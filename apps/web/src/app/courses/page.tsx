@@ -1,38 +1,38 @@
 import Link from "next/link";
 import { apiGetPublic } from "../../lib/api";
+import { EmptyState, PageHeader } from "../../components/ui";
 
 interface Product {
   slug: string;
   title: string;
   description: string;
-  prices: { amountRial: number }[];
+  prices?: { amountRial: number }[];
 }
 
 export default async function CoursesPage() {
-  const products = await apiGetPublic<Product[]>("/products");
+  let products: Product[] | null = null;
+  try {
+    products = await apiGetPublic<Product[]>("/products");
+  } catch {
+    products = null;
+  }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>دوره‌ها</h1>
-      {!products || products.length === 0 ? (
-        <p>در حال حاضر دوره‌ای برای فروش وجود ندارد.</p>
+    <main className="page-container">
+      <PageHeader eyebrow="یادگیری هدفمند" title="دوره‌ها" description="مسیرهای آموزشی ارشد و دکتری کامپیوتر را بر اساس هدف و زمانت انتخاب کن." />
+      {!products ? (
+        <EmptyState title="فهرست دوره‌ها در دسترس نیست" description="اتصال به سرویس محتوا برقرار نشد؛ بعداً دوباره امتحان کن." />
+      ) : products.length === 0 ? (
+        <EmptyState title="هنوز دوره‌ای منتشر نشده است" description="به‌محض انتشار دورهٔ جدید، اینجا نمایش داده می‌شود." />
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <div className="course-grid">
           {products.map((product) => (
-            <li
-              key={product.slug}
-              style={{ border: "1px solid #D7E2EA", borderRadius: 8, padding: "1rem", marginBottom: "1rem" }}
-            >
-              <Link href={`/courses/${product.slug}`}>
-                <strong>{product.title}</strong>
-              </Link>
-              <p>{product.description}</p>
-              {product.prices[0] && (
-                <p>{product.prices[0].amountRial.toLocaleString("fa-IR")} تومان</p>
-              )}
-            </li>
+            <article className="catalog-card" key={product.slug}>
+              <div><div className="catalog-card-meta"><span>دورهٔ تخصصی</span><span>یادگیری</span></div><Link href={`/courses/${product.slug}`}><h3>{product.title}</h3></Link><p>{product.description}</p></div>
+              <div className="catalog-card-footer">{product.prices?.[0] ? <strong>{product.prices[0].amountRial.toLocaleString("fa-IR")} تومان</strong> : <span className="muted-copy">جزئیات در صفحهٔ دوره</span>}<Link className="button button-secondary" href={`/courses/${product.slug}`}>مشاهده دوره ←</Link></div>
+            </article>
           ))}
-        </ul>
+        </div>
       )}
     </main>
   );

@@ -1,5 +1,6 @@
 import { apiGetPublic } from "../../lib/api";
 import { StartExamButton } from "../../components/StartExamButton";
+import { EmptyState, PageHeader } from "../../components/ui";
 
 interface Exam {
   id: string;
@@ -10,24 +11,26 @@ interface Exam {
 }
 
 export default async function ExamsPage() {
-  const exams = await apiGetPublic<Exam[]>("/exams");
+  let exams: Exam[] | null = null;
+  try {
+    exams = await apiGetPublic<Exam[]>("/exams");
+  } catch {
+    exams = null;
+  }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>آزمون‌ها</h1>
-      {!exams || exams.length === 0 ? (
-        <p>در حال حاضر آزمونی برای شرکت وجود ندارد.</p>
+    <main className="page-container">
+      <PageHeader eyebrow="سنجش آمادگی" title="آزمون‌ها" description="با آزمون‌های واقعی، آمادگی‌ات را بسنج و قدم بعدی را دقیق‌تر انتخاب کن." />
+      {!exams ? (
+        <EmptyState title="فهرست آزمون‌ها در دسترس نیست" description="اتصال به سرویس آزمون برقرار نشد؛ بعداً دوباره امتحان کن." />
+      ) : exams.length === 0 ? (
+        <EmptyState title="هنوز آزمونی منتشر نشده است" description="آزمون‌های جدید بعد از انتشار در این بخش قرار می‌گیرند." />
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <div className="exam-grid">
           {exams.map((exam) => (
-            <li key={exam.id} style={{ border: "1px solid #D7E2EA", borderRadius: 6, padding: "0.8rem", marginBottom: "0.6rem" }}>
-              <strong>{exam.title}</strong>
-              <p>{exam.description}</p>
-              <p style={{ fontSize: "0.85rem", color: "#486581" }}>مدت: {exam.durationMinutes} دقیقه</p>
-              <StartExamButton examId={exam.id} />
-            </li>
+            <article className="catalog-card" key={exam.id}><div><div className="catalog-card-meta"><span>آزمون شبیه‌ساز</span><span>{exam.durationMinutes} دقیقه</span></div><h3>{exam.title}</h3><p>{exam.description}</p></div><div className="catalog-card-footer"><span className="muted-copy">آماده‌ای؟</span><StartExamButton examId={exam.id} /></div></article>
           ))}
-        </ul>
+        </div>
       )}
     </main>
   );

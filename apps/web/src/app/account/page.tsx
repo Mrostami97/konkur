@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { EmptyState, PageHeader, StatCard } from "../../components/ui";
 
 interface Me {
   user: { id: string; phone: string; roles: string[] };
@@ -101,100 +102,91 @@ export default function AccountPage() {
     router.push("/");
   }
 
-  if (loading) return <main style={{ padding: "2rem" }}>در حال بارگذاری...</main>;
+  if (loading) return <main className="page-container"><div className="surface-card loading-state">در حال بارگذاری حساب...</div></main>;
   if (!me) return null;
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>حساب من</h1>
-      <p>
-        {me.user.phone} — نقش‌ها: {me.user.roles.join(", ")}
-      </p>
-      <button onClick={logout}>خروج</button>
+    <main className="page-container">
+      <PageHeader eyebrow="فضای شخصی" title="حساب من" description="پروفایل، دسترسی‌ها و شواهد پیشرفتت را یکجا مدیریت کن." action={<button className="button button-secondary" onClick={logout}>خروج از حساب</button>} />
+      <section className="content-grid">
+      <div className="surface-card">
+      <div className="account-identity"><div className="avatar-placeholder">{me.user.phone.slice(-2)}</div><div><strong>{me.user.phone}</strong><p className="muted-copy">نقش‌ها: {me.user.roles.join(", ")}</p></div></div>
       {me.user.roles.some((r) => ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE", "MENTOR"].includes(r)) && (
-        <p>
-          <Link href="/admin">ورود به پنل ادمین</Link>
-        </p>
+        <Link className="quick-link-highlight" href="/admin">ورود به پنل ادمین ←</Link>
       )}
 
       <h2>پروفایل</h2>
       {profile && (
-        <form onSubmit={saveProfile}>
-          <label>
-            نام نمایشی
-            <input
+        <form className="field-grid" onSubmit={saveProfile}>
+          <label className="field-group"><span>نام نمایشی</span><input className="field-input"
               value={profile.displayName ?? ""}
               onChange={(e) => setProfile({ ...profile, displayName: e.target.value })}
-              style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.5rem" }}
             />
           </label>
-          <label>
-            مقطع هدف
-            <select
+          <label className="field-group"><span>مقطع هدف</span><select className="field-input"
               value={profile.targetDegree ?? ""}
               onChange={(e) => setProfile({ ...profile, targetDegree: e.target.value })}
-              style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.5rem" }}
             >
               <option value="">—</option>
               <option value="MASTER">ارشد</option>
               <option value="PHD">دکتری</option>
             </select>
           </label>
-          <label>
-            گرایش هدف
-            <input
+          <label className="field-group"><span>گرایش هدف</span><input className="field-input"
               value={profile.targetField ?? ""}
               onChange={(e) => setProfile({ ...profile, targetField: e.target.value })}
-              style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.5rem" }}
             />
           </label>
-          <button type="submit">{saveState === "saving" ? "در حال ذخیره..." : "ذخیره"}</button>
-          {saveState === "saved" && <span style={{ color: "green" }}> ذخیره شد</span>}
+          <button className="button button-primary" type="submit">{saveState === "saving" ? "در حال ذخیره..." : "ذخیره تغییرات"}</button>
+          {saveState === "saved" && <span className="success-message">ذخیره شد</span>}
         </form>
       )}
+      </div>
+      <div className="stats-grid account-stats"><StatCard label="دوره‌های من" value={enrollments.length.toLocaleString("fa-IR")} tone="teal" /><StatCard label="دسترسی‌ها" value={entitlements.length.toLocaleString("fa-IR")} tone="blue" /><StatCard label="موضوعات با شواهد" value={mastery.length.toLocaleString("fa-IR")} tone="purple" /></div>
+      </section>
 
-      <h2>دوره‌های من</h2>
+      <section className="content-grid-wide account-sections"><div className="surface-card"><h2>دوره‌های من</h2>
       {enrollments.length === 0 ? (
-        <p>هنوز در دوره‌ای ثبت‌نام نکرده‌اید.</p>
+        <EmptyState title="دوره‌ای در حساب نیست" description="دوره‌های فعال بعد از ثبت‌نام اینجا نمایش داده می‌شوند." action={<Link className="button button-secondary" href="/courses">مشاهده دوره‌ها</Link>} />
       ) : (
-        <ul>
+        <ul className="quick-links">
           {enrollments.map((e) => (
             <li key={e.id}>
               <Link href={`/courses/${e.course.slug}`}>{e.course.title}</Link>
             </li>
           ))}
         </ul>
-      )}
+      )}</div>
 
-      <h2>دسترسی‌های من</h2>
+      <div className="surface-card"><h2>دسترسی‌های من</h2>
       {entitlements.length === 0 ? (
-        <p>دسترسی فعالی وجود ندارد.</p>
+        <EmptyState title="دسترسی فعالی نیست" description="دسترسی‌های خریداری یا اعطاشده اینجا قرار می‌گیرند." />
       ) : (
-        <ul>
+        <ul className="quick-links">
           {entitlements.map((e) => (
             <li key={e.id}>
               {e.product.title} ({e.grantedVia})
             </li>
           ))}
         </ul>
-      )}
+      )}</div>
 
-      <h2>نقشه تسلط</h2>
+      <div className="surface-card"><h2>نقشهٔ تسلط</h2>
       {mastery.length === 0 ? (
-        <p>هنوز شواهدی برای محاسبه تسلط شما وجود ندارد؛ در آزمون‌ها شرکت کنید.</p>
+        <EmptyState title="هنوز داده‌ای برای تسلط نیست" description="با مطالعه و شرکت در آزمون‌ها، این بخش به‌تدریج کامل می‌شود." action={<Link className="button button-secondary" href="/exams">رفتن به آزمون‌ها</Link>} />
       ) : (
-        <ul>
+        <ul className="quick-links">
           {mastery.map((m) => (
             <li key={m.topicCode}>
               {m.subjectCode} / {m.topicCode} — تسلط: {(m.masteryScore * 100).toFixed(0)}٪ (اطمینان: {m.confidence})
             </li>
           ))}
         </ul>
-      )}
+      )}</div></section>
 
-      <h2>تاریخچه تغییر برنامه</h2>
+      <section className="surface-card revision-section"><h2>تاریخچهٔ تغییر برنامه</h2>
       {revisions.length === 0 ? (
-        <p>هنوز برنامه‌ای ساخته نشده است.</p>
+        <EmptyState title="هنوز برنامه‌ای ساخته نشده است" description="تغییرات و بازبرنامه‌ریزی‌های آینده اینجا ثبت می‌شوند." />
       ) : (
         <ul>
           {revisions.map((r) => (
@@ -203,7 +195,7 @@ export default function AccountPage() {
             </li>
           ))}
         </ul>
-      )}
+      )}</section>
     </main>
   );
 }

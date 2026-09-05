@@ -30,16 +30,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </span>
             </Link>
             <nav className="main-nav" aria-label="منوی اصلی">
-              <Link className="nav-link" href="/today">امروز</Link>
-              <Link className="nav-link" href="/courses">دوره‌ها</Link>
-              <Link className="nav-link" href="/questions">بانک سؤال</Link>
-              <Link className="nav-link" href="/exams">آزمون‌ها</Link>
-              <Link className="nav-link" href="/admissions">انتخاب‌رشته</Link>
+              <Link className="nav-link" href="/today"><span>◷</span> امروز</Link>
+              <Link className="nav-link" href="/courses"><span>◈</span> یادگیری</Link>
+              <Link className="nav-link" href="/exams"><span>✓</span> آزمون</Link>
+              <Link className="nav-link" href="/rank-estimate"><span>↗</span> تحلیل</Link>
+              <Link className="nav-link" href="/account"><span>◎</span> حساب من</Link>
             </nav>
             <span className="auth-link"><AuthStatus /></span>
           </div>
         </header>
         {children}
+        <nav className="mobile-nav" aria-label="ناوبری موبایل">
+          <Link href="/today"><span>◷</span><small>امروز</small></Link>
+          <Link href="/courses"><span>◈</span><small>یادگیری</small></Link>
+          <Link className="mobile-nav-main" href="/exams"><span>✓</span><small>آزمون</small></Link>
+          <Link href="/rank-estimate"><span>↗</span><small>تحلیل</small></Link>
+          <Link href="/account"><span>◎</span><small>حساب من</small></Link>
+        </nav>
         <ServiceWorkerRegistration />
       </body>
     </html>

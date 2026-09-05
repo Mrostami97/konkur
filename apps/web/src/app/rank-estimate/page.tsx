@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { EmptyState, PageHeader, StatCard } from "../../components/ui";
 
 interface SubjectScore {
   subjectCode: string;
@@ -67,44 +68,39 @@ export default function RankEstimatePage() {
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>تخمین رتبه</h1>
-      <p style={{ fontSize: "0.85rem", color: "#486581" }}>
+    <main className="page-container">
+      <PageHeader eyebrow="تحلیل عملکرد" title="تخمین رتبه" description="با داده‌های عملکردی و کارنامه‌های مشابه، جایگاه احتمالی‌ات را بهتر درک کن." />
+      <div className="surface-card surface-card-muted analysis-note">
+      <p>
         این تخمین بر اساس مقایسه با کارنامه‌های واقعی و تأییدشده مشابه محاسبه می‌شود؛ یک عدد قطعی نیست.
       </p>
+      </div>
 
-      <form onSubmit={submit}>
-        <select value={degree} onChange={(e) => setDegree(e.target.value as "master" | "phd")} style={{ marginBottom: "0.4rem" }}>
+      <form className="surface-card rank-form" onSubmit={submit}>
+        <div className="field-grid field-grid-two"><label className="field-group"><span>مقطع</span><select className="field-input" value={degree} onChange={(e) => setDegree(e.target.value as "master" | "phd")}>
           <option value="master">ارشد</option>
           <option value="phd">دکتری</option>
-        </select>
-        <input placeholder="گرایش" value={field} onChange={(e) => setField(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        <input placeholder="سهمیه" value={quota} onChange={(e) => setQuota(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
+        </select></label><label className="field-group"><span>گرایش</span><input className="field-input" placeholder="گرایش" value={field} onChange={(e) => setField(e.target.value)} required /></label><label className="field-group"><span>سهمیه</span><input className="field-input" placeholder="سهمیه" value={quota} onChange={(e) => setQuota(e.target.value)} required /></label></div>
 
         {scores.map((s, i) => (
-          <div key={i} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.3rem" }}>
-            <input placeholder="کد درس" value={s.subjectCode} onChange={(e) => updateScore(i, "subjectCode", e.target.value)} required />
-            <input placeholder="درصد" value={s.percent} onChange={(e) => updateScore(i, "percent", e.target.value)} required style={{ width: "5rem" }} />
+          <div className="score-row" key={i}>
+            <input className="field-input" placeholder="کد درس" value={s.subjectCode} onChange={(e) => updateScore(i, "subjectCode", e.target.value)} required />
+            <input className="field-input score-percent" inputMode="decimal" placeholder="درصد" value={s.percent} onChange={(e) => updateScore(i, "percent", e.target.value)} required />
           </div>
         ))}
-        <button type="button" onClick={() => setScores([...scores, { subjectCode: "", percent: "" }])}>
+        <button className="button button-secondary" type="button" onClick={() => setScores([...scores, { subjectCode: "", percent: "" }])}>
           افزودن درس
         </button>
-        <button type="submit" disabled={loading} style={{ marginInlineStart: "0.5rem" }}>
+        <button className="button button-primary" type="submit" disabled={loading}>
           {loading ? "در حال محاسبه..." : "محاسبه تخمین"}
         </button>
       </form>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+      {error && <p className="form-error" role="alert">{error}</p>}
 
       {estimate && (
-        <div style={{ background: "#F4F8FB", padding: "1rem", borderRadius: 6, marginTop: "1rem" }}>
-          <h2>نتیجه</h2>
-          <p>
-            میانه رتبه: <strong>{estimate.rankMedian}</strong> (این عدد به‌تنهایی قابل اتکا نیست — بازه‌ها را ببینید)
-          </p>
-          <p>بازه ۵۰٪: از {estimate.rankP50Low} تا {estimate.rankP50High}</p>
-          <p>بازه ۸۰٪: از {estimate.rankP80Low} تا {estimate.rankP80High}</p>
-          <p>سطح اطمینان: {estimate.confidence}</p>
+        <section className="surface-card rank-result">
+          <div className="section-heading"><div><h2>نتیجهٔ آخرین محاسبه</h2><p>بازه‌ها را در کنار میانهٔ رتبه بخوان؛ این تخمین قطعی نیست.</p></div></div>
+          <div className="stats-grid"><StatCard label="میانه رتبه" value={estimate.rankMedian.toLocaleString("fa-IR")} detail={`اطمینان ${estimate.confidence}`} tone="teal" /><StatCard label="بازهٔ ۵۰٪" value={`${estimate.rankP50Low} تا ${estimate.rankP50High}`} tone="blue" /><StatCard label="بازهٔ ۸۰٪" value={`${estimate.rankP80Low} تا ${estimate.rankP80High}`} tone="purple" /></div>
           <p>
             تعداد کارنامه‌های مشابه: {estimate.comparableCount} (سال‌های {estimate.comparableYears.join("، ")})
           </p>
@@ -116,9 +112,10 @@ export default function RankEstimatePage() {
               </li>
             ))}
           </ul>
-          <p style={{ fontSize: "0.8rem", color: "#486581" }}>{estimate.methodology}</p>
-        </div>
+          <p className="muted-copy">{estimate.methodology}</p>
+        </section>
       )}
+      {!estimate && !loading && <EmptyState title="هنوز تخمینی ثبت نشده است" description="درصد درس‌ها را وارد کن تا تحلیل اولیه‌ات از طریق سرویس واقعی محاسبه شود." />}
     </main>
   );
 }
