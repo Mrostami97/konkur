@@ -1,0 +1,35 @@
+{
+  "schema_version": "question.v1",
+  "external_id": "ce-1405-q01",
+  "exam": { "degree": "master", "major": "computer-engineering", "year": 1405 },
+  "subject_code": "algorithms",
+  "topic_codes": ["asymptotic-analysis"],
+  "stem_blocks": [
+    { "type": "text", "text": "What is the tight asymptotic bound of merge sort?" },
+    { "type": "image", "media_key": "figure-01" }
+  ],
+  "options": [
+    { "number": 1, "blocks": [{ "type": "text", "text": "O(n)" }] },
+    { "number": 2, "blocks": [{ "type": "latex", "latex": "O(n\\log n)" }] },
+    { "number": 3, "blocks": [{ "type": "text", "text": "O(n^2)" }] },
+    { "number": 4, "blocks": [{ "type": "text", "text": "O(\\log n)" }] }
+  ],
+  "correct_option": 2,
+  "solution_blocks": [
+    { "type": "text", "text": "Merge sort always splits and merges in O(n log n)." }
+  ],
+  "assets": [
+    {
+      "media_key": "figure-01",
+      "filename": "figure-01.png",
+      "mime_type": "image/png",
+      "checksum": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "source": { "page": 1, "question_number": 1 },
+  "provenance": {
+    "producer_type": "external_ai",
+    "producer_version": "v1",
+    "source_artifact": "file-001"
+  }
+}

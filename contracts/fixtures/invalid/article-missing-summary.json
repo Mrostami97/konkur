@@ -1,0 +1,10 @@
+{
+  "schema_version": "article.v1",
+  "external_id": "article-002",
+  "title": "Broken article fixture",
+  "slug": "broken-article-fixture",
+  "content_blocks": [{ "type": "text", "text": "..." }],
+  "taxonomy": { "major": ["computer-engineering"] },
+  "provenance": { "producer_type": "human", "source_artifact": "manual" },
+  "review_status": "draft"
+}

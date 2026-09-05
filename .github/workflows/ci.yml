@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: konkur
+          POSTGRES_PASSWORD: konkur
+          POSTGRES_DB: konkurcom
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U konkur -d konkurcom"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://konkur:konkur@localhost:5432/konkurcom?schema=public
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable corepack (pnpm)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm -w run lint
+
+      - name: Typecheck
+        run: pnpm -w run typecheck
+
+      - name: Contracts unit tests (JSON Schema fixtures)
+        run: pnpm --filter @konkurcom/contracts run test
+
+      - name: Prisma migrate deploy (migration check)
+        run: pnpm --filter @konkurcom/api exec prisma migrate deploy
+
+      - name: API unit tests
+        run: pnpm --filter @konkurcom/api run test
+
+      - name: API integration/e2e tests
+        run: pnpm --filter @konkurcom/api run test:e2e
+
+      - name: Build all workspaces
+        run: pnpm -w run build

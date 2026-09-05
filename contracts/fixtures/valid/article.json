@@ -1,0 +1,43 @@
+{
+  "schema_version": "article.v1",
+  "external_id": "article-001",
+  "title": "Asymptotic Analysis Refresher",
+  "slug": "asymptotic-analysis-refresher",
+  "summary": "A short refresher on big-O notation for the algorithms section.",
+  "content_blocks": [
+    { "type": "heading", "level": 2, "text": "Big-O in one page" },
+    { "type": "text", "text": "Big-O describes an upper bound on growth rate." },
+    { "type": "latex", "latex": "T(n)=O(n\\log n)" },
+    {
+      "type": "table",
+      "headers": ["Function", "Class"],
+      "rows": [["n", "linear"], ["n log n", "linearithmic"]]
+    },
+    { "type": "image", "media_key": "figure-01", "alt": "growth chart" },
+    { "type": "quote", "text": "Measure twice, cut once.", "cite": "Anonymous" }
+  ],
+  "taxonomy": {
+    "major": ["computer-engineering"],
+    "tags": ["algorithms", "asymptotic-analysis"]
+  },
+  "source": { "url": "https://t.me/Konkur_answer/123" },
+  "assets": [
+    {
+      "media_key": "figure-01",
+      "filename": "figure-01.png",
+      "mime_type": "image/png",
+      "checksum": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "width": 640,
+      "height": 480
+    }
+  ],
+  "provenance": {
+    "producer_type": "human",
+    "producer_name": "editorial-team",
+    "producer_version": "v1",
+    "source_artifact": "channel-post-123",
+    "generated_at": "2026-01-10T08:00:00.000Z",
+    "checksum": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "review_status": "approved"
+}

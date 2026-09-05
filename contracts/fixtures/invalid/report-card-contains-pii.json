@@ -1,0 +1,17 @@
+{
+  "schema_version": "report-card.v1",
+  "external_id": "rc-1405-002",
+  "anonymous_id": "anon-002",
+  "student_name": "This field must never appear on a report card payload",
+  "exam_year": 1405,
+  "degree": "master",
+  "field": "computer-engineering",
+  "quota": "region-1",
+  "subject_scores": [{ "subject_code": "algorithms", "percent": 40.0 }],
+  "rank": { "value": 900, "scope": "quota" },
+  "admissions": [],
+  "provenance": {
+    "producer_type": "external_ai",
+    "source_artifact": "report-image-002"
+  }
+}

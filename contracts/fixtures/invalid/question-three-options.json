@@ -1,0 +1,19 @@
+{
+  "schema_version": "question.v1",
+  "external_id": "ce-1405-q02",
+  "exam": { "degree": "master", "major": "computer-engineering", "year": 1405 },
+  "subject_code": "algorithms",
+  "topic_codes": ["asymptotic-analysis"],
+  "stem_blocks": [{ "type": "text", "text": "Broken question with only three options." }],
+  "options": [
+    { "number": 1, "blocks": [{ "type": "text", "text": "A" }] },
+    { "number": 2, "blocks": [{ "type": "text", "text": "B" }] },
+    { "number": 3, "blocks": [{ "type": "text", "text": "C" }] }
+  ],
+  "correct_option": 1,
+  "solution_blocks": [{ "type": "text", "text": "..." }],
+  "provenance": {
+    "producer_type": "human",
+    "source_artifact": "manual"
+  }
+}

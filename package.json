@@ -1,0 +1,20 @@
+{
+  "name": "konkurcom-360",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "pnpm -r --if-present run lint",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "test": "pnpm -r --if-present run test",
+    "build": "pnpm -r --if-present run build",
+    "migrate:deploy": "pnpm --filter api prisma migrate deploy",
+    "migrate:dev": "pnpm --filter api prisma migrate dev",
+    "migrate:reset": "pnpm --filter api prisma migrate reset --force",
+    "seed": "pnpm --filter api run seed",
+    "dev:api": "pnpm --filter api run start:dev",
+    "dev:web": "pnpm --filter web run dev"
+  }
+}

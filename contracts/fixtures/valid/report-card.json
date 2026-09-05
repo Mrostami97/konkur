@@ -1,0 +1,22 @@
+{
+  "schema_version": "report-card.v1",
+  "external_id": "rc-1405-001",
+  "anonymous_id": "anon-001",
+  "exam_year": 1405,
+  "degree": "master",
+  "field": "computer-engineering",
+  "quota": "region-1",
+  "subject_scores": [
+    { "subject_code": "algorithms", "percent": 52.5 },
+    { "subject_code": "data-structures", "percent": 61.2 },
+    { "subject_code": "computer-architecture", "percent": 40.0 }
+  ],
+  "rank": { "value": 120, "scope": "quota" },
+  "admissions": [
+    { "program_code": "ce-software-example", "status": "accepted" }
+  ],
+  "provenance": {
+    "producer_type": "external_ai",
+    "source_artifact": "report-image-001"
+  }
+}

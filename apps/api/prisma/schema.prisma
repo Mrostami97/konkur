@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// RBAC roles per doc §9: Student, Mentor, Author, Reviewer, Admin, Finance.
+// A user can hold more than one role (e.g. Mentor + Author), hence a join table.
+enum Role {
+  STUDENT
+  MENTOR
+  AUTHOR
+  REVIEWER
+  ADMIN
+  FINANCE
+}
+
+model User {
+  id        String     @id @default(uuid())
+  phone     String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  roles     UserRole[]
+  sessions  Session[]
+  otpCodes  OtpCode[]
+  consents  Consent[]
+
+  @@map("users")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role
+  createdAt DateTime @default(now())
+
+  @@unique([userId, role])
+  @@map("user_roles")
+}
+
+model OtpCode {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone       String
+  codeHash    String
+  attempts    Int       @default(0)
+  consumedAt  DateTime?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@map("otp_codes")
+}
+
+model Session {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique
+  userAgent  String?
+  ip         String?
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Consent {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String
+  version    String
+  acceptedAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("consents")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  actorUserId   String?
+  action        String
+  targetType    String
+  targetId      String
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([targetType, targetId])
+  @@map("audit_logs")
+}
+
+// Transactional Outbox (doc §5.1): domain changes and their events are written
+// in the same DB transaction. No consumer exists yet in Phase 0 -- later phases
+// (Planning/CRM/Notification) add a poller/dispatcher that reads unpublished rows.
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  eventType   String
+  payload     Json
+  createdAt   DateTime  @default(now())
+  publishedAt DateTime?
+
+  @@index([eventType])
+  @@index([publishedAt])
+  @@map("outbox_events")
+}
