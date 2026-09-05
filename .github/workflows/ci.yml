@@ -26,6 +26,12 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://konkur:konkur@localhost:5432/konkurcom?schema=public
+      S3_ENDPOINT: localhost
+      S3_PORT: "9000"
+      S3_USE_SSL: "false"
+      S3_ACCESS_KEY: konkur
+      S3_SECRET_KEY: konkur123
+      S3_BUCKET: konkurcom-media
 
     steps:
       - uses: actions/checkout@v4
@@ -36,6 +42,22 @@ jobs:
 
       - name: Enable corepack (pnpm)
         run: corepack enable
+
+      # GitHub Actions' `services:` block can't override a container's
+      # command, and the minio/minio image requires `server /data` -- so
+      # it's started as a plain background container instead, published to
+      # the runner's own localhost (matching the app's S3_ENDPOINT default).
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio -p 9000:9000 \
+            -e MINIO_ROOT_USER=konkur -e MINIO_ROOT_PASSWORD=konkur123 \
+            minio/minio server /data
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:9000/minio/health/live && exit 0
+            sleep 1
+          done
+          echo "MinIO did not become ready in time" >&2
+          exit 1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

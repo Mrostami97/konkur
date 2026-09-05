@@ -21,8 +21,14 @@ export class ObjectStorageService implements OnModuleInit {
   async onModuleInit() {
     const exists = await this.client.bucketExists(this.bucket).catch(() => false);
     if (!exists) {
-      await this.client.makeBucket(this.bucket);
-      this.logger.log(`Created bucket ${this.bucket}`);
+      await this.client
+        .makeBucket(this.bucket)
+        .then(() => this.logger.log(`Created bucket ${this.bucket}`))
+        .catch((err: Error) =>
+          this.logger.warn(
+            `Could not create/verify bucket ${this.bucket} at startup (media upload/download will fail until this is reachable): ${err.message}`,
+          ),
+        );
     }
   }
 

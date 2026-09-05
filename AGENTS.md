@@ -202,6 +202,21 @@ Phase 2:
   mislabeled `mime_type` with a matching checksum is not caught.
 - No signed-URL/access-controlled serving of uploaded media yet — Ingestion
   only stores objects in MinIO and records `SourceArtifact.storageKey`.
+- `ObjectStorageService.onModuleInit()` bucket-creation is now wrapped in a
+  catch (log a warning, don't crash boot) instead of letting an unreachable
+  MinIO take down the *entire* app at startup -- since every e2e suite
+  imports `AppModule` (and therefore this module) regardless of whether it
+  touches media, an unreachable S3 endpoint was failing literally every e2e
+  test in CI (which never had a MinIO service) with an identical, unhelpful
+  `AggregateError`/`ECONNREFUSED`. This was a real latent bug present since
+  Phase 2's introduction, only ever masked locally by a long-lived dev
+  container that always had MinIO reachable. Tests that actually exercise
+  media upload/download still correctly fail (with a real error) when S3 is
+  unreachable; unrelated suites (auth, commerce, planning, CRM, etc.) no
+  longer do. CI now starts a real MinIO via a plain `docker run` step (its
+  `services:` block can't override the image's required `server /data`
+  command) so the ingestion/media tests are exercised for real, not just
+  tolerated.
   Phase 3 added `GET /media/:checksum` (a public, unauthenticated presigned
   redirect) so images/charts actually render; it does not check entitlement,
   so it isn't suitable for paid/protected media as-is — that's still open.
