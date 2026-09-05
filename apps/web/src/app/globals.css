@@ -1,4 +1,7 @@
 :root {
+  /* Use the licensed local IRANYekan family when it is available; the
+     open-source fallback keeps the layout consistent on every device. */
+  --font-persian: "IRANYekanX", "IRANYekan", "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
   --ink: #10243f;
   --muted: #6b7c93;
   --navy: #112c4e;
@@ -22,14 +25,18 @@ body {
     radial-gradient(circle at 8% 6%, rgba(16, 185, 166, 0.11), transparent 28rem),
     radial-gradient(circle at 96% 17%, rgba(84, 153, 255, 0.09), transparent 26rem),
     var(--background);
-  font-family: Tahoma, Vazirmatn, "Segoe UI", sans-serif;
+  font-family: var(--font-persian);
+  font-size: 15px;
+  font-weight: 400;
+  font-synthesis: none;
   line-height: 1.75;
+  text-rendering: optimizeLegibility;
 }
 
 a { color: inherit; text-decoration: none; }
 a:hover { color: var(--teal-dark); }
 
-button, input { font: inherit; }
+button, input { font: inherit; font-family: var(--font-persian); }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; opacity: 0.58; }
 
@@ -79,7 +86,7 @@ button:disabled { cursor: not-allowed; opacity: 0.58; }
 .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: 3rem; padding: 5.2rem 0 4rem; }
 .eyebrow { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.35rem 0.7rem; border: 1px solid #c8ece6; border-radius: 999px; color: var(--teal-dark); background: #effcf9; font-size: 0.78rem; font-weight: 800; }
 .eyebrow::before { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); content: ""; }
-.hero h1 { max-width: 650px; margin: 1.1rem 0 1rem; color: var(--navy); font-size: clamp(2.25rem, 5vw, 4.35rem); letter-spacing: -0.055em; line-height: 1.2; }
+.hero h1 { max-width: 650px; margin: 1.1rem 0 1rem; color: var(--navy); font-size: clamp(2.25rem, 5vw, 4.35rem); letter-spacing: -0.03em; line-height: 1.28; }
 .hero h1 em { color: var(--teal); font-style: normal; }
 .hero-lead { max-width: 590px; margin: 0; color: var(--muted); font-size: 1.08rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.8rem; }
@@ -118,7 +125,7 @@ button:disabled { cursor: not-allowed; opacity: 0.58; }
 .empty-state { grid-column: 1 / -1; padding: 2rem; border: 1px dashed #bed2df; border-radius: 18px; color: var(--muted); background: rgba(255,255,255,0.6); text-align: center; }
 
 .login-shell { display: grid; grid-template-columns: 1fr 0.9fr; align-items: center; gap: 3rem; max-width: 980px; min-height: calc(100vh - 76px); padding: 3rem 1.5rem; margin: 0 auto; }
-.login-pitch h1 { margin: 1rem 0; color: var(--navy); font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.25; }
+.login-pitch h1 { margin: 1rem 0; color: var(--navy); font-size: clamp(2rem, 4vw, 3.2rem); letter-spacing: -0.025em; line-height: 1.35; }
 .login-pitch p { max-width: 430px; color: var(--muted); }
 .login-points { display: grid; gap: 0.6rem; padding: 0; margin: 1.5rem 0 0; list-style: none; color: #52657c; font-size: 0.88rem; }
 .login-points li::before { display: inline-grid; width: 22px; height: 22px; place-items: center; margin-left: 0.5rem; border-radius: 50%; color: var(--teal-dark); background: var(--sky); content: "✓"; font-weight: 900; }
