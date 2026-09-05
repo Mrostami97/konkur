@@ -88,9 +88,9 @@ See `README.md`'s secrets table.
 Until a real server exists, the job logs "deploy skipped: SSH_HOST not set" and
 exits 0 so it never blocks CI.
 
-**Server prerequisites are auto-provisioned on every deploy run** except one:
-the one-time `git clone` of this private repo (below), since the deploy
-script has no credential it can safely invent on its own.
+**Everything the server needs is auto-provisioned on every deploy run.** The
+server compiles nothing and needs no GitHub credential of its own: the runner
+builds, the runner ships.
 
 - **Docker Engine + the Compose plugin.** If `docker` isn't on `PATH`, the
   deploy script installs it, using `sudo` when the SSH user isn't root:
@@ -108,27 +108,33 @@ script has no credential it can safely invent on its own.
 - **Firewall.** On RHEL-family hosts firewalld is usually active and blocks
   80/443 by default, so the script opens the `http`/`https` services if
   firewalld is running. Best effort — never fatal.
-- **`git` does NOT need to be installed on the server at all**, ever. Every
-  deploy runs `git fetch`/`git reset --hard` **inside a throwaway
-  `buildpack-deps:bookworm-scm` container** (an official Debian image that
-  already ships git, so there's no `apt-get` on every deploy), reusing the
-  existing checkout's already-working remote config. A missing host `git` is
-  what broke an earlier deploy ("git: command not found"); containerizing it
-  means the host's own package state no longer matters.
+- **`rsync`**, installed if missing, because that's how the source arrives.
+- **The source itself.** The runner rsyncs its own checkout to `DEPLOY_PATH`
+  (default `/opt/app` when the `DEPLOY_PATH` secret is unset). The runner is
+  already authenticated to this private repo, so **the server needs no git
+  credential and doesn't even have to be a git checkout** — which is what
+  used to break here, first as "git: command not found" and then as
+  "ERROR:  is not a git checkout" against an empty path. `.env` and
+  `node_modules` are excluded from the sync so server-side secrets survive
+  `--delete`.
+- **The images.** `docker compose build api web` runs on the runner, and both
+  images are streamed to the server in a single `docker save | gzip | docker
+  load` (one stream, so their shared base layers dedupe). The server then runs
+  `docker compose up -d --no-build` and compiles nothing. If that fails for
+  any reason it falls back to `up -d --build`, so a botched image transfer
+  can't take the site down — it just makes that one deploy slow.
 - The post-deploy `/healthz` wait (below) also runs `curl` in a container
   (`curlimages/curl`), not on the host.
 
-The one thing that still can't be auto-provisioned: the **first** checkout at
-`DEPLOY_PATH`. This repo is private, so that first `git clone` needs a working
-credential (SSH deploy key, or an HTTPS token) set up by hand, once, before
-the very first deploy to a given server -- the deploy script fails with a
-clear message if `$DEPLOY_PATH/.git` doesn't exist yet rather than guessing.
-Every deploy after that first clone needs nothing manual at all.
+**Fallback:** if the server has no `rsync` and none can be installed, the
+deploy clones over HTTPS using the workflow's own `GITHUB_TOKEN` (repo-scoped,
+expires with the job) inside a `buildpack-deps:bookworm-scm` container, then
+rewrites the remote so the token isn't left behind in `.git/config`.
 
 ### Post-deploy health check
 
 The last thing every deploy does is wait for the service to actually come up.
-After `docker compose up -d --build`, the script polls `GET /healthz`
+After `docker compose up -d`, the script polls `GET /healthz`
 (through nginx, resolved by IP so no public DNS is needed) every 3s for up to
 180s. It exits 0 as soon as the response reports `"status":"ok"`; if that
 never happens it prints the last response plus `docker compose ps` and the

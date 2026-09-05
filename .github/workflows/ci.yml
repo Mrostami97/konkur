@@ -10,6 +10,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
@@ -93,138 +96,224 @@ jobs:
           pnpm --filter @konkurcom/api run test
           pnpm --filter @konkurcom/api run test:e2e
 
-      # Deploy runs as the tail of this same job: steps run in order and stop
-      # at the first failure, so nothing below runs unless everything above
-      # was green. The `secrets` context isn't available in a step `if:`,
-      # hence this gate step writing an output. When it's skipped (PRs, or
-      # non-main pushes) its output is empty, so the deploy step is skipped too.
-      - name: Check deploy secrets
-        id: deploy_gate
+      # Built here, on the runner, and shipped to the server as images below --
+      # the server never compiles anything. Tags are compose's own defaults
+      # (<project>-<service>), so the server's `docker compose up --no-build`
+      # picks these up with no image: overrides in docker-compose.yml.
+      - name: Build production images
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: docker compose build api web
+
+      # Deploy is the tail of this same job: steps run in order and stop at the
+      # first failure, so this only runs if everything above was green.
+      #
+      # Source is rsync'd from this runner's checkout, which already has
+      # authenticated access to this private repo -- the server needs no git
+      # credential of its own and doesn't even have to be a git checkout. If
+      # the server has no rsync and none can be installed, it falls back to
+      # cloning over HTTPS with this job's GITHUB_TOKEN.
+      - name: Deploy to server, then wait for /healthz
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
         run: |
-          if [ -n "${{ secrets.SSH_HOST }}" ]; then
-            echo "configured=true" >> "$GITHUB_OUTPUT"
-          else
+          set -euo pipefail
+
+          if [ -z "${SSH_HOST:-}" ]; then
             echo "Deploy skipped: SSH_HOST secret is not set (see ops/runbook.md)."
+            exit 0
           fi
 
-      - name: Deploy over SSH, then wait for /healthz
-        if: steps.deploy_gate.outputs.configured == 'true'
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          # SSH_KEY is primary; SSH_PASS is an optional password fallback. SSH
-          # negotiates which offered method the server accepts, so passing
-          # both is safe even when only one is set.
-          key: ${{ secrets.SSH_KEY }}
-          password: ${{ secrets.SSH_PASS }}
-          script: |
-            set -euo pipefail
-            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+          # Both are optional secrets; an unset DEPLOY_PATH previously produced
+          # "ERROR:  is not a git checkout" against an empty path.
+          DEPLOY_PATH="${DEPLOY_PATH:-/opt/app}"
+          SSH_USER="${SSH_USER:-root}"
+          REMOTE="$SSH_USER@$SSH_HOST"
+          echo "Deploying to $REMOTE:$DEPLOY_PATH"
 
-            SUDO=""
-            if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
-              SUDO="sudo"
-            fi
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
-            echo "== Prerequisites =="
-            if ! command -v docker >/dev/null 2>&1; then
-              echo "Docker not found -- installing."
-              # The convenience script covers Debian/Ubuntu/Fedora but refuses
-              # RHEL rebuilds ("Unsupported distribution 'almalinux'"), so fall
-              # back to Docker's own CentOS repo, which is what Docker
-              # documents for AlmaLinux/Rocky/RHEL.
-              if ! curl -fsSL https://get.docker.com | $SUDO sh; then
-                echo "Convenience script failed -- using the RHEL/CentOS package repo."
-                if command -v dnf >/dev/null 2>&1; then
-                  $SUDO dnf -y install dnf-plugins-core
-                  $SUDO dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-                  $SUDO dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-                elif command -v yum >/dev/null 2>&1; then
-                  $SUDO yum -y install yum-utils
-                  $SUDO yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-                  $SUDO yum -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-                else
-                  echo "ERROR: no supported package manager (dnf/yum) to install Docker with." >&2
-                  exit 1
-                fi
-              fi
-              # The RPM packages don't start the daemon themselves.
-              $SUDO systemctl enable --now docker || true
-            fi
+          # SSH_KEY is primary; SSH_PASS is the fallback (via sshpass, reading
+          # the password from the environment rather than argv).
+          if [ -n "${SSH_KEY:-}" ]; then
+            printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+            chmod 600 ~/.ssh/deploy_key
+            SSH="ssh -i $HOME/.ssh/deploy_key -o BatchMode=yes"
+          elif [ -n "${SSH_PASS:-}" ]; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+            export SSHPASS="$SSH_PASS"
+            SSH="sshpass -e ssh"
+          else
+            echo "ERROR: neither SSH_KEY nor SSH_PASS is set." >&2
+            exit 1
+          fi
 
-            if ! command -v docker >/dev/null 2>&1; then
-              echo "ERROR: Docker installation failed. Install Docker Engine + the compose plugin manually, then re-run." >&2
-              exit 1
-            fi
-
-            # Use sudo for docker only if this user can't reach the daemon
-            # directly (fresh install, not yet in the `docker` group -- which
-            # wouldn't take effect until a new login anyway).
-            $SUDO systemctl start docker >/dev/null 2>&1 || true
+          # ---- shared remote prelude -------------------------------------
+          # Prepended to every remote script below, so sudo/Docker detection
+          # lives in exactly one place.
+          cat > /tmp/prelude.sh <<'PRELUDE'
+          set -euo pipefail
+          SUDO=""
+          if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+            SUDO="sudo"
+          fi
+          # Re-runnable on purpose: provisioning calls it again after install.
+          detect_docker() {
             if docker info >/dev/null 2>&1; then
               DOCKER="docker"
             elif [ -n "$SUDO" ] && $SUDO docker info >/dev/null 2>&1; then
               DOCKER="$SUDO docker"
             else
-              echo "ERROR: cannot reach the Docker daemon (and no sudo to retry as root)." >&2
-              exit 1
+              DOCKER=""
             fi
+          }
+          detect_docker
+          PRELUDE
 
-            if ! $DOCKER compose version >/dev/null 2>&1; then
-              echo "ERROR: Docker is installed but the compose plugin is missing." >&2
-              exit 1
-            fi
+          run_remote() {  # run_remote <script> [VAR=val ...]
+            local script="$1"; shift
+            cat /tmp/prelude.sh "$script" | $SSH "$REMOTE" "$* bash -s"
+          }
 
-            # Best effort: on RHEL-family hosts firewalld is usually on and
-            # blocks 80/443 by default. Never fatal.
-            if command -v firewall-cmd >/dev/null 2>&1 && $SUDO firewall-cmd --state >/dev/null 2>&1; then
-              $SUDO firewall-cmd --permanent --add-service=http --add-service=https >/dev/null 2>&1 || true
-              $SUDO firewall-cmd --reload >/dev/null 2>&1 || true
-            fi
-
-            if [ ! -d "$DEPLOY_PATH/.git" ]; then
-              echo "ERROR: $DEPLOY_PATH is not a git checkout. This repo is private, so the first clone needs a credential set up by hand once (see ops/runbook.md)." >&2
-              exit 1
-            fi
-
-            cd "$DEPLOY_PATH"
-
-            echo "== Updating checkout =="
-            # git runs in a container so the host never needs it installed
-            # (a missing host git is what broke an earlier deploy).
-            # buildpack-deps:*-scm is an official image that already ships
-            # git, so there's no apt-get on every deploy.
-            $DOCKER run --rm -v "$PWD:/repo" -w /repo buildpack-deps:bookworm-scm sh -c "
-              git config --global --add safe.directory /repo
-              git fetch origin main
-              git reset --hard origin/main
-            "
-
-            echo "== Building and starting services =="
-            $DOCKER compose up -d --build
-
-            echo "== Waiting for /healthz =="
-            # /healthz reports real connectivity to every dependency the API
-            # has (Postgres, MinIO/S3), not just "the process started". Hit it
-            # through nginx by IP via --resolve so no public DNS is needed.
-            # curl runs in a container too, not assumed to be on the host.
-            API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
-            API_DOMAIN="${API_DOMAIN:-api.localhost}"
-            RESPONSE=""
-            for _ in $(seq 1 60); do
-              RESPONSE="$($DOCKER run --rm --network host curlimages/curl:latest \
-                -sk --resolve "${API_DOMAIN}:443:127.0.0.1" \
-                "https://${API_DOMAIN}/healthz" || true)"
-              if echo "$RESPONSE" | grep -q '"status":"ok"'; then
-                echo "Healthy: $RESPONSE"
-                exit 0
+          # ---- 1. provision ----------------------------------------------
+          cat > /tmp/provision.sh <<'PROVISION'
+          if ! command -v docker >/dev/null 2>&1; then
+            echo "Docker not found -- installing."
+            # The convenience script covers Debian/Ubuntu/Fedora but refuses
+            # RHEL rebuilds ("Unsupported distribution 'almalinux'"), so fall
+            # back to Docker's own CentOS repo, which is what Docker documents
+            # for AlmaLinux/Rocky/RHEL.
+            if ! curl -fsSL https://get.docker.com | $SUDO sh; then
+              if command -v dnf >/dev/null 2>&1; then
+                $SUDO dnf -y install dnf-plugins-core
+                $SUDO dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+                $SUDO dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+              elif command -v yum >/dev/null 2>&1; then
+                $SUDO yum -y install yum-utils
+                $SUDO yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+                $SUDO yum -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+              else
+                echo "ERROR: no dnf/yum to install Docker with." >&2
+                exit 1
               fi
-              sleep 3
-            done
+            fi
+            # The RPM packages don't start the daemon themselves.
+            $SUDO systemctl enable --now docker || true
+          fi
+          $SUDO systemctl start docker >/dev/null 2>&1 || true
+          detect_docker
+          [ -n "$DOCKER" ] || { echo "ERROR: cannot reach the Docker daemon." >&2; exit 1; }
+          $DOCKER compose version >/dev/null 2>&1 || { echo "ERROR: Docker compose plugin is missing." >&2; exit 1; }
 
-            echo "ERROR: not healthy after 180s. Last /healthz response: ${RESPONSE:-<no response>}" >&2
-            $DOCKER compose ps || true
-            $DOCKER compose logs --tail 50 api || true
-            exit 1
+          # rsync is how the source arrives; install it if the image is minimal.
+          if ! command -v rsync >/dev/null 2>&1; then
+            if command -v dnf >/dev/null 2>&1; then $SUDO dnf -y install rsync || true
+            elif command -v yum >/dev/null 2>&1; then $SUDO yum -y install rsync || true
+            elif command -v apt-get >/dev/null 2>&1; then
+              $SUDO apt-get update -qq && $SUDO apt-get install -y -qq rsync || true
+            fi
+          fi
+
+          # On RHEL-family hosts firewalld is usually on and blocks 80/443.
+          if command -v firewall-cmd >/dev/null 2>&1 && $SUDO firewall-cmd --state >/dev/null 2>&1; then
+            $SUDO firewall-cmd --permanent --add-service=http --add-service=https >/dev/null 2>&1 || true
+            $SUDO firewall-cmd --reload >/dev/null 2>&1 || true
+          fi
+
+          $SUDO mkdir -p "$DEPLOY_PATH"
+          $SUDO chown -R "$(id -u):$(id -g)" "$DEPLOY_PATH"
+
+          # Reported back so the runner knows how to talk to this server.
+          command -v rsync >/dev/null 2>&1 && echo "has_rsync=yes" || echo "has_rsync=no"
+          [ "$DOCKER" = "docker" ] && echo "docker_sudo=no" || echo "docker_sudo=yes"
+          PROVISION
+
+          echo "== Provisioning server =="
+          PROVISION_OUT="$(run_remote /tmp/provision.sh "DEPLOY_PATH='$DEPLOY_PATH'")"
+          echo "$PROVISION_OUT"
+
+          RDOCKER="docker"
+          if echo "$PROVISION_OUT" | grep -q 'docker_sudo=yes'; then
+            RDOCKER="sudo docker"
+          fi
+
+          # ---- 2. ship the source (compose file, ops/, Dockerfiles) -------
+          echo "== Shipping source =="
+          if echo "$PROVISION_OUT" | grep -q 'has_rsync=yes'; then
+            # --delete keeps the server free of files deleted upstream, but
+            # .env lives only on the server (secrets, domains) and must survive.
+            rsync -az --delete \
+              --exclude '.git' --exclude '.env' --exclude 'node_modules' \
+              -e "$SSH" ./ "$REMOTE:$DEPLOY_PATH/"
+          else
+            echo "No rsync on the server -- falling back to a token-authenticated clone."
+            cat > /tmp/clone.sh <<'CLONE'
+          # git runs in a container so the host never needs it installed;
+          # buildpack-deps:*-scm is an official image that already ships git.
+          # The token is this job's GITHUB_TOKEN (repo-scoped, expires with the
+          # job), and the remote is rewritten afterwards so it isn't persisted.
+          $DOCKER run --rm -v "$DEPLOY_PATH:/repo" -w /repo \
+            -e GH_TOKEN="$GH_TOKEN" -e REPO="$REPO" buildpack-deps:bookworm-scm sh -c '
+              git config --global --add safe.directory /repo
+              [ -d .git ] || git init -q -b main .
+              git remote remove origin 2>/dev/null || true
+              git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+              git fetch --depth 1 origin main
+              git reset --hard FETCH_HEAD
+              git remote set-url origin "https://github.com/${REPO}.git"
+            '
+          CLONE
+            run_remote /tmp/clone.sh \
+              "DEPLOY_PATH='$DEPLOY_PATH'" "REPO='$REPO'" "GH_TOKEN='$GH_TOKEN'"
+          fi
+
+          # ---- 3. ship the images built above -----------------------------
+          # Saving both in one stream lets their shared base layers dedupe.
+          # `docker load` detects the gzip itself. This is what lets the server
+          # skip building entirely.
+          echo "== Shipping images =="
+          docker save konkurcom-360-api:latest konkurcom-360-web:latest \
+            | gzip -1 \
+            | $SSH "$REMOTE" "$RDOCKER load"
+
+          # ---- 4. start services, then wait for /healthz -------------------
+          cat > /tmp/up.sh <<'UP'
+          cd "$DEPLOY_PATH"
+          # --no-build: use the images the runner just shipped. Falling back to
+          # a local build keeps a botched image transfer from taking the site
+          # down, at the cost of a slow deploy.
+          $DOCKER compose up -d --no-build || $DOCKER compose up -d --build
+
+          # /healthz reports real connectivity to every dependency the API has
+          # (Postgres, MinIO/S3), not just "the process started". Hit it through
+          # nginx by IP via --resolve so no public DNS is needed. curl runs in a
+          # container too, not assumed to be on the host.
+          API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
+          API_DOMAIN="${API_DOMAIN:-api.localhost}"
+          RESPONSE=""
+          for _ in $(seq 1 60); do
+            RESPONSE="$($DOCKER run --rm --network host curlimages/curl:latest \
+              -sk --resolve "${API_DOMAIN}:443:127.0.0.1" \
+              "https://${API_DOMAIN}/healthz" || true)"
+            if echo "$RESPONSE" | grep -q '"status":"ok"'; then
+              echo "Healthy: $RESPONSE"
+              exit 0
+            fi
+            sleep 3
+          done
+
+          echo "ERROR: not healthy after 180s. Last /healthz response: ${RESPONSE:-<no response>}" >&2
+          $DOCKER compose ps || true
+          $DOCKER compose logs --tail 50 api || true
+          exit 1
+          UP
+
+          echo "== Starting services and waiting for /healthz =="
+          run_remote /tmp/up.sh "DEPLOY_PATH='$DEPLOY_PATH'"
