@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     services:
@@ -88,3 +88,125 @@ jobs:
 
       - name: Build all workspaces
         run: pnpm -w run build
+
+      # --- Deploy: only on a push to main, and only once every check above
+      # has passed -- steps in this job run in order and stop at the first
+      # failure, so nothing below runs unless the whole build/test pipeline
+      # above was green. This replaces a separate Deploy workflow that used
+      # to trigger via `workflow_run` after CI finished; same guarantee,
+      # one job, no cross-workflow indirection.
+      - name: Check deploy secrets are configured
+        id: check_deploy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          if [ -z "${{ secrets.SSH_HOST }}" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip deploy (no server configured yet)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check_deploy.outputs.configured == 'false'
+        run: |
+          echo "Deploy skipped: SSH_HOST secret is not set."
+          echo "See ops/runbook.md for which secrets to add once a server exists."
+
+      - name: Deploy over SSH
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check_deploy.outputs.configured == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          # SSH_KEY is the primary method; SSH_PASS is an optional fallback
+          # (password auth) if no key is configured for the deploy user.
+          # The SSH protocol itself negotiates which offered method the
+          # server accepts, so passing both is safe even when only one is set.
+          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.SSH_PASS }}
+          script: |
+            set -euo pipefail
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+
+            echo "== Checking/installing prerequisites =="
+            # Docker is the one thing this script can and does auto-install --
+            # everything else (git, curl) runs inside containers, so once
+            # Docker is present the server needs nothing else preinstalled.
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "docker not found -- installing via get.docker.com"
+              if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+                curl -fsSL https://get.docker.com | sudo sh
+              elif [ "$(id -u)" -eq 0 ]; then
+                curl -fsSL https://get.docker.com | sh
+              else
+                echo "ERROR: docker is missing and there is no sudo/root to install it as. Install Docker Engine + the compose plugin manually, then re-run deploy." >&2
+                exit 1
+              fi
+            fi
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "ERROR: automatic Docker installation failed. Install Docker Engine + the compose plugin manually, then re-run deploy." >&2
+              exit 1
+            fi
+
+            # Run docker as root only if this user can't already talk to the
+            # daemon directly (freshly installed and not yet in the `docker`
+            # group -- group membership from `usermod` wouldn't take effect
+            # until a new login anyway, so just use sudo for this run).
+            if docker info >/dev/null 2>&1; then
+              DOCKER="docker"
+            elif command -v sudo >/dev/null 2>&1; then
+              DOCKER="sudo docker"
+            else
+              echo "ERROR: cannot reach the Docker daemon and there is no sudo to retry with as root." >&2
+              exit 1
+            fi
+
+            if ! $DOCKER compose version >/dev/null 2>&1; then
+              echo "ERROR: docker is installed but the 'compose' plugin is not available (install didn't include it, or this is an old Docker Engine). Install the Compose plugin, then re-run deploy." >&2
+              exit 1
+            fi
+
+            if [ ! -d "$DEPLOY_PATH/.git" ]; then
+              echo "ERROR: $DEPLOY_PATH is not a git checkout. This repo is private, so the first checkout has to be created manually once with a working credential (see ops/runbook.md) -- auto-provisioning can't safely invent one." >&2
+              exit 1
+            fi
+
+            cd "$DEPLOY_PATH"
+
+            echo "== Updating checkout =="
+            # git is run inside a container, never assumed to be installed on
+            # the host. Reuses the existing checkout's already-configured
+            # remote/credentials, so no new auth is needed.
+            $DOCKER run --rm -v "$PWD:/repo" -w /repo debian:12-slim bash -c "
+              set -e
+              apt-get update -qq && apt-get install -y -qq git ca-certificates >/dev/null
+              git config --global --add safe.directory /repo
+              git fetch origin main
+              git reset --hard origin/main
+            "
+
+            echo "== Building and starting services =="
+            $DOCKER compose up -d --build
+
+            echo "== Post-deploy health check =="
+            # /healthz reports real connectivity to every dependency the API
+            # actually has (Postgres, MinIO/S3), not just "the process
+            # started". Read API_DOMAIN the same way docker-compose does
+            # (from .env in this directory, default api.localhost) and hit it
+            # through nginx by IP via --resolve, so no public DNS is needed
+            # for the check itself. curl runs in a container too (the
+            # official curl project image), not assumed to be on the host.
+            API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
+            API_DOMAIN="${API_DOMAIN:-api.localhost}"
+            RESPONSE=""
+            for i in $(seq 1 30); do
+              RESPONSE="$($DOCKER run --rm --network host curlimages/curl:latest -sk --resolve "${API_DOMAIN}:443:127.0.0.1" "https://${API_DOMAIN}/healthz" || true)"
+              if echo "$RESPONSE" | grep -q '"status":"ok"'; then
+                echo "Deploy healthy:"
+                echo "$RESPONSE"
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "Deploy did not become healthy within 60s. Last /healthz response:"
+            echo "$RESPONSE"
+            exit 1

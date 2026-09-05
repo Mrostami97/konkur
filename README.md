@@ -4,7 +4,7 @@
 
 There is a single deploy target (production), driven by one `docker-compose.yml`.
 
-### GitHub Actions repo secrets (for `.github/workflows/deploy.yml`)
+### GitHub Actions repo secrets (for the deploy steps in `.github/workflows/ci.yml`)
 
 **Required**
 

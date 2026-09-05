@@ -71,8 +71,13 @@ volume once: `docker compose down && docker volume rm konkurcom-360_nginx_certs`
 
 ## CD (SSH deploy)
 
-`.github/workflows/deploy.yml` runs after CI passes on `main`. It is a no-op
-until these GitHub Secrets exist on the repo:
+`.github/workflows/ci.yml` is a single job that builds, lints, and tests on
+every push/PR, then -- only on a push to `main`, and only if every step above
+it passed -- deploys over SSH as the last few steps of that same job. There
+is no separate deploy workflow: deploy steps are gated with `if:` conditions
+rather than a second workflow triggered off the first, so there's no
+cross-workflow indirection to reason about. It's a no-op until these GitHub
+Secrets exist on the repo:
 
 - `SSH_HOST`, `SSH_USER`, `SSH_KEY` — target server and private key (primary auth)
 - `SSH_PASS` — optional password fallback if the deploy user has no key configured on the server; not needed alongside a working `SSH_KEY`
@@ -83,30 +88,36 @@ See `README.md`'s secrets table.
 Until a real server exists, the job logs "deploy skipped: SSH_HOST not set" and
 exits 0 so it never blocks CI.
 
-**Server prerequisites — Docker is the only one you set up by hand.** Every
-deploy run re-checks and (where possible) auto-provisions everything else:
+**Server prerequisites are auto-provisioned on every deploy run** except one:
+the one-time `git clone` of this private repo (below), since the deploy
+script has no credential it can safely invent on its own.
 
-- **Docker Engine + the Compose plugin** must already be installed on the
-  server (`docker` and `docker compose` both on `PATH`) — this is the one
-  thing that can't be auto-provisioned without knowing the server's distro
-  and sudo rights. If missing, the deploy fails immediately with a clear
-  message instead of a confusing error later.
-- **`git` does NOT need to be installed on the server.** This repo is
-  private, so the very first checkout at `DEPLOY_PATH` still has to be
-  created once by hand with a working credential (`git clone` over SSH with
-  a deploy key, or HTTPS with a token) — the deploy script refuses to guess
-  credentials for you and fails with a clear message if `$DEPLOY_PATH/.git`
-  doesn't exist yet. But from then on, every deploy runs `git fetch`/`git
-  reset --hard` **inside a throwaway `debian:12-slim` container** (which
-  installs `git` fresh each time), reusing that checkout's already-working
-  remote config. A server that never had `git` installed at all — the
-  failure mode this replaced ("git: command not found") — now just works.
+- **Docker Engine + the Compose plugin.** If `docker` isn't on `PATH`, the
+  deploy script installs it itself via Docker's official convenience script
+  (`get.docker.com`), using `sudo` if the SSH user isn't root. This needs the
+  server to be a distro that script supports (Debian/Ubuntu/Fedora/RHEL/etc,
+  which covers essentially every mainstream choice) and either root or
+  passwordless-enough `sudo` for that one install command; if neither holds,
+  the deploy fails with a clear message rather than silently doing nothing.
+  If a fresh install isn't yet in the `docker` group (group membership
+  wouldn't take effect until a new login anyway), the rest of that deploy
+  run's `docker`/`docker compose` commands are prefixed with `sudo`
+  automatically.
+- **`git` does NOT need to be installed on the server at all**, ever. Every
+  deploy runs `git fetch`/`git reset --hard` **inside a throwaway
+  `debian:12-slim` container** (which installs `git` fresh each time),
+  reusing the existing checkout's already-working remote config. This is
+  what silently broke a previous deploy ("git: command not found") --
+  containerizing it means the host's own package state no longer matters.
 - The post-deploy `/healthz` smoke check (below) also runs `curl` in a
   container (`curlimages/curl`), not on the host.
 
-So re-running deploy against a freshly reimaged server needs exactly two
-manual, one-time steps: install Docker, and `git clone` the repo once at
-`DEPLOY_PATH`. Everything else is handled automatically on every run.
+The one thing that still can't be auto-provisioned: the **first** checkout at
+`DEPLOY_PATH`. This repo is private, so that first `git clone` needs a working
+credential (SSH deploy key, or an HTTPS token) set up by hand, once, before
+the very first deploy to a given server -- the deploy script fails with a
+clear message if `$DEPLOY_PATH/.git` doesn't exist yet rather than guessing.
+Every deploy after that first clone needs nothing manual at all.
 
 ### Post-deploy health check
 
