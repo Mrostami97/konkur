@@ -44,3 +44,25 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             docker compose up -d --build
+
+            # Post-deploy smoke check: /healthz reports real connectivity to
+            # every dependency the API actually has (Postgres, MinIO/S3), not
+            # just "the process started". Read API_DOMAIN the same way
+            # docker-compose does (from .env in this directory, default
+            # api.localhost) and hit it through nginx by IP so no public DNS
+            # is required for the check itself.
+            API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
+            API_DOMAIN="${API_DOMAIN:-api.localhost}"
+            RESPONSE=""
+            for i in $(seq 1 30); do
+              RESPONSE="$(curl -sk --resolve "${API_DOMAIN}:443:127.0.0.1" "https://${API_DOMAIN}/healthz" || true)"
+              if echo "$RESPONSE" | grep -q '"status":"ok"'; then
+                echo "Deploy healthy:"
+                echo "$RESPONSE"
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "Deploy did not become healthy within 60s. Last /healthz response:"
+            echo "$RESPONSE"
+            exit 1

@@ -38,6 +38,13 @@ export class ObjectStorageService implements OnModuleInit {
     });
   }
 
+  /** Real connectivity check for /healthz -- throws if the bucket can't be
+   * reached, rather than swallowing the error like onModuleInit does. */
+  async ping(): Promise<void> {
+    const exists = await this.client.bucketExists(this.bucket);
+    if (!exists) throw new Error(`bucket ${this.bucket} does not exist`);
+  }
+
   async objectExists(key: string): Promise<boolean> {
     return this.client
       .statObject(this.bucket, key)
