@@ -72,5 +72,5 @@ deploy key, and push to `main`.
 `apps/api` logs to stdout via Nest's default logger (structured upgrade —
 pino/OpenTelemetry — is a later-phase Observability item per doc §5.1). In
 Docker, `docker compose logs -f postgres|redis|minio` covers infra; the API/web
-processes run outside compose in Phase 0 (see README), so use your terminal or
-process manager's own log output.
+processes run outside compose in local dev, so use your terminal or process
+manager's own log output.
