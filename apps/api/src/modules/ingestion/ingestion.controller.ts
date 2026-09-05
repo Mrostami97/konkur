@@ -79,4 +79,10 @@ export class ContentRollbackController {
       req.user!.id,
     );
   }
+
+  @Get(":entityType/:entityId/versions")
+  @Roles(Role.AUTHOR, Role.REVIEWER, Role.ADMIN)
+  listVersions(@Param("entityType") entityType: string, @Param("entityId") entityId: string) {
+    return this.ingestion.listVersions(entityType as VersionedEntityType, entityId);
+  }
 }

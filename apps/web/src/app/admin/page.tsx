@@ -19,6 +19,12 @@ export default function AdminHomePage() {
           <li>
             <Link href="/admin/import">ورود داده (Import)</Link>
           </li>
+          <li>
+            <Link href="/admin/taxonomy">طبقه‌بندی موضوعی</Link>
+          </li>
+          <li>
+            <Link href="/admin/questions">افزودن سؤال</Link>
+          </li>
         </ul>
       </main>
     </AdminGuard>

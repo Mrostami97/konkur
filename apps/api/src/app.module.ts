@@ -7,6 +7,8 @@ import { ContentModule } from "./modules/content/content.module";
 import { LearningModule } from "./modules/learning/learning.module";
 import { CommerceModule } from "./modules/commerce/commerce.module";
 import { IngestionModule } from "./modules/ingestion/ingestion.module";
+import { TaxonomyModule } from "./modules/taxonomy/taxonomy.module";
+import { QuestionBankModule } from "./modules/question-bank/question-bank.module";
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { IngestionModule } from "./modules/ingestion/ingestion.module";
     LearningModule,
     CommerceModule,
     IngestionModule,
+    TaxonomyModule,
+    QuestionBankModule,
   ],
 })
 export class AppModule {}

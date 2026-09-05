@@ -76,7 +76,11 @@ Phase 1 added **Content** (admin-authored articles only), **Learning**
 inside Identity (docx §6.1 groups "profiles" with identity, not as its own
 module). Phase 2 added **Ingestion** (ImportJob/ImportItem/SourceArtifact/
 ContentVersion) and extended Content with the canonical `Question` and
-`ReportCard` tables that bulk-ingested data publishes into. Assessment,
+`ReportCard` tables that bulk-ingested data publishes into. Phase 3 added
+**Taxonomy** (Subject/Topic) and a **QuestionBank** sub-resource (public
+browse/filter/detail, direct single-item authoring reusing the same
+Stage→Review→Publish path as bulk ZIP import), plus a `/media/:checksum`
+endpoint so image/chart blocks actually resolve to something. Assessment,
 Planning, Analytics, CRM, Notification still do not exist — added only when a
 later phase has real logic to put in them. Do not pre-create empty module
 shells "for structure"; that is scope creep the docx explicitly warns against
@@ -88,8 +92,8 @@ shells "for structure"; that is scope creep the docx explicitly warns against
 |---|---|---|
 | 0 | Contracts & infrastructure | **Done** |
 | 1 | Usable mother site (portal, accounts, academy, commerce, admin) | **Done** |
-| 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | **Done — this repo state** |
-| 3 | Content & question bank | Not started |
+| 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | **Done** |
+| 3 | Content & question bank | **Done — this repo state** |
 | 4 | Assessment engine | Not started |
 | 5 | Study OS | Not started |
 | 6 | Rank & admissions engine | Not started |
@@ -184,5 +188,33 @@ Phase 2:
   re-derives MIME type from file content (e.g. via magic-byte sniffing) — a
   mislabeled `mime_type` with a matching checksum is not caught.
 - No signed-URL/access-controlled serving of uploaded media yet — Ingestion
-  only stores objects in MinIO and records `SourceArtifact.storageKey`;
-  serving paid/protected media through the app is a later phase's concern.
+  only stores objects in MinIO and records `SourceArtifact.storageKey`.
+  Phase 3 added `GET /media/:checksum` (a public, unauthenticated presigned
+  redirect) so images/charts actually render; it does not check entitlement,
+  so it isn't suitable for paid/protected media as-is — that's still open.
+
+Phase 3:
+
+- Taxonomy (`Subject`/`Topic`) is a standalone catalog, **not** a foreign key
+  on `Question`/`Article` — those keep the plain `subjectCode`/`topicCodes`
+  strings the contracts fix. A Topic-browsing UI or authoring-time validation
+  can check codes against this catalog, but nothing enforces referential
+  integrity between them yet.
+- Search (`GET /questions?q=`) is a simple `ILIKE` over `subjectCode`/
+  `examMajor`/`topicCodes` only — it does **not** search inside
+  `stemBlocks`/`solutionBlocks` JSON content. Doc's own tech choice
+  ("PostgreSQL FTS در ابتدا") implies a real `tsvector`+GIN-indexed search
+  over block text; that's deferred, most naturally to whenever the question
+  bank's corpus is large enough to need ranked full-text results.
+- Direct question authoring (`POST /admin/questions`) only supports
+  text/latex content blocks (`assets: []` always) — a question needing a new
+  image/chart still has to go through the zip-upload path, since direct
+  authoring has nowhere to attach a media file.
+- `/media/:checksum` is unauthenticated and has no expiry-based cache-busting
+  concerns worked out (a presigned URL is short-lived, but the endpoint
+  itself never checks who's asking) — fine for today's all-public reference
+  content, not yet fine for paid/protected media.
+- KaTeX renders via `dangerouslySetInnerHTML` (this is KaTeX's own documented
+  server/client-safe rendering path, not a raw passthrough of un-sanitized
+  user HTML) — only trusted internal roles (Author/Reviewer/Admin) or the
+  ingestion pipeline ever produce the `latex` string being rendered.

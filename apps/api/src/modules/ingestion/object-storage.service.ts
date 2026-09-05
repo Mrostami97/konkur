@@ -38,4 +38,10 @@ export class ObjectStorageService implements OnModuleInit {
       .then(() => true)
       .catch(() => false);
   }
+
+  /** Short-lived signed URL (doc §9: "Signed URL کوتاه‌عمر"); the app never
+   * proxies media bytes itself, it just redirects here. */
+  async presignedGetUrl(key: string, expirySeconds = 300): Promise<string> {
+    return this.client.presignedGetObject(this.bucket, key, expirySeconds);
+  }
 }

@@ -150,6 +150,9 @@ model Article {
   title         String
   summary       String
   contentBlocks Json
+  // Set only for ingested content -- the article.v1 contract's media_key ->
+  // checksum manifest, so image/chart blocks can be resolved to /media/:checksum.
+  assets        Json         @default("[]")
   taxonomyMajor String[]
   taxonomyTags  String[]     @default([])
   reviewStatus  ReviewStatus @default(DRAFT)
@@ -521,6 +524,36 @@ model ContentVersion {
   @@unique([entityType, entityId, version])
   @@index([entityType, entityId])
   @@map("content_versions")
+}
+
+// ---------------------------------------------------------------------------
+// Taxonomy (doc §6.1, phase 3 deliverable): canonical Subject/Topic catalog.
+// Question.subjectCode/topicCodes and Article.taxonomyMajor/taxonomyTags stay
+// as plain strings (that's the shape the article.v1/question.v1 contracts
+// fix) -- this catalog is what a Topic-browsing UI reads, and what content
+// authoring validates codes against; it is not wired as a foreign key onto
+// the ingested tables themselves.
+// ---------------------------------------------------------------------------
+model Subject {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  title     String
+  topics    Topic[]
+  createdAt DateTime @default(now())
+
+  @@map("subjects")
+}
+
+model Topic {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  title     String
+  subjectId String
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([subjectId])
+  @@map("topics")
 }
 
 // Transactional Outbox (doc §5.1): domain changes and their events are written

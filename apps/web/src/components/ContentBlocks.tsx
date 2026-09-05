@@ -1,6 +1,24 @@
-type Block = { type: string; [key: string]: unknown };
+import katex from "katex";
+import { API_URL } from "../lib/api";
 
-function renderBlock(block: Block, index: number) {
+type Block = { type: string; [key: string]: unknown };
+type Asset = { media_key: string; checksum: string };
+
+function mediaUrl(assets: Asset[], mediaKey: string): string | null {
+  const asset = assets.find((a) => a.media_key === mediaKey);
+  if (!asset) return null;
+  return `${API_URL}/media/${asset.checksum.replace("sha256:", "")}`;
+}
+
+function renderLatex(source: string): string {
+  try {
+    return katex.renderToString(source, { throwOnError: false, output: "html" });
+  } catch {
+    return source;
+  }
+}
+
+function renderBlock(block: Block, index: number, assets: Asset[]) {
   switch (block.type) {
     case "heading": {
       const level = typeof block.level === "number" ? block.level : 2;
@@ -17,11 +35,21 @@ function renderBlock(block: Block, index: number) {
         </blockquote>
       );
     case "image":
+    case "chart": {
+      const mediaKey = String(block.media_key ?? "");
+      const url = mediaUrl(assets, mediaKey);
+      if (!url) {
+        return (
+          <div key={index} style={{ background: "#F4F8FB", padding: "0.5rem", fontSize: "0.85rem" }}>
+            [رسانه یافت نشد: {mediaKey}]
+          </div>
+        );
+      }
       return (
-        <div key={index} style={{ background: "#F4F8FB", padding: "0.5rem", fontSize: "0.85rem" }}>
-          [تصویر: {String(block.media_key ?? block.alt ?? "")}]
-        </div>
+        // eslint-disable-next-line @next/next/no-img-element
+        <img key={index} src={url} alt={String(block.alt ?? block.caption ?? mediaKey)} style={{ maxWidth: "100%" }} />
       );
+    }
     case "video":
       return (
         // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -29,8 +57,20 @@ function renderBlock(block: Block, index: number) {
       );
     case "table": {
       const rows = Array.isArray(block.rows) ? (block.rows as string[][]) : [];
+      const headers = Array.isArray(block.headers) ? (block.headers as string[]) : [];
       return (
         <table key={index} style={{ borderCollapse: "collapse", width: "100%" }}>
+          {headers.length > 0 && (
+            <thead>
+              <tr>
+                {headers.map((h, i) => (
+                  <th key={i} style={{ border: "1px solid #D7E2EA", padding: "0.4rem" }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
           <tbody>
             {rows.map((row, rowIndex) => (
               <tr key={rowIndex}>
@@ -47,15 +87,18 @@ function renderBlock(block: Block, index: number) {
     }
     case "latex":
       return (
-        <pre key={index} style={{ background: "#F4F8FB", padding: "0.5rem", direction: "ltr" }}>
-          {String(block.latex ?? "")}
-        </pre>
+        <div
+          key={index}
+          style={{ direction: "ltr", textAlign: "center", margin: "0.5rem 0" }}
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: renderLatex(String(block.latex ?? "")) }}
+        />
       );
     default:
       return null;
   }
 }
 
-export function ContentBlocks({ blocks }: { blocks: Block[] }) {
-  return <div>{blocks.map((block, index) => renderBlock(block, index))}</div>;
+export function ContentBlocks({ blocks, assets = [] }: { blocks: Block[]; assets?: Asset[] }) {
+  return <div>{blocks.map((block, index) => renderBlock(block, index, assets))}</div>;
 }

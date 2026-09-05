@@ -83,6 +83,34 @@ export class IngestionService {
     });
   }
 
+  /**
+   * Direct single-item authoring (doc §10.2 Phase 3 "Workflow محتوا"), e.g. a
+   * question typed by hand rather than bulk-imported. Reuses the exact same
+   * Stage -> Review -> Publish machinery as receiveImport (same ImportJob/
+   * ImportItem rows, same /admin/import review UI) instead of a parallel
+   * authoring workflow -- just without a zip or media files. A question
+   * referencing new (not-yet-uploaded) media assets isn't supported this way;
+   * use the zip upload path for that.
+   */
+  async receiveDirectItem(rawItem: unknown, submittedBy: string) {
+    const schemaVersion = extractSchemaVersion(rawItem);
+    if (!schemaVersion || !["article.v1", "report-card.v1", "question.v1"].includes(schemaVersion)) {
+      throw new BadRequestException(`unknown or missing schema_version`);
+    }
+    const idempotencyKey = sha256Json({ direct: true, rawItem });
+    const existing = await this.prisma.importJob.findUnique({ where: { idempotencyKey } });
+    if (existing) return existing;
+
+    const job = await this.prisma.importJob.create({
+      data: { schemaVersion, idempotencyKey, submittedBy, totalItems: 1, status: ImportJobStatus.RECEIVED },
+    });
+    await this.stageItem(job.id, schemaVersion, rawItem, new Map());
+    return this.prisma.importJob.update({
+      where: { id: job.id },
+      data: { status: ImportJobStatus.STAGED },
+    });
+  }
+
   private async stageItem(
     jobId: string,
     schemaVersion: string,
@@ -267,8 +295,34 @@ export class IngestionService {
     const job = await this.prisma.importJob.findUniqueOrThrow({ where: { id: item.importJobId } });
     const payload = item.rawPayload as unknown as ContractItem;
 
+    const { entityId, version } = await this.publishValidatedPayload(
+      job.schemaVersion,
+      payload,
+      actorId,
+      item.id,
+    );
+
+    return this.prisma.importItem.update({
+      where: { id: item.id },
+      data: { status: ImportItemStatus.PUBLISHED, publishedEntityId: entityId, publishedVersion: version },
+    });
+  }
+
+  /**
+   * Shared by the bulk-ZIP ingestion pipeline (publishItem, above) and direct
+   * single-item authoring (e.g. QuestionBankService authoring one question by
+   * hand) -- one code path does the canonical upsert + version snapshot +
+   * outbox event + audit log, so both entry points version identically.
+   * `importItemId` is omitted for direct authoring.
+   */
+  async publishValidatedPayload(
+    schemaVersion: string,
+    payload: ContractItem,
+    actorId: string,
+    importItemId?: string,
+  ): Promise<{ entityId: string; version: number; entityType: VersionedEntityType }> {
     return this.prisma.$transaction(async (tx) => {
-      const { entityId, version, entityType } = await this.publishBySchema(tx, job.schemaVersion, payload);
+      const { entityId, version, entityType } = await this.publishBySchema(tx, schemaVersion, payload);
 
       await tx.contentVersion.create({
         data: {
@@ -276,34 +330,34 @@ export class IngestionService {
           entityId,
           version,
           payload: payload as unknown as Prisma.InputJsonValue,
-          publishedByImportItemId: item.id,
+          publishedByImportItemId: importItemId,
         },
-      });
-
-      const updatedItem = await tx.importItem.update({
-        where: { id: item.id },
-        data: { status: ImportItemStatus.PUBLISHED, publishedEntityId: entityId, publishedVersion: version },
       });
 
       await tx.outboxEvent.create({
         data: {
           eventType: "ImportPublished",
-          payload: { schemaVersion: job.schemaVersion, externalId: item.externalId, entityId, version },
+          payload: {
+            schemaVersion,
+            externalId: (payload as { external_id: string }).external_id,
+            entityId,
+            version,
+          },
         },
       });
 
       await this.audit.log(
         {
           actorUserId: actorId,
-          action: "import.published",
+          action: importItemId ? "import.published" : "content.authored",
           targetType: entityType,
           targetId: entityId,
-          metadata: { version, importItemId: item.id },
+          metadata: { version, importItemId },
         },
         tx,
       );
 
-      return updatedItem;
+      return { entityId, version, entityType };
     });
   }
 
@@ -322,6 +376,7 @@ export class IngestionService {
         title: p.title,
         summary: p.summary,
         contentBlocks: p.content_blocks as unknown as Prisma.InputJsonValue,
+        assets: (p.assets ?? []) as unknown as Prisma.InputJsonValue,
         taxonomyMajor: p.taxonomy.major,
         taxonomyTags: p.taxonomy.tags ?? [],
         provenance: p.provenance as unknown as Prisma.InputJsonValue,
@@ -383,6 +438,15 @@ export class IngestionService {
     return { entityId: question.id, version, entityType: VersionedEntityType.QUESTION };
   }
 
+  /** doc §10.2 Phase 3 DoD: "تاریخچه کامل" -- complete history for a piece of
+   * versioned content, oldest first. */
+  async listVersions(entityType: VersionedEntityType, entityId: string) {
+    return this.prisma.contentVersion.findMany({
+      where: { entityType, entityId },
+      orderBy: { version: "asc" },
+    });
+  }
+
   async rollbackEntity(entityType: VersionedEntityType, entityId: string, toVersion: number, actorId: string) {
     const target = await this.prisma.contentVersion.findUnique({
       where: { entityType_entityId_version: { entityType, entityId, version: toVersion } },
@@ -405,6 +469,7 @@ export class IngestionService {
             title: p.title,
             summary: p.summary,
             contentBlocks: p.content_blocks as unknown as Prisma.InputJsonValue,
+            assets: (p.assets ?? []) as unknown as Prisma.InputJsonValue,
             taxonomyMajor: p.taxonomy.major,
             taxonomyTags: p.taxonomy.tags ?? [],
             version: newVersion,

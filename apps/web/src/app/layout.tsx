@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import "katex/dist/katex.min.css";
 import { AuthStatus } from "../components/AuthStatus";
 
 export const metadata: Metadata = {
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <nav style={{ display: "flex", gap: "1rem" }}>
             <Link href="/">خانه</Link>
             <Link href="/courses">دوره‌ها</Link>
+            <Link href="/questions">بانک سؤال</Link>
           </nav>
           <AuthStatus />
         </header>
