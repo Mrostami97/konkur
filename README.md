@@ -5,7 +5,9 @@ protocol and module map: [AGENTS.md](AGENTS.md). **Read AGENTS.md before
 changing anything** — it explains the one-phase-at-a-time rule this repo is
 built under.
 
-Current state: **Phase 0 — contracts & infrastructure.**
+Current state: **Phase 1 — usable mother site** (portal/CMS, accounts,
+academy, commerce & entitlements, admin panel). Phase 0 (contracts &
+infrastructure) is done underneath it.
 
 ## Stack
 
@@ -42,8 +44,29 @@ pnpm dev:web                                       # http://localhost:3000 (sepa
 
 Seeded users (OTP via console log — check the API's stdout for the code):
 
-- Admin: `+989120000001`
+- Admin: `+989120000001` (also seeded Author/Reviewer/Admin/Finance-level
+  access via the single ADMIN role)
 - Student: `+989120000002`
+
+The seed also creates one course (`ce-algorithms-bootcamp`) with a module and
+a lesson, a matching sellable product with an active price, and one published
+article — enough to exercise the full flow below without touching the admin
+panel first.
+
+## Try the real flow
+
+1. Visit `http://localhost:3000/courses`, open the seeded course, and log in
+   (`/login`) with a **new** phone number — the OTP code is printed in the
+   API's stdout.
+2. Click a lesson: you're correctly blocked (no entitlement yet).
+3. Go back to the course page and click "خرید دوره" (buy) — checkout runs
+   against a sandbox payment provider that always succeeds (no real gateway
+   is configured yet, see AGENTS.md).
+4. The lesson is now readable and completable; `/account` shows your
+   enrollment and entitlement.
+5. Log in as the seeded admin and visit `/admin` to author articles, manage
+   courses/lessons, create products/prices, and grant/revoke entitlements
+   (gift/trial/compensatory access) by hand.
 
 ## Common commands
 

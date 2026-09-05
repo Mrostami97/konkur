@@ -1,0 +1,23 @@
+import Link from "next/link";
+import { AdminGuard } from "../../components/AdminGuard";
+
+export default function AdminHomePage() {
+  return (
+    <AdminGuard>
+      <main style={{ padding: "2rem", maxWidth: 480, margin: "0 auto" }}>
+        <h1>پنل ادمین</h1>
+        <ul>
+          <li>
+            <Link href="/admin/articles">مدیریت مقالات</Link>
+          </li>
+          <li>
+            <Link href="/admin/courses">مدیریت دوره‌ها</Link>
+          </li>
+          <li>
+            <Link href="/admin/commerce">فروش و دسترسی‌ها</Link>
+          </li>
+        </ul>
+      </main>
+    </AdminGuard>
+  );
+}

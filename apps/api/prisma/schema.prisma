@@ -19,16 +19,40 @@ enum Role {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  phone     String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  roles     UserRole[]
-  sessions  Session[]
-  otpCodes  OtpCode[]
-  consents  Consent[]
+  id          String       @id @default(uuid())
+  phone       String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  roles       UserRole[]
+  sessions    Session[]
+  otpCodes    OtpCode[]
+  consents    Consent[]
+  profile     Profile?
+  enrollments Enrollment[]
+  orders      Order[]
+  entitlements Entitlement[] @relation("EntitlementUser")
 
   @@map("users")
+}
+
+// doc §6.1 groups this under "هویت و پروفایل" (identity & profile) alongside
+// users/roles/consents -- not a separate module boundary.
+model Profile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName   String?
+  targetDegree  Degree?
+  targetField   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+enum Degree {
+  MASTER
+  PHD
 }
 
 model UserRole {
@@ -96,6 +120,249 @@ model AuditLog {
   @@index([actorUserId])
   @@index([targetType, targetId])
   @@map("audit_logs")
+}
+
+// ---------------------------------------------------------------------------
+// Content (doc §5.2): admin-authored articles for the Portal in Phase 1.
+// Bulk JSON ingestion (Staging/Review/Publish, article_versions history) is
+// Phase 2; this table is designed so that pipeline can write into it later
+// without a schema change. Full version history is deliberately not built
+// yet -- see AGENTS.md Phase 1 simplifications.
+// ---------------------------------------------------------------------------
+enum ReviewStatus {
+  DRAFT
+  IN_REVIEW
+  PUBLISHED
+  REJECTED
+}
+
+model Article {
+  id            String       @id @default(uuid())
+  slug          String       @unique
+  title         String
+  summary       String
+  contentBlocks Json
+  taxonomyMajor String[]
+  taxonomyTags  String[]     @default([])
+  reviewStatus  ReviewStatus @default(DRAFT)
+  authorId      String
+  publishedAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([reviewStatus])
+  @@map("articles")
+}
+
+// ---------------------------------------------------------------------------
+// Learning (doc §5.2): course/lesson content + enrollment + progress.
+// Lesson content is intentionally simple blocks (text/heading/image/video-url)
+// -- no upload/streaming infra yet, no LaTeX/rich question content (Phase 3).
+// ---------------------------------------------------------------------------
+model Course {
+  id          String         @id @default(uuid())
+  slug        String         @unique
+  title       String
+  description String
+  isPublished Boolean        @default(false)
+  modules     CourseModule[]
+  products    Product[]
+  enrollments Enrollment[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("courses")
+}
+
+model CourseModule {
+  id        String   @id @default(uuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  order     Int
+  lessons   Lesson[]
+  createdAt DateTime @default(now())
+
+  @@index([courseId])
+  @@map("course_modules")
+}
+
+model Lesson {
+  id             String           @id @default(uuid())
+  courseModuleId String
+  courseModule   CourseModule     @relation(fields: [courseModuleId], references: [id], onDelete: Cascade)
+  title          String
+  order          Int
+  contentBlocks  Json
+  progress       LessonProgress[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([courseModuleId])
+  @@map("lessons")
+}
+
+enum EnrollmentSource {
+  PURCHASE
+  GIFT
+  MANUAL
+}
+
+model Enrollment {
+  id         String           @id @default(uuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId   String
+  course     Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  source     EnrollmentSource
+  enrolledAt DateTime         @default(now())
+  revokedAt  DateTime?
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id           String    @id @default(uuid())
+  userId       String
+  lessonId     String
+  lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completedAt  DateTime?
+  lastViewedAt DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@map("lesson_progress")
+}
+
+// ---------------------------------------------------------------------------
+// Commerce (doc §5.2/§8.1): the only source of truth for "is access active".
+// Only COURSE-kind products exist in Phase 1 (nothing else is sellable yet --
+// Study Pro/Mentor/Admissions packages need modules that don't exist until
+// later phases). Coupons and subscriptions are deferred -- see AGENTS.md.
+// No real payment gateway is chosen yet (doc §12.1), so PaymentProvider is a
+// swappable interface with a "manual-sandbox" implementation for now, same
+// pattern as the OTP provider in Phase 0.
+// ---------------------------------------------------------------------------
+enum ProductKind {
+  COURSE
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  slug        String        @unique
+  title       String
+  description String
+  kind        ProductKind
+  courseId    String?
+  course      Course?       @relation(fields: [courseId], references: [id])
+  isActive    Boolean       @default(true)
+  prices      Price[]
+  orderItems  OrderItem[]
+  entitlements Entitlement[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("products")
+}
+
+model Price {
+  id            String      @id @default(uuid())
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  amountRial    Int
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  orderItems    OrderItem[]
+
+  @@index([productId])
+  @@map("prices")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELED
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          OrderStatus @default(PENDING)
+  totalAmountRial Int
+  items           OrderItem[]
+  payments        Payment[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([userId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String  @id @default(uuid())
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+  priceId    String
+  price      Price   @relation(fields: [priceId], references: [id])
+  quantity   Int     @default(1)
+  amountRial Int
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  orderId     String
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider    String
+  providerRef String        @unique
+  status      PaymentStatus @default(PENDING)
+  amountRial  Int
+  createdAt   DateTime      @default(now())
+  paidAt      DateTime?
+
+  @@index([orderId])
+  @@map("payments")
+}
+
+enum EntitlementGrantSource {
+  ORDER
+  GIFT
+  MANUAL
+  TRIAL
+}
+
+model Entitlement {
+  id              String                 @id @default(uuid())
+  userId          String
+  user            User                   @relation("EntitlementUser", fields: [userId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product                @relation(fields: [productId], references: [id])
+  grantedVia      EntitlementGrantSource
+  reason          String?
+  grantedByUserId String?
+  startAt         DateTime               @default(now())
+  endAt           DateTime?
+  revokedAt       DateTime?
+  createdAt       DateTime               @default(now())
+
+  @@index([userId])
+  @@index([productId])
+  @@map("entitlements")
 }
 
 // Transactional Outbox (doc §5.1): domain changes and their events are written

@@ -69,18 +69,23 @@ not faked.
 | CRM | Lead, Case, Interaction, Campaign | Support data; never mutates score/access directly |
 | Notification | Template, Delivery, Preference | Sends from a queue, respects consent |
 
-Phase 0 only implements **Identity** (base) and an **Audit** cross-cutting
-concern. Every other module folder does not exist yet — later phases create
-their own module when they have real logic to put in it. Do not pre-create
-empty module shells "for structure"; that is scope creep the docx explicitly
-warns against (§11, "دامنه بیش‌ازحد").
+Phase 0 implemented **Identity** (base) and an **Audit** cross-cutting concern.
+Phase 1 added **Content** (admin-authored articles only, no bulk ingestion
+yet), **Learning** (course/module/lesson/enrollment/progress), and
+**Commerce** (product/price/order/payment/entitlement), plus a `Profile`
+sub-resource inside Identity (docx §6.1 groups "profiles" with identity, not
+as its own module). Every other module folder still does not exist —
+Assessment, Planning, Analytics, Ingestion, CRM, Notification are added only
+when a later phase has real logic to put in them. Do not pre-create empty
+module shells "for structure"; that is scope creep the docx explicitly warns
+against (§11, "دامنه بیش‌ازحد").
 
 ## Phase table (docx §10.2) — what's done, what's next
 
 | Phase | Name | Status |
 |---|---|---|
-| 0 | Contracts & infrastructure | **In progress / this repo state** |
-| 1 | Usable mother site (portal, accounts, academy, commerce, admin) | Not started |
+| 0 | Contracts & infrastructure | **Done** |
+| 1 | Usable mother site (portal, accounts, academy, commerce, admin) | **Done — this repo state** |
 | 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | Not started |
 | 3 | Content & question bank | Not started |
 | 4 | Assessment engine | Not started |
@@ -88,7 +93,9 @@ warns against (§11, "دامنه بیش‌ازحد").
 | 6 | Rank & admissions engine | Not started |
 | 7 | Growth & scale | Not started |
 
-## Known Phase 0 simplifications (carry these into later phases' risk lists)
+## Known simplifications (carry these into later phases' risk lists)
+
+Phase 0:
 
 - OTP delivery uses a console-log provider, not a real SMS gateway (no vendor
   chosen yet — docx §12.1). Swappable behind the `OtpProvider` interface in
@@ -96,10 +103,6 @@ warns against (§11, "دامنه بیش‌ازحد").
 - `contracts/` ships the 3 JSON Schemas and a reusable validator, but there is
   no HTTP import endpoint, Staging table, or Review UI yet — that is Phase 2
   verbatim.
-- E2E tests run against whatever `DATABASE_URL` is configured (not an isolated
-  per-run test database). Fine for a fresh scaffold and CI's throwaway
-  Postgres service; do not run `pnpm test:e2e` against a database with real
-  data.
 - The GitHub Actions deploy workflow is scaffolded but inert until
   `SSH_HOST`/`SSH_USER`/`SSH_KEY`/`DEPLOY_PATH` secrets exist — see
   `ops/runbook.md`.
@@ -108,3 +111,40 @@ warns against (§11, "دامنه بیش‌ازحد").
   (pnpm workspace symlinks inside multi-stage Docker builds are a common
   failure point). Build and run them once against a real target before
   trusting the first real deploy.
+
+Phase 1:
+
+- No real payment gateway is chosen yet (docx §12.1). `PaymentProvider` is an
+  interface; `ManualSandboxPaymentProvider` always succeeds immediately,
+  standing in for a real gateway's redirect+callback cycle. Swappable in
+  `apps/api/src/modules/commerce/payment-provider.ts`.
+- Article/lesson content blocks are validated by a light, hand-rolled checker
+  (`apps/api/src/common/content-blocks.ts`) for trusted internal roles
+  (Author/Reviewer/Admin) authoring through the admin panel — not the strict
+  `contracts/article.v1` JSON Schema, which is for Phase 2's external bulk
+  ingestion into the same `articles` table.
+- No article version-history table yet — `reviewStatus` (DRAFT → IN_REVIEW →
+  PUBLISHED/REJECTED) is tracked, but edits to a DRAFT/REJECTED article
+  overwrite in place rather than creating a new version row. A published
+  article cannot be edited in place (by design, to avoid silently changing
+  live content) but there's no republish-as-new-version flow yet either.
+- Entitlement `endAt` (time-limited access) is stored but **not enforced** by
+  any expiry job — no access-duration policy has been supplied yet (docx
+  §12.1). Only explicit admin revocation (`revokedAt`) is enforced today.
+- `EntitlementActivated` is written to the outbox for provenance, but Commerce
+  calls `LearningService.enrollFromEntitlement()`/`revokeEnrollment()`
+  directly and synchronously (within the same DB transaction) rather than via
+  an async outbox consumer. No outbox consumer/poller exists yet for any
+  event — that's still open for whichever phase first needs true async
+  fan-out (e.g., Notification).
+- E2E tests run against whatever `DATABASE_URL` is configured (not an isolated
+  per-run test database) and now run **serially** (`maxWorkers: 1` in
+  `jest.e2e.config.cjs`) because two files' `beforeAll` both call the shared
+  `seed()` and raced on the same phone numbers when run in parallel. Do not
+  run `pnpm test:e2e` against a database with real data.
+- The admin course-editor UI (`/admin/courses`) is intentionally minimal (no
+  drag-to-reorder, no rich content-block editor beyond a single text block per
+  lesson) — a real block editor with images/LaTeX/tables is Phase 3's Content
+  Engine.
+- Product "kind" only supports `COURSE` — Study Pro/Mentor/Admissions-package
+  products need modules (Planning/Analytics/Admissions) that don't exist yet.

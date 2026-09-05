@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
+import { AuthStatus } from "../components/AuthStatus";
 
 export const metadata: Metadata = {
   title: "KonkurCom 360",
@@ -17,6 +19,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           color: "#102A43",
         }}
       >
+        <header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "1rem 2rem",
+            borderBottom: "1px solid #D7E2EA",
+            background: "white",
+          }}
+        >
+          <nav style={{ display: "flex", gap: "1rem" }}>
+            <Link href="/">خانه</Link>
+            <Link href="/courses">دوره‌ها</Link>
+          </nav>
+          <AuthStatus />
+        </header>
         {children}
       </body>
     </html>
