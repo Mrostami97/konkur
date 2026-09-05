@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../lib/api";
 
-const STAFF_ROLES = ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE"];
+const STAFF_ROLES = ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE", "MENTOR"];
 
 /** Client-side gate: staff-only pages still rely on the API's own RBAC guards
  * for real enforcement -- this only avoids flashing a form a student can't use. */

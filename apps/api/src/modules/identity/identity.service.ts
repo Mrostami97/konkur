@@ -36,7 +36,7 @@ export class IdentityService {
     @Inject(OTP_PROVIDER) private readonly otpProvider: OtpProvider,
   ) {}
 
-  async requestOtp(phone: string): Promise<void> {
+  async requestOtp(phone: string, attribution?: { source?: string; campaignCode?: string }): Promise<void> {
     let user = await this.prisma.user.findUnique({ where: { phone } });
     let isNewUser = false;
     if (!user) {
@@ -51,7 +51,12 @@ export class IdentityService {
       await this.prisma.outboxEvent.create({
         data: {
           eventType: "UserOnboarded",
-          payload: { userId: user.id, phone: user.phone },
+          payload: {
+            userId: user.id,
+            phone: user.phone,
+            source: attribution?.source,
+            campaignCode: attribution?.campaignCode,
+          },
         },
       });
       await this.audit.log({

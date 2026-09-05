@@ -37,6 +37,7 @@ model User {
   masteryStates MasteryState[]
   rankEstimates RankEstimate[]
   choiceList  ChoiceList?
+  lead        Lead?
 
   @@map("users")
 }
@@ -932,4 +933,81 @@ model BacktestReport {
   computedAt          DateTime @default(now())
 
   @@map("backtest_reports")
+}
+
+// ---------------------------------------------------------------------------
+// CRM (doc §5.2/§8.2): support data; never mutates score/access directly.
+// Lead.stage follows doc's funnel: Lead -> Activated -> At Risk -> Qualified
+// -> Customer -> Advocate. The Lead row itself is created by a real outbox
+// consumer (the first one in this codebase -- see AnalyticsModule... no,
+// CrmModule -- for OutboxEvent "UserOnboarded"), closing a gap noted since
+// Phase 0/1 ("no consumer exists yet").
+// ---------------------------------------------------------------------------
+enum LeadStage {
+  LEAD
+  ACTIVATED
+  AT_RISK
+  QUALIFIED
+  CUSTOMER
+  ADVOCATE
+}
+
+model Lead {
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stage        LeadStage     @default(LEAD)
+  source       String?
+  campaignCode String?
+  cases        Case[]
+  interactions Interaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([stage])
+  @@map("leads")
+}
+
+enum CaseStatus {
+  OPEN
+  RESOLVED
+}
+
+model Case {
+  id         String     @id @default(uuid())
+  leadId     String
+  lead       Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  subject    String
+  status     CaseStatus @default(OPEN)
+  createdAt  DateTime   @default(now())
+  resolvedAt DateTime?
+
+  @@index([leadId])
+  @@map("cases")
+}
+
+model Interaction {
+  id        String   @id @default(uuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      String
+  note      String
+  createdAt DateTime @default(now())
+
+  @@index([leadId])
+  @@map("interactions")
+}
+
+// Telegram growth loop (doc §8.3): every deep link carries a campaign_id +
+// content_id; GET /r/:code attributes the click and forwards the visitor,
+// and the resulting signup's Lead carries the same campaignCode.
+model Campaign {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  title     String
+  targetUrl String
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("campaigns")
 }

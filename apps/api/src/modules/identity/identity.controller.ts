@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { Request, Response } from "express";
+import { Throttle } from "@nestjs/throttler";
 import { RequestOtpDto } from "./dto/request-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { IdentityService } from "./identity.service";
@@ -21,15 +22,21 @@ const SESSION_TTL_HOURS = Number(process.env.SESSION_TTL_HOURS ?? 720);
 export class IdentityController {
   constructor(private readonly identity: IdentityService) {}
 
+  // doc §9's "محدودیت تلاش" (attempt limiting) applied specifically to OTP:
+  // 5 requests/min per IP so the console/SMS provider can't be spammed, and
+  // 10 verify attempts/min per IP on top of the existing per-code attempt
+  // counter (which limits guessing a single code, not request volume).
   @Post("otp/request")
   @HttpCode(200)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   async requestOtp(@Body() dto: RequestOtpDto) {
-    await this.identity.requestOtp(dto.phone);
+    await this.identity.requestOtp(dto.phone, { source: dto.source, campaignCode: dto.campaignCode });
     return { sent: true };
   }
 
   @Post("otp/verify")
   @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   async verifyOtp(
     @Body() dto: VerifyOtpDto,
     @Req() req: Request,

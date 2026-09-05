@@ -1,12 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
 import { AuthStatus } from "../components/AuthStatus";
+import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
   title: "KonkurCom 360",
   description: "سایت مادر پلتفرم KonkurCom 360",
+  manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#243B53",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -40,6 +46,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <AuthStatus />
         </header>
         {children}
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );

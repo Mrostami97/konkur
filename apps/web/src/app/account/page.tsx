@@ -111,7 +111,7 @@ export default function AccountPage() {
         {me.user.phone} — نقش‌ها: {me.user.roles.join(", ")}
       </p>
       <button onClick={logout}>خروج</button>
-      {me.user.roles.some((r) => ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE"].includes(r)) && (
+      {me.user.roles.some((r) => ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE", "MENTOR"].includes(r)) && (
         <p>
           <Link href="/admin">ورود به پنل ادمین</Link>
         </p>

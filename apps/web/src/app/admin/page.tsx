@@ -34,6 +34,9 @@ export default function AdminHomePage() {
           <li>
             <Link href="/admin/analytics">بک‌تست تخمین رتبه</Link>
           </li>
+          <li>
+            <Link href="/admin/crm">CRM و رشد</Link>
+          </li>
         </ul>
       </main>
     </AdminGuard>
