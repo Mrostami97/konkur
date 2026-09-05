@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
 
+# A newer push to the same ref makes an in-flight run pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
@@ -36,149 +41,162 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # action-setup reads the pinned pnpm version from package.json's
+      # `packageManager` field; setup-node then caches the pnpm store keyed on
+      # the lockfile, which is the single biggest win on repeat runs.
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
 
-      - name: Enable corepack (pnpm)
-        run: corepack enable
-
-      # GitHub Actions' `services:` block can't override a container's
-      # command, and the minio/minio image requires `server /data` -- so
-      # it's started as a plain background container instead, published to
-      # the runner's own localhost (matching the app's S3_ENDPOINT default).
-      - name: Start MinIO
+      # MinIO boots in the background while dependencies install, so the
+      # readiness wait below almost always returns immediately. It can't be a
+      # `services:` entry: that block can't override a container's command,
+      # and the minio image requires `server /data`.
+      - name: Install dependencies (MinIO boots in parallel)
         run: |
+          set -euo pipefail
           docker run -d --name minio -p 9000:9000 \
             -e MINIO_ROOT_USER=konkur -e MINIO_ROOT_PASSWORD=konkur123 \
             minio/minio server /data
-          for i in $(seq 1 30); do
-            curl -sf http://localhost:9000/minio/health/live && exit 0
+          pnpm install --frozen-lockfile
+          for _ in $(seq 1 30); do
+            if curl -sf http://localhost:9000/minio/health/live; then exit 0; fi
             sleep 1
           done
           echo "MinIO did not become ready in time" >&2
           exit 1
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # Both are prerequisites for typecheck: apps/api imports @prisma/client's
+      # generated types and @konkurcom/contracts by its built types entrypoint.
+      # `pnpm -r run build` walks workspaces in topological order, so contracts
+      # lands before api/web -- no separate contracts build step needed.
+      - name: Generate Prisma Client and build workspaces
+        run: |
+          set -euo pipefail
+          pnpm --filter @konkurcom/api exec prisma generate
+          pnpm -w run build
 
-      - name: Generate Prisma Client
-        run: pnpm --filter @konkurcom/api exec prisma generate
+      - name: Lint and typecheck
+        run: |
+          set -euo pipefail
+          pnpm -w run lint
+          pnpm -w run typecheck
 
-      - name: Build contracts package
-        run: pnpm --filter @konkurcom/contracts run build
+      - name: Tests (contracts, migrations, API unit + e2e)
+        run: |
+          set -euo pipefail
+          pnpm --filter @konkurcom/contracts run test
+          pnpm --filter @konkurcom/api exec prisma migrate deploy
+          pnpm --filter @konkurcom/api run test
+          pnpm --filter @konkurcom/api run test:e2e
 
-      - name: Lint
-        run: pnpm -w run lint
-
-      - name: Typecheck
-        run: pnpm -w run typecheck
-
-      - name: Contracts unit tests (JSON Schema fixtures)
-        run: pnpm --filter @konkurcom/contracts run test
-
-      - name: Prisma migrate deploy (migration check)
-        run: pnpm --filter @konkurcom/api exec prisma migrate deploy
-
-      - name: API unit tests
-        run: pnpm --filter @konkurcom/api run test
-
-      - name: API integration/e2e tests
-        run: pnpm --filter @konkurcom/api run test:e2e
-
-      - name: Build all workspaces
-        run: pnpm -w run build
-
-      # --- Deploy: only on a push to main, and only once every check above
-      # has passed -- steps in this job run in order and stop at the first
-      # failure, so nothing below runs unless the whole build/test pipeline
-      # above was green. This replaces a separate Deploy workflow that used
-      # to trigger via `workflow_run` after CI finished; same guarantee,
-      # one job, no cross-workflow indirection.
-      - name: Check deploy secrets are configured
-        id: check_deploy
+      # Deploy runs as the tail of this same job: steps run in order and stop
+      # at the first failure, so nothing below runs unless everything above
+      # was green. The `secrets` context isn't available in a step `if:`,
+      # hence this gate step writing an output. When it's skipped (PRs, or
+      # non-main pushes) its output is empty, so the deploy step is skipped too.
+      - name: Check deploy secrets
+        id: deploy_gate
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          if [ -z "${{ secrets.SSH_HOST }}" ]; then
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-          else
+          if [ -n "${{ secrets.SSH_HOST }}" ]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Deploy skipped: SSH_HOST secret is not set (see ops/runbook.md)."
           fi
 
-      - name: Skip deploy (no server configured yet)
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check_deploy.outputs.configured == 'false'
-        run: |
-          echo "Deploy skipped: SSH_HOST secret is not set."
-          echo "See ops/runbook.md for which secrets to add once a server exists."
-
-      - name: Deploy over SSH
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check_deploy.outputs.configured == 'true'
+      - name: Deploy over SSH, then wait for /healthz
+        if: steps.deploy_gate.outputs.configured == 'true'
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          # SSH_KEY is the primary method; SSH_PASS is an optional fallback
-          # (password auth) if no key is configured for the deploy user.
-          # The SSH protocol itself negotiates which offered method the
-          # server accepts, so passing both is safe even when only one is set.
+          # SSH_KEY is primary; SSH_PASS is an optional password fallback. SSH
+          # negotiates which offered method the server accepts, so passing
+          # both is safe even when only one is set.
           key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.SSH_PASS }}
           script: |
             set -euo pipefail
             DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
 
-            echo "== Checking/installing prerequisites =="
-            # Docker is the one thing this script can and does auto-install --
-            # everything else (git, curl) runs inside containers, so once
-            # Docker is present the server needs nothing else preinstalled.
-            if ! command -v docker >/dev/null 2>&1; then
-              echo "docker not found -- installing via get.docker.com"
-              if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
-                curl -fsSL https://get.docker.com | sudo sh
-              elif [ "$(id -u)" -eq 0 ]; then
-                curl -fsSL https://get.docker.com | sh
-              else
-                echo "ERROR: docker is missing and there is no sudo/root to install it as. Install Docker Engine + the compose plugin manually, then re-run deploy." >&2
-                exit 1
-              fi
+            SUDO=""
+            if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+              SUDO="sudo"
             fi
+
+            echo "== Prerequisites =="
             if ! command -v docker >/dev/null 2>&1; then
-              echo "ERROR: automatic Docker installation failed. Install Docker Engine + the compose plugin manually, then re-run deploy." >&2
+              echo "Docker not found -- installing."
+              # The convenience script covers Debian/Ubuntu/Fedora but refuses
+              # RHEL rebuilds ("Unsupported distribution 'almalinux'"), so fall
+              # back to Docker's own CentOS repo, which is what Docker
+              # documents for AlmaLinux/Rocky/RHEL.
+              if ! curl -fsSL https://get.docker.com | $SUDO sh; then
+                echo "Convenience script failed -- using the RHEL/CentOS package repo."
+                if command -v dnf >/dev/null 2>&1; then
+                  $SUDO dnf -y install dnf-plugins-core
+                  $SUDO dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+                  $SUDO dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+                elif command -v yum >/dev/null 2>&1; then
+                  $SUDO yum -y install yum-utils
+                  $SUDO yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+                  $SUDO yum -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+                else
+                  echo "ERROR: no supported package manager (dnf/yum) to install Docker with." >&2
+                  exit 1
+                fi
+              fi
+              # The RPM packages don't start the daemon themselves.
+              $SUDO systemctl enable --now docker || true
+            fi
+
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "ERROR: Docker installation failed. Install Docker Engine + the compose plugin manually, then re-run." >&2
               exit 1
             fi
 
-            # Run docker as root only if this user can't already talk to the
-            # daemon directly (freshly installed and not yet in the `docker`
-            # group -- group membership from `usermod` wouldn't take effect
-            # until a new login anyway, so just use sudo for this run).
+            # Use sudo for docker only if this user can't reach the daemon
+            # directly (fresh install, not yet in the `docker` group -- which
+            # wouldn't take effect until a new login anyway).
+            $SUDO systemctl start docker >/dev/null 2>&1 || true
             if docker info >/dev/null 2>&1; then
               DOCKER="docker"
-            elif command -v sudo >/dev/null 2>&1; then
-              DOCKER="sudo docker"
+            elif [ -n "$SUDO" ] && $SUDO docker info >/dev/null 2>&1; then
+              DOCKER="$SUDO docker"
             else
-              echo "ERROR: cannot reach the Docker daemon and there is no sudo to retry with as root." >&2
+              echo "ERROR: cannot reach the Docker daemon (and no sudo to retry as root)." >&2
               exit 1
             fi
 
             if ! $DOCKER compose version >/dev/null 2>&1; then
-              echo "ERROR: docker is installed but the 'compose' plugin is not available (install didn't include it, or this is an old Docker Engine). Install the Compose plugin, then re-run deploy." >&2
+              echo "ERROR: Docker is installed but the compose plugin is missing." >&2
               exit 1
             fi
 
+            # Best effort: on RHEL-family hosts firewalld is usually on and
+            # blocks 80/443 by default. Never fatal.
+            if command -v firewall-cmd >/dev/null 2>&1 && $SUDO firewall-cmd --state >/dev/null 2>&1; then
+              $SUDO firewall-cmd --permanent --add-service=http --add-service=https >/dev/null 2>&1 || true
+              $SUDO firewall-cmd --reload >/dev/null 2>&1 || true
+            fi
+
             if [ ! -d "$DEPLOY_PATH/.git" ]; then
-              echo "ERROR: $DEPLOY_PATH is not a git checkout. This repo is private, so the first checkout has to be created manually once with a working credential (see ops/runbook.md) -- auto-provisioning can't safely invent one." >&2
+              echo "ERROR: $DEPLOY_PATH is not a git checkout. This repo is private, so the first clone needs a credential set up by hand once (see ops/runbook.md)." >&2
               exit 1
             fi
 
             cd "$DEPLOY_PATH"
 
             echo "== Updating checkout =="
-            # git is run inside a container, never assumed to be installed on
-            # the host. Reuses the existing checkout's already-configured
-            # remote/credentials, so no new auth is needed.
-            $DOCKER run --rm -v "$PWD:/repo" -w /repo debian:12-slim bash -c "
-              set -e
-              apt-get update -qq && apt-get install -y -qq git ca-certificates >/dev/null
+            # git runs in a container so the host never needs it installed
+            # (a missing host git is what broke an earlier deploy).
+            # buildpack-deps:*-scm is an official image that already ships
+            # git, so there's no apt-get on every deploy.
+            $DOCKER run --rm -v "$PWD:/repo" -w /repo buildpack-deps:bookworm-scm sh -c "
               git config --global --add safe.directory /repo
               git fetch origin main
               git reset --hard origin/main
@@ -187,26 +205,26 @@ jobs:
             echo "== Building and starting services =="
             $DOCKER compose up -d --build
 
-            echo "== Post-deploy health check =="
+            echo "== Waiting for /healthz =="
             # /healthz reports real connectivity to every dependency the API
-            # actually has (Postgres, MinIO/S3), not just "the process
-            # started". Read API_DOMAIN the same way docker-compose does
-            # (from .env in this directory, default api.localhost) and hit it
-            # through nginx by IP via --resolve, so no public DNS is needed
-            # for the check itself. curl runs in a container too (the
-            # official curl project image), not assumed to be on the host.
+            # has (Postgres, MinIO/S3), not just "the process started". Hit it
+            # through nginx by IP via --resolve so no public DNS is needed.
+            # curl runs in a container too, not assumed to be on the host.
             API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
             API_DOMAIN="${API_DOMAIN:-api.localhost}"
             RESPONSE=""
-            for i in $(seq 1 30); do
-              RESPONSE="$($DOCKER run --rm --network host curlimages/curl:latest -sk --resolve "${API_DOMAIN}:443:127.0.0.1" "https://${API_DOMAIN}/healthz" || true)"
+            for _ in $(seq 1 60); do
+              RESPONSE="$($DOCKER run --rm --network host curlimages/curl:latest \
+                -sk --resolve "${API_DOMAIN}:443:127.0.0.1" \
+                "https://${API_DOMAIN}/healthz" || true)"
               if echo "$RESPONSE" | grep -q '"status":"ok"'; then
-                echo "Deploy healthy:"
-                echo "$RESPONSE"
+                echo "Healthy: $RESPONSE"
                 exit 0
               fi
-              sleep 2
+              sleep 3
             done
-            echo "Deploy did not become healthy within 60s. Last /healthz response:"
-            echo "$RESPONSE"
+
+            echo "ERROR: not healthy after 180s. Last /healthz response: ${RESPONSE:-<no response>}" >&2
+            $DOCKER compose ps || true
+            $DOCKER compose logs --tail 50 api || true
             exit 1

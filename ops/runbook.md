@@ -93,24 +93,30 @@ the one-time `git clone` of this private repo (below), since the deploy
 script has no credential it can safely invent on its own.
 
 - **Docker Engine + the Compose plugin.** If `docker` isn't on `PATH`, the
-  deploy script installs it itself via Docker's official convenience script
-  (`get.docker.com`), using `sudo` if the SSH user isn't root. This needs the
-  server to be a distro that script supports (Debian/Ubuntu/Fedora/RHEL/etc,
-  which covers essentially every mainstream choice) and either root or
-  passwordless-enough `sudo` for that one install command; if neither holds,
-  the deploy fails with a clear message rather than silently doing nothing.
+  deploy script installs it, using `sudo` when the SSH user isn't root:
+  first Docker's convenience script (`get.docker.com`), which covers
+  Debian/Ubuntu/Fedora; if that refuses the distro — it rejects RHEL
+  rebuilds outright with `Unsupported distribution 'almalinux'`, which is
+  exactly what this server is — it falls back to Docker's own CentOS
+  package repo via `dnf`/`yum`, which is what Docker documents for
+  AlmaLinux/Rocky/RHEL. The RPM packages don't start the daemon
+  themselves, so it runs `systemctl enable --now docker` afterwards.
   If a fresh install isn't yet in the `docker` group (group membership
   wouldn't take effect until a new login anyway), the rest of that deploy
   run's `docker`/`docker compose` commands are prefixed with `sudo`
   automatically.
+- **Firewall.** On RHEL-family hosts firewalld is usually active and blocks
+  80/443 by default, so the script opens the `http`/`https` services if
+  firewalld is running. Best effort — never fatal.
 - **`git` does NOT need to be installed on the server at all**, ever. Every
   deploy runs `git fetch`/`git reset --hard` **inside a throwaway
-  `debian:12-slim` container** (which installs `git` fresh each time),
-  reusing the existing checkout's already-working remote config. This is
-  what silently broke a previous deploy ("git: command not found") --
-  containerizing it means the host's own package state no longer matters.
-- The post-deploy `/healthz` smoke check (below) also runs `curl` in a
-  container (`curlimages/curl`), not on the host.
+  `buildpack-deps:bookworm-scm` container** (an official Debian image that
+  already ships git, so there's no `apt-get` on every deploy), reusing the
+  existing checkout's already-working remote config. A missing host `git` is
+  what broke an earlier deploy ("git: command not found"); containerizing it
+  means the host's own package state no longer matters.
+- The post-deploy `/healthz` wait (below) also runs `curl` in a container
+  (`curlimages/curl`), not on the host.
 
 The one thing that still can't be auto-provisioned: the **first** checkout at
 `DEPLOY_PATH`. This repo is private, so that first `git clone` needs a working
@@ -121,13 +127,18 @@ Every deploy after that first clone needs nothing manual at all.
 
 ### Post-deploy health check
 
-After `docker compose up -d --build`, the deploy script polls the API's
-`GET /healthz` (through nginx, resolved by IP so no public DNS is needed) for
-up to 60s and fails the deploy job if it never reports `"status":"ok"`,
-printing the full report either way. `/healthz` checks real connectivity to
-Postgres and MinIO/S3 — not just "the process started" — so a deploy that
-"succeeds" but leaves the API unable to reach its database or object storage
-is caught immediately. See `apps/api/src/health/healthz.controller.ts`.
+The last thing every deploy does is wait for the service to actually come up.
+After `docker compose up -d --build`, the script polls `GET /healthz`
+(through nginx, resolved by IP so no public DNS is needed) every 3s for up to
+180s. It exits 0 as soon as the response reports `"status":"ok"`; if that
+never happens it prints the last response plus `docker compose ps` and the
+API's last 50 log lines, then **fails the job** — so a red CI run means the
+deploy genuinely isn't serving, not just that a command exited oddly.
+
+`/healthz` checks real connectivity to Postgres and MinIO/S3 — not just "the
+process started" — so a deploy that "succeeds" but leaves the API unable to
+reach its database or object storage is caught here. See
+`apps/api/src/health/healthz.controller.ts`.
 
 ### Images
 
