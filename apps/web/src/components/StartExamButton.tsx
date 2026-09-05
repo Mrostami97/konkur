@@ -23,7 +23,7 @@ export function StartExamButton({ examId }: { examId: string }) {
   }
 
   return (
-    <button onClick={start} disabled={loading}>
+    <button className="button button-primary" onClick={start} disabled={loading}>
       {loading ? "در حال شروع..." : "شروع آزمون"}
     </button>
   );

@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { EmptyState, PageHeader } from "../../components/ui";
 
 interface ChoiceComparison {
   priority: number;
@@ -14,12 +16,15 @@ interface ChoiceComparison {
 export default function ChoicesPage() {
   const router = useRouter();
   const [items, setItems] = useState<ChoiceComparison[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
+      setError(null);
       setItems(await apiFetch<ChoiceComparison[]>("/me/choices/compare"));
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) router.push("/login");
+      else setError("فهرست انتخاب‌ها در دسترس نیست.");
     }
   }, [router]);
 
@@ -45,30 +50,29 @@ export default function ChoicesPage() {
     await load();
   }
 
-  if (!items) return <main style={{ padding: "2rem" }}>در حال بارگذاری...</main>;
+  if (!items) return <main className="page-container"><div className="surface-card loading-state">در حال بارگذاری انتخاب‌ها...</div></main>;
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>مقایسه و اولویت انتخاب‌رشته</h1>
+    <main className="page-container">
+      <PageHeader eyebrow="انتخاب‌رشته ۳۶۰" title="مقایسه و اولویت انتخاب‌رشته" description="اولویت‌هایت را مرتب کن و دادهٔ مقایسه‌ای هر گزینه را با احتیاط بخوان." />
+      {error && <div className="form-error" role="alert">{error}</div>}
       {items.length === 0 ? (
-        <p>هنوز رشته‌ای به فهرست انتخاب‌ها اضافه نکرده‌اید.</p>
+        <EmptyState title="هنوز انتخابی ثبت نشده است" description="از فهرست دانشگاه‌ها، گزینه‌های مناسب را به این صفحه اضافه کن." action={<Link className="button button-primary" href="/programs">جست‌وجوی دانشگاه‌ها</Link>} />
       ) : (
-        <ol>
+        <ol className="choice-list">
           {items.map((item, index) => (
-            <li key={item.program.id} style={{ border: "1px solid #D7E2EA", borderRadius: 6, padding: "0.8rem", marginBottom: "0.6rem" }}>
-              <strong>{item.program.title}</strong> — {item.program.university.title}
-              <p>
+            <li className="surface-card choice-card" key={item.program.id}>
+              <div><span className="choice-rank">اولویت {index + 1}</span><h2>{item.program.title}</h2><p className="muted-copy">{item.program.university.title}</p></div>
+              <p className="choice-chance">
                 {item.chance === null
                   ? `شانس قبولی: داده کافی نیست (نمونه: ${item.sampleSize})`
                   : `شانس قبولی تجربی: ${(item.chance * 100).toFixed(0)}٪ (بر اساس ${item.sampleSize} کارنامه مشابه)`}
               </p>
-              <button onClick={() => move(index, -1)} disabled={index === 0}>
+              <div className="choice-actions"><button className="button button-secondary" aria-label="انتقال به بالا" onClick={() => move(index, -1)} disabled={index === 0}>
                 ↑
-              </button>
-              <button onClick={() => move(index, 1)} disabled={index === items.length - 1}>
+              </button><button className="button button-secondary" aria-label="انتقال به پایین" onClick={() => move(index, 1)} disabled={index === items.length - 1}>
                 ↓
-              </button>
-              <button onClick={() => remove(item.program.id)}>حذف</button>
+              </button><button className="button button-danger" onClick={() => remove(item.program.id)}>حذف</button></div>
             </li>
           ))}
         </ol>

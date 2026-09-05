@@ -216,6 +216,26 @@ button:disabled { cursor: not-allowed; opacity: 0.58; }
 .account-identity p { margin: 0.25rem 0 0; }
 .avatar-placeholder { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 16px; color: var(--teal-dark); background: var(--sky); font-weight: 900; }
 .quick-link-highlight { display: block; padding: 0.7rem 0.8rem; margin: 0 0 1.4rem; border-radius: 12px; color: var(--teal-dark); background: var(--sky); font-size: 0.82rem; font-weight: 800; }
+.admissions-grid { margin-top: 0.5rem; }
+.admissions-card { display: grid; align-content: start; gap: 0.45rem; min-height: 220px; color: inherit; transition: transform 160ms ease, box-shadow 160ms ease; }
+.admissions-card:hover { transform: translateY(-3px); box-shadow: 0 18px 34px rgba(17,44,78,0.1); }
+.admissions-card h2 { margin: 0.35rem 0 0; font-size: 1.1rem; }
+.admissions-card p { margin: 0 0 1rem; color: var(--muted); font-size: 0.82rem; }
+.admissions-card .text-link { margin-top: auto; }
+.program-filters { display: grid; grid-template-columns: 1.4fr 0.7fr auto; align-items: end; gap: 0.8rem; margin-bottom: 1.25rem; }
+.program-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.program-card { min-height: 245px; }
+.program-card > .button { align-self: end; justify-self: start; }
+.choice-list { display: grid; gap: 0.85rem; padding: 0; margin: 0; list-style: none; }
+.choice-card { display: grid; grid-template-columns: 1.2fr 1fr auto; align-items: center; gap: 1rem; }
+.choice-card h2 { margin: 0.3rem 0 0; font-size: 1.05rem; }
+.choice-rank { color: var(--teal-dark); font-size: 0.74rem; font-weight: 800; }
+.choice-chance { margin: 0; color: var(--muted); font-size: 0.8rem; }
+.choice-actions { display: flex; gap: 0.4rem; }
+.choice-actions .button { min-width: 42px; min-height: 40px; padding: 0.5rem 0.7rem; }
+.button-danger { border: 1px solid #f4c5c1; color: #b42318; background: #fff6f5; }
+.button-danger:hover { background: #ffe9e7; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(16,185,166,0.35); outline-offset: 3px; }
 .account-stats { align-content: start; }
 .account-sections { margin-top: 1.25rem; }
 .account-sections .surface-card { min-height: 240px; }
@@ -258,6 +278,9 @@ button:disabled { cursor: not-allowed; opacity: 0.58; }
   .login-shell { max-width: 560px; }
   .page-header { align-items: start; flex-direction: column; }
   .field-grid-two { grid-template-columns: 1fr; }
+  .program-filters { grid-template-columns: 1fr; align-items: stretch; }
+  .program-grid { grid-template-columns: 1fr; }
+  .choice-card { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

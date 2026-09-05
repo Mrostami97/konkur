@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { EmptyState, PageHeader } from "../../components/ui";
 
 interface Program {
   id: string;
@@ -19,12 +20,23 @@ export default function ProgramsPage() {
   const [degree, setDegree] = useState("");
   const [programs, setPrograms] = useState<Program[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function search() {
-    const params = new URLSearchParams();
-    if (field) params.set("field", field);
-    if (degree) params.set("degree", degree);
-    setPrograms(await apiFetch<Program[]>(`/programs?${params.toString()}`));
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (field) params.set("field", field);
+      if (degree) params.set("degree", degree);
+      setPrograms(await apiFetch<Program[]>(`/programs?${params.toString()}`));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "دریافت برنامه‌ها ناموفق بود");
+      setPrograms([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -44,29 +56,23 @@ export default function ProgramsPage() {
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>دانشگاه‌ها و گرایش‌ها</h1>
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <input placeholder="گرایش" value={field} onChange={(e) => setField(e.target.value)} />
-        <select value={degree} onChange={(e) => setDegree(e.target.value)}>
+    <main className="page-container">
+      <PageHeader eyebrow="انتخاب‌رشته ۳۶۰" title="دانشگاه‌ها و گرایش‌ها" description="برنامه‌های واقعی را بر اساس مقطع و گرایش جست‌وجو کن و گزینه‌های مناسب را به فهرستت اضافه کن." />
+      <form className="surface-card program-filters" onSubmit={(e) => { e.preventDefault(); search(); }}>
+        <label className="field-group"><span>گرایش یا کلیدواژه</span><input className="field-input" placeholder="مثلاً هوش مصنوعی" value={field} onChange={(e) => setField(e.target.value)} /></label>
+        <label className="field-group"><span>مقطع</span><select className="field-input" value={degree} onChange={(e) => setDegree(e.target.value)}>
           <option value="">همه مقاطع</option>
           <option value="master">ارشد</option>
           <option value="phd">دکتری</option>
-        </select>
-        <button onClick={search}>جست‌وجو</button>
-      </div>
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      <ul style={{ listStyle: "none", padding: 0 }}>
+        </select></label>
+        <button className="button button-primary" type="submit" disabled={loading}>{loading ? "در حال جست‌وجو..." : "جست‌وجو"}</button>
+      </form>
+      {message && <p className="success-message" role="status">{message}</p>}
+      {error ? <EmptyState title="نتیجه‌ای دریافت نشد" description={error} action={<button className="button button-secondary" onClick={search}>تلاش دوباره</button>} /> : programs.length === 0 ? <EmptyState title="برنامه‌ای برای نمایش نیست" description="فیلترها را تغییر بده یا بعداً دوباره جست‌وجو کن." /> : <div className="program-grid">
         {programs.map((p) => (
-          <li key={p.id} style={{ border: "1px solid #D7E2EA", borderRadius: 6, padding: "0.8rem", marginBottom: "0.6rem" }}>
-            <strong>{p.title}</strong> — {p.university.title} ({p.university.city})
-            <p style={{ fontSize: "0.85rem", color: "#486581" }}>
-              {p.degree} — {p.tuitionType} {p.hasDormitory ? "— خوابگاه دارد" : ""}
-            </p>
-            <button onClick={() => addToChoices(p.id)}>افزودن به انتخاب‌ها</button>
-          </li>
+          <article className="catalog-card program-card" key={p.id}><div><div className="catalog-card-meta"><span>{p.degree}</span><span>{p.university.city}</span></div><h3>{p.title}</h3><p>{p.university.title}</p><p className="muted-copy">{p.tuitionType}{p.hasDormitory ? " · خوابگاه دارد" : ""}</p></div><button className="button button-secondary" onClick={() => addToChoices(p.id)}>افزودن به انتخاب‌ها</button></article>
         ))}
-      </ul>
+      </div>}
     </main>
   );
 }
