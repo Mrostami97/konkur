@@ -91,10 +91,13 @@ full Analytics (Benchmark/Prediction, for rank estimation) is Phase 6's job.
 Phase 6 added that Benchmark/Prediction slice (`RankEstimate`,
 `BacktestReport` -- a k-NN estimator over real ingested `ReportCard` rows,
 never a bare number) and **Admissions** (University/Program/Capacity/
-ChoiceList). CRM, Notification still do not exist — added only when a later
-phase has real logic to put in them. Do not pre-create empty module shells
-"for structure"; that is scope creep the docx explicitly warns against (§11,
-"دامنه بیش‌ازحد").
+ChoiceList). Phase 7 added **CRM** (Lead/Case/Interaction/Campaign, a deep-link
+attribution redirect, and an outbox-consumer that creates a Lead on
+`UserOnboarded`), plus cross-cutting rate limiting (`@nestjs/throttler`) and a
+basic PWA shell for the web app. Notification still does not exist — added
+only when a later phase has real logic to put in it. Do not pre-create empty
+module shells "for structure"; that is scope creep the docx explicitly warns
+against (§11, "دامنه بیش‌ازحد").
 
 ## Phase table (docx §10.2) — what's done, what's next
 
@@ -106,8 +109,8 @@ phase has real logic to put in them. Do not pre-create empty module shells
 | 3 | Content & question bank | **Done** |
 | 4 | Assessment engine | **Done** |
 | 5 | Study OS | **Done** |
-| 6 | Rank & admissions engine | **Done — this repo state** |
-| 7 | Growth & scale | Not started |
+| 6 | Rank & admissions engine | **Done** |
+| 7 | Growth & scale | **Done — this repo state** |
 
 ## Known simplifications (carry these into later phases' risk lists)
 
@@ -122,7 +125,7 @@ Phase 0:
 - The GitHub Actions deploy workflow is scaffolded but inert until
   `SSH_HOST`/`SSH_USER`/`SSH_KEY`/`DEPLOY_PATH` secrets exist — see
   `ops/runbook.md`.
-- `apps/api/Dockerfile`, `apps/web/Dockerfile`, and `docker-compose.prod.yml`
+- `apps/api/Dockerfile`, `apps/web/Dockerfile`, and `docker-compose.yml`
   are written for that eventual deploy but have **not been build-tested**
   (pnpm workspace symlinks inside multi-stage Docker builds are a common
   failure point). Build and run them once against a real target before
@@ -319,3 +322,97 @@ Phase 6:
   application (the real Konkur "انتخاب‌رشته" submission) -- it's a
   comparison/ordering tool only, not an integration with the actual national
   admissions system (out of scope for any phase in this spec).
+
+Phase 7:
+
+- Lead stage classification (`recomputeStage`) is a heuristic computed on
+  demand (via a manual "بازمحاسبه مرحله" button, or whenever a lead is read),
+  not an event-driven state machine that reacts to every underlying signal
+  the instant it changes.
+- The outbox consumer (`CrmService.processOutbox`) is a simple `@Interval(5000)`
+  polling loop over `OutboxEvent`, not a real queue/worker (no BullMQ/Redis
+  Streams, no backoff/retry beyond a plain try/catch-and-log, no ordering
+  guarantee across events).
+- Deep-link campaign attribution (`GET /r/:code`) only flows into the
+  `UserOnboarded` outbox payload via the OTP-request path
+  (`source`/`campaignCode` on `RequestOtpDto`) -- attribution isn't captured
+  for any other entry point (e.g. direct signup without a referral code).
+- Rate limiting (`@nestjs/throttler`) is IP-based only, with the default
+  in-memory throttler storage -- it resets on process restart and isn't
+  shared across multiple API instances (no Redis-backed distributed limiter,
+  even though Redis is already provisioned). It's globally `skipIf`-disabled
+  under `NODE_ENV=test` so the e2e suite's rapid-fire OTP requests aren't
+  throttled; the throttle itself was verified manually with `curl` against a
+  live dev server instead.
+- The PWA (`manifest.json` + `sw.js`) is a basic installability/network-first
+  shell -- no real offline-first strategy (no precaching, no background sync),
+  no push notifications, and placeholder icons (solid-color "K360" text,
+  generated locally) since no real brand assets were supplied (docx §12.1).
+
+Infrastructure (post-Phase-7 cleanup):
+
+- There is now exactly **one** `docker-compose.yml`, and it is the production
+  stack (postgres/redis/minio/api/web/nginx/certs-init) -- the earlier
+  dev-only compose file and the separate `docker-compose.prod.yml` were
+  merged into it per explicit instruction, so there is no infra-only "just
+  run Postgres/Redis/MinIO for local `pnpm dev`" mode anymore; local
+  iteration goes through `docker compose up -d --build` (see
+  `ops/runbook.md`).
+- `nginx` terminates TLS with a **self-signed** certificate generated once by
+  the one-shot `certs-init` service into the `nginx_certs` named volume (kept
+  across redeploys; only regenerated if missing). This is not a trusted
+  certificate -- browsers/`curl` will warn/refuse by default. Swapping in a
+  real certificate (e.g. ACME/Let's Encrypt automation) is not done.
+- `NEXT_PUBLIC_API_URL` is a Next.js **build-time** env var, baked into the
+  client bundle at `next build`. The web `Dockerfile`'s build stage does not
+  receive it as a build arg, so the `environment:` value set on the running
+  `web` container in `docker-compose.yml` has no effect on the already-built
+  bundle -- this predates Phase 7 and is not yet fixed; a real deploy needs a
+  `next build --build-arg`/`ARG` wiring (or a runtime-config approach) before
+  `WEB_DOMAIN`/`API_DOMAIN` overrides actually reach the browser.
+- `package.json` now pins `"packageManager": "pnpm@9.12.0"`. Without it,
+  Corepack fetched the latest pnpm inside the `node:20-bookworm-slim` build
+  stage, which requires Node >= 22 (`node:sqlite`) and made `docker compose
+  build api web` fail outright.
+- Both Dockerfiles' runtime `CMD`s now invoke `node_modules/.bin/{prisma,next}`
+  directly instead of `pnpm exec`/`pnpm start` -- the runtime stage never
+  copies the root `package.json` (only `node_modules`/`contracts`/the app
+  itself), so Corepack couldn't see the `packageManager` pin there either and
+  would have re-triggered the same latest-pnpm-needs-Node-22 crash at
+  container start, not just at build time.
+- `apps/api/Dockerfile`'s base image needs `openssl` installed (added via
+  `apt-get` in the shared `base` stage, not just `runtime`) -- without it,
+  Prisma can't detect the actual libssl version and silently generates/
+  expects the wrong query-engine binary (`openssl-1.1.x` guessed vs. the
+  real `openssl-3.0.x` on `bookworm`), crashing on `PrismaClient` init with
+  `PrismaClientInitializationError`. It has to be in `base`, not just
+  `runtime`, because `prisma generate` (build stage) needs the same correct
+  detection as the running container, or the engine it builds won't match.
+- `apps/web/src/lib/api.ts`'s `apiGetPublic` (server-side/SSR fetch) now uses
+  a server-only `INTERNAL_API_URL` env var (`http://api:3001` on the compose
+  network) instead of the public `NEXT_PUBLIC_API_URL` -- SSR requests were
+  failing with `ENOTFOUND`/certificate errors because the public HTTPS
+  domain (`API_DOMAIN`) doesn't resolve from inside the `web` container, and
+  even if it did, Node's `fetch` doesn't accept the self-signed cert.
+  Browser-side `apiFetch`/`apiUpload` are unaffected and still use the public
+  URL, since those really do run in the user's browser.
+- `nginx`'s `proxy_pass` targets are resolved via a `resolver 127.0.0.11` +
+  `set $upstream ...` pattern, not a bare `proxy_pass http://web:3000`.
+  Nginx resolves a literal hostname once at config load and caches it
+  forever; a bare form would keep routing to a recreated container's old,
+  now-dead IP after every `docker compose up -d --build` redeploy until
+  nginx itself was restarted. Verified by recreating `api`/`web` in place and
+  confirming `nginx` (never restarted) still routed correctly.
+- `NEXT_PUBLIC_API_URL` is still a Next.js **build-time** env var baked into
+  the client bundle at `next build`; the web `Dockerfile`'s build stage does
+  not receive it as a build arg, so a `WEB_DOMAIN`/`API_DOMAIN` override
+  taking effect for real browser traffic requires rebuilding the image with
+  that value threaded through as a build ARG (not yet done).
+
+All of the above (nginx/certs-init/api/web Dockerfile fixes) were verified by
+actually bringing up the full compose stack -- `docker compose build api web`,
+`docker compose up -d`, confirming all 6 services reach a stable `Up` state,
+then `curl -k https://localhost/` and `https://api.localhost/health` both
+returning `200` through nginx, and re-confirming both stay `200` after
+force-recreating `api`+`web` without touching `nginx` (the redeploy scenario).
+The Dockerfiles had never been build-tested before this.

@@ -17,4 +17,4 @@ WORKDIR /repo/apps/web
 COPY --from=build /repo/node_modules /repo/node_modules
 COPY --from=build /repo/apps/web ./
 EXPOSE 3000
-CMD ["pnpm", "start"]
+CMD ["node_modules/.bin/next", "start"]

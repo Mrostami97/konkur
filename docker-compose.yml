@@ -6,10 +6,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: konkur
-      POSTGRES_PASSWORD: konkur
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-konkur}
       POSTGRES_DB: konkurcom
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -21,8 +19,6 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -37,10 +33,7 @@ services:
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: konkur
-      MINIO_ROOT_PASSWORD: konkur123
-    ports:
-      - "9000:9000"
-      - "9001:9001"
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-konkur123}
     volumes:
       - minio_data:/data
     healthcheck:
@@ -49,7 +42,73 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://konkur:${POSTGRES_PASSWORD:-konkur}@postgres:5432/konkurcom?schema=public
+      PORT: 3001
+      FRONTEND_URL: https://${WEB_DOMAIN:-localhost}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-720}
+      OTP_TTL_MINUTES: ${OTP_TTL_MINUTES:-5}
+      OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS:-5}
+      S3_ENDPOINT: minio
+      S3_PORT: 9000
+      S3_USE_SSL: "false"
+      S3_ACCESS_KEY: konkur
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-konkur123}
+      S3_BUCKET: konkurcom-media
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: https://${API_DOMAIN:-api.localhost}
+      INTERNAL_API_URL: http://api:3001
+
+  certs-init:
+    image: alpine:3.20
+    volumes:
+      - nginx_certs:/certs
+      - ./ops/certs-init.sh:/certs-init.sh:ro
+    environment:
+      WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
+      API_DOMAIN: ${API_DOMAIN:-api.localhost}
+    command: sh -c "apk add --no-cache openssl >/dev/null && sh /certs-init.sh"
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+      api:
+        condition: service_started
+      web:
+        condition: service_started
+    environment:
+      WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
+      API_DOMAIN: ${API_DOMAIN:-api.localhost}
+    volumes:
+      - ./ops/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - nginx_certs:/etc/nginx/certs:ro
+    ports:
+      - "80:80"
+      - "443:443"
+
 volumes:
   postgres_data:
   redis_data:
   minio_data:
+  nginx_certs:
