@@ -27,28 +27,48 @@ interface Entitlement {
   startAt: string;
 }
 
+interface Mastery {
+  topicCode: string;
+  subjectCode: string;
+  masteryScore: number;
+  confidence: string;
+}
+
+interface PlanRevision {
+  id: string;
+  reasonCode: string;
+  summary: string;
+  createdAt: string;
+}
+
 export default function AccountPage() {
   const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [entitlements, setEntitlements] = useState<Entitlement[]>([]);
+  const [mastery, setMastery] = useState<Mastery[]>([]);
+  const [revisions, setRevisions] = useState<PlanRevision[]>([]);
   const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
 
   useEffect(() => {
     (async () => {
       try {
-        const [meRes, profileRes, enrollmentsRes, entitlementsRes] = await Promise.all([
+        const [meRes, profileRes, enrollmentsRes, entitlementsRes, masteryRes, revisionsRes] = await Promise.all([
           apiFetch<Me>("/auth/me"),
           apiFetch<Profile>("/me/profile"),
           apiFetch<Enrollment[]>("/me/enrollments"),
           apiFetch<Entitlement[]>("/me/entitlements"),
+          apiFetch<Mastery[]>("/me/mastery").catch(() => []),
+          apiFetch<PlanRevision[]>("/me/plan/revisions").catch(() => []),
         ]);
         setMe(meRes);
         setProfile(profileRes);
         setEnrollments(enrollmentsRes);
         setEntitlements(entitlementsRes);
+        setMastery(masteryRes);
+        setRevisions(revisionsRes);
       } catch (err) {
         if (err instanceof ApiError && err.status === 401) {
           router.push("/login");
@@ -154,6 +174,32 @@ export default function AccountPage() {
           {entitlements.map((e) => (
             <li key={e.id}>
               {e.product.title} ({e.grantedVia})
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h2>نقشه تسلط</h2>
+      {mastery.length === 0 ? (
+        <p>هنوز شواهدی برای محاسبه تسلط شما وجود ندارد؛ در آزمون‌ها شرکت کنید.</p>
+      ) : (
+        <ul>
+          {mastery.map((m) => (
+            <li key={m.topicCode}>
+              {m.subjectCode} / {m.topicCode} — تسلط: {(m.masteryScore * 100).toFixed(0)}٪ (اطمینان: {m.confidence})
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h2>تاریخچه تغییر برنامه</h2>
+      {revisions.length === 0 ? (
+        <p>هنوز برنامه‌ای ساخته نشده است.</p>
+      ) : (
+        <ul>
+          {revisions.map((r) => (
+            <li key={r.id}>
+              [{r.reasonCode}] {r.summary} — {new Date(r.createdAt).toLocaleDateString("fa-IR")}
             </li>
           ))}
         </ul>

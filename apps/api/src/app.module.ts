@@ -10,6 +10,7 @@ import { IngestionModule } from "./modules/ingestion/ingestion.module";
 import { TaxonomyModule } from "./modules/taxonomy/taxonomy.module";
 import { QuestionBankModule } from "./modules/question-bank/question-bank.module";
 import { AssessmentModule } from "./modules/assessment/assessment.module";
+import { PlanningModule } from "./modules/planning/planning.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AssessmentModule } from "./modules/assessment/assessment.module";
     TaxonomyModule,
     QuestionBankModule,
     AssessmentModule,
+    PlanningModule,
   ],
 })
 export class AppModule {}

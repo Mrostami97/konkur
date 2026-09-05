@@ -31,6 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           <nav style={{ display: "flex", gap: "1rem" }}>
             <Link href="/">خانه</Link>
+            <Link href="/today">امروز</Link>
             <Link href="/courses">دوره‌ها</Link>
             <Link href="/questions">بانک سؤال</Link>
             <Link href="/exams">آزمون‌ها</Link>

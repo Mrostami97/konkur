@@ -32,6 +32,9 @@ model User {
   orders      Order[]
   entitlements Entitlement[] @relation("EntitlementUser")
   attempts    Attempt[]
+  goal        Goal?
+  studySessions StudySession[]
+  masteryStates MasteryState[]
 
   @@map("users")
 }
@@ -678,6 +681,123 @@ model Score {
 
 // Transactional Outbox (doc §5.1): domain changes and their events are written
 // in the same DB transaction. No consumer exists yet in Phase 0 -- later phases
+// ---------------------------------------------------------------------------
+// Planning (doc §5.2/§6.1, phase 5): consumes Mastery, produces activity. One
+// active Goal per user for now (a student changes their goal in place rather
+// than juggling several); Plan/Task/StudySession are Planning's own; Mastery
+// belongs to Analytics per doc's module table, but this is the only slice of
+// Analytics phase 5 needs (Benchmark/Prediction are Phase 6's rank engine).
+// ---------------------------------------------------------------------------
+model Goal {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  degree         Degree
+  field          String
+  targetExamDate DateTime?
+  weeklyHours    Int
+  plans          Plan[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("goals")
+}
+
+enum PlanStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model Plan {
+  id        String         @id @default(uuid())
+  goalId    String
+  goal      Goal           @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  userId    String
+  status    PlanStatus     @default(ACTIVE)
+  version   Int            @default(1)
+  tasks     Task[]
+  revisions PlanRevision[]
+  createdAt DateTime       @default(now())
+
+  @@index([userId])
+  @@index([userId, status])
+  @@map("plans")
+}
+
+enum TaskStatus {
+  PENDING
+  DONE
+  SKIPPED
+}
+
+model Task {
+  id               String     @id @default(uuid())
+  planId           String
+  plan             Plan       @relation(fields: [planId], references: [id], onDelete: Cascade)
+  subjectCode      String
+  topicCode        String?
+  title            String
+  estimatedMinutes Int
+  scheduledFor     DateTime
+  priority         Int
+  reasonCode       String
+  status           TaskStatus @default(PENDING)
+  completedAt      DateTime?
+  createdAt        DateTime   @default(now())
+
+  @@index([planId])
+  @@index([planId, scheduledFor])
+  @@map("tasks")
+}
+
+// Every (re)plan action is recorded here -- doc §10.2 Phase 5 DoD:
+// "reason_code، تاریخچه تغییر" (reason_code, change history).
+model PlanRevision {
+  id         String   @id @default(uuid())
+  planId     String
+  plan       Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  reasonCode String
+  summary    String
+  createdAt  DateTime @default(now())
+
+  @@index([planId])
+  @@map("plan_revisions")
+}
+
+model StudySession {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectCode String
+  topicCode   String?
+  minutes     Int
+  taskId      String?
+  loggedAt    DateTime @default(now())
+
+  @@index([userId])
+  @@map("study_sessions")
+}
+
+// Deterministic, versioned, rule-based -- doc §7: "وزن‌دهی صحت، سختی، تازگی و
+// تعداد شواهد با فرمول ثابت" (weight correctness, difficulty, recency, and
+// evidence count with a fixed formula). Never a black-box/ML estimate.
+model MasteryState {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectCode   String
+  topicCode     String
+  masteryScore  Float
+  confidence    String
+  evidenceCount Int
+  ruleVersion   String
+  computedAt    DateTime @default(now())
+
+  @@unique([userId, topicCode])
+  @@index([userId])
+  @@map("mastery_states")
+}
+
 // (Planning/CRM/Notification) add a poller/dispatcher that reads unpublished rows.
 model OutboxEvent {
   id          String    @id @default(uuid())

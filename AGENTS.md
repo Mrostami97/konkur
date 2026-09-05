@@ -84,10 +84,14 @@ endpoint so image/chart blocks actually resolve to something. Phase 4 added
 **Assessment** (Exam/ExamForm/ExamItem/Attempt/Answer/Score) -- exam builder
 (STATIC hand-curated form, or DYNAMIC random draw from a subject), timed
 attempts with autosave/resume, a concurrency-safe submit, and simplified
-psychometrics. Planning, Analytics, CRM, Notification still do not exist —
-added only when a later phase has real logic to put in them. Do not
-pre-create empty module shells "for structure"; that is scope creep the docx
-explicitly warns against (§11, "دامنه بیش‌ازحد").
+psychometrics. Phase 5 added **Planning** (Goal/Plan/Task/PlanRevision/
+StudySession) and the Mastery slice of **Analytics** (MasteryState) --
+doc §6.1 assigns Mastery to Analytics, not Planning, but Phase 5 needs it and
+full Analytics (Benchmark/Prediction, for rank estimation) is Phase 6's job.
+CRM, Notification still do not exist — added only when a later phase has
+real logic to put in them. Do not pre-create empty module shells "for
+structure"; that is scope creep the docx explicitly warns against (§11,
+"دامنه بیش‌ازحد").
 
 ## Phase table (docx §10.2) — what's done, what's next
 
@@ -97,8 +101,8 @@ explicitly warns against (§11, "دامنه بیش‌ازحد").
 | 1 | Usable mother site (portal, accounts, academy, commerce, admin) | **Done** |
 | 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | **Done** |
 | 3 | Content & question bank | **Done** |
-| 4 | Assessment engine | **Done — this repo state** |
-| 5 | Study OS | Not started |
+| 4 | Assessment engine | **Done** |
+| 5 | Study OS | **Done — this repo state** |
 | 6 | Rank & admissions engine | Not started |
 | 7 | Growth & scale | Not started |
 
@@ -252,3 +256,32 @@ Phase 4:
 - The exam-taking UI has no offline/reconnect handling beyond what autosave
   + resume already provide (every answer PUT is its own request; there's no
   local-storage fallback if the network drops mid-exam).
+
+Phase 5:
+
+- Mastery is computed from Assessment `Answer` correctness only (weighted by
+  a 30-day recency half-life) -- it does **not** weight by item difficulty,
+  even though doc §7 names difficulty as one of the four inputs. A real
+  difficulty weight would need a global per-question difficulty lookup
+  (essentially Phase 4's psychometrics, computed continuously) that isn't
+  wired between Assessment and Planning yet. `StudySession` logs are tracked
+  for their own sake (manual time logging, task-completion records) but do
+  **not** feed the mastery formula's evidence count -- only graded answers
+  do, to keep the correctness signal unambiguous.
+- Cold start gap: a user with zero graded answers has no `MasteryState` rows
+  at all, so `buildTasksForNewPlan` generates an **empty** task list (no
+  fallback "explore the question bank" tasks). `replan()` still succeeds in
+  this case; the plan just starts with nothing scheduled until the student
+  takes an exam.
+- One `Goal` per user (upsert in place) -- no history of past goals, no
+  support for juggling multiple concurrent goals (e.g., ارشد this term, دکتری
+  later).
+- `rescheduleOverdueTasks` (the `FALLING_BEHIND` path) always moves overdue
+  tasks to *today*, never redistributes them across the next few days --
+  a student who falls behind by a week gets everything dumped on one day
+  rather than smoothed out.
+- Task generation always creates exactly `PLAN_HORIZON_DAYS` (7) days of
+  tasks up front, round-robining the weak-topic list; it doesn't check
+  Entitlement (doc §7 names "دسترسی" -- access -- as a Decision Table input)
+  before assigning a task, so a task can reference course/topic content the
+  student hasn't actually purchased access to.
