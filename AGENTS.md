@@ -80,11 +80,14 @@ ContentVersion) and extended Content with the canonical `Question` and
 **Taxonomy** (Subject/Topic) and a **QuestionBank** sub-resource (public
 browse/filter/detail, direct single-item authoring reusing the same
 Stage→Review→Publish path as bulk ZIP import), plus a `/media/:checksum`
-endpoint so image/chart blocks actually resolve to something. Assessment,
-Planning, Analytics, CRM, Notification still do not exist — added only when a
-later phase has real logic to put in them. Do not pre-create empty module
-shells "for structure"; that is scope creep the docx explicitly warns against
-(§11, "دامنه بیش‌ازحد").
+endpoint so image/chart blocks actually resolve to something. Phase 4 added
+**Assessment** (Exam/ExamForm/ExamItem/Attempt/Answer/Score) -- exam builder
+(STATIC hand-curated form, or DYNAMIC random draw from a subject), timed
+attempts with autosave/resume, a concurrency-safe submit, and simplified
+psychometrics. Planning, Analytics, CRM, Notification still do not exist —
+added only when a later phase has real logic to put in them. Do not
+pre-create empty module shells "for structure"; that is scope creep the docx
+explicitly warns against (§11, "دامنه بیش‌ازحد").
 
 ## Phase table (docx §10.2) — what's done, what's next
 
@@ -93,8 +96,8 @@ shells "for structure"; that is scope creep the docx explicitly warns against
 | 0 | Contracts & infrastructure | **Done** |
 | 1 | Usable mother site (portal, accounts, academy, commerce, admin) | **Done** |
 | 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | **Done** |
-| 3 | Content & question bank | **Done — this repo state** |
-| 4 | Assessment engine | Not started |
+| 3 | Content & question bank | **Done** |
+| 4 | Assessment engine | **Done — this repo state** |
 | 5 | Study OS | Not started |
 | 6 | Rank & admissions engine | Not started |
 | 7 | Growth & scale | Not started |
@@ -218,3 +221,34 @@ Phase 3:
   server/client-safe rendering path, not a raw passthrough of un-sanitized
   user HTML) — only trusted internal roles (Author/Reviewer/Admin) or the
   ingestion pipeline ever produce the `latex` string being rendered.
+
+Phase 4:
+
+- DYNAMIC exams draw a fresh, randomly-selected `ExamForm` **per attempt**
+  (not one shared adaptive pool) — simpler to reason about and still
+  meaningfully "dynamic," but it means item-level psychometrics for a DYNAMIC
+  exam mix questions across many different forms; that's fine for the
+  difficulty/discrimination stats built here (grouped by `questionId`, not by
+  form), but there's no per-form comparison.
+- No question-level time limit or per-item navigation lock — a student can
+  freely revisit any question in an attempt until the whole exam's deadline
+  or submission. Doc's phase-4 DoD doesn't ask for per-item timing, only
+  exam-level resume/timer.
+- Auto-expiry is **lazy**: an attempt only flips `IN_PROGRESS` → `EXPIRED`
+  (and gets scored) the next time something touches it (`GET /attempts/:id`
+  or a submit call) — there's no background cron sweeping expired attempts
+  the moment their deadline passes. Fine for correctness (the student's own
+  client always re-checks via GET before the timer even reaches zero), not
+  yet fine if you need an admin-side "list all expired-but-unscored attempts
+  right now" view.
+- Psychometrics' `discrimination` is a simplified separation index (average
+  raw score of those who got the item right minus those who got it wrong),
+  not a true point-biserial correlation coefficient — computed on demand (no
+  materialized/stored view), same "start simple" posture as Phase 3's search.
+- No question-shuffling or option-shuffling per attempt — two students
+  taking the same STATIC exam see options in the same 1-2-3-4 order. Not
+  asked for by the DoD, but a common anti-cheating measure a later phase
+  might want.
+- The exam-taking UI has no offline/reconnect handling beyond what autosave
+  + resume already provide (every answer PUT is its own request; there's no
+  local-storage fallback if the network drops mid-exam).

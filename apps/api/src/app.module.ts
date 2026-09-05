@@ -9,6 +9,7 @@ import { CommerceModule } from "./modules/commerce/commerce.module";
 import { IngestionModule } from "./modules/ingestion/ingestion.module";
 import { TaxonomyModule } from "./modules/taxonomy/taxonomy.module";
 import { QuestionBankModule } from "./modules/question-bank/question-bank.module";
+import { AssessmentModule } from "./modules/assessment/assessment.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { QuestionBankModule } from "./modules/question-bank/question-bank.module
     IngestionModule,
     TaxonomyModule,
     QuestionBankModule,
+    AssessmentModule,
   ],
 })
 export class AppModule {}

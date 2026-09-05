@@ -31,6 +31,7 @@ model User {
   enrollments Enrollment[]
   orders      Order[]
   entitlements Entitlement[] @relation("EntitlementUser")
+  attempts    Attempt[]
 
   @@map("users")
 }
@@ -399,6 +400,8 @@ model Question {
   source        Json?
   provenance    Json
   version       Int      @default(1)
+  examItems     ExamItem[]
+  answers       Answer[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -554,6 +557,123 @@ model Topic {
 
   @@index([subjectId])
   @@map("topics")
+}
+
+// ---------------------------------------------------------------------------
+// Assessment (doc §5.2/§6.1, phase 4): the only place scores/answers are
+// authoritative. Exam is the blueprint; ExamForm is one concrete, ordered set
+// of questions (STATIC exams reuse one shared form; DYNAMIC exams get a
+// fresh, randomly-drawn form per attempt -- simpler to reason about than a
+// shared adaptive pool, and still meaningfully "dynamic").
+// ---------------------------------------------------------------------------
+enum ExamMode {
+  STATIC
+  DYNAMIC
+}
+
+model Exam {
+  id              String     @id @default(uuid())
+  slug            String     @unique
+  title           String
+  description     String
+  mode            ExamMode
+  durationMinutes Int
+  // DYNAMIC-mode selection rule: draw questionCount random published
+  // questions matching subjectCode. Not used for STATIC exams.
+  subjectCode     String?
+  questionCount   Int?
+  isPublished     Boolean    @default(false)
+  createdBy       String?
+  forms           ExamForm[]
+  attempts        Attempt[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@map("exams")
+}
+
+model ExamForm {
+  id        String     @id @default(uuid())
+  examId    String
+  exam      Exam       @relation(fields: [examId], references: [id], onDelete: Cascade)
+  items     ExamItem[]
+  attempts  Attempt[]
+  createdAt DateTime   @default(now())
+
+  @@index([examId])
+  @@map("exam_forms")
+}
+
+model ExamItem {
+  id         String   @id @default(uuid())
+  examFormId String
+  examForm   ExamForm @relation(fields: [examFormId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  order      Int
+  points     Float    @default(1)
+
+  @@unique([examFormId, questionId])
+  @@index([examFormId])
+  @@map("exam_items")
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  EXPIRED
+}
+
+model Attempt {
+  id          String        @id @default(uuid())
+  examId      String
+  exam        Exam          @relation(fields: [examId], references: [id])
+  examFormId  String
+  examForm    ExamForm      @relation(fields: [examFormId], references: [id])
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      AttemptStatus @default(IN_PROGRESS)
+  startedAt   DateTime      @default(now())
+  deadlineAt  DateTime
+  submittedAt DateTime?
+  answers     Answer[]
+  score       Score?
+  createdAt   DateTime      @default(now())
+
+  @@index([userId])
+  @@index([examId])
+  @@map("attempts")
+}
+
+model Answer {
+  id             String   @id @default(uuid())
+  attemptId      String
+  attempt        Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId     String
+  question       Question @relation(fields: [questionId], references: [id])
+  selectedOption Int?
+  answeredAt     DateTime @default(now())
+
+  @@unique([attemptId, questionId])
+  @@map("answers")
+}
+
+// scoreVersion makes every score reproducible/auditable even if the scoring
+// rule changes later (doc's "estimator_version"-style discipline, applied
+// here to grading instead of rank estimation).
+model Score {
+  id              String   @id @default(uuid())
+  attemptId       String   @unique
+  attempt         Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  scoreVersion    String
+  correctCount    Int
+  wrongCount      Int
+  unansweredCount Int
+  rawScore        Float
+  percentCorrect  Float
+  computedAt      DateTime @default(now())
+
+  @@map("scores")
 }
 
 // Transactional Outbox (doc §5.1): domain changes and their events are written

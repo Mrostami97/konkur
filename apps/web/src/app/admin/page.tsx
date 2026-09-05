@@ -25,6 +25,9 @@ export default function AdminHomePage() {
           <li>
             <Link href="/admin/questions">افزودن سؤال</Link>
           </li>
+          <li>
+            <Link href="/admin/exams">مدیریت آزمون‌ها</Link>
+          </li>
         </ul>
       </main>
     </AdminGuard>

@@ -33,6 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Link href="/">خانه</Link>
             <Link href="/courses">دوره‌ها</Link>
             <Link href="/questions">بانک سؤال</Link>
+            <Link href="/exams">آزمون‌ها</Link>
           </nav>
           <AuthStatus />
         </header>
