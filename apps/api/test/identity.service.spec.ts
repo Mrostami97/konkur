@@ -4,6 +4,7 @@ import { IdentityService } from "../src/modules/identity/identity.service";
 import { AuditService } from "../src/modules/audit/audit.service";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { OtpProvider } from "../src/modules/identity/otp-provider";
+import { hashPassword } from "../src/modules/identity/password-hasher";
 
 function buildFakePrisma() {
   const users = new Map<string, any>();
@@ -145,5 +146,26 @@ describe("IdentityService", () => {
     expect(await service.validateSession(token)).not.toBeNull();
     await service.logout(token);
     expect(await service.validateSession(token)).toBeNull();
+  });
+
+  it("verifies a password and issues a session alongside OTP", async () => {
+    await service.requestOtp(phone);
+    const user = [...prisma._debug.users.values()][0];
+    user.passwordHash = await hashPassword("123");
+
+    const { user: sessionUser } = await service.loginWithPassword(phone, "123", {});
+    expect(sessionUser.phone).toBe(phone);
+    expect(prisma._debug.sessions).toHaveLength(1);
+    expect((audit.log as jest.Mock).mock.calls.at(-1)?.[0].metadata).toEqual({ method: "password" });
+  });
+
+  it("rejects an invalid password", async () => {
+    await service.requestOtp(phone);
+    const user = [...prisma._debug.users.values()][0];
+    user.passwordHash = await hashPassword("123");
+
+    await expect(service.loginWithPassword(phone, "wrong", {})).rejects.toBeInstanceOf(
+      UnauthorizedException,
+    );
   });
 });

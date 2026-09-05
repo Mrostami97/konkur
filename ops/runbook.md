@@ -23,15 +23,21 @@ by default (`curl -k` to bypass locally).
 # apply pending migrations
 docker compose exec api pnpm prisma migrate deploy
 
+# roll back only the latest migration (take a backup first)
+docker compose exec api pnpm run migrate:down -- 20260906120000_password_auth
+
 # roll everything back and re-apply from scratch (dev/staging only — destructive)
 docker compose exec api pnpm prisma migrate reset --force
 ```
 
 `prisma migrate reset` drops the schema, re-runs every migration from zero, then
-runs the seed script. This is the "down" path validated for Phase 0: there is
-no partial per-migration down script (Prisma migrations are forward-only by
-design), so rollback of a bad migration in a real environment means restoring
-the pre-migration backup (see below), not a scripted `down`.
+runs the seed script. New migrations are additive and carry a reviewed
+`down.sql` alongside `migration.sql` (for example,
+`apps/api/prisma/migrations/20260906120000_password_auth/`). Prisma itself only
+executes the up file; the API's `migrate:down` command executes the checked-in
+down file only for the latest applied migration and removes its ledger row.
+Full reset or restoring the pre-migration backup remains the safer production
+rollback path.
 
 ## Backup / restore
 

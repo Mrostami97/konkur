@@ -21,6 +21,9 @@ enum Role {
 model User {
   id          String       @id @default(uuid())
   phone       String       @unique
+  // Nullable so OTP-only users continue to work. Password authentication is
+  // enabled for users that have a password credential provisioned.
+  passwordHash String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   roles       UserRole[]

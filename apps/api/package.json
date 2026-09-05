@@ -11,6 +11,7 @@
     "test": "jest --config jest.config.cjs",
     "test:e2e": "jest --config jest.e2e.config.cjs",
     "seed": "ts-node -r tsconfig-paths/register src/seed.ts",
+    "migrate:down": "ts-node -r tsconfig-paths/register src/migrate-down.ts",
     "prisma": "prisma"
   },
   "dependencies": {

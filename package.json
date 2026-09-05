@@ -13,6 +13,7 @@
     "build": "pnpm -r --if-present run build",
     "migrate:deploy": "pnpm --filter api prisma migrate deploy",
     "migrate:dev": "pnpm --filter api prisma migrate dev",
+    "migrate:down": "pnpm --filter api run migrate:down",
     "migrate:reset": "pnpm --filter api prisma migrate reset --force",
     "seed": "pnpm --filter api run seed",
     "dev:api": "pnpm --filter api run start:dev",

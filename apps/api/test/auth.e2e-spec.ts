@@ -6,7 +6,7 @@ import request from "supertest";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
-import { seed, SEED_ADMIN_PHONE } from "../src/seed";
+import { seed, SEED_ADMIN_PASSWORD, SEED_ADMIN_PHONE } from "../src/seed";
 
 class CapturingOtpProvider implements OtpProvider {
   public sent: { phone: string; code: string }[] = [];
@@ -115,5 +115,23 @@ describe("Auth + RBAC (e2e)", () => {
       .expect(200);
     expect(Array.isArray(res.body.users)).toBe(true);
     expect(res.body.users.some((u: any) => u.phone === SEED_ADMIN_PHONE)).toBe(true);
+  });
+
+  it("logs the seeded administrator in with the password method", async () => {
+    const res = await request(app.getHttpServer())
+      .post("/auth/password/login")
+      .send({ phone: SEED_ADMIN_PHONE, password: SEED_ADMIN_PASSWORD })
+      .expect(200);
+
+    expect(res.headers["set-cookie"]).toBeDefined();
+    expect(res.body.user.phone).toBe(SEED_ADMIN_PHONE);
+    expect(res.body.user.roles).toContain("ADMIN");
+  });
+
+  it("rejects a wrong password without issuing a session", async () => {
+    await request(app.getHttpServer())
+      .post("/auth/password/login")
+      .send({ phone: SEED_ADMIN_PHONE, password: "not-the-seed-password" })
+      .expect(401);
   });
 });

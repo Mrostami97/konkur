@@ -4,6 +4,7 @@ import { createHash, randomBytes, randomInt } from "crypto";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { OTP_PROVIDER, OtpProvider } from "./otp-provider";
+import { verifyPassword } from "./password-hasher";
 
 const OTP_TTL_MINUTES = Number(process.env.OTP_TTL_MINUTES ?? 5);
 const OTP_MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS ?? 5);
@@ -108,6 +109,30 @@ export class IdentityService {
       data: { consumedAt: new Date() },
     });
 
+    return this.issueSession(user, ctx, "otp");
+  }
+
+  async loginWithPassword(
+    phone: string,
+    password: string,
+    ctx: AuthContext,
+  ): Promise<{ token: string; user: SessionUser }> {
+    const user = await this.prisma.user.findUnique({
+      where: { phone },
+      include: { roles: true },
+    });
+    if (!user?.passwordHash || !(await verifyPassword(password, user.passwordHash))) {
+      throw new UnauthorizedException("invalid phone or password");
+    }
+
+    return this.issueSession(user, ctx, "password");
+  }
+
+  private async issueSession(
+    user: { id: string; phone: string; roles: { role: Role }[] },
+    ctx: AuthContext,
+    method: "otp" | "password",
+  ): Promise<{ token: string; user: SessionUser }> {
     const rawToken = randomBytes(32).toString("hex");
     await this.prisma.session.create({
       data: {
@@ -124,6 +149,7 @@ export class IdentityService {
       action: "auth.login",
       targetType: "User",
       targetId: user.id,
+      metadata: { method },
     });
 
     return {

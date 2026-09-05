@@ -12,6 +12,7 @@ import { Request, Response } from "express";
 import { Throttle } from "@nestjs/throttler";
 import { RequestOtpDto } from "./dto/request-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
+import { PasswordLoginDto } from "./dto/password-login.dto";
 import { IdentityService } from "./identity.service";
 import { SessionAuthGuard, RequestWithUser } from "./guards/session-auth.guard";
 
@@ -43,6 +44,31 @@ export class IdentityController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { token, user } = await this.identity.verifyOtp(dto.phone, dto.code, {
+      userAgent: req.headers["user-agent"],
+      ip: req.ip,
+    });
+    res.cookie(SESSION_COOKIE, token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: SESSION_TTL_HOURS * 3_600_000,
+    });
+    return { user };
+  }
+
+  /**
+   * Password login is deliberately a separate method from OTP so existing
+   * passwordless users can keep using OTP and additional methods can be added
+   * without changing the OTP contract.
+   */
+  @Post("password/login")
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  async loginWithPassword(
+    @Body() dto: PasswordLoginDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { token, user } = await this.identity.loginWithPassword(dto.phone, dto.password, {
       userAgent: req.headers["user-agent"],
       ip: req.ip,
     });

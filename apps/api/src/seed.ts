@@ -1,8 +1,10 @@
 import { PrismaClient, ReviewStatus, Role } from "@prisma/client";
+import { hashPassword } from "./modules/identity/password-hasher";
 
 const prisma = new PrismaClient();
 
 export const SEED_ADMIN_PHONE = "+989120000001";
+export const SEED_ADMIN_PASSWORD = "123";
 export const SEED_STUDENT_PHONE = "+989120000002";
 export const SEED_COURSE_SLUG = "ce-algorithms-bootcamp";
 export const SEED_PRODUCT_SLUG = "ce-algorithms-bootcamp";
@@ -99,6 +101,14 @@ async function seedCourseAndProduct(authorId: string) {
 
 export async function seed() {
   const admin = await upsertUserWithRole(SEED_ADMIN_PHONE, Role.ADMIN);
+  // Keep the fixture repeatable without overwriting an administrator's
+  // deliberately changed password on subsequent seed runs.
+  if (!admin.passwordHash) {
+    await prisma.user.update({
+      where: { id: admin.id },
+      data: { passwordHash: await hashPassword(SEED_ADMIN_PASSWORD) },
+    });
+  }
   await upsertUserWithRole(SEED_STUDENT_PHONE, Role.STUDENT);
   await seedCourseAndProduct(admin.id);
 }

@@ -6,9 +6,11 @@ import { apiFetch } from "../../lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [method, setMethod] = useState<"otp" | "password">("otp");
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -40,10 +42,59 @@ export default function LoginPage() {
     }
   }
 
+  async function loginWithPassword(e: FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      await apiFetch("/auth/password/login", { method: "POST", body: { phone, password } });
+      router.push("/account");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ورود با رمز عبور ناموفق بود");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main style={{ padding: "2rem", maxWidth: 420, margin: "0 auto" }}>
       <h1>ورود</h1>
-      {step === "phone" ? (
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
+        <button type="button" onClick={() => { setMethod("otp"); setStep("phone"); }} disabled={method === "otp"}>
+          ورود با کد یک‌بارمصرف
+        </button>
+        <button type="button" onClick={() => setMethod("password")} disabled={method === "password"}>
+          ورود با رمز عبور
+        </button>
+      </div>
+      {method === "password" ? (
+        <form onSubmit={loginWithPassword}>
+          <label>
+            شماره موبایل
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+989120000000"
+              style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}
+            />
+          </label>
+          <label style={{ display: "block", marginTop: "1rem" }}>
+            رمز عبور
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}
+            />
+          </label>
+          <button type="submit" disabled={loading} style={{ marginTop: "1rem" }}>
+            ورود
+          </button>
+        </form>
+      ) : step === "phone" ? (
         <form onSubmit={requestCode}>
           <label>
             شماره موبایل
