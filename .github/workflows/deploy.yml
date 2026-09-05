@@ -40,22 +40,60 @@ jobs:
           password: ${{ secrets.SSH_PASS }}
           script: |
             set -euo pipefail
-            cd "${{ secrets.DEPLOY_PATH }}"
-            git fetch origin main
-            git reset --hard origin/main
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+
+            echo "== Checking prerequisites =="
+            # Docker itself is the one true hard prerequisite -- everything
+            # else in this script (including git) runs inside a container
+            # precisely so the server needs nothing else preinstalled. If
+            # Docker is missing there is no way to auto-provision it safely
+            # (unknown distro/package manager, unknown sudo rights), so fail
+            # loudly with a clear message instead of a cryptic later error.
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "ERROR: docker is not installed on this server. Install Docker Engine + the compose plugin once, then re-run deploy. See ops/runbook.md." >&2
+              exit 1
+            fi
+            if ! docker compose version >/dev/null 2>&1; then
+              echo "ERROR: the 'docker compose' plugin is not available on this server (only legacy docker-compose, or neither). Install the Compose plugin, then re-run deploy." >&2
+              exit 1
+            fi
+
+            if [ ! -d "$DEPLOY_PATH/.git" ]; then
+              echo "ERROR: $DEPLOY_PATH is not a git checkout. This repo is private, so the first checkout has to be created manually once with a working credential (see ops/runbook.md) -- auto-provisioning can't safely invent one." >&2
+              exit 1
+            fi
+
+            cd "$DEPLOY_PATH"
+
+            echo "== Updating checkout =="
+            # git is run inside a container, never assumed to be installed on
+            # the host -- this is what broke last time ("git: command not
+            # found"). Reuses the existing checkout's already-configured
+            # remote/credentials, so no new auth is needed.
+            docker run --rm -v "$PWD:/repo" -w /repo debian:12-slim bash -c "
+              set -e
+              apt-get update -qq && apt-get install -y -qq git ca-certificates >/dev/null
+              git config --global --add safe.directory /repo
+              git fetch origin main
+              git reset --hard origin/main
+            "
+
+            echo "== Building and starting services =="
             docker compose up -d --build
 
-            # Post-deploy smoke check: /healthz reports real connectivity to
-            # every dependency the API actually has (Postgres, MinIO/S3), not
-            # just "the process started". Read API_DOMAIN the same way
-            # docker-compose does (from .env in this directory, default
-            # api.localhost) and hit it through nginx by IP so no public DNS
-            # is required for the check itself.
+            echo "== Post-deploy health check =="
+            # /healthz reports real connectivity to every dependency the API
+            # actually has (Postgres, MinIO/S3), not just "the process
+            # started". Read API_DOMAIN the same way docker-compose does
+            # (from .env in this directory, default api.localhost) and hit it
+            # through nginx by IP via --resolve, so no public DNS is needed
+            # for the check itself. curl runs in a container too (the
+            # official curl project image), not assumed to be on the host.
             API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
             API_DOMAIN="${API_DOMAIN:-api.localhost}"
             RESPONSE=""
             for i in $(seq 1 30); do
-              RESPONSE="$(curl -sk --resolve "${API_DOMAIN}:443:127.0.0.1" "https://${API_DOMAIN}/healthz" || true)"
+              RESPONSE="$(docker run --rm --network host curlimages/curl:latest -sk --resolve "${API_DOMAIN}:443:127.0.0.1" "https://${API_DOMAIN}/healthz" || true)"
               if echo "$RESPONSE" | grep -q '"status":"ok"'; then
                 echo "Deploy healthy:"
                 echo "$RESPONSE"

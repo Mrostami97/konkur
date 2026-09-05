@@ -71,8 +71,8 @@ volume once: `docker compose down && docker volume rm konkurcom-360_nginx_certs`
 
 ## CD (SSH deploy)
 
-`.github/workflows/deploy.yml` runs on push to `main` after CI passes. It is a
-no-op until these GitHub Secrets exist on the repo:
+`.github/workflows/deploy.yml` runs after CI passes on `main`. It is a no-op
+until these GitHub Secrets exist on the repo:
 
 - `SSH_HOST`, `SSH_USER`, `SSH_KEY` — target server and private key (primary auth)
 - `SSH_PASS` — optional password fallback if the deploy user has no key configured on the server; not needed alongside a working `SSH_KEY`
@@ -81,9 +81,49 @@ no-op until these GitHub Secrets exist on the repo:
 See `README.md`'s secrets table.
 
 Until a real server exists, the job logs "deploy skipped: SSH_HOST not set" and
-exits 0 so it never blocks CI. When a server is ready: create the secrets,
-`git clone` the repo once at `DEPLOY_PATH` on that host with a checked-out
-deploy key, and push to `main`.
+exits 0 so it never blocks CI.
+
+**Server prerequisites — Docker is the only one you set up by hand.** Every
+deploy run re-checks and (where possible) auto-provisions everything else:
+
+- **Docker Engine + the Compose plugin** must already be installed on the
+  server (`docker` and `docker compose` both on `PATH`) — this is the one
+  thing that can't be auto-provisioned without knowing the server's distro
+  and sudo rights. If missing, the deploy fails immediately with a clear
+  message instead of a confusing error later.
+- **`git` does NOT need to be installed on the server.** This repo is
+  private, so the very first checkout at `DEPLOY_PATH` still has to be
+  created once by hand with a working credential (`git clone` over SSH with
+  a deploy key, or HTTPS with a token) — the deploy script refuses to guess
+  credentials for you and fails with a clear message if `$DEPLOY_PATH/.git`
+  doesn't exist yet. But from then on, every deploy runs `git fetch`/`git
+  reset --hard` **inside a throwaway `debian:12-slim` container** (which
+  installs `git` fresh each time), reusing that checkout's already-working
+  remote config. A server that never had `git` installed at all — the
+  failure mode this replaced ("git: command not found") — now just works.
+- The post-deploy `/healthz` smoke check (below) also runs `curl` in a
+  container (`curlimages/curl`), not on the host.
+
+So re-running deploy against a freshly reimaged server needs exactly two
+manual, one-time steps: install Docker, and `git clone` the repo once at
+`DEPLOY_PATH`. Everything else is handled automatically on every run.
+
+### Post-deploy health check
+
+After `docker compose up -d --build`, the deploy script polls the API's
+`GET /healthz` (through nginx, resolved by IP so no public DNS is needed) for
+up to 60s and fails the deploy job if it never reports `"status":"ok"`,
+printing the full report either way. `/healthz` checks real connectivity to
+Postgres and MinIO/S3 — not just "the process started" — so a deploy that
+"succeeds" but leaves the API unable to reach its database or object storage
+is caught immediately. See `apps/api/src/health/healthz.controller.ts`.
+
+### Images
+
+All infra images (`postgres`, `redis`, `nginx`, the `certs-init` helper, and
+the deploy script's own throwaway `git`/`curl` containers) are mainstream,
+Debian-based (glibc) images, not Alpine — chosen for broader compatibility
+over the smaller image size.
 
 ## Logs / errors
 

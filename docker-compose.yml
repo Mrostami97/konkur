@@ -2,7 +2,7 @@ name: konkurcom-360
 
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:16
     restart: unless-stopped
     environment:
       POSTGRES_USER: konkur
@@ -17,7 +17,7 @@ services:
       retries: 10
 
   redis:
-    image: redis:7-alpine
+    image: redis:7
     restart: unless-stopped
     volumes:
       - redis_data:/data
@@ -78,17 +78,17 @@ services:
       INTERNAL_API_URL: http://api:3001
 
   certs-init:
-    image: alpine:3.20
+    image: debian:12-slim
     volumes:
       - nginx_certs:/certs
       - ./ops/certs-init.sh:/certs-init.sh:ro
     environment:
       WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
       API_DOMAIN: ${API_DOMAIN:-api.localhost}
-    command: sh -c "apk add --no-cache openssl >/dev/null && sh /certs-init.sh"
+    command: sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null && sh /certs-init.sh"
 
   nginx:
-    image: nginx:1.27-alpine
+    image: nginx:1.27
     restart: unless-stopped
     depends_on:
       certs-init:
