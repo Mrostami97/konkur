@@ -43,6 +43,9 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm --filter @konkurcom/api exec prisma generate
 
+      - name: Build contracts package
+        run: pnpm --filter @konkurcom/contracts run build
+
       - name: Lint
         run: pnpm -w run lint
 
