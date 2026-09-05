@@ -57,80 +57,89 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 420, margin: "0 auto" }}>
-      <h1>ورود</h1>
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button type="button" onClick={() => { setMethod("otp"); setStep("phone"); }} disabled={method === "otp"}>
+    <main className="login-shell">
+      <section className="login-pitch">
+        <span className="eyebrow">ورود به مسیر شخصی تو</span>
+        <h1>آماده‌ای امروز کمی بهتر از دیروز باشی؟</h1>
+        <p>با ورود به حساب، برنامه روزانه، دوره‌ها، آزمون‌ها و گزارش پیشرفتت همیشه همراهت هستند.</p>
+        <ul className="login-points">
+          <li>برنامه و هدف‌های شخصی‌سازی‌شده</li>
+          <li>ثبت روند مطالعه و آزمون‌ها</li>
+          <li>تحلیل روشن برای تصمیم بهتر</li>
+        </ul>
+      </section>
+      <section className="login-card">
+        <h2>خوش آمدی 👋</h2>
+        <p>یکی از روش‌های ورود را انتخاب کن.</p>
+        <div className="method-switch">
+          <button className={method === "otp" ? "active" : ""} type="button" onClick={() => { setMethod("otp"); setStep("phone"); }}>
           ورود با کد یک‌بارمصرف
-        </button>
-        <button type="button" onClick={() => setMethod("password")} disabled={method === "password"}>
+          </button>
+          <button className={method === "password" ? "active" : ""} type="button" onClick={() => setMethod("password")}>
           ورود با رمز عبور
-        </button>
-      </div>
+          </button>
+        </div>
       {method === "password" ? (
         <form onSubmit={loginWithPassword}>
-          <label>
-            شماره موبایل
+          <div className="form-group"><label htmlFor="password-phone">شماره موبایل</label>
             <input
+              id="password-phone"
               type="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+989120000000"
-              style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}
             />
-          </label>
-          <label style={{ display: "block", marginTop: "1rem" }}>
-            رمز عبور
+          </div>
+          <div className="form-group"><label htmlFor="password">رمز عبور</label>
             <input
+              id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}
             />
-          </label>
-          <button type="submit" disabled={loading} style={{ marginTop: "1rem" }}>
+          </div>
+          <button className="button button-primary form-submit" type="submit" disabled={loading}>
             ورود
           </button>
         </form>
       ) : step === "phone" ? (
         <form onSubmit={requestCode}>
-          <label>
-            شماره موبایل
+          <div className="form-group"><label htmlFor="otp-phone">شماره موبایل</label>
             <input
+              id="otp-phone"
               type="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+989120000000"
-              style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}
             />
-          </label>
-          <button type="submit" disabled={loading} style={{ marginTop: "1rem" }}>
+          </div>
+          <button className="button button-primary form-submit" type="submit" disabled={loading}>
             دریافت کد
           </button>
         </form>
       ) : (
         <form onSubmit={verifyCode}>
-          <p>کد ۶ رقمی ارسال‌شده را وارد کنید (در محیط توسعه، در لاگ سرور API چاپ می‌شود).</p>
-          <label>
-            کد تأیید
+          <p className="form-hint">کد ۶ رقمی ارسال‌شده را وارد کنید (در محیط توسعه، در لاگ سرور API چاپ می‌شود).</p>
+          <div className="form-group"><label htmlFor="otp-code">کد تأیید</label>
             <input
+              id="otp-code"
               type="text"
               required
               value={code}
               onChange={(e) => setCode(e.target.value)}
               maxLength={6}
-              style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.3rem" }}
             />
-          </label>
-          <button type="submit" disabled={loading} style={{ marginTop: "1rem" }}>
+          </div>
+          <button className="button button-primary form-submit" type="submit" disabled={loading}>
             ورود
           </button>
         </form>
       )}
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+      {error && <p className="form-error">{error}</p>}
+      </section>
     </main>
   );
 }
