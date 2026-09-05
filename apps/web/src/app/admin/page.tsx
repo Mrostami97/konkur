@@ -28,6 +28,12 @@ export default function AdminHomePage() {
           <li>
             <Link href="/admin/exams">مدیریت آزمون‌ها</Link>
           </li>
+          <li>
+            <Link href="/admin/admissions">دانشگاه‌ها و گرایش‌ها</Link>
+          </li>
+          <li>
+            <Link href="/admin/analytics">بک‌تست تخمین رتبه</Link>
+          </li>
         </ul>
       </main>
     </AdminGuard>

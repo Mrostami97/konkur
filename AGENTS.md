@@ -88,9 +88,12 @@ psychometrics. Phase 5 added **Planning** (Goal/Plan/Task/PlanRevision/
 StudySession) and the Mastery slice of **Analytics** (MasteryState) --
 doc §6.1 assigns Mastery to Analytics, not Planning, but Phase 5 needs it and
 full Analytics (Benchmark/Prediction, for rank estimation) is Phase 6's job.
-CRM, Notification still do not exist — added only when a later phase has
-real logic to put in them. Do not pre-create empty module shells "for
-structure"; that is scope creep the docx explicitly warns against (§11,
+Phase 6 added that Benchmark/Prediction slice (`RankEstimate`,
+`BacktestReport` -- a k-NN estimator over real ingested `ReportCard` rows,
+never a bare number) and **Admissions** (University/Program/Capacity/
+ChoiceList). CRM, Notification still do not exist — added only when a later
+phase has real logic to put in them. Do not pre-create empty module shells
+"for structure"; that is scope creep the docx explicitly warns against (§11,
 "دامنه بیش‌ازحد").
 
 ## Phase table (docx §10.2) — what's done, what's next
@@ -102,8 +105,8 @@ structure"; that is scope creep the docx explicitly warns against (§11,
 | 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | **Done** |
 | 3 | Content & question bank | **Done** |
 | 4 | Assessment engine | **Done** |
-| 5 | Study OS | **Done — this repo state** |
-| 6 | Rank & admissions engine | Not started |
+| 5 | Study OS | **Done** |
+| 6 | Rank & admissions engine | **Done — this repo state** |
 | 7 | Growth & scale | Not started |
 
 ## Known simplifications (carry these into later phases' risk lists)
@@ -285,3 +288,34 @@ Phase 5:
   Entitlement (doc §7 names "دسترسی" -- access -- as a Decision Table input)
   before assigning a task, so a task can reference course/topic content the
   student hasn't actually purchased access to.
+
+Phase 6:
+
+- The rank estimator matches candidates by **exact** degree+field+quota only
+  (no fallback to a broader cohort when the exact match is too sparse) --
+  `estimateFromPool` throws rather than silently widening the search, which
+  is the honest choice but means a niche field/quota combination may never
+  clear `MIN_COMPARABLES` (5) until enough report cards exist for it.
+- Similarity is mean absolute percent-score difference over whatever
+  subjects both sides share (requiring >= 2 common subjects) -- no per-
+  subject weighting (e.g. weighting a student's weakest/most-decisive
+  subject more heavily), and no leverage of `MasteryState` from Phase 5 even
+  though both ultimately derive from the same kind of evidence.
+- `getAcceptanceChance` requires `Program.code` to exactly match the
+  `program_code` strings inside ingested `ReportCard.admissions` JSON --
+  there's no reconciliation/fuzzy-matching between the admin-curated
+  Program catalog and whatever codes an external JSON source actually used.
+- Backtest is leave-one-out **within the same exact cohort**, capped at
+  `BACKTEST_SAMPLE_LIMIT` (200) report cards for one run, and treats a
+  report card with too few remaining comparables as simply excluded from
+  the sample (not as a calibration failure) -- so `sampleSize` in the report
+  can be smaller than the number of report cards in the database.
+- No sensitivity weighting or acceptance-chance factor for `Capacity`
+  (year-over-year capacity changes) yet -- `Capacity` rows are stored
+  (admin-enterable) but neither the rank estimator nor the acceptance-chance
+  calculation reads them; a real "how does a capacity increase change my
+  odds" scenario isn't wired up.
+- `ChoiceList` has no notion of committing/submitting a final ranked
+  application (the real Konkur "انتخاب‌رشته" submission) -- it's a
+  comparison/ordering tool only, not an integration with the actual national
+  admissions system (out of scope for any phase in this spec).

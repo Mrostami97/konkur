@@ -11,6 +11,8 @@ import { TaxonomyModule } from "./modules/taxonomy/taxonomy.module";
 import { QuestionBankModule } from "./modules/question-bank/question-bank.module";
 import { AssessmentModule } from "./modules/assessment/assessment.module";
 import { PlanningModule } from "./modules/planning/planning.module";
+import { AnalyticsModule } from "./modules/analytics/analytics.module";
+import { AdmissionsModule } from "./modules/admissions/admissions.module";
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { PlanningModule } from "./modules/planning/planning.module";
     QuestionBankModule,
     AssessmentModule,
     PlanningModule,
+    AnalyticsModule,
+    AdmissionsModule,
   ],
 })
 export class AppModule {}

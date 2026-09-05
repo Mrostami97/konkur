@@ -35,6 +35,8 @@ model User {
   goal        Goal?
   studySessions StudySession[]
   masteryStates MasteryState[]
+  rankEstimates RankEstimate[]
+  choiceList  ChoiceList?
 
   @@map("users")
 }
@@ -809,4 +811,125 @@ model OutboxEvent {
   @@index([eventType])
   @@index([publishedAt])
   @@map("outbox_events")
+}
+
+// ---------------------------------------------------------------------------
+// Admissions (doc §2's module list): university/program/capacity catalog +
+// a student's ordered choice list. Depends on Analytics (below) to show an
+// acceptance chance per program; never the other way around.
+// ---------------------------------------------------------------------------
+enum TuitionType {
+  FREE
+  PAID
+}
+
+model University {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  title     String
+  city      String
+  programs  Program[]
+  createdAt DateTime  @default(now())
+
+  @@map("universities")
+}
+
+model Program {
+  id           String           @id @default(uuid())
+  universityId String
+  university   University       @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  code         String           @unique
+  title        String
+  degree       Degree
+  field        String
+  tuitionType  TuitionType
+  hasDormitory Boolean          @default(false)
+  capacities   Capacity[]
+  choiceItems  ChoiceListItem[]
+  createdAt    DateTime         @default(now())
+
+  @@index([degree, field])
+  @@map("programs")
+}
+
+model Capacity {
+  id        String  @id @default(uuid())
+  programId String
+  program   Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  examYear  Int
+  quota     String
+  capacity  Int
+
+  @@unique([programId, examYear, quota])
+  @@map("capacities")
+}
+
+model ChoiceList {
+  id        String           @id @default(uuid())
+  userId    String           @unique
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     ChoiceListItem[]
+  updatedAt DateTime         @updatedAt
+  createdAt DateTime         @default(now())
+
+  @@map("choice_lists")
+}
+
+model ChoiceListItem {
+  id           String     @id @default(uuid())
+  choiceListId String
+  choiceList   ChoiceList @relation(fields: [choiceListId], references: [id], onDelete: Cascade)
+  programId    String
+  program      Program    @relation(fields: [programId], references: [id])
+  priority     Int
+
+  @@unique([choiceListId, programId])
+  @@index([choiceListId])
+  @@map("choice_list_items")
+}
+
+// ---------------------------------------------------------------------------
+// Analytics -- Benchmark/Prediction slice (doc §6.1/§6.5/§7): a k-nearest-
+// neighbor rank estimate against real, approved ReportCard comparables.
+// Never a bare number -- always median + interval + confidence + comparables
+// + methodology + per-subject sensitivity, versioned and backtestable.
+// ---------------------------------------------------------------------------
+model RankEstimate {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  estimatorVersion String
+  degree           Degree
+  field            String
+  quota            String
+  subjectScores    Json
+  rankMedian       Int
+  rankP50Low       Int
+  rankP50High      Int
+  rankP80Low       Int
+  rankP80High      Int
+  confidence       String
+  comparableCount  Int
+  comparableYears  Int[]
+  sensitivity      Json
+  methodology      String
+  generatedAt      DateTime @default(now())
+
+  @@index([userId])
+  @@map("rank_estimates")
+}
+
+// doc's Phase 6 DoD: "Backtest، گزارش خطا" -- run the same estimator against
+// known historical report cards and record how well its intervals actually
+// covered the real outcome (doc §11's "Prediction Calibration" metric).
+model BacktestReport {
+  id                  String   @id @default(uuid())
+  estimatorVersion    String
+  sampleSize          Int
+  coverageP50         Float
+  coverageP80         Float
+  meanAbsPercentError Float
+  computedAt          DateTime @default(now())
+
+  @@map("backtest_reports")
 }
