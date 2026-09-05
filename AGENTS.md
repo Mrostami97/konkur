@@ -70,23 +70,25 @@ not faked.
 | Notification | Template, Delivery, Preference | Sends from a queue, respects consent |
 
 Phase 0 implemented **Identity** (base) and an **Audit** cross-cutting concern.
-Phase 1 added **Content** (admin-authored articles only, no bulk ingestion
-yet), **Learning** (course/module/lesson/enrollment/progress), and
-**Commerce** (product/price/order/payment/entitlement), plus a `Profile`
-sub-resource inside Identity (docx §6.1 groups "profiles" with identity, not
-as its own module). Every other module folder still does not exist —
-Assessment, Planning, Analytics, Ingestion, CRM, Notification are added only
-when a later phase has real logic to put in them. Do not pre-create empty
-module shells "for structure"; that is scope creep the docx explicitly warns
-against (§11, "دامنه بیش‌ازحد").
+Phase 1 added **Content** (admin-authored articles only), **Learning**
+(course/module/lesson/enrollment/progress), and **Commerce**
+(product/price/order/payment/entitlement), plus a `Profile` sub-resource
+inside Identity (docx §6.1 groups "profiles" with identity, not as its own
+module). Phase 2 added **Ingestion** (ImportJob/ImportItem/SourceArtifact/
+ContentVersion) and extended Content with the canonical `Question` and
+`ReportCard` tables that bulk-ingested data publishes into. Assessment,
+Planning, Analytics, CRM, Notification still do not exist — added only when a
+later phase has real logic to put in them. Do not pre-create empty module
+shells "for structure"; that is scope creep the docx explicitly warns against
+(§11, "دامنه بیش‌ازحد").
 
 ## Phase table (docx §10.2) — what's done, what's next
 
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Contracts & infrastructure | **Done** |
-| 1 | Usable mother site (portal, accounts, academy, commerce, admin) | **Done — this repo state** |
-| 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | Not started |
+| 1 | Usable mother site (portal, accounts, academy, commerce, admin) | **Done** |
+| 2 | Data ingestion factory (Staging/Review/Publish for the 3 JSON contracts) | **Done — this repo state** |
 | 3 | Content & question bank | Not started |
 | 4 | Assessment engine | Not started |
 | 5 | Study OS | Not started |
@@ -148,3 +150,39 @@ Phase 1:
   Engine.
 - Product "kind" only supports `COURSE` — Study Pro/Mentor/Admissions-package
   products need modules (Planning/Analytics/Admissions) that don't exist yet.
+
+Phase 2:
+
+- `Question`/`ReportCard` are deliberately thin canonical tables (mostly JSON
+  blobs + a few indexed fields) built only to prove the ingestion pipeline
+  publishes real, queryable, versioned rows. Rich modeling — normalized
+  Topic/Tag/Option entities, full-text search, a block renderer — is Phase 3's
+  Content Engine; this shape does not need to survive that rewrite unchanged.
+- Only one entry point exists: `POST /admin/import` takes a `.zip` with
+  `payload.json` at its root (a single contract item or `{items:[...]}`) plus
+  any referenced media files at the zip root. There's no plain-JSON (no-zip)
+  shortcut, even for report-card.v1 payloads that never carry assets — doc
+  §6.2's "Import Service تنها درگاه ورود است" (single import gateway)
+  principle made one endpoint simpler to reason about than several.
+- Normalization (doc §6.2 step 5) is pass-through only — no canonical-ID
+  mapping tables (e.g. mapping raw subject names to a fixed `subject_code`
+  enum). That's naturally Phase 3's Taxonomy system's job.
+- No async outbox consumer for `ImportPublished` yet, same as
+  `EntitlementActivated` in Phase 1 — it's written for provenance/future
+  consumers but nothing reads it yet.
+- Rollback creates a **new** version copying an old snapshot's payload rather
+  than destroying history (`ContentVersion` rows are never deleted) — this is
+  deliberate, not a shortcut: it's what makes rollback safe under concurrent
+  access and keeps a full audit trail.
+- Dedup is per-item (`external_id` + a stable-JSON checksum of the last
+  published `ContentVersion`), not per-batch beyond the whole-file
+  `idempotencyKey` on `ImportJob` (re-uploading byte-identical zips is a full
+  no-op; re-uploading a batch where only some items changed still requires
+  reviewing/approving all of them, including the unchanged ones — no
+  auto-skip for individually-unchanged items in an otherwise-new job).
+- Asset checksum/MIME are verified against the declared contract, but nothing
+  re-derives MIME type from file content (e.g. via magic-byte sniffing) — a
+  mislabeled `mime_type` with a matching checksum is not caught.
+- No signed-URL/access-controlled serving of uploaded media yet — Ingestion
+  only stores objects in MinIO and records `SourceArtifact.storageKey`;
+  serving paid/protected media through the app is a later phase's concern.

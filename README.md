@@ -5,9 +5,10 @@ protocol and module map: [AGENTS.md](AGENTS.md). **Read AGENTS.md before
 changing anything** — it explains the one-phase-at-a-time rule this repo is
 built under.
 
-Current state: **Phase 1 — usable mother site** (portal/CMS, accounts,
-academy, commerce & entitlements, admin panel). Phase 0 (contracts &
-infrastructure) is done underneath it.
+Current state: **Phase 2 — data ingestion factory** (Staging → Review →
+Publish for `article.v1`/`report-card.v1`/`question.v1`, with versioning and
+rollback). Phase 1 (usable mother site) and Phase 0 (contracts &
+infrastructure) are done underneath it.
 
 ## Stack
 
@@ -67,6 +68,12 @@ panel first.
 5. Log in as the seeded admin and visit `/admin` to author articles, manage
    courses/lessons, create products/prices, and grant/revoke entitlements
    (gift/trial/compensatory access) by hand.
+6. At `/admin/import`, upload a `.zip` containing a `payload.json` (one
+   contract item, or `{"items": [...]}` for a batch) matching one of
+   `contracts/schemas/*.v1.schema.json`, plus any media files it references
+   at the zip root. Open the job, tick the staged item(s), approve, then
+   publish — the result is a real, versioned row in `articles` / `questions` /
+   `report_cards`, rollback-able from the same page.
 
 ## Common commands
 

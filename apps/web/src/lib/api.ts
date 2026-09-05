@@ -45,3 +45,20 @@ export async function apiFetch<T>(
   }
   return body as T;
 }
+
+/** Multipart upload (e.g. the ingestion zip) with the session cookie attached. */
+export async function apiUpload<T>(path: string, file: File): Promise<T> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+  const body = await parseBody(res);
+  if (!res.ok) {
+    const message = (body && body.message) || res.statusText;
+    throw new ApiError(res.status, Array.isArray(message) ? message.join(", ") : message);
+  }
+  return body as T;
+}

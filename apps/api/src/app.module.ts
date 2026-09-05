@@ -6,6 +6,7 @@ import { IdentityModule } from "./modules/identity/identity.module";
 import { ContentModule } from "./modules/content/content.module";
 import { LearningModule } from "./modules/learning/learning.module";
 import { CommerceModule } from "./modules/commerce/commerce.module";
+import { IngestionModule } from "./modules/ingestion/ingestion.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CommerceModule } from "./modules/commerce/commerce.module";
     ContentModule,
     LearningModule,
     CommerceModule,
+    IngestionModule,
   ],
 })
 export class AppModule {}

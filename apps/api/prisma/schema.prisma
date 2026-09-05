@@ -138,6 +138,14 @@ enum ReviewStatus {
 
 model Article {
   id            String       @id @default(uuid())
+  // Set only for admin-authored content (Phase 1 path); ingested articles
+  // (Phase 2 path) carry provenance instead of an internal author.
+  authorId      String?
+  // Set only for ingested content (Phase 2 path) -- the article.v1 contract's
+  // external_id, for dedup/idempotent-reimport matching.
+  externalId    String?      @unique
+  provenance    Json?
+  version       Int          @default(1)
   slug          String       @unique
   title         String
   summary       String
@@ -145,7 +153,6 @@ model Article {
   taxonomyMajor String[]
   taxonomyTags  String[]     @default([])
   reviewStatus  ReviewStatus @default(DRAFT)
-  authorId      String
   publishedAt   DateTime?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -363,6 +370,157 @@ model Entitlement {
   @@index([userId])
   @@index([productId])
   @@map("entitlements")
+}
+
+// ---------------------------------------------------------------------------
+// Content: minimal canonical tables for ingested question.v1 / report-card.v1
+// data (doc §6.1). Deliberately thin -- just enough structure to prove the
+// ingestion pipeline publishes real, queryable, versioned rows. Rich modeling
+// (normalized Topic/Tag/Option entities, full-text search, a block renderer)
+// is Phase 3's Content Engine; this table's shape does not need to survive
+// that rewrite unchanged.
+// ---------------------------------------------------------------------------
+model Question {
+  id            String   @id @default(uuid())
+  externalId    String   @unique
+  examDegree    Degree
+  examMajor     String
+  examYear      Int
+  subjectCode   String
+  topicCodes    String[]
+  stemBlocks    Json
+  options       Json
+  correctOption Int
+  solutionBlocks Json
+  assets        Json     @default("[]")
+  source        Json?
+  provenance    Json
+  version       Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([subjectCode])
+  @@map("questions")
+}
+
+model ReportCard {
+  id            String   @id @default(uuid())
+  externalId    String   @unique
+  anonymousId   String
+  examYear      Int
+  degree        Degree
+  field         String
+  quota         String
+  subjectScores Json
+  rank          Json
+  admissions    Json
+  provenance    Json
+  version       Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([examYear, degree, field])
+  @@map("report_cards")
+}
+
+// ---------------------------------------------------------------------------
+// Ingestion (doc §5.2/§6.2): the only path from external JSON/ZIP to canonical
+// data. Receive -> Schema -> Staging -> Normalize -> Assets -> Deduplicate ->
+// Domain QA -> Review -> Publish. No external tool ever writes to Article/
+// Question/ReportCard directly -- only IngestionService.publish() does, and
+// only for items an ImportItem review approved.
+// ---------------------------------------------------------------------------
+enum ImportJobStatus {
+  RECEIVED
+  STAGED
+  REVIEWED
+  PUBLISHED
+  FAILED
+}
+
+model ImportJob {
+  id             String          @id @default(uuid())
+  schemaVersion  String
+  idempotencyKey String          @unique
+  status         ImportJobStatus @default(RECEIVED)
+  submittedBy    String?
+  totalItems     Int             @default(0)
+  items          ImportItem[]
+  createdAt      DateTime        @default(now())
+
+  @@map("import_jobs")
+}
+
+enum ImportItemStatus {
+  PENDING
+  VALID
+  INVALID
+  APPROVED
+  REJECTED
+  PUBLISHED
+}
+
+enum DedupeStatus {
+  NEW
+  MATCH
+  CONFLICT
+}
+
+model ImportItem {
+  id                String           @id @default(uuid())
+  importJobId       String
+  importJob         ImportJob        @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+  externalId        String
+  rawPayload        Json
+  status            ImportItemStatus @default(PENDING)
+  validationErrors  Json             @default("[]")
+  dedupeStatus      DedupeStatus?
+  publishedEntityId String?
+  publishedVersion  Int?
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  reviewNote        String?
+  createdAt         DateTime         @default(now())
+
+  @@index([importJobId])
+  @@index([status])
+  @@map("import_items")
+}
+
+model SourceArtifact {
+  id         String   @id @default(uuid())
+  checksum   String   @unique
+  filename   String
+  mimeType   String
+  size       Int
+  storageKey String
+  createdAt  DateTime @default(now())
+
+  @@map("source_artifacts")
+}
+
+// Generic version history so any ingested entity (article/question/report
+// card) can be rolled back to a prior snapshot without a per-domain
+// versions table. Rollback creates a NEW version copying an old snapshot's
+// payload rather than destroying history (doc §10.2: "بازگشت نسخه بدون خرابی").
+enum VersionedEntityType {
+  ARTICLE
+  QUESTION
+  REPORT_CARD
+}
+
+model ContentVersion {
+  id          String              @id @default(uuid())
+  entityType  VersionedEntityType
+  entityId    String
+  version     Int
+  payload     Json
+  publishedByImportItemId String?
+  createdAt   DateTime            @default(now())
+
+  @@unique([entityType, entityId, version])
+  @@index([entityType, entityId])
+  @@map("content_versions")
 }
 
 // Transactional Outbox (doc §5.1): domain changes and their events are written

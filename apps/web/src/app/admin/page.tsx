@@ -16,6 +16,9 @@ export default function AdminHomePage() {
           <li>
             <Link href="/admin/commerce">فروش و دسترسی‌ها</Link>
           </li>
+          <li>
+            <Link href="/admin/import">ورود داده (Import)</Link>
+          </li>
         </ul>
       </main>
     </AdminGuard>
