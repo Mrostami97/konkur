@@ -31,6 +31,12 @@ export default async function HomePage() {
       </div>
     </div></section>
 
+    <section className="home-signal-strip page-shell" aria-label="خلاصهٔ مسیر kunkur01">
+      <article className="signal-card signal-card-accent"><span className="signal-index">۰۱</span><div><small>تصمیم اول</small><h2>مقطع و مجموعه‌ات را دقیق انتخاب کن</h2><p>برای ارشد مهندسی، IT، علوم کامپیوتر و دکتری مسیرهای جدا و قابل مقایسه داری.</p><Link href="/guides">مقایسهٔ مسیرها ←</Link></div></article>
+      <article className="signal-card"><span className="signal-index">۰۲</span><div><small>تصمیم دوم</small><h2>سرفصل را به برنامه تبدیل کن</h2><p>هر درس با پیش‌نیاز، فصل‌های کلیدی و گام بعدی در یک صفحه قرار گرفته است.</p><Link href="/subjects">رفتن به نقشهٔ درس‌ها ←</Link></div></article>
+      <article className="signal-card"><span className="signal-index">۰۳</span><div><small>تصمیم سوم</small><h2>هر هفته با داده جلو برو</h2><p>برنامهٔ امروز، مرور و تحلیل عملکرد برای مرحلهٔ بعدی آماده‌اند.</p><Link href="/today">ساخت برنامهٔ شخصی ←</Link></div></article>
+    </section>
+
     <section className="home-section page-shell" aria-labelledby="paths-title"><div className="section-heading home-heading"><div><span className="section-index">۰۱</span><h2 id="paths-title">اول مسیر درست را انتخاب کن</h2><p>یک آزمون واحد نیست؛ هر مقطع و مجموعه مواد و اولویت خودش را دارد.</p></div><Link className="text-link" href="/guides">همهٔ راهنماها ←</Link></div>
       <div className="path-grid">{guides.map((guide) => <Link className={`path-card ${guide.featured ? "path-card-featured" : ""}`} href={`/guides/${guide.slug}`} key={guide.slug}><div><span>{guide.degree}</span><strong>{guide.field}</strong></div><p>{guide.description}</p><span className="path-arrow">←</span></Link>)}</div>
     </section>
