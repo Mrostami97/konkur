@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { toEnglishDigits, toPersianDigits } from "../../lib/format";
 import { EmptyState, PageHeader, StatCard } from "../../components/ui";
 
 interface SubjectScore {
@@ -52,7 +53,7 @@ export default function RankEstimatePage() {
           degree,
           field,
           quota,
-          subjectScores: scores.map((s) => ({ subjectCode: s.subjectCode, percent: Number(s.percent) })),
+          subjectScores: scores.map((s) => ({ subjectCode: s.subjectCode, percent: Number(toEnglishDigits(s.percent)) })),
         },
       });
       setEstimate(result);
@@ -85,7 +86,7 @@ export default function RankEstimatePage() {
         {scores.map((s, i) => (
           <div className="score-row" key={i}>
             <input className="field-input" placeholder="کد درس" value={s.subjectCode} onChange={(e) => updateScore(i, "subjectCode", e.target.value)} required />
-            <input className="field-input score-percent" inputMode="decimal" placeholder="درصد" value={s.percent} onChange={(e) => updateScore(i, "percent", e.target.value)} required />
+            <input className="field-input score-percent" inputMode="decimal" placeholder="درصد" value={s.percent} onChange={(e) => updateScore(i, "percent", toPersianDigits(e.target.value))} required />
           </div>
         ))}
         <button className="button button-secondary" type="button" onClick={() => setScores([...scores, { subjectCode: "", percent: "" }])}>
@@ -100,15 +101,15 @@ export default function RankEstimatePage() {
       {estimate && (
         <section className="surface-card rank-result">
           <div className="section-heading"><div><h2>نتیجهٔ آخرین محاسبه</h2><p>بازه‌ها را در کنار میانهٔ رتبه بخوان؛ این تخمین قطعی نیست.</p></div></div>
-          <div className="stats-grid"><StatCard label="میانه رتبه" value={estimate.rankMedian.toLocaleString("fa-IR")} detail={`اطمینان ${estimate.confidence}`} tone="teal" /><StatCard label="بازهٔ ۵۰٪" value={`${estimate.rankP50Low} تا ${estimate.rankP50High}`} tone="blue" /><StatCard label="بازهٔ ۸۰٪" value={`${estimate.rankP80Low} تا ${estimate.rankP80High}`} tone="purple" /></div>
+          <div className="stats-grid"><StatCard label="میانه رتبه" value={toPersianDigits(estimate.rankMedian.toLocaleString("en-US"))} detail={`اطمینان ${estimate.confidence}`} tone="teal" /><StatCard label="بازهٔ ۵۰٪" value={`${toPersianDigits(estimate.rankP50Low)} تا ${toPersianDigits(estimate.rankP50High)}`} tone="blue" /><StatCard label="بازهٔ ۸۰٪" value={`${toPersianDigits(estimate.rankP80Low)} تا ${toPersianDigits(estimate.rankP80High)}`} tone="purple" /></div>
           <p>
-            تعداد کارنامه‌های مشابه: {estimate.comparableCount} (سال‌های {estimate.comparableYears.join("، ")})
+            تعداد کارنامه‌های مشابه: {toPersianDigits(estimate.comparableCount)} (سال‌های {toPersianDigits(estimate.comparableYears.join("، "))})
           </p>
           <h3>حساسیت به بهبود هر درس</h3>
           <ul>
             {Object.entries(estimate.sensitivity).map(([subject, delta]) => (
               <li key={subject}>
-                {subject}: {delta === 0 ? "بدون داده کافی" : `${delta > 0 ? "+" : ""}${delta} تغییر در میانه رتبه`}
+                {subject}: {delta === 0 ? "بدون داده کافی" : `${delta > 0 ? "+" : ""}${toPersianDigits(delta)} تغییر در میانه رتبه`}
               </li>
             ))}
           </ul>

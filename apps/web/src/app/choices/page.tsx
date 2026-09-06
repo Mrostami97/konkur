@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { toPersianDigits } from "../../lib/format";
 import { EmptyState, PageHeader } from "../../components/ui";
 
 interface ChoiceComparison {
@@ -62,11 +63,11 @@ export default function ChoicesPage() {
         <ol className="choice-list">
           {items.map((item, index) => (
             <li className="surface-card choice-card" key={item.program.id}>
-              <div><span className="choice-rank">اولویت {index + 1}</span><h2>{item.program.title}</h2><p className="muted-copy">{item.program.university.title}</p></div>
+              <div><span className="choice-rank">اولویت {toPersianDigits(index + 1)}</span><h2>{item.program.title}</h2><p className="muted-copy">{item.program.university.title}</p></div>
               <p className="choice-chance">
                 {item.chance === null
-                  ? `شانس قبولی: داده کافی نیست (نمونه: ${item.sampleSize})`
-                  : `شانس قبولی تجربی: ${(item.chance * 100).toFixed(0)}٪ (بر اساس ${item.sampleSize} کارنامه مشابه)`}
+                  ? `شانس قبولی: داده کافی نیست (نمونه: ${toPersianDigits(item.sampleSize)})`
+                  : `شانس قبولی تجربی: ${toPersianDigits((item.chance * 100).toFixed(0))}٪ (بر اساس ${toPersianDigits(item.sampleSize)} کارنامه مشابه)`}
               </p>
               <div className="choice-actions"><button className="button button-secondary" aria-label="انتقال به بالا" onClick={() => move(index, -1)} disabled={index === 0}>
                 ↑

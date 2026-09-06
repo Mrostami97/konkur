@@ -1,6 +1,7 @@
 import { apiGetPublic } from "../../lib/api";
 import { StartExamButton } from "../../components/StartExamButton";
 import { EmptyState, PageHeader } from "../../components/ui";
+import { toPersianDigits } from "../../lib/format";
 
 interface Exam {
   id: string;
@@ -28,7 +29,7 @@ export default async function ExamsPage() {
       ) : (
         <div className="exam-grid">
           {exams.map((exam) => (
-            <article className="catalog-card" key={exam.id}><div><div className="catalog-card-meta"><span>آزمون شبیه‌ساز</span><span>{exam.durationMinutes} دقیقه</span></div><h3>{exam.title}</h3><p>{exam.description}</p></div><div className="catalog-card-footer"><span className="muted-copy">آماده‌ای؟</span><StartExamButton examId={exam.id} /></div></article>
+            <article className="catalog-card" key={exam.id}><div><div className="catalog-card-meta"><span>آزمون شبیه‌ساز</span><span>{toPersianDigits(exam.durationMinutes)} دقیقه</span></div><h3>{exam.title}</h3><p>{exam.description}</p></div><div className="catalog-card-footer"><span className="muted-copy">آماده‌ای؟</span><StartExamButton examId={exam.id} /></div></article>
           ))}
         </div>
       )}

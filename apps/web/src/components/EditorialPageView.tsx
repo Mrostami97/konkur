@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { editorialDateIso, type EditorialPage } from "../content/editorial";
 import { absoluteUrl } from "../lib/seo";
+import { toPersianDigits } from "../lib/format";
 import { StructuredData } from "./StructuredData";
 
 export function EditorialPageView({ page, basePath }: { page: EditorialPage; basePath: "/articles" | "/guides" }) {
@@ -58,7 +59,7 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
             <div className="editorial-byline">
               <div className="author-avatar">{page.author === "محمد رستمی" ? "م" : "ک"}</div>
               <div><strong>{page.author}</strong><span>بازبینی: {page.reviewer}</span></div>
-              <div className="editorial-dates"><span>آخرین بررسی {page.reviewedAt}</span><span>{page.readingMinutes} دقیقه مطالعه</span></div>
+              <div className="editorial-dates"><span>آخرین بررسی {page.reviewedAt}</span><span>{toPersianDigits(page.readingMinutes)} دقیقه مطالعه</span></div>
             </div>
           </header>
 

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "../../components/ui";
 import { articles as editorialArticles } from "../../content/editorial";
 import { apiGetPublic } from "../../lib/api";
+import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
 
 interface Article {
@@ -31,7 +32,7 @@ export default async function ArticlesPage() {
           <Link className="article-card editorial-card" key={article.slug} href={`/articles/${article.slug}`}>
             <div className="article-card-top"><span className="article-meta">{article.category}</span><span>{article.degree}</span></div>
             <h2>{article.title}</h2><p>{article.description}</p>
-            <div className="article-card-footer"><span>{article.author}</span><span>{article.readingMinutes} دقیقه ←</span></div>
+            <div className="article-card-footer"><span>{article.author}</span><span>{toPersianDigits(article.readingMinutes)} دقیقه ←</span></div>
           </Link>
         ))}
         {apiArticles.filter((article) => !editorialArticles.some((local) => local.slug === article.slug)).map((article) => (

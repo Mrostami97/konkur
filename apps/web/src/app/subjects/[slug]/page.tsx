@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StructuredData } from "../../../components/StructuredData";
 import { articles, findSubject, guides, subjects } from "../../../content/editorial";
+import { toPersianDigits } from "../../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
 
 export function generateStaticParams() { return subjects.map(({ slug }) => ({ slug })); }
@@ -28,7 +29,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
     <aside className="official-disclaimer subject-disclaimer"><strong>اعتبار وضعیت ۱۴۰۶</strong><p>این وضعیت در ۱۵ شهریور ۱۴۰۵ با اطلاعیه‌های رسمی تطبیق داده شده است؛ برای ثبت‌نام و ضرایب، <a href="https://www.sanjesh.org/" target="_blank" rel="noreferrer">آخرین دفترچه و اصلاحیهٔ سازمان سنجش</a> ملاک نهایی است.</p></aside>
     <section className="syllabus-panel" aria-labelledby="syllabus-title">
       <div className="section-heading syllabus-heading"><div><span className="eyebrow">سرفصل آموزشی</span><h2 id="syllabus-title">نقشهٔ کامل مباحث {subject.shortTitle}</h2><p>این سرفصل برای یادگیری و دسته‌بندی مطالعه است؛ حضور درس و ضریب آن را از راهنمای آزمون همان سال کنترل کن.</p></div><a className="text-link" href={subject.syllabusSource?.url ?? "https://syllab.ir/courses/"} target="_blank" rel="noreferrer">منبع سرفصل ←</a></div>
-      <div className="syllabus-grid">{syllabus.map((section, index) => <details className="syllabus-card" open={index === 0} key={section.title}><summary><span>{String(index + 1).padStart(2, "۰")}</span><strong>{section.title}</strong><i>+</i></summary><ul>{section.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul></details>)}</div>
+      <div className="syllabus-grid">{syllabus.map((section, index) => <details className="syllabus-card" open={index === 0} key={section.title}><summary><span>{toPersianDigits(String(index + 1).padStart(2, "0"))}</span><strong>{section.title}</strong><i>+</i></summary><ul>{section.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul></details>)}</div>
       <div className="syllabus-source"><span>منبع محتوایی</span><strong>{subject.syllabusSource?.title ?? "Syllab"}</strong><small>بازنویسی و دسته‌بندی آموزشی در kunkur01؛ آخرین دفترچه و اصلاحیهٔ سنجش برای مواد آزمون اولویت دارد.</small></div>
     </section>
     <div className="subject-journey"><section className="surface-card"><span className="journey-number">۱</span><h2>یادگیری</h2><p>تعریف‌ها و ایده‌های پایه را به مثال و حل مسئله وصل کن.</p><ul>{subject.focus.map((item) => <li key={item}>{item}</li>)}</ul></section><section className="surface-card"><span className="journey-number">۲</span><h2>تمرین مرتبط</h2><p>تمرین‌های مبحثی و تست‌های سال‌های گذشته در مرحلهٔ بعد به همین صفحه متصل می‌شوند.</p><Link className="text-link" href="/questions">مشاهده بانک فعلی ←</Link></section><section className="surface-card"><span className="journey-number">۳</span><h2>تحلیل عملکرد</h2><p>خطاها را بر اساس مفهوم، بی‌دقتی و کمبود زمان دسته‌بندی کن.</p><Link className="text-link" href="/rank-estimate">ورود به تحلیل ←</Link></section></div>

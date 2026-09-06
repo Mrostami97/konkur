@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
@@ -10,7 +11,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "kunkur01 | مرجع کنکور ارشد و دکتری کامپیوتر", template: "%s | kunkur01" },
+  title: { default: "کنکورصفریک | مرجع کنکور ارشد و دکتری کامپیوتر", template: "%s | کنکورصفریک" },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   keywords: ["کنکور ارشد کامپیوتر", "کنکور دکتری کامپیوتر", "کنکور IT", "علوم کامپیوتر", "منابع کنکور کامپیوتر"],
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   creator: "kunkur01",
   publisher: "kunkur01",
   alternates: { canonical: "/" },
-  openGraph: { type: "website", locale: "fa_IR", siteName: SITE_NAME, title: "kunkur01", description: SITE_DESCRIPTION, url: "/" },
+  openGraph: { type: "website", locale: "fa_IR", siteName: SITE_NAME, title: "کنکورصفریک", description: SITE_DESCRIPTION, url: "/" },
   manifest: "/manifest.json",
 };
 
@@ -31,16 +32,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fa" dir="rtl">
       <body>
         <StructuredData data={[
-          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "kunkur01", url: absoluteUrl("/"), sameAs: ["https://t.me/konkurcom", "https://t.me/Konkur_answer"] },
-          { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "kunkur01", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
+          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom", "https://t.me/Konkur_answer"] },
+          { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
         ]} />
         <header className="site-header">
           <div className="nav-wrap">
-            <Link href="/" className="brand" aria-label="kunkur01">
-              <span className="brand-mark">01</span>
+            <Link href="/" className="brand" aria-label="کنکورصفریک">
+              <span className="brand-logo-wrap"><Image className="brand-logo" src="/brand/konkurcom-logo.png" alt="" width={64} height={64} priority /></span>
               <span className="brand-copy">
-                <strong>kunkur01</strong>
-                <span>مرجع کنکور کامپیوتر</span>
+                <strong>کنکورصفریک</strong>
+                <span>kunkur01 · مرجع کنکور کامپیوتر</span>
               </span>
             </Link>
             <nav className="main-nav" aria-label="منوی اصلی">
@@ -56,12 +57,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <footer className="site-footer">
           <div className="footer-grid">
-            <div className="footer-brand"><span className="brand-mark">01</span><div><strong>kunkur01</strong><p>مسیر روشن‌تر برای ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.</p></div></div>
+            <div className="footer-brand"><span className="brand-logo-wrap footer-logo-wrap"><Image className="brand-logo" src="/brand/konkurcom-logo.png" alt="" width={72} height={72} /></span><div><strong>کنکورصفریک <small>kunkur01</small></strong><p>مسیر روشن‌تر برای ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.</p></div></div>
             <div><strong>مسیرهای مطالعه</strong><Link href="/guides">راهنمای آزمون ۱۴۰۶</Link><Link href="/subjects">صفحهٔ درس‌ها</Link><Link href="/articles">مقاله‌ها</Link></div>
             <div><strong>اعتماد و شفافیت</strong><Link href="/about">دربارهٔ محمد رستمی</Link><Link href="/editorial-policy">روش تولید محتوا</Link><Link href="/corrections">سیاست اصلاح</Link></div>
             <div><strong>کانال‌های رسمی</strong><a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">@konkurcom — کانال اصلی</a><a href="https://t.me/Konkur_answer" target="_blank" rel="noreferrer">@Konkur_answer — پاسخ و منابع</a></div>
           </div>
-          <div className="footer-bottom"><span>© ۱۴۰۵ kunkur01</span><span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند.</span></div>
+          <div className="footer-bottom"><span>© ۱۴۰۵ کنکورصفریک · kunkur01</span><span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند.</span></div>
         </footer>
         <nav className="mobile-nav" aria-label="ناوبری موبایل">
           <Link href="/today"><span>◷</span><small>امروز</small></Link>

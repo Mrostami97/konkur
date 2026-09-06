@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { toEnglishDigits, toPersianDigits } from "../../lib/format";
 import { EmptyState, PageHeader, ProgressBar, StatCard } from "../../components/ui";
 
 interface Goal {
@@ -30,7 +31,7 @@ function GoalForm({ onSaved, initialDegree }: { onSaved: () => void; initialDegr
     e.preventDefault();
     await apiFetch("/me/goal", {
       method: "PUT",
-      body: { degree, field, weeklyHours: Number(weeklyHours) },
+      body: { degree, field, weeklyHours: Number(toEnglishDigits(weeklyHours)) },
     });
     onSaved();
   }
@@ -46,7 +47,7 @@ function GoalForm({ onSaved, initialDegree }: { onSaved: () => void; initialDegr
           <option value="PHD">دکتری</option>
         </select></label>
         <label className="field-group"><span>گرایش</span><input className="field-input" placeholder="مثلاً مهندسی کامپیوتر" value={field} onChange={(e) => setField(e.target.value)} required /></label>
-        <label className="field-group"><span>ساعت مطالعه در هفته</span><input className="field-input" inputMode="numeric" placeholder="۱۰" value={weeklyHours} onChange={(e) => setWeeklyHours(e.target.value)} required /></label>
+        <label className="field-group"><span>ساعت مطالعه در هفته</span><input className="field-input" inputMode="numeric" placeholder="۱۰" value={weeklyHours} onChange={(e) => setWeeklyHours(toPersianDigits(e.target.value))} required /></label>
         <button className="button button-primary" type="submit">ثبت هدف و ساخت برنامه</button>
       </form>
     </div>
@@ -129,12 +130,12 @@ export default function TodayPage() {
             <div className="surface-card">
               <span className="eyebrow">هدف فعلی</span>
               <h2>{goal.degree === "MASTER" ? "کنکور ارشد" : "کنکور دکتری"} کامپیوتر</h2>
-              <p className="muted-copy">{goal.field} · {goal.weeklyHours} ساعت مطالعه در هفته</p>
+              <p className="muted-copy">{goal.field} · {toPersianDigits(goal.weeklyHours)} ساعت مطالعه در هفته</p>
               <ProgressBar value={tasks.length ? 100 : 0} label={tasks.length ? "برنامهٔ امروز آماده است" : "برنامهٔ امروز هنوز ساخته نشده"} />
             </div>
             <div className="stats-grid stats-grid-single">
-              <StatCard label="کارهای امروز" value={tasks.length.toLocaleString("fa-IR")} detail="از برنامهٔ فعلی" tone="teal" />
-              <StatCard label="زمان پیشنهادی" value={`${tasks.reduce((sum, task) => sum + task.estimatedMinutes, 0).toLocaleString("fa-IR")} دقیقه`} detail="برآورد مطالعه" tone="blue" />
+              <StatCard label="کارهای امروز" value={toPersianDigits(tasks.length.toLocaleString("en-US"))} detail="از برنامهٔ فعلی" tone="teal" />
+              <StatCard label="زمان پیشنهادی" value={`${toPersianDigits(tasks.reduce((sum, task) => sum + task.estimatedMinutes, 0).toLocaleString("en-US"))} دقیقه`} detail="برآورد مطالعه" tone="blue" />
             </div>
           </section>
 
@@ -146,7 +147,7 @@ export default function TodayPage() {
               <ul className="task-list">
                 {tasks.map((task) => (
                   <li className="task-card" key={task.id}>
-                    <div className="task-card-main"><strong>{task.title}</strong><span>{task.subjectCode} · حدود {task.estimatedMinutes} دقیقه</span>{task.topicCode && <Link className="text-link" href={`/questions?subjectCode=${task.subjectCode}`}>مشاهده سؤالات مرتبط ←</Link>}</div>
+                    <div className="task-card-main"><strong>{task.title}</strong><span>{task.subjectCode} · حدود {toPersianDigits(task.estimatedMinutes)} دقیقه</span>{task.topicCode && <Link className="text-link" href={`/questions?subjectCode=${task.subjectCode}`}>مشاهده سؤالات مرتبط ←</Link>}</div>
                     <div className="task-card-action"><span className="task-status">{task.status === "PENDING" ? "در انتظار انجام" : task.status}</span><button className="button button-primary" onClick={() => completeTask(task.id)}>تکمیل شد</button></div>
                   </li>
                 ))}

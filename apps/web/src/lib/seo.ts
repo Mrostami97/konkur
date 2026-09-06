@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const SITE_NAME = "kunkur01";
+export const SITE_NAME = "کنکورصفریک";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://kunkur01.ir").replace(/\/$/, "");
 export const SITE_DESCRIPTION = "مرجع فارسی کنکور ارشد و دکتری مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر؛ راهنما، منابع، برنامه‌ریزی، کارنامه و تحلیل.";
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../lib/api";
+import { toPersianDigits } from "../../../../lib/format";
 import { ContentBlocks } from "../../../../components/ContentBlocks";
 
 interface Block {
@@ -53,9 +54,9 @@ export default function ReportPage({ params }: { params: { id: string } }) {
     <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
       <h1>گزارش آزمون: {report.examTitle}</h1>
       <div style={{ background: "#F4F8FB", padding: "1rem", borderRadius: 6, marginBottom: "1rem" }}>
-        <p>درصد صحیح: {report.score.percentCorrect.toFixed(1)}٪</p>
+        <p>درصد صحیح: {toPersianDigits(report.score.percentCorrect.toFixed(1))}٪</p>
         <p>
-          صحیح: {report.score.correctCount} — غلط: {report.score.wrongCount} — بی‌پاسخ: {report.score.unansweredCount}
+          صحیح: {toPersianDigits(report.score.correctCount)} — غلط: {toPersianDigits(report.score.wrongCount)} — بی‌پاسخ: {toPersianDigits(report.score.unansweredCount)}
         </p>
         <p style={{ fontSize: "0.8rem", color: "#486581" }}>نسخه نمره‌دهی: {report.score.scoreVersion}</p>
       </div>
@@ -72,7 +73,7 @@ export default function ReportPage({ params }: { params: { id: string } }) {
               marginBottom: "1rem",
             }}
           >
-            <p style={{ fontWeight: "bold" }}>سؤال {index + 1}</p>
+            <p style={{ fontWeight: "bold" }}>سؤال {toPersianDigits(index + 1)}</p>
             <ContentBlocks blocks={item.question.stemBlocks} assets={item.question.assets} />
             {item.question.options.map((option) => {
               const isSelected = item.selectedOption === option.number;

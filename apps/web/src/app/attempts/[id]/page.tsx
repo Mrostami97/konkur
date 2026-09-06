@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
+import { toPersianDigits } from "../../../lib/format";
 import { ContentBlocks } from "../../../components/ContentBlocks";
 
 interface Block {
@@ -39,7 +40,7 @@ interface AttemptState {
 function formatTime(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
   const s = totalSeconds % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
+  return toPersianDigits(`${m}:${String(s).padStart(2, "0")}`);
 }
 
 export default function AttemptPage({ params }: { params: { id: string } }) {
@@ -113,7 +114,7 @@ export default function AttemptPage({ params }: { params: { id: string } }) {
 
       {attempt.items.map((item, index) => (
         <div key={item.questionId} style={{ border: "1px solid #D7E2EA", borderRadius: 6, padding: "1rem", marginBottom: "1rem" }}>
-          <p style={{ fontWeight: "bold" }}>سؤال {index + 1}</p>
+          <p style={{ fontWeight: "bold" }}>سؤال {toPersianDigits(index + 1)}</p>
           <ContentBlocks blocks={item.question.stemBlocks} assets={item.question.assets} />
           {item.question.options.map((option) => (
             <label key={option.number} style={{ display: "block", margin: "0.3rem 0", cursor: "pointer" }}>

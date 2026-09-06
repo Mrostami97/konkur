@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { toPersianDigits } from "../../lib/format";
 import { EmptyState, PageHeader, StatCard } from "../../components/ui";
 
 interface Me {
@@ -178,7 +179,7 @@ export default function AccountPage() {
         <ul className="quick-links">
           {mastery.map((m) => (
             <li key={m.topicCode}>
-              {m.subjectCode} / {m.topicCode} — تسلط: {(m.masteryScore * 100).toFixed(0)}٪ (اطمینان: {m.confidence})
+              {m.subjectCode} / {m.topicCode} — تسلط: {toPersianDigits((m.masteryScore * 100).toFixed(0))}٪ (اطمینان: {m.confidence})
             </li>
           ))}
         </ul>
