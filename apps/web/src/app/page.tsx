@@ -20,12 +20,12 @@ export default async function HomePage() {
         <h1>کنکور کامپیوتر را<br/><em>یکپارچه</em> جلو ببر.</h1>
         <p>راهنمای دقیق، نقشهٔ درس‌ها، برنامهٔ شخصی و تحلیل عملکرد برای ارشد و دکتری مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر.</p>
         <div className="hero-actions"><Link className="button button-primary button-large" href="/guides">دیدن راهنمای ۱۴۰۶ ←</Link><Link className="button button-secondary button-large" href="/today">ساخت برنامهٔ شخصی</Link></div>
-        <div className="hero-proof"><span><strong>۶</strong> مسیر آزمون</span><span><strong>۱۶</strong> هاب درسی</span><span><strong>۲</strong> آرشیو رسمی</span></div>
+        <div className="hero-proof"><span><strong>۶</strong> مسیر آزمون</span><span><strong>{subjects.length}</strong> هاب درسی</span><span><strong>۲</strong> آرشیو رسمی</span></div>
       </div>
       <div className="hero-command" aria-label="نمای نقشهٔ آمادگی آزمون">
         <div className="command-top"><span><i></i> نقشهٔ آمادگی من</span><strong>۱۴۰۶</strong></div>
         <div className="command-goal"><span>هدف انتخاب‌شده</span><h2>ارشد مهندسی کامپیوتر</h2><p>ساختار جدید دروس و ضرایب</p></div>
-        <div className="command-subjects"><div><span>تخصصی</span><strong>ضریب ۴</strong><small>۸ درس</small></div><div><span>ریاضیات</span><strong>ضریب ۲</strong><small>۳ درس</small></div><div><span>زبان</span><strong>ضریب ۱</strong><small>پیوسته</small></div></div>
+        <div className="command-subjects"><div><span>تخصصی</span><strong>ضریب ۴</strong><small>بستهٔ یکپارچه</small></div><div><span>ریاضیات</span><strong>ضریب ۲</strong><small>۳ درس</small></div><div><span>زبان</span><strong>ضریب ۱</strong><small>پیوسته</small></div></div>
         <div className="command-alert"><span>جدید</span><p><strong>جبر خطی و مبانی برنامه‌سازی</strong> به برنامهٔ ۱۴۰۶ اضافه شده‌اند.</p></div>
         <Link href="/guides/master-computer-engineering-1406">مشاهده جزئیات رسمی <span>←</span></Link>
       </div>
