@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "c8c12d450091f941b47dff3cbfa05095d4b3a30e",
+    "indexed_at": "2026-09-06T02:37:23Z",
+    "project": "konkur-git",
+    "nodes": 2172,
+    "edges": 6889,
+    "original_size": 5636096,
+    "compressed_size": 1019304,
+    "compression_level": 9
+}

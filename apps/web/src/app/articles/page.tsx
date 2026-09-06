@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { EmptyState, PageHeader } from "../../components/ui";
+import type { Metadata } from "next";
+import { PageHeader } from "../../components/ui";
+import { articles as editorialArticles } from "../../content/editorial";
 import { apiGetPublic } from "../../lib/api";
+import { pageMetadata } from "../../lib/seo";
 
 interface Article {
   slug: string;
@@ -9,32 +12,32 @@ interface Article {
   publishedAt: string;
 }
 
+export const metadata: Metadata = pageMetadata({ title: "مقاله‌ها و راهنماهای کنکور کامپیوتر", description: "مقاله‌های منبع‌دار دربارهٔ برنامه‌ریزی، منابع، کارنامه و تغییرات کنکور ارشد و دکتری کامپیوتر.", path: "/articles" });
+
 export default async function ArticlesPage() {
-  let articles: Article[] | null = null;
+  let apiArticles: Article[] = [];
   try {
-    articles = await apiGetPublic<Article[]>("/articles");
+    apiArticles = (await apiGetPublic<Article[]>("/articles")) ?? [];
   } catch {
-    articles = null;
+    apiArticles = [];
   }
 
   return (
     <main className="page-container">
-      <PageHeader eyebrow="دانش و راهنما" title="مقاله‌ها" description="راهنماهای کوتاه و کاربردی برای مطالعهٔ بهتر و تصمیم‌گیری دقیق‌تر." />
-      {!articles ? (
-        <EmptyState title="فهرست مطالب در دسترس نیست" description="اتصال به سرویس محتوا برقرار نشد؛ بعداً دوباره امتحان کن." />
-      ) : articles.length === 0 ? (
-        <EmptyState title="هنوز مطلبی منتشر نشده است" description="مقاله‌های جدید بعد از انتشار اینجا قرار می‌گیرند." />
-      ) : (
-        <div className="article-grid">
-          {articles.map((article) => (
-            <Link className="article-card" key={article.slug} href={`/articles/${article.slug}`}>
-              <span className="article-meta">{new Date(article.publishedAt).toLocaleDateString("fa-IR")}</span>
-              <h3>{article.title}</h3>
-              <p>{article.summary}</p>
-            </Link>
-          ))}
-        </div>
-      )}
+      <PageHeader eyebrow="کتابخانهٔ kunkur01" title="مقاله‌های کاربردی، نه محتوای پُرکننده" description="هر مطلب یک پاسخ کوتاه، نویسنده، بازبین، تاریخ اعتبار و منبع مشخص دارد." />
+      <div className="content-filter-row" aria-label="دسته‌بندی مطالب"><span className="active">همه مطالب</span><span>تغییرات ۱۴۰۶</span><span>برنامه‌ریزی</span><span>منابع</span><span>کارنامه و رتبه</span></div>
+      <div className="article-grid editorial-card-grid">
+        {editorialArticles.map((article) => (
+          <Link className="article-card editorial-card" key={article.slug} href={`/articles/${article.slug}`}>
+            <div className="article-card-top"><span className="article-meta">{article.category}</span><span>{article.degree}</span></div>
+            <h2>{article.title}</h2><p>{article.description}</p>
+            <div className="article-card-footer"><span>{article.author}</span><span>{article.readingMinutes} دقیقه ←</span></div>
+          </Link>
+        ))}
+        {apiArticles.filter((article) => !editorialArticles.some((local) => local.slug === article.slug)).map((article) => (
+          <Link className="article-card editorial-card" key={article.slug} href={`/articles/${article.slug}`}><span className="article-meta">مطلب منتشرشده</span><h2>{article.title}</h2><p>{article.summary}</p><div className="article-card-footer"><span>تحریریه kunkur01</span><span>مطالعه ←</span></div></Link>
+        ))}
+      </div>
     </main>
   );
 }

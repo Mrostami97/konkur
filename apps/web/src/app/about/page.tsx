@@ -1,0 +1,6 @@
+import type { Metadata } from "next";
+import { PageHeader } from "../../components/ui";
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata: Metadata = pageMetadata({ title: "دربارهٔ محمد رستمی و kunkur01", description: "هویت، مأموریت و کانال‌های رسمی مرجع کنکور ارشد و دکتری کامپیوتر kunkur01.", path: "/about" });
+export default function AboutPage() { return <main className="page-container trust-page"><PageHeader eyebrow="پشت kunkur01" title="اطلاعات دقیق، مسیر روشن و احترام به وقت داوطلب" description="kunkur01 با هدف یکپارچه‌کردن راهنما، یادگیری، برنامه‌ریزی و تحلیل کنکور کامپیوتر ساخته می‌شود." /><div className="trust-layout"><section className="surface-card profile-card"><div className="author-avatar author-avatar-large">م</div><div><h2>محمد رستمی</h2><p>نویسندهٔ تحلیل‌های تخصصی kunkur01 و مدیر کانال‌های رسمی پروژه.</p><div className="subject-tags"><a href="https://t.me/konkurcom">@konkurcom</a><a href="https://t.me/Konkur_answer">@Konkur_answer</a></div></div></section><section className="surface-card"><h2>این سایت چه قولی می‌دهد؟</h2><ul><li>مطلب زمان‌حساس بدون تاریخ بازبینی منتشر نشود.</li><li>منبع رسمی از تحلیل تحریریه جدا باشد.</li><li>محتوای اختصاصی دیگران کپی نشود.</li><li>ابهام و محدودیت داده صریح گفته شود.</li></ul></section></div></main>; }

@@ -1,0 +1,6 @@
+import type { Metadata } from "next";
+import { PageHeader } from "../../components/ui";
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata: Metadata = pageMetadata({ title: "سیاست اصلاح محتوا", description: "نحوهٔ گزارش خطا و به‌روزرسانی مطالب زمان‌حساس در kunkur01.", path: "/corrections" });
+export default function CorrectionsPage() { return <main className="page-container trust-page"><PageHeader eyebrow="اصلاح و پاسخ‌گویی" title="خطا باید دیده و اصلاح شود" description="نسخهٔ دقیق‌تر محتوا از پنهان‌کردن خطا مهم‌تر است." /><div className="trust-layout"><section className="surface-card"><h2>چه چیزی اصلاح می‌شود؟</h2><ul><li>مغایرت با دفترچه یا اصلاحیهٔ رسمی</li><li>خطای عددی، نگارشی یا لینک شکسته</li><li>تغییر مواد آزمون، زمان‌بندی یا شرایط ثبت‌نام</li><li>ابهام در انتساب منبع یا نویسنده</li></ul></section><section className="surface-card"><h2>فرآیند اصلاح</h2><p>گزارش بررسی می‌شود، منبع اصلی دوباره خوانده می‌شود و در صورت تأیید، متن و تاریخ آخرین بازبینی تغییر می‌کند. اصلاح‌های مؤثر بر تصمیم داوطلب باید در ابتدای صفحه نیز توضیح داده شوند.</p><a className="button button-primary" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">گزارش از کانال اصلی</a></section></div></main>; }

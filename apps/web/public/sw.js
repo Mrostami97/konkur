@@ -1,4 +1,4 @@
-const CACHE_NAME = "konkurcom-shell-v1";
+const CACHE_NAME = "kunkur01-shell-v2";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

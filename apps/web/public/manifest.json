@@ -1,11 +1,11 @@
 {
-  "name": "KonkurCom 360",
-  "short_name": "KonkurCom",
+  "name": "kunkur01",
+  "short_name": "kunkur01",
   "description": "سایت مادر آموزش، سنجش و انتخاب‌رشته کنکور ارشد و دکتری کامپیوتر",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F4F8FB",
-  "theme_color": "#243B53",
+  "background_color": "#F5F8FC",
+  "theme_color": "#112C4E",
   "dir": "rtl",
   "lang": "fa",
   "icons": [
