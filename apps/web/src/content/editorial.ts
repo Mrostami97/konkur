@@ -56,12 +56,6 @@ const primaryChannel: EditorialSource = {
   checkedAt: "۱۵ شهریور ۱۴۰۵",
 };
 
-const answerChannel: EditorialSource = {
-  title: "آرشیو پاسخ، تحلیل و منابع رایگان",
-  publisher: "kunkur01",
-  url: "https://t.me/Konkur_answer",
-  checkedAt: "۱۵ شهریور ۱۴۰۵",
-};
 
 export const guides: EditorialPage[] = [
   {
@@ -294,7 +288,7 @@ export const articles: EditorialPage[] = [
       { title: "چرخهٔ پیشنهادی", bullets: ["مرور کوتاه در پایان همان جلسه", "بازیابی بدون جزوه در فاصلهٔ ۲ تا ۳ روز", "تست ترکیبی در پایان هفته", "آزمونک زمان‌دار پس از تثبیت"] },
       { title: "دفترچهٔ خطا", paragraphs: ["برای هر خطا فقط پاسخ درست ننویس؛ علت خطا، نشانهٔ تشخیص سؤال و یک اقدام پیشگیرانه را ثبت کن."] },
     ],
-    sources: [answerChannel],
+    sources: [primaryChannel],
   },
   {
     slug: "change-major-to-computer",
@@ -332,7 +326,7 @@ export const articles: EditorialPage[] = [
       { title: "چک‌لیست", bullets: ["پوشش سرفصل رسمی سال هدف", "مثال حل‌شدهٔ کافی", "پاسخ تشریحی قابل فهم", "حجم متناسب با زمان", "امکان نمونه‌خوانی پیش از خرید"] },
       { title: "قانون یک‌به‌یک", paragraphs: ["برای هر درس در هر مرحله، یک منبع اصلی آموزش و یک منبع اصلی تمرین داشته باش. منابع دیگر فقط برای رفع یک شکاف مشخص وارد شوند."] },
     ],
-    sources: [answerChannel],
+    sources: [primaryChannel],
   },
   {
     slug: "read-exam-report-card",
@@ -385,10 +379,10 @@ export const articles: EditorialPage[] = [
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
     readingMinutes: 5,
     sections: [
-      { title: "دو کانال، دو نقش", bullets: ["@konkurcom مرجع اصلی خبرها و مسیرهای kunkur01 است.", "@Konkur_answer آرشیو پاسخ، نمونه تدریس، PDF و تحلیل سؤال‌هاست."] },
+      { title: "یک کانال، یک مسیر", bullets: ["@konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای kunkur01 است.", "محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."] },
       { title: "روش استفاده", bullets: ["قبل از دیدن ویدئو، مبحث و خروجی مورد انتظار را بنویس.", "بعد از هر محتوا حداقل سه تست یا سه پرسش بازیابی حل کن.", "لینک پست اصلی را کنار یادداشت نگه دار تا نسخه و زمینه گم نشود."] },
     ],
-    sources: [primaryChannel, answerChannel],
+    sources: [primaryChannel],
   },
 ];
 
@@ -427,7 +421,7 @@ const syllabusSourceBySubject: Record<string, { title: string; url: string }> = 
   "data-structures-algorithms": { title: "پست رسمی سرفصل داده‌ساختار و الگوریتم ۱۴۰۶ در @konkurcom", url: "https://t.me/konkurcom/138" },
   "data-structures": { title: "داده‌ساختارها و الگوریتم‌ها در Syllab", url: "https://syllab.ir/courses/40254" },
   algorithms: { title: "داده‌ساختارها و الگوریتم‌ها در Syllab", url: "https://syllab.ir/courses/40254" },
-  automata: { title: "سرفصل نظریه زبان‌ها و ماشین‌ها در @Konkur_answer", url: "https://t.me/Konkur_answer/3196" },
+  automata: { title: "آرشیو رسمی سرفصل نظریه زبان‌ها و ماشین‌ها در @konkurcom", url: "https://t.me/konkurcom" },
   "operating-systems": { title: "سیستم‌های عامل در Syllab", url: "https://syllab.ir/courses/40424" },
   "artificial-intelligence": { title: "هوش مصنوعی در Syllab", url: "https://syllab.ir/courses/40417" },
   "computer-networks": { title: "شبکه‌های کامپیوتری در Syllab", url: "https://syllab.ir/courses/40443" },

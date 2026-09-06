@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fa" dir="rtl">
       <body>
         <StructuredData data={[
-          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom", "https://t.me/Konkur_answer"] },
+          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom"] },
           { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
         ]} />
         <header className="site-header">
@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <div className="footer-brand"><span className="brand-logo-wrap footer-logo-wrap"><Image className="brand-logo" src="/brand/konkurcom-logo.png" alt="" width={72} height={72} /></span><div><strong>کنکورصفریک <small>kunkur01</small></strong><p>مسیر روشن‌تر برای ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.</p></div></div>
             <div><strong>مسیرهای مطالعه</strong><Link href="/guides">راهنمای آزمون ۱۴۰۶</Link><Link href="/subjects">صفحهٔ درس‌ها</Link><Link href="/articles">مقاله‌ها</Link></div>
             <div><strong>اعتماد و شفافیت</strong><Link href="/about">دربارهٔ محمد رستمی</Link><Link href="/editorial-policy">روش تولید محتوا</Link><Link href="/corrections">سیاست اصلاح</Link></div>
-            <div><strong>کانال‌های رسمی</strong><a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">@konkurcom — کانال اصلی</a><a href="https://t.me/Konkur_answer" target="_blank" rel="noreferrer">@Konkur_answer — پاسخ و منابع</a></div>
+            <div><strong>کانال رسمی</strong><a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">@konkurcom — خبر، آموزش و منابع</a></div>
           </div>
           <div className="footer-bottom"><span>© ۱۴۰۵ کنکورصفریک · kunkur01</span><span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند.</span></div>
         </footer>
