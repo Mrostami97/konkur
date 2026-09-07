@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { validateArticle, validateQuestion, validateReportCard } from "../src/validators";
+import { validateArticle, validateArticleV2, validateQuestion, validateReportCard } from "../src/validators";
 
 const validDir = path.join(__dirname, "../fixtures/valid");
 const invalidDir = path.join(__dirname, "../fixtures/invalid");
@@ -14,6 +14,12 @@ describe("valid fixtures", () => {
     const result = validateArticle(load(validDir, "article.json"));
     expect(result.errors).toEqual([]);
     expect(result.valid).toBe(true);
+  });
+
+  it("accepts article-v2.json without changing article.v1", () => {
+    const fixture = load(validDir, "article-v2.json");
+    expect(validateArticle(fixture).valid).toBe(true);
+    expect(validateArticleV2(fixture).valid).toBe(true);
   });
 
   it("accepts report-card.json", () => {
@@ -34,6 +40,12 @@ describe("invalid fixtures", () => {
     const result = validateArticle(load(invalidDir, "article-missing-summary.json"));
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBeGreaterThan(0);
+  });
+
+  it("rejects a time-sensitive article.v2 without source review dates", () => {
+    const result = validateArticle(load(invalidDir, "article-v2-time-sensitive-without-review.json"));
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(" ")).toMatch(/source_checked_at|review_due_at/);
   });
 
   it("rejects report-card-contains-pii.json (unknown field)", () => {

@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsString, IsUUID, MinLength } from "class-validator";
+import { IsDateString, IsIn, IsOptional, IsString, IsUUID, MinLength } from "class-validator";
 
 export class GrantEntitlementDto {
   @IsUUID()
@@ -13,6 +13,14 @@ export class GrantEntitlementDto {
   @IsString()
   @MinLength(1)
   reason!: string;
+
+  @IsOptional()
+  @IsDateString()
+  startAt?: string;
+
+  @IsOptional()
+  @IsDateString()
+  endAt?: string;
 }
 
 export class RevokeEntitlementDto {

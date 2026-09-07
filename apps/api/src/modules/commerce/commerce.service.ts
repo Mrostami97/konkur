@@ -19,16 +19,31 @@ export class CommerceService {
   // --- Admin catalog management ---------------------------------------------
 
   async createProduct(actorId: string, dto: CreateProductDto) {
-    if (dto.kind === "COURSE" && !dto.courseId) {
-      throw new BadRequestException("courseId is required for a COURSE product");
+    const courseIds = [...new Set([...(dto.courseIds ?? []), ...(dto.courseId ? [dto.courseId] : [])])];
+    const resourceIds = [...new Set(dto.resourceIds ?? [])];
+    if (dto.kind === "COURSE" && (courseIds.length !== 1 || resourceIds.length > 0)) {
+      throw new BadRequestException("COURSE products must grant exactly one course");
     }
+    if (dto.kind === "RESOURCE" && (resourceIds.length !== 1 || courseIds.length > 0)) {
+      throw new BadRequestException("RESOURCE products must grant exactly one resource");
+    }
+    if (dto.kind === "BUNDLE" && courseIds.length + resourceIds.length < 2) {
+      throw new BadRequestException("BUNDLE products must grant at least two courses or resources");
+    }
+
     const product = await this.prisma.product.create({
       data: {
         slug: dto.slug,
         title: dto.title,
         description: dto.description,
         kind: dto.kind as ProductKind,
-        courseId: dto.courseId,
+        // Legacy pointer stays populated for existing clients; authorization
+        // resolves the explicit grant tables below.
+        courseId: dto.kind === "COURSE" ? courseIds[0] : undefined,
+        courseGrants: courseIds.length ? { create: courseIds.map((courseId) => ({ courseId })) } : undefined,
+        resourceGrants: resourceIds.length
+          ? { create: resourceIds.map((resourceId) => ({ resourceId })) }
+          : undefined,
       },
     });
     await this.audit.log({
@@ -50,7 +65,12 @@ export class CommerceService {
 
   async listAllProducts() {
     return this.prisma.product.findMany({
-      include: { prices: true, course: true },
+      include: {
+        prices: true,
+        course: true,
+        courseGrants: { include: { course: true } },
+        resourceGrants: { include: { resource: { select: { id: true, slug: true, title: true } } } },
+      },
       orderBy: { createdAt: "desc" },
     });
   }
@@ -58,18 +78,37 @@ export class CommerceService {
   async listActiveProducts() {
     const products = await this.prisma.product.findMany({
       where: { isActive: true },
-      include: { prices: { where: { isActive: true }, take: 1 } },
+      include: {
+        prices: { where: { isActive: true }, take: 1 },
+        courseGrants: { include: { course: { select: { id: true, slug: true, title: true, isPublished: true } } } },
+        resourceGrants: { include: { resource: { select: { id: true, slug: true, title: true, reviewStatus: true } } } },
+      },
       orderBy: { createdAt: "desc" },
     });
-    return products.filter((p) => p.prices.length > 0);
+    return products.filter(
+      (product) =>
+        product.prices.length > 0 &&
+        product.courseGrants.every((grant) => grant.course.isPublished) &&
+        product.resourceGrants.every((grant) => grant.resource.reviewStatus === "PUBLISHED"),
+    );
   }
 
   async getProductBySlug(slug: string) {
     const product = await this.prisma.product.findUnique({
       where: { slug },
-      include: { prices: { where: { isActive: true }, take: 1 } },
+      include: {
+        prices: { where: { isActive: true }, take: 1 },
+        courseGrants: { include: { course: { select: { id: true, slug: true, title: true, isPublished: true } } } },
+        resourceGrants: { include: { resource: { select: { id: true, slug: true, title: true, reviewStatus: true } } } },
+      },
     });
-    if (!product || !product.isActive || product.prices.length === 0) {
+    if (
+      !product ||
+      !product.isActive ||
+      product.prices.length === 0 ||
+      product.courseGrants.some((grant) => !grant.course.isPublished) ||
+      product.resourceGrants.some((grant) => grant.resource.reviewStatus !== "PUBLISHED")
+    ) {
       throw new NotFoundException("product not found");
     }
     return product;
@@ -80,9 +119,21 @@ export class CommerceService {
   async checkout(userId: string, productId: string) {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
-      include: { prices: { where: { isActive: true }, take: 1 } },
+      include: {
+        prices: { where: { isActive: true }, take: 1 },
+        course: { select: { isPublished: true } },
+        courseGrants: { include: { course: { select: { isPublished: true } } } },
+        resourceGrants: { include: { resource: { select: { reviewStatus: true } } } },
+      },
     });
-    if (!product || !product.isActive || product.prices.length === 0) {
+    if (
+      !product ||
+      !product.isActive ||
+      product.prices.length === 0 ||
+      (product.courseId && !product.course?.isPublished) ||
+      product.courseGrants.some((grant) => !grant.course.isPublished) ||
+      product.resourceGrants.some((grant) => grant.resource.reviewStatus !== "PUBLISHED")
+    ) {
       throw new NotFoundException("product not available for purchase");
     }
     const price = product.prices[0];
@@ -131,8 +182,8 @@ export class CommerceService {
       const entitlement = await tx.entitlement.create({
         data: { userId, productId, grantedVia: EntitlementGrantSource.ORDER },
       });
-      if (product.kind === ProductKind.COURSE && product.courseId) {
-        await this.learning.enrollFromEntitlement(userId, product.courseId, tx);
+      for (const courseId of this.productCourseIds(product)) {
+        await this.learning.enrollFromEntitlement(userId, courseId, tx);
       }
       await tx.outboxEvent.create({
         data: {
@@ -166,8 +217,16 @@ export class CommerceService {
     productId: string,
     grantedVia: "GIFT" | "TRIAL" | "MANUAL",
     reason: string,
+    startAt?: Date,
+    endAt?: Date,
   ) {
-    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    if (startAt && endAt && endAt <= startAt) {
+      throw new BadRequestException("endAt must be after startAt");
+    }
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      include: { courseGrants: true },
+    });
     if (!product) throw new NotFoundException("product not found");
 
     const entitlement = await this.prisma.$transaction(async (tx) => {
@@ -178,10 +237,15 @@ export class CommerceService {
           grantedVia: grantedVia as EntitlementGrantSource,
           reason,
           grantedByUserId: adminId,
+          startAt,
+          endAt,
         },
       });
-      if (product.kind === ProductKind.COURSE && product.courseId) {
-        await this.learning.enrollFromEntitlement(userId, product.courseId, tx);
+      const now = new Date();
+      if ((!startAt || startAt <= now) && (!endAt || endAt > now)) {
+        for (const courseId of this.productCourseIds(product)) {
+          await this.learning.enrollFromEntitlement(userId, courseId, tx);
+        }
       }
       return entitlement;
     });
@@ -200,12 +264,17 @@ export class CommerceService {
   async revokeEntitlement(adminId: string, entitlementId: string, reason?: string) {
     const entitlement = await this.prisma.entitlement.findUnique({ where: { id: entitlementId } });
     if (!entitlement) throw new NotFoundException("entitlement not found");
-    const product = await this.prisma.product.findUnique({ where: { id: entitlement.productId } });
+    const product = await this.prisma.product.findUnique({
+      where: { id: entitlement.productId },
+      include: { courseGrants: true },
+    });
 
     await this.prisma.$transaction(async (tx) => {
       await tx.entitlement.update({ where: { id: entitlementId }, data: { revokedAt: new Date() } });
-      if (product?.kind === ProductKind.COURSE && product.courseId) {
-        await this.learning.revokeEnrollment(entitlement.userId, product.courseId, tx);
+      if (product) {
+        for (const courseId of this.productCourseIds(product)) {
+          await this.learning.revokeEnrollment(entitlement.userId, courseId, tx);
+        }
       }
     });
 
@@ -234,10 +303,80 @@ export class CommerceService {
   }
 
   async listMyEntitlements(userId: string) {
-    return this.prisma.entitlement.findMany({
+    const entitlements = await this.prisma.entitlement.findMany({
       where: { userId },
-      include: { product: true },
+      include: {
+        product: {
+          include: {
+            courseGrants: {
+              where: { course: { isPublished: true } },
+              include: { course: { select: { id: true, slug: true, title: true } } },
+            },
+            resourceGrants: {
+              where: { resource: { reviewStatus: "PUBLISHED" } },
+              include: { resource: { select: { id: true, slug: true, title: true } } },
+            },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
+    const now = new Date();
+    return entitlements.map((entitlement) => ({
+      ...entitlement,
+      status: entitlement.revokedAt
+        ? "REVOKED"
+        : entitlement.startAt > now
+          ? "SCHEDULED"
+          : entitlement.endAt && entitlement.endAt <= now
+            ? "EXPIRED"
+            : "ACTIVE",
+    }));
+  }
+
+  async listMyLibrary(userId: string) {
+    const active = (await this.listMyEntitlements(userId)).filter((item) => item.status === "ACTIVE");
+    const courses = new Map<string, unknown>();
+    const resources = new Map<string, unknown>();
+    for (const entitlement of active) {
+      for (const grant of entitlement.product.courseGrants) courses.set(grant.course.id, grant.course);
+      for (const grant of entitlement.product.resourceGrants) resources.set(grant.resource.id, grant.resource);
+    }
+    return { courses: [...courses.values()], resources: [...resources.values()] };
+  }
+
+  async addCourseGrant(productId: string, courseId: string) {
+    await this.ensureBundle(productId);
+    return this.prisma.productCourseGrant.upsert({
+      where: { productId_courseId: { productId, courseId } },
+      update: {},
+      create: { productId, courseId },
+    });
+  }
+
+  async addResourceGrant(productId: string, resourceId: string) {
+    await this.ensureBundle(productId);
+    return this.prisma.productResourceGrant.upsert({
+      where: { productId_resourceId: { productId, resourceId } },
+      update: {},
+      create: { productId, resourceId },
+    });
+  }
+
+  private async ensureBundle(productId: string) {
+    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    if (!product) throw new NotFoundException("product not found");
+    if (product.kind !== ProductKind.BUNDLE) {
+      throw new BadRequestException("grants can only be appended to BUNDLE products");
+    }
+  }
+
+  private productCourseIds(product: { courseId: string | null; courseGrants: { courseId: string }[] }) {
+    return [
+      ...new Set([
+        ...(product.courseId ? [product.courseId] : []),
+        ...product.courseGrants.map((grant) => grant.courseId),
+      ]),
+    ];
   }
 }

@@ -1,5 +1,5 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { EnrollmentSource, Prisma } from "@prisma/client";
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { AccessMode, EnrollmentSource, Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/content-blocks";
@@ -53,12 +53,15 @@ export class LearningService {
     const mod = await this.prisma.courseModule.findUnique({ where: { id: courseModuleId } });
     if (!mod) throw new NotFoundException("course module not found");
     assertValidContentBlocks(dto.contentBlocks, LESSON_BLOCK_TYPES);
+    const { topicIds = [], ...lessonInput } = dto;
     return this.prisma.lesson.create({
       data: {
         courseModuleId,
-        title: dto.title,
-        order: dto.order,
+        title: lessonInput.title,
+        order: lessonInput.order,
         contentBlocks: dto.contentBlocks as Prisma.InputJsonValue,
+        isPreview: lessonInput.isPreview ?? false,
+        topics: topicIds.length > 0 ? { create: topicIds.map((topicId) => ({ topicId })) } : undefined,
       },
     });
   }
@@ -78,7 +81,12 @@ export class LearningService {
       include: {
         modules: {
           orderBy: { order: "asc" },
-          include: { lessons: { orderBy: { order: "asc" }, select: { id: true, title: true, order: true } } },
+          include: {
+            lessons: {
+              orderBy: { order: "asc" },
+              select: { id: true, title: true, order: true, isPreview: true },
+            },
+          },
         },
       },
     });
@@ -92,7 +100,12 @@ export class LearningService {
       include: {
         modules: {
           orderBy: { order: "asc" },
-          include: { lessons: { orderBy: { order: "asc" }, select: { id: true, title: true, order: true } } },
+          include: {
+            lessons: {
+              orderBy: { order: "asc" },
+              select: { id: true, title: true, order: true, isPreview: true },
+            },
+          },
         },
       },
     });
@@ -111,26 +124,19 @@ export class LearningService {
     });
   }
 
-  async grantManualEnrollment(userId: string, courseId: string) {
-    return this.prisma.enrollment.upsert({
-      where: { userId_courseId: { userId, courseId } },
-      update: { revokedAt: null },
-      create: { userId, courseId, source: EnrollmentSource.MANUAL },
-    });
-  }
-
-  /** Called by Commerce when it revokes the entitlement backing this course. */
+  /** Called by Commerce after an entitlement changes. Another active product
+   * grant may still keep the same course available, so revocation is always
+   * reconciled against all grants rather than applied blindly. */
   async revokeEnrollment(userId: string, courseId: string, tx?: Tx) {
     const db = tx ?? this.prisma;
-    await db.enrollment.updateMany({
-      where: { userId, courseId, revokedAt: null },
-      data: { revokedAt: new Date() },
-    });
+    const active = await this.hasActiveCourseEntitlement(userId, courseId, db);
+    if (active) return;
+    await db.enrollment.updateMany({ where: { userId, courseId, revokedAt: null }, data: { revokedAt: new Date() } });
   }
 
   async listMyEnrollments(userId: string) {
     return this.prisma.enrollment.findMany({
-      where: { userId },
+      where: { userId, revokedAt: null, course: { isPublished: true } },
       include: { course: true },
       orderBy: { enrolledAt: "desc" },
     });
@@ -138,23 +144,21 @@ export class LearningService {
 
   // --- Gated lesson consumption --------------------------------------------
 
-  async getLessonForStudent(userId: string, lessonId: string) {
+  async getLesson(userId: string | undefined, lessonId: string) {
     const lesson = await this.prisma.lesson.findUnique({
       where: { id: lessonId },
-      include: { courseModule: true },
+      include: { courseModule: { include: { course: true } }, topics: { include: { topic: true } } },
     });
     if (!lesson) throw new NotFoundException("lesson not found");
 
-    const enrollment = await this.prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId, courseId: lesson.courseModule.courseId } },
-    });
-    if (!enrollment || enrollment.revokedAt) throw new ForbiddenException("no active access to this course");
-
-    await this.prisma.lessonProgress.upsert({
-      where: { userId_lessonId: { userId, lessonId } },
-      update: { lastViewedAt: new Date() },
-      create: { userId, lessonId },
-    });
+    await this.assertLessonAccess(userId, lesson);
+    if (userId) {
+      await this.prisma.lessonProgress.upsert({
+        where: { userId_lessonId: { userId, lessonId } },
+        update: { lastViewedAt: new Date() },
+        create: { userId, lessonId },
+      });
+    }
 
     return lesson;
   }
@@ -162,19 +166,51 @@ export class LearningService {
   async completeLesson(userId: string, lessonId: string) {
     const lesson = await this.prisma.lesson.findUnique({
       where: { id: lessonId },
-      include: { courseModule: true },
+      include: { courseModule: { include: { course: true } } },
     });
     if (!lesson) throw new NotFoundException("lesson not found");
-
-    const enrollment = await this.prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId, courseId: lesson.courseModule.courseId } },
-    });
-    if (!enrollment || enrollment.revokedAt) throw new ForbiddenException("no active access to this course");
+    await this.assertLessonAccess(userId, lesson);
 
     return this.prisma.lessonProgress.upsert({
       where: { userId_lessonId: { userId, lessonId } },
       update: { completedAt: new Date(), lastViewedAt: new Date() },
       create: { userId, lessonId, completedAt: new Date() },
     });
+  }
+
+  async hasActiveCourseEntitlement(userId: string, courseId: string, tx?: Tx): Promise<boolean> {
+    const db = tx ?? this.prisma;
+    const now = new Date();
+    const entitlement = await db.entitlement.findFirst({
+      where: {
+        userId,
+        startAt: { lte: now },
+        revokedAt: null,
+        OR: [{ endAt: null }, { endAt: { gt: now } }],
+        product: {
+          OR: [{ courseId }, { courseGrants: { some: { courseId } } }],
+        },
+      },
+      select: { id: true },
+    });
+    return Boolean(entitlement);
+  }
+
+  private async assertLessonAccess(
+    userId: string | undefined,
+    lesson: {
+      isPreview: boolean;
+      courseModule: { courseId: string; course: { accessMode: AccessMode; isPublished: boolean } };
+    },
+  ) {
+    const course = lesson.courseModule.course;
+    if (!course.isPublished) throw new NotFoundException("lesson not found");
+    const mode = course.accessMode;
+    if (lesson.isPreview || mode === AccessMode.PUBLIC) return;
+    if (!userId) throw new UnauthorizedException("sign in to access this lesson");
+    if (mode === AccessMode.ACCOUNT) return;
+    if (!(await this.hasActiveCourseEntitlement(userId, lesson.courseModule.courseId))) {
+      throw new ForbiddenException("no active entitlement for this course");
+    }
   }
 }

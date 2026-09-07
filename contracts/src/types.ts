@@ -40,6 +40,56 @@ export interface ArticleV1 {
   review_status: "draft" | "in_review" | "approved" | "rejected";
 }
 
+export type ArticleContentTypeV2 = "article" | "guide" | "news" | "case_study";
+
+export interface ArticleV2Source {
+  source_external_id: string;
+  relation:
+    | "DEFINES"
+    | "SUPPORTS"
+    | "DERIVED_FROM"
+    | "TRANSLATION_OF"
+    | "ANSWER_KEY_FOR"
+    | "CORRECTS"
+    | "SUPERSEDES";
+  locator?: string;
+  claim?: string;
+  order?: number;
+}
+
+export interface ArticleV2 {
+  schema_version: "article.v2";
+  external_id: string;
+  content_type: ArticleContentTypeV2;
+  title: string;
+  slug: string;
+  summary: string;
+  quick_answer: string;
+  content_blocks: ArticleBlock[];
+  taxonomy: {
+    major: string[];
+    tags?: string[];
+    degrees: ("master" | "phd")[];
+    fields: string[];
+    subject_codes: string[];
+    topic_codes: string[];
+  };
+  seo: { title: string; description: string };
+  validity: {
+    exam_year?: number;
+    time_sensitive: boolean;
+    source_checked_at?: string;
+    review_due_at?: string;
+  };
+  sources: ArticleV2Source[];
+  editorial?: { author_slug?: string };
+  assets?: Asset[];
+  provenance: Provenance;
+  review_status: "draft" | "in_review" | "approved" | "rejected";
+}
+
+export type ArticleContract = ArticleV1 | ArticleV2;
+
 export interface ReportCardV1 {
   schema_version: "report-card.v1";
   external_id: string;

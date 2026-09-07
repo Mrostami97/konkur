@@ -8,6 +8,7 @@ import { SessionAuthGuard } from "./guards/session-auth.guard";
 import { RolesGuard } from "./guards/roles.guard";
 import { ProfileController } from "./profile/profile.controller";
 import { ProfileService } from "./profile/profile.service";
+import { OptionalSessionAuthGuard } from "./guards/optional-session-auth.guard";
 
 @Module({
   imports: [AuditModule],
@@ -15,10 +16,11 @@ import { ProfileService } from "./profile/profile.service";
   providers: [
     IdentityService,
     SessionAuthGuard,
+    OptionalSessionAuthGuard,
     RolesGuard,
     ProfileService,
     { provide: OTP_PROVIDER, useClass: ConsoleOtpProvider },
   ],
-  exports: [IdentityService, SessionAuthGuard, RolesGuard],
+  exports: [IdentityService, SessionAuthGuard, OptionalSessionAuthGuard, RolesGuard],
 })
 export class IdentityModule {}

@@ -11,6 +11,15 @@ export default function AdminHomePage() {
             <Link href="/admin/articles">مدیریت مقالات</Link>
           </li>
           <li>
+            <Link href="/admin/content-sources">منابع و مستندات تحریریه</Link>
+          </li>
+          <li>
+            <Link href="/admin/contributors">نویسندگان و بازبین‌ها</Link>
+          </li>
+          <li>
+            <Link href="/admin/resources">مدیریت منابع آموزشی</Link>
+          </li>
+          <li>
             <Link href="/admin/courses">مدیریت دوره‌ها</Link>
           </li>
           <li>

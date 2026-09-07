@@ -3,9 +3,10 @@ import addFormats from "ajv-formats";
 import type { ErrorObject, ValidateFunction } from "ajv";
 
 import articleSchema from "../schemas/article.v1.schema.json";
+import articleV2Schema from "../schemas/article.v2.schema.json";
 import reportCardSchema from "../schemas/report-card.v1.schema.json";
 import questionSchema from "../schemas/question.v1.schema.json";
-import type { ArticleV1, QuestionV1, ReportCardV1 } from "./types";
+import type { ArticleContract, ArticleV1, ArticleV2, QuestionV1, ReportCardV1 } from "./types";
 
 export interface ValidationResult<T> {
   valid: boolean;
@@ -18,6 +19,7 @@ addFormats(ajv);
 
 const compiled = {
   "article.v1": ajv.compile(articleSchema) as ValidateFunction<ArticleV1>,
+  "article.v2": ajv.compile(articleV2Schema) as ValidateFunction<ArticleV2>,
   "report-card.v1": ajv.compile(reportCardSchema) as ValidateFunction<ReportCardV1>,
   "question.v1": ajv.compile(questionSchema) as ValidateFunction<QuestionV1>,
 };
@@ -48,11 +50,22 @@ export function checkQuestionOptionIntegrity(question: QuestionV1): string[] {
   return errors;
 }
 
-export function validateArticle(data: unknown): ValidationResult<ArticleV1> {
-  const validate = compiled["article.v1"];
+export function validateArticle(data: unknown): ValidationResult<ArticleContract> {
+  const version =
+    data && typeof data === "object"
+      ? (data as Record<string, unknown>).schema_version
+      : undefined;
+  const validate = version === "article.v2" ? compiled["article.v2"] : compiled["article.v1"];
   const ok = validate(data);
   if (!ok) return { valid: false, errors: formatErrors(validate.errors) };
-  return { valid: true, data: data as ArticleV1, errors: [] };
+  return { valid: true, data: data as ArticleContract, errors: [] };
+}
+
+export function validateArticleV2(data: unknown): ValidationResult<ArticleV2> {
+  const validate = compiled["article.v2"];
+  const ok = validate(data);
+  if (!ok) return { valid: false, errors: formatErrors(validate.errors) };
+  return { valid: true, data: data as ArticleV2, errors: [] };
 }
 
 export function validateReportCard(data: unknown): ValidationResult<ReportCardV1> {

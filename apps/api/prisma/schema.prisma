@@ -19,28 +19,29 @@ enum Role {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  phone       String       @unique
+  id                 String              @id @default(uuid())
+  phone              String              @unique
   // Nullable so OTP-only users continue to work. Password authentication is
   // enabled for users that have a password credential provisioned.
-  passwordHash String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  roles       UserRole[]
-  sessions    Session[]
-  otpCodes    OtpCode[]
-  consents    Consent[]
-  profile     Profile?
-  enrollments Enrollment[]
-  orders      Order[]
-  entitlements Entitlement[] @relation("EntitlementUser")
-  attempts    Attempt[]
-  goal        Goal?
-  studySessions StudySession[]
-  masteryStates MasteryState[]
-  rankEstimates RankEstimate[]
-  choiceList  ChoiceList?
-  lead        Lead?
+  passwordHash       String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  roles              UserRole[]
+  sessions           Session[]
+  otpCodes           OtpCode[]
+  consents           Consent[]
+  profile            Profile?
+  enrollments        Enrollment[]
+  orders             Order[]
+  entitlements       Entitlement[]       @relation("EntitlementUser")
+  attempts           Attempt[]
+  goal               Goal?
+  studySessions      StudySession[]
+  masteryStates      MasteryState[]
+  rankEstimates      RankEstimate[]
+  choiceList         ChoiceList?
+  lead               Lead?
+  contributorProfile ContributorProfile?
 
   @@map("users")
 }
@@ -48,14 +49,14 @@ model User {
 // doc §6.1 groups this under "هویت و پروفایل" (identity & profile) alongside
 // users/roles/consents -- not a separate module boundary.
 model Profile {
-  id            String   @id @default(uuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  displayName   String?
-  targetDegree  Degree?
-  targetField   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName  String?
+  targetDegree Degree?
+  targetField  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("profiles")
 }
@@ -77,30 +78,30 @@ model UserRole {
 }
 
 model OtpCode {
-  id          String    @id @default(uuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  phone       String
-  codeHash    String
-  attempts    Int       @default(0)
-  consumedAt  DateTime?
-  expiresAt   DateTime
-  createdAt   DateTime  @default(now())
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone      String
+  codeHash   String
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
 
   @@index([userId])
   @@map("otp_codes")
 }
 
 model Session {
-  id         String    @id @default(uuid())
-  userId     String
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash  String    @unique
-  userAgent  String?
-  ip         String?
-  expiresAt  DateTime
-  revokedAt  DateTime?
-  createdAt  DateTime  @default(now())
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  userAgent String?
+  ip        String?
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([userId])
   @@map("sessions")
@@ -119,13 +120,13 @@ model Consent {
 }
 
 model AuditLog {
-  id            String   @id @default(uuid())
-  actorUserId   String?
-  action        String
-  targetType    String
-  targetId      String
-  metadata      Json?
-  createdAt     DateTime @default(now())
+  id          String   @id @default(uuid())
+  actorUserId String?
+  action      String
+  targetType  String
+  targetId    String
+  metadata    Json?
+  createdAt   DateTime @default(now())
 
   @@index([actorUserId])
   @@index([targetType, targetId])
@@ -146,32 +147,232 @@ enum ReviewStatus {
   REJECTED
 }
 
+enum ArticleContentType {
+  ARTICLE
+  GUIDE
+  NEWS
+  CASE_STUDY
+}
+
+enum ContributorKind {
+  PERSON
+  ORGANIZATION
+}
+
+enum AccessMode {
+  PUBLIC
+  ACCOUNT
+  ENTITLEMENT
+}
+
+enum ResourceKind {
+  NOTE
+  VIDEO
+  PDF
+  EXTERNAL_LINK
+  OFFICIAL_NOTICE
+  EXAM_PROGRAM
+  REGISTRATION_BOOKLET
+  QUESTION_BOOKLET
+  ANSWER_KEY
+  CORRECTION
+  ACADEMIC_SYLLABUS
+  OPEN_TEXTBOOK
+  OLYMPIAD_PROBLEM_SET
+  OLYMPIAD_SOLUTION
+  TELEGRAM_POST
+  TRANSCRIPT
+}
+
+enum ResourceHostingMode {
+  METADATA_ONLY
+  EXTERNAL_LINK
+  OFFICIAL_EMBED
+  USER_UPLOAD
+  MIRRORED_WITH_PERMISSION
+}
+
 model Article {
-  id            String       @id @default(uuid())
+  id                String              @id @default(uuid())
   // Set only for admin-authored content (Phase 1 path); ingested articles
   // (Phase 2 path) carry provenance instead of an internal author.
-  authorId      String?
+  authorId          String?
   // Set only for ingested content (Phase 2 path) -- the article.v1 contract's
   // external_id, for dedup/idempotent-reimport matching.
-  externalId    String?      @unique
-  provenance    Json?
-  version       Int          @default(1)
-  slug          String       @unique
-  title         String
-  summary       String
-  contentBlocks Json
+  externalId        String?             @unique
+  provenance        Json?
+  version           Int                 @default(1)
+  slug              String              @unique
+  title             String
+  summary           String
+  contentBlocks     Json
   // Set only for ingested content -- the article.v1 contract's media_key ->
   // checksum manifest, so image/chart blocks can be resolved to /media/:checksum.
-  assets        Json         @default("[]")
-  taxonomyMajor String[]
-  taxonomyTags  String[]     @default([])
-  reviewStatus  ReviewStatus @default(DRAFT)
-  publishedAt   DateTime?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  assets            Json                @default("[]")
+  taxonomyMajor     String[]
+  taxonomyTags      String[]            @default([])
+  contentType       ArticleContentType  @default(ARTICLE)
+  quickAnswer       String?
+  seoTitle          String?
+  seoDescription    String?
+  taxonomyDegrees   Degree[]            @default([])
+  taxonomyFields    String[]            @default([])
+  subjectCodes      String[]            @default([])
+  topicCodes        String[]            @default([])
+  validForYear      Int?
+  authorProfileId   String?
+  authorProfile     ContributorProfile? @relation("ArticleAuthor", fields: [authorProfileId], references: [id])
+  reviewerProfileId String?
+  reviewerProfile   ContributorProfile? @relation("ArticleReviewer", fields: [reviewerProfileId], references: [id])
+  reviewedAt        DateTime?
+  sourceValidatedAt DateTime?
+  reviewDueAt       DateTime?
+  sources           ArticleSource[]
+  reviewStatus      ReviewStatus        @default(DRAFT)
+  publishedAt       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
   @@index([reviewStatus])
+  @@index([contentType])
+  @@index([authorProfileId])
+  @@index([reviewerProfileId])
   @@map("articles")
+}
+
+model ContributorProfile {
+  id                String          @id @default(uuid())
+  userId            String?         @unique
+  user              User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  kind              ContributorKind @default(PERSON)
+  slug              String          @unique
+  displayName       String
+  roleTitle         String?
+  shortBio          String?
+  bioBlocks         Json            @default("[]")
+  avatarUrl         String?
+  thesisUrl         String?
+  sameAs            String[]        @default([])
+  isPublished       Boolean         @default(false)
+  authoredArticles  Article[]       @relation("ArticleAuthor")
+  reviewedArticles  Article[]       @relation("ArticleReviewer")
+  authoredResources Resource[]      @relation("ResourceAuthor")
+  reviewedResources Resource[]      @relation("ResourceReviewer")
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("contributor_profiles")
+}
+
+model ContentSource {
+  id                   String           @id @default(uuid())
+  externalId           String?          @unique
+  kind                 String
+  title                String
+  publisher            String
+  creator              String?
+  canonicalUrl         String
+  deepUrl              String?
+  sourceTier           String
+  authorityScopes      String[]         @default([])
+  sourceStatus         String           @default("ACTIVE")
+  publishedAt          DateTime?
+  issuedAt             DateTime?
+  checkedAt            DateTime
+  rightsHolder         String?
+  rightsBasis          String           @default("LINK_ONLY")
+  licenseName          String?
+  licenseUrl           String?
+  attributionText      String?
+  mayLink              Boolean          @default(true)
+  mayEmbed             Boolean          @default(false)
+  mayQuote             Boolean          @default(false)
+  mayReproduce         Boolean          @default(false)
+  mayAdapt             Boolean          @default(false)
+  mayTranslate         Boolean          @default(false)
+  mayHost              Boolean          @default(false)
+  commercialUseAllowed Boolean          @default(false)
+  checksum             String?
+  metadata             Json             @default("{}")
+  archivedAt           DateTime?
+  articleLinks         ArticleSource[]
+  resourceLinks        ResourceSource[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([canonicalUrl])
+  @@index([sourceStatus])
+  @@map("content_sources")
+}
+
+model ArticleSource {
+  articleId String
+  article   Article       @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  sourceId  String
+  source    ContentSource @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  relation  String        @default("SUPPORTS")
+  locator   String?
+  claim     String?
+  order     Int           @default(0)
+
+  @@id([articleId, sourceId])
+  @@index([sourceId])
+  @@map("article_sources")
+}
+
+model Resource {
+  id                String                 @id @default(uuid())
+  externalId        String?                @unique
+  slug              String                 @unique
+  title             String
+  summary           String
+  description       String?
+  kind              ResourceKind
+  accessMode        AccessMode             @default(PUBLIC)
+  hostingMode       ResourceHostingMode    @default(METADATA_ONLY)
+  contentBlocks     Json                   @default("[]")
+  externalUrl       String?
+  sourceArtifactId  String?
+  sourceArtifact    SourceArtifact?        @relation(fields: [sourceArtifactId], references: [id], onDelete: SetNull)
+  taxonomyDegrees   Degree[]               @default([])
+  taxonomyFields    String[]               @default([])
+  subjectCodes      String[]               @default([])
+  topicCodes        String[]               @default([])
+  provenance        Json?
+  metadata          Json                   @default("{}")
+  authorProfileId   String?
+  authorProfile     ContributorProfile?    @relation("ResourceAuthor", fields: [authorProfileId], references: [id])
+  reviewerProfileId String?
+  reviewerProfile   ContributorProfile?    @relation("ResourceReviewer", fields: [reviewerProfileId], references: [id])
+  reviewStatus      ReviewStatus           @default(DRAFT)
+  version           Int                    @default(1)
+  reviewedAt        DateTime?
+  publishedAt       DateTime?
+  sources           ResourceSource[]
+  productGrants     ProductResourceGrant[]
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  @@index([reviewStatus, accessMode])
+  @@index([sourceArtifactId])
+  @@index([authorProfileId])
+  @@index([reviewerProfileId])
+  @@map("resources")
+}
+
+model ResourceSource {
+  resourceId String
+  resource   Resource      @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  sourceId   String
+  source     ContentSource @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  relation   String        @default("SUPPORTS")
+  locator    String?
+  claim      String?
+  order      Int           @default(0)
+
+  @@id([resourceId, sourceId])
+  @@index([sourceId])
+  @@map("resource_sources")
 }
 
 // ---------------------------------------------------------------------------
@@ -180,16 +381,22 @@ model Article {
 // -- no upload/streaming infra yet, no LaTeX/rich question content (Phase 3).
 // ---------------------------------------------------------------------------
 model Course {
-  id          String         @id @default(uuid())
-  slug        String         @unique
-  title       String
-  description String
-  isPublished Boolean        @default(false)
-  modules     CourseModule[]
-  products    Product[]
-  enrollments Enrollment[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id            String               @id @default(uuid())
+  slug          String               @unique
+  title         String
+  description   String
+  isPublished   Boolean              @default(false)
+  accessMode    AccessMode           @default(ENTITLEMENT)
+  subjectId     String?
+  subject       Subject?             @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  degreeTargets Degree[]             @default([])
+  fieldTargets  String[]             @default([])
+  modules       CourseModule[]
+  products      Product[]
+  productGrants ProductCourseGrant[]
+  enrollments   Enrollment[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
 
   @@map("courses")
 }
@@ -214,6 +421,8 @@ model Lesson {
   title          String
   order          Int
   contentBlocks  Json
+  isPreview      Boolean          @default(false)
+  topics         LessonTopic[]
   progress       LessonProgress[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
@@ -268,34 +477,60 @@ model LessonProgress {
 // ---------------------------------------------------------------------------
 enum ProductKind {
   COURSE
+  RESOURCE
+  BUNDLE
 }
 
 model Product {
-  id          String        @id @default(uuid())
-  slug        String        @unique
-  title       String
-  description String
-  kind        ProductKind
-  courseId    String?
-  course      Course?       @relation(fields: [courseId], references: [id])
-  isActive    Boolean       @default(true)
-  prices      Price[]
-  orderItems  OrderItem[]
-  entitlements Entitlement[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id             String                 @id @default(uuid())
+  slug           String                 @unique
+  title          String
+  description    String
+  kind           ProductKind
+  courseId       String?
+  course         Course?                @relation(fields: [courseId], references: [id])
+  isActive       Boolean                @default(true)
+  prices         Price[]
+  orderItems     OrderItem[]
+  entitlements   Entitlement[]
+  courseGrants   ProductCourseGrant[]
+  resourceGrants ProductResourceGrant[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
 
   @@map("products")
 }
 
+model ProductCourseGrant {
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([productId, courseId])
+  @@index([courseId])
+  @@map("product_course_grants")
+}
+
+model ProductResourceGrant {
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  resourceId String
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@id([productId, resourceId])
+  @@index([resourceId])
+  @@map("product_resource_grants")
+}
+
 model Price {
-  id            String      @id @default(uuid())
-  productId     String
-  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  amountRial    Int
-  isActive      Boolean     @default(true)
-  createdAt     DateTime    @default(now())
-  orderItems    OrderItem[]
+  id         String      @id @default(uuid())
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  amountRial Int
+  isActive   Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  orderItems OrderItem[]
 
   @@index([productId])
   @@map("prices")
@@ -394,25 +629,25 @@ model Entitlement {
 // that rewrite unchanged.
 // ---------------------------------------------------------------------------
 model Question {
-  id            String   @id @default(uuid())
-  externalId    String   @unique
-  examDegree    Degree
-  examMajor     String
-  examYear      Int
-  subjectCode   String
-  topicCodes    String[]
-  stemBlocks    Json
-  options       Json
-  correctOption Int
+  id             String     @id @default(uuid())
+  externalId     String     @unique
+  examDegree     Degree
+  examMajor      String
+  examYear       Int
+  subjectCode    String
+  topicCodes     String[]
+  stemBlocks     Json
+  options        Json
+  correctOption  Int
   solutionBlocks Json
-  assets        Json     @default("[]")
-  source        Json?
-  provenance    Json
-  version       Int      @default(1)
-  examItems     ExamItem[]
-  answers       Answer[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  assets         Json       @default("[]")
+  source         Json?
+  provenance     Json
+  version        Int        @default(1)
+  examItems      ExamItem[]
+  answers        Answer[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   @@index([subjectCode])
   @@map("questions")
@@ -431,6 +666,7 @@ model ReportCard {
   admissions    Json
   provenance    Json
   version       Int      @default(1)
+  publicConsent Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -503,13 +739,14 @@ model ImportItem {
 }
 
 model SourceArtifact {
-  id         String   @id @default(uuid())
-  checksum   String   @unique
+  id         String     @id @default(uuid())
+  checksum   String     @unique
   filename   String
   mimeType   String
   size       Int
   storageKey String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime   @default(now())
+  resources  Resource[]
 
   @@map("source_artifacts")
 }
@@ -522,16 +759,26 @@ enum VersionedEntityType {
   ARTICLE
   QUESTION
   REPORT_CARD
+  RESOURCE
 }
 
 model ContentVersion {
-  id          String              @id @default(uuid())
-  entityType  VersionedEntityType
-  entityId    String
-  version     Int
-  payload     Json
+  id                      String              @id @default(uuid())
+  entityType              VersionedEntityType
+  entityId                String
+  version                 Int
+  payload                 Json
+  schemaVersion           String              @default("article.v1")
+  reviewStatus            ReviewStatus        @default(PUBLISHED)
+  createdByUserId         String?
+  reviewedByUserId        String?
+  submittedAt             DateTime?
+  reviewedAt              DateTime?
+  reviewNote              String?
+  publishedAt             DateTime?
   publishedByImportItemId String?
-  createdAt   DateTime            @default(now())
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
 
   @@unique([entityType, entityId, version])
   @@index([entityType, entityId])
@@ -547,25 +794,72 @@ model ContentVersion {
 // the ingested tables themselves.
 // ---------------------------------------------------------------------------
 model Subject {
-  id        String   @id @default(uuid())
-  code      String   @unique
-  title     String
-  topics    Topic[]
-  createdAt DateTime @default(now())
+  id              String                @id @default(uuid())
+  code            String                @unique
+  title           String
+  slug            String                @unique
+  description     String?
+  order           Int                   @default(0)
+  metadata        Json                  @default("{}")
+  topics          Topic[]
+  courses         Course[]
+  prerequisites   SubjectPrerequisite[] @relation("SubjectPrerequisites")
+  prerequisiteFor SubjectPrerequisite[] @relation("SubjectPrerequisiteFor")
+  createdAt       DateTime              @default(now())
 
   @@map("subjects")
 }
 
 model Topic {
-  id        String   @id @default(uuid())
-  code      String   @unique
-  title     String
-  subjectId String
-  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id              String              @id @default(uuid())
+  code            String              @unique
+  title           String
+  slug            String              @unique
+  description     String?
+  order           Int                 @default(0)
+  metadata        Json                @default("{}")
+  subjectId       String
+  subject         Subject             @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  lessonLinks     LessonTopic[]
+  prerequisites   TopicPrerequisite[] @relation("TopicPrerequisites")
+  prerequisiteFor TopicPrerequisite[] @relation("TopicPrerequisiteFor")
+  createdAt       DateTime            @default(now())
 
   @@index([subjectId])
   @@map("topics")
+}
+
+model SubjectPrerequisite {
+  subjectId      String
+  prerequisiteId String
+  subject        Subject @relation("SubjectPrerequisites", fields: [subjectId], references: [id], onDelete: Cascade)
+  prerequisite   Subject @relation("SubjectPrerequisiteFor", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@id([subjectId, prerequisiteId])
+  @@index([prerequisiteId])
+  @@map("subject_prerequisites")
+}
+
+model TopicPrerequisite {
+  topicId        String
+  prerequisiteId String
+  topic          Topic  @relation("TopicPrerequisites", fields: [topicId], references: [id], onDelete: Cascade)
+  prerequisite   Topic  @relation("TopicPrerequisiteFor", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@id([topicId, prerequisiteId])
+  @@index([prerequisiteId])
+  @@map("topic_prerequisites")
+}
+
+model LessonTopic {
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  topicId  String
+  topic    Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([lessonId, topicId])
+  @@index([topicId])
+  @@map("lesson_topics")
 }
 
 // ---------------------------------------------------------------------------

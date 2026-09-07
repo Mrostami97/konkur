@@ -2,10 +2,10 @@
 
 > این فایل مرجع اجرایی برنامهٔ چندفازی kunkur01 است. هر مورد فقط پس از پیاده‌سازی، آزمون و بازبینی تیک می‌خورد.
 
-- آخرین به‌روزرسانی: ۱۴۰۵/۰۶/۱۵
-- فاز فعال: فاز ۸ تکمیل شده؛ فاز ۹ تا جلسهٔ بعد آغاز نمی‌شود
-- commit مرتبط: `feat(content): establish phase 8 research and editorial system`
-- وضعیت آزمون‌ها: PASS — قرارداد ۶۰ brief، یکتایی شناسه/slug، پوشش اسناد، لینک‌های منبع و whitespace کنترل شد
+- آخرین به‌روزرسانی: ۱۴۰۵/۰۶/۱۶
+- فاز فعال: فاز ۹ تکمیل شده؛ فاز ۱۰ تا جلسهٔ بعد آغاز نمی‌شود
+- commit مرتبط: `feat(content): complete phase 9 editorial commerce foundation`
+- وضعیت آزمون‌ها: PASS — قرارداد ۹/۹، واحد API ۱۵/۱۵، API E2E ۶۷/۶۷، typecheck، lint، build تولیدی ۷۱ مسیر وب، migration up/down و seed تکرارپذیر
 - قانون اجرا: در هر جلسه فقط یک فاز؛ پس از Gate همان فاز، commit و push و سپس توقف.
 - قانون انتشار: صفحات محتوایی تا زمان بازبینی واقعی کاربر Draft می‌مانند.
 - قانون انتساب: نام «محمد رستمی» فقط پس از بازبینی واقعی او به‌عنوان نویسنده یا بازبین نمایش داده می‌شود.
@@ -34,15 +34,26 @@
 
 ## فاز ۹ — مدل محتوا، قراردادها و پنل تحریریه
 
-- [ ] `P09-01` افزودن additive مدل‌های `ContentSource`، `Resource` و `ContributorProfile`.
-- [ ] `P09-02` توسعهٔ `Article` با نوع محتوا، پاسخ سریع، SEO، مقطع، رشته، سال اعتبار و نویسنده/بازبین.
-- [ ] `P09-03` توسعهٔ `Subject` و `Topic` با slug، توضیح، ترتیب، پیش‌نیاز و metadata.
-- [ ] `P09-04` افزودن `publicConsent=false` به `ReportCard`.
-- [ ] `P09-05` تعریف `article.v2` و حفظ کامل پشتیبانی `article.v1`.
-- [ ] `P09-06` ارتقای پنل ادمین برای منبع، نویسنده، بازبین، SEO و Draft → Review → Publish.
-- [ ] `P09-07` انتقال محتوای فعلی به مسیر نسخه‌دار بدون تغییر slug یا canonical.
-- [ ] `P09-08` ساخت migration استاندارد additive با up/down و آزمون حفظ داده.
-- [ ] `P09-GATE` موفقیت قراردادها، migration دوطرفه، مجوزها و چرخهٔ انتشار.
+- [x] `P09-01` افزودن additive مدل‌های `ContentSource`، `Resource` و `ContributorProfile`.
+- [x] `P09-02` توسعهٔ `Article` با نوع محتوا، پاسخ سریع، SEO، مقطع، رشته، سال اعتبار و نویسنده/بازبین.
+- [x] `P09-03` توسعهٔ `Subject` و `Topic` با slug، توضیح، ترتیب، پیش‌نیاز و metadata.
+- [x] `P09-04` افزودن `publicConsent=false` به `ReportCard`.
+- [x] `P09-05` تعریف `article.v2` و حفظ کامل پشتیبانی `article.v1`.
+- [x] `P09-06` ارتقای پنل ادمین برای منبع، نویسنده، بازبین، SEO و Draft → Review → Publish.
+- [x] `P09-07` انتقال محتوای فعلی به مسیر نسخه‌دار بدون تغییر slug یا canonical.
+- [x] `P09-08` ساخت migration استاندارد additive با up/down و آزمون حفظ داده.
+- [x] `P09-GATE` موفقیت قراردادها، migration دوطرفه، مجوزها و چرخهٔ انتشار.
+
+### گزارش Gate فاز ۹
+
+- مدل و دسترسی: دوره و منبع از `PUBLIC`، `ACCOUNT` و `ENTITLEMENT` پشتیبانی می‌کنند؛ خرید واقعی Productهای دوره، جزوه و Bundle، مجوزهای چندگانه، زمان شروع/انقضا و لغو آزموده شد.
+- تحریریه: قرارداد `article.v1` دست‌نخورده ماند و `article.v2`، منبع، taxonomy، SEO، نویسنده و چرخهٔ Draft → Review → Publish → Revision را اضافه کرد.
+- امنیت انتشار: فایل Resource فقط با روش میزبانی و حقوق مستند مجاز، از endpoint کنترل‌شده و به‌صورت inline تحویل می‌شود؛ checksum فایل‌های جاری، جداشده و تاریخی Resource عمومی نیست.
+- انتقال: ۱۴ صفحهٔ static با slug ثابت و ۳ منبع، deterministic و idempotent در وضعیت Draft آماده شدند. seed تراکنشی است و هیچ وضعیت یا ویرایش انسانی موجود را بازنویسی نمی‌کند.
+- migration: ده migration قبلی همراه دادهٔ legacy اعمال شد؛ up، down، guard دادهٔ جدید و atomicity همگی PASS بودند. Prisma schema معتبر، ۱۱ migration به‌روز و schema diff خالی است.
+- آزمون‌ها: ۹ تست قرارداد، ۱۵ تست واحد API و ۶۷ تست E2E پاس شدند؛ typecheck، lint و build کل workspace نیز موفق بود و Next.js هر ۷۱ مسیر را ساخت.
+- رابط کاربری: پنل‌های مقاله، منبع، مشارکت‌کننده و Resource با Componentها و Design System موجود ساخته شدند؛ هیچ فایل CSS عمومی یا بازطراحی سراسری تغییر نکرد.
+- محدوده: مسیرهای عمومی و canonical فعلی حفظ شدند، فاز ۱۰ آغاز نشد و Codebase Memory در هیچ بخش فاز ۹ استفاده نشد.
 
 ## فاز ۱۰ — معماری عمومی محتوا و SEO
 

@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import {
   ArticleV1,
+  ArticleV2,
   QuestionV1,
   ReportCardV1,
   validateArticle,
@@ -20,7 +21,9 @@ import { ObjectStorageService } from "./object-storage.service";
 import { parseImportZip } from "./zip-reader";
 import { sha256Buffer, sha256Json } from "./checksum";
 
-type ContractItem = ArticleV1 | QuestionV1 | ReportCardV1;
+type ContractItem = ArticleV1 | ArticleV2 | QuestionV1 | ReportCardV1;
+type PublicationReview = { reviewedByUserId: string; reviewedAt: Date };
+const SUPPORTED_SCHEMA_VERSIONS = ["article.v1", "article.v2", "report-card.v1", "question.v1"] as const;
 
 function extractExternalId(item: unknown): string | null {
   if (item && typeof item === "object" && typeof (item as Record<string, unknown>).external_id === "string") {
@@ -59,7 +62,7 @@ export class IngestionService {
       throw new BadRequestException("all items in one import must share the same schema_version");
     }
     const schemaVersion = [...schemaVersions][0] as string;
-    if (!["article.v1", "report-card.v1", "question.v1"].includes(schemaVersion)) {
+    if (!SUPPORTED_SCHEMA_VERSIONS.includes(schemaVersion as (typeof SUPPORTED_SCHEMA_VERSIONS)[number])) {
       throw new BadRequestException(`unknown schema_version: ${schemaVersion}`);
     }
 
@@ -94,7 +97,7 @@ export class IngestionService {
    */
   async receiveDirectItem(rawItem: unknown, submittedBy: string) {
     const schemaVersion = extractSchemaVersion(rawItem);
-    if (!schemaVersion || !["article.v1", "report-card.v1", "question.v1"].includes(schemaVersion)) {
+    if (!schemaVersion || !SUPPORTED_SCHEMA_VERSIONS.includes(schemaVersion as (typeof SUPPORTED_SCHEMA_VERSIONS)[number])) {
       throw new BadRequestException(`unknown or missing schema_version`);
     }
     const idempotencyKey = sha256Json({ direct: true, rawItem });
@@ -120,7 +123,7 @@ export class IngestionService {
     const externalId = extractExternalId(rawItem) ?? "unknown";
 
     const validation =
-      schemaVersion === "article.v1"
+      schemaVersion.startsWith("article.")
         ? validateArticle(rawItem)
         : schemaVersion === "report-card.v1"
           ? validateReportCard(rawItem)
@@ -206,7 +209,7 @@ export class IngestionService {
     rawItem: unknown,
   ): Promise<{ status: DedupeStatus }> {
     const existing =
-      schemaVersion === "article.v1"
+      schemaVersion.startsWith("article.")
         ? await this.prisma.article.findUnique({ where: { externalId } })
         : schemaVersion === "report-card.v1"
           ? await this.prisma.reportCard.findUnique({ where: { externalId } })
@@ -292,6 +295,9 @@ export class IngestionService {
     if (item.status !== ImportItemStatus.APPROVED) {
       throw new ForbiddenException(`item ${itemId} must be APPROVED before it can be published`);
     }
+    if (!item.reviewedBy || !item.reviewedAt) {
+      throw new ForbiddenException(`approved item ${itemId} has no recorded reviewer`);
+    }
     const job = await this.prisma.importJob.findUniqueOrThrow({ where: { id: item.importJobId } });
     const payload = item.rawPayload as unknown as ContractItem;
 
@@ -300,6 +306,7 @@ export class IngestionService {
       payload,
       actorId,
       item.id,
+      { reviewedByUserId: item.reviewedBy, reviewedAt: item.reviewedAt },
     );
 
     return this.prisma.importItem.update({
@@ -320,9 +327,18 @@ export class IngestionService {
     payload: ContractItem,
     actorId: string,
     importItemId?: string,
+    recordedReview?: PublicationReview,
   ): Promise<{ entityId: string; version: number; entityType: VersionedEntityType }> {
     return this.prisma.$transaction(async (tx) => {
-      const { entityId, version, entityType } = await this.publishBySchema(tx, schemaVersion, payload);
+      const publishedAt = new Date();
+      const review = recordedReview ?? { reviewedByUserId: actorId, reviewedAt: publishedAt };
+      const { entityId, version, entityType } = await this.publishBySchema(
+        tx,
+        schemaVersion,
+        payload,
+        review.reviewedByUserId,
+        review.reviewedAt,
+      );
 
       await tx.contentVersion.create({
         data: {
@@ -330,6 +346,12 @@ export class IngestionService {
           entityId,
           version,
           payload: payload as unknown as Prisma.InputJsonValue,
+          schemaVersion,
+          reviewStatus: "PUBLISHED",
+          createdByUserId: actorId,
+          reviewedByUserId: review.reviewedByUserId,
+          reviewedAt: review.reviewedAt,
+          publishedAt,
           publishedByImportItemId: importItemId,
         },
       });
@@ -352,7 +374,13 @@ export class IngestionService {
           action: importItemId ? "import.published" : "content.authored",
           targetType: entityType,
           targetId: entityId,
-          metadata: { version, importItemId },
+          metadata: {
+            version,
+            importItemId,
+            publisherUserId: actorId,
+            reviewedByUserId: review.reviewedByUserId,
+            reviewedAt: review.reviewedAt.toISOString(),
+          },
         },
         tx,
       );
@@ -365,10 +393,13 @@ export class IngestionService {
     tx: Prisma.TransactionClient,
     schemaVersion: string,
     payload: ContractItem,
+    reviewerId: string,
+    reviewedAt: Date,
   ): Promise<{ entityId: string; version: number; entityType: VersionedEntityType }> {
     if (schemaVersion === "article.v1") {
       const p = payload as ArticleV1;
       const existing = await tx.article.findUnique({ where: { externalId: p.external_id } });
+      const reviewer = await tx.contributorProfile.findUnique({ where: { userId: reviewerId } });
       const version = (existing?.version ?? 0) + 1;
       const data = {
         externalId: p.external_id,
@@ -380,6 +411,8 @@ export class IngestionService {
         taxonomyMajor: p.taxonomy.major,
         taxonomyTags: p.taxonomy.tags ?? [],
         provenance: p.provenance as unknown as Prisma.InputJsonValue,
+        reviewerProfileId: reviewer?.id,
+        reviewedAt,
         version,
         reviewStatus: "PUBLISHED" as const,
         publishedAt: new Date(),
@@ -387,6 +420,85 @@ export class IngestionService {
       const article = existing
         ? await tx.article.update({ where: { id: existing.id }, data })
         : await tx.article.create({ data });
+      return { entityId: article.id, version, entityType: VersionedEntityType.ARTICLE };
+    }
+
+    if (schemaVersion === "article.v2") {
+      const p = payload as ArticleV2;
+      let existing = await tx.article.findUnique({ where: { externalId: p.external_id } });
+      if (existing) {
+        await this.lockArticle(tx, existing.id);
+        existing = await tx.article.findUnique({ where: { id: existing.id } });
+        const pending = await tx.contentVersion.findFirst({
+          where: {
+            entityType: VersionedEntityType.ARTICLE,
+            entityId: existing!.id,
+            schemaVersion: "article.v2",
+            reviewStatus: { in: ["DRAFT", "IN_REVIEW"] },
+          },
+        });
+        if (pending) throw new ForbiddenException("this article already has a pending revision");
+      }
+      const latest = existing
+        ? await tx.contentVersion.findFirst({
+            where: { entityType: VersionedEntityType.ARTICLE, entityId: existing.id },
+            orderBy: { version: "desc" },
+          })
+        : null;
+      const version = Math.max(existing?.version ?? 0, latest?.version ?? 0) + 1;
+      const externalSourceIds = p.sources.map((source) => source.source_external_id);
+      const sources = await tx.contentSource.findMany({ where: { externalId: { in: externalSourceIds }, archivedAt: null } });
+      const sourceByExternalId = new Map(sources.map((source) => [source.externalId, source.id]));
+      if (sourceByExternalId.size !== new Set(externalSourceIds).size) {
+        throw new BadRequestException("article.v2 references an unknown or archived ContentSource");
+      }
+      const author = p.editorial?.author_slug
+        ? await tx.contributorProfile.findUnique({ where: { slug: p.editorial.author_slug } })
+        : null;
+      if (p.editorial?.author_slug && !author) throw new BadRequestException("article.v2 author profile does not exist");
+      const reviewer = await tx.contributorProfile.findUnique({ where: { userId: reviewerId } });
+      const now = new Date();
+      const sourceRows = p.sources.map((source) => ({
+        sourceId: sourceByExternalId.get(source.source_external_id)!,
+        relation: source.relation,
+        locator: source.locator,
+        claim: source.claim,
+        order: source.order ?? 0,
+      }));
+      const data = {
+        externalId: p.external_id,
+        slug: p.slug,
+        title: p.title,
+        summary: p.summary,
+        contentType: p.content_type.toUpperCase() as "ARTICLE" | "GUIDE" | "NEWS" | "CASE_STUDY",
+        quickAnswer: p.quick_answer,
+        contentBlocks: p.content_blocks as unknown as Prisma.InputJsonValue,
+        assets: (p.assets ?? []) as unknown as Prisma.InputJsonValue,
+        taxonomyMajor: p.taxonomy.major,
+        taxonomyTags: p.taxonomy.tags ?? [],
+        taxonomyDegrees: p.taxonomy.degrees.map((degree) => degree.toUpperCase() as "MASTER" | "PHD"),
+        taxonomyFields: p.taxonomy.fields,
+        subjectCodes: p.taxonomy.subject_codes,
+        topicCodes: p.taxonomy.topic_codes,
+        seoTitle: p.seo.title,
+        seoDescription: p.seo.description,
+        validForYear: p.validity.exam_year,
+        sourceValidatedAt: p.validity.source_checked_at ? new Date(p.validity.source_checked_at) : null,
+        reviewDueAt: p.validity.review_due_at ? new Date(p.validity.review_due_at) : null,
+        provenance: p.provenance as unknown as Prisma.InputJsonValue,
+        authorProfileId: author?.id,
+        reviewerProfileId: reviewer?.id,
+        reviewedAt,
+        version,
+        reviewStatus: "PUBLISHED" as const,
+        publishedAt: now,
+      };
+      const article = existing
+        ? await tx.article.update({
+            where: { id: existing.id },
+            data: { ...data, sources: { deleteMany: {}, create: sourceRows } },
+          })
+        : await tx.article.create({ data: { ...data, sources: { create: sourceRows } } });
       return { entityId: article.id, version, entityType: VersionedEntityType.ARTICLE };
     }
 
@@ -448,10 +560,62 @@ export class IngestionService {
   }
 
   async rollbackEntity(entityType: VersionedEntityType, entityId: string, toVersion: number, actorId: string) {
+    if (entityType === VersionedEntityType.RESOURCE) {
+      throw new BadRequestException("resource rollback must use the editorial resource revision workflow");
+    }
+
     const target = await this.prisma.contentVersion.findUnique({
       where: { entityType_entityId_version: { entityType, entityId, version: toVersion } },
     });
     if (!target) throw new NotFoundException("target version not found");
+
+    if (entityType === VersionedEntityType.ARTICLE && target.schemaVersion === "article.v2") {
+      if (target.reviewStatus !== "PUBLISHED") {
+        throw new ForbiddenException("only a published article version can be used as a rollback target");
+      }
+      const draft = await this.prisma.$transaction(async (tx) => {
+        await this.lockArticle(tx, entityId);
+        const article = await tx.article.findUnique({ where: { id: entityId } });
+        if (!article) throw new NotFoundException("article not found");
+        const pending = await tx.contentVersion.findFirst({
+          where: {
+            entityType: VersionedEntityType.ARTICLE,
+            entityId,
+            schemaVersion: "article.v2",
+            reviewStatus: { in: ["DRAFT", "IN_REVIEW"] },
+          },
+        });
+        if (pending) throw new ForbiddenException("this article already has a pending revision");
+        const latest = await tx.contentVersion.findFirstOrThrow({
+          where: { entityType, entityId },
+          orderBy: { version: "desc" },
+        });
+        const newVersion = Math.max(article.version, latest.version) + 1;
+        await tx.contentVersion.create({
+          data: {
+            entityType,
+            entityId,
+            version: newVersion,
+            payload: { ...(target.payload as Prisma.JsonObject), review_status: "draft" },
+            schemaVersion: "article.v2",
+            reviewStatus: "DRAFT",
+            createdByUserId: actorId,
+          },
+        });
+        await this.audit.log(
+          {
+            actorUserId: actorId,
+            action: "content.rollback_draft_created",
+            targetType: entityType,
+            targetId: entityId,
+            metadata: { toVersion, newVersion },
+          },
+          tx,
+        );
+        return { entityId, newVersion, restoredFromVersion: toVersion, pendingReview: true };
+      });
+      return draft;
+    }
 
     const latest = await this.prisma.contentVersion.findFirstOrThrow({
       where: { entityType, entityId },
@@ -501,7 +665,18 @@ export class IngestionService {
       }
 
       await tx.contentVersion.create({
-        data: { entityType, entityId, version: newVersion, payload: payload as unknown as Prisma.InputJsonValue },
+        data: {
+          entityType,
+          entityId,
+          version: newVersion,
+          payload: payload as unknown as Prisma.InputJsonValue,
+          schemaVersion: target.schemaVersion,
+          reviewStatus: "PUBLISHED",
+          createdByUserId: actorId,
+          reviewedByUserId: actorId,
+          reviewedAt: new Date(),
+          publishedAt: new Date(),
+        },
       });
 
       await this.audit.log(
@@ -518,10 +693,15 @@ export class IngestionService {
 
     return { entityId, newVersion, restoredFromVersion: toVersion };
   }
+
+  private async lockArticle(tx: Prisma.TransactionClient, articleId: string) {
+    const rows = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`SELECT "id" FROM "articles" WHERE "id" = ${articleId} FOR UPDATE`);
+    if (rows.length === 0) throw new NotFoundException("article not found");
+  }
 }
 
 function schemaVersionToEntityType(schemaVersion: string): VersionedEntityType {
-  if (schemaVersion === "article.v1") return VersionedEntityType.ARTICLE;
+  if (schemaVersion.startsWith("article.")) return VersionedEntityType.ARTICLE;
   if (schemaVersion === "report-card.v1") return VersionedEntityType.REPORT_CARD;
   return VersionedEntityType.QUESTION;
 }

@@ -163,16 +163,40 @@ describe("Register -> purchase -> access -> consume lesson (e2e)", () => {
 
   it("admin content workflow: draft articles are invisible publicly until approved", async () => {
     const { cookie: adminCookie } = await loginAs(SEED_ADMIN_PHONE);
+    const unique = Date.now();
+    const sourceRes = await request(app.getHttpServer())
+      .post("/admin/content-sources")
+      .set("Cookie", adminCookie)
+      .send({
+        externalId: "workflow-source-" + unique,
+        kind: "FIRST_PARTY_TEST",
+        title: "Workflow source",
+        publisher: "kunkur01",
+        canonicalUrl: "https://kunkur01.ir/about/editorial-policy",
+        sourceTier: "FIRST_PARTY",
+        checkedAt: new Date().toISOString(),
+        rightsBasis: "OWNED_BY_PUBLISHER",
+        mayLink: true,
+        mayAdapt: true,
+      })
+      .expect(201);
 
     const createRes = await request(app.getHttpServer())
       .post("/admin/articles")
       .set("Cookie", adminCookie)
       .send({
-        slug: `draft-article-${Date.now()}`,
+        slug: "draft-article-" + unique,
         title: "Draft article",
         summary: "not yet published",
+        quickAnswer: "A concise answer backed by the attached source.",
+        seoTitle: "Draft article for workflow testing",
+        seoDescription: "A source-backed editorial workflow fixture for kunkur01.",
         contentBlocks: [{ type: "text", text: "..." }],
         taxonomyMajor: ["computer-engineering"],
+        taxonomyTags: ["workflow"],
+        taxonomyDegrees: ["MASTER"],
+        taxonomyFields: ["computer-engineering"],
+        sourceLinks: [{ sourceId: sourceRes.body.id, relation: "SUPPORTS", order: 0 }],
       })
       .expect(201);
     const articleId = createRes.body.id;

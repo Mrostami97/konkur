@@ -1,0 +1,22 @@
+{
+  "schema_version": "article.v2",
+  "external_id": "invalid-time-sensitive",
+  "content_type": "article",
+  "title": "نمونه نامعتبر",
+  "slug": "invalid-time-sensitive",
+  "summary": "این fixture عمداً تاریخ بررسی منبع ندارد.",
+  "quick_answer": "پاسخ کوتاه",
+  "content_blocks": [{ "type": "text", "text": "متن" }],
+  "taxonomy": {
+    "major": ["computer-engineering"],
+    "degrees": ["master"],
+    "fields": [],
+    "subject_codes": [],
+    "topic_codes": []
+  },
+  "seo": { "title": "نمونه نامعتبر", "description": "نمونه‌ای که باید توسط قرارداد رد شود." },
+  "validity": { "time_sensitive": true },
+  "sources": [{ "source_external_id": "source-1", "relation": "SUPPORTS" }],
+  "provenance": { "producer_type": "human", "source_artifact": "invalid-fixture" },
+  "review_status": "draft"
+}

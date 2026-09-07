@@ -1,0 +1,1331 @@
+{
+  "sources": [
+    {
+      "externalId": "editorial-source-0aad058f3377baa8289b",
+      "kind": "WEB_PAGE",
+      "title": "برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+      "publisher": "سازمان سنجش آموزش کشور",
+      "canonicalUrl": "https://www.sanjesh.org/",
+      "sourceTier": "PRIMARY_OFFICIAL",
+      "checkedAt": "2026-09-06T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "سازمان سنجش آموزش کشور — برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/editorial.ts"
+      }
+    },
+    {
+      "externalId": "editorial-source-08110ffe99548a591190",
+      "kind": "FIRST_PARTY_CHANNEL",
+      "title": "کانال اصلی kunkur01",
+      "publisher": "kunkur01",
+      "canonicalUrl": "https://t.me/konkurcom",
+      "sourceTier": "FIRST_PARTY",
+      "checkedAt": "2026-09-06T00:00:00.000Z",
+      "rightsBasis": "OWNED_BY_PUBLISHER",
+      "mayLink": true,
+      "mayAdapt": true,
+      "commercialUseAllowed": true,
+      "attributionText": "kunkur01 — کانال اصلی kunkur01",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/editorial.ts"
+      }
+    },
+    {
+      "externalId": "editorial-source-a571b97f76f925498976",
+      "kind": "WEB_PAGE",
+      "title": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+      "publisher": "سازمان سنجش آموزش کشور",
+      "canonicalUrl": "https://www.sanjesh.org/",
+      "sourceTier": "PRIMARY_OFFICIAL",
+      "checkedAt": "2026-09-06T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "سازمان سنجش آموزش کشور — برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/editorial.ts"
+      }
+    }
+  ],
+  "articles": [
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-computer-engineering-1406",
+      "content_type": "guide",
+      "title": "راهنمای کامل کنکور ارشد مهندسی کامپیوتر ۱۴۰۶",
+      "slug": "master-computer-engineering-1406",
+      "summary": "فهرست به‌روز دروس و ضرایب جدید، تغییرات مهم نسبت به ۱۴۰۵ و نقشهٔ شروع مطالعه برای همهٔ گرایش‌ها.",
+      "quick_answer": "در جدول برنامهٔ پذیرش ۱۴۰۶، ساختار مهندسی کامپیوتر ساده‌تر و یکپارچه شده است: زبان با ضریب ۱، ریاضیات با ضریب ۲ و مجموعهٔ تخصصی با ضریب ۴. این ضرایب برای گرایش‌های فهرست‌شدهٔ این مجموعه یکسان اعلام شده‌اند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "خلاصهٔ قطعی برای شروع"
+        },
+        {
+          "type": "text",
+          "text": "در جدول برنامهٔ پذیرش ۱۴۰۶، ساختار مهندسی کامپیوتر ساده‌تر و یکپارچه شده است: زبان با ضریب ۱، ریاضیات با ضریب ۲ و مجموعهٔ تخصصی با ضریب ۴. این ضرایب برای گرایش‌های فهرست‌شدهٔ این مجموعه یکسان اعلام شده‌اند."
+        },
+        {
+          "type": "text",
+          "text": "اطلاعیهٔ اولیه صراحتاً یادآوری می‌کند که نام گرایش‌ها یا جزئیات ممکن است تا زمان دفترچهٔ ثبت‌نام اصلاح شود؛ بنابراین این صفحه تاریخ بازبینی دارد و ملاک نهایی همیشه آخرین دفترچه و اصلاحیهٔ سازمان سنجش است."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بستهٔ امتحانی",
+            "دروس ۱۴۰۶",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان عمومی و تخصصی انگلیسی",
+              "۱"
+            ],
+            [
+              "ریاضیات",
+              "ریاضیات گسسته، آمار و احتمال مهندسی، جبر خطی",
+              "۲"
+            ],
+            [
+              "تخصصی",
+              "مبانی کامپیوتر و برنامه‌سازی، مدار منطقی، معماری، داده‌ساختار و الگوریتم، نظریه زبان‌ها و ماشین‌ها، سیستم‌عامل، هوش مصنوعی",
+              "۴"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چه چیزهایی نسبت به ۱۴۰۵ تغییر کرده؟"
+        },
+        {
+          "type": "text",
+          "text": "• جبر خطی به بستهٔ ریاضیات اضافه شده است.\n• مبانی کامپیوتر و برنامه‌سازی به مجموعهٔ تخصصی اضافه شده است.\n• ریاضی عمومی ۱ و ۲، سیگنال‌ها و سیستم‌ها، الکترونیک دیجیتال، شبکه‌های کامپیوتری و پایگاه داده از مواد این مجموعه حذف شده‌اند.\n• چهار باکس تخصصی قدیمی به یک مجموعهٔ تخصصی با ضریب ۴ تبدیل شده است."
+        },
+        {
+          "type": "quote",
+          "text": "حذف یک درس از مجموعهٔ مهندسی کامپیوتر به معنی بی‌اهمیت شدن آن در رشتهٔ IT، دورهٔ دانشگاهی یا مسیر شغلی نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پیشنهاد ترتیب شروع"
+        },
+        {
+          "type": "text",
+          "text": "• اگر پایه ضعیف است: مبانی برنامه‌سازی، گسسته و مدار منطقی را موازی آغاز کن.\n• پس از تثبیت برنامه‌سازی، بستهٔ داده‌ساختار و الگوریتم را به‌صورت یک مسیر پیوسته جلو ببر.\n• معماری و سیستم‌عامل را زنجیره‌ای بخوان؛ ارتباط این دو، مرور را کوتاه‌تر می‌کند.\n• برای زبان، تمرین کوتاه روزانه از مطالعهٔ فشردهٔ آخر مسیر مؤثرتر است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "linear-algebra",
+          "programming-fundamentals",
+          "digital-logic",
+          "computer-architecture",
+          "data-structures-algorithms",
+          "automata",
+          "operating-systems",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کامل کنکور ارشد مهندسی کامپیوتر ۱۴۰۶",
+        "description": "فهرست به‌روز دروس و ضرایب جدید، تغییرات مهم نسبت به ۱۴۰۵ و نقشهٔ شروع مطالعه برای همهٔ گرایش‌ها."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0aad058f3377baa8289b",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:master-computer-engineering-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-information-technology-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور ارشد فناوری اطلاعات (IT) ۱۴۰۶",
+      "slug": "master-information-technology-1406",
+      "summary": "ساختار جدید سه‌بخشی دروس IT، ضرایب یکسان گرایش‌ها و تفاوت حیاتی آن با مجموعهٔ مهندسی کامپیوتر.",
+      "quick_answer": "ساختار جدید، ضرایب را میان گرایش‌های این مجموعه یکسان می‌کند. در نتیجه انتخاب ترتیب مطالعه باید بیشتر بر پایهٔ پیش‌نیاز، زمان در دسترس و وضعیت شخصی انجام شود، نه جدول‌های کد ضریب قدیمی.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "دروس و ضرایب اعلام‌شده برای ۱۴۰۶"
+        },
+        {
+          "type": "text",
+          "text": "ساختار جدید، ضرایب را میان گرایش‌های این مجموعه یکسان می‌کند. در نتیجه انتخاب ترتیب مطالعه باید بیشتر بر پایهٔ پیش‌نیاز، زمان در دسترس و وضعیت شخصی انجام شود، نه جدول‌های کد ضریب قدیمی."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بسته",
+            "مواد امتحانی",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان عمومی و تخصصی انگلیسی",
+              "۱"
+            ],
+            [
+              "ریاضیات",
+              "ریاضیات گسسته، آمار و احتمال مهندسی",
+              "۲"
+            ],
+            [
+              "تخصصی",
+              "مبانی کامپیوتر و برنامه‌سازی، داده‌ساختار و الگوریتم، سیستم‌عامل، شبکه، پایگاه داده، هوش مصنوعی",
+              "۴"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "IT را با مهندسی کامپیوتر اشتباه نگیر"
+        },
+        {
+          "type": "text",
+          "text": "• شبکه و پایگاه داده در مجموعهٔ IT ۱۴۰۶ حضور دارند، اما از مجموعهٔ ارشد مهندسی کامپیوتر ۱۴۰۶ حذف شده‌اند.\n• جبر خطی در ریاضیات مهندسی کامپیوتر آمده، اما در بستهٔ ریاضیات IT اعلام نشده است.\n• اگر هدف تو شبکه‌های کامپیوتری یا رایانش امن است، عنوان مجموعه و گرایش مقصد را در دفترچهٔ نهایی دوباره کنترل کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "نقشهٔ مطالعهٔ پیشنهادی"
+        },
+        {
+          "type": "text",
+          "text": "• گسسته + داده‌ساختار و الگوریتم + سیستم‌عامل را به‌عنوان سه ستون شروع کن.\n• بستهٔ داده‌ساختار و الگوریتم را با تمرین‌های ترکیبی و زمان‌دار جلو ببر.\n• پس از سیستم‌عامل، پایگاه داده یا شبکه را متناسب با پایهٔ خود اضافه کن.\n• مبانی برنامه‌سازی را برای فهم عمیق‌تر تست‌های الگوریتمی جدی بگیر."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "فناوری اطلاعات"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "programming-fundamentals",
+          "data-structures-algorithms",
+          "operating-systems",
+          "computer-networks",
+          "databases",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور ارشد فناوری اطلاعات (IT) ۱۴۰۶",
+        "description": "ساختار جدید سه‌بخشی دروس IT، ضرایب یکسان گرایش‌ها و تفاوت حیاتی آن با مجموعهٔ مهندسی کامپیوتر."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0aad058f3377baa8289b",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:master-information-technology-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-computer-science-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور ارشد علوم کامپیوتر ۱۴۰۶",
+      "slug": "master-computer-science-1406",
+      "summary": "مسیر تصمیم‌گیری برای علوم کامپیوتر، تفاوت آن با مهندسی کامپیوتر و روش کنترل آخرین جدول رسمی.",
+      "quick_answer": "علوم کامپیوتر در برنامهٔ ۱۴۰۶ به‌عنوان مجموعهٔ اصلی معرفی شده و برای این مسیر، ساختمان داده و طراحی الگوریتم به‌صورت دو درس جداگانه دنبال می‌شوند. پیش از ثبت‌نام، عنوان مواد و امکان انتخاب هم‌زمان مجموعه‌ها را فقط بر اساس دفترچهٔ نهایی بررسی کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تغییر مهم ۱۴۰۶"
+        },
+        {
+          "type": "text",
+          "text": "علوم کامپیوتر در برنامهٔ ۱۴۰۶ به‌عنوان مجموعهٔ اصلی معرفی شده و برای این مسیر، ساختمان داده و طراحی الگوریتم به‌صورت دو درس جداگانه دنبال می‌شوند. پیش از ثبت‌نام، عنوان مواد و امکان انتخاب هم‌زمان مجموعه‌ها را فقط بر اساس دفترچهٔ نهایی بررسی کن."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بخش",
+            "مواد کلیدی",
+            "نکتهٔ مسیر"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان عمومی و تخصصی انگلیسی",
+              "برنامهٔ پیوسته"
+            ],
+            [
+              "تخصصی",
+              "ساختمان داده، طراحی الگوریتم، گسسته و مباحث نظری علوم کامپیوتر",
+              "دو عنوان جداگانه؛ با یک منبع آموزشی مشترک قابل پیوندند"
+            ]
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "جدول کامل ضرایب این مجموعه پس از انتشار دفترچهٔ ثبت‌نام و هر اصلاحیه، دوباره اعتبارسنجی می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "این مسیر برای چه کسی مناسب است؟"
+        },
+        {
+          "type": "text",
+          "text": "• علاقه‌مندان به مبانی نظری، الگوریتم، بهینه‌سازی و محاسبات علمی\n• داوطلبانی که از ریاضیات و اثبات فرار نمی‌کنند\n• کسانی که می‌خواهند بین مسیر پژوهشی و کاربردهای داده/الگوریتم پل بزنند"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قبل از خرید منبع"
+        },
+        {
+          "type": "text",
+          "text": "• کد مجموعه و عنوان دقیق گرایش را در آخرین دفترچه پیدا کن.\n• مواد امتحانی را به بسته‌های مستقل تبدیل کن.\n• برای هر درس یک منبع آموزش و یک منبع تست انتخاب کن؛ تعدد منبع پیشرفت نیست."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور ارشد علوم کامپیوتر ۱۴۰۶",
+        "description": "مسیر تصمیم‌گیری برای علوم کامپیوتر، تفاوت آن با مهندسی کامپیوتر و روش کنترل آخرین جدول رسمی."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0aad058f3377baa8289b",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:master-computer-science-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-engineering-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور دکتری مهندسی کامپیوتر ۱۴۰۶",
+      "slug": "phd-computer-engineering-1406",
+      "summary": "دروس یکپارچهٔ گرایش‌های دکتری کامپیوتر، حذف استعداد تحصیلی و وزن جدید تخصصی‌ها.",
+      "quick_answer": "برای گرایش‌های دکتری مهندسی کامپیوتر، مواد آزمون متمرکز یکپارچه اعلام شده است. زبان انگلیسی ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ دارد؛ استعداد تحصیلی در ساختار اعلام‌شده حضور ندارد و داده‌ساختار و الگوریتم یک عنوان در بستهٔ تخصصی است.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ساختار اعلام‌شده"
+        },
+        {
+          "type": "text",
+          "text": "برای گرایش‌های دکتری مهندسی کامپیوتر، مواد آزمون متمرکز یکپارچه اعلام شده است. زبان انگلیسی ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ دارد؛ استعداد تحصیلی در ساختار اعلام‌شده حضور ندارد و داده‌ساختار و الگوریتم یک عنوان در بستهٔ تخصصی است."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بخش",
+            "دروس",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان انگلیسی",
+              "۱"
+            ],
+            [
+              "ریاضیات تخصصی",
+              "گسسته، آمار و احتمال مهندسی، جبر خطی",
+              "۵ (در مجموعه تخصصی)"
+            ],
+            [
+              "تخصصی کامپیوتر",
+              "مدار منطقی، معماری، داده‌ساختار و الگوریتم، نظریه زبان‌ها، سیستم‌عامل، هوش مصنوعی",
+              "۵"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تفاوت مطالعهٔ دکتری با ارشد"
+        },
+        {
+          "type": "text",
+          "text": "• سطح پرسش‌های اعلام‌شده در محدودهٔ دروس ارشد است، اما رقابت و نیاز به دقت بالاتر است.\n• در کنار آزمون کتبی، رزومه، سوابق پژوهشی و آمادگی مصاحبه مسیر جداگانه‌ای دارند.\n• حذف استعداد تحصیلی به معنی انتقال زمان به تخصصی و زبان است، نه حذف کامل مطالعهٔ زبان."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "مهندسی کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "linear-algebra",
+          "digital-logic",
+          "computer-architecture",
+          "data-structures-algorithms",
+          "automata",
+          "operating-systems",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور دکتری مهندسی کامپیوتر ۱۴۰۶",
+        "description": "دروس یکپارچهٔ گرایش‌های دکتری کامپیوتر، حذف استعداد تحصیلی و وزن جدید تخصصی‌ها."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-engineering-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-information-technology-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور دکتری فناوری اطلاعات ۱۴۰۶",
+      "slug": "phd-information-technology-1406",
+      "summary": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد.",
+      "quick_answer": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مواد امتحانی"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "سطح",
+            "مواد"
+          ],
+          "rows": [
+            [
+              "عمومی",
+              "زبان انگلیسی؛ استعداد تحصیلی حذف شده است"
+            ],
+            [
+              "کارشناسی",
+              "حل مسئله (داده‌ساختار و الگوریتم)، شبکه (شبکه‌های کامپیوتری و امنیت شبکه)"
+            ],
+            [
+              "کارشناسی ارشد",
+              "مهندسی اطلاعات (پایگاه داده پیشرفته، بازیابی اطلاعات، داده‌کاوی) و خدمات IT (تجارت الکترونیکی، آموزش الکترونیکی)"
+            ]
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "زبان ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ اعلام شده است؛ ملاک نهایی آخرین دفترچه و اصلاحیه است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ترتیب منطقی مطالعه"
+        },
+        {
+          "type": "text",
+          "text": "• داده‌ساختار و الگوریتم را به‌عنوان بستهٔ حل مسئله و پیش‌نیاز مطالعهٔ دکتری IT قرار بده.\n• شبکهٔ پایه را قبل از امنیت شبکه تثبیت کن.\n• پایگاه داده را به بازیابی اطلاعات و داده‌کاوی متصل بخوان.\n• برای خدمات IT، تعریف‌ها را با مطالعهٔ موردی و مقایسهٔ معماری‌ها مرور کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "فناوری اطلاعات"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "english",
+          "data-structures-algorithms",
+          "computer-networks",
+          "databases"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور دکتری فناوری اطلاعات ۱۴۰۶",
+        "description": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:phd-information-technology-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-science-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور دکتری علوم کامپیوتر ۱۴۰۶",
+      "slug": "phd-computer-science-1406",
+      "summary": "ساختار آزمون دکتری علوم کامپیوتر با تمرکز بر ساختمان گسسته، منطق و نظریهٔ علوم کامپیوتر.",
+      "quick_answer": "در ساختار اعلام‌شده برای ۱۴۰۶، زبان انگلیسی در بخش عمومی و داده‌ساختار و الگوریتم در بستهٔ تخصصی دکتری علوم کامپیوتر قرار دارد. استعداد تحصیلی حذف شده است و جزئیات سطح هر عنوان باید با آخرین دفترچه تطبیق داده شود.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مواد اصلی"
+        },
+        {
+          "type": "text",
+          "text": "در ساختار اعلام‌شده برای ۱۴۰۶، زبان انگلیسی در بخش عمومی و داده‌ساختار و الگوریتم در بستهٔ تخصصی دکتری علوم کامپیوتر قرار دارد. استعداد تحصیلی حذف شده است و جزئیات سطح هر عنوان باید با آخرین دفترچه تطبیق داده شود."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بخش",
+            "مواد"
+          ],
+          "rows": [
+            [
+              "عمومی",
+              "زبان انگلیسی"
+            ],
+            [
+              "تخصصی",
+              "داده‌ساختار و الگوریتم، ساختمان گسسته و منطق"
+            ],
+            [
+              "تخصصی تکمیلی",
+              "نظریه علوم کامپیوتر"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "راهبرد"
+        },
+        {
+          "type": "text",
+          "text": "• اثبات‌نویسی و فهم تعریف‌ها را کنار تست‌زنی پیش ببر.\n• منطق و گسسته را جدا از هم نخوان؛ وابستگی مفهومی آن‌ها زیاد است.\n• برای نظریه، طبقه‌بندی مسائل و مدل‌های محاسباتی را با مثال مرور کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "data-structures-algorithms",
+          "automata"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور دکتری علوم کامپیوتر ۱۴۰۶",
+        "description": "ساختار آزمون دکتری علوم کامپیوتر با تمرکز بر ساختمان گسسته، منطق و نظریهٔ علوم کامپیوتر."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-science-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-computer-exam-changes-1406",
+      "content_type": "article",
+      "title": "تغییرات کنکور کامپیوتر ۱۴۰۶ در یک نگاه",
+      "slug": "computer-exam-changes-1406",
+      "summary": "فهرست افزوده‌ها، حذف‌ها و تصمیم‌هایی که داوطلب ارشد یا دکتری باید همین حالا اصلاح کند.",
+      "quick_answer": "در ارشد مهندسی کامپیوتر، جبر خطی و مبانی کامپیوتر و برنامه‌سازی اضافه شده و شش درس از ساختار قبلی کنار رفته‌اند. در ارشد IT هم ساختار سه‌بخشی زبان ۱، ریاضیات ۲ و تخصصی ۴ اعلام شده است. در دکتری، استعداد تحصیلی حذف و تخصصی با ضریب ۵ پررنگ‌تر شده است.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پاسخ کوتاه"
+        },
+        {
+          "type": "text",
+          "text": "در ارشد مهندسی کامپیوتر، جبر خطی و مبانی کامپیوتر و برنامه‌سازی اضافه شده و شش درس از ساختار قبلی کنار رفته‌اند. در ارشد IT هم ساختار سه‌بخشی زبان ۱، ریاضیات ۲ و تخصصی ۴ اعلام شده است. در دکتری، استعداد تحصیلی حذف و تخصصی با ضریب ۵ پررنگ‌تر شده است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه اقدام فوری"
+        },
+        {
+          "type": "text",
+          "text": "• فهرست منابع قدیمی را با نام مجموعهٔ امتحانی خودت تطبیق بده.\n• برنامه را بر پایهٔ پیش‌نیازهای جدید، مخصوصاً برنامه‌سازی و جبر خطی بازچینش کن.\n• صفحهٔ رسمی سازمان سنجش را تا انتشار دفترچه و اصلاحیه‌ها رصد کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرا جدول‌های قدیمی خطرناک‌اند؟"
+        },
+        {
+          "type": "text",
+          "text": "بسیاری از صفحه‌ها و فایل‌های سال‌های قبل هنوز در نتایج جست‌وجو دیده می‌شوند. تاریخ عنوان صفحه به‌تنهایی کافی نیست؛ باید تاریخ انتشار منبع، نام مجموعه، مواد امتحانی و ضرایب هم‌زمان کنترل شوند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و IT"
+        ],
+        "tags": [
+          "خبر و تحلیل"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر و IT"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "تغییرات کنکور کامپیوتر ۱۴۰۶ در یک نگاه",
+        "description": "فهرست افزوده‌ها، حذف‌ها و تصمیم‌هایی که داوطلب ارشد یا دکتری باید همین حالا اصلاح کند."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0aad058f3377baa8289b",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:computer-exam-changes-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-study-plan-from-zero",
+      "content_type": "article",
+      "title": "چطور از صفر برای کنکور ارشد کامپیوتر برنامه‌ریزی کنیم؟",
+      "slug": "study-plan-from-zero",
+      "summary": "یک چارچوب عملی برای انتخاب درس، ساخت هفتهٔ مطالعاتی و جلوگیری از پراکنده‌خوانی.",
+      "quick_answer": "زمان هفتگی را از روی روز ایدئال ننویس. دو هفتهٔ اول فقط ساعت واقعی را ثبت کن و بعد برنامه را روی میانگین قابل تکرار ببند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "از ظرفیت واقعی شروع کن"
+        },
+        {
+          "type": "text",
+          "text": "زمان هفتگی را از روی روز ایدئال ننویس. دو هفتهٔ اول فقط ساعت واقعی را ثبت کن و بعد برنامه را روی میانگین قابل تکرار ببند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه سبد درس"
+        },
+        {
+          "type": "text",
+          "text": "• درس ستون: پیش‌نیاز چند درس دیگر و نیازمند تداوم\n• درس امتیازساز: متناسب با پایهٔ شخصی و ضریب آزمون\n• درس نگهدارنده: زبان یا مرور کوتاه روزانه"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قانون پایان هفته"
+        },
+        {
+          "type": "text",
+          "text": "• تعداد تست، نه فقط ساعت، ثبت شود.\n• اشتباه‌ها برچسب مفهومی یا بی‌دقتی بگیرند.\n• کارهای انجام‌نشده بدون دلیل به هفتهٔ بعد کپی نشوند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و IT"
+        ],
+        "tags": [
+          "برنامه‌ریزی"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر و IT"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "چطور از صفر برای کنکور ارشد کامپیوتر برنامه‌ریزی کنیم؟",
+        "description": "یک چارچوب عملی برای انتخاب درس، ساخت هفتهٔ مطالعاتی و جلوگیری از پراکنده‌خوانی."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:study-plan-from-zero"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-active-review-system",
+      "content_type": "article",
+      "title": "سیستم مرور فعال برای درس‌های محاسباتی و مفهومی",
+      "slug": "active-review-system",
+      "summary": "چطور مرور را از دوباره‌خوانی منفعل به بازیابی، تست فاصله‌دار و دفترچهٔ خطا تبدیل کنیم.",
+      "quick_answer": "قبل از بازکردن جزوه، تعریف، فرمول یا مراحل حل را از حافظه بازسازی کن. هرجا بازیابی متوقف شد همان نقطه تبدیل به کارت مرور یا تست بعدی می‌شود.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرور یعنی تلاش برای بازیابی"
+        },
+        {
+          "type": "text",
+          "text": "قبل از بازکردن جزوه، تعریف، فرمول یا مراحل حل را از حافظه بازسازی کن. هرجا بازیابی متوقف شد همان نقطه تبدیل به کارت مرور یا تست بعدی می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرخهٔ پیشنهادی"
+        },
+        {
+          "type": "text",
+          "text": "• مرور کوتاه در پایان همان جلسه\n• بازیابی بدون جزوه در فاصلهٔ ۲ تا ۳ روز\n• تست ترکیبی در پایان هفته\n• آزمونک زمان‌دار پس از تثبیت"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "دفترچهٔ خطا"
+        },
+        {
+          "type": "text",
+          "text": "برای هر خطا فقط پاسخ درست ننویس؛ علت خطا، نشانهٔ تشخیص سؤال و یک اقدام پیشگیرانه را ثبت کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و IT"
+        ],
+        "tags": [
+          "روش مطالعه"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر و IT"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "سیستم مرور فعال برای درس‌های محاسباتی و مفهومی",
+        "description": "چطور مرور را از دوباره‌خوانی منفعل به بازیابی، تست فاصله‌دار و دفترچهٔ خطا تبدیل کنیم."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:active-review-system"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-change-major-to-computer",
+      "content_type": "article",
+      "title": "راهنمای تغییر رشته به ارشد کامپیوتر در ۱۴۰۶",
+      "slug": "change-major-to-computer",
+      "summary": "مسیر داوطلبان غیرکامپیوتری با توجه به اضافه‌شدن مبانی برنامه‌سازی و تغییر ساختار دروس.",
+      "quick_answer": "مسیر داوطلبان غیرکامپیوتری با توجه به اضافه‌شدن مبانی برنامه‌سازی و تغییر ساختار دروس.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "اول شکاف پایه را اندازه بگیر"
+        },
+        {
+          "type": "text",
+          "text": "• توانایی خواندن شبه‌کد و ردیابی اجرای برنامه\n• جبر و منطق دبیرستانی\n• درک ساختمان‌های دادهٔ ساده\n• تحمل حل مسئلهٔ پیوسته"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر ۱۲ هفتهٔ اول"
+        },
+        {
+          "type": "text",
+          "text": "• هفته ۱ تا ۴: برنامه‌سازی + گسسته\n• هفته ۵ تا ۸: داده‌ساختار و الگوریتم + مدار منطقی\n• هفته ۹ تا ۱۲: حل تست ترکیبی + معماری مقدماتی"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "خطای رایج"
+        },
+        {
+          "type": "text",
+          "text": "هم‌زمان شروع‌کردن تمام درس‌ها حس حرکت می‌دهد، اما حلقهٔ باز زیاد می‌سازد. دو درس عمیق و یک عادت سبک برای شروع کافی است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی کامپیوتر"
+        ],
+        "tags": [
+          "تغییر رشته"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای تغییر رشته به ارشد کامپیوتر در ۱۴۰۶",
+        "description": "مسیر داوطلبان غیرکامپیوتری با توجه به اضافه‌شدن مبانی برنامه‌سازی و تغییر ساختار دروس."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0aad058f3377baa8289b",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:change-major-to-computer"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-how-to-choose-study-resources",
+      "content_type": "article",
+      "title": "چطور منبع کنکور کامپیوتر انتخاب کنیم؟",
+      "slug": "how-to-choose-study-resources",
+      "summary": "چک‌لیست انتخاب کتاب، ویدئو، جزوه و تست بدون افتادن در دام تعدد منابع.",
+      "quick_answer": "منبع باید با سطح شروع، زمان باقی‌مانده و نوع خطای تو سازگار باشد. مشهوربودن یک کتاب، لزوماً آن را برای شروع تو مناسب نمی‌کند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "منبع خوب برای همه یکسان نیست"
+        },
+        {
+          "type": "text",
+          "text": "منبع باید با سطح شروع، زمان باقی‌مانده و نوع خطای تو سازگار باشد. مشهوربودن یک کتاب، لزوماً آن را برای شروع تو مناسب نمی‌کند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چک‌لیست"
+        },
+        {
+          "type": "text",
+          "text": "• پوشش سرفصل رسمی سال هدف\n• مثال حل‌شدهٔ کافی\n• پاسخ تشریحی قابل فهم\n• حجم متناسب با زمان\n• امکان نمونه‌خوانی پیش از خرید"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قانون یک‌به‌یک"
+        },
+        {
+          "type": "text",
+          "text": "برای هر درس در هر مرحله، یک منبع اصلی آموزش و یک منبع اصلی تمرین داشته باش. منابع دیگر فقط برای رفع یک شکاف مشخص وارد شوند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و IT"
+        ],
+        "tags": [
+          "منابع"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر و IT"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "چطور منبع کنکور کامپیوتر انتخاب کنیم؟",
+        "description": "چک‌لیست انتخاب کتاب، ویدئو، جزوه و تست بدون افتادن در دام تعدد منابع."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:how-to-choose-study-resources"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-read-exam-report-card",
+      "content_type": "article",
+      "title": "راهنمای خواندن کارنامهٔ کنکور ارشد کامپیوتر",
+      "slug": "read-exam-report-card",
+      "summary": "تفاوت رتبه، تراز، کد ضریب و قبولی؛ و اینکه چگونه از کارنامه‌ها بدون نتیجه‌گیری غلط استفاده کنیم.",
+      "quick_answer": "کارنامهٔ یک نفر فقط یک مشاهده با سهمیه، سال، مجموعه، شرایط آزمون و انتخاب‌های مشخص است. برای تصمیم‌گیری باید چند نمونهٔ هم‌گروه را کنار هم دید.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کارنامه نسخهٔ آیندهٔ تو نیست"
+        },
+        {
+          "type": "text",
+          "text": "کارنامهٔ یک نفر فقط یک مشاهده با سهمیه، سال، مجموعه، شرایط آزمون و انتخاب‌های مشخص است. برای تصمیم‌گیری باید چند نمونهٔ هم‌گروه را کنار هم دید."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چه ستون‌هایی مهم‌اند؟"
+        },
+        {
+          "type": "text",
+          "text": "• سال و مجموعهٔ امتحانی\n• سهمیه و کد ضریب\n• درصد هر بستهٔ درس\n• رتبه در سهمیه\n• ترتیب انتخاب‌ها و نتیجهٔ نهایی"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "حریم خصوصی"
+        },
+        {
+          "type": "text",
+          "text": "در بانک کارنامهٔ kunkur01 فقط نمونه‌هایی نمایش داده می‌شوند که رضایت انتشار دارند؛ شناسه‌های داخلی و اطلاعات شناسایی در صفحهٔ عمومی جایی ندارند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و IT"
+        ],
+        "tags": [
+          "کارنامه و رتبه"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر و IT"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای خواندن کارنامهٔ کنکور ارشد کامپیوتر",
+        "description": "تفاوت رتبه، تراز، کد ضریب و قبولی؛ و اینکه چگونه از کارنامه‌ها بدون نتیجه‌گیری غلط استفاده کنیم."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:read-exam-report-card"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-official-exam-updates-checklist",
+      "content_type": "article",
+      "title": "چک‌لیست پیگیری اطلاعیه‌های رسمی کنکور ۱۴۰۶",
+      "slug": "official-exam-updates-checklist",
+      "summary": "کدام فایل ملاک است، اصلاحیه را کجا باید دید و چگونه تاریخ اعتبار اطلاعات را کنترل کنیم.",
+      "quick_answer": "کدام فایل ملاک است، اصلاحیه را کجا باید دید و چگونه تاریخ اعتبار اطلاعات را کنترل کنیم.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ترتیب اعتبار"
+        },
+        {
+          "type": "text",
+          "text": "• دفترچهٔ ثبت‌نام سال آزمون\n• اصلاحیه‌های بعد از دفترچه\n• اطلاعیه‌های رسمی سازمان سنجش\n• تحلیل رسانه‌ها و کانال‌ها"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "هر بار چه چیزی را کنترل کنیم؟"
+        },
+        {
+          "type": "text",
+          "text": "• کد و نام مجموعه\n• مواد و ضرایب\n• شرایط مدارک تحصیلی\n• تاریخ ثبت‌نام و آزمون\n• محدودیت مجموعهٔ اصلی یا شناور"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سیاست kunkur01"
+        },
+        {
+          "type": "text",
+          "text": "صفحات زمان‌حساس تاریخ آخرین بازبینی و منبع دارند. اگر مدرک رسمی کافی نباشد، ابهام صریح نوشته می‌شود و حدس به‌جای خبر منتشر نمی‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "ثبت‌نام و اخبار رسمی"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "چک‌لیست پیگیری اطلاعیه‌های رسمی کنکور ۱۴۰۶",
+        "description": "کدام فایل ملاک است، اصلاحیه را کجا باید دید و چگونه تاریخ اعتبار اطلاعات را کنترل کنیم."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0aad058f3377baa8289b",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:official-exam-updates-checklist"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-telegram-learning-archive",
+      "content_type": "article",
+      "title": "چطور از آرشیو رایگان تلگرام kunkur01 استفاده کنیم؟",
+      "slug": "telegram-learning-archive",
+      "summary": "مسیر پیشنهادی برای تبدیل ویدئوها، PDFها و تحلیل‌های کانال به یک برنامهٔ مطالعهٔ منظم.",
+      "quick_answer": "مسیر پیشنهادی برای تبدیل ویدئوها، PDFها و تحلیل‌های کانال به یک برنامهٔ مطالعهٔ منظم.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "یک کانال، یک مسیر"
+        },
+        {
+          "type": "text",
+          "text": "• @konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای kunkur01 است.\n• محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "روش استفاده"
+        },
+        {
+          "type": "text",
+          "text": "• قبل از دیدن ویدئو، مبحث و خروجی مورد انتظار را بنویس.\n• بعد از هر محتوا حداقل سه تست یا سه پرسش بازیابی حل کن.\n• لینک پست اصلی را کنار یادداشت نگه دار تا نسخه و زمینه گم نشود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و IT"
+        ],
+        "tags": [
+          "منابع رایگان"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر و IT"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "چطور از آرشیو رایگان تلگرام kunkur01 استفاده کنیم؟",
+        "description": "مسیر پیشنهادی برای تبدیل ویدئوها، PDFها و تحلیل‌های کانال به یک برنامهٔ مطالعهٔ منظم."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:telegram-learning-archive"
+      },
+      "review_status": "draft"
+    }
+  ]
+}

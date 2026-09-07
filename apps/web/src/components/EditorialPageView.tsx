@@ -25,8 +25,6 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
             datePublished: editorialDateIso(page.publishedAt),
             dateModified: editorialDateIso(page.reviewedAt),
             mainEntityOfPage: absoluteUrl(path),
-            author: { "@type": page.author === "محمد رستمی" ? "Person" : "Organization", name: page.author },
-            reviewedBy: { "@type": page.reviewer === "محمد رستمی" ? "Person" : "Organization", name: page.reviewer },
             publisher: { "@type": "Organization", name: "kunkur01", url: absoluteUrl("/") },
             about: [page.degree, page.field, "کنکور تحصیلات تکمیلی"],
           },
@@ -57,8 +55,6 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
             <h1>{page.title}</h1>
             <p className="editorial-deck">{page.description}</p>
             <div className="editorial-byline">
-              <div className="author-avatar">{page.author === "محمد رستمی" ? "م" : "ک"}</div>
-              <div><strong>{page.author}</strong><span>بازبینی: {page.reviewer}</span></div>
               <div className="editorial-dates"><span>آخرین بررسی {page.reviewedAt}</span><span>{toPersianDigits(page.readingMinutes)} دقیقه مطالعه</span></div>
             </div>
           </header>

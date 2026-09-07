@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   keywords: ["کنکور ارشد کامپیوتر", "کنکور دکتری کامپیوتر", "کنکور IT", "علوم کامپیوتر", "منابع کنکور کامپیوتر"],
-  authors: [{ name: "تحریریه kunkur01" }, { name: "محمد رستمی" }],
+  authors: [{ name: "kunkur01" }],
   creator: "kunkur01",
   publisher: "kunkur01",
   alternates: { canonical: "/" },

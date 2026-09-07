@@ -1,0 +1,46 @@
+{
+  "schema_version": "article.v2",
+  "external_id": "guide-master-ce-1406",
+  "content_type": "guide",
+  "title": "راهنمای ارشد مهندسی کامپیوتر ۱۴۰۶",
+  "slug": "master-computer-engineering-1406",
+  "summary": "مسیر مستند شناخت مواد آزمون و شروع مطالعه.",
+  "quick_answer": "مواد آزمون را از آخرین دفترچه و اصلاحیه رسمی کنترل کنید.",
+  "content_blocks": [
+    { "type": "heading", "level": 2, "text": "از کجا شروع کنیم؟" },
+    { "type": "text", "text": "ابتدا وضعیت رسمی آزمون و سپس پیش‌نیازهای هر درس را بررسی کنید." }
+  ],
+  "taxonomy": {
+    "major": ["computer-engineering"],
+    "tags": ["1406"],
+    "degrees": ["master"],
+    "fields": ["computer-engineering"],
+    "subject_codes": [],
+    "topic_codes": []
+  },
+  "seo": {
+    "title": "راهنمای کنکور ارشد کامپیوتر ۱۴۰۶",
+    "description": "راهنمای منبع‌دار مواد آزمون و شروع مطالعه برای کنکور ارشد مهندسی کامپیوتر ۱۴۰۶."
+  },
+  "validity": {
+    "exam_year": 1406,
+    "time_sensitive": true,
+    "source_checked_at": "2026-09-06T08:00:00.000Z",
+    "review_due_at": "2026-10-06T08:00:00.000Z"
+  },
+  "sources": [
+    {
+      "source_external_id": "sanjesh-master-1406",
+      "relation": "DEFINES",
+      "locator": "جدول مواد امتحانی",
+      "order": 0
+    }
+  ],
+  "editorial": { "author_slug": "mohammad-rostami" },
+  "provenance": {
+    "producer_type": "human",
+    "producer_name": "تحریریه kunkur01",
+    "source_artifact": "phase-9-contract-fixture"
+  },
+  "review_status": "draft"
+}

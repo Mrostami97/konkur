@@ -1,5 +1,6 @@
-import { PrismaClient, ReviewStatus, Role } from "@prisma/client";
+import { Prisma, PrismaClient, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
 import { hashPassword } from "./modules/identity/password-hasher";
+import { seedStaticEditorial } from "./seed-static-editorial";
 
 const prisma = new PrismaClient();
 
@@ -79,22 +80,63 @@ async function seedCourseAndProduct(authorId: string) {
     await prisma.price.create({ data: { productId: product.id, amountRial: 490_000 } });
   }
 
-  await prisma.article.upsert({
+  await prisma.productCourseGrant.upsert({
+    where: { productId_courseId: { productId: product.id, courseId: course.id } },
+    update: {},
+    create: { productId: product.id, courseId: course.id },
+  });
+
+  const seedArticlePayload = {
+    schema_version: "article.v1",
+    external_id: "seed-big-o-refresher",
+    title: "مروری بر نماد O بزرگ",
+    slug: SEED_ARTICLE_SLUG,
+    summary: "یک مرور کوتاه بر نماد O بزرگ پیش از شروع دوره الگوریتم.",
+    content_blocks: [
+      { type: "heading", level: 2, text: "چرا O بزرگ مهم است؟" },
+      { type: "text", text: "این مقاله مقدمه‌ای بر مبحث پیچیدگی زمانی است." },
+    ],
+    taxonomy: { major: ["computer-engineering"], tags: ["algorithms"] },
+    provenance: {
+      producer_type: "human",
+      producer_name: "kunkur01 seed",
+      source_artifact: "apps/api/src/seed.ts",
+    },
+    review_status: "approved",
+  };
+  const article = await prisma.article.upsert({
     where: { slug: SEED_ARTICLE_SLUG },
     update: {},
     create: {
+      externalId: seedArticlePayload.external_id,
       slug: SEED_ARTICLE_SLUG,
-      title: "مروری بر نماد O بزرگ",
-      summary: "یک مرور کوتاه بر نماد O بزرگ پیش از شروع دوره الگوریتم.",
-      contentBlocks: [
-        { type: "heading", level: 2, text: "چرا O بزرگ مهم است؟" },
-        { type: "text", text: "این مقاله مقدمه‌ای بر مبحث پیچیدگی زمانی است." },
-      ],
+      title: seedArticlePayload.title,
+      summary: seedArticlePayload.summary,
+      contentBlocks: seedArticlePayload.content_blocks,
       taxonomyMajor: ["computer-engineering"],
       taxonomyTags: ["algorithms"],
       authorId,
       reviewStatus: ReviewStatus.PUBLISHED,
       publishedAt: new Date(),
+    },
+  });
+  await prisma.contentVersion.upsert({
+    where: {
+      entityType_entityId_version: {
+        entityType: VersionedEntityType.ARTICLE,
+        entityId: article.id,
+        version: article.version,
+      },
+    },
+    update: {},
+    create: {
+      entityType: VersionedEntityType.ARTICLE,
+      entityId: article.id,
+      version: article.version,
+      payload: seedArticlePayload as Prisma.InputJsonValue,
+      schemaVersion: "article.v1",
+      reviewStatus: ReviewStatus.PUBLISHED,
+      publishedAt: article.publishedAt,
     },
   });
 }
@@ -109,8 +151,22 @@ export async function seed() {
       data: { passwordHash: await hashPassword(SEED_ADMIN_PASSWORD) },
     });
   }
+  await prisma.contributorProfile.upsert({
+    where: { slug: "mohammad-rostami" },
+    update: { userId: admin.id },
+    create: {
+      userId: admin.id,
+      slug: "mohammad-rostami",
+      displayName: "محمد رستمی",
+      roleTitle: "مدرس و مؤلف کنکور کامپیوتر",
+      shortBio: "پروفایل تحریریه برای تکمیل و تأیید پیش از انتشار عمومی.",
+      thesisUrl: "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/",
+      isPublished: false,
+    },
+  });
   await upsertUserWithRole(SEED_STUDENT_PHONE, Role.STUDENT);
   await seedCourseAndProduct(admin.id);
+  await seedStaticEditorial(prisma);
 }
 
 if (require.main === module) {

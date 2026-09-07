@@ -24,7 +24,7 @@ by default (`curl -k` to bypass locally).
 docker compose exec api pnpm prisma migrate deploy
 
 # roll back only the latest migration (take a backup first)
-docker compose exec api pnpm run migrate:down -- 20260906120000_password_auth
+docker compose exec api pnpm run migrate:down -- 20260906200000_phase9_content_commerce
 
 # roll everything back and re-apply from scratch (dev/staging only — destructive)
 docker compose exec api pnpm prisma migrate reset --force
@@ -38,6 +38,56 @@ executes the up file; the API's `migrate:down` command executes the checked-in
 down file only for the latest applied migration and removes its ledger row.
 Full reset or restoring the pre-migration backup remains the safer production
 rollback path.
+
+### Phase 9 content/commerce migration
+
+Migration 20260906200000_phase9_content_commerce is additive. Existing courses
+are backfilled as ENTITLEMENT, existing lessons as non-preview, report-card
+consent as false, subject/topic slugs from their existing codes, existing
+course products into product_course_grants, and legacy article snapshots as
+article.v1.
+
+Before deploy:
+
+    ops/backup.sh
+    docker compose exec api pnpm prisma migrate deploy
+    docker compose exec api pnpm run seed
+
+The seed is repeatable. It creates the unpublished contributor profile, keeps
+the existing paid course grant, and stages the 14 current static editorial
+pages as article.v2 drafts without changing their public routes or publishing
+an unreviewed byline. Once one of those slugs exists, later seed runs leave its
+canonical record, workflow status, source links and revision payload untouched
+so deployment cannot erase editorial work. Regenerate the checked-in draft fixture after an
+intentional edit to apps/web/src/content/editorial.ts:
+
+    node scripts/generate-editorial-drafts.mjs
+
+The down migration succeeds only while all Phase 9-only state is still
+representable by the previous schema. It intentionally aborts atomically when
+it finds resources, resource/bundle products, article.v2, content sources,
+contributor profiles, source links, non-default access/taxonomy metadata,
+preview lessons, prerequisite links, or a positive report-card publication
+consent. Do not delete those records to force a production downgrade; restore
+the pre-migration backup instead.
+
+Paid resource delivery is authorized from active Entitlements, proxied by the
+API, marked private/no-store, and served with an inline content disposition.
+An artifact can be attached or streamed only in `USER_UPLOAD` or
+`MIRRORED_WITH_PERMISSION` mode, and only while an active source explicitly has
+`mayHost=true` plus a documented hosting-rights basis. `METADATA_ONLY`,
+`EXTERNAL_LINK`, and `OFFICIAL_EMBED` never stream a stored artifact. Changing
+hosting mode requires clearing incompatible artifact/link fields; the admin UI
+does this explicitly and the API rejects an unsafe retained attachment.
+The public checksum media route refuses every artifact referenced now or
+previously by a Resource, including public, detached, draft, rejected, and
+historical revisions. Resource bytes are available only through the authorized
+`/resources/:slug/content` endpoint. Public DTOs omit object-storage keys,
+artifact identifiers, provenance, and internal source-link identifiers. A
+published resource stays canonical and available while its next revision is a
+draft, in review, or rejected; only approval promotes the revision atomically.
+This limits ordinary link sharing; it is not DRM and cannot prevent screenshots
+or a determined client from saving received bytes.
 
 ## Backup / restore
 

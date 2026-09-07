@@ -10,8 +10,8 @@ import { PrismaClient } from "@prisma/client";
  * Usage: pnpm run migrate:down -- 20260906120000_password_auth
  */
 async function main() {
-  const migrationName = process.argv[2];
-  if (!migrationName || !/^\d{14}_[a-z0-9-]+$/.test(migrationName)) {
+  const migrationName = process.argv.slice(2).find((argument) => argument !== "--");
+  if (!migrationName || !/^\d{14}_[a-z0-9_-]+$/.test(migrationName)) {
     throw new Error("usage: pnpm run migrate:down -- <timestamp_name>");
   }
 
@@ -31,13 +31,16 @@ async function main() {
       throw new Error("only the latest applied migration may be rolled back");
     }
 
-    // The checked-in down files contain independent SQL statements. Execute
-    // them separately so the command remains compatible with Prisma's raw SQL
-    // driver and fails before the migration ledger is changed.
-    for (const statement of sql.split(";").map((part) => part.trim()).filter(Boolean)) {
-      await prisma.$executeRawUnsafe(statement);
-    }
-    await prisma.$executeRaw`DELETE FROM "_prisma_migrations" WHERE migration_name = ${migrationName}`;
+    const statements = sql.split(";").map((part) => part.trim()).filter(Boolean);
+    // Rollback guards and schema changes must be atomic. If a down file finds
+    // Phase-specific data that cannot be represented by the previous schema,
+    // the guard fails and PostgreSQL restores every statement in this block.
+    await prisma.$transaction(async (tx) => {
+      for (const statement of statements) {
+        await tx.$executeRawUnsafe(statement);
+      }
+      await tx.$executeRaw`DELETE FROM "_prisma_migrations" WHERE migration_name = ${migrationName}`;
+    });
   } finally {
     await prisma.$disconnect();
   }

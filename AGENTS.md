@@ -110,7 +110,9 @@ against (§11, "دامنه بیش‌ازحد").
 | 4 | Assessment engine | **Done** |
 | 5 | Study OS | **Done** |
 | 6 | Rank & admissions engine | **Done** |
-| 7 | Growth & scale | **Done — this repo state** |
+| 7 | Growth & scale | **Done** |
+| 8 | Competitive research & editorial policy | **Done** |
+| 9 | Editorial content/commerce foundation | **Done — this repo state** |
 
 ## Known simplifications (carry these into later phases' risk lists)
 
@@ -142,14 +144,13 @@ Phase 1:
   (Author/Reviewer/Admin) authoring through the admin panel — not the strict
   `contracts/article.v1` JSON Schema, which is for Phase 2's external bulk
   ingestion into the same `articles` table.
-- No article version-history table yet — `reviewStatus` (DRAFT → IN_REVIEW →
-  PUBLISHED/REJECTED) is tracked, but edits to a DRAFT/REJECTED article
-  overwrite in place rather than creating a new version row. A published
-  article cannot be edited in place (by design, to avoid silently changing
-  live content) but there's no republish-as-new-version flow yet either.
-- Entitlement `endAt` (time-limited access) is stored but **not enforced** by
-  any expiry job — no access-duration policy has been supplied yet (docx
-  §12.1). Only explicit admin revocation (`revokedAt`) is enforced today.
+- Phase 9 extended `ContentVersion` to articles and resources. Published
+  canonical content remains live while a new DRAFT/IN_REVIEW/REJECTED
+  revision is edited; approval promotes it atomically and rollback creates a
+  new Draft instead of rewriting history.
+- Entitlement `startAt`, `endAt` and `revokedAt` are enforced on every Phase 9
+  course/resource access check. There is no expiry mutation job because an
+  expired grant is already inactive by time comparison.
 - `EntitlementActivated` is written to the outbox for provenance, but Commerce
   calls `LearningService.enrollFromEntitlement()`/`revokeEnrollment()`
   directly and synchronously (within the same DB transaction) rather than via
@@ -165,8 +166,9 @@ Phase 1:
   drag-to-reorder, no rich content-block editor beyond a single text block per
   lesson) — a real block editor with images/LaTeX/tables is Phase 3's Content
   Engine.
-- Product "kind" only supports `COURSE` — Study Pro/Mentor/Admissions-package
-  products need modules (Planning/Analytics/Admissions) that don't exist yet.
+- Product kinds now support one `COURSE`, one `RESOURCE`, or a non-nested
+  `BUNDLE` of explicit course/resource grants. Study Pro, Mentor and
+  Admissions-package products still need their own future grant targets.
 
 Phase 2:
 
@@ -200,8 +202,10 @@ Phase 2:
 - Asset checksum/MIME are verified against the declared contract, but nothing
   re-derives MIME type from file content (e.g. via magic-byte sniffing) — a
   mislabeled `mime_type` with a matching checksum is not caught.
-- No signed-URL/access-controlled serving of uploaded media yet — Ingestion
-  only stores objects in MinIO and records `SourceArtifact.storageKey`.
+- Phase 9 added access-controlled inline serving for uploaded Resources.
+  Ingestion still stores source artifacts in MinIO, while protected Resource
+  responses are proxied only after ACCOUNT/Entitlement checks and never expose
+  a storage key or signed object URL.
 - `ObjectStorageService.onModuleInit()` bucket-creation is now wrapped in a
   catch (log a warning, don't crash boot) instead of letting an unreachable
   MinIO take down the *entire* app at startup -- since every e2e suite
@@ -238,10 +242,10 @@ Phase 3:
   text/latex content blocks (`assets: []` always) — a question needing a new
   image/chart still has to go through the zip-upload path, since direct
   authoring has nowhere to attach a media file.
-- `/media/:checksum` is unauthenticated and has no expiry-based cache-busting
-  concerns worked out (a presigned URL is short-lived, but the endpoint
-  itself never checks who's asking) — fine for today's all-public reference
-  content, not yet fine for paid/protected media.
+- `/media/:checksum` remains an unauthenticated redirect only for artifacts
+  never referenced by a Resource. Phase 9 blocks current, detached and
+  historical Resource artifacts in every access/review state; those bytes are
+  served only through the access-controlled Resource endpoint.
 - KaTeX renders via `dangerouslySetInnerHTML` (this is KaTeX's own documented
   server/client-safe rendering path, not a raw passthrough of un-sanitized
   user HTML) — only trusted internal roles (Author/Reviewer/Admin) or the

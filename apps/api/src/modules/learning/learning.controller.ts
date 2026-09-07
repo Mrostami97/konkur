@@ -3,6 +3,7 @@ import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
+import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
 import { LearningService } from "./learning.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
@@ -24,21 +25,23 @@ export class CoursesPublicController {
 }
 
 @Controller()
-@UseGuards(SessionAuthGuard)
 export class LearningStudentController {
   constructor(private readonly learning: LearningService) {}
 
   @Get("me/enrollments")
+  @UseGuards(SessionAuthGuard)
   myEnrollments(@Req() req: RequestWithUser) {
     return this.learning.listMyEnrollments(req.user!.id);
   }
 
   @Get("lessons/:id")
+  @UseGuards(OptionalSessionAuthGuard)
   getLesson(@Param("id") id: string, @Req() req: RequestWithUser) {
-    return this.learning.getLessonForStudent(req.user!.id, id);
+    return this.learning.getLesson(req.user?.id, id);
   }
 
   @Post("lessons/:id/complete")
+  @UseGuards(SessionAuthGuard)
   completeLesson(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.learning.completeLesson(req.user!.id, id);
   }
@@ -75,9 +78,4 @@ export class LearningAdminController {
     return this.learning.addLesson(id, dto);
   }
 
-  @Post("enrollments/manual")
-  @Roles(Role.ADMIN)
-  grantManualEnrollment(@Body("userId") userId: string, @Body("courseId") courseId: string) {
-    return this.learning.grantManualEnrollment(userId, courseId);
-  }
 }

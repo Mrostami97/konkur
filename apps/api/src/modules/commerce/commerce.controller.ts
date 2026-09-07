@@ -8,6 +8,7 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { CreatePriceDto } from "./dto/create-price.dto";
 import { CheckoutDto } from "./dto/checkout.dto";
 import { GrantEntitlementDto, RevokeEntitlementDto } from "./dto/grant-entitlement.dto";
+import { GrantCourseDto, GrantResourceDto } from "./dto/grant-product-item.dto";
 
 @Controller("products")
 export class ProductsPublicController {
@@ -43,6 +44,11 @@ export class CommerceStudentController {
   myEntitlements(@Req() req: RequestWithUser) {
     return this.commerce.listMyEntitlements(req.user!.id);
   }
+
+  @Get("me/library")
+  myLibrary(@Req() req: RequestWithUser) {
+    return this.commerce.listMyLibrary(req.user!.id);
+  }
 }
 
 @Controller("admin")
@@ -77,7 +83,21 @@ export class CommerceAdminController {
       dto.productId,
       dto.grantedVia,
       dto.reason,
+      dto.startAt ? new Date(dto.startAt) : undefined,
+      dto.endAt ? new Date(dto.endAt) : undefined,
     );
+  }
+
+  @Post("products/:id/course-grants")
+  @Roles(Role.ADMIN)
+  addCourseGrant(@Param("id") id: string, @Body() dto: GrantCourseDto) {
+    return this.commerce.addCourseGrant(id, dto.courseId);
+  }
+
+  @Post("products/:id/resource-grants")
+  @Roles(Role.ADMIN)
+  addResourceGrant(@Param("id") id: string, @Body() dto: GrantResourceDto) {
+    return this.commerce.addResourceGrant(id, dto.resourceId);
   }
 
   @Post("entitlements/:id/revoke")

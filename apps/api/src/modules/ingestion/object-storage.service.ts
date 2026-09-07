@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Client } from "minio";
+import type { Readable } from "stream";
 
 @Injectable()
 export class ObjectStorageService implements OnModuleInit {
@@ -56,5 +57,11 @@ export class ObjectStorageService implements OnModuleInit {
    * proxies media bytes itself, it just redirects here. */
   async presignedGetUrl(key: string, expirySeconds = 300): Promise<string> {
     return this.client.presignedGetObject(this.bucket, key, expirySeconds);
+  }
+
+  /** Protected resources are proxied by the API after an entitlement check;
+   * callers never receive an object-storage URL or key. */
+  async getObjectStream(key: string): Promise<Readable> {
+    return this.client.getObject(this.bucket, key);
   }
 }
