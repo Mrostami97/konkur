@@ -3,8 +3,19 @@ import { editorialDateIso, findSubject, type EditorialPage } from "../content/ed
 import { absoluteUrl } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
 import { StructuredData } from "./StructuredData";
+import { RelatedContentGrid, type RelatedPublicItem } from "./PublicContent";
 
-export function EditorialPageView({ page, basePath }: { page: EditorialPage; basePath: "/articles" | "/guides" }) {
+export function EditorialPageView({
+  page,
+  basePath,
+  related = [],
+  showOfficialDisclaimer = basePath === "/guides",
+}: {
+  page: EditorialPage;
+  basePath: "/articles" | "/guides";
+  related?: RelatedPublicItem[];
+  showOfficialDisclaimer?: boolean;
+}) {
   const path = `${basePath}/${page.slug}`;
   const relatedSubjects = (page.relatedSubjects ?? []).flatMap((slug) => {
     const subject = findSubject(slug);
@@ -65,7 +76,7 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
             </div>
           </header>
 
-          {basePath === "/guides" && (
+          {showOfficialDisclaimer && (
             <aside className="official-disclaimer editorial-disclaimer">
               <strong>اعتبار اطلاعات ۱۴۰۶</strong>
               <p>این راهنما در {page.reviewedAt} بازبینی شده است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است.</p>
@@ -74,7 +85,7 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
 
           <div className="answer-first">
             <strong>پاسخ سریع</strong>
-            <p>{page.sections[0]?.paragraphs?.[0] ?? page.description}</p>
+            <p>{page.quickAnswer ?? page.sections[0]?.paragraphs?.[0] ?? page.description}</p>
           </div>
 
           <div className="editorial-body">
@@ -121,6 +132,12 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
             <ol>{page.sources.map((source) => <li key={source.url + source.title}><a href={source.url} target="_blank" rel="noreferrer"><strong>{source.title}</strong><span>{source.publisher}{source.publishedAt ? ` • انتشار ${source.publishedAt}` : ""}{" • بررسی "}{source.checkedAt}</span></a></li>)}</ol>
             <p>اگر دفترچه یا اصلاحیهٔ رسمی جدیدی منتشر شود، تاریخ بازبینی و متن همین صفحه به‌روزرسانی می‌شود.</p>
           </section>
+
+          <RelatedContentGrid
+            items={related}
+            title="قدم بعدی"
+            description="این پیوندها بخشی از مسیر همین راهنما هستند؛ از هر کدام می‌توانی مطالعه را ادامه بدهی."
+          />
         </article>
 
         <aside className="editorial-aside" aria-label="راهنمای صفحه">

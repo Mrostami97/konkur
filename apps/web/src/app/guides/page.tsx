@@ -3,13 +3,14 @@ import Link from "next/link";
 import { PageHeader } from "../../components/ui";
 import { formatPublicDate, type PublicArticleRecord } from "../../components/PublicContent";
 import { guides as legacyGuides } from "../../content/editorial";
+import { phase12EditorialPages } from "../../content/phase12";
 import { apiGetPublic } from "../../lib/api";
 import { pageMetadata } from "../../lib/seo";
 
 export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
   return pageMetadata({
-    title: "راهنمای کنکور ۱۴۰۶ کامپیوتر، IT و علوم کامپیوتر",
-    description: "راهنماهای منبع‌دار ارشد و دکتری مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر.",
+    title: "راهنمای برنامه‌ریزی و کنکور ۱۴۰۶ کامپیوتر",
+    description: "راهنماهای عملی برنامه‌ریزی، مرور، جمع‌بندی و اطلاعات رسمی ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.",
     path: "/guides",
     noIndex: Object.keys(searchParams).length > 0,
   });
@@ -25,14 +26,14 @@ export default async function GuidesPage() {
   }
   const apiGuides = published.filter((item) => item.contentType === "GUIDE");
   const publishedSlugs = new Set(published.map((guide) => guide.slug));
-  const legacyOnly = legacyGuides.filter((guide) => !publishedSlugs.has(guide.slug));
+  const staticOnly = [...legacyGuides, ...phase12EditorialPages].filter((guide) => !publishedSlugs.has(guide.slug));
 
   return (
     <main className="page-container">
       <PageHeader
         eyebrow="راهنمای منبع‌دار"
-        title="مسیر آزمونت را با اطلاعات بررسی‌شده بساز"
-        description="راهنما فقط پس از بازبینی انسانی منتشر می‌شود و نسخه‌های زمان‌حساس، تاریخ بررسی و منبع روشن دارند."
+        title="از انتخاب مسیر تا برنامهٔ هفته و روز آزمون"
+        description="راهنماهای اجرایی مطالعه و صفحات رسمی ۱۴۰۶، با پاسخ کوتاه، تاریخ بررسی، منبع و قدم بعدی روشن."
       />
       {apiUnavailable && (
         <aside className="official-disclaimer">
@@ -55,11 +56,11 @@ export default async function GuidesPage() {
             </div>
           </Link>
         ))}
-        {legacyOnly.map((guide) => (
+        {staticOnly.map((guide) => (
           <Link href={`/guides/${guide.slug}`} className="guide-card" key={guide.slug}>
-            <div className="guide-card-index">{guide.degree === "ارشد" ? "MSc" : "PhD"}</div>
+            <div className="guide-card-index">{staticDegreeMark(guide.degree)}</div>
             <div>
-              <span>{guide.field}</span>
+              <span>{guide.category} · {guide.field}</span>
               <h2>{guide.title}</h2>
               <p>{guide.description}</p>
               <div className="guide-card-meta"><span>بررسی {guide.reviewedAt}</span><strong>مشاهده راهنما ←</strong></div>
@@ -69,6 +70,12 @@ export default async function GuidesPage() {
       </div>
     </main>
   );
+}
+
+function staticDegreeMark(degree: string) {
+  if (degree === "ارشد") return "MSc";
+  if (degree === "دکتری") return "PhD";
+  return "M/P";
 }
 
 function toDegreeMark(degrees: string[]) {

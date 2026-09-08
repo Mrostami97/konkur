@@ -1,4 +1,5 @@
 import { articles, editorialDateIso, guides } from "../../content/editorial";
+import { phase12EditorialPages } from "../../content/phase12";
 import { apiGetPublic } from "../../lib/api";
 import { absoluteUrl, SITE_DESCRIPTION } from "../../lib/seo";
 
@@ -32,7 +33,7 @@ export async function GET() {
   const apiArticles = apiResult.items;
   const publishedSlugs = new Set(apiArticles.map((item) => item.slug));
   const entries: FeedEntry[] = [
-    ...guides.filter((item) => !publishedSlugs.has(item.slug)).map((item) => ({ title: item.title, description: item.description, path: `/guides/${item.slug}`, publishedAt: editorialDateIso(item.publishedAt) })),
+    ...[...guides, ...phase12EditorialPages].filter((item) => !publishedSlugs.has(item.slug)).map((item) => ({ title: item.title, description: item.description, path: `/guides/${item.slug}`, publishedAt: editorialDateIso(item.publishedAt) })),
     ...articles.filter((item) => !publishedSlugs.has(item.slug)).map((item) => ({ title: item.title, description: item.description, path: `/articles/${item.slug}`, publishedAt: editorialDateIso(item.publishedAt) })),
     ...apiArticles.map((item) => ({
       title: item.title,

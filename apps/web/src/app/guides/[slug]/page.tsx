@@ -8,6 +8,11 @@ import {
   type RelatedPublicItem,
 } from "../../../components/PublicContent";
 import { findEditorialPage, guides } from "../../../content/editorial";
+import {
+  findPhase12EditorialPage,
+  findPhase12Page,
+  phase12EditorialPages,
+} from "../../../content/phase12";
 import { apiGetPublic } from "../../../lib/api";
 import { pageMetadata } from "../../../lib/seo";
 
@@ -18,7 +23,7 @@ interface TaxonomyEntry {
 }
 
 export function generateStaticParams() {
-  return guides.map(({ slug }) => ({ slug }));
+  return [...guides, ...phase12EditorialPages].map(({ slug }) => ({ slug }));
 }
 
 async function loadGuide(slug: string) {
@@ -39,9 +44,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       type: "article",
     });
   }
-  const legacy = findEditorialPage(params.slug);
-  if (legacy && guides.some((item) => item.slug === params.slug)) {
-    return pageMetadata({ title: legacy.title, description: legacy.description, path: `/guides/${legacy.slug}`, type: "article" });
+  const staticGuide = findEditorialPage(params.slug) ?? findPhase12EditorialPage(params.slug);
+  if (staticGuide && [...guides, ...phase12EditorialPages].some((item) => item.slug === params.slug)) {
+    return pageMetadata({ title: staticGuide.title, description: staticGuide.description, path: `/guides/${staticGuide.slug}`, type: "article" });
   }
   return {};
 }
@@ -65,11 +70,26 @@ async function relatedTaxonomy(article: PublicArticleRecord): Promise<RelatedPub
 
 export default async function GuidePage({ params }: { params: { slug: string } }) {
   const result = await loadGuide(params.slug);
+  const phase12 = findPhase12Page(params.slug);
   if (result.article) {
     if (result.article.contentType !== "GUIDE") redirect(`/articles/${result.article.slug}`);
-    return <PublicArticleView article={result.article} related={await relatedTaxonomy(result.article)} />;
+    const view = <PublicArticleView article={result.article} related={await relatedTaxonomy(result.article)} />;
+    return phase12 ? <div data-phase12="verified-guide">{view}</div> : view;
   }
-  const legacy = findEditorialPage(params.slug);
-  if (!legacy || !guides.some((item) => item.slug === params.slug)) notFound();
-  return <EditorialPageView page={legacy} basePath="/guides" />;
+  const staticGuide = findEditorialPage(params.slug) ?? findPhase12EditorialPage(params.slug);
+  if (!staticGuide || ![...guides, ...phase12EditorialPages].some((item) => item.slug === params.slug)) notFound();
+  const view = (
+    <EditorialPageView
+      page={staticGuide}
+      basePath="/guides"
+      related={phase12?.internalLinks.map((item) => ({
+        href: item.href,
+        title: item.title,
+        label: item.label,
+        summary: item.description,
+      }))}
+      showOfficialDisclaimer={!phase12 || phase12.kind === "OFFICIAL"}
+    />
+  );
+  return phase12 ? <div data-phase12="verified-guide">{view}</div> : view;
 }

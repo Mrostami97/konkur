@@ -20,6 +20,7 @@ export interface EditorialPage {
   slug: string;
   title: string;
   description: string;
+  quickAnswer?: string;
   category: string;
   degree: ExamDegree;
   field: string;

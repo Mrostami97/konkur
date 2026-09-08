@@ -4,6 +4,7 @@ import { PublicServiceError } from "../../components/PublicContent";
 import { EmptyState, PageHeader } from "../../components/ui";
 import { articles, findSubject, guides, subjects } from "../../content/editorial";
 import { phase11SubjectContent, type Phase11SubjectSlug } from "../../content/phase11";
+import { phase12EditorialPages } from "../../content/phase12";
 import { apiGetPublic } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
@@ -84,7 +85,7 @@ function matchScore(title: string, body: string, query: string) {
 
 function legacySearch(query: string): SearchItem[] {
   const candidates = [
-    ...guides.map((item) => ({
+    ...[...guides, ...phase12EditorialPages].map((item) => ({
       type: "ARTICLE" as const,
       slug: item.slug,
       title: item.title,

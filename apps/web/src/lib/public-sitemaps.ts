@@ -1,5 +1,6 @@
 import { articles, editorialDateIso, guides, subjects } from "../content/editorial";
 import { phase11DateIso, phase11SubjectContent, type Phase11SubjectSlug } from "../content/phase11";
+import { phase12EditorialPages } from "../content/phase12";
 import { apiGetPublic } from "./api";
 import { absoluteUrl } from "./seo";
 
@@ -78,7 +79,7 @@ export async function guideSitemapEntries(): Promise<SitemapCollection> {
   const publishedTypes = new Map(published.map((article) => [article.slug, article.contentType]));
   return { complete: loaded !== null, entries: uniqueEntries([
     { loc: absoluteUrl("/guides") },
-    ...guides.filter((guide) => !publishedTypes.has(guide.slug) || publishedTypes.get(guide.slug) === "GUIDE").map((guide) => ({
+    ...[...guides, ...phase12EditorialPages].filter((guide) => !publishedTypes.has(guide.slug) || publishedTypes.get(guide.slug) === "GUIDE").map((guide) => ({
       loc: absoluteUrl(`/guides/${guide.slug}`),
       lastmod: asIso(editorialDateIso(guide.reviewedAt)),
     })),

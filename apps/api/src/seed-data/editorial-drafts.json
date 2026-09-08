@@ -50,6 +50,142 @@
       "metadata": {
         "importedFrom": "apps/web/src/content/editorial.ts"
       }
+    },
+    {
+      "externalId": "editorial-source-0acf614bda63129236c4",
+      "kind": "WEB_PAGE",
+      "title": "Improving Students’ Learning With Effective Learning Techniques",
+      "publisher": "Psychological Science in the Public Interest",
+      "canonicalUrl": "https://doi.org/10.1177/1529100612453266",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "Psychological Science in the Public Interest — Improving Students’ Learning With Effective Learning Techniques",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-02dc8955edf07d3a9b91",
+      "kind": "WEB_PAGE",
+      "title": "Retrieval Practice Produces More Learning than Elaborative Studying",
+      "publisher": "Science",
+      "canonicalUrl": "https://doi.org/10.1126/science.1199327",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "Science — Retrieval Practice Produces More Learning than Elaborative Studying",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-7cccd4c5e57231cacfe4",
+      "kind": "WEB_PAGE",
+      "title": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+      "publisher": "Psychological Bulletin",
+      "canonicalUrl": "https://doi.org/10.1037/0033-2909.132.3.354",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "Psychological Bulletin — Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-45a51ba313803cf5fb76",
+      "kind": "WEB_PAGE",
+      "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+      "publisher": "سازمان سنجش آموزش کشور",
+      "canonicalUrl": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+      "sourceTier": "PRIMARY_OFFICIAL",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "سازمان سنجش آموزش کشور — اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-e51440ab3baeb3c87ede",
+      "kind": "WEB_PAGE",
+      "title": "The Shuffling of Mathematics Problems Improves Learning",
+      "publisher": "Instructional Science",
+      "canonicalUrl": "https://doi.org/10.1007/s11251-007-9015-8",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "Instructional Science — The Shuffling of Mathematics Problems Improves Learning",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-90acf5084bd313d2b5b0",
+      "kind": "WEB_PAGE",
+      "title": "آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
+      "publisher": "کنکورصفریک",
+      "canonicalUrl": "https://t.me/konkurcom",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "کنکورصفریک — آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-bd8f7cb1262dd65dec24",
+      "kind": "WEB_PAGE",
+      "title": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+      "publisher": "سازمان سنجش آموزش کشور",
+      "canonicalUrl": "https://www.sanjesh.org/",
+      "sourceTier": "PRIMARY_OFFICIAL",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "سازمان سنجش آموزش کشور — درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-d2a119b23c0831cb70d5",
+      "kind": "WEB_PAGE",
+      "title": "اعلام زمان‌بندی ثبت‌نام و برگزاری آزمون‌های دکتری و ارشد ۱۴۰۶",
+      "publisher": "وزارت علوم، تحقیقات و فناوری",
+      "canonicalUrl": "https://t.me/msrt_iri/43538",
+      "sourceTier": "PRIMARY_OFFICIAL",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "وزارت علوم، تحقیقات و فناوری — اعلام زمان‌بندی ثبت‌نام و برگزاری آزمون‌های دکتری و ارشد ۱۴۰۶",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
     }
   ],
   "articles": [
@@ -734,6 +870,2274 @@
         "producer_type": "human",
         "producer_name": "تحریریه kunkur01",
         "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-science-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-start-from-zero",
+      "content_type": "guide",
+      "title": "شروع کنکور کامپیوتر از صفر؛ اولین چهار هفته چه کار کنیم؟",
+      "slug": "start-from-zero",
+      "summary": "راهنمای عملی انتخاب مجموعه، سنجش پایه و ساخت چهار هفتهٔ نخست برای داوطلبی که هنوز برنامه و منبع مشخص ندارد.",
+      "quick_answer": "از صفر یعنی هنوز نقطهٔ شروع خودت را نمی‌دانی، نه اینکه باید همهٔ کتاب‌ها را از صفحهٔ اول بخوانی. ابتدا مجموعهٔ هدف را قطعی کن، سه درس ستون را بسنج و چهار هفته فقط یک چرخهٔ آموزش، بازیابی و تست بساز.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "روز اول: مسئله را کوچک کن"
+        },
+        {
+          "type": "text",
+          "text": "نام مجموعه و مواد امتحانی ۱۴۰۶ را از راهنمای همان مسیر بردار. سپس برای هر درس سه برچسب بنویس: نخوانده‌ام، آشنا هستم، یا می‌توانم تست استاندارد حل کنم. این برچسب‌ها موقت‌اند و با آزمون کوتاه اصلاح می‌شوند."
+        },
+        {
+          "type": "text",
+          "text": "• یک مجموعهٔ اصلی انتخاب کن؛ هم‌زمان برای سه آزمون متفاوت برنامه نساز.\n• از هر درس ده تا پانزده پرسش نمونه را بدون زمان‌گیری ببین تا نوع ضعف روشن شود.\n• سه درس ستون انتخاب کن: یک درس پایه، یک درس تخصصی و زبان با حجم کم اما پیوسته."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چهار هفتهٔ نخست"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "هفته",
+            "خروجی قابل مشاهده",
+            "کنترل پایان هفته"
+          ],
+          "rows": [
+            [
+              "اول",
+              "شناخت مسیر و تثبیت دو بازهٔ مطالعه",
+              "برنامه واقعاً اجرا شد؟"
+            ],
+            [
+              "دوم",
+              "یک فصل پایه همراه تست آموزشی",
+              "می‌توانی راه‌حل را توضیح بدهی؟"
+            ],
+            [
+              "سوم",
+              "افزودن درس تخصصی دوم",
+              "حجم اضافه، کیفیت را خراب نکرد؟"
+            ],
+            [
+              "چهارم",
+              "مرور فاصله‌دار و یک آزمونک",
+              "کدام خطا دوباره تکرار شد؟"
+            ]
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "تعداد ساعت معیار شروع نیست. برنامه‌ای که در سه روز واقعی اجرا شده، از جدول سنگینی که فقط نوشته شده ارزشمندتر است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "بعد از ماه اول تصمیم بگیر"
+        },
+        {
+          "type": "text",
+          "text": "• درس‌هایی را که بازیابی فعال در آن‌ها بهتر شده‌اند حفظ کن.\n• برای ضعف پیش‌نیازی، یک فصل عقب‌تر برو؛ منبع تازه را بی‌دلیل جایگزین نکن.\n• برنامهٔ ماه دوم را از دادهٔ اجرای خودت بساز، نه از برنامهٔ رتبه‌های ناشناس."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "شروع و برنامه‌ریزی"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "شروع کنکور کامپیوتر از صفر؛ اولین چهار هفته چه کار کنیم؟",
+        "description": "راهنمای عملی انتخاب مجموعه، سنجش پایه و ساخت چهار هفتهٔ نخست برای داوطلبی که هنوز برنامه و منبع مشخص ندارد."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:start-from-zero"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-twelve-month-study-plan",
+      "content_type": "guide",
+      "title": "برنامهٔ دوازده‌ماهه کنکور کامپیوتر؛ از پایه تا روز آزمون",
+      "slug": "twelve-month-study-plan",
+      "summary": "نقشهٔ یک‌سالهٔ منعطف برای ساخت پایه، تکمیل درس‌ها، ترکیب تست و مرور و رسیدن به جمع‌بندی بدون انباشتگی.",
+      "quick_answer": "دوازده ماه را به چهار فصل کاری تقسیم کن: پایه‌سازی، پوشش اصلی، یکپارچه‌سازی و جمع‌بندی. هر فصل خروجی و آزمون کنترل خودش را دارد؛ تاریخ‌ها با وضعیت واقعی تو جابه‌جا می‌شوند، اما ترتیب کار نباید برعکس شود.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چهار فصل برنامه"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بازه",
+            "تمرکز",
+            "نشانهٔ عبور"
+          ],
+          "rows": [
+            [
+              "ماه ۱ تا ۳",
+              "پیش‌نیاز و درس‌های ستون",
+              "حل تست آموزشی بدون وابستگی دائم به پاسخ"
+            ],
+            [
+              "ماه ۴ تا ۷",
+              "پوشش فصل‌های اصلی",
+              "ثبت خطا و مرور منظم"
+            ],
+            [
+              "ماه ۸ تا ۱۰",
+              "تست ترکیبی و زمان‌دار",
+              "تشخیص سریع مبحث و روش حل"
+            ],
+            [
+              "ماه ۱۱ و ۱۲",
+              "جمع‌بندی و شبیه‌سازی",
+              "تصمیم‌گیری پایدار در زمان محدود"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قانون ظرفیت"
+        },
+        {
+          "type": "text",
+          "text": "برنامه را با حدود هشتاد درصد ظرفیت قابل‌اتکای هفته ببند تا بیماری، دانشگاه یا کار، کل زنجیره را نشکند. زمان آزاد باقی‌مانده برای جبران هدفمند است، نه افزودن بی‌پایان منبع."
+        },
+        {
+          "type": "text",
+          "text": "• هر هفته یک خروجی کوچک و قابل سنجش تعریف کن.\n• هر چهار هفته یک هفتهٔ سبک‌تر برای مرور و اصلاح در نظر بگیر.\n• درس‌های رهاشده را با بازبرنامه‌ریزی وارد کن؛ بدهی نامرئی نساز."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کنترل ماهانه"
+        },
+        {
+          "type": "text",
+          "text": "• پوشش فصل با تسلط یکی نیست؛ هر دو را جدا گزارش کن.\n• نسبت تست‌های حل‌شده به تست‌های تحلیل‌شده را بررسی کن.\n• اگر دو ماه پیاپی عقب افتادی، دامنه را کم کن نه اینکه ساعت خیالی اضافه کنی."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "نقشهٔ بلندمدت"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "برنامهٔ دوازده‌ماهه کنکور کامپیوتر؛ از پایه تا روز آزمون",
+        "description": "نقشهٔ یک‌سالهٔ منعطف برای ساخت پایه، تکمیل درس‌ها، ترکیب تست و مرور و رسیدن به جمع‌بندی بدون انباشتگی."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:twelve-month-study-plan"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-six-month-study-plan",
+      "content_type": "guide",
+      "title": "برنامهٔ شش‌ماهه کنکور کامپیوتر؛ انتخاب هوشمندانه به‌جای فشرده‌خوانی",
+      "slug": "six-month-study-plan",
+      "summary": "روش اولویت‌بندی درس‌ها در شش ماه، ترکیب آموزش و تست و جلوگیری از قربانی‌شدن مرور در انتهای مسیر.",
+      "quick_answer": "در شش ماه، کامل‌خوانی همهٔ منابع معمولاً هدف خوبی نیست. درس‌های پراثر و پیش‌نیازدار را انتخاب کن، از هفتهٔ اول تست و بازیابی را کنار آموزش بگذار و دو ماه آخر را برای ترکیب و جمع‌بندی حفظ کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "انتخاب سبد درس"
+        },
+        {
+          "type": "text",
+          "text": "• مواد رسمی مجموعه را بنویس و درس‌های خارج از آزمون را حذف کن.\n• درس‌های مشترک و پیش‌نیازدار را زودتر شروع کن.\n• برای هر درس فقط یک منبع آموزش و یک مخزن تمرین فعال نگه دار."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تقسیم شش ماه"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بازه",
+            "کار اصلی",
+            "سهم مرور"
+          ],
+          "rows": [
+            [
+              "ماه ۱ و ۲",
+              "پایه و فصل‌های محوری",
+              "مرور کوتاه هفتگی"
+            ],
+            [
+              "ماه ۳ و ۴",
+              "تکمیل انتخابی و تست ترکیبی",
+              "دو نوبت بازیابی برای هر فصل"
+            ],
+            [
+              "ماه ۵",
+              "آزمونک و ترمیم ضعف",
+              "دفترچهٔ خطا محور"
+            ],
+            [
+              "ماه ۶",
+              "جمع‌بندی و شبیه‌سازی",
+              "فقط یادداشت‌های فشرده و خطاها"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "علامت خطر"
+        },
+        {
+          "type": "text",
+          "text": "اگر تا پایان ماه دوم هنوز فقط ویدئو می‌بینی، برنامه خروجی یادگیری ندارد. بخشی از زمان را به حل بدون راهنما، توضیح شفاهی راه‌حل و ثبت علت خطا منتقل کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "نقشهٔ میان‌مدت"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "برنامهٔ شش‌ماهه کنکور کامپیوتر؛ انتخاب هوشمندانه به‌جای فشرده‌خوانی",
+        "description": "روش اولویت‌بندی درس‌ها در شش ماه، ترکیب آموزش و تست و جلوگیری از قربانی‌شدن مرور در انتهای مسیر."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:six-month-study-plan"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-three-month-study-plan",
+      "content_type": "guide",
+      "title": "برنامهٔ سه‌ماهه کنکور کامپیوتر؛ دامنهٔ کمتر، اجرای دقیق‌تر",
+      "slug": "three-month-study-plan",
+      "summary": "برنامه‌ای واقع‌بینانه برای سه ماه پایانی با انتخاب محدود درس، تست تشخیصی و جمع‌بندی زودهنگام.",
+      "quick_answer": "سه ماه برای خواندن همه‌چیز نیست. یک سبد محدود با بیشترین هم‌پوشانی و امکان پیشرفت انتخاب کن، هر هفته خروجی آزمونک بگیر و از روز اول بخشی از وقت را به مرور مطالب قبلی اختصاص بده.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "هفتهٔ صفر"
+        },
+        {
+          "type": "text",
+          "text": "• مجموعه و ضرایب درست را قطعی کن.\n• از درس‌های محتمل یک آزمون تشخیصی کوچک بگیر.\n• درس‌های کم‌بازده برای وضعیت فعلی خودت را آگاهانه کنار بگذار."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرخهٔ دوازده‌هفته‌ای"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "هفته‌ها",
+            "تمرکز",
+            "خروجی"
+          ],
+          "rows": [
+            [
+              "۱ تا ۵",
+              "آموزش گزیده و تست آموزشی",
+              "خلاصهٔ مسئله‌محور"
+            ],
+            [
+              "۶ تا ۹",
+              "تکمیل فصل‌های منتخب و تست ترکیبی",
+              "دفترچهٔ خطای قابل مرور"
+            ],
+            [
+              "۱۰ تا ۱۲",
+              "آزمون و ترمیم",
+              "تصمیم‌گیری و مدیریت زمان"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چه چیزی را حذف کنیم؟"
+        },
+        {
+          "type": "text",
+          "text": "حذف یعنی تصمیم ثبت‌شده، نه عقب‌انداختن مبهم. اگر فصلی پیش‌نیاز طولانی دارد و سهم آن در هدف تو روشن نیست، آن را در فهرست «بعد از دادهٔ جدید» قرار بده و زمانش را به فصل قابل تثبیت منتقل کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "برنامهٔ فشرده"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "برنامهٔ سه‌ماهه کنکور کامپیوتر؛ دامنهٔ کمتر، اجرای دقیق‌تر",
+        "description": "برنامه‌ای واقع‌بینانه برای سه ماه پایانی با انتخاب محدود درس، تست تشخیصی و جمع‌بندی زودهنگام."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:three-month-study-plan"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-working-candidate-study-plan",
+      "content_type": "guide",
+      "title": "برنامه کنکور کامپیوتر برای داوطلب شاغل",
+      "slug": "working-candidate-study-plan",
+      "summary": "طراحی هفته‌ای مقاوم در برابر خستگی و اضافه‌کاری، با بلوک‌های کوتاه، روزهای لنگر و جبران کنترل‌شده.",
+      "quick_answer": "داوطلب شاغل به برنامه‌ای نیاز دارد که در هفتهٔ بد هم زنده بماند. دو یا سه روز لنگر، بلوک‌های کوتاه روز کاری و یک بازهٔ عمیق در تعطیلی بساز؛ هدف هفتگی را با خروجی تعریف کن، نه ساعت آرمانی.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "هفتهٔ حداقلی و هفتهٔ عادی"
+        },
+        {
+          "type": "text",
+          "text": "دو نسخه از برنامه داشته باش. نسخهٔ حداقلی فقط زنجیرهٔ یادگیری را حفظ می‌کند؛ نسخهٔ عادی پوشش تازه هم دارد. در هفتهٔ پرکار به نسخهٔ حداقلی برگرد، بدون اینکه آن را شکست تلقی کنی."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "نوع روز",
+            "کار مناسب",
+            "کار نامناسب"
+          ],
+          "rows": [
+            [
+              "روز کاری",
+              "مرور، تست کوتاه، واژگان",
+              "شروع فصل سنگین بعد از خستگی"
+            ],
+            [
+              "روز نیمه‌آزاد",
+              "آموزش یک مفهوم و تمرین",
+              "چند درس پراکنده"
+            ],
+            [
+              "روز تعطیل",
+              "بلوک عمیق و آزمونک",
+              "جبران بی‌حد همهٔ عقب‌ماندگی"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کاهش اصطکاک"
+        },
+        {
+          "type": "text",
+          "text": "• شب قبل فقط اولین کار فردا را مشخص کن.\n• منبع، دفتر خطا و تایمر را در یک جای ثابت نگه دار.\n• مرورهای پنج تا پانزده دقیقه‌ای را برای فاصله‌های رفت‌وآمد آماده کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جبران بدون فرسودگی"
+        },
+        {
+          "type": "text",
+          "text": "عقب‌ماندگی را به سه دسته تقسیم کن: ضروری، قابل تعویق، حذف‌شدنی. فقط ضروری‌ها به هفتهٔ بعد منتقل شوند؛ انتقال خودکار همهٔ کارها برنامه را در چند هفته غیرقابل اجرا می‌کند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "برنامه برای شاغلان"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "برنامه کنکور کامپیوتر برای داوطلب شاغل",
+        "description": "طراحی هفته‌ای مقاوم در برابر خستگی و اضافه‌کاری، با بلوک‌های کوتاه، روزهای لنگر و جبران کنترل‌شده."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:working-candidate-study-plan"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-switch-to-computer-science",
+      "content_type": "guide",
+      "title": "راهنمای تغییر رشته به کنکور کامپیوتر",
+      "slug": "switch-to-computer-science",
+      "summary": "مسیر سنجش پیش‌نیاز، انتخاب میان مهندسی کامپیوتر، IT و علوم کامپیوتر و ساخت پایه برای داوطلب غیرمرتبط.",
+      "quick_answer": "تغییر رشته با انتخاب مجموعه شروع می‌شود، نه خرید دوره. تفاوت مواد ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ را ببین، پایهٔ ریاضی و برنامه‌سازی خودت را بسنج و فقط پیش‌نیازهایی را بساز که به درس‌های هدف وصل‌اند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کدام مجموعه به تو نزدیک‌تر است؟"
+        },
+        {
+          "type": "text",
+          "text": "• ۱۲۷۷ برای مسیر گستردهٔ مهندسی و علم کامپیوتر، با بستهٔ تخصصی یکپارچه است.\n• ۱۲۷۶ شبکه و طراحی پایگاه داده را در مواد تخصصی نگه می‌دارد.\n• ۱۲۰۹ ریاضی و مبانی نظری پررنگ‌تری دارد و دو کد ضریب متفاوت را باید دقیق خواند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه پیش‌نیاز تشخیصی"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "حوزه",
+            "نشانهٔ کمبود پایه",
+            "اولین اقدام"
+          ],
+          "rows": [
+            [
+              "برنامه‌سازی",
+              "ردیابی حلقه و تابع دشوار است",
+              "تمرین کد و شبه‌کد کوتاه"
+            ],
+            [
+              "ریاضی",
+              "نماد و اثبات مانع فهم سؤال می‌شود",
+              "مرور منطق، تابع و شمارش"
+            ],
+            [
+              "حل مسئله",
+              "با دیدن پاسخ، راه‌حل آشناست اما تولید نمی‌شود",
+              "بازیابی و حل بدون راهنما"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "خطای رایج تغییررشته‌ای‌ها"
+        },
+        {
+          "type": "text",
+          "text": "فهرست بلند دوره‌های مقدماتی می‌تواند حس پیشرفت بدهد اما آزمون خروجی می‌خواهد. هر پیش‌نیاز باید به یک فصل رسمی وصل باشد و تاریخ خروج از آن از ابتدا مشخص شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "تغییر رشته"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای تغییر رشته به کنکور کامپیوتر",
+        "description": "مسیر سنجش پیش‌نیاز، انتخاب میان مهندسی کامپیوتر، IT و علوم کامپیوتر و ساخت پایه برای داوطلب غیرمرتبط."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:switch-to-computer-science"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-weekly-study-plan",
+      "content_type": "guide",
+      "title": "چطور یک هفتهٔ مطالعاتی قابل اجرا طراحی کنیم؟",
+      "slug": "weekly-study-plan",
+      "summary": "روش تبدیل هدف ماهانه به خروجی روزانه، با ظرفیت امن، بلوک جبرانی و معیار روشن برای پایان هر کار.",
+      "quick_answer": "هفته را از تقویم واقعی خودت بساز: ابتدا تعهدهای ثابت، سپس سه خروجی اصلی و در آخر بلوک‌های مطالعه. برای هر کار تعریف پایان بنویس و بخشی از ظرفیت را خالی نگه دار تا برنامه با یک اتفاق کوچک فرو نریزد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "از خروجی شروع کن"
+        },
+        {
+          "type": "text",
+          "text": "• سه خروجی اصلی هفته را بنویس؛ بیشتر از آن معمولاً تمرکز را می‌شکند.\n• هر خروجی را به واحدی تقسیم کن که در یک یا دو نشست تمام شود.\n• مرور و آزمونک را مثل درس تازه داخل تقویم قرار بده."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تعریف پایان"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "عبارت مبهم",
+            "نسخهٔ قابل سنجش"
+          ],
+          "rows": [
+            [
+              "الگوریتم بخوانم",
+              "بخش تقسیم‌وحل را توضیح بدهم و هشت تمرین منتخب را تحلیل کنم"
+            ],
+            [
+              "نظریه مرور کنم",
+              "تعریف‌ها را بدون جزوه بازسازی و سه خطای قبلی را حل کنم"
+            ],
+            [
+              "تست بزنم",
+              "یک مجموعهٔ بیست‌دقیقه‌ای حل و علت همهٔ گزینه‌ها را ثبت کنم"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جلسهٔ ده‌دقیقه‌ای پایان هفته"
+        },
+        {
+          "type": "text",
+          "text": "• چه چیزی تمام شد و شواهدش چیست؟\n• کدام برآورد زمان اشتباه بود؟\n• فقط کدام بدهی ضروری به هفتهٔ بعد منتقل می‌شود؟"
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "طراحی برنامه"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "چطور یک هفتهٔ مطالعاتی قابل اجرا طراحی کنیم؟",
+        "description": "روش تبدیل هدف ماهانه به خروجی روزانه، با ظرفیت امن، بلوک جبرانی و معیار روشن برای پایان هر کار."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:weekly-study-plan"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-active-review",
+      "content_type": "guide",
+      "title": "مرور فعال برای دروس کنکور کامپیوتر",
+      "slug": "active-review",
+      "summary": "تبدیل بازخوانی جزوه به بازیابی، پرسش‌سازی و مرور فاصله‌دار برای درس‌های محاسباتی و مفهومی.",
+      "quick_answer": "مرور فعال یعنی قبل از دیدن پاسخ، دانسته را از حافظه بیرون بکشی. صفحه را ببند، تعریف یا راه‌حل را بازسازی کن، بعد با منبع مقایسه و فاصلهٔ مرور بعدی را بر اساس کیفیت پاسخ تنظیم کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه شکل بازیابی"
+        },
+        {
+          "type": "text",
+          "text": "• تعریف‌محور: مفهوم را با مثال و ضد‌مثال توضیح بده.\n• حل‌محور: مسئلهٔ کوتاه را بدون دیدن راه‌حل حل کن.\n• تشخیص‌محور: از صورت سؤال، مبحث و ابزار مناسب را نام ببر."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "فاصله را چگونه تنظیم کنیم؟"
+        },
+        {
+          "type": "text",
+          "text": "تقویم ثابت برای همهٔ مطالب لازم نیست. پاسخ ضعیف یا پرخطا را زودتر و پاسخ روان را دیرتر مرور کن. هدف این است که بازیابی کمی دشوار باشد، نه اینکه پاسخ کاملاً فراموش شده باشد."
+        },
+        {
+          "type": "quote",
+          "text": "هایلایت و بازخوانی می‌توانند برای یافتن بخش مهم مفید باشند، اما به‌تنهایی شواهد کافی از توان حل سؤال نیستند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "یک چرخهٔ پانزده‌دقیقه‌ای"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "زمان",
+            "کار"
+          ],
+          "rows": [
+            [
+              "۵ دقیقه",
+              "بازسازی تعریف، الگوریتم یا فرمول بدون منبع"
+            ],
+            [
+              "۷ دقیقه",
+              "حل یک پرسش یا مثال هدفمند"
+            ],
+            [
+              "۳ دقیقه",
+              "مقایسه، ثبت خطا و تعیین مرور بعدی"
+            ]
+          ]
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "یادگیری و مرور"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مرور فعال برای دروس کنکور کامپیوتر",
+        "description": "تبدیل بازخوانی جزوه به بازیابی، پرسش‌سازی و مرور فاصله‌دار برای درس‌های محاسباتی و مفهومی."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:active-review"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-error-log",
+      "content_type": "guide",
+      "title": "دفترچهٔ خطا؛ از تست غلط تا برنامهٔ ترمیم",
+      "slug": "error-log",
+      "summary": "الگوی ثبت علت خطا، تصمیم اصلاحی و زمان مرور دوباره بدون رونویسی طولانی صورت سؤال.",
+      "quick_answer": "دفترچهٔ خطا آرشیو سؤال غلط نیست. برای هر خطا فقط مبحث، نوع خطا، نشانه‌ای که ندیدی، اقدام اصلاحی و تاریخ بازیابی بعدی را ثبت کن؛ سپس تکرار همان خطا را در آزمون بعد بسنج.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پنج ستون کافی"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "ستون",
+            "پرسش راهنما"
+          ],
+          "rows": [
+            [
+              "شناسه",
+              "سال، دفترچه و شمارهٔ سؤال چیست؟"
+            ],
+            [
+              "مبحث",
+              "سؤال دقیقاً به کدام فصل و ریزمبحث وصل است؟"
+            ],
+            [
+              "نوع خطا",
+              "دانش، تشخیص، محاسبه، زمان یا بی‌دقتی؟"
+            ],
+            [
+              "اصلاح",
+              "یک اقدام کوچک و قابل انجام چیست؟"
+            ],
+            [
+              "بازآزمایی",
+              "چه زمانی بدون دیدن پاسخ دوباره حل می‌شود؟"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "بی‌دقتی را توضیح بده"
+        },
+        {
+          "type": "text",
+          "text": "برچسب «بی‌دقتی» علت نیست. بنویس کدام نشانه را جا انداختی، چرا کنترل نهایی انجام نشد و چه قاعده‌ای در تلاش بعدی قابل اجراست. اگر الگو تکرار شد، مسئله احتمالاً فراتر از یک لغزش اتفاقی است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرور دفترچه"
+        },
+        {
+          "type": "text",
+          "text": "• پیش از آزمونک، فقط نشانه و نوع خطا را ببین و راه‌حل را بازیابی کن.\n• خطای رفع‌شده را حذف نکن؛ وضعیتش را تغییر بده تا روند دیده شود.\n• خطاهای هم‌ریشه را به یک اقدام مشترک وصل کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "تحلیل خطا"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "دفترچهٔ خطا؛ از تست غلط تا برنامهٔ ترمیم",
+        "description": "الگوی ثبت علت خطا، تصمیم اصلاحی و زمان مرور دوباره بدون رونویسی طولانی صورت سؤال."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:error-log"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-final-month-review",
+      "content_type": "guide",
+      "title": "جمع‌بندی ماه آخر کنکور کامپیوتر",
+      "slug": "final-month-review",
+      "summary": "روش بستن دامنهٔ مطالعه، شبیه‌سازی دفترچه، ترمیم ضعف‌های منتخب و حفظ ریتم در چهار هفتهٔ پایانی.",
+      "quick_answer": "ماه آخر زمان تبدیل دانسته‌ها به عملکرد پایدار است. منبع تازه را محدود کن، آزمون‌های شبیه‌سازی‌شده را تحلیل کن و فقط ضعف‌هایی را ترمیم کن که پیش‌نیاز کوتاه و اثر روشن دارند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چهار هفته، چهار هدف"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "هفته",
+            "هدف"
+          ],
+          "rows": [
+            [
+              "اول",
+              "تثبیت فهرست مباحث و یک آزمون خط پایه"
+            ],
+            [
+              "دوم",
+              "ترمیم دو یا سه ضعف پرتکرار"
+            ],
+            [
+              "سوم",
+              "شبیه‌سازی کامل و تمرین ترتیب دفترچه"
+            ],
+            [
+              "چهارم",
+              "مرور سبک، خواب منظم و کاهش نوسان"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تحلیل آزمون مهم‌تر از تعداد آزمون"
+        },
+        {
+          "type": "text",
+          "text": "• زمان ازدست‌رفته و علت توقف روی سؤال را ثبت کن.\n• غلط دانشی را از غلط تصمیمی جدا کن.\n• فقط یک اقدام اصلاحی را برای آزمون بعد انتخاب و کنترل کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "هفتهٔ آخر"
+        },
+        {
+          "type": "text",
+          "text": "در روزهای آخر، تغییر ناگهانی ساعت خواب یا مسابقهٔ حجم مطالعه می‌تواند ریتم را برهم بزند. خلاصه‌های خودت، خطاهای منتخب و چند بازیابی کوتاه را نگه دار؛ برنامه را سبک‌تر اما منظم اجرا کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "جمع‌بندی"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "جمع‌بندی ماه آخر کنکور کامپیوتر",
+        "description": "روش بستن دامنهٔ مطالعه، شبیه‌سازی دفترچه، ترمیم ضعف‌های منتخب و حفظ ریتم در چهار هفتهٔ پایانی."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:final-month-review"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-exam-time-management",
+      "content_type": "guide",
+      "title": "مدیریت زمان جلسهٔ کنکور کامپیوتر",
+      "slug": "exam-time-management",
+      "summary": "ساخت قواعد عبور، بازگشت و کنترل زمان با آزمون‌های شبیه‌سازی‌شده و بدون نسخهٔ یکسان برای همه.",
+      "quick_answer": "مدیریت زمان یک جدول دقیقه‌ای ثابت نیست؛ مجموعه‌ای از تصمیم‌های تمرین‌شده است. ترتیب پاسخ‌گویی، سقف توقف و نشانهٔ عبور را در آزمونک‌ها امتحان کن و نسخه‌ای را نگه دار که خطای تصمیمی تو را کم می‌کند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه دور پاسخ‌گویی"
+        },
+        {
+          "type": "text",
+          "text": "• دور اول: سؤال‌های روشن و کوتاه؛ بدون درگیری با بن‌بست.\n• دور دوم: سؤال‌های قابل حل با محاسبه یا تمرکز بیشتر.\n• دور سوم: بازگشت گزینشی، فقط اگر زمان و احتمال نتیجه توجیه دارد."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قاعدهٔ عبور را شخصی کن"
+        },
+        {
+          "type": "text",
+          "text": "عبور فقط بر اساس دقیقه نیست. نداشتن مسیر حل، تکرار محاسبه و افزایش خطای هیجانی هم نشانه‌اند. قاعده را در آزمون تمرین کن تا روز اصلی تصمیم تازه‌ای نباشد."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "برگهٔ تحلیل زمان"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "داده",
+            "کاربرد"
+          ],
+          "rows": [
+            [
+              "زمان شروع و پایان هر بخش",
+              "تشخیص بخش‌های زمان‌بر"
+            ],
+            [
+              "سؤال‌های رهاشده",
+              "تمایز عبور درست از فرار زودهنگام"
+            ],
+            [
+              "تغییر پاسخ",
+              "بررسی تصمیم بدون اتکا به حس"
+            ],
+            [
+              "پرسش‌های نرسیده",
+              "اصلاح ترتیب یا سقف توقف"
+            ]
+          ]
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "مهارت آزمون"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مدیریت زمان جلسهٔ کنکور کامپیوتر",
+        "description": "ساخت قواعد عبور، بازگشت و کنترل زمان با آزمون‌های شبیه‌سازی‌شده و بدون نسخهٔ یکسان برای همه."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-e51440ab3baeb3c87ede",
+          "relation": "SUPPORTS",
+          "locator": "The Shuffling of Mathematics Problems Improves Learning",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:exam-time-management"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-choose-study-resources",
+      "content_type": "guide",
+      "title": "انتخاب منبع کنکور کامپیوتر بر اساس سطح، زمان و بودجه",
+      "slug": "choose-study-resources",
+      "summary": "چارچوب بی‌طرف مقایسهٔ کتاب، دوره، جزوه و ویدئو بدون فهرست خرید طولانی یا ادعای یک منبع مناسب برای همه.",
+      "quick_answer": "منبع خوب منبعی است که شکاف فعلی تو را با زمان و بودجهٔ واقعی‌ات پوشش دهد. ابتدا نیاز را به آموزش، تمرین یا مرور تفکیک کن؛ نمونهٔ منبع را امتحان و فقط بعد از سنجش خروجی تصمیم بگیر.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چهار سؤال پیش از خرید"
+        },
+        {
+          "type": "text",
+          "text": "• آیا به آموزش مفهومی نیاز دارم یا بانک تمرین؟\n• تا آزمون چقدر زمان قابل‌اتکا دارم؟\n• نمونهٔ تدریس یا فصل کتاب با شیوهٔ یادگیری من سازگار است؟\n• این منبع جای کدام منبع فعلی را می‌گیرد؟"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ماتریس تصمیم"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "وضعیت",
+            "اولویت منبع",
+            "ریسک"
+          ],
+          "rows": [
+            [
+              "پایه ضعیف، زمان کافی",
+              "آموزش ساختاریافته + تمرین مرحله‌ای",
+              "انباشت چند دورهٔ مقدماتی"
+            ],
+            [
+              "پایه متوسط، زمان محدود",
+              "درس‌نامهٔ فشرده + تست تحلیل‌شده",
+              "پرش میان منابع"
+            ],
+            [
+              "پایه قوی، نزدیک آزمون",
+              "آزمون، خطاها و مرور هدفمند",
+              "شروع منبع جامع تازه"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "رایگان و پولی را درست کنار هم بگذار"
+        },
+        {
+          "type": "text",
+          "text": "رایگان بودن به معنی بی‌ساختار بودن نیست و پولی بودن هم تضمین نتیجه نیست. محتوای رایگان را برای سنجش نیاز و نمونهٔ یادگیری استفاده کن؛ دوره یا جزوهٔ پولی زمانی ارزش دارد که مسیر، بازخورد یا پوششی بدهد که در برنامهٔ فعلی کم است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "انتخاب منبع"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "انتخاب منبع کنکور کامپیوتر بر اساس سطح، زمان و بودجه",
+        "description": "چارچوب بی‌طرف مقایسهٔ کتاب، دوره، جزوه و ویدئو بدون فهرست خرید طولانی یا ادعای یک منبع مناسب برای همه."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-90acf5084bd313d2b5b0",
+          "relation": "SUPPORTS",
+          "locator": "آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:choose-study-resources"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-exam-changes-1406",
+      "content_type": "guide",
+      "title": "تغییرات کنکور ارشد کامپیوتر ۱۴۰۶؛ چه چیزی واقعاً عوض شده است؟",
+      "slug": "master-exam-changes-1406",
+      "summary": "جمع‌بندی منبع‌دار تغییرات سه مجموعهٔ ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ و تفکیک دادهٔ رسمی از برداشت آموزشی.",
+      "quick_answer": "در ۱۴۰۶ ساختار مجموعه‌های ۱۲۷۷ و ۱۲۷۶ به سه بستهٔ زبان، ریاضیات و تخصصی تبدیل شده و عنوان «داده‌ساختارها و الگوریتم‌ها» در آن‌ها یکپارچه است. علوم کامپیوتر ۱۲۰۹ همچنان دو کد ضریب و عنوان‌های جداگانهٔ ساختمان داده‌ها و طراحی الگوریتم‌ها دارد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه تغییر که نباید با هم قاطی شوند"
+        },
+        {
+          "type": "text",
+          "text": "• ۱۲۷۷: زبان ضریب ۱، ریاضیات ضریب ۲ و تخصصی ضریب ۴ است.\n• ۱۲۷۶: زبان ضریب ۱، ریاضیات ضریب ۲ و تخصصی ضریب ۴ است، اما فهرست تخصصی با ۱۲۷۷ تفاوت دارد.\n• ۱۲۰۹: پنج گروه درسی و دو کد ضریب دارد؛ ضریب هر گروه به کد مقصد وابسته است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تفاوت نام درس الگوریتم"
+        },
+        {
+          "type": "text",
+          "text": "در ۱۲۷۶ و ۱۲۷۷ عبارت رسمی یکپارچهٔ «داده‌ساختارها و الگوریتم‌ها» آمده است. در ۱۲۰۹، «ساختمان داده‌ها» و «طراحی الگوریتم‌ها» دو عنوان جدا هستند که همراه مبانی نظریهٔ محاسبه در گروه درسی شمارهٔ سه قرار می‌گیرند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قبل از تغییر برنامه"
+        },
+        {
+          "type": "text",
+          "text": "• کد مجموعه و گرایش مقصد را از جدول رسمی پیدا کن.\n• فهرست منابع قدیمی را با عنوان‌های رسمی جدید تطبیق بده.\n• تا انتشار دفترچه و اصلاحیه، این جدول را اطلاعیهٔ اولیه بدان و تاریخ بازبینی صفحه را کنترل کن."
+        },
+        {
+          "type": "quote",
+          "text": "ملاک نهایی ثبت‌نام و مطالعه، آخرین دفترچه و اصلاحیهٔ سازمان سنجش است؛ صفحه در صورت انتشار سند تازه نسخه‌گذاری می‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "اطلاعات رسمی ۱۴۰۶"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "تغییرات کنکور ارشد کامپیوتر ۱۴۰۶؛ چه چیزی واقعاً عوض شده است؟",
+        "description": "جمع‌بندی منبع‌دار تغییرات سه مجموعهٔ ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ و تفکیک دادهٔ رسمی از برداشت آموزشی."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:master-exam-changes-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-computer-engineering-subjects-1406",
+      "content_type": "guide",
+      "title": "دروس و ضرایب ارشد مهندسی و علم کامپیوتر ۱۴۰۶؛ مجموعهٔ ۱۲۷۷",
+      "slug": "master-computer-engineering-subjects-1406",
+      "summary": "جدول دقیق سه بستهٔ امتحانی مجموعهٔ ۱۲۷۷ و پیوند مستقیم هر عنوان رسمی به صفحهٔ درس.",
+      "quick_answer": "مجموعهٔ ۱۲۷۷ سه بسته دارد: زبان عمومی و تخصصی با ضریب ۱؛ گسسته، آمار و احتمال مهندسی و جبر خطی با ضریب ۲؛ و هشت عنوان تخصصی با ضریب ۴.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جدول مواد و ضرایب"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بسته",
+            "مواد امتحانی",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان عمومی و تخصصی (انگلیسی)",
+              "۱"
+            ],
+            [
+              "ریاضیات",
+              "ریاضیات گسسته، آمار و احتمال مهندسی، جبر خطی",
+              "۲"
+            ],
+            [
+              "تخصصی",
+              "مبانی کامپیوتر و برنامه‌سازی، مدارهای منطقی، معماری کامپیوتر، داده‌ساختارها و الگوریتم‌ها، نظریه زبان‌ها و ماشین‌ها، سیستم‌های عامل، هوش مصنوعی",
+              "۴"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "برداشت درست از ضریب بسته"
+        },
+        {
+          "type": "text",
+          "text": "ضریب ۴ به کل بستهٔ تخصصی مربوط است؛ این جدول به‌تنهایی تعداد سؤال هر عنوان یا بودجه‌بندی فصل‌ها را اعلام نمی‌کند. برای اولویت شخصی، پیش‌نیاز، سطح فعلی و زمان باقی‌مانده را هم وارد تصمیم کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کنترل نسخه"
+        },
+        {
+          "type": "text",
+          "text": "این صفحه از اطلاعیهٔ اولیهٔ معرفی مجموعه‌ها تهیه شده است. هنگام ثبت‌نام، عنوان گرایش، شرایط و هر تغییر احتمالی را با دفترچه و اصلاحیهٔ همان سال کنترل کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "tags": [
+          "دروس و ضرایب ۱۴۰۶"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "subject_codes": [
+          "data-structures-algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "دروس و ضرایب ارشد مهندسی و علم کامپیوتر ۱۴۰۶؛ مجموعهٔ ۱۲۷۷",
+        "description": "جدول دقیق سه بستهٔ امتحانی مجموعهٔ ۱۲۷۷ و پیوند مستقیم هر عنوان رسمی به صفحهٔ درس."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:master-computer-engineering-subjects-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-information-technology-subjects-1406",
+      "content_type": "guide",
+      "title": "دروس و ضرایب ارشد فناوری اطلاعات ۱۴۰۶؛ مجموعهٔ ۱۲۷۶",
+      "slug": "master-information-technology-subjects-1406",
+      "summary": "جدول دقیق زبان، ریاضیات و تخصصی مجموعهٔ IT و تفاوت‌های کلیدی آن با مجموعهٔ ۱۲۷۷.",
+      "quick_answer": "در مجموعهٔ ۱۲۷۶، زبان ضریب ۱، گسسته و آمار ضریب ۲، و شش عنوان تخصصی شامل برنامه‌سازی، داده‌ساختار و الگوریتم، سیستم‌عامل، شبکه، طراحی پایگاه داده و هوش مصنوعی ضریب ۴ دارند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جدول مواد و ضرایب"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بسته",
+            "مواد امتحانی",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان عمومی و تخصصی (انگلیسی)",
+              "۱"
+            ],
+            [
+              "ریاضیات",
+              "ریاضیات گسسته، آمار و احتمال مهندسی",
+              "۲"
+            ],
+            [
+              "تخصصی",
+              "مبانی کامپیوتر و برنامه‌سازی، داده‌ساختارها و الگوریتم‌ها، سیستم‌های عامل، شبکه‌های کامپیوتری، طراحی پایگاه داده‌ها، هوش مصنوعی",
+              "۴"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "دو تفاوت مهم با ۱۲۷۷"
+        },
+        {
+          "type": "text",
+          "text": "• شبکه‌های کامپیوتری و طراحی پایگاه داده‌ها در ۱۲۷۶ عنوان رسمی تخصصی‌اند.\n• جبر خطی در بستهٔ ریاضیات ۱۲۷۷ آمده، اما در فهرست ریاضیات ۱۲۷۶ نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قبل از برنامه‌ریزی"
+        },
+        {
+          "type": "text",
+          "text": "شباهت بعضی درس‌ها دلیل یکسان بودن دو آزمون نیست. کد مجموعه را در برنامه و خرید منبع ثبت کن تا درس اضافه یا حذف‌شده به‌اشتباه وارد مسیر نشود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "tags": [
+          "دروس و ضرایب ۱۴۰۶"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "computer-networks",
+          "databases"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "دروس و ضرایب ارشد فناوری اطلاعات ۱۴۰۶؛ مجموعهٔ ۱۲۷۶",
+        "description": "جدول دقیق زبان، ریاضیات و تخصصی مجموعهٔ IT و تفاوت‌های کلیدی آن با مجموعهٔ ۱۲۷۷."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:master-information-technology-subjects-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-computer-science-subjects-1406",
+      "content_type": "guide",
+      "title": "دروس و ضرایب ارشد علوم کامپیوتر ۱۴۰۶؛ مجموعهٔ ۱۲۰۹",
+      "slug": "master-computer-science-subjects-1406",
+      "summary": "جدول پنج گروه درسی و هر دو کد ضریب علوم کامپیوتر، با تأکید بر عنوان مستقل ساختمان داده و طراحی الگوریتم.",
+      "quick_answer": "مجموعهٔ ۱۲۰۹ پنج گروه درسی و دو کد ضریب دارد. زبان در هر دو کد ضریب ۲، پایه ضریب ۳ و گروه ساختمان داده، طراحی الگوریتم و نظریه محاسبه ضریب ۴ است؛ تفاوت اصلی در منطق/مجموعه‌ها و گسسته/ترکیبات رخ می‌دهد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جدول کامل دو کد ضریب"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "گروه",
+            "مواد",
+            "کد ۱",
+            "کد ۲"
+          ],
+          "rows": [
+            [
+              "۱",
+              "زبان عمومی و تخصصی (انگلیسی)",
+              "۲",
+              "۲"
+            ],
+            [
+              "۲",
+              "ریاضی عمومی ۱ و ۲، مبانی علوم ریاضی، ماتریس‌ها و جبر خطی، آنالیز ریاضی، آنالیز عددی، احتمال",
+              "۳",
+              "۳"
+            ],
+            [
+              "۳",
+              "ساختمان داده‌ها، طراحی الگوریتم‌ها، مبانی نظریهٔ محاسبه",
+              "۴",
+              "۴"
+            ],
+            [
+              "۴",
+              "مبانی منطق و نظریهٔ مجموعه‌ها",
+              "۲",
+              "۰"
+            ],
+            [
+              "۵",
+              "ریاضیات گسسته و مبانی ترکیبات",
+              "۲",
+              "۴"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرا کد ضریب مهم است؟"
+        },
+        {
+          "type": "text",
+          "text": "کد ضریب به گرایش مقصد وابسته است. ضریب صفر گروه چهارم در کد ۲ را نباید به همهٔ گرایش‌ها تعمیم داد؛ عنوان گرایش و کد متناظر را در دفترچهٔ نهایی کنار هم بخوان."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "نام مستقل دو درس"
+        },
+        {
+          "type": "text",
+          "text": "در علوم کامپیوتر، ساختمان داده‌ها و طراحی الگوریتم‌ها دو عنوان مستقل‌اند، هرچند در یک گروه ضریب قرار دارند. این تفاوت در ساخت صفحهٔ درس و انتخاب منبع حفظ شده است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "دروس و ضرایب ۱۴۰۶"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [
+          "data-structures",
+          "algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "دروس و ضرایب ارشد علوم کامپیوتر ۱۴۰۶؛ مجموعهٔ ۱۲۰۹",
+        "description": "جدول پنج گروه درسی و هر دو کد ضریب علوم کامپیوتر، با تأکید بر عنوان مستقل ساختمان داده و طراحی الگوریتم."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:master-computer-science-subjects-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-registration-calendar-1406",
+      "content_type": "guide",
+      "title": "تقویم ثبت‌نام و برگزاری کنکور ارشد و دکتری ۱۴۰۶",
+      "slug": "registration-calendar-1406",
+      "summary": "تاریخ‌های اعلام‌شده برای ثبت‌نام و برگزاری آزمون‌های تحصیلات تکمیلی، همراه با وضعیت منبع و کنترل اصلاحیه.",
+      "quick_answer": "طبق برنامهٔ زمانی بازنشرشده از اعلام سازمان سنجش، ثبت‌نام دکتری ۱۴۰۶ از ۳ تا ۹ آبان ۱۴۰۵ و آزمون در ۱۶ بهمن ۱۴۰۵ است؛ ثبت‌نام ارشد از ۱۶ تا ۲۲ آذر ۱۴۰۵ و آزمون در ۱۶ و ۱۷ اردیبهشت ۱۴۰۶ برنامه‌ریزی شده است. پیش از اقدام، اطلاعیهٔ روز سازمان سنجش را کنترل کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جدول زمان‌بندی اعلام‌شده"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "آزمون",
+            "ثبت‌نام",
+            "برگزاری"
+          ],
+          "rows": [
+            [
+              "دکتری ۱۴۰۶",
+              "۳ تا ۹ آبان ۱۴۰۵",
+              "جمعه ۱۶ بهمن ۱۴۰۵"
+            ],
+            [
+              "کارشناسی ارشد ۱۴۰۶",
+              "۱۶ تا ۲۲ آذر ۱۴۰۵",
+              "پنج‌شنبه ۱۶ و جمعه ۱۷ اردیبهشت ۱۴۰۶"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرا باید دوباره کنترل شود؟"
+        },
+        {
+          "type": "text",
+          "text": "تقویم عملیاتی ممکن است با اطلاعیهٔ تکمیلی یا شرایط اجرایی تغییر کند. این صفحه تاریخ بازبینی را نشان می‌دهد و درگاه سازمان سنجش مرجع نهایی اقدام است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چک‌لیست پیش از ثبت‌نام"
+        },
+        {
+          "type": "text",
+          "text": "• دفترچهٔ همان سال را دانلود و شرایط مدرک و سهمیه را بخوان.\n• کد مجموعهٔ اصلی و در صورت نیاز شناور را دوباره کنترل کن.\n• رسید نهایی، شماره پرونده و کد پیگیری را خارج از مرورگر نگه دار."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "تمام مجموعه‌ها"
+        ],
+        "tags": [
+          "تقویم رسمی ۱۴۰۶"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "تمام مجموعه‌ها"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "تقویم ثبت‌نام و برگزاری کنکور ارشد و دکتری ۱۴۰۶",
+        "description": "تاریخ‌های اعلام‌شده برای ثبت‌نام و برگزاری آزمون‌های تحصیلات تکمیلی، همراه با وضعیت منبع و کنترل اصلاحیه."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-d2a119b23c0831cb70d5",
+          "relation": "SUPPORTS",
+          "locator": "اعلام زمان‌بندی ثبت‌نام و برگزاری آزمون‌های دکتری و ارشد ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:registration-calendar-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-official-notices-and-corrections",
+      "content_type": "guide",
+      "title": "مرکز اطلاعیه‌ها و اصلاحیه‌های کنکور کامپیوتر",
+      "slug": "official-notices-and-corrections",
+      "summary": "راهنمای تشخیص سند جدیدتر، ثبت اثر هر اصلاحیه و جلوگیری از تصمیم بر اساس تصویر یا پیام قدیمی.",
+      "quick_answer": "برای هر خبر، سند پایه، اصلاحیه‌های بعدی و تاریخ اقدام را کنار هم ببین. آخرین سند رسمیِ مرتبط بر نسخهٔ قدیمی‌تر مقدم است؛ تصویر بدون URL، تاریخ و مرجع برای تغییر برنامه کافی نیست.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ترتیب کنترل"
+        },
+        {
+          "type": "text",
+          "text": "• صفحهٔ رسمی خبر در درگاه سازمان سنجش\n• دفترچهٔ همان مرحله و همان سال\n• اصلاحیه‌های دارای تاریخ بعدی\n• گزارش رسانه یا کانال فقط به‌عنوان مسیر رسیدن به سند اصلی"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کارت هر اصلاحیه"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "فیلد",
+            "دلیل"
+          ],
+          "rows": [
+            [
+              "عنوان و URL رسمی",
+              "قابلیت بازبینی"
+            ],
+            [
+              "تاریخ انتشار و دریافت",
+              "تشخیص سند جدیدتر"
+            ],
+            [
+              "بند یا صفحهٔ تغییر",
+              "جلوگیری از برداشت کلی"
+            ],
+            [
+              "اثر روی برنامه",
+              "تبدیل خبر به اقدام مشخص"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سیاست کنکورصفریک"
+        },
+        {
+          "type": "text",
+          "text": "اگر دسترسی به سند اصلی یا معنای تغییر روشن نباشد، وضعیت «در انتظار تأیید» نمایش داده می‌شود. خبر زمان‌حساس بدون منبع قطعی به‌عنوان تصمیم نهایی منتشر نمی‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "مرکز اطلاعیه‌ها"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مرکز اطلاعیه‌ها و اصلاحیه‌های کنکور کامپیوتر",
+        "description": "راهنمای تشخیص سند جدیدتر، ثبت اثر هر اصلاحیه و جلوگیری از تصمیم بر اساس تصویر یا پیام قدیمی."
+      },
+      "validity": {
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:official-notices-and-corrections"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-historical-budget-computer-engineering",
+      "content_type": "guide",
+      "title": "بودجه‌بندی تاریخی ارشد مهندسی و علم کامپیوتر",
+      "slug": "historical-budget-computer-engineering",
+      "summary": "چارچوب منبع‌دار تحلیل سؤال‌های سال‌های قبل مجموعهٔ ۱۲۷۷، بدون تبدیل فراوانی گذشته به پیش‌بینی قطعی.",
+      "quick_answer": "تا وقتی دفترچه‌های رسمی به‌صورت سؤال‌به‌سؤال و با بازبینی انسانی برچسب نخورده‌اند، جدول درصدی منتشر نمی‌کنیم. این صفحه روش ثبت سال، شماره سؤال، درس، مبحث و وضعیت کلید را شفاف می‌کند و بعداً دادهٔ تأییدشده را می‌پذیرد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "وضعیت داده"
+        },
+        {
+          "type": "text",
+          "text": "در نسخهٔ فعلی، شمارش عددی تأییدشده منتشر نشده است. تغییر ساختار ۱۴۰۶ نیز مقایسهٔ مستقیم بعضی سال‌ها را دشوار می‌کند؛ بنابراین نمودار نمایشی یا میانگین بدون provenance نشان داده نمی‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "قرارداد برچسب‌گذاری آینده"
+        },
+        {
+          "type": "text",
+          "text": "• سال، نوبت، کد دفترچه، صفحه و شماره سؤال\n• درس رسمی، فصل، مبحث و پیش‌نیاز\n• وضعیت سؤال: معتبر، حذف‌شده یا دارای اصلاح کلید\n• شناسهٔ بازبین و تاریخ آخرین بررسی"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چطور تاریخچه را بخوانیم؟"
+        },
+        {
+          "type": "text",
+          "text": "تکرار یک مبحث در گذشته فقط تاریخچه است. برای تصمیم مطالعه، مواد رسمی ۱۴۰۶، پیش‌نیازها، سطح فعلی و دامنهٔ کتاب مرجع را نیز در نظر بگیر."
+        },
+        {
+          "type": "quote",
+          "text": "فراوانی گذشته تضمین یا پیش‌بینی سؤال آینده نیست."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "tags": [
+          "بودجه‌بندی تاریخی"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "بودجه‌بندی تاریخی ارشد مهندسی و علم کامپیوتر",
+        "description": "چارچوب منبع‌دار تحلیل سؤال‌های سال‌های قبل مجموعهٔ ۱۲۷۷، بدون تبدیل فراوانی گذشته به پیش‌بینی قطعی."
+      },
+      "validity": {
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:historical-budget-computer-engineering"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-historical-budget-information-technology",
+      "content_type": "guide",
+      "title": "بودجه‌بندی تاریخی ارشد فناوری اطلاعات",
+      "slug": "historical-budget-information-technology",
+      "summary": "روش تحلیل دفترچه‌های مجموعهٔ ۱۲۷۶ با حفظ تفاوت سال‌ها و بدون ادعای بودجه‌بندی قطعی آزمون آینده.",
+      "quick_answer": "بودجه‌بندی IT فقط پس از ثبت منبع هر سؤال و تطبیق آن با مواد همان سال معتبر است. تا تکمیل این بازبینی، عدد یا درصد تخمینی نمایش داده نمی‌شود؛ ساختار صفحه برای افزوده‌شدن رکوردهای رسمی آماده است.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرا مقایسهٔ سال‌ها حساس است؟"
+        },
+        {
+          "type": "text",
+          "text": "عنوان و ترکیب بسته‌های امتحانی می‌تواند تغییر کند. سؤال شبکه یا پایگاه داده در یک ساختار قدیمی را نباید بدون ثبت مجموعه و سال، مستقیماً به برنامهٔ ۱۴۰۶ نسبت داد."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "حداقل دادهٔ هر سؤال"
+        },
+        {
+          "type": "text",
+          "text": "• URL یا فایل رسمی و checksum نسخه\n• سال، کد دفترچه و شماره سؤال\n• درس، فصل، مبحث و مهارت لازم\n• کلید اولیه، کلید نهایی و وضعیت اختلاف"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "خروجی مفید آینده"
+        },
+        {
+          "type": "text",
+          "text": "خروجی نهایی باید هم تعداد سؤال را نشان دهد و هم دامنهٔ نمونه، سال‌های پوشش‌داده‌شده و موارد حذف‌شده را. نمودار بدون این توضیحات می‌تواند دقت کاذب بسازد."
+        },
+        {
+          "type": "quote",
+          "text": "این صفحه تاریخچه را گزارش می‌کند، نه پیش‌بینی قطعی ۱۴۰۶."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "tags": [
+          "بودجه‌بندی تاریخی"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "computer-networks",
+          "databases"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "بودجه‌بندی تاریخی ارشد فناوری اطلاعات",
+        "description": "روش تحلیل دفترچه‌های مجموعهٔ ۱۲۷۶ با حفظ تفاوت سال‌ها و بدون ادعای بودجه‌بندی قطعی آزمون آینده."
+      },
+      "validity": {
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:historical-budget-information-technology"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-historical-budget-computer-science",
+      "content_type": "guide",
+      "title": "بودجه‌بندی تاریخی ارشد علوم کامپیوتر",
+      "slug": "historical-budget-computer-science",
+      "summary": "زیرساخت تحلیل سال‌به‌سال مجموعهٔ ۱۲۰۹ با توجه به دو کد ضریب و تفکیک ساختمان داده از طراحی الگوریتم.",
+      "quick_answer": "برای علوم کامپیوتر، هر سؤال باید علاوه بر سال و مبحث، به گروه درسی و کد ضریب مقصد وصل شود. تا تکمیل برچسب‌گذاری دفترچه‌های رسمی، جدول عددی منتشر نمی‌شود و فراوانی تاریخی جای ضرایب ۱۴۰۶ را نمی‌گیرد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تفکیک ضروری"
+        },
+        {
+          "type": "text",
+          "text": "• ساختمان داده و طراحی الگوریتم دو عنوان مستقل‌اند.\n• هر دو همراه مبانی نظریه محاسبه در گروه سه قرار دارند.\n• گروه‌های چهار و پنج میان کد ضریب ۱ و ۲ وزن یکسان ندارند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ساختار رکورد آینده"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "لایه",
+            "نمونهٔ فیلد"
+          ],
+          "rows": [
+            [
+              "منبع",
+              "سال، کد دفترچه، صفحه، شماره سؤال"
+            ],
+            [
+              "آزمون",
+              "گروه درسی و کد ضریب"
+            ],
+            [
+              "دانش",
+              "درس، فصل، مبحث و پیش‌نیاز"
+            ],
+            [
+              "اعتبار",
+              "کلید نهایی، اصلاحیه و بازبین"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرز تفسیر"
+        },
+        {
+          "type": "text",
+          "text": "حتی پس از تکمیل داده، تعداد سال‌های بررسی‌شده و تغییر مواد آزمون کنار هر نمودار نمایش داده می‌شود. تاریخچه برای شناخت پوشش است، نه وعدهٔ تکرار."
+        },
+        {
+          "type": "quote",
+          "text": "این صفحه پیش‌بینی قطعی سؤال‌های آزمون آینده نیست."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "بودجه‌بندی تاریخی"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [
+          "data-structures",
+          "algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "بودجه‌بندی تاریخی ارشد علوم کامپیوتر",
+        "description": "زیرساخت تحلیل سال‌به‌سال مجموعهٔ ۱۲۰۹ با توجه به دو کد ضریب و تفکیک ساختمان داده از طراحی الگوریتم."
+      },
+      "validity": {
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:historical-budget-computer-science"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-booklets-and-answer-keys",
+      "content_type": "guide",
+      "title": "دفترچه‌ها، کلید اولیه و کلید نهایی کنکور؛ اختلاف را چگونه تشخیص دهیم؟",
+      "slug": "booklets-and-answer-keys",
+      "summary": "راهنمای تشخیص نسخهٔ معتبر دفترچه و پاسخ‌نامه، ثبت اصلاح کلید و جلوگیری از تحلیل بر پایهٔ فایل اشتباه.",
+      "quick_answer": "دفترچه سؤال، کلید اولیه و کلید نهایی سه سند متفاوت‌اند. تحلیل سؤال را با شناسهٔ دفترچه آغاز کن، اعتراض‌ها را از نتیجهٔ نهایی جدا نگه دار و در صورت اختلاف، آخرین کلید یا اصلاحیهٔ رسمی را مبنا قرار بده.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "نقش هر فایل"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "سند",
+            "کاربرد",
+            "محدودیت"
+          ],
+          "rows": [
+            [
+              "دفترچه سؤال",
+              "صورت و ترتیب پرسش‌ها",
+              "پاسخ معتبر را تعیین نمی‌کند"
+            ],
+            [
+              "کلید اولیه",
+              "پاسخ اعلامی نخست",
+              "ممکن است پس از بررسی اصلاح شود"
+            ],
+            [
+              "کلید نهایی/اصلاحیه",
+              "مبنای تحلیل نهایی",
+              "باید با کد دفترچه یکسان باشد"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چک تطبیق"
+        },
+        {
+          "type": "text",
+          "text": "• سال، مقطع، مجموعه و کد دفترچه را تطبیق بده.\n• تاریخ انتشار فایل و اصلاحیه‌های بعدی را ثبت کن.\n• اگر سؤال حذف یا کلید عوض شده، وضعیت قبلی را پاک نکن؛ نسخه را نگه دار.\n• در تحلیل آموزشی، شمارهٔ سؤال و locator دقیق منبع را بنویس."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "اتصال آینده به حل سؤال"
+        },
+        {
+          "type": "text",
+          "text": "هر حل تشریحی آینده به نسخهٔ مشخص دفترچه، کلید نهایی، درس، فصل و مبحث متصل می‌شود. این اتصال امکان می‌دهد سؤال‌های کنکور و تمرین‌های کتاب مرجع بعداً بر اساس مفهوم مشترک کنار هم دیده شوند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "اسناد آزمون"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "دفترچه‌ها، کلید اولیه و کلید نهایی کنکور؛ اختلاف را چگونه تشخیص دهیم؟",
+        "description": "راهنمای تشخیص نسخهٔ معتبر دفترچه و پاسخ‌نامه، ثبت اصلاح کلید و جلوگیری از تحلیل بر پایهٔ فایل اشتباه."
+      },
+      "validity": {
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase12-corpus.json:booklets-and-answer-keys"
       },
       "review_status": "draft"
     },
