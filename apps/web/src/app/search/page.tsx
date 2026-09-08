@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicServiceError } from "../../components/PublicContent";
 import { EmptyState, PageHeader } from "../../components/ui";
-import { articles, guides, subjects } from "../../content/editorial";
+import { articles, findSubject, guides, subjects } from "../../content/editorial";
+import { phase11SubjectContent, type Phase11SubjectSlug } from "../../content/phase11";
 import { apiGetPublic } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
@@ -99,14 +100,26 @@ function legacySearch(query: string): SearchItem[] {
       href: `/articles/${item.slug}`,
       body: [item.category, item.degree, item.field, ...item.sections.flatMap((section) => [section.title, ...(section.paragraphs ?? []), ...(section.bullets ?? []), section.note ?? ""])].join(" "),
     })),
-    ...subjects.map((item) => ({
-      type: "SUBJECT" as const,
-      slug: item.slug,
-      title: item.title,
-      summary: item.description,
-      href: `/subjects/${item.slug}`,
-      body: [item.shortTitle, item.status1406, ...item.tracks, ...(item.syllabus ?? []).flatMap((section) => [section.title, ...section.topics])].join(" "),
-    })),
+    ...subjects.map((source) => findSubject(source.slug) ?? source).map((item) => {
+      const phase11 = phase11SubjectContent[item.slug as Phase11SubjectSlug];
+      return {
+        type: "SUBJECT" as const,
+        slug: item.slug,
+        title: item.title,
+        summary: item.description,
+        href: `/subjects/${item.slug}`,
+        body: [
+          item.shortTitle,
+          item.status1406,
+          ...item.tracks,
+          ...item.focus,
+          phase11?.quickAnswer ?? "",
+          ...(phase11?.learningPath ?? []).flatMap((step) => [step.title, step.detail]),
+          ...(phase11?.commonMistakes ?? []),
+          ...(item.syllabus ?? []).flatMap((section) => [section.title, ...section.topics]),
+        ].join(" "),
+      };
+    }),
   ];
   return candidates
     .map((item) => ({ item, score: matchScore(item.title, `${item.summary} ${item.body}`, query) }))

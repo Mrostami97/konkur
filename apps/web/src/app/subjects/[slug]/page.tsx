@@ -11,9 +11,15 @@ import {
   type PublicArticleRecord,
   type RelatedPublicItem,
 } from "../../../components/PublicContent";
+import { Phase11SubjectEditorial } from "../../../components/Phase11SubjectEditorial";
 import { StructuredData } from "../../../components/StructuredData";
 import { SectionHeader } from "../../../components/ui";
 import { articles, findSubject, guides, subjects } from "../../../content/editorial";
+import {
+  phase11SubjectContent,
+  type Phase11SubjectContent,
+  type Phase11SubjectSlug,
+} from "../../../content/phase11";
 import { apiGetPublic } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
@@ -73,6 +79,12 @@ async function loadSubject(slug: string) {
   }
 }
 
+function getPhase11Content(slug: string): Phase11SubjectContent | null {
+  return Object.hasOwn(phase11SubjectContent, slug)
+    ? phase11SubjectContent[slug as Phase11SubjectSlug]
+    : null;
+}
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const result = await loadSubject(params.slug);
   if (result.subject) {
@@ -97,6 +109,8 @@ function toRelatedItems(subject: PublicSubjectDetail): RelatedPublicItem[] {
 
 function CanonicalSubjectPage({ subject }: { subject: PublicSubjectDetail }) {
   const path = `/subjects/${subject.slug}`;
+  const legacy = findSubject(subject.slug);
+  const phase11 = getPhase11Content(subject.slug);
   const breadcrumbs = [{ name: "خانه", href: "/" }, { name: "درس‌ها", href: "/subjects" }, { name: subject.title }];
   const schemas: Record<string, unknown>[] = [
     {
@@ -107,6 +121,7 @@ function CanonicalSubjectPage({ subject }: { subject: PublicSubjectDetail }) {
       termCode: subject.code,
       url: absoluteUrl(path),
       inDefinedTermSet: { "@type": "DefinedTermSet", name: "نقشهٔ دروس کنکورصفریک", url: absoluteUrl("/subjects") },
+      ...(phase11 ? { citation: phase11.sources.map((source) => source.url) } : {}),
     },
     {
       "@context": "https://schema.org",
@@ -144,6 +159,8 @@ function CanonicalSubjectPage({ subject }: { subject: PublicSubjectDetail }) {
         </nav>
       )}
 
+      {legacy && phase11 && <Phase11SubjectEditorial subject={legacy} content={phase11} />}
+
       <section className="syllabus-panel" aria-labelledby="topics-title">
         <div className="section-heading"><div><h2 id="topics-title">مباحث {subject.title}</h2><p>ترتیب و توضیح هر مبحث مستقیماً از نقشهٔ دانش سایت خوانده می‌شود.</p></div></div>
         {subject.topics.length === 0 ? (
@@ -171,28 +188,43 @@ function CanonicalSubjectPage({ subject }: { subject: PublicSubjectDetail }) {
   );
 }
 
-function LegacySubjectPage({ slug }: { slug: string }) {
+function LegacySubjectPage({ slug, apiUnavailable }: { slug: string; apiUnavailable: boolean }) {
   const subject = findSubject(slug);
   if (!subject) notFound();
+  const phase11 = getPhase11Content(slug);
+  if (!phase11) notFound();
   const prerequisites = subject.prerequisites.map(findSubject).filter(Boolean);
   const related = [...guides, ...articles].filter((page) => page.relatedSubjects?.includes(subject.slug)).slice(0, 4);
-  const syllabus = subject.syllabus ?? [];
+  const path = `/subjects/${subject.slug}`;
   const breadcrumbs = [
     { name: "خانه", item: absoluteUrl("/") },
     { name: "درس‌ها", item: absoluteUrl("/subjects") },
-    { name: subject.title, item: absoluteUrl(`/subjects/${subject.slug}`) },
+    { name: subject.title, item: absoluteUrl(path) },
+  ];
+  const schemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "DefinedTerm",
+      name: subject.title,
+      description: phase11.quickAnswer,
+      url: absoluteUrl(path),
+      inDefinedTermSet: { "@type": "DefinedTermSet", name: "نقشهٔ دروس کنکورصفریک", url: absoluteUrl("/subjects") },
+      citation: phase11.sources.map((source) => source.url),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: breadcrumbs.map((item, index) => ({ "@type": "ListItem", position: index + 1, ...item })),
+    },
   ];
   return (
     <main className="page-container subject-detail">
-      <StructuredData data={{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: breadcrumbs.map((item, index) => ({ "@type": "ListItem", position: index + 1, ...item })) }} />
+      <StructuredData data={schemas} />
       <PublicBreadcrumbs items={[{ name: "خانه", href: "/" }, { name: "درس‌ها", href: "/subjects" }, { name: subject.shortTitle }]} />
-      <aside className="official-disclaimer"><strong>نسخهٔ آفلاین</strong><p>دادهٔ ثابت پیشین نمایش داده شده و ممکن است با آخرین ویرایش نقشهٔ دانش یکسان نباشد.</p></aside>
+      {apiUnavailable && <aside className="official-disclaimer"><strong>نسخهٔ پایدار</strong><p>اتصال زندهٔ نقشهٔ دانش برقرار نیست؛ محتوای منبع‌دار و آخرین نسخهٔ ثابت این درس همچنان در دسترس است.</p></aside>}
       <section className="subject-detail-hero"><div className="subject-monogram subject-monogram-large">{subject.accent}</div><div><span className="eyebrow">{subject.status1406}</span><h1>{subject.title}</h1><p>{subject.description}</p><div className="subject-tags">{subject.tracks.map((track) => <span key={track}>{track}</span>)}</div></div></section>
-      <section className="syllabus-panel" aria-labelledby="legacy-syllabus-title">
-        <div className="section-heading syllabus-heading"><div><span className="eyebrow">سرفصل آموزشی</span><h2 id="legacy-syllabus-title">نقشهٔ مباحث {subject.shortTitle}</h2></div>{subject.syllabusSource?.url && <a className="text-link" href={subject.syllabusSource.url} target="_blank" rel="noreferrer">منبع سرفصل ←</a>}</div>
-        <div className="syllabus-grid">{syllabus.map((section, index) => <details className="syllabus-card" open={index === 0} key={section.title}><summary><span>{toPersianDigits(String(index + 1).padStart(2, "0"))}</span><strong>{section.title}</strong><i>+</i></summary><ul>{section.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul></details>)}</div>
-      </section>
       {prerequisites.length > 0 && <nav className="prerequisite-strip" aria-label="پیش‌نیازها"><strong>پیش‌نیازهای پیشنهادی</strong>{prerequisites.map((item) => item && <Link href={`/subjects/${item.slug}`} key={item.slug}>{item.shortTitle} ←</Link>)}</nav>}
+      <Phase11SubjectEditorial subject={subject} content={phase11} />
       <section><SectionHeader title="راهنماهای مرتبط" description="نسخهٔ ثابتِ در دسترس" /><div className="article-grid">{related.map((page) => <Link className="article-card" href={`${guides.includes(page) ? "/guides" : "/articles"}/${page.slug}`} key={page.slug}><span className="article-meta">{page.category}</span><h3>{page.title}</h3><p>{page.description}</p></Link>)}</div></section>
     </main>
   );
@@ -201,7 +233,7 @@ function LegacySubjectPage({ slug }: { slug: string }) {
 export default async function SubjectPage({ params }: { params: { slug: string } }) {
   const result = await loadSubject(params.slug);
   if (result.subject) return <CanonicalSubjectPage subject={result.subject} />;
-  if (findSubject(params.slug)) return <LegacySubjectPage slug={params.slug} />;
+  if (findSubject(params.slug)) return <LegacySubjectPage slug={params.slug} apiUnavailable={result.unavailable} />;
   if (result.unavailable) return <main className="page-container"><PublicServiceError label="صفحهٔ درس" /></main>;
   notFound();
 }

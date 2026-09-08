@@ -1,11 +1,15 @@
 import Link from "next/link";
-import { editorialDateIso, type EditorialPage } from "../content/editorial";
+import { editorialDateIso, findSubject, type EditorialPage } from "../content/editorial";
 import { absoluteUrl } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
 import { StructuredData } from "./StructuredData";
 
 export function EditorialPageView({ page, basePath }: { page: EditorialPage; basePath: "/articles" | "/guides" }) {
   const path = `${basePath}/${page.slug}`;
+  const relatedSubjects = (page.relatedSubjects ?? []).flatMap((slug) => {
+    const subject = findSubject(slug);
+    return subject ? [subject] : [];
+  });
   const breadcrumbs = [
     { name: "خانه", item: absoluteUrl("/") },
     { name: basePath === "/guides" ? "راهنماها" : "مقاله‌ها", item: absoluteUrl(basePath) },
@@ -86,6 +90,31 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
               </section>
             ))}
           </div>
+
+          {relatedSubjects.length > 0 && (
+            <section className="syllabus-panel" aria-labelledby="guide-subjects-title">
+              <div className="section-heading syllabus-heading">
+                <div>
+                  <span className="eyebrow">از جدول آزمون تا برنامهٔ مطالعه</span>
+                  <h2 id="guide-subjects-title">صفحهٔ اختصاصی درس‌های این مسیر</h2>
+                  <p>وضعیت ۱۴۰۶، سرفصل مرجع، پیش‌نیازها و ترتیب شروع هر درس را جداگانه ببین.</p>
+                </div>
+              </div>
+              <div className="subject-grid">
+                {relatedSubjects.map((subject) => (
+                  <Link className="subject-card" href={`/subjects/${subject.slug}`} key={subject.slug}>
+                    <div className="subject-monogram">{subject.accent}</div>
+                    <div>
+                      <span className="subject-status">{subject.status1406}</span>
+                      <h3>{subject.title}</h3>
+                      <p>{subject.description}</p>
+                      <span className="subject-card-link">سرفصل و مسیر یادگیری ←</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           <section className="sources-box" aria-labelledby="sources-title">
             <div><span>منابع و اعتبارسنجی</span><h2 id="sources-title">این مطلب بر چه اساسی نوشته شده؟</h2></div>

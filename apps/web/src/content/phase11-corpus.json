@@ -1,0 +1,1314 @@
+{
+  "officialSource": {
+    "kind": "official-notice",
+    "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+    "publisher": "سازمان سنجش آموزش کشور",
+    "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+    "publishedAt": "۱۴۰۵/۰۴/۰۱",
+    "checkedAt": "۱۴۰۵/۰۶/۱۷"
+  },
+  "guideSlugs": [
+    "master-computer-engineering-1406",
+    "master-information-technology-1406",
+    "master-computer-science-1406"
+  ],
+  "subjectSlugs": [
+    "english",
+    "discrete-math",
+    "statistics",
+    "linear-algebra",
+    "programming-fundamentals",
+    "digital-logic",
+    "computer-architecture",
+    "data-structures-algorithms",
+    "data-structures",
+    "algorithms",
+    "automata",
+    "operating-systems",
+    "artificial-intelligence",
+    "computer-networks",
+    "databases",
+    "software-engineering",
+    "it-management"
+  ],
+  "syllabSources": {
+    "english": {
+      "kind": "academic-syllabus",
+      "title": "زبان تخصصی کامپیوتر در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40211",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "discrete-math": {
+      "kind": "academic-syllabus",
+      "title": "ریاضیات گسسته در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40115",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "statistics": {
+      "kind": "academic-syllabus",
+      "title": "آمار و احتمال مهندسی در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40181",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "linear-algebra": {
+      "kind": "academic-syllabus",
+      "title": "جبر خطی در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40282",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "programming-fundamentals": {
+      "kind": "academic-syllabus",
+      "title": "مبانی کامپیوتر و برنامه‌سازی در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40153",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "digital-logic": {
+      "kind": "academic-syllabus",
+      "title": "مدارهای منطقی در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40212",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "computer-architecture": {
+      "kind": "academic-syllabus",
+      "title": "معماری کامپیوتر در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40323",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "data-structures": {
+      "kind": "academic-syllabus",
+      "title": "داده‌ساختارها و الگوریتم‌ها در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40254",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "algorithms": {
+      "kind": "academic-syllabus",
+      "title": "داده‌ساختارها و الگوریتم‌ها در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40254",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "operating-systems": {
+      "kind": "academic-syllabus",
+      "title": "سیستم‌های عامل در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40424",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "artificial-intelligence": {
+      "kind": "academic-syllabus",
+      "title": "هوش مصنوعی در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40417",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "computer-networks": {
+      "kind": "academic-syllabus",
+      "title": "شبکه‌های کامپیوتری در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40443",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "databases": {
+      "kind": "academic-syllabus",
+      "title": "طراحی پایگاه داده‌ها در Syllab",
+      "publisher": "Syllab",
+      "url": "https://syllab.ir/courses/40384",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "software-engineering": {
+      "kind": "academic-syllabus",
+      "title": "برنامهٔ درسی مرجع کارشناسی مهندسی کامپیوتر",
+      "publisher": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات",
+      "url": "https://www.syllab.ir/_media/programs/bs-cse.pdf",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "it-management": {
+      "kind": "academic-syllabus",
+      "title": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات",
+      "publisher": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات",
+      "url": "https://www.syllab.ir/_media/programs/grad-it.pdf",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    }
+  },
+  "ownedSources": {
+    "data-structures-algorithms": {
+      "kind": "owned-archive",
+      "title": "سرفصل داده‌ساختار و الگوریتم ۱۴۰۶ در کانال رسمی @konkurcom",
+      "publisher": "کنکورصفریک",
+      "url": "https://t.me/konkurcom/138",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    },
+    "automata": {
+      "kind": "owned-archive",
+      "title": "آرشیو رسمی نظریه زبان‌ها و ماشین‌ها در @konkurcom",
+      "publisher": "کنکورصفریک",
+      "url": "https://t.me/konkurcom",
+      "checkedAt": "۱۴۰۵/۰۶/۱۷"
+    }
+  },
+  "tracks": {
+    "master-computer-engineering-1406": {
+      "guideSlug": "master-computer-engineering-1406",
+      "collectionCode": "1277",
+      "officialName": "مهندسی و علم کامپیوتر",
+      "quickAnswer": "در مجموعهٔ ۱۲۷۷، زبان با ضریب ۱، بستهٔ ریاضیات با ضریب ۲ و بستهٔ تخصصی با ضریب ۴ سنجیده می‌شوند. عنوان آزمونی داده‌ساختار و الگوریتم در این مجموعه یکپارچه است.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "bundles": [
+        {
+          "key": "language",
+          "title": "زبان",
+          "officialSubjects": [
+            "زبان عمومی و تخصصی (انگلیسی)"
+          ],
+          "coefficient": 1,
+          "subjectSlugs": [
+            "english"
+          ]
+        },
+        {
+          "key": "mathematics",
+          "title": "ریاضیات",
+          "officialSubjects": [
+            "ریاضیات گسسته",
+            "آمار و احتمال مهندسی",
+            "جبر خطی"
+          ],
+          "coefficient": 2,
+          "subjectSlugs": [
+            "discrete-math",
+            "statistics",
+            "linear-algebra"
+          ]
+        },
+        {
+          "key": "specialist",
+          "title": "دروس تخصصی",
+          "officialSubjects": [
+            "مبانی کامپیوتر و برنامه‌سازی",
+            "مدارهای منطقی",
+            "معماری کامپیوتر",
+            "داده‌ساختارها و الگوریتم‌ها",
+            "نظریه زبان‌ها و ماشین‌ها",
+            "سیستم‌های عامل",
+            "هوش مصنوعی"
+          ],
+          "coefficient": 4,
+          "subjectSlugs": [
+            "programming-fundamentals",
+            "digital-logic",
+            "computer-architecture",
+            "data-structures-algorithms",
+            "automata",
+            "operating-systems",
+            "artificial-intelligence"
+          ]
+        }
+      ]
+    },
+    "master-information-technology-1406": {
+      "guideSlug": "master-information-technology-1406",
+      "collectionCode": "1276",
+      "officialName": "مهندسی فناوری اطلاعات",
+      "quickAnswer": "در مجموعهٔ ۱۲۷۶ «مهندسی فناوری اطلاعات»، زبان ضریب ۱، ریاضیات ضریب ۲ و دروس تخصصی ضریب ۴ دارند. شبکه‌های کامپیوتری و طراحی پایگاه داده‌ها در بستهٔ تخصصی هستند، اما جبر خطی در بستهٔ ریاضیات آن نیامده است.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "bundles": [
+        {
+          "key": "language",
+          "title": "زبان",
+          "officialSubjects": [
+            "زبان عمومی و تخصصی (انگلیسی)"
+          ],
+          "coefficient": 1,
+          "subjectSlugs": [
+            "english"
+          ]
+        },
+        {
+          "key": "mathematics",
+          "title": "ریاضیات",
+          "officialSubjects": [
+            "ریاضیات گسسته",
+            "آمار و احتمال مهندسی"
+          ],
+          "coefficient": 2,
+          "subjectSlugs": [
+            "discrete-math",
+            "statistics"
+          ]
+        },
+        {
+          "key": "specialist",
+          "title": "دروس تخصصی",
+          "officialSubjects": [
+            "مبانی کامپیوتر و برنامه‌سازی",
+            "داده‌ساختارها و الگوریتم‌ها",
+            "سیستم‌های عامل",
+            "شبکه‌های کامپیوتری",
+            "طراحی پایگاه داده‌ها",
+            "هوش مصنوعی"
+          ],
+          "coefficient": 4,
+          "subjectSlugs": [
+            "programming-fundamentals",
+            "data-structures-algorithms",
+            "operating-systems",
+            "computer-networks",
+            "databases",
+            "artificial-intelligence"
+          ]
+        }
+      ]
+    },
+    "master-computer-science-1406": {
+      "guideSlug": "master-computer-science-1406",
+      "collectionCode": "1209",
+      "officialName": "علوم کامپیوتر",
+      "coefficientCodes": [
+        "1",
+        "2"
+      ],
+      "quickAnswer": "مجموعهٔ ۱۲۰۹ دو کد ضریب دارد. در هر دو، زبان ضریب ۲، دروس پایه ضریب ۳ و گروه ساختمان داده‌ها، طراحی الگوریتم‌ها و مبانی نظریه محاسبه ضریب ۴ است؛ منطق/مجموعه‌ها و گسسته/ترکیبات در کد ۱ هر دو ضریب ۲ و در کد ۲ به‌ترتیب ضریب ۰ و ۴ دارند. ساختمان داده و طراحی الگوریتم در نام رسمی این مسیر جدا هستند، اما در یک گروه امتحانی مشترک قرار می‌گیرند.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "bundles": [
+        {
+          "key": "language",
+          "title": "زبان عمومی و تخصصی",
+          "officialSubjects": [
+            "زبان عمومی و تخصصی (انگلیسی)"
+          ],
+          "coefficientsByCode": {
+            "1": 2,
+            "2": 2
+          },
+          "subjectSlugs": [
+            "english"
+          ]
+        },
+        {
+          "key": "basics",
+          "title": "دروس پایه",
+          "officialSubjects": [
+            "ریاضی عمومی (۱ و ۲)",
+            "مبانی علوم ریاضی",
+            "مبانی ماتریس‌ها و جبر خطی",
+            "مبانی آنالیز ریاضی",
+            "مبانی آنالیز عددی",
+            "مبانی احتمال"
+          ],
+          "coefficientsByCode": {
+            "1": 3,
+            "2": 3
+          },
+          "subjectSlugs": [
+            "linear-algebra"
+          ],
+          "note": "هاب جبر خطی به زیرعنوان رسمی «مبانی ماتریس‌ها و جبر خطی» وصل می‌شود؛ این هاب نمایندهٔ دیگر اجزای گروه دروس پایه نیست."
+        },
+        {
+          "key": "computer-science-core",
+          "title": "ساختمان داده‌ها، طراحی الگوریتم‌ها و مبانی نظریه محاسبه",
+          "officialSubjects": [
+            "ساختمان داده‌ها",
+            "طراحی الگوریتم‌ها",
+            "مبانی نظریه محاسبه"
+          ],
+          "coefficientsByCode": {
+            "1": 4,
+            "2": 4
+          },
+          "subjectSlugs": [
+            "data-structures",
+            "algorithms",
+            "automata"
+          ],
+          "note": "هاب automata دامنهٔ مبانی نظریه محاسبه را نیز پوشش می‌دهد؛ هاب یکپارچهٔ data-structures-algorithms عمداً به مجموعهٔ ۱۲۰۹ وصل نشده است."
+        },
+        {
+          "key": "mathematical-logic",
+          "title": "مبانی منطق و نظریه مجموعه‌ها",
+          "officialSubjects": [
+            "مبانی منطق و نظریه مجموعه‌ها"
+          ],
+          "coefficientsByCode": {
+            "1": 2,
+            "2": 0
+          },
+          "subjectSlugs": [],
+          "note": "این گروه در کد ضریب ۱ ضریب ۲ و در کد ضریب ۲ ضریب صفر دارد و هاب مستقلی در فاز ۱۱ ندارد."
+        },
+        {
+          "key": "discrete-combinatorics",
+          "title": "ریاضیات گسسته و مبانی ترکیبات",
+          "officialSubjects": [
+            "ریاضیات گسسته",
+            "مبانی ترکیبات"
+          ],
+          "coefficientsByCode": {
+            "1": 2,
+            "2": 4
+          },
+          "subjectSlugs": [
+            "discrete-math"
+          ]
+        }
+      ]
+    }
+  },
+  "subjects": {
+    "english": {
+      "slug": "english",
+      "quickAnswer": "زبان عمومی و تخصصی در هر سه آزمون ارشد این فاز سنجیده می‌شود: در مجموعه‌های ۱۲۷۷ و ۱۲۷۶ ضریب ۱ و در هر دو کد ضریب مجموعهٔ ۱۲۰۹ ضریب ۲ دارد. مطالعهٔ کوتاه و پیوستهٔ واژگان در متن و درک مطلب، مسیر مطمئن‌تری از انباشت واژه در پایان دوره است.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "سنجش نقطهٔ شروع",
+          "detail": "یک متن تخصصی کوتاه را زمان‌دار بخوان و خطاها را به واژگان، ساختار جمله، برداشت از متن یا مدیریت زمان تقسیم کن."
+        },
+        {
+          "title": "واژه در بافت",
+          "detail": "واژه‌های عمومی و تخصصی را با جمله و خانوادهٔ واژه مرور کن تا بازیابی معنا به متن وابسته شود، نه ترجمهٔ منفرد."
+        },
+        {
+          "title": "خواندن هدفمند",
+          "detail": "ایدهٔ اصلی، جزئیات، ارجاع ضمیر و استنتاج را جداگانه تمرین کن و برای هر پاسخ شاهدی در متن پیدا کن."
+        },
+        {
+          "title": "تمرین ترکیبی",
+          "detail": "مجموعه‌های کوتاه زمان‌دار حل کن و دفترچهٔ خطا را برای واژه‌ها و الگوهای خواندن پرتکرار به‌روز نگه دار."
+        }
+      ],
+      "commonMistakes": [
+        "حفظ‌کردن فهرست بلند واژه بدون جمله، مرور فاصله‌دار و بازیابی فعال.",
+        "صرف تمام زمان برای دستور زبان و عقب‌انداختن تمرین واقعی درک مطلب.",
+        "ترجمهٔ کلمه‌به‌کلمهٔ متن و نداشتن سقف زمانی برای هر پرسش."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "زبان تخصصی کامپیوتر در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40211",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "مقایسهٔ جایگاه زبان در سه مسیر",
+          "href": "/guides/master-computer-science-1406"
+        },
+        "resource": {
+          "label": "دیدن منابع برچسب‌خوردهٔ زبان",
+          "href": "/resources?subject=english"
+        }
+      }
+    },
+    "discrete-math": {
+      "slug": "discrete-math",
+      "quickAnswer": "ریاضیات گسسته در بستهٔ ریاضیات ۱۲۷۷ و ۱۲۷۶ با ضریب ۲ قرار دارد. در مجموعهٔ ۱۲۰۹ همراه مبانی ترکیبات است: ضریب ۲ در کد ۱ و ضریب ۴ در کد ۲. منطق و اثبات را پیش از شمارش و گراف تثبیت کن تا فرمول‌ها به ابزار حل مسئله تبدیل شوند.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "منطق و زبان اثبات",
+          "detail": "گزاره، سور، هم‌ارزی و روش‌های اثبات مستقیم، خلف و استقرا را با مثال‌های کوتاه تمرین کن."
+        },
+        {
+          "title": "شمارش و رابطه",
+          "detail": "اصل جمع و ضرب، جایگشت، ترکیب، طرد و شمول و رابطه‌ها را همراه شرط کاربرد هر ابزار یاد بگیر."
+        },
+        {
+          "title": "گراف و ساختار",
+          "detail": "درخت، مسیر، همبندی، رنگ‌آمیزی و بازگشت‌ها را با رسم و تحلیل مرحله‌ای به الگوریتم پیوند بده."
+        },
+        {
+          "title": "مرور مسئله‌محور",
+          "detail": "پرسش‌های ترکیبی را بر اساس ایدهٔ اصلی دسته‌بندی کن و علت رد گزینه‌های نادرست را بنویس."
+        }
+      ],
+      "commonMistakes": [
+        "استفاده از فرمول‌های شمارش بدون بررسی تمایز، ترتیب، تکرار و محدودیت مسئله.",
+        "حذف تمرین اثبات و تکیه بر حفظ پاسخ‌های تستی.",
+        "یکسان‌گرفتن ضریب گسسته در علوم کامپیوتر با بستهٔ ریاضیات مهندسی و IT."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "ریاضیات گسسته در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40115",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "رفتن به مسیر علوم کامپیوتر",
+          "href": "/guides/master-computer-science-1406"
+        },
+        "resource": {
+          "label": "دیدن منابع برچسب‌خوردهٔ گسسته",
+          "href": "/resources?subject=discrete-math"
+        }
+      }
+    },
+    "statistics": {
+      "slug": "statistics",
+      "quickAnswer": "آمار و احتمال مهندسی در بستهٔ ریاضیات مجموعه‌های ۱۲۷۷ و ۱۲۷۶ با ضریب ۲ سنجیده می‌شود. این هاب را نباید جایگزین عنوان رسمی «مبانی احتمال» در گروه دروس پایهٔ ۱۲۰۹ کرد؛ آن گروه صفحهٔ هم‌نام مستقلی در فاز ۱۱ ندارد.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "رخداد و احتمال شرطی",
+          "detail": "فضای نمونه، استقلال، احتمال شرطی و قاعدهٔ بیز را با درخت احتمال و جدول دوبعدی تمرین کن."
+        },
+        {
+          "title": "متغیر تصادفی",
+          "detail": "تابع جرم یا چگالی، تابع توزیع، امید و واریانس را ابتدا برای یک متغیر و سپس حالت مشترک بخوان."
+        },
+        {
+          "title": "توزیع‌های مهم",
+          "detail": "هر توزیع را با پارامترها، دامنه، میانگین، واریانس و نشانه‌های تشخیص آن در صورت سؤال ثبت کن."
+        },
+        {
+          "title": "استنتاج و مرور",
+          "detail": "حد مرکزی و مبانی تخمین و آزمون فرض را پس از احتمال تثبیت کن و مسئله‌های چندمرحله‌ای حل کن."
+        }
+      ],
+      "commonMistakes": [
+        "جابه‌جاگرفتن شرط و رخداد در احتمال شرطی یا استفادهٔ بی‌دلیل از استقلال.",
+        "حفظ نام توزیع‌ها بدون توجه به دامنه و معنای پارامترها.",
+        "معادل‌گرفتن آمار و احتمال مهندسی با گروه رسمی مبانی احتمال مجموعهٔ علوم کامپیوتر."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "آمار و احتمال مهندسی در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40181",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "دیدن بستهٔ ریاضیات مهندسی کامپیوتر",
+          "href": "/guides/master-computer-engineering-1406"
+        },
+        "resource": {
+          "label": "دیدن منابع برچسب‌خوردهٔ آمار",
+          "href": "/resources?subject=statistics"
+        }
+      }
+    },
+    "linear-algebra": {
+      "slug": "linear-algebra",
+      "quickAnswer": "جبر خطی در بستهٔ ریاضیات مجموعهٔ ۱۲۷۷ «مهندسی و علم کامپیوتر» با ضریب ۲ آمده و در ۱۲۷۶ نیامده است. در ۱۲۰۹، «مبانی ماتریس‌ها و جبر خطی» جزئی از گروه دروس پایهٔ ضریب ۳ است، نه یک مادهٔ مستقل؛ این هاب به‌عنوان نمایندهٔ کل آن گروه لینک نشده است.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "ماتریس و دستگاه",
+          "detail": "عملیات سطری، فرم پلکانی، رتبه و حل دستگاه‌های خطی را با کنترل سازگاری جواب تمرین کن."
+        },
+        {
+          "title": "فضای برداری",
+          "detail": "استقلال، مولد، پایه، بعد و زیرفضا را با مثال‌های ماتریسی و چندجمله‌ای کنار هم قرار بده."
+        },
+        {
+          "title": "تبدیل خطی",
+          "detail": "هسته، برد، نمایش ماتریسی و تغییر پایه را به قضیهٔ رتبه و پوچی متصل بخوان."
+        },
+        {
+          "title": "ساختار طیفی",
+          "detail": "مقادیر و بردارهای ویژه، قطری‌سازی و تعامد را پس از تسلط بر پایه و تبدیل مرور کن."
+        }
+      ],
+      "commonMistakes": [
+        "خطای علامت و سطر در محاسبات طولانی بدون کنترل جواب در دستگاه اولیه.",
+        "استفاده از دترمینان به‌عنوان ابزار عمومی، حتی وقتی رتبه یا عملیات سطری ساده‌تر است.",
+        "واردکردن جبر خطی به برنامهٔ IT یا علوم کامپیوتر فقط بر پایهٔ جدول‌های رشته‌ای دیگر."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "جبر خطی در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40282",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "دیدن راهنمای مجموعهٔ ۱۲۷۷",
+          "href": "/guides/master-computer-engineering-1406"
+        },
+        "resource": {
+          "label": "دیدن منابع برچسب‌خوردهٔ جبر خطی",
+          "href": "/resources?subject=linear-algebra"
+        }
+      }
+    },
+    "programming-fundamentals": {
+      "slug": "programming-fundamentals",
+      "quickAnswer": "مبانی کامپیوتر و برنامه‌سازی در بستهٔ تخصصی مجموعه‌های ۱۲۷۷ و ۱۲۷۶ با ضریب ۴ قرار دارد. هدف این هاب تسلط بر ردگیری برنامه و حل مسئله است؛ انتخاب یک زبان برای تمرین مفید است، اما نباید مطالعه را به حفظ نحو همان زبان محدود کند.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "مدل‌سازی و شبه‌کد",
+          "detail": "ورودی، خروجی، حالت و گام‌های حل را پیش از نوشتن کد روشن کن و الگوریتم کوتاه بنویس."
+        },
+        {
+          "title": "کنترل جریان",
+          "detail": "نوع داده، عبارت، شرط و حلقه را با جدول ردگیری متغیرها و شمارش دفعات اجرا تمرین کن."
+        },
+        {
+          "title": "تابع و دادهٔ مرکب",
+          "detail": "پارامتر، دامنهٔ متغیر، آرایه و رشته را با مثال‌های کوچک و آزمون مرزی تثبیت کن."
+        },
+        {
+          "title": "بازگشت و هزینه",
+          "detail": "فراخوانی بازگشتی را با پشتهٔ اجرا رسم کن و برآورد مقدماتی زمان و حافظه را به آن بیفزا."
+        }
+      ],
+      "commonMistakes": [
+        "درگیرشدن با جزئیات یک زبان برنامه‌نویسی و از دست‌دادن منطق مشترک شبه‌کد.",
+        "حدس خروجی برنامه بدون ثبت تغییر مقدار متغیرها در هر مرحله.",
+        "کم‌اهمیت‌دانستن درس به‌خاطر عنوان «مبانی» و رفتن مستقیم سراغ الگوریتم‌های پیشرفته."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "مبانی کامپیوتر و برنامه‌سازی در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40153",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "ادامه به داده‌ساختار و الگوریتم",
+          "href": "/subjects/data-structures-algorithms"
+        },
+        "resource": {
+          "label": "دیدن منابع برچسب‌خوردهٔ برنامه‌سازی",
+          "href": "/resources?subject=programming-fundamentals"
+        }
+      }
+    },
+    "digital-logic": {
+      "slug": "digital-logic",
+      "quickAnswer": "مدار منطقی در بستهٔ تخصصی مجموعهٔ ۱۲۷۷ با ضریب ۴ قرار دارد و در بسته‌های اعلام‌شدهٔ ۱۲۷۶ و ۱۲۰۹ عنوان مستقلی نیست. مسیر یادگیری را از جبر بول و نمایش عدد شروع کن و سپس به مدارهای ترکیبی و ترتیبی برس.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "نمایش و جبر بول",
+          "detail": "مبنای اعداد، کدها، توابع بولی و قوانین ساده‌سازی را با تبدیل دقیق نمایش‌ها تمرین کن."
+        },
+        {
+          "title": "مدار ترکیبی",
+          "detail": "نقشهٔ کارنو، مالتی‌پلکسر، دیکودر، جمع‌کننده و مقایسه‌گر را از جدول درستی طراحی کن."
+        },
+        {
+          "title": "مدار ترتیبی",
+          "detail": "لچ، فلیپ‌فلاپ، ثبات و شمارنده را با جدول حالت و نمودار حالت تحلیل کن."
+        },
+        {
+          "title": "پل به معماری",
+          "detail": "مسیر داده و حافظه را با قطعه‌های منطقی شناخته‌شده مدل کن تا ورود به معماری پیوسته باشد."
+        }
+      ],
+      "commonMistakes": [
+        "استفادهٔ نادرست از حالت‌های بی‌اهمیت در نقشهٔ کارنو و تغییر تابع اصلی.",
+        "تحلیل مدار ترتیبی مثل مدار ترکیبی و نادیده‌گرفتن حالت قبلی یا لبهٔ کلاک.",
+        "حفظ مدارهای آماده بدون توانایی رفت‌وبرگشت میان عبارت، جدول و شماتیک."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "مدارهای منطقی در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40212",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "ادامه به معماری کامپیوتر",
+          "href": "/subjects/computer-architecture"
+        },
+        "resource": {
+          "label": "دیدن منابع برچسب‌خوردهٔ مدار منطقی",
+          "href": "/resources?subject=digital-logic"
+        }
+      }
+    },
+    "computer-architecture": {
+      "slug": "computer-architecture",
+      "quickAnswer": "معماری کامپیوتر در بستهٔ تخصصی مجموعهٔ ۱۲۷۷ با ضریب ۴ سنجیده می‌شود و در ۱۲۷۶ و ۱۲۰۹ عنوان مستقل ندارد. اگر مدار منطقی ضعیف است، یک مرور جبر بول، مدارهای ترکیبی و ثبات‌ها پیش از مسیر داده انجام بده.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "دستور و مسیر داده",
+          "detail": "قالب دستور، واحد حساب و منطق، ثبات‌ها و سیگنال‌های کنترل را روی یک مسیر دادهٔ ساده دنبال کن."
+        },
+        {
+          "title": "حساب و کارایی",
+          "detail": "نمایش عدد، حساب دودویی، زمان CPU، CPI و نرخ کلاک را با واحدهای سازگار حل کن."
+        },
+        {
+          "title": "سلسله‌مراتب حافظه",
+          "detail": "حافظهٔ نهان، حافظهٔ اصلی و ذخیره‌سازی را با آدرس، نگاشت و هزینهٔ عدم‌اصابت تحلیل کن."
+        },
+        {
+          "title": "خط لوله",
+          "detail": "اجرای هم‌پوشان دستورها، مخاطره‌ها و راه‌حل‌ها را چرخه‌به‌چرخه در جدول زمان‌بندی رسم کن."
+        }
+      ],
+      "commonMistakes": [
+        "جابه‌جاگرفتن CPI، نرخ کلاک و زمان اجرا یا حذف واحدها در محاسبهٔ کارایی.",
+        "شمردن نادرست بیت‌های برچسب، شاخص و جابه‌جایی در مسائل حافظهٔ نهان.",
+        "حل خط لوله با یک فرمول ثابت بدون رسم وابستگی‌ها و توقف‌های واقعی."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "معماری کامپیوتر در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40323",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "مرور پیش‌نیاز مدار منطقی",
+          "href": "/subjects/digital-logic"
+        },
+        "resource": {
+          "label": "دیدن منابع برچسب‌خوردهٔ معماری",
+          "href": "/resources?subject=computer-architecture"
+        }
+      }
+    },
+    "data-structures-algorithms": {
+      "slug": "data-structures-algorithms",
+      "quickAnswer": "مادهٔ رسمی «داده‌ساختارها و الگوریتم‌ها» در بستهٔ تخصصی مجموعه‌های ۱۲۷۷ و ۱۲۷۶ یکپارچه و دارای ضریب ۴ است. این هاب عمداً از مجموعهٔ ۱۲۰۹ کنار گذاشته شده؛ در علوم کامپیوتر باید از دو هاب مستقل «ساختمان داده‌ها» و «طراحی الگوریتم‌ها» استفاده کنی.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "پیش‌نیاز و تحلیل",
+          "detail": "ردگیری برنامه، بازگشت، رشد توابع و تحلیل زمان و حافظه را پیش از ورود به ساختارها تثبیت کن."
+        },
+        {
+          "title": "ساختار و عملیات",
+          "detail": "فهرست، پشته، صف، درخت، هیپ و هش را بر اساس عملیات، ناوردا و هزینه مقایسه کن."
+        },
+        {
+          "title": "گراف و نمایش",
+          "detail": "نمایش‌های گراف، پیمایش و کاربرد ساختارهای کمکی را با مثال‌های مرحله‌ای تمرین کن."
+        },
+        {
+          "title": "الگوهای طراحی",
+          "detail": "تقسیم‌وحل، حریصانه و برنامه‌ریزی پویا را با تشخیص الگو، اثبات درستی و تحلیل هزینه پیش ببر."
+        },
+        {
+          "title": "تمرین یکپارچه",
+          "detail": "مسئله‌هایی حل کن که انتخاب ساختار داده و الگوریتم را هم‌زمان می‌سنجند و علت انتخاب را بنویس."
+        }
+      ],
+      "commonMistakes": [
+        "تبدیل عنوان یکپارچهٔ مهندسی و IT به دو ضریب یا دو بستهٔ آزمونی جدا.",
+        "وصل‌کردن این هاب به مجموعهٔ ۱۲۰۹ به‌جای دو هاب مستقل ساختمان داده و طراحی الگوریتم.",
+        "حفظ شبه‌کد بدون فهم ناوردا، شرط کاربرد و تحلیل مرتبهٔ زمانی."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "owned-archive",
+          "title": "سرفصل داده‌ساختار و الگوریتم ۱۴۰۶ در کانال رسمی @konkurcom",
+          "publisher": "کنکورصفریک",
+          "url": "https://t.me/konkurcom/138",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "دیدن جایگاه درس در مهندسی کامپیوتر",
+          "href": "/guides/master-computer-engineering-1406"
+        },
+        "resource": {
+          "label": "دیدن منابع یکپارچهٔ درس",
+          "href": "/resources?subject=data-structures-algorithms"
+        }
+      }
+    },
+    "data-structures": {
+      "slug": "data-structures",
+      "quickAnswer": "ساختمان داده‌ها در گروه سوم مجموعهٔ ۱۲۰۹ و در هر دو کد ضریب با ضریب ۴ سنجیده می‌شود؛ طراحی الگوریتم هاب مستقل خودش را دارد، اما هر دو در یک گروه امتحانی‌اند. داوطلب مجموعه‌های ۱۲۷۷ و ۱۲۷۶ باید به هاب یکپارچهٔ داده‌ساختار و الگوریتم برود.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "تحلیل عملیات",
+          "detail": "رشد زمان و حافظه و تفاوت بدترین، میانگین و سرشکن را برای عملیات پایه مرور کن."
+        },
+        {
+          "title": "ساختارهای خطی",
+          "detail": "آرایه، فهرست پیوندی، پشته و صف را بر اساس نمایش، عملیات و کاربرد مقایسه کن."
+        },
+        {
+          "title": "درخت و اولویت",
+          "detail": "درخت جست‌وجو، درخت متوازن و هیپ را با ناوردا و ردگیری درج و حذف یاد بگیر."
+        },
+        {
+          "title": "هش و گراف",
+          "detail": "برخورد در هش و نمایش گراف را با هزینهٔ واقعی عملیات و انتخاب ساختار مناسب تحلیل کن."
+        }
+      ],
+      "commonMistakes": [
+        "خواندن این صفحه به‌عنوان عنوان آزمونی مشترک مهندسی کامپیوتر و IT.",
+        "گسترش درس به همهٔ الگوهای طراحی الگوریتم و ازبین‌بردن مرز هاب مستقل الگوریتم.",
+        "مقایسهٔ ساختارها فقط با یک مرتبهٔ زمانی و نادیده‌گرفتن عملیات، حافظه و شرط داده."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "داده‌ساختارها و الگوریتم‌ها در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40254",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "ادامه به طراحی الگوریتم",
+          "href": "/subjects/algorithms"
+        },
+        "resource": {
+          "label": "دیدن منابع ساختمان داده",
+          "href": "/resources?subject=data-structures"
+        }
+      }
+    },
+    "algorithms": {
+      "slug": "algorithms",
+      "quickAnswer": "طراحی الگوریتم‌ها در گروه سوم مجموعهٔ ۱۲۰۹ و در هر دو کد ضریب با ضریب ۴ سنجیده می‌شود؛ عنوان آن از ساختمان داده‌ها جداست، اما هر دو در یک گروه امتحانی‌اند. برای ۱۲۷۷ و ۱۲۷۶، این مطالب بخشی از هاب یکپارچهٔ داده‌ساختار و الگوریتم‌اند.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "پیش‌نیاز تحلیل",
+          "detail": "ساختمان داده، گسسته، رشد توابع و حل روابط بازگشتی را تا سطح تحلیل الگوریتم آماده کن."
+        },
+        {
+          "title": "تقسیم‌وحل",
+          "detail": "شکستن مسئله، ترکیب پاسخ و رابطهٔ بازگشتی را روی چند الگوی متفاوت تمرین کن."
+        },
+        {
+          "title": "حریصانه",
+          "detail": "ویژگی انتخاب حریصانه را از روی ساختار مسئله تشخیص بده و درستی انتخاب محلی را اثبات کن."
+        },
+        {
+          "title": "برنامه‌ریزی پویا",
+          "detail": "حالت، گذار، ترتیب محاسبه و بازسازی پاسخ را پیش از کدنویسی روی جدول مشخص کن."
+        },
+        {
+          "title": "الگوریتم‌های گراف",
+          "detail": "پیمایش، کوتاه‌ترین مسیر و درخت پوشا را با فرض‌ها، ساختار داده و پیچیدگی مقایسه کن."
+        }
+      ],
+      "commonMistakes": [
+        "حفظ نام و شبه‌کد الگوها بدون تشخیص شرطی که استفاده از آن‌ها را درست می‌کند.",
+        "نوشتن راه‌حل بدون استدلال درستی یا بدون تحلیل زمان و حافظه.",
+        "ادغام این هاب با ساختمان داده در نمایش رسمی مجموعهٔ ۱۲۰۹."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "داده‌ساختارها و الگوریتم‌ها در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40254",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "مرور پیش‌نیاز ساختمان داده",
+          "href": "/subjects/data-structures"
+        },
+        "resource": {
+          "label": "دیدن منابع طراحی الگوریتم",
+          "href": "/resources?subject=algorithms"
+        }
+      }
+    },
+    "automata": {
+      "slug": "automata",
+      "quickAnswer": "این هاب در مجموعهٔ ۱۲۷۷ با عنوان «نظریه زبان‌ها و ماشین‌ها» و در گروه سوم مجموعهٔ ۱۲۰۹ با عنوان «مبانی نظریه محاسبه» به مسیر آزمون وصل می‌شود؛ بستهٔ ۱۲۷۷ و هر دو کد ضریب ۱۲۰۹ برای این گروه ضریب ۴ دارند. این درس در بستهٔ اعلام‌شدهٔ ۱۲۷۶ عنوان مستقلی ندارد.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "زبان و مدل",
+          "detail": "الفبا، رشته، زبان و عملگرهای زبان را دقیق تعریف کن و هر مدل را با زبان قابل‌پذیرش آن بشناس."
+        },
+        {
+          "title": "منظم‌ها",
+          "detail": "DFA، NFA و عبارت منظم را با تبدیل دوطرفه، کمینه‌سازی و تشخیص محدودیت‌ها تمرین کن."
+        },
+        {
+          "title": "گرامر و پشته",
+          "detail": "گرامر مستقل از متن، درخت اشتقاق و ماشین پشته‌ای را همراه ابهام و فرم‌های نرمال بخوان."
+        },
+        {
+          "title": "محاسبه‌پذیری",
+          "detail": "ماشین تورینگ، تصمیم‌پذیری و کاهش را با تعریف مسئله و منطق هر اثبات دنبال کن."
+        },
+        {
+          "title": "نقشهٔ مقایسه",
+          "detail": "توان مدل‌ها، بسته‌بودن زبان‌ها و ابزار اثبات نامنظمی یا تصمیم‌ناپذیری را در یک جدول جمع کن."
+        }
+      ],
+      "commonMistakes": [
+        "جابه‌جاگرفتن رشته، زبان، گرامر و ماشین و استفادهٔ مبهم از نمادها.",
+        "حفظ مراحل تبدیل بدون بررسی هم‌ارزی زبان پیش و پس از تبدیل.",
+        "قرار دادن نظریه در بستهٔ IT یا یکسان‌نوشتن عنوان رسمی آن در ۱۲۷۷ و ۱۲۰۹."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "owned-archive",
+          "title": "آرشیو رسمی نظریه زبان‌ها و ماشین‌ها در @konkurcom",
+          "publisher": "کنکورصفریک",
+          "url": "https://t.me/konkurcom",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "مرور پیش‌نیاز ریاضیات گسسته",
+          "href": "/subjects/discrete-math"
+        },
+        "resource": {
+          "label": "دیدن آرشیو منابع نظریه",
+          "href": "/resources?subject=automata"
+        }
+      }
+    },
+    "operating-systems": {
+      "slug": "operating-systems",
+      "quickAnswer": "سیستم‌های عامل در بستهٔ تخصصی مجموعه‌های ۱۲۷۷ و ۱۲۷۶ با ضریب ۴ قرار دارد و در ۱۲۰۹ عنوان مستقل ندارد. شناخت حافظه، وقفه و اجرای دستور از معماری کمک می‌کند؛ اگر این پایه ضعیف است، پیش از حافظهٔ مجازی یک مرور کوتاه انجام بده.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "مدل اجرای سیستم",
+          "detail": "حالت کاربر و هسته، وقفه، فراخوان سیستمی، فرایند و نخ را در یک جریان اجرای واقعی جای بده."
+        },
+        {
+          "title": "زمان‌بندی",
+          "detail": "الگوریتم‌های زمان‌بندی را با خط زمان، زمان انتظار، پاسخ و گردش حل و مقایسه کن."
+        },
+        {
+          "title": "هم‌روندی و بن‌بست",
+          "detail": "ناحیهٔ بحرانی، سمافور و شرایط بن‌بست را با ردگیری ترتیب رخدادها تحلیل کن."
+        },
+        {
+          "title": "حافظه و ذخیره‌سازی",
+          "detail": "صفحه‌بندی، حافظهٔ مجازی، جایگزینی صفحه و سیستم فایل را با واحد و وضعیت جدول‌ها تمرین کن."
+        }
+      ],
+      "commonMistakes": [
+        "یکسان‌گرفتن فرایند و نخ یا نادیده‌گرفتن فضای آدرس و منابع مشترک.",
+        "حل زمان‌بندی و هم‌روندی بدون رسم خط زمان یا ثبت ترتیب رخدادها.",
+        "مخلوط‌کردن شمارهٔ صفحه، قاب، آدرس منطقی و آدرس فیزیکی در مسائل حافظه."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "سیستم‌های عامل در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40424",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "مرور پیش‌نیاز معماری",
+          "href": "/subjects/computer-architecture"
+        },
+        "resource": {
+          "label": "دیدن منابع سیستم‌عامل",
+          "href": "/resources?subject=operating-systems"
+        }
+      }
+    },
+    "artificial-intelligence": {
+      "slug": "artificial-intelligence",
+      "quickAnswer": "هوش مصنوعی در بستهٔ تخصصی مجموعه‌های ۱۲۷۷ و ۱۲۷۶ با ضریب ۴ سنجیده می‌شود و در گروه‌های اعلام‌شدهٔ ۱۲۰۹ عنوان مستقلی ندارد. دامنهٔ مطالعه را از سرفصل آموزشی و سند آزمون بگیر؛ موضوعات روز را خودکار به فهرست آزمون اضافه نکن.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "مدل‌سازی و جست‌وجو",
+          "detail": "مسئله را به حالت، عمل، هدف و هزینه تبدیل کن و جست‌وجوهای ناآگاهانه را مقایسه کن."
+        },
+        {
+          "title": "ابتکاری و بازی",
+          "detail": "جست‌وجوی آگاهانه، ویژگی‌های تابع ابتکاری، minimax و هرس آلفاـبتا را روی درخت رسم کن."
+        },
+        {
+          "title": "قید و منطق",
+          "detail": "مسائل ارضای قید و استنتاج منطقی را با نمایش صریح متغیر، دامنه و قید تمرین کن."
+        },
+        {
+          "title": "عدم قطعیت و یادگیری",
+          "detail": "احتمال، شبکهٔ بیزی و مبانی یادگیری را فقط در محدودهٔ سرفصل منبع‌دار و با پیش‌نیاز آماری بخوان."
+        }
+      ],
+      "commonMistakes": [
+        "یکی‌گرفتن هوش مصنوعی آزمون با همهٔ موضوعات روز مانند مدل‌های زبانی و افزودن دامنهٔ بی‌سند.",
+        "مخلوط‌کردن جست‌وجوی درختی و گرافی و فراموش‌کردن مجموعهٔ حالت‌های دیده‌شده.",
+        "استفاده از تابع ابتکاری بدون بررسی خوش‌بینی یا سازگاری موردنیاز الگوریتم."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "هوش مصنوعی در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40417",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "مرور پیش‌نیاز آمار و احتمال",
+          "href": "/subjects/statistics"
+        },
+        "resource": {
+          "label": "دیدن منابع هوش مصنوعی",
+          "href": "/resources?subject=artificial-intelligence"
+        }
+      }
+    },
+    "computer-networks": {
+      "slug": "computer-networks",
+      "quickAnswer": "شبکه‌های کامپیوتری در بستهٔ تخصصی مجموعهٔ ۱۲۷۶ فناوری اطلاعات با ضریب ۴ قرار دارد؛ در مجموعهٔ ۱۲۷۷ و گروه‌های کد ضریب مشترک ۲ مجموعهٔ ۱۲۰۹ عنوان مستقلی ندارد. برنامه را لایه‌به‌لایه بساز، اما جریان انتهابه‌انتهای یک بسته را هم حفظ کن.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "مدل لایه‌ای",
+          "detail": "وظیفه، واحد داده و مرز هر لایه را با مسیر واقعی ارسال یک پیام از میزبان مبدأ تا مقصد مشخص کن."
+        },
+        {
+          "title": "کاربرد و انتقال",
+          "detail": "HTTP و DNS را به سوکت، UDP، TCP، قابلیت اطمینان و کنترل ازدحام متصل بخوان."
+        },
+        {
+          "title": "شبکه و مسیریابی",
+          "detail": "آدرس‌دهی، زیرشبکه، ارسال بسته و الگوریتم‌های مسیریابی را با جدول و نمودار تمرین کن."
+        },
+        {
+          "title": "پیوند و امنیت",
+          "detail": "قاب، تشخیص خطا، دسترسی به رسانه و اصول امنیت شبکه را در جای درست معماری مرور کن."
+        }
+      ],
+      "commonMistakes": [
+        "استفاده از جدول‌های قدیمی و قراردادن شبکه در مواد مجموعهٔ ۱۲۷۷ سال ۱۴۰۶.",
+        "جابه‌جاگرفتن بیت و بایت یا نرخ ارسال و تأخیر در مسائل عددی.",
+        "حفظ نام پروتکل‌ها بدون توانایی توضیح ترتیب پیام‌ها و تغییر وضعیت دو سر ارتباط."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "شبکه‌های کامپیوتری در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40443",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "دیدن راهنمای ارشد IT",
+          "href": "/guides/master-information-technology-1406"
+        },
+        "resource": {
+          "label": "دیدن منابع شبکه",
+          "href": "/resources?subject=computer-networks"
+        }
+      }
+    },
+    "databases": {
+      "slug": "databases",
+      "quickAnswer": "پایگاه داده در بستهٔ تخصصی مجموعهٔ ۱۲۷۶ فناوری اطلاعات با ضریب ۴ قرار دارد و در ۱۲۷۷ و ۱۲۰۹ عنوان مستقل ندارد. مسیر را از مدل‌سازی و جبر رابطه‌ای شروع کن، سپس SQL، نرمال‌سازی و تراکنش را روی یک طرح واحد به هم وصل کن.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "مدل‌سازی داده",
+          "detail": "موجودیت، رابطه، کلید و قید را به طرح رابطه‌ای تبدیل کن و فرض‌های طراحی را صریح بنویس."
+        },
+        {
+          "title": "جبر و SQL",
+          "detail": "انتخاب، تصویر، پیوند و تقسیم را میان جبر رابطه‌ای و پرس‌وجوی SQL رفت‌وبرگشت بده."
+        },
+        {
+          "title": "وابستگی و نرمال‌سازی",
+          "detail": "بستار، کلید کاندید و تجزیه را از وابستگی‌های تابعی محاسبه کن، نه از شکل ظاهری جدول."
+        },
+        {
+          "title": "تراکنش و کارایی",
+          "detail": "ACID، زمان‌بندی، قفل، بازیابی و نمایه را با سناریوی چندتراکنشی تحلیل کن."
+        }
+      ],
+      "commonMistakes": [
+        "قرار دادن پایگاه داده در مواد مجموعهٔ ۱۲۷۷ بر پایهٔ ساختار سال‌های گذشته.",
+        "نادیده‌گرفتن منطق سه‌ارزشی NULL و تفاوت آن با رشتهٔ خالی یا صفر در SQL.",
+        "حفظ فرم‌های نرمال بدون محاسبهٔ وابستگی‌ها، کلیدها و ویژگی‌های تجزیه."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "طراحی پایگاه داده‌ها در Syllab",
+          "publisher": "Syllab",
+          "url": "https://syllab.ir/courses/40384",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "دیدن بستهٔ تخصصی ارشد IT",
+          "href": "/guides/master-information-technology-1406"
+        },
+        "resource": {
+          "label": "دیدن منابع پایگاه داده",
+          "href": "/resources?subject=databases"
+        }
+      }
+    },
+    "software-engineering": {
+      "slug": "software-engineering",
+      "quickAnswer": "مهندسی نرم‌افزار در سند بررسی‌شده، مادهٔ مستقل هیچ‌یک از سه آزمون ارشد ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ نیست. این هاب فقط برای دانش تکمیلی و توسعهٔ آینده نگه داشته می‌شود و نباید در برنامهٔ آزمونی ۱۴۰۶ جای یک درس رسمی بنشیند.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "نیازمندی",
+          "detail": "مسئله، ذی‌نفع، نیازمندی کارکردی و غیرکارکردی و معیار پذیرش را از هم تفکیک کن."
+        },
+        {
+          "title": "فرایند و مدل‌سازی",
+          "detail": "مدل‌های فرایند را بر اساس زمینهٔ پروژه مقایسه کن و تغییر نیازمندی را در چرخه ببین."
+        },
+        {
+          "title": "طراحی",
+          "detail": "مسئولیت اجزا، رابط‌ها، انسجام و وابستگی را پیش از انتخاب الگو یا معماری بررسی کن."
+        },
+        {
+          "title": "کیفیت و نگهداشت",
+          "detail": "سطوح آزمون، بازبینی، مدیریت پیکربندی و تحویل را به ریسک و قابلیت تغییر پیوند بده."
+        }
+      ],
+      "commonMistakes": [
+        "معرفی مهندسی نرم‌افزار به‌عنوان درس مستقل ارشد IT یا مهندسی کامپیوتر ۱۴۰۶.",
+        "یکسان‌گرفتن مهارت شغلی مهم با مادهٔ رسمی آزمون کتبی.",
+        "نسبت‌دادن اهمیت یا فراوانی آزمونی بدون دادهٔ رسمی و برچسب سال."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "برنامهٔ درسی مرجع کارشناسی مهندسی کامپیوتر",
+          "publisher": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات",
+          "url": "https://www.syllab.ir/_media/programs/bs-cse.pdf",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "بازگشت به مواد رسمی ارشد IT",
+          "href": "/guides/master-information-technology-1406"
+        },
+        "resource": {
+          "label": "بررسی منابع تکمیلی نرم‌افزار",
+          "href": "/resources?subject=software-engineering"
+        }
+      }
+    },
+    "it-management": {
+      "slug": "it-management",
+      "quickAnswer": "اصول و خدمات فناوری اطلاعات مادهٔ مستقل هیچ‌یک از سه آزمون ارشد این فاز نیست. این هاب محتوای تکمیلی است و هر کاربرد آزمونی آیندهٔ آن باید در مسیر دکتری IT، جدا از ارشد و پس از تطبیق با سند رسمی همان آزمون بیان شود.",
+      "reviewedAt": "۱۴۰۵/۰۶/۱۷",
+      "learningPath": [
+        {
+          "title": "خدمت و راهبری",
+          "detail": "خدمت، ارزش، ذی‌نفع، سطح خدمت، ریسک و سازوکار تصمیم‌گیری فناوری را تعریف و مرتبط کن."
+        },
+        {
+          "title": "فرایند و معماری",
+          "detail": "فرایند کسب‌وکار، معماری سازمانی و سامانه‌های سازمانی را با مرز مسئولیت هرکدام مقایسه کن."
+        },
+        {
+          "title": "خدمات دیجیتال",
+          "detail": "تجارت و آموزش الکترونیکی را از منظر بازیگران، جریان ارزش، داده و کنترل بررسی کن."
+        },
+        {
+          "title": "مطالعهٔ موردی",
+          "detail": "برای هر چارچوب، یک مسئلهٔ سازمانی کوچک بنویس و مشخص کن کدام مفهوم واقعاً به تصمیم کمک می‌کند."
+        }
+      ],
+      "commonMistakes": [
+        "افزودن این هاب به بستهٔ تخصصی ارشد IT ۱۴۰۶، با وجود نبود عنوان مستقل در سند ارشد.",
+        "مخلوط‌کردن مواد و ضرایب دکتری IT با مجموعهٔ ۱۲۷۶ ارشد.",
+        "حفظ نام چارچوب‌ها و مخفف‌ها بدون شناخت مسئله، دامنه و محدودیت کاربردشان."
+      ],
+      "sources": [
+        {
+          "kind": "official-notice",
+          "title": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون ورودی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "publisher": "سازمان سنجش آموزش کشور",
+          "url": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
+          "publishedAt": "۱۴۰۵/۰۴/۰۱",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        },
+        {
+          "kind": "academic-syllabus",
+          "title": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات",
+          "publisher": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات",
+          "url": "https://www.syllab.ir/_media/programs/grad-it.pdf",
+          "checkedAt": "۱۴۰۵/۰۶/۱۷"
+        }
+      ],
+      "ctas": {
+        "internal": {
+          "label": "بازگشت به راهنمای رسمی ارشد IT",
+          "href": "/guides/master-information-technology-1406"
+        },
+        "resource": {
+          "label": "بررسی منابع تکمیلی مدیریت IT",
+          "href": "/resources?subject=it-management"
+        }
+      }
+    }
+  }
+}

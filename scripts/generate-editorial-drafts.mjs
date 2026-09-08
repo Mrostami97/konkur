@@ -43,8 +43,14 @@ const sourceId = (source) => "editorial-source-" + createHash("sha256")
 const clamp = (value, max) => value.length <= max ? value : value.slice(0, max - 1).trim() + "…";
 const checkedAt = (value) => {
   const normalized = toAsciiDigits(value ?? "");
-  if (normalized.includes("15") && normalized.includes("1405")) return "2026-09-06T00:00:00.000Z";
-  return "2026-09-06T00:00:00.000Z";
+  const writtenDate = normalized.match(/(\d{1,2})\s+شهریور\s+1405/);
+  const numericDate = normalized.match(/^1405[/-]0?6[/-](\d{1,2})$/);
+  const day = Number(writtenDate?.[1] ?? numericDate?.[1]);
+  if (Number.isInteger(day) && day >= 1 && day <= 31) {
+    // 1 Shahrivar 1405 is 23 August 2026. Date.UTC safely rolls into September.
+    return new Date(Date.UTC(2026, 7, 22 + day)).toISOString();
+  }
+  throw new Error(`Unsupported editorial source review date: ${value}`);
 };
 const degrees = (degree) => degree === "هر دو" ? ["master", "phd"] : degree === "دکتری" ? ["phd"] : ["master"];
 

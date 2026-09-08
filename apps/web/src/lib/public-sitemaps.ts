@@ -1,4 +1,5 @@
 import { articles, editorialDateIso, guides, subjects } from "../content/editorial";
+import { phase11DateIso, phase11SubjectContent, type Phase11SubjectSlug } from "../content/phase11";
 import { apiGetPublic } from "./api";
 import { absoluteUrl } from "./seo";
 
@@ -116,7 +117,13 @@ export async function subjectSitemapEntries(): Promise<SitemapCollection> {
   const published = loaded ?? [];
   return { complete: loaded !== null, entries: uniqueEntries([
     { loc: absoluteUrl("/subjects") },
-    ...subjects.map((subject) => ({ loc: absoluteUrl(`/subjects/${subject.slug}`) })),
+    ...subjects.map((subject) => {
+      const phase11 = phase11SubjectContent[subject.slug as Phase11SubjectSlug];
+      return {
+        loc: absoluteUrl(`/subjects/${subject.slug}`),
+        lastmod: phase11 ? asIso(phase11DateIso(phase11.reviewedAt)) : undefined,
+      };
+    }),
     ...published.map((subject) => ({ loc: absoluteUrl(`/subjects/${subject.slug}`), lastmod: asIso(subject.updatedAt) })),
   ]) };
 }
