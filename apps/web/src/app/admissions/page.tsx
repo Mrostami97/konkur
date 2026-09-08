@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader, SectionHeader } from "../../components/ui";
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "راهنمای انتخاب‌رشتهٔ کنکور کامپیوتر",
+  description: "مسیر شفاف تخمین رتبه، مقایسهٔ دانشگاه‌ها و اولویت‌بندی انتخاب‌های ارشد و دکتری کامپیوتر.",
+  path: "/admissions",
+});
 
 export default function AdmissionsHubPage() {
   return (

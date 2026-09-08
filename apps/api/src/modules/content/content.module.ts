@@ -6,11 +6,25 @@ import { ContentService } from "./content.service";
 import { IngestionModule } from "../ingestion/ingestion.module";
 import { EditorialAdminController, ResourcesPublicController } from "./editorial.controller";
 import { EditorialService } from "./editorial.service";
+import {
+  ContentDiscoveryController,
+  ContributorsPublicController,
+  ReportCardsPublicController,
+} from "./content-discovery.controller";
+import { ContentDiscoveryService } from "./content-discovery.service";
 
 @Module({
   imports: [AuditModule, IdentityModule, IngestionModule],
-  controllers: [ArticlesPublicController, ArticlesAdminController, ResourcesPublicController, EditorialAdminController],
-  providers: [ContentService, EditorialService],
-  exports: [ContentService, EditorialService],
+  controllers: [
+    ArticlesPublicController,
+    ArticlesAdminController,
+    ResourcesPublicController,
+    EditorialAdminController,
+    ContentDiscoveryController,
+    ContributorsPublicController,
+    ReportCardsPublicController,
+  ],
+  providers: [ContentService, EditorialService, ContentDiscoveryService],
+  exports: [ContentService, EditorialService, ContentDiscoveryService],
 })
 export class ContentModule {}

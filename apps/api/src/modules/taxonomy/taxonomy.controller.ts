@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -19,6 +19,16 @@ export class TaxonomyPublicController {
   @Get("topics")
   listTopics(@Query("subjectCode") subjectCode?: string) {
     return this.taxonomy.listTopics(subjectCode);
+  }
+
+  @Get("subjects/:slug")
+  getSubject(@Param("slug") slug: string) {
+    return this.taxonomy.getSubjectBySlug(slug);
+  }
+
+  @Get("topics/:slug")
+  getTopic(@Param("slug") slug: string) {
+    return this.taxonomy.getTopicBySlug(slug);
   }
 }
 

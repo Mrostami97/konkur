@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:seo": "node test/phase10-seo.mjs"
   },
   "dependencies": {
     "katex": "^0.16.11",

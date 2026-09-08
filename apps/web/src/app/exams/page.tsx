@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { apiGetPublic } from "../../lib/api";
 import { StartExamButton } from "../../components/StartExamButton";
 import { EmptyState, PageHeader } from "../../components/ui";
 import { toPersianDigits } from "../../lib/format";
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "آزمون‌های آمادگی کنکور کامپیوتر",
+  description: "فهرست آزمون‌های منتشرشده برای سنجش آمادگی ارشد و دکتری کامپیوتر در کنکورصفریک.",
+  path: "/exams",
+});
 
 interface Exam {
   id: string;

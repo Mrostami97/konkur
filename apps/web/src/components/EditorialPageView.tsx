@@ -38,7 +38,7 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
       <nav className="breadcrumbs" aria-label="مسیر صفحه">
         {breadcrumbs.map((item, index) => (
           <span key={item.item}>
-            {index > 0 && <i>/</i>}
+            {index > 0 && <i aria-hidden="true">/</i>}
             {index === breadcrumbs.length - 1 ? item.name : <Link href={new URL(item.item).pathname}>{item.name}</Link>}
           </span>
         ))}
@@ -55,6 +55,8 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
             <h1>{page.title}</h1>
             <p className="editorial-deck">{page.description}</p>
             <div className="editorial-byline">
+              <span className="author-avatar" aria-hidden="true">ک</span>
+              <div><strong>نسخهٔ پایهٔ تحریریه</strong><span>انتساب نویسنده و بازبین پس از تأیید نسخهٔ canonical منتشر می‌شود.</span></div>
               <div className="editorial-dates"><span>آخرین بررسی {page.reviewedAt}</span><span>{toPersianDigits(page.readingMinutes)} دقیقه مطالعه</span></div>
             </div>
           </header>
@@ -92,13 +94,13 @@ export function EditorialPageView({ page, basePath }: { page: EditorialPage; bas
           </section>
         </article>
 
-        <aside className="editorial-aside">
+        <aside className="editorial-aside" aria-label="راهنمای صفحه">
           <div className="surface-card toc-card">
             <strong>در این صفحه</strong>
-            <nav>{page.sections.map((section, index) => <a key={section.title} href={`#section-${index + 1}`}>{section.title}</a>)}</nav>
+            <nav aria-label="فهرست مطالب">{page.sections.map((section, index) => <a key={section.title} href={`#section-${index + 1}`}>{section.title}</a>)}</nav>
           </div>
           <div className="surface-card telegram-card">
-            <span className="telegram-icon">↗</span>
+            <span className="telegram-icon" aria-hidden="true">↗</span>
             <strong>آپدیت‌های کنکور را از دست نده</strong>
             <p>خبرهای اصلی و تحلیل‌ها در کانال رسمی kunkur01 منتشر می‌شوند.</p>
             <a className="button button-primary" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>

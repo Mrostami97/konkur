@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { apiGetPublic } from "../../lib/api";
 import { EmptyState, PageHeader } from "../../components/ui";
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "دوره‌های کنکور ارشد و دکتری کامپیوتر",
+  description: "دوره‌های منتشرشدهٔ کنکورصفریک با مسیر یادگیری و دسترسی روشن برای داوطلبان کنکور کامپیوتر.",
+  path: "/courses",
+});
 
 interface Product {
   slug: string;

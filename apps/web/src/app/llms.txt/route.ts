@@ -1,7 +1,38 @@
 import { articles, guides, subjects } from "../../content/editorial";
+import { apiGetPublic } from "../../lib/api";
 import { absoluteUrl } from "../../lib/seo";
 
-export function GET() {
+type PublicArticle = { slug: string; title: string; summary: string; contentType?: string | null };
+type PublicCatalogItem = { slug: string; title: string; summary?: string | null; description?: string | null };
+
+async function safeList<T>(path: string): Promise<{ items: T[]; complete: boolean }> {
+  try {
+    const value = await apiGetPublic<T[]>(path);
+    return { items: Array.isArray(value) ? value : [], complete: Array.isArray(value) };
+  } catch {
+    return { items: [], complete: false };
+  }
+}
+
+function uniqueBySlug<T extends { slug: string }>(items: T[]) {
+  return [...new Map(items.map((item) => [item.slug, item])).values()];
+}
+
+export async function GET() {
+  const [articleResult, subjectResult, topicResult, resourceResult] = await Promise.all([
+    safeList<PublicArticle>("/articles"),
+    safeList<PublicCatalogItem>("/subjects"),
+    safeList<PublicCatalogItem>("/topics"),
+    safeList<PublicCatalogItem>("/resources"),
+  ]);
+  const publishedSlugs = new Set(articleResult.items.map((item) => item.slug));
+  const canonicalGuides = [...articleResult.items.filter((item) => item.contentType === "GUIDE")];
+  const canonicalArticles = [...articleResult.items.filter((item) => item.contentType !== "GUIDE")];
+  const canonicalSubjects = uniqueBySlug([
+    ...subjectResult.items,
+    ...subjects.filter((item) => !subjectResult.items.some((published) => published.slug === item.slug)).map((item) => ({ slug: item.slug, title: item.title, description: item.status1406 })),
+  ]);
+  const complete = [articleResult, subjectResult, topicResult, resourceResult].every((result) => result.complete);
   const body = [
     "# kunkur01",
     "",
@@ -10,18 +41,34 @@ export function GET() {
     "اطلاعات زمان‌حساس با نویسنده، بازبین، تاریخ آخرین بررسی و منابع نمایش داده می‌شود. برای تاریخ و مواد آزمون، آخرین دفترچه و اصلاحیه سازمان سنجش ملاک نهایی است.",
     "",
     "## راهنماهای ۱۴۰۶",
-    ...guides.map((item) => `- [${item.title}](${absoluteUrl(`/guides/${item.slug}`)}): ${item.description}`),
+    ...guides.filter((item) => !publishedSlugs.has(item.slug)).map((item) => `- [${item.title}](${absoluteUrl(`/guides/${item.slug}`)}): ${item.description}`),
+    ...canonicalGuides.map((item) => `- [${item.title}](${absoluteUrl(`/guides/${item.slug}`)}): ${item.summary}`),
     "",
     "## درس‌ها",
-    ...subjects.map((item) => `- [${item.title}](${absoluteUrl(`/subjects/${item.slug}`)}): ${item.status1406}`),
+    ...canonicalSubjects.map((item) => `- [${item.title}](${absoluteUrl(`/subjects/${item.slug}`)}): ${item.description ?? "صفحهٔ درس و محتوای مرتبط"}`),
+    "",
+    "## مباحث منتشرشده",
+    ...uniqueBySlug(topicResult.items).map((item) => `- [${item.title}](${absoluteUrl(`/topics/${item.slug}`)}): ${item.description ?? "مبحث و مسیرهای مرتبط"}`),
     "",
     "## مقاله‌های منتخب",
-    ...articles.map((item) => `- [${item.title}](${absoluteUrl(`/articles/${item.slug}`)}): ${item.description}`),
+    ...articles.filter((item) => !publishedSlugs.has(item.slug)).map((item) => `- [${item.title}](${absoluteUrl(`/articles/${item.slug}`)}): ${item.description}`),
+    ...canonicalArticles.map((item) => `- [${item.title}](${absoluteUrl(`/articles/${item.slug}`)}): ${item.summary}`),
+    "",
+    "## منابع آموزشی منتشرشده",
+    ...uniqueBySlug(resourceResult.items).map((item) => `- [${item.title}](${absoluteUrl(`/resources/${item.slug}`)}): ${item.summary ?? item.description ?? "منبع آموزشی"}`),
     "",
     "## سیاست‌ها",
     `- [روش تولید محتوا](${absoluteUrl("/editorial-policy")})`,
     `- [سیاست اصلاح](${absoluteUrl("/corrections")})`,
+    `- [دربارهٔ محمد رستمی و تحریریه](${absoluteUrl("/about")})`,
+    `- [مستندات آموزشی و نتایج](${absoluteUrl("/evidence")})`,
+    `- [کارنامه‌های دارای رضایت انتشار](${absoluteUrl("/report-cards")})`,
+    `- [جست‌وجوی محتوای سایت](${absoluteUrl("/search")})`,
     `- [RSS](${absoluteUrl("/rss.xml")})`,
+    `- [نقشهٔ سایت](${absoluteUrl("/sitemap.xml")})`,
+    "",
+    "## استفاده و انتساب",
+    "برای نقل واقعیت‌های زمان‌حساس، تاریخ آخرین بررسی و منبع همان صفحه را نیز ذکر کنید. محتوای عمومی برای خواندن و ارجاع در دسترس است؛ بازنشر کامل تابع سیاست منابع و کپی‌رایت سایت است.",
   ].join("\n");
-  return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } });
+  return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": complete ? "public, s-maxage=3600, stale-while-revalidate=86400" : "no-store" } });
 }

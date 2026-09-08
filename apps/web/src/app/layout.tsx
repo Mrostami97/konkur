@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   authors: [{ name: "kunkur01" }],
   creator: "kunkur01",
   publisher: "kunkur01",
-  alternates: { canonical: "/" },
-  openGraph: { type: "website", locale: "fa_IR", siteName: SITE_NAME, title: "کنکورصفریک", description: SITE_DESCRIPTION, url: "/" },
+  openGraph: { type: "website", locale: "fa_IR", siteName: SITE_NAME, title: "کنکورصفریک", description: SITE_DESCRIPTION, url: "/", images: [{ url: "/brand/konkurcom-logo.png", width: 600, height: 600, alt: SITE_NAME }] },
+  twitter: { card: "summary_large_image", title: "کنکورصفریک", description: SITE_DESCRIPTION, images: ["/brand/konkurcom-logo.png"] },
   manifest: "/manifest.json",
 };
 
