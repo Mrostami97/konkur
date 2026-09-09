@@ -11,7 +11,7 @@ export const metadata: Metadata = pageMetadata({
   path: "/evidence",
 });
 
-const thesisUrl = "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B2%D8%A7%DB%8C%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";
+const thesisUrl = "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";
 
 function EvidenceCard({ item }: { item: EvidenceDocument }) {
   return (
@@ -21,7 +21,7 @@ function EvidenceCard({ item }: { item: EvidenceDocument }) {
       <p><strong>{item.subject}</strong></p>
       <p>{item.description}</p>
       <strong>{item.metric}</strong>
-      <div className="article-card-footer"><span>مستند ثبت‌شده</span><a className="text-link" href={item.telegramUrl} target="_blank" rel="noreferrer">مشاهده مستند اصلی ↗</a></div>
+      <div className="article-card-footer"><span>ادعای ثبت‌شده در آرشیو</span><a className="text-link" href={item.telegramUrl} target="_blank" rel="noreferrer">مشاهده مستند اصلی ↗</a></div>
     </article>
   );
 }
@@ -29,11 +29,19 @@ function EvidenceCard({ item }: { item: EvidenceDocument }) {
 export default function EvidencePage() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
+    "@type": "CollectionPage",
     name: "نتایج دانشجویان، مستندات آموزشی و سابقه طراحی سؤال",
     inLanguage: "fa-IR",
-    about: { "@type": "Person", name: "محمد رستمی", sameAs: ["https://t.me/konkurcom", thesisUrl] },
-    mainEntity: { "@type": "Dataset", name: "مستندات آموزشی و نتایج ثبت‌شده kunkur01", description: "نمونه‌های مستند از نتایج، تطبیق سؤال و محتوای آموزشی." },
+    about: {
+      "@type": "Person",
+      name: "محمد رستمی",
+      subjectOf: { "@type": "CreativeWork", name: "پایان‌نامه در کتابخانهٔ دانشگاه صنعتی شریف", url: thesisUrl },
+    },
+    mainEntity: {
+      "@type": "ItemList",
+      name: "فهرست ادعاها و مستندات آموزشی kunkur01",
+      description: "نمونه‌های خوداظهاری از نتایج، تطبیق سؤال و محتوای آموزشی همراه با پیوند سند اصلی و محدودیت راستی‌آزمایی.",
+    },
   };
 
   return (
@@ -60,6 +68,10 @@ export default function EvidencePage() {
         <SectionHeader title="آمارهای شاخص" description="نمونه‌هایی از نتایج ثبت‌شده در مستندات آموزشی." />
         <div className="stats-grid">{evidenceStats.map((stat) => <StatCard key={stat.label} {...stat} />)}</div>
         <div className="official-disclaimer"><strong>یادآوری</strong><p>این موارد نمونه‌هایی از نتایج ثبت‌شده هستند و تضمین نتیجهٔ مشابه برای همهٔ داوطلبان نیستند.</p></div>
+        <div className="official-disclaimer">
+          <strong>شفافیت منبع و تعارض منافع</strong>
+          <p>این نمونه‌ها از آرشیوی متعلق به مدرس و مالک kunkur01 آمده‌اند، تأیید مستقل محسوب نمی‌شوند و ممکن است در معرفی آموزش او به کار روند. برای داوری، سند اصلی و محدودیت اندازهٔ نمونه را بررسی کنید. نام اشخاص بدون ثبت رضایت صریح در سایت بازنشر نمی‌شود.</p>
+        </div>
       </section>
 
       <section aria-label="نتایج شاخص دانشجویان">
@@ -70,9 +82,8 @@ export default function EvidencePage() {
       <section aria-label="رتبه‌ها و مسیرهای موفقیت">
         <SectionHeader title="رتبه‌ها و مسیرهای موفقیت" description="نمونه‌های رتبه و کارنامه در مستندات منتشرشده." />
         <div className="content-grid-wide">
-          <div className="surface-card"><span className="feature-icon">۱</span><h3>رتبهٔ تک‌رقمی IT</h3><p>نمونهٔ رتبهٔ شاخص در مسیر فناوری اطلاعات.</p><a className="text-link" href="https://t.me/Konkur_answer/4014" target="_blank" rel="noreferrer">مشاهده کارنامه ↗</a></div>
-          <div className="surface-card"><span className="feature-icon">۱۷</span><h3>رتبهٔ ۱۷ نرم‌افزار</h3><p>در کنار نتیجهٔ ۱۶ پاسخ صحیح از ۱۹ تست دکتری.</p><a className="text-link" href="https://t.me/Konkur_answer/4753" target="_blank" rel="noreferrer">مشاهده مستند ↗</a></div>
-          <div className="surface-card"><span className="feature-icon">۲۶</span><h3>رتبهٔ ۲۶ هوش</h3><p>نمونهٔ رتبهٔ منتشرشده در همان مستند نتیجهٔ دکتری.</p><a className="text-link" href="https://t.me/Konkur_answer/4753" target="_blank" rel="noreferrer">مشاهده مستند ↗</a></div>
+          <div className="surface-card"><span className="feature-icon">۱۷</span><h3>رتبهٔ ۱۷ نرم‌افزار</h3><p>ادعای درج‌شده در پست آرشیوی، در کنار نتیجهٔ ۱۶ پاسخ صحیح از ۱۹ تست دکتری؛ بدون راستی‌آزمایی مستقل.</p><a className="text-link" href="https://t.me/Konkur_answer/4753" target="_blank" rel="noreferrer">مشاهده مستند ↗</a></div>
+          <div className="surface-card"><span className="feature-icon">۲۶</span><h3>رتبهٔ ۲۶ هوش</h3><p>ادعای درج‌شده در همان پست آرشیوی نتیجهٔ دکتری؛ بدون راستی‌آزمایی مستقل.</p><a className="text-link" href="https://t.me/Konkur_answer/4753" target="_blank" rel="noreferrer">مشاهده مستند ↗</a></div>
         </div>
       </section>
 

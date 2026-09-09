@@ -8,13 +8,15 @@
       "canonicalUrl": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
       "sourceTier": "PRIMARY_OFFICIAL",
       "checkedAt": "2026-09-08T00:00:00.000Z",
+      "publishedAt": "2026-06-22T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
       "mayLink": true,
       "mayAdapt": false,
       "commercialUseAllowed": false,
       "attributionText": "سازمان سنجش آموزش کشور — اطلاعیه و جدول مجموعه‌های امتحانی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
       "metadata": {
-        "importedFrom": "apps/web/src/content/editorial.ts"
+        "importedFrom": "apps/web/src/content/editorial.ts",
+        "publishedAtText": "۱ تیر ۱۴۰۵"
       }
     },
     {
@@ -65,7 +67,8 @@
       "commercialUseAllowed": false,
       "attributionText": "Psychological Science in the Public Interest — Improving Students’ Learning With Effective Learning Techniques",
       "metadata": {
-        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "publishedAtText": "۲۰۱۳"
       }
     },
     {
@@ -82,7 +85,8 @@
       "commercialUseAllowed": false,
       "attributionText": "Science — Retrieval Practice Produces More Learning than Elaborative Studying",
       "metadata": {
-        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "publishedAtText": "۲۰۱۱"
       }
     },
     {
@@ -99,7 +103,8 @@
       "commercialUseAllowed": false,
       "attributionText": "Psychological Bulletin — Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
       "metadata": {
-        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "publishedAtText": "۲۰۰۶"
       }
     },
     {
@@ -110,13 +115,16 @@
       "canonicalUrl": "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13669/Staging",
       "sourceTier": "PRIMARY_OFFICIAL",
       "checkedAt": "2026-09-08T00:00:00.000Z",
+      "publishedAt": "2026-06-22T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
       "mayLink": true,
       "mayAdapt": false,
       "commercialUseAllowed": false,
       "attributionText": "سازمان سنجش آموزش کشور — اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
       "metadata": {
-        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "supportedClaim": "مواد امتحانی و ضرایب اعلام‌شده برای مجموعه‌های ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ در آزمون کارشناسی ارشد ۱۴۰۶.",
+        "publishedAtText": "۱ تیر ۱۴۰۵"
       }
     },
     {
@@ -133,7 +141,8 @@
       "commercialUseAllowed": false,
       "attributionText": "Instructional Science — The Shuffling of Mathematics Problems Improves Learning",
       "metadata": {
-        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "publishedAtText": "۲۰۰۷"
       }
     },
     {
@@ -167,7 +176,8 @@
       "commercialUseAllowed": false,
       "attributionText": "سازمان سنجش آموزش کشور — درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
       "metadata": {
-        "importedFrom": "apps/web/src/content/phase12-corpus.json"
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "supportedClaim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند."
       }
     },
     {
@@ -185,6 +195,150 @@
       "attributionText": "وزارت علوم، تحقیقات و فناوری — اعلام زمان‌بندی ثبت‌نام و برگزاری آزمون‌های دکتری و ارشد ۱۴۰۶",
       "metadata": {
         "importedFrom": "apps/web/src/content/phase12-corpus.json"
+      }
+    },
+    {
+      "externalId": "editorial-source-d0ab23cf888abba73267",
+      "kind": "WEB_PAGE",
+      "title": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر",
+      "publisher": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات",
+      "canonicalUrl": "https://www.syllab.ir/_media/programs/grad-cse.pdf",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات — برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "گرایش‌ها، اهداف و حوزه‌های درسی و پژوهشی برنامهٔ مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر."
+      }
+    },
+    {
+      "externalId": "editorial-source-93b99bd69524dcf273b0",
+      "kind": "WEB_PAGE",
+      "title": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات",
+      "publisher": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات",
+      "canonicalUrl": "https://www.syllab.ir/_media/programs/grad-it.pdf",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "کارگروه تخصصی مهندسی کامپیوتر و فناوری اطلاعات — برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "گرایش‌ها، اهداف و خانواده‌های درسی فنی و سازمانی برنامهٔ مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات."
+      }
+    },
+    {
+      "externalId": "editorial-source-6631b443fa6a32255645",
+      "kind": "WEB_PAGE",
+      "title": "مسایل بهینه‌سازی شبکه روی منابع افرازشده",
+      "publisher": "کتابخانهٔ دانشگاه صنعتی شریف",
+      "canonicalUrl": "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true",
+      "sourceTier": "SECONDARY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "کتابخانهٔ دانشگاه صنعتی شریف — مسایل بهینه‌سازی شبکه روی منابع افرازشده",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "وجود و عنوان رکورد پایان‌نامهٔ «مسایل بهینه‌سازی شبکه روی منابع افرازشده» در کتابخانهٔ دانشگاه صنعتی شریف."
+      }
+    },
+    {
+      "externalId": "editorial-source-0bd9d17f6b6977a18bdc",
+      "kind": "FIRST_PARTY_CHANNEL",
+      "title": "مستند نتیجهٔ ۱۰۰٪ نظریه زبان‌ها و ماشین‌ها",
+      "publisher": "آرشیو مستندات آموزشی محمد رستمی",
+      "canonicalUrl": "https://t.me/Konkur_answer/4666",
+      "sourceTier": "FIRST_PARTY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "آرشیو مستندات آموزشی محمد رستمی — مستند نتیجهٔ ۱۰۰٪ نظریه زبان‌ها و ماشین‌ها",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "پست پیوندشده نتیجهٔ ۱۰۰٪ نظریه زبان‌ها و ماشین‌ها در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش مستقل تأیید نشده است."
+      }
+    },
+    {
+      "externalId": "editorial-source-f526984e864803b3d027",
+      "kind": "FIRST_PARTY_CHANNEL",
+      "title": "مستند ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر",
+      "publisher": "آرشیو مستندات آموزشی محمد رستمی",
+      "canonicalUrl": "https://t.me/Konkur_answer/3609",
+      "sourceTier": "FIRST_PARTY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "آرشیو مستندات آموزشی محمد رستمی — مستند ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "پست پیوندشده ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر ساختمان داده و طراحی الگوریتم در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش مستقل تأیید نشده است."
+      }
+    },
+    {
+      "externalId": "editorial-source-72aac1c49c7ed427c66b",
+      "kind": "FIRST_PARTY_CHANNEL",
+      "title": "مستند نمونهٔ ۹ تست صحیح و تطبیق آموزشی",
+      "publisher": "آرشیو مستندات آموزشی محمد رستمی",
+      "canonicalUrl": "https://t.me/Konkur_answer/4767",
+      "sourceTier": "FIRST_PARTY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "آرشیو مستندات آموزشی محمد رستمی — مستند نمونهٔ ۹ تست صحیح و تطبیق آموزشی",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "پست پیوندشده یک نمونهٔ ۹ تست صحیح و ادعای تطبیق ۹ سؤال از ۱۲ سؤال با مطالب تدریس‌شده در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش‌ها مستقل تأیید نشده‌اند."
+      }
+    },
+    {
+      "externalId": "editorial-source-1e18761aca8ace6ff458",
+      "kind": "FIRST_PARTY_CHANNEL",
+      "title": "مستند نتیجهٔ دکتری و رتبه‌های ثبت‌شده",
+      "publisher": "آرشیو مستندات آموزشی محمد رستمی",
+      "canonicalUrl": "https://t.me/Konkur_answer/4753",
+      "sourceTier": "FIRST_PARTY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "آرشیو مستندات آموزشی محمد رستمی — مستند نتیجهٔ دکتری و رتبه‌های ثبت‌شده",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "پست پیوندشده ۱۶ پاسخ صحیح از ۱۹ تست و رتبه‌های ۱۷ نرم‌افزار و ۲۶ هوش در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش مستقل تأیید نشده است."
+      }
+    },
+    {
+      "externalId": "editorial-source-d619754ba9283d3271e1",
+      "kind": "FIRST_PARTY_CHANNEL",
+      "title": "مستند سابقهٔ طراحی سؤال سال ۱۴۰۱",
+      "publisher": "آرشیو مستندات آموزشی محمد رستمی",
+      "canonicalUrl": "https://t.me/Konkur_answer/3922",
+      "sourceTier": "FIRST_PARTY",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "آرشیو مستندات آموزشی محمد رستمی — مستند سابقهٔ طراحی سؤال سال ۱۴۰۱",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase13-corpus.json",
+        "supportedClaim": "پست پیوندشده ادعای نویسنده دربارهٔ طرح یک سؤال در سال ۱۴۰۱ و مطرح‌شدن آن در آزمون را ثبت می‌کند؛ این ادعا مستقل تأیید نشده است."
       }
     }
   ],
@@ -3143,6 +3297,856 @@
     },
     {
       "schema_version": "article.v2",
+      "external_id": "static-editorial-computer-it-cs-comparison",
+      "content_type": "guide",
+      "title": "مقایسهٔ مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر برای ارشد",
+      "slug": "computer-it-cs-comparison",
+      "summary": "مقایسهٔ سه مجموعه بر اساس مواد رسمی ۱۴۰۶، جنس درس‌ها و پرسش‌هایی که باید پیش از انتخاب مسیر از خودت بپرسی.",
+      "quick_answer": "اگر هنوز بین سه مسیر مرددی، از اسم گرایش شروع نکن. مواد رسمی، نسبت خودت با ریاضی و سیستم، و نوع مسئله‌ای که دوست داری را کنار هم بگذار؛ سپس دانشگاه‌ها و گرایش‌های واقعیِ دفترچهٔ انتخاب‌رشته را جدا بررسی کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تفاوت در یک نگاه"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "مسیر",
+            "نشانهٔ محتوایی",
+            "نکتهٔ آزمون ۱۴۰۶"
+          ],
+          "rows": [
+            [
+              "مهندسی و علم کامپیوتر ۱۲۷۷",
+              "طیف گسترده از برنامه‌سازی تا معماری و هوش",
+              "بستهٔ تخصصی یکپارچه با ضریب ۴"
+            ],
+            [
+              "فناوری اطلاعات ۱۲۷۶",
+              "شبکه، پایگاه داده و سامانه‌های اطلاعاتی",
+              "شبکه و طراحی پایگاه داده در تخصصی حضور دارند"
+            ],
+            [
+              "علوم کامپیوتر ۱۲۰۹",
+              "ریاضی، الگوریتم و مبانی نظری",
+              "پنج گروه درسی و دو کد ضریب"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه سؤال شخصی"
+        },
+        {
+          "type": "text",
+          "text": "• از کار با سیستم و پیاده‌سازی بیشتر لذت می‌برم یا از مدل‌سازی و اثبات؟\n• پایهٔ ریاضی من چقدر است و برای ساختنش چه زمانی دارم؟\n• دانشگاه و گرایش مقصد من واقعاً زیر کدام مجموعه و کد ضریب قرار می‌گیرد؟"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "انتخاب را قطعی اما قابل بازبینی کن"
+        },
+        {
+          "type": "text",
+          "text": "یک مسیر اصلی انتخاب و دلیلش را ثبت کن. اگر سند رسمی تازه یا دادهٔ واقعی از اجرای برنامه دلیل را عوض کرد، تصمیم را بازبینی کن؛ تغییر روزانه بر اساس نظر دیگران فقط هزینهٔ جابه‌جایی می‌سازد."
+        },
+        {
+          "type": "quote",
+          "text": "نام رشته به‌تنهایی مسیر شغلی را تضمین نمی‌کند؛ درس‌های انتخابی، پروژه، پژوهش و تجربهٔ عملی تفاوت بزرگی می‌سازند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "انتخاب مسیر"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مقایسهٔ مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر برای ارشد",
+        "description": "مقایسهٔ سه مجموعه بر اساس مواد رسمی ۱۴۰۶، جنس درس‌ها و پرسش‌هایی که باید پیش از انتخاب مسیر از خودت بپرسی."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-08T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "claim": "مواد امتحانی و ضرایب اعلام‌شده برای مجموعه‌های ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ در آزمون کارشناسی ارشد ۱۴۰۶.",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-d0ab23cf888abba73267",
+          "relation": "SUPPORTS",
+          "locator": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر",
+          "claim": "گرایش‌ها، اهداف و حوزه‌های درسی و پژوهشی برنامهٔ مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر.",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-93b99bd69524dcf273b0",
+          "relation": "SUPPORTS",
+          "locator": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات",
+          "claim": "گرایش‌ها، اهداف و خانواده‌های درسی فنی و سازمانی برنامهٔ مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات.",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:computer-it-cs-comparison"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-computer-engineering-master-specializations",
+      "content_type": "guide",
+      "title": "گرایش‌های ارشد مهندسی کامپیوتر را چگونه مقایسه کنیم؟",
+      "slug": "computer-engineering-master-specializations",
+      "summary": "چارچوب مقایسهٔ نرم‌افزار، هوش، معماری و مسیرهای نزدیک بر اساس برنامهٔ درسی، استاد، آزمایشگاه و مسئلهٔ مورد علاقه.",
+      "quick_answer": "گرایش را با عنوانش انتخاب نکن. فهرست درس‌های اجباری و انتخابی، استادهای فعال، آزمایشگاه‌ها، پایان‌نامه‌های اخیر و امکان تغییر مسیر را برای هر دانشگاه کنار هم ببین؛ یک نام یکسان می‌تواند در دو دانشگاه تجربهٔ متفاوتی بسازد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چهار محور مقایسه"
+        },
+        {
+          "type": "text",
+          "text": "• هستهٔ درسی: چه درس‌هایی واقعاً باید گذرانده شوند؟\n• مسئله: پژوهش و پروژه‌ها بیشتر نظری، داده‌محور یا سیستمی‌اند؟\n• آدم‌ها: کدام استاد و گروه در دو سال اخیر فعال بوده‌اند؟\n• انعطاف: چند درس را می‌توان از گرایش‌های دیگر برداشت؟"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "برچسب‌ها چه چیزی را پنهان می‌کنند؟"
+        },
+        {
+          "type": "text",
+          "text": "نرم‌افزار می‌تواند از روش‌های صوری تا سامانه‌های مقیاس‌پذیر را پوشش دهد؛ هوش از مبانی یادگیری تا کاربردهای داده گسترده است؛ معماری نیز از طراحی پردازنده تا سامانه‌های نهفته امتداد دارد. برای تصمیم، نام درس و پروژه مهم‌تر از برداشت عمومی از عنوان است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "برگهٔ تصمیم"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "معیار",
+            "مدرک لازم",
+            "امتیاز شخصی"
+          ],
+          "rows": [
+            [
+              "درس‌های جذاب",
+              "چارت رسمی و سرفصل",
+              "از ۱ تا ۵"
+            ],
+            [
+              "استاد هم‌راستا",
+              "صفحهٔ دانشگاه و آثار اخیر",
+              "از ۱ تا ۵"
+            ],
+            [
+              "امکان پروژه",
+              "آزمایشگاه و پایان‌نامه‌های اخیر",
+              "از ۱ تا ۵"
+            ],
+            [
+              "ریسک انتخاب",
+              "ظرفیت و گزینه‌های جایگزین",
+              "کم/متوسط/زیاد"
+            ]
+          ]
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "tags": [
+          "شناخت گرایش"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "گرایش‌های ارشد مهندسی کامپیوتر را چگونه مقایسه کنیم؟",
+        "description": "چارچوب مقایسهٔ نرم‌افزار، هوش، معماری و مسیرهای نزدیک بر اساس برنامهٔ درسی، استاد، آزمایشگاه و مسئلهٔ مورد علاقه."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-d0ab23cf888abba73267",
+          "relation": "SUPPORTS",
+          "locator": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر",
+          "claim": "گرایش‌ها، اهداف و حوزه‌های درسی و پژوهشی برنامهٔ مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر.",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند.",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:computer-engineering-master-specializations"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-information-technology-specializations-careers",
+      "content_type": "guide",
+      "title": "گرایش‌ها و مسیرهای حرفه‌ای فناوری اطلاعات؛ از عنوان تا مهارت",
+      "slug": "information-technology-specializations-careers",
+      "summary": "راهنمای خواندن گرایش‌های IT از روی درس و پروژه، بدون وعدهٔ شغلی یا یکی‌گرفتن مدیریت فناوری با شبکه و داده.",
+      "quick_answer": "برای IT دو لایه را جدا ببین: لایهٔ فنی مانند شبکه، داده و امنیت؛ و لایهٔ سازمانی مانند خدمات، تجارت و تحول دیجیتال. گرایش مناسب جایی است که نسبت این دو با علاقه و سابقهٔ تو هم‌خوان باشد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه خانوادهٔ مسئله"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "خانواده",
+            "پرسش نمونه",
+            "شاهد دانشگاهی"
+          ],
+          "rows": [
+            [
+              "زیرساخت و امنیت",
+              "سامانه چگونه امن و پایدار می‌ماند؟",
+              "درس شبکه، امنیت و رایانش"
+            ],
+            [
+              "داده و اطلاعات",
+              "داده چگونه ذخیره، بازیابی و تحلیل می‌شود؟",
+              "پایگاه داده، بازیابی و داده‌کاوی"
+            ],
+            [
+              "خدمات و سازمان",
+              "فناوری چگونه یک فرایند را بهتر می‌کند؟",
+              "خدمات IT، تجارت و معماری سازمانی"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر حرفه‌ای را از درس استنتاج نکن"
+        },
+        {
+          "type": "text",
+          "text": "یک درس می‌تواند چند کاربرد حرفه‌ای داشته باشد و یک شغل نیز ترکیبی از چند درس است. برای ارزیابی، شرح پروژه‌ها و مهارت ابزار را کنار برنامهٔ دانشگاه قرار بده؛ مدرک به‌تنهایی تعهد استخدامی نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آزمایش کم‌هزینه پیش از انتخاب"
+        },
+        {
+          "type": "text",
+          "text": "• یک پروژهٔ کوچک شبکه یا داده انجام بده.\n• یک مطالعهٔ موردی خدمت دیجیتال را تحلیل کن.\n• پس از تجربه، بنویس از کدام نوع مسئله انرژی گرفتی و کجا فقط نتیجه جذاب بود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "tags": [
+          "شناخت گرایش"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "computer-networks",
+          "databases"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "گرایش‌ها و مسیرهای حرفه‌ای فناوری اطلاعات؛ از عنوان تا مهارت",
+        "description": "راهنمای خواندن گرایش‌های IT از روی درس و پروژه، بدون وعدهٔ شغلی یا یکی‌گرفتن مدیریت فناوری با شبکه و داده."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-93b99bd69524dcf273b0",
+          "relation": "SUPPORTS",
+          "locator": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات",
+          "claim": "گرایش‌ها، اهداف و خانواده‌های درسی فنی و سازمانی برنامهٔ مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات.",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "claim": "مواد امتحانی و ضرایب اعلام‌شده برای مجموعه‌های ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ در آزمون کارشناسی ارشد ۱۴۰۶.",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:information-technology-specializations-careers"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-computer-science-specializations-research",
+      "content_type": "guide",
+      "title": "گرایش‌ها و مسیر پژوهشی علوم کامپیوتر؛ تصمیم بر اساس نوع مسئله",
+      "slug": "computer-science-specializations-research",
+      "summary": "چارچوب شناخت مسیرهای نظری، الگوریتمی و محاسباتی علوم کامپیوتر و سنجش آمادگی ریاضی پیش از انتخاب.",
+      "quick_answer": "علوم کامپیوتر فقط «برنامه‌نویسی نظری» نیست. نوع سؤال پژوهشی، میزان کار با اثبات و مدل ریاضی، و ابزار محاسباتی هر گروه را بررسی کن؛ سپس آن را با پایه و کنجکاوی واقعی خودت تطبیق بده.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "طیف مسئله‌ها"
+        },
+        {
+          "type": "text",
+          "text": "• نظریهٔ محاسبه و منطق: مرز محاسبه‌پذیری و ساختارهای صوری\n• الگوریتم و بهینه‌سازی: طراحی روش، اثبات و تحلیل پیچیدگی\n• محاسبات علمی و داده: مدل عددی، احتمال و پیاده‌سازی محاسباتی"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آمادگی را چگونه بسنجیم؟"
+        },
+        {
+          "type": "text",
+          "text": "سه نمونهٔ واقعی بردار: یک اثبات کوتاه، یک مسئلهٔ طراحی الگوریتم و یک تمرین جبر خطی یا احتمال. دشواری طبیعی است؛ مهم این است که آیا فرایند کندوکاو برایت قابل تحمل و جذاب است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "از نام گرایش تا گروه پژوهشی"
+        },
+        {
+          "type": "text",
+          "text": "• صفحهٔ اعضای هیئت علمی را با تاریخ آخرین فعالیت بخوان.\n• عنوان پایان‌نامه‌های اخیر را دسته‌بندی کن.\n• درس‌های قابل ارائه در چند نیم‌سال گذشته را بررسی کن.\n• اگر داده کافی نیست، عدم قطعیت را در تصمیم نگه دار."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "شناخت گرایش"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [
+          "algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "گرایش‌ها و مسیر پژوهشی علوم کامپیوتر؛ تصمیم بر اساس نوع مسئله",
+        "description": "چارچوب شناخت مسیرهای نظری، الگوریتمی و محاسباتی علوم کامپیوتر و سنجش آمادگی ریاضی پیش از انتخاب."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-45a51ba313803cf5fb76",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه معرفی مجموعه‌های امتحانی آزمون کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "claim": "مواد امتحانی و ضرایب اعلام‌شده برای مجموعه‌های ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ در آزمون کارشناسی ارشد ۱۴۰۶.",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-d0ab23cf888abba73267",
+          "relation": "SUPPORTS",
+          "locator": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر",
+          "claim": "گرایش‌ها، اهداف و حوزه‌های درسی و پژوهشی برنامهٔ مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر.",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-6631b443fa6a32255645",
+          "relation": "SUPPORTS",
+          "locator": "مسایل بهینه‌سازی شبکه روی منابع افرازشده",
+          "claim": "وجود و عنوان رکورد پایان‌نامهٔ «مسایل بهینه‌سازی شبکه روی منابع افرازشده» در کتابخانهٔ دانشگاه صنعتی شریف.",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:computer-science-specializations-research"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-how-to-read-master-scorecard",
+      "content_type": "guide",
+      "title": "کارنامهٔ کنکور ارشد را چگونه درست بخوانیم؟",
+      "slug": "how-to-read-master-scorecard",
+      "summary": "تفکیک درصد خام، نمره کل، رتبه، سهمیه و مجازبودن و جلوگیری از مقایسهٔ دو کارنامه با زمینهٔ متفاوت.",
+      "quick_answer": "این پیش‌نویس یک چک‌لیست تحریریه است، نه تفسیر رسمی کارنامه. هیچ عدد را جدا تفسیر نکن و نام و معنای هر فیلد را با کارنامه و راهنمای رسمی همان سال تطبیق بده.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پنج لایهٔ کارنامه"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "لایه",
+            "سؤال درست"
+          ],
+          "rows": [
+            [
+              "هویت آزمون",
+              "سال، مجموعه و کد ضریب چیست؟"
+            ],
+            [
+              "عملکرد درس",
+              "درصد از چند پاسخ درست/غلط ساخته شده؟"
+            ],
+            [
+              "نمره و رتبه",
+              "در کدام سهمیه و کدام کد گزارش شده؟"
+            ],
+            [
+              "مجازبودن",
+              "برای کدام دوره‌ها و مسیرها مجاز است؟"
+            ],
+            [
+              "انتخاب",
+              "این رتبه با کدام ترجیح و ظرفیت سنجیده می‌شود؟"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مقایسهٔ سالم دو کارنامه"
+        },
+        {
+          "type": "text",
+          "text": "• سال و ساختار آزمون یکسان باشد.\n• سهمیه و کد ضریب مشخص باشد.\n• نمونهٔ رتبه را به تضمین قبولی تبدیل نکن.\n• کارنامهٔ منتشرشده باید رضایت و ناشناس‌سازی داشته باشد."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کارنامه چه چیزی را نمی‌گوید؟"
+        },
+        {
+          "type": "text",
+          "text": "کارنامه کیفیت دانشگاه، ترجیح فرد، وضعیت رزومه یا نتیجهٔ آیندهٔ تو را به‌تنهایی مشخص نمی‌کند. آن را ورودی تصمیم بدان، نه نسخهٔ کامل انتخاب‌رشته."
+        },
+        {
+          "type": "quote",
+          "text": "این چارچوب توصیهٔ بازبینی‌نشدهٔ تحریریه است؛ صفحهٔ اصلی سنجش جزئیات فیلدهای کارنامه را تأیید نمی‌کند. پیش از انتشار عمومی باید راهنمای رسمی همان سال به‌صورت مستقیم پیوند داده و بررسی شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "تمام مجموعه‌ها"
+        ],
+        "tags": [
+          "کارنامه"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "تمام مجموعه‌ها"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "کارنامهٔ کنکور ارشد را چگونه درست بخوانیم؟",
+        "description": "تفکیک درصد خام، نمره کل، رتبه، سهمیه و مجازبودن و جلوگیری از مقایسهٔ دو کارنامه با زمینهٔ متفاوت."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:how-to-read-master-scorecard"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-percent-rank-scenarios",
+      "content_type": "guide",
+      "title": "سناریوهای درصد و رتبه؛ چگونه بدون دقت کاذب تحلیل کنیم؟",
+      "slug": "percent-rank-scenarios",
+      "summary": "روش ساخت بازه و سناریو از دادهٔ سال و کد ضریب یکسان، همراه با حجم نمونه و محدودیت‌های روشن.",
+      "quick_answer": "این روش، پیشنهاد بازبینی‌نشدهٔ تحریریه برای پرهیز از دقت کاذب است. سناریو باید سال، مجموعه، کد ضریب، سهمیه و حجم نمونه را نشان دهد و نتیجه را به‌صورت بازه گزارش کند؛ تا پیش از اعتبارسنجی داده و روش، خروجی پیش‌بینی رسمی نیست.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "حداقل قرارداد داده"
+        },
+        {
+          "type": "text",
+          "text": "• کارنامه فقط با رضایت انتشار و ناشناس‌سازی وارد نمونه شود.\n• سال، مجموعه، کد ضریب و سهمیه حذف نشوند.\n• نمونه‌های کمتر از حداقل تعریف‌شده تجمیع آماری نشوند.\n• بازه و محدودیت کنار هر خروجی نمایش داده شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه سناریو، نه یک وعده"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "سناریو",
+            "کاربرد",
+            "مرز"
+          ],
+          "rows": [
+            [
+              "محافظه‌کارانه",
+              "برنامه‌ریزی با حاشیه",
+              "بدترین حالت قطعی نیست"
+            ],
+            [
+              "میانه",
+              "مرکز داده‌های مشابه",
+              "پیش‌بینی شخصی قطعی نیست"
+            ],
+            [
+              "خوش‌بینانه",
+              "شناخت سقف نمونه",
+              "هدف تضمین‌شده نیست"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "وضعیت فعلی kunkur01"
+        },
+        {
+          "type": "text",
+          "text": "تا زمانی که نمونهٔ کافی و همگن فراهم نشود، این صفحه روش محاسبه را توضیح می‌دهد و رتبهٔ ساختگی تولید نمی‌کند. هر مدل آینده باید نسخه، حجم نمونه و خطای خود را منتشر کند."
+        },
+        {
+          "type": "quote",
+          "text": "صفحهٔ اصلی سنجش فقط مسیر یافتن اسناد رسمی است و این روش آماری را تأیید نمی‌کند؛ روش و آستانه‌های داده پیش از انتشار باید بازبینی تخصصی شوند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "تحلیل رتبه"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "سناریوهای درصد و رتبه؛ چگونه بدون دقت کاذب تحلیل کنیم؟",
+        "description": "روش ساخت بازه و سناریو از دادهٔ سال و کد ضریب یکسان، همراه با حجم نمونه و محدودیت‌های روشن."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:percent-rank-scenarios"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-compare-computer-universities",
+      "content_type": "guide",
+      "title": "دانشگاه‌های کامپیوتر را چگونه با معیار قابل بررسی مقایسه کنیم؟",
+      "slug": "compare-computer-universities",
+      "summary": "ساخت ماتریس شخصی برای مقایسهٔ برنامهٔ درسی، استاد، پژوهش، شهر، هزینه و انعطاف مسیر بدون رتبه‌بندی نمایشی.",
+      "quick_answer": "یک رتبه‌بندی عمومی جای انتخاب شخصی را نمی‌گیرد. برای هر گزینه، چارت رسمی، استادهای هم‌راستا، درس‌های واقعاً ارائه‌شده، آزمایشگاه، هزینه و محدودیت زندگی را با لینک و تاریخ ثبت کن؛ سپس وزن معیارها را برای خودت تعیین کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مدرک هر معیار"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "معیار",
+            "منبع بهتر",
+            "علامت خطر"
+          ],
+          "rows": [
+            [
+              "برنامهٔ درسی",
+              "صفحه یا فایل رسمی گروه",
+              "فهرست بدون تاریخ"
+            ],
+            [
+              "استاد و پژوهش",
+              "صفحهٔ دانشگاه و آثار اخیر",
+              "اتکا به شهرت قدیمی"
+            ],
+            [
+              "ارائهٔ درس",
+              "برنامهٔ چند نیم‌سال اخیر",
+              "فرض ارائهٔ همهٔ انتخابی‌ها"
+            ],
+            [
+              "زندگی و هزینه",
+              "برآورد شخصی و اطلاعات رسمی",
+              "نادیده‌گرفتن رفت‌وآمد یا مسکن"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "وزن‌دهی شخصی"
+        },
+        {
+          "type": "text",
+          "text": "ابتدا سه معیار غیرقابل‌مذاکره و سه معیار ترجیحی بنویس. وزن‌ها را پیش از دیدن نتیجه نهایی ثبت کن تا نام دانشگاه، معیارها را بعداً به نفع خودش جابه‌جا نکند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مقایسهٔ قابل بازبینی"
+        },
+        {
+          "type": "text",
+          "text": "• برای هر امتیاز یک URL و تاریخ بررسی نگه دار.\n• اطلاعات نامعلوم را صفر فرض نکن؛ با برچسب نامشخص نگه دار.\n• نسخهٔ ماتریس را هنگام انتشار دفترچهٔ انتخاب‌رشته به‌روزرسانی کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "مقایسه دانشگاه"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "دانشگاه‌های کامپیوتر را چگونه با معیار قابل بررسی مقایسه کنیم؟",
+        "description": "ساخت ماتریس شخصی برای مقایسهٔ برنامهٔ درسی، استاد، پژوهش، شهر، هزینه و انعطاف مسیر بدون رتبه‌بندی نمایشی."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-d0ab23cf888abba73267",
+          "relation": "SUPPORTS",
+          "locator": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر",
+          "claim": "گرایش‌ها، اهداف و حوزه‌های درسی و پژوهشی برنامهٔ مرجع تحصیلات تکمیلی مهندسی و علم کامپیوتر.",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-93b99bd69524dcf273b0",
+          "relation": "SUPPORTS",
+          "locator": "برنامهٔ درسی مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات",
+          "claim": "گرایش‌ها، اهداف و خانواده‌های درسی فنی و سازمانی برنامهٔ مرجع تحصیلات تکمیلی مهندسی فناوری اطلاعات.",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند.",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:compare-computer-universities"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-master-field-selection-guide",
+      "content_type": "guide",
+      "title": "اصول انتخاب‌رشته ارشد کامپیوتر و خطاهای رایج",
+      "slug": "master-field-selection-guide",
+      "summary": "روش تبدیل کارنامه و ترجیح شخصی به ترتیب انتخاب، با جداسازی شانس قبولی از علاقه و بدون ادعای قبولی قطعی.",
+      "quick_answer": "این پیش‌نویس دربارهٔ اثر ترتیب انتخاب‌ها بر پردازش قبولی حکم رسمی نمی‌دهد. فعلاً ترجیح، شرایط و ریسک را جدا ثبت کن و ترتیب نهایی را فقط پس از خواندن دفترچه و اصلاحیه‌های رسمی همان سال بساز.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه فهرست بساز"
+        },
+        {
+          "type": "text",
+          "text": "• ترجیح: اگر همه قبول شوند، کدام را بیشتر می‌خواهی؟\n• شرایط: کدام انتخاب از نظر مدرک، سهمیه یا محدودیت مجاز است؟\n• ریسک: دادهٔ سال‌های قبل چه بازه‌ای نشان می‌دهد و چقدر محدود است؟"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "خطاهای رایج"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "خطا",
+            "اصلاح"
+          ],
+          "rows": [
+            [
+              "مرتب‌سازی فقط بر اساس رتبهٔ دانشگاه",
+              "گرایش، استاد، شهر و هزینه را وارد کن"
+            ],
+            [
+              "حذف علاقه به دلیل تخمین بدبینانه",
+              "ترجیح را از احتمال جدا نگه دار"
+            ],
+            [
+              "تکیه به یک کارنامه",
+              "سال، سهمیه و حجم نمونه را کنترل کن"
+            ],
+            [
+              "استفاده از دفترچهٔ قدیمی",
+              "آخرین دفترچه و اصلاحیه را مبنا بگیر"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "بازبینی نهایی"
+        },
+        {
+          "type": "text",
+          "text": "ترتیب را از بالا به پایین بخوان و برای هر جفت متوالی بپرس: اگر هر دو همین حالا قبول شوند، واقعاً اولی را انتخاب می‌کنم؟ اگر پاسخ منفی است، ترتیب هنوز ترجیح تو را نشان نمی‌دهد."
+        },
+        {
+          "type": "quote",
+          "text": "این پرسش یک توصیهٔ بازبینی‌نشدهٔ تحریریه است، نه شرح سازوکار رسمی پذیرش. صفحهٔ اصلی سنجش این قاعده را تأیید نمی‌کند؛ دفترچه و اصلاحیهٔ همان سال مرجع نهایی‌اند و هیچ جدول یا مشاوری قبولی را تضمین نمی‌کند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "انتخاب‌رشته"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "اصول انتخاب‌رشته ارشد کامپیوتر و خطاهای رایج",
+        "description": "روش تبدیل کارنامه و ترجیح شخصی به ترتیب انتخاب، با جداسازی شانس قبولی از علاقه و بدون ادعای قبولی قطعی."
+      },
+      "validity": {
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:master-field-selection-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
       "external_id": "static-editorial-computer-exam-changes-1406",
       "content_type": "article",
       "title": "تغییرات کنکور کامپیوتر ۱۴۰۶ در یک نگاه",
@@ -3761,6 +4765,634 @@
         "producer_type": "human",
         "producer_name": "تحریریه kunkur01",
         "source_artifact": "apps/web/src/content/editorial.ts:telegram-learning-archive"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-case-study-automata-100-percent",
+      "content_type": "case_study",
+      "title": "مطالعهٔ موردی نتیجهٔ ۱۰۰٪ نظریه زبان‌ها و ماشین‌ها",
+      "slug": "case-study-automata-100-percent",
+      "summary": "خوانش محدود و مستند یک نمونه نتیجهٔ ثبت‌شده در نظریه، بدون تعمیم آن به همهٔ داوطلبان یا وعدهٔ نتیجه.",
+      "quick_answer": "این صفحه فقط یک نمونهٔ نتیجهٔ ۱۰۰٪ نظریه در سال ۱۴۰۵ را مستند می‌کند. از یک نمونه نمی‌توان نرخ موفقیت دوره یا نتیجهٔ داوطلب دیگر را استنتاج کرد؛ ارزش آن در امکان بررسی سند اصلی است.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معیار مستند این نمونه"
+        },
+        {
+          "type": "text",
+          "text": "معیار ثبت‌شده: ۱۰۰٪"
+        },
+        {
+          "type": "quote",
+          "text": "این معیار فقط همان گزارش پیوندشده را توصیف می‌کند و تضمین یا پیش‌بینی نتیجهٔ داوطلب دیگری نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "افشای تعارض منافع"
+        },
+        {
+          "type": "text",
+          "text": "منبع این مطالعهٔ موردی از آرشیو متعلق به مدرس و عرضه‌کنندهٔ دوره است؛ بنابراین ادعای عملکرد، تطبیق یا سابقه را گزارش دست‌اولِ دارای نفع تجاری بدان، نه ارزیابی مستقل."
+        },
+        {
+          "type": "quote",
+          "text": "انتشار یا بازاستفاده از کارنامه و تصویر دانشجو منوط به ثبت رضایت صریح و قابل لغو است؛ تا پیش از آن، منبع فقط به‌صورت پیوند ارجاعی استفاده می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آنچه سند نشان می‌دهد"
+        },
+        {
+          "type": "text",
+          "text": "• سال ثبت‌شده: ۱۴۰۵\n• درس: نظریه زبان‌ها و ماشین‌ها\n• نتیجهٔ نمایش‌داده‌شده: ۱۰۰٪"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آنچه از سند نمی‌دانیم"
+        },
+        {
+          "type": "text",
+          "text": "این رکورد به‌تنهایی ساعت مطالعه، سطح شروع، همهٔ منابع یا سهم هر عامل را مشخص نمی‌کند. بنابراین نتیجه به یک دستورالعمل عمومی یا تضمین اثربخشی تبدیل نمی‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کاربرد آموزشی"
+        },
+        {
+          "type": "text",
+          "text": "از نمونه می‌توان برای طرح پرسش بهتر استفاده کرد: کدام فصل‌ها مسلط بوده‌اند، روش مرور چه بوده و چه شواهد دیگری وجود دارد؟ پاسخ این پرسش‌ها فقط پس از مستندات بیشتر اضافه می‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "نظریه زبان‌ها و ماشین‌ها"
+        ],
+        "tags": [
+          "مطالعهٔ موردی مستند"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "نظریه زبان‌ها و ماشین‌ها"
+        ],
+        "subject_codes": [
+          "automata"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مطالعهٔ موردی نتیجهٔ ۱۰۰٪ نظریه زبان‌ها و ماشین‌ها",
+        "description": "خوانش محدود و مستند یک نمونه نتیجهٔ ثبت‌شده در نظریه، بدون تعمیم آن به همهٔ داوطلبان یا وعدهٔ نتیجه."
+      },
+      "validity": {
+        "exam_year": 1405,
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-0bd9d17f6b6977a18bdc",
+          "relation": "SUPPORTS",
+          "locator": "مستند نتیجهٔ ۱۰۰٪ نظریه زبان‌ها و ماشین‌ها",
+          "claim": "پست پیوندشده نتیجهٔ ۱۰۰٪ نظریه زبان‌ها و ماشین‌ها در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش مستقل تأیید نشده است.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-automata-100-percent"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-case-study-data-structures-10-of-11",
+      "content_type": "case_study",
+      "title": "مطالعهٔ موردی ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر",
+      "slug": "case-study-data-structures-10-of-11",
+      "summary": "ثبت یک نمونه عملکرد در ساختمان داده و طراحی الگوریتم با تفکیک صورت ادعا از برداشت‌های غیرقابل اثبات.",
+      "quick_answer": "مستند پیوندشده نمونه‌ای با ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر را نشان می‌دهد. این عدد فقط همان نمونه را توصیف می‌کند و بدون اطلاعات تکمیلی، دربارهٔ میانگین کلاس یا نتیجهٔ آیندهٔ فرد دیگری چیزی ثابت نمی‌کند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معیار مستند این نمونه"
+        },
+        {
+          "type": "text",
+          "text": "معیار ثبت‌شده: ۱۰ از ۱۱"
+        },
+        {
+          "type": "quote",
+          "text": "این معیار فقط همان گزارش پیوندشده را توصیف می‌کند و تضمین یا پیش‌بینی نتیجهٔ داوطلب دیگری نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "افشای تعارض منافع"
+        },
+        {
+          "type": "text",
+          "text": "منبع این مطالعهٔ موردی از آرشیو متعلق به مدرس و عرضه‌کنندهٔ دوره است؛ بنابراین ادعای عملکرد، تطبیق یا سابقه را گزارش دست‌اولِ دارای نفع تجاری بدان، نه ارزیابی مستقل."
+        },
+        {
+          "type": "quote",
+          "text": "انتشار یا بازاستفاده از کارنامه و تصویر دانشجو منوط به ثبت رضایت صریح و قابل لغو است؛ تا پیش از آن، منبع فقط به‌صورت پیوند ارجاعی استفاده می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "صورت دقیق ادعا"
+        },
+        {
+          "type": "text",
+          "text": "• سال ثبت‌شده: ۱۴۰۵\n• حوزه: ساختمان داده و طراحی الگوریتم\n• معیار: ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرا «سؤال معتبر» مهم است؟"
+        },
+        {
+          "type": "text",
+          "text": "اگر سؤال حذف یا کلید آن اصلاح شده باشد، مخرج مقایسه تغییر می‌کند. هر تحلیل آینده باید کد دفترچه و کلید نهایی را ثبت کند تا عدد قابل بازبینی بماند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "گام بعدی داده"
+        },
+        {
+          "type": "text",
+          "text": "برای تحلیل آموزشی، هر سؤال باید به درس، فصل و مبحث وصل شود. این نگاشت بعداً نشان می‌دهد عملکرد از پوشش گسترده آمده یا از چند فصل مشخص."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "ساختمان داده و طراحی الگوریتم"
+        ],
+        "tags": [
+          "مطالعهٔ موردی مستند"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "ساختمان داده و طراحی الگوریتم"
+        ],
+        "subject_codes": [
+          "data-structures-algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مطالعهٔ موردی ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر",
+        "description": "ثبت یک نمونه عملکرد در ساختمان داده و طراحی الگوریتم با تفکیک صورت ادعا از برداشت‌های غیرقابل اثبات."
+      },
+      "validity": {
+        "exam_year": 1405,
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-f526984e864803b3d027",
+          "relation": "SUPPORTS",
+          "locator": "مستند ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر",
+          "claim": "پست پیوندشده ۱۰ پاسخ صحیح از ۱۱ سؤال معتبر ساختمان داده و طراحی الگوریتم در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش مستقل تأیید نشده است.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-data-structures-10-of-11"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-case-study-data-structures-9-correct",
+      "content_type": "case_study",
+      "title": "مطالعهٔ موردی نمونهٔ ۹ تست صحیح ساختمان داده",
+      "slug": "case-study-data-structures-9-correct",
+      "summary": "نمایش یک نتیجهٔ ثبت‌شده با ۹ تست صحیح، همراه با مرز روشن میان گزارش نمونه و ادعای عمومی.",
+      "quick_answer": "این رکورد یک نمونهٔ ۹ تست صحیح را ثبت می‌کند. چون اطلاعات کامل جامعه، سطح شروع و سایر پاسخ‌ها در دسترس این صفحه نیست، عدد فقط به‌عنوان سند یک نمونه نمایش داده می‌شود.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معیار مستند این نمونه"
+        },
+        {
+          "type": "text",
+          "text": "معیار ثبت‌شده: ۹ تست صحیح"
+        },
+        {
+          "type": "quote",
+          "text": "این معیار فقط همان گزارش پیوندشده را توصیف می‌کند و تضمین یا پیش‌بینی نتیجهٔ داوطلب دیگری نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "افشای تعارض منافع"
+        },
+        {
+          "type": "text",
+          "text": "منبع این مطالعهٔ موردی از آرشیو متعلق به مدرس و عرضه‌کنندهٔ دوره است؛ بنابراین ادعای عملکرد، تطبیق یا سابقه را گزارش دست‌اولِ دارای نفع تجاری بدان، نه ارزیابی مستقل."
+        },
+        {
+          "type": "quote",
+          "text": "انتشار یا بازاستفاده از کارنامه و تصویر دانشجو منوط به ثبت رضایت صریح و قابل لغو است؛ تا پیش از آن، منبع فقط به‌صورت پیوند ارجاعی استفاده می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "دادهٔ ثبت‌شده"
+        },
+        {
+          "type": "text",
+          "text": "• سال: ۱۴۰۵\n• درس: ساختمان داده و طراحی الگوریتم\n• نتیجه: ۹ تست صحیح"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تفکیک نتیجه و علت"
+        },
+        {
+          "type": "text",
+          "text": "کارنامه نتیجه را نشان می‌دهد، اما علت را به‌تنهایی تعیین نمی‌کند. نسبت‌دادن همهٔ نتیجه به یک منبع یا روش، بدون دادهٔ فرایند مطالعه ادعای بیشتری از سند است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چطور کامل‌تر می‌شود؟"
+        },
+        {
+          "type": "text",
+          "text": "در نسخهٔ بعدی، در صورت وجود مستند و رضایت، کد دفترچه، تعداد پاسخ غلط یا نزده و نگاشت فصل‌ها افزوده می‌شود؛ تا آن زمان همان عدد محدود حفظ می‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "ساختمان داده و طراحی الگوریتم"
+        ],
+        "tags": [
+          "مطالعهٔ موردی مستند"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "ساختمان داده و طراحی الگوریتم"
+        ],
+        "subject_codes": [
+          "data-structures"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مطالعهٔ موردی نمونهٔ ۹ تست صحیح ساختمان داده",
+        "description": "نمایش یک نتیجهٔ ثبت‌شده با ۹ تست صحیح، همراه با مرز روشن میان گزارش نمونه و ادعای عمومی."
+      },
+      "validity": {
+        "exam_year": 1405,
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-72aac1c49c7ed427c66b",
+          "relation": "SUPPORTS",
+          "locator": "مستند نمونهٔ ۹ تست صحیح و تطبیق آموزشی",
+          "claim": "پست پیوندشده یک نمونهٔ ۹ تست صحیح و ادعای تطبیق ۹ سؤال از ۱۲ سؤال با مطالب تدریس‌شده در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش‌ها مستقل تأیید نشده‌اند.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-data-structures-9-correct"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-case-study-course-alignment-9-of-12",
+      "content_type": "case_study",
+      "title": "تطبیق ۹ سؤال از ۱۲ سؤال با مطالب تدریس‌شده در کنکور ۱۴۰۵",
+      "slug": "case-study-course-alignment-9-of-12",
+      "summary": "بررسی دامنهٔ ادعای تطبیق آموزشی در ساختمان داده و الگوریتم و تفکیک شباهت مفهومی از پیش‌بینی سؤال.",
+      "quick_answer": "مستند این مطالعهٔ موردی، ۹ سؤال از ۱۲ سؤال را مشابه یا منطبق با مطالب تدریس‌شده گزارش می‌کند؛ معادل ۷۵٪ همان نمونه. این تطبیق ادعای پیش‌بینی سؤال یا تضمین پوشش آزمون آینده نیست.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معیار مستند این نمونه"
+        },
+        {
+          "type": "text",
+          "text": "معیار ثبت‌شده: ۹ از ۱۲"
+        },
+        {
+          "type": "quote",
+          "text": "این معیار فقط همان گزارش پیوندشده را توصیف می‌کند و تضمین یا پیش‌بینی نتیجهٔ داوطلب دیگری نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "افشای تعارض منافع"
+        },
+        {
+          "type": "text",
+          "text": "منبع این مطالعهٔ موردی از آرشیو متعلق به مدرس و عرضه‌کنندهٔ دوره است؛ بنابراین ادعای عملکرد، تطبیق یا سابقه را گزارش دست‌اولِ دارای نفع تجاری بدان، نه ارزیابی مستقل."
+        },
+        {
+          "type": "quote",
+          "text": "انتشار یا بازاستفاده از کارنامه و تصویر دانشجو منوط به ثبت رضایت صریح و قابل لغو است؛ تا پیش از آن، منبع فقط به‌صورت پیوند ارجاعی استفاده می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مباحث ثبت‌شده"
+        },
+        {
+          "type": "text",
+          "text": "• Merge Sorted Lists\n• Quick Sort و Insertion Sort\n• Huffman و MST\n• روابط بازگشتی و Hash"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تطبیق چگونه باید بازبینی شود؟"
+        },
+        {
+          "type": "text",
+          "text": "برای هر ردیف باید شماره سؤال، قطعهٔ دقیق آموزش و نوع رابطه ثبت شود: آموزش مستقیم، تمرین هم‌ساختار یا صرفاً اشتراک مبحث. بدون این تفکیک، واژهٔ «مشابه» می‌تواند بیش از حد گسترده شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرز ادعا"
+        },
+        {
+          "type": "text",
+          "text": "این صفحه سابقهٔ پوشش محتوایی یک نمونه را نشان می‌دهد. از آن نمی‌توان نتیجه گرفت که سؤال آینده قابل پیش‌بینی است یا هر دانشجو با دیدن همان محتوا پاسخ درست می‌دهد."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "ساختمان داده و طراحی الگوریتم"
+        ],
+        "tags": [
+          "مطالعهٔ موردی مستند"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "ساختمان داده و طراحی الگوریتم"
+        ],
+        "subject_codes": [
+          "data-structures-algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "تطبیق ۹ سؤال از ۱۲ سؤال با مطالب تدریس‌شده در کنکور ۱۴۰۵",
+        "description": "بررسی دامنهٔ ادعای تطبیق آموزشی در ساختمان داده و الگوریتم و تفکیک شباهت مفهومی از پیش‌بینی سؤال."
+      },
+      "validity": {
+        "exam_year": 1405,
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-72aac1c49c7ed427c66b",
+          "relation": "SUPPORTS",
+          "locator": "مستند نمونهٔ ۹ تست صحیح و تطبیق آموزشی",
+          "claim": "پست پیوندشده یک نمونهٔ ۹ تست صحیح و ادعای تطبیق ۹ سؤال از ۱۲ سؤال با مطالب تدریس‌شده در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش‌ها مستقل تأیید نشده‌اند.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-course-alignment-9-of-12"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-case-study-phd-16-of-19",
+      "content_type": "case_study",
+      "title": "مطالعهٔ موردی دکتری؛ ۱۶ پاسخ صحیح از ۱۹ تست",
+      "slug": "case-study-phd-16-of-19",
+      "summary": "ثبت نتیجهٔ ۱۶ از ۱۹ همراه با رتبه‌های ۱۷ نرم‌افزار و ۲۶ هوش، فقط در حدود مستند منتشرشده.",
+      "quick_answer": "مستند پیوندشده نتیجهٔ ۱۶ پاسخ صحیح از ۱۹ تست را همراه رتبهٔ ۱۷ نرم‌افزار و ۲۶ هوش ثبت کرده است. این‌ها داده‌های همان نمونه‌اند و برای پیش‌بینی رتبهٔ فرد دیگر کافی نیستند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معیار مستند این نمونه"
+        },
+        {
+          "type": "text",
+          "text": "معیار ثبت‌شده: ۱۶ از ۱۹"
+        },
+        {
+          "type": "quote",
+          "text": "این معیار فقط همان گزارش پیوندشده را توصیف می‌کند و تضمین یا پیش‌بینی نتیجهٔ داوطلب دیگری نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "افشای تعارض منافع"
+        },
+        {
+          "type": "text",
+          "text": "منبع این مطالعهٔ موردی از آرشیو متعلق به مدرس و عرضه‌کنندهٔ دوره است؛ بنابراین ادعای عملکرد، تطبیق یا سابقه را گزارش دست‌اولِ دارای نفع تجاری بدان، نه ارزیابی مستقل."
+        },
+        {
+          "type": "quote",
+          "text": "انتشار یا بازاستفاده از کارنامه و تصویر دانشجو منوط به ثبت رضایت صریح و قابل لغو است؛ تا پیش از آن، منبع فقط به‌صورت پیوند ارجاعی استفاده می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "صورت داده"
+        },
+        {
+          "type": "text",
+          "text": "• پاسخ صحیح: ۱۶ از ۱۹ تست\n• رتبهٔ ثبت‌شده: ۱۷ نرم‌افزار\n• رتبهٔ ثبت‌شده: ۲۶ هوش"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرا دو رتبه متفاوت است؟"
+        },
+        {
+          "type": "text",
+          "text": "رتبه باید همراه رشته/گرایش و قواعد همان آزمون خوانده شود. این صفحه فقط دو برچسب موجود در سند را حفظ می‌کند و دربارهٔ فرمول یا جامعهٔ آماریِ ذکرنشده توضیح تازه نمی‌سازد."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کاربرد درست"
+        },
+        {
+          "type": "text",
+          "text": "این نمونه برای اعتمادسازی از راه سند قابل مشاهده است، نه ساختن وعده. مقایسه با سال یا داوطلب دیگر نیازمند دادهٔ هم‌تعریف و حجم نمونهٔ کافی است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی کامپیوتر"
+        ],
+        "tags": [
+          "مطالعهٔ موردی مستند"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "مهندسی کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مطالعهٔ موردی دکتری؛ ۱۶ پاسخ صحیح از ۱۹ تست",
+        "description": "ثبت نتیجهٔ ۱۶ از ۱۹ همراه با رتبه‌های ۱۷ نرم‌افزار و ۲۶ هوش، فقط در حدود مستند منتشرشده."
+      },
+      "validity": {
+        "exam_year": 1405,
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-1e18761aca8ace6ff458",
+          "relation": "SUPPORTS",
+          "locator": "مستند نتیجهٔ دکتری و رتبه‌های ثبت‌شده",
+          "claim": "پست پیوندشده ۱۶ پاسخ صحیح از ۱۹ تست و رتبه‌های ۱۷ نرم‌افزار و ۲۶ هوش در سال ۱۴۰۵ را گزارش می‌کند؛ این گزارش مستقل تأیید نشده است.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-phd-16-of-19"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-case-study-question-design-1401",
+      "content_type": "case_study",
+      "title": "از تحلیل تا طراحی سؤال؛ مستند آموزشی سال ۱۴۰۱",
+      "slug": "case-study-question-design-1401",
+      "summary": "ثبت ادعای خوداظهاری مدرس دربارهٔ سؤال طراحی‌شده و مطرح‌شدن آن در آزمون، بدون تأیید مستقل یا تبدیل شباهت به ادعای پیش‌گویی.",
+      "quick_answer": "پست سال ۱۴۰۱ ادعای نویسنده را ثبت می‌کند که سؤال طراحی‌شدهٔ او در آزمون مطرح شده است. این ادعای خوداظهاری مستقل تأیید نشده و نه سابقهٔ رسمی طراحی سؤال است و نه تضمین پیش‌بینی آزمون بعد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معیار مستند این نمونه"
+        },
+        {
+          "type": "text",
+          "text": "معیار ثبت‌شده: نمونهٔ سال ۱۴۰۱"
+        },
+        {
+          "type": "quote",
+          "text": "این معیار فقط همان گزارش پیوندشده را توصیف می‌کند و تضمین یا پیش‌بینی نتیجهٔ داوطلب دیگری نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "افشای تعارض منافع"
+        },
+        {
+          "type": "text",
+          "text": "منبع این مطالعهٔ موردی از آرشیو متعلق به مدرس و عرضه‌کنندهٔ دوره است؛ بنابراین ادعای عملکرد، تطبیق یا سابقه را گزارش دست‌اولِ دارای نفع تجاری بدان، نه ارزیابی مستقل."
+        },
+        {
+          "type": "quote",
+          "text": "انتشار یا بازاستفاده از کارنامه و تصویر دانشجو منوط به ثبت رضایت صریح و قابل لغو است؛ تا پیش از آن، منبع فقط به‌صورت پیوند ارجاعی استفاده می‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آنچه ثبت شده"
+        },
+        {
+          "type": "text",
+          "text": "لینک اصلی ادعای نویسنده دربارهٔ یک نمونهٔ طراحی سؤال و ارتباط آن با سؤال مطرح‌شده در آزمون سال ۱۴۰۱ را ثبت می‌کند. این صفحه ادعا را تأییدشده تلقی نمی‌کند و جزئیاتی فراتر از همان پست اضافه نمی‌کند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ارزش آموزشی"
+        },
+        {
+          "type": "text",
+          "text": "• شناخت محدودیت‌های صورت سؤال\n• تفکیک مفهوم مرکزی از ظاهر مسئله\n• طراحی گزینه‌های خطا بر اساس بدفهمی‌های رایج"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرز روشن"
+        },
+        {
+          "type": "text",
+          "text": "شباهت یک نمونه، احتمال تکرار آینده را تعیین نمی‌کند. ادعای طراحی سؤال در این پست فقط یک خوداظهاری دارای نفع تجاری است و تا زمان تأیید مستقل، سابقهٔ رسمی یا شاهد دسترسی به فرایند طراحی آزمون محسوب نمی‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "ساختمان داده و الگوریتم"
+        ],
+        "tags": [
+          "مطالعهٔ موردی مستند"
+        ],
+        "degrees": [
+          "master"
+        ],
+        "fields": [
+          "ساختمان داده و الگوریتم"
+        ],
+        "subject_codes": [
+          "data-structures-algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "از تحلیل تا طراحی سؤال؛ مستند آموزشی سال ۱۴۰۱",
+        "description": "ثبت ادعای خوداظهاری مدرس دربارهٔ سؤال طراحی‌شده و مطرح‌شدن آن در آزمون، بدون تأیید مستقل یا تبدیل شباهت به ادعای پیش‌گویی."
+      },
+      "validity": {
+        "exam_year": 1401,
+        "time_sensitive": false
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-d619754ba9283d3271e1",
+          "relation": "SUPPORTS",
+          "locator": "مستند سابقهٔ طراحی سؤال سال ۱۴۰۱",
+          "claim": "پست پیوندشده ادعای نویسنده دربارهٔ طرح یک سؤال در سال ۱۴۰۱ و مطرح‌شدن آن در آزمون را ثبت می‌کند؛ این ادعا مستقل تأیید نشده است.",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-question-design-1401"
       },
       "review_status": "draft"
     }

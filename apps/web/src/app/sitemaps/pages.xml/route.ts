@@ -10,6 +10,7 @@ const publicPages = [
   "/editorial-policy",
   "/evidence",
   "/exams",
+  "/source-policy",
 ] as const;
 
 export function GET() {

@@ -80,12 +80,8 @@ export const phase12PlanningPages = phase12Corpus.planningPages;
 export const phase12OfficialPages = phase12Corpus.officialPages;
 export const phase12Pages = [...phase12PlanningPages, ...phase12OfficialPages] as const;
 
-function asciiDigits(value: string) {
-  return value.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
-}
-
 export function phase12EditorialDate(value: Phase12Date): string {
-  return asciiDigits(value).replaceAll("/", "-");
+  return value.replaceAll("/", "-");
 }
 
 function resolveSources(page: Phase12Page): EditorialSource[] {

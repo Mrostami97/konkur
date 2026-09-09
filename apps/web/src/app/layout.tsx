@@ -59,7 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="footer-grid">
             <div className="footer-brand"><span className="brand-logo-wrap footer-logo-wrap"><Image className="brand-logo" src="/brand/konkurcom-logo.png" alt="" width={72} height={72} /></span><div><strong>کنکورصفریک <small>kunkur01</small></strong><p>مسیر روشن‌تر برای ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.</p></div></div>
             <div><strong>مسیرهای مطالعه</strong><Link href="/guides">راهنمای آزمون ۱۴۰۶</Link><Link href="/subjects">صفحهٔ درس‌ها</Link><Link href="/articles">مقاله‌ها</Link></div>
-            <div><strong>اعتماد و شفافیت</strong><Link href="/about">دربارهٔ محمد رستمی</Link><Link href="/editorial-policy">روش تولید محتوا</Link><Link href="/corrections">سیاست اصلاح</Link></div>
+            <div><strong>اعتماد و شفافیت</strong><Link href="/about">دربارهٔ محمد رستمی</Link><Link href="/editorial-policy">روش تولید محتوا</Link><Link href="/source-policy">سیاست منبع و حق نشر</Link><Link href="/corrections">سیاست اصلاح</Link></div>
             <div><strong>کانال رسمی</strong><a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">@konkurcom — خبر، آموزش و منابع</a></div>
           </div>
           <div className="footer-bottom"><span>© ۱۴۰۵ کنکورصفریک · kunkur01</span><span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند.</span></div>

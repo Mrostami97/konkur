@@ -60,6 +60,7 @@ export async function GET() {
     "",
     "## سیاست‌ها",
     `- [روش تولید محتوا](${absoluteUrl("/editorial-policy")})`,
+    `- [سیاست منابع، انتساب و کپی‌رایت](${absoluteUrl("/source-policy")})`,
     `- [سیاست اصلاح](${absoluteUrl("/corrections")})`,
     `- [دربارهٔ محمد رستمی و تحریریه](${absoluteUrl("/about")})`,
     `- [مستندات آموزشی و نتایج](${absoluteUrl("/evidence")})`,

@@ -12,6 +12,7 @@ function sourceCreateData(source: SeedSource) {
     publisher: source.publisher,
     canonicalUrl: source.canonicalUrl,
     sourceTier: source.sourceTier,
+    publishedAt: "publishedAt" in source && source.publishedAt ? new Date(source.publishedAt) : null,
     checkedAt: new Date(source.checkedAt),
     rightsBasis: source.rightsBasis,
     mayLink: source.mayLink,
@@ -26,7 +27,14 @@ export async function seedStaticEditorial(prisma: PrismaClient) {
   for (const source of seedData.sources) {
     await prisma.contentSource.upsert({
       where: { externalId: source.externalId },
-      update: {},
+      // Rights flags are safety policy, so rerunning the seed must apply a
+      // downgrade even when this source was created by an older fixture.
+      update: {
+        rightsBasis: source.rightsBasis,
+        mayLink: source.mayLink,
+        mayAdapt: source.mayAdapt,
+        commercialUseAllowed: source.commercialUseAllowed,
+      },
       create: sourceCreateData(source),
     });
   }

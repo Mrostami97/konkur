@@ -8,6 +8,7 @@ import ts from "../apps/api/node_modules/typescript/lib/typescript.js";
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const sourcePath = resolve(projectRoot, "apps/web/src/content/editorial.ts");
 const phase12SourcePath = resolve(projectRoot, "apps/web/src/content/phase12-corpus.json");
+const phase13SourcePath = resolve(projectRoot, "apps/web/src/content/phase13-corpus.json");
 const outputPath = resolve(projectRoot, "apps/api/src/seed-data/editorial-drafts.json");
 
 const source = await readFile(sourcePath, "utf8");
@@ -53,10 +54,53 @@ const phase12Guides = [...phase12Corpus.planningPages, ...phase12Corpus.official
   timeSensitive: page.kind === "OFFICIAL",
   producerType: "external_ai",
 }));
+const phase13Corpus = JSON.parse(await readFile(phase13SourcePath, "utf8"));
+const phase13Pages = [...phase13Corpus.decisionPages, ...phase13Corpus.caseStudies].map((page) => ({
+  ...page,
+  sections: page.kind === "CASE_STUDY" ? [
+    {
+      title: "معیار مستند این نمونه",
+      paragraphs: [`معیار ثبت‌شده: ${page.metric}`],
+      note: "این معیار فقط همان گزارش پیوندشده را توصیف می‌کند و تضمین یا پیش‌بینی نتیجهٔ داوطلب دیگری نیست.",
+    },
+    {
+      title: "افشای تعارض منافع",
+      paragraphs: [
+        "منبع این مطالعهٔ موردی از آرشیو متعلق به مدرس و عرضه‌کنندهٔ دوره است؛ بنابراین ادعای عملکرد، تطبیق یا سابقه را گزارش دست‌اولِ دارای نفع تجاری بدان، نه ارزیابی مستقل.",
+      ],
+      note: "انتشار یا بازاستفاده از کارنامه و تصویر دانشجو منوط به ثبت رضایت صریح و قابل لغو است؛ تا پیش از آن، منبع فقط به‌صورت پیوند ارجاعی استفاده می‌شود.",
+    },
+    ...page.sections,
+  ] : page.sections,
+  author: "تحریریه kunkur01",
+  reviewer: "در انتظار بازبینی انسانی",
+  sources: page.sourceIds.map((sourceId) => {
+    const item = phase13Corpus.sources[sourceId];
+    if (!item) throw new Error(`Unknown Phase 13 source: ${sourceId} (${page.slug})`);
+    const existingPhase12Source = Object.values(phase12Corpus.sources).find((candidate) =>
+      candidate.publisher === item.publisher
+      && candidate.title === item.title
+      && candidate.url === item.url,
+    );
+    return {
+      ...item,
+      sourceArtifact: existingPhase12Source
+        ? "apps/web/src/content/phase12-corpus.json"
+        : "apps/web/src/content/phase13-corpus.json",
+    };
+  }),
+  relatedSubjects: page.internalLinks
+    .map((item) => item.href.match(/^\/subjects\/([^/?#]+)/)?.[1])
+    .filter(Boolean),
+  sourceArtifact: "apps/web/src/content/phase13-corpus.json:" + page.slug,
+  producerType: "external_ai",
+}));
 const pages = [
   ...guides.map((page) => ({ ...page, contentType: "guide", sourceArtifact: "apps/web/src/content/editorial.ts:" + page.slug, producerType: "human" })),
   ...phase12Guides.map((page) => ({ ...page, contentType: "guide" })),
+  ...phase13Pages.filter((page) => page.kind === "DECISION").map((page) => ({ ...page, contentType: "guide" })),
   ...articles.map((page) => ({ ...page, contentType: "article", sourceArtifact: "apps/web/src/content/editorial.ts:" + page.slug, producerType: "human" })),
+  ...phase13Pages.filter((page) => page.kind === "CASE_STUDY").map((page) => ({ ...page, contentType: "case_study" })),
 ];
 
 const toAsciiDigits = (value) => value.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
@@ -76,6 +120,19 @@ const checkedAt = (value) => {
   }
   throw new Error(`Unsupported editorial source review date: ${value}`);
 };
+const publishedAt = (value) => {
+  const normalized = toAsciiDigits(value ?? "");
+  const writtenDate = normalized.match(/^(\d{1,2})\s+تیر\s+1405$/);
+  const day = Number(writtenDate?.[1]);
+  if (Number.isInteger(day) && day >= 1 && day <= 31) {
+    // 1 Tir 1405 is 22 June 2026. Date.UTC safely rolls into July.
+    return new Date(Date.UTC(2026, 5, 21 + day)).toISOString();
+  }
+  // A year-only value is useful provenance but is not precise enough for a
+  // DateTime column; retain it in metadata without inventing a month/day.
+  if (/^\d{4}$/.test(normalized)) return undefined;
+  throw new Error(`Unsupported editorial source publication date: ${value}`);
+};
 const degrees = (degree) => degree === "هر دو" ? ["master", "phd"] : degree === "دکتری" ? ["phd"] : ["master"];
 
 const blocksFor = (sections) => sections.flatMap((section) => {
@@ -91,28 +148,39 @@ const allSources = new Map();
 for (const page of pages) {
   for (const item of page.sources) {
     const externalId = sourceId(item);
+    const isReusableFirstParty = item.publisher === "kunkur01";
+    const isFirstPartyMetadata = isReusableFirstParty
+      || item.publisher.includes("آرشیو مستندات آموزشی محمد رستمی");
+    const itemPublishedAt = item.publishedAt ? publishedAt(item.publishedAt) : undefined;
     allSources.set(externalId, {
       externalId,
-      kind: item.publisher === "kunkur01" ? "FIRST_PARTY_CHANNEL" : "WEB_PAGE",
+      kind: isFirstPartyMetadata ? "FIRST_PARTY_CHANNEL" : "WEB_PAGE",
       title: item.title,
       publisher: item.publisher,
       canonicalUrl: item.url,
-      sourceTier: item.publisher.includes("سنجش") || item.publisher.includes("وزارت علوم") ? "PRIMARY_OFFICIAL" : item.publisher === "kunkur01" ? "FIRST_PARTY" : "SECONDARY",
+      sourceTier: item.publisher.includes("سنجش") || item.publisher.includes("وزارت علوم") ? "PRIMARY_OFFICIAL" : isFirstPartyMetadata ? "FIRST_PARTY" : "SECONDARY",
       checkedAt: checkedAt(item.checkedAt),
-      rightsBasis: item.publisher === "kunkur01" ? "OWNED_BY_PUBLISHER" : "LINK_ONLY",
+      ...(itemPublishedAt ? { publishedAt: itemPublishedAt } : {}),
+      rightsBasis: isReusableFirstParty ? "OWNED_BY_PUBLISHER" : "LINK_ONLY",
       mayLink: true,
-      mayAdapt: item.publisher === "kunkur01",
-      commercialUseAllowed: item.publisher === "kunkur01",
+      mayAdapt: isReusableFirstParty,
+      commercialUseAllowed: isReusableFirstParty,
       attributionText: item.publisher + " — " + item.title,
-      metadata: { importedFrom: item.sourceArtifact ?? "apps/web/src/content/editorial.ts" },
+      metadata: {
+        importedFrom: item.sourceArtifact ?? "apps/web/src/content/editorial.ts",
+        ...(item.supportedClaim ? { supportedClaim: item.supportedClaim } : {}),
+        ...(item.publishedAt ? { publishedAtText: item.publishedAt } : {}),
+      },
     });
   }
 }
 
 const payloads = pages.map((page) => {
-  const pageChecked = editorialDateIso(page.reviewedAt) + "T00:00:00.000Z";
+  const pageChecked = page.reviewedAt
+    ? editorialDateIso(page.reviewedAt) + "T00:00:00.000Z"
+    : page.sources.map((item) => checkedAt(item.checkedAt)).sort().at(-1);
   const timeSensitive = page.timeSensitive ?? (page.title.includes("۱۴۰۶") || page.description.includes("۱۴۰۶"));
-  const examYear = page.validForYear ?? (page.title.includes("۱۴۰۶") || page.description.includes("۱۴۰۶") ? 1406 : undefined);
+  const examYear = page.examYear ?? page.validForYear ?? (page.title.includes("۱۴۰۶") || page.description.includes("۱۴۰۶") ? 1406 : undefined);
   return {
     schema_version: "article.v2",
     external_id: "static-editorial-" + page.slug,
@@ -140,6 +208,7 @@ const payloads = pages.map((page) => {
       source_external_id: sourceId(item),
       relation: "SUPPORTS",
       locator: item.title,
+      ...(item.supportedClaim ? { claim: item.supportedClaim } : {}),
       order,
     })),
     provenance: {

@@ -28,8 +28,8 @@ export const studentResults: EvidenceDocument[] = [
   { id: "theory-1405", year: "۱۴۰۵", category: "نتایج دانشجویان", subject: "نظریه زبان‌ها و ماشین‌ها", title: "نتیجهٔ نظریه", metric: "۱۰۰٪", description: "نمونهٔ نتیجهٔ منتشرشده از عملکرد درس نظریه.", telegramUrl: "https://t.me/Konkur_answer/4666", featured: true },
   { id: "data-11-1405", year: "۱۴۰۵", category: "نتایج دانشجویان", subject: "ساختمان داده و طراحی الگوریتم", title: "نتیجهٔ ساختمان داده", metric: "۱۰ پاسخ صحیح از ۱۱ سؤال معتبر", description: "نمونهٔ کارنامه/نتیجهٔ منتشرشده برای درس ساختمان داده و طراحی الگوریتم.", telegramUrl: "https://t.me/Konkur_answer/3609", featured: true },
   { id: "data-9-1405", year: "۱۴۰۵", category: "نتایج دانشجویان", subject: "ساختمان داده و طراحی الگوریتم", title: "نتیجهٔ ساختمان داده", metric: "۹ تست صحیح", description: "نمونهٔ دیگری از نتیجهٔ ثبت‌شدهٔ دانشجویان.", telegramUrl: "https://t.me/Konkur_answer/4767" },
-  { id: "theory-students", year: "—", category: "نتایج دانشجویان", subject: "نظریه", title: "نمونه‌های نظریه", metric: "۱۰۰٪ نظریه", description: "نمونه‌های نام‌برده‌شده در مستندات آموزشی: آقای کریمی و شیوا خوش‌نام.", telegramUrl: "https://t.me/Konkur_answer/4751" },
-  { id: "phd-results", year: "—", category: "کارنامه", subject: "نتیجهٔ دکتری", title: "نتیجهٔ دکتری", metric: "۱۶ پاسخ صحیح از ۱۹ تست", description: "همراه با رتبهٔ ۱۷ نرم‌افزار و رتبهٔ ۲۶ هوش در مستند منتشرشده.", telegramUrl: "https://t.me/Konkur_answer/4753", featured: true },
+  { id: "theory-students", year: "—", category: "نتایج دانشجویان", subject: "نظریه", title: "نمونه‌های نظریه", metric: "۱۰۰٪ نظریه", description: "دو نمونه در پست آرشیوی نام برده شده‌اند؛ نام‌ها تا زمان ثبت رضایت انتشار در سایت بازنشر نمی‌شوند.", telegramUrl: "https://t.me/Konkur_answer/4751" },
+  { id: "phd-results", year: "—", category: "کارنامه", subject: "نتیجهٔ دکتری", title: "نتیجهٔ دکتری", metric: "۱۶ پاسخ صحیح از ۱۹ تست", description: "پست آرشیوی این نتیجه را همراه با رتبهٔ ۱۷ نرم‌افزار و رتبهٔ ۲۶ هوش گزارش کرده است؛ این ادعا مستقلاً راستی‌آزمایی نشده است.", telegramUrl: "https://t.me/Konkur_answer/4753", featured: true },
 ];
 
 export const alignmentEvidence: EvidenceDocument = {

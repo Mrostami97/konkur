@@ -12,6 +12,7 @@ import { ObjectStorageService } from "../src/modules/ingestion/object-storage.se
 import { PrismaService } from "../src/prisma/prisma.service";
 import { seed, SEED_ADMIN_PHONE } from "../src/seed";
 import { seedStaticEditorial } from "../src/seed-static-editorial";
+import staticEditorialSeed from "../src/seed-data/editorial-drafts.json";
 
 class CapturingOtpProvider implements OtpProvider {
   sent: { phone: string; code: string }[] = [];
@@ -835,7 +836,7 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     expect(report.publicConsent).toBe(false);
   });
 
-  it("seeds all fourteen existing static pages as idempotent article.v2 drafts", async () => {
+  it("seeds every static editorial page as an idempotent article.v2 draft", async () => {
     const migrated = await prisma.article.findMany({
       where: { externalId: { startsWith: "static-editorial-" } },
       select: {
@@ -844,8 +845,16 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
         reviewStatus: true,
       },
     });
-    expect(migrated).toHaveLength(14);
-    expect(new Set(migrated.map((article) => article.slug)).size).toBe(14);
+    expect(migrated).toHaveLength(staticEditorialSeed.articles.length);
+    expect(new Set(migrated.map((article) => article.slug)).size).toBe(staticEditorialSeed.articles.length);
+    const phase13Payloads = staticEditorialSeed.articles.filter((article) =>
+      article.provenance.source_artifact.startsWith("apps/web/src/content/phase13-corpus.json:"),
+    );
+    expect(phase13Payloads).toHaveLength(14);
+    expect(phase13Payloads.filter((article) => article.content_type === "guide")).toHaveLength(8);
+    expect(phase13Payloads.filter((article) => article.content_type === "case_study")).toHaveLength(6);
+    const phase13Slugs = new Set(phase13Payloads.map((article) => article.slug));
+    expect(migrated.filter((article) => phase13Slugs.has(article.slug))).toHaveLength(14);
     for (const article of migrated) {
       expect(article.reviewStatus).toBe("DRAFT");
       const revision = await prisma.contentVersion.findUnique({
