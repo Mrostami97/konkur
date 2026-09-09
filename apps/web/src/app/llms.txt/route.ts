@@ -5,6 +5,14 @@ import { absoluteUrl } from "../../lib/seo";
 
 type PublicArticle = { slug: string; title: string; summary: string; contentType?: string | null };
 type PublicCatalogItem = { slug: string; title: string; summary?: string | null; description?: string | null };
+type PublicUniversity = { code: string; title: string; city: string };
+type PublicProgram = {
+  code: string;
+  title: string;
+  degree: string;
+  field: string;
+  university: { code: string; title: string };
+};
 
 async function safeList<T>(path: string): Promise<{ items: T[]; complete: boolean }> {
   try {
@@ -20,11 +28,13 @@ function uniqueBySlug<T extends { slug: string }>(items: T[]) {
 }
 
 export async function GET() {
-  const [articleResult, subjectResult, topicResult, resourceResult] = await Promise.all([
+  const [articleResult, subjectResult, topicResult, resourceResult, universityResult, programResult] = await Promise.all([
     safeList<PublicArticle>("/articles"),
     safeList<PublicCatalogItem>("/subjects"),
     safeList<PublicCatalogItem>("/topics"),
     safeList<PublicCatalogItem>("/resources"),
+    safeList<PublicUniversity>("/universities"),
+    safeList<PublicProgram>("/programs"),
   ]);
   const publishedSlugs = new Set(articleResult.items.map((item) => item.slug));
   const canonicalGuides = [...articleResult.items.filter((item) => item.contentType === "GUIDE")];
@@ -33,7 +43,14 @@ export async function GET() {
     ...subjectResult.items,
     ...subjects.filter((item) => !subjectResult.items.some((published) => published.slug === item.slug)).map((item) => ({ slug: item.slug, title: item.title, description: item.status1406 })),
   ]);
-  const complete = [articleResult, subjectResult, topicResult, resourceResult].every((result) => result.complete);
+  const complete = [
+    articleResult,
+    subjectResult,
+    topicResult,
+    resourceResult,
+    universityResult,
+    programResult,
+  ].every((result) => result.complete);
   const body = [
     "# kunkur01",
     "",
@@ -57,6 +74,12 @@ export async function GET() {
     "",
     "## منابع آموزشی منتشرشده",
     ...uniqueBySlug(resourceResult.items).map((item) => `- [${item.title}](${absoluteUrl(`/resources/${item.slug}`)}): ${item.summary ?? item.description ?? "منبع آموزشی"}`),
+    "",
+    "## دانشگاه‌ها و رشته‌محل‌های دارای منبع رسمی",
+    ...universityResult.items.map((item) => `- [${item.title}](${absoluteUrl(`/universities/${encodeURIComponent(item.code)}`)}): ${item.city}`),
+    ...programResult.items.map((item) => `- [${item.title} — ${item.university.title}](${absoluteUrl(`/programs/${encodeURIComponent(item.code)}`)}): ${item.degree}، ${item.field}`),
+    "",
+    "اطلاعات دانشگاه، رشته‌محل و ظرفیت تنها هنگامی در این فهرست می‌آید که در سامانه به منبع رسمی فعال متصل باشد؛ تاریخ بررسی و لینک منبع در صفحهٔ همان رکورد نمایش داده می‌شود.",
     "",
     "## سیاست‌ها",
     `- [روش تولید محتوا](${absoluteUrl("/editorial-policy")})`,

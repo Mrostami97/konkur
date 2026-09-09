@@ -8,6 +8,12 @@ const K_NEIGHBORS = 15;
 const MIN_COMPARABLES = 5;
 const SENSITIVITY_DELTA = 10;
 const BACKTEST_SAMPLE_LIMIT = 200;
+const ACTIVE_OFFICIAL_SOURCE = {
+  sourceTier: "PRIMARY_OFFICIAL",
+  sourceStatus: "ACTIVE",
+  archivedAt: null,
+  mayLink: true,
+} as const;
 
 interface Candidate {
   subjectScores: Record<string, number>;
@@ -75,7 +81,7 @@ function estimateFromPool(scores: Record<string, number>, pool: Candidate[]): Es
     p80Low: Math.round(percentile(ranks, 10)),
     p80High: Math.round(percentile(ranks, 90)),
     comparableCount: withDistance.length,
-    comparableYears: [...new Set(withDistance.map((x) => x.c.examYear))].sort(),
+    comparableYears: [...new Set(withDistance.map((x) => x.c.examYear))].sort((left, right) => left - right),
   };
 }
 
@@ -83,6 +89,22 @@ function confidenceFor(comparableCount: number): string {
   if (comparableCount < 8) return "LOW";
   if (comparableCount < 15) return "MEDIUM";
   return "HIGH";
+}
+
+function wilsonInterval(successes: number, sampleSize: number) {
+  const z = 1.96;
+  const proportion = successes / sampleSize;
+  const denominator = 1 + (z * z) / sampleSize;
+  const center = (proportion + (z * z) / (2 * sampleSize)) / denominator;
+  const margin = (z / denominator) * Math.sqrt(
+    (proportion * (1 - proportion)) / sampleSize + (z * z) / (4 * sampleSize * sampleSize),
+  );
+  return {
+    low: Math.max(0, center - margin),
+    high: Math.min(1, center + margin),
+    level: 0.95,
+    method: "WILSON_SCORE",
+  };
 }
 
 @Injectable()
@@ -160,7 +182,13 @@ export class AnalyticsService {
    * there isn't enough data.
    */
   async getAcceptanceChance(userId: string, programId: string) {
-    const program = await this.prisma.program.findUnique({ where: { id: programId } });
+    const program = await this.prisma.program.findFirst({
+      where: {
+        id: programId,
+        source: { is: ACTIVE_OFFICIAL_SOURCE },
+        university: { source: { is: ACTIVE_OFFICIAL_SOURCE } },
+      },
+    });
     if (!program) throw new NotFoundException("program not found");
 
     const estimate = await this.getLatestEstimate(userId);
@@ -179,8 +207,20 @@ export class AnalyticsService {
         (a) => a.program_code === program.code,
       );
     });
-    if (applicants.length === 0) {
-      return { programId, chance: null, sampleSize: 0 };
+    const dataYears = [...new Set(applicants.map((candidate) => candidate.examYear))].sort((left, right) => left - right);
+    const shared = {
+      programId,
+      sampleSize: applicants.length,
+      minimumSampleSize: MIN_COMPARABLES,
+      dataYears,
+      methodology: "نسبت پذیرش ثبت‌شده در کارنامه‌های هم‌رشته، هم‌سهمیه و واقع در بازهٔ تجربی ۸۰٪ آخرین تخمین رتبه.",
+      limitations: [
+        "این برآورد علی یا تضمین قبولی نیست.",
+        "تغییر ظرفیت، انتخاب‌های داوطلبان و سال آزمون می‌تواند نتیجه را جابه‌جا کند.",
+      ],
+    };
+    if (applicants.length < MIN_COMPARABLES) {
+      return { ...shared, chance: null, interval: null, reason: "حداقل پنج کارنامهٔ قابل مقایسه لازم است." };
     }
     const accepted = applicants.filter((c) =>
       (c.admissions as { program_code: string; status: string }[]).some(
@@ -188,7 +228,12 @@ export class AnalyticsService {
       ),
     ).length;
 
-    return { programId, chance: accepted / applicants.length, sampleSize: applicants.length };
+    return {
+      ...shared,
+      chance: accepted / applicants.length,
+      interval: wilsonInterval(accepted, applicants.length),
+      reason: null,
+    };
   }
 
   /**

@@ -8,6 +8,7 @@ const sitemapPaths = [
   "/sitemaps/topics.xml",
   "/sitemaps/resources.xml",
   "/sitemaps/report-cards.xml",
+  "/sitemaps/admissions.xml",
 ] as const;
 
 function xml(value: string) {

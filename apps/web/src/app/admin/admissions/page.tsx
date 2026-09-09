@@ -11,8 +11,14 @@ interface University {
   city: string;
 }
 
+interface Program { id: string; code: string; title: string; }
+interface OfficialSource { id: string; title: string; sourceTier: string; sourceStatus: string; mayLink: boolean; archivedAt: string | null; }
+
 function AdmissionsAdmin() {
   const [universities, setUniversities] = useState<University[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [sources, setSources] = useState<OfficialSource[]>([]);
+  const [sourceId, setSourceId] = useState("");
   const [uniCode, setUniCode] = useState("");
   const [uniTitle, setUniTitle] = useState("");
   const [uniCity, setUniCity] = useState("");
@@ -29,39 +35,49 @@ function AdmissionsAdmin() {
   const [quota, setQuota] = useState("region-1");
   const [capacity, setCapacity] = useState("20");
 
-  async function loadUniversities() {
-    setUniversities(await apiFetch<University[]>("/universities"));
+  async function loadCatalog() {
+    const [universityRows, programRows, sourceRows] = await Promise.all([
+      apiFetch<University[]>("/universities"),
+      apiFetch<Program[]>("/programs"),
+      apiFetch<OfficialSource[]>("/admin/content-sources"),
+    ]);
+    setUniversities(universityRows);
+    setPrograms(programRows);
+    const official = sourceRows.filter((item) => item.sourceTier === "PRIMARY_OFFICIAL" && item.sourceStatus === "ACTIVE" && item.mayLink && !item.archivedAt);
+    setSources(official);
+    setSourceId((current) => current || official[0]?.id || "");
   }
 
   useEffect(() => {
-    loadUniversities().catch(() => {});
+    loadCatalog().catch(() => {});
   }, []);
 
   async function createUniversity(e: FormEvent) {
     e.preventDefault();
-    await apiFetch("/admin/universities", { method: "POST", body: { code: uniCode, title: uniTitle, city: uniCity } });
+    await apiFetch("/admin/universities", { method: "POST", body: { sourceId, code: uniCode, title: uniTitle, city: uniCity } });
     setUniCode("");
     setUniTitle("");
     setUniCity("");
-    await loadUniversities();
+    await loadCatalog();
   }
 
   async function createProgram(e: FormEvent) {
     e.preventDefault();
     await apiFetch("/admin/programs", {
       method: "POST",
-      body: { universityId, code: programCode, title: programTitle, degree, field, tuitionType },
+      body: { sourceId, universityId, code: programCode, title: programTitle, degree, field, tuitionType },
     });
     setProgramCode("");
     setProgramTitle("");
     setField("");
+    await loadCatalog();
   }
 
   async function addCapacity(e: FormEvent) {
     e.preventDefault();
     await apiFetch(`/admin/programs/${capacityProgramId}/capacities`, {
       method: "POST",
-      body: { examYear: Number(examYear), quota, capacity: Number(capacity) },
+      body: { sourceId, examYear: Number(examYear), quota, capacity: Number(capacity) },
     });
   }
 
@@ -69,12 +85,20 @@ function AdmissionsAdmin() {
     <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
       <h1>دانشگاه‌ها و گرایش‌ها (Admissions)</h1>
 
+      <label style={{ display: "block", marginBottom: "1rem" }}>
+        منبع رسمی مشترک
+        <select value={sourceId} onChange={(event) => setSourceId(event.target.value)} required style={{ display: "block", width: "100%", padding: "0.5rem" }}>
+          <option value="">ابتدا یک منبع PRIMARY_OFFICIAL در بخش منابع ثبت کنید</option>
+          {sources.map((source) => <option value={source.id} key={source.id}>{source.title}</option>)}
+        </select>
+      </label>
+
       <h2>دانشگاه جدید</h2>
       <form onSubmit={createUniversity} style={{ display: "flex", gap: "0.5rem" }}>
         <input placeholder="code" value={uniCode} onChange={(e) => setUniCode(e.target.value)} required />
         <input placeholder="عنوان" value={uniTitle} onChange={(e) => setUniTitle(e.target.value)} required />
         <input placeholder="شهر" value={uniCity} onChange={(e) => setUniCity(e.target.value)} required />
-        <button type="submit">ایجاد</button>
+        <button type="submit" disabled={!sourceId}>ایجاد</button>
       </form>
       <ul>
         {universities.map((u) => (
@@ -105,16 +129,19 @@ function AdmissionsAdmin() {
           <option value="FREE">رایگان</option>
           <option value="PAID">شهریه‌پرداز</option>
         </select>
-        <button type="submit">ایجاد رشته</button>
+        <button type="submit" disabled={!sourceId}>ایجاد رشته</button>
       </form>
 
       <h2>ظرفیت</h2>
       <form onSubmit={addCapacity} style={{ display: "flex", gap: "0.5rem" }}>
-        <input placeholder="programId" value={capacityProgramId} onChange={(e) => setCapacityProgramId(e.target.value)} required />
+        <select value={capacityProgramId} onChange={(event) => setCapacityProgramId(event.target.value)} required>
+          <option value="">برنامه را انتخاب کنید</option>
+          {programs.map((program) => <option value={program.id} key={program.id}>{program.title} ({program.code})</option>)}
+        </select>
         <input placeholder="سال" value={examYear} onChange={(e) => setExamYear(e.target.value)} style={{ width: "5rem" }} />
         <input placeholder="سهمیه" value={quota} onChange={(e) => setQuota(e.target.value)} />
         <input placeholder="ظرفیت" value={capacity} onChange={(e) => setCapacity(e.target.value)} style={{ width: "5rem" }} />
-        <button type="submit">ثبت</button>
+        <button type="submit" disabled={!sourceId}>ثبت</button>
       </form>
     </main>
   );

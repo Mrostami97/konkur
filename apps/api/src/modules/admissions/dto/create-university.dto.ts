@@ -1,6 +1,9 @@
-import { IsString, Matches, MinLength } from "class-validator";
+import { IsString, IsUUID, Matches, MinLength } from "class-validator";
 
 export class CreateUniversityDto {
+  @IsUUID()
+  sourceId!: string;
+
   @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/, { message: "code must be kebab-case" })
   code!: string;
 

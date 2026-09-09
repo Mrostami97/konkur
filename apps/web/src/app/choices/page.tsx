@@ -6,12 +6,31 @@ import { useCallback, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { EmptyState, PageHeader } from "../../components/ui";
+import { AdmissionsJourney } from "../../components/AdmissionsJourney";
+
+interface ChanceInterval {
+  low: number;
+  high: number;
+  level: number;
+  method?: "WILSON_SCORE";
+}
 
 interface ChoiceComparison {
   priority: number;
-  program: { id: string; title: string; university: { title: string } };
+  program: { id: string; code?: string; title: string; university: { title: string } };
   chance: number | null;
   sampleSize: number;
+  minimumSampleSize?: number;
+  dataYears?: number[];
+  interval?: ChanceInterval | null;
+  methodology?: string;
+  limitations?: string[];
+  reason?: string | null;
+  error?: string;
+}
+
+function percent(value: number): string {
+  return toPersianDigits(Math.round(value * 100));
 }
 
 export default function ChoicesPage() {
@@ -25,7 +44,10 @@ export default function ChoicesPage() {
       setItems(await apiFetch<ChoiceComparison[]>("/me/choices/compare"));
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) router.push("/login");
-      else setError("فهرست انتخاب‌ها در دسترس نیست.");
+      else {
+        setError("فهرست انتخاب‌ها در دسترس نیست.");
+        setItems([]);
+      }
     }
   }, [router]);
 
@@ -63,12 +85,44 @@ export default function ChoicesPage() {
         <ol className="choice-list">
           {items.map((item, index) => (
             <li className="surface-card choice-card" key={item.program.id}>
-              <div><span className="choice-rank">اولویت {toPersianDigits(index + 1)}</span><h2>{item.program.title}</h2><p className="muted-copy">{item.program.university.title}</p></div>
-              <p className="choice-chance">
-                {item.chance === null
-                  ? `شانس قبولی: داده کافی نیست (نمونه: ${toPersianDigits(item.sampleSize)})`
-                  : `شانس قبولی تجربی: ${toPersianDigits((item.chance * 100).toFixed(0))}٪ (بر اساس ${toPersianDigits(item.sampleSize)} کارنامه مشابه)`}
-              </p>
+              <div>
+                <span className="choice-rank">اولویت {toPersianDigits(index + 1)}</span>
+                <h2>{item.program.title}</h2>
+                <p className="muted-copy">{item.program.university.title}</p>
+                {item.program.code && <Link className="text-link" href={`/programs/${item.program.code}`}>جزئیات برنامه و منبع رسمی ←</Link>}
+              </div>
+              <div className="choice-chance">
+                {item.chance === null ? (
+                  <>
+                    <strong>برای برآورد، دادهٔ کافی نیست.</strong>
+                    <p>
+                      نمونهٔ فعلی: {toPersianDigits(item.sampleSize)} کارنامه؛ حداقل لازم: {toPersianDigits(item.minimumSampleSize ?? 5)} کارنامه.
+                    </p>
+                    <p className="muted-copy">
+                      {item.error
+                        ? "ابتدا یک تخمین رتبهٔ سازگار با رشته و مقطع این برنامه ثبت کن."
+                        : item.reason ?? "تا رسیدن نمونه به حداقل لازم، درصد قبولی نمایش داده نمی‌شود."}
+                    </p>
+                    {item.error && <Link className="text-link" href="/rank-estimate">ساخت تخمین رتبه ←</Link>}
+                  </>
+                ) : (
+                  <>
+                    <strong>نرخ قبولی ثبت‌شده در نمونه: {percent(item.chance)}٪</strong>
+                    <p>بر اساس {toPersianDigits(item.sampleSize)} کارنامهٔ قابل مقایسه</p>
+                    {item.interval && (
+                      <p>
+                        بازهٔ ویلسون {percent(item.interval.level)}٪ برای نرخ نمونه: {percent(item.interval.low)}٪ تا {percent(item.interval.high)}٪
+                      </p>
+                    )}
+                  </>
+                )}
+                <p>
+                  سال‌های داده: {item.dataYears && item.dataYears.length > 0
+                    ? toPersianDigits([...item.dataYears].sort((a, b) => a - b).join("، "))
+                    : "دادهٔ سالانه در دسترس نیست"}
+                </p>
+                {item.limitations?.map((limitation) => <p className="muted-copy" key={limitation}>{limitation}</p>)}
+              </div>
               <div className="choice-actions"><button className="button button-secondary" aria-label="انتقال به بالا" onClick={() => move(index, -1)} disabled={index === 0}>
                 ↑
               </button><button className="button button-secondary" aria-label="انتقال به پایین" onClick={() => move(index, 1)} disabled={index === items.length - 1}>
@@ -78,6 +132,11 @@ export default function ChoicesPage() {
           ))}
         </ol>
       )}
+      <div className="surface-card surface-card-muted analysis-note">
+        <p><strong>شیوهٔ خواندن این درصدها:</strong> نرخ نمایش‌داده‌شده فقط نتیجهٔ کارنامه‌های تاریخیِ قابل مقایسه است.</p>
+        <p>بازهٔ آماری، عدم‌قطعیت نمونه را نشان می‌دهد و پیش‌بینی قطعی یا تضمین قبولی نیست.</p>
+      </div>
+      <AdmissionsJourney current="choices" />
     </main>
   );
 }

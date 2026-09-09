@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { ReviewStatus } from "@prisma/client";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { Degree, ReviewStatus } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ContentSearchQueryDto, PublicReportCardsQueryDto } from "./dto/content-discovery.dto";
 
@@ -28,6 +28,47 @@ const SEARCH_TYPE_ORDER: Record<SearchResultType, number> = {
   TOPIC: 3,
   CONTRIBUTOR: 4,
 };
+
+const MIN_PUBLIC_COHORT_SIZE = 5;
+const ACTIVE_OFFICIAL_SOURCE = {
+  sourceTier: "PRIMARY_OFFICIAL",
+  sourceStatus: "ACTIVE",
+  archivedAt: null,
+  mayLink: true,
+} as const;
+
+export interface PublicSubjectScore {
+  subject_code: string;
+  percent: number;
+}
+
+export interface PublicAdmission {
+  program_code: string;
+  status: "accepted" | "rejected" | "waitlisted";
+  program?: {
+    code: string;
+    title: string;
+    university: { code: string; title: string };
+  };
+}
+
+export interface SanitizedReportCard {
+  examYear: number;
+  degree: Degree;
+  field: string;
+  quota: string;
+  subjectScores: PublicSubjectScore[];
+  rank: { value: number; scope: "national" | "quota" | "field" };
+  admissions: PublicAdmission[];
+}
+
+function percentile(sorted: number[], value: number) {
+  const index = (value / 100) * (sorted.length - 1);
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+  if (lower === upper) return sorted[lower];
+  return sorted[lower] + (sorted[upper] - sorted[lower]) * (index - lower);
+}
 
 /**
  * Makes Persian search insensitive to Arabic ی/ک variants, joiners,
@@ -255,31 +296,146 @@ export class ContentDiscoveryService {
   }
 
   async listPublicReportCards(query: PublicReportCardsQueryDto) {
-    const where = { publicConsent: true } as const;
-    const [records, total] = await this.prisma.$transaction([
-      this.prisma.reportCard.findMany({
-        where,
-        orderBy: [{ examYear: "desc" }, { createdAt: "desc" }],
-        skip: (query.page - 1) * query.limit,
-        take: query.limit,
-        select: {
-          examYear: true,
-          degree: true,
-          field: true,
-          quota: true,
-          subjectScores: true,
-          rank: true,
-          admissions: true,
-        },
+    if (query.rankMin && query.rankMax && query.rankMin > query.rankMax) {
+      throw new BadRequestException("rankMin must not be greater than rankMax");
+    }
+    const admissionProgramCodes = await this.publicAdmissionProgramCodes(query);
+    const requiresAdmissionFilter = Boolean(query.specialization || query.university);
+    const records = await this.prisma.reportCard.findMany({
+      where: {
+        publicConsent: true,
+        examYear: query.examYear,
+        degree: query.degree,
+        field: query.field,
+        quota: query.quota,
+      },
+      orderBy: [{ examYear: "desc" }, { createdAt: "desc" }],
+      select: {
+        examYear: true,
+        degree: true,
+        field: true,
+        quota: true,
+        subjectScores: true,
+        rank: true,
+        admissions: true,
+      },
+    });
+    const filtered = records
+      .map((record) => this.sanitizePublicReportCard(record))
+      .filter((record): record is SanitizedReportCard => Boolean(record))
+      .filter((record) => query.rankMin === undefined || record.rank.value >= query.rankMin)
+      .filter((record) => query.rankMax === undefined || record.rank.value <= query.rankMax)
+      .filter((record) => !requiresAdmissionFilter || record.admissions.some((item) => admissionProgramCodes.has(item.program_code)));
+
+    const referencedCodes = [...new Set(filtered.flatMap((record) => record.admissions.map((item) => item.program_code)))];
+    const publicPrograms = referencedCodes.length === 0 ? [] : await this.prisma.program.findMany({
+      where: {
+        code: { in: referencedCodes },
+        source: { is: ACTIVE_OFFICIAL_SOURCE },
+        university: { source: { is: ACTIVE_OFFICIAL_SOURCE } },
+      },
+      select: { code: true, title: true, university: { select: { code: true, title: true } } },
+    });
+    const programByCode = new Map(publicPrograms.map((program) => [program.code, program]));
+    const enriched = filtered.map((record) => ({
+      ...record,
+      // A free-form program_code from an imported card is not public catalog
+      // data by itself. Publish an admission only after that code resolves to
+      // an independently sourced, active official program and university.
+      admissions: record.admissions.flatMap((admission) => {
+        const program = programByCode.get(admission.program_code);
+        return program ? [{ ...admission, program }] : [];
       }),
-      this.prisma.reportCard.count({ where }),
-    ]);
+    }));
+    const total = enriched.length;
+    const items = enriched.slice((query.page - 1) * query.limit, query.page * query.limit);
+    const ranks = filtered.map((record) => record.rank.value).sort((left, right) => left - right);
+    const dataYears = [...new Set(filtered.map((record) => record.examYear))].sort((left, right) => left - right);
+    const aggregate = total >= MIN_PUBLIC_COHORT_SIZE
+      ? {
+          rankMedian: Math.round(percentile(ranks, 50)),
+          rankP25: Math.round(percentile(ranks, 25)),
+          rankP75: Math.round(percentile(ranks, 75)),
+          rankCentral80Low: Math.round(percentile(ranks, 10)),
+          rankCentral80High: Math.round(percentile(ranks, 90)),
+          intervalKind: "EMPIRICAL_CENTRAL_80",
+          intervalNote: "این بازهٔ تجربی مرکزی ۸۰٪ است و فاصلهٔ اطمینان آماری یا تضمین رتبه نیست.",
+        }
+      : null;
     return {
-      items: records,
+      items,
       page: query.page,
       limit: query.limit,
       total,
       totalPages: total === 0 ? 0 : Math.ceil(total / query.limit),
+      cohort: {
+        sampleSize: total,
+        minimumSampleSize: MIN_PUBLIC_COHORT_SIZE,
+        dataYears,
+        aggregate,
+        limitations: [
+          "کارنامه‌ها فقط نمونه‌های دارای رضایت انتشارند و نمایندهٔ همهٔ داوطلبان نیستند.",
+          "تغییر سال، سهمیه، مجموعه و ظرفیت دانشگاه می‌تواند مقایسه را جابه‌جا کند.",
+          "رکورد کمتر از پنج نمونه عمداً به آمار تجمیعی تبدیل نمی‌شود.",
+        ],
+      },
+    };
+  }
+
+  private async publicAdmissionProgramCodes(query: PublicReportCardsQueryDto) {
+    if (!query.specialization && !query.university) return new Set<string>();
+    const programs = await this.prisma.program.findMany({
+      where: {
+        ...(query.specialization ? { code: query.specialization } : {}),
+        source: { is: ACTIVE_OFFICIAL_SOURCE },
+        university: {
+          ...(query.university ? { code: query.university } : {}),
+          source: { is: ACTIVE_OFFICIAL_SOURCE },
+        },
+      },
+      select: { code: true },
+    });
+    return new Set(programs.map((program) => program.code));
+  }
+
+  private sanitizePublicReportCard(record: {
+    examYear: number;
+    degree: Degree;
+    field: string;
+    quota: string;
+    subjectScores: unknown;
+    rank: unknown;
+    admissions: unknown;
+  }): SanitizedReportCard | null {
+    if (!Number.isInteger(record.examYear) || !record.field || !record.quota) return null;
+    const rank = record.rank;
+    if (!Array.isArray(record.subjectScores) || !this.isRecord(rank) || !Array.isArray(record.admissions)) return null;
+    const rankValue = rank.value;
+    const rankScope = rank.scope;
+    if (typeof rankValue !== "number" || !Number.isInteger(rankValue) || rankValue < 1) return null;
+    if (typeof rankScope !== "string" || !["national", "quota", "field"].includes(rankScope)) return null;
+    const subjectScores = record.subjectScores.flatMap((value): PublicSubjectScore[] => {
+      if (!this.isRecord(value) || typeof value.subject_code !== "string" || typeof value.percent !== "number") return [];
+      if (!Number.isFinite(value.percent) || value.percent < -100 || value.percent > 100) return [];
+      return [{ subject_code: value.subject_code, percent: value.percent }];
+    });
+    if (subjectScores.length === 0) return null;
+    const admissions = record.admissions.flatMap((value): PublicAdmission[] => {
+      if (!this.isRecord(value) || typeof value.program_code !== "string") return [];
+      if (!["accepted", "rejected", "waitlisted"].includes(String(value.status))) return [];
+      return [{
+        program_code: value.program_code,
+        status: value.status as PublicAdmission["status"],
+      }];
+    });
+    return {
+      examYear: record.examYear,
+      degree: record.degree,
+      field: record.field,
+      quota: record.quota,
+      subjectScores,
+      rank: { value: rankValue, scope: rankScope as SanitizedReportCard["rank"]["scope"] },
+      admissions,
     };
   }
 
@@ -325,5 +481,9 @@ export class ContentDiscoveryService {
       return Object.values(value as Record<string, unknown>).map((item) => this.jsonText(item)).join(" ");
     }
     return "";
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return Boolean(value) && typeof value === "object" && !Array.isArray(value);
   }
 }

@@ -297,6 +297,9 @@ model ContentSource {
   archivedAt           DateTime?
   articleLinks         ArticleSource[]
   resourceLinks        ResourceSource[]
+  universityRecords    University[]          @relation("UniversityOfficialSource")
+  programRecords       Program[]             @relation("ProgramOfficialSource")
+  capacityRecords      Capacity[]            @relation("CapacityOfficialSource")
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt
 
@@ -1122,13 +1125,16 @@ enum TuitionType {
 }
 
 model University {
-  id        String    @id @default(uuid())
-  code      String    @unique
+  id        String         @id @default(uuid())
+  code      String         @unique
   title     String
   city      String
+  sourceId  String?
+  source    ContentSource? @relation("UniversityOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
   programs  Program[]
-  createdAt DateTime  @default(now())
+  createdAt DateTime       @default(now())
 
+  @@index([sourceId])
   @@map("universities")
 }
 
@@ -1142,23 +1148,29 @@ model Program {
   field        String
   tuitionType  TuitionType
   hasDormitory Boolean          @default(false)
+  sourceId      String?
+  source        ContentSource?  @relation("ProgramOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
   capacities   Capacity[]
   choiceItems  ChoiceListItem[]
   createdAt    DateTime         @default(now())
 
   @@index([degree, field])
+  @@index([sourceId])
   @@map("programs")
 }
 
 model Capacity {
-  id        String  @id @default(uuid())
+  id        String         @id @default(uuid())
   programId String
-  program   Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  program   Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
   examYear  Int
   quota     String
   capacity  Int
+  sourceId  String?
+  source    ContentSource? @relation("CapacityOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
 
   @@unique([programId, examYear, quota])
+  @@index([sourceId])
   @@map("capacities")
 }
 

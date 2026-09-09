@@ -9,6 +9,7 @@ import { CreateUniversityDto } from "./dto/create-university.dto";
 import { CreateProgramDto } from "./dto/create-program.dto";
 import { CreateCapacityDto } from "./dto/create-capacity.dto";
 import { AddChoiceDto } from "./dto/choice-list.dto";
+import { ListProgramsDto } from "./dto/list-programs.dto";
 
 class ReorderChoicesDto {
   @IsArray()
@@ -25,13 +26,19 @@ export class AdmissionsPublicController {
     return this.admissions.listUniversities();
   }
 
+  @Get("universities/:code")
+  getUniversity(@Param("code") code: string) {
+    return this.admissions.getUniversityByCode(code);
+  }
+
   @Get("programs")
-  listPrograms(
-    @Query("degree") degree?: "master" | "phd",
-    @Query("field") field?: string,
-    @Query("city") city?: string,
-  ) {
-    return this.admissions.listPrograms({ degree, field, city });
+  listPrograms(@Query() query: ListProgramsDto) {
+    return this.admissions.listPrograms(query);
+  }
+
+  @Get("programs/code/:code")
+  getProgramByCode(@Param("code") code: string) {
+    return this.admissions.getProgramByCode(code);
   }
 
   @Get("programs/:id")

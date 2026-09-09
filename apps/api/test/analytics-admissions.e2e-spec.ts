@@ -182,16 +182,32 @@ describe("Analytics (rank estimation/backtest) + Admissions (e2e)", () => {
   });
 
   it("builds an admissions catalog and computes a real empirical acceptance chance", async () => {
+    const sourceRes = await request(app.getHttpServer())
+      .post("/admin/content-sources")
+      .set("Cookie", adminCookie)
+      .send({
+        externalId: `admissions-official-source-${Date.now()}`,
+        kind: "OFFICIAL_ADMISSIONS_BOOKLET",
+        title: "Official admissions test fixture",
+        publisher: "Official test authority",
+        canonicalUrl: `https://example.test/official-admissions/${Date.now()}`,
+        sourceTier: "PRIMARY_OFFICIAL",
+        checkedAt: new Date().toISOString(),
+        rightsBasis: "LINK_ONLY",
+        mayLink: true,
+      })
+      .expect(201);
     const uniRes = await request(app.getHttpServer())
       .post("/admin/universities")
       .set("Cookie", adminCookie)
-      .send({ code: `uni-${Date.now()}`, title: "Test University", city: "Tehran" })
+      .send({ sourceId: sourceRes.body.id, code: `uni-${Date.now()}`, title: "Test University", city: "Tehran" })
       .expect(201);
     const programRes = await request(app.getHttpServer())
       .post("/admin/programs")
       .set("Cookie", adminCookie)
       .send({
         universityId: uniRes.body.id,
+        sourceId: sourceRes.body.id,
         code: programCode,
         title: "Software Engineering",
         degree: "MASTER",
@@ -202,7 +218,7 @@ describe("Analytics (rank estimation/backtest) + Admissions (e2e)", () => {
     await request(app.getHttpServer())
       .post(`/admin/programs/${programRes.body.id}/capacities`)
       .set("Cookie", adminCookie)
-      .send({ examYear: 1405, quota, capacity: 20 })
+      .send({ sourceId: sourceRes.body.id, examYear: 1405, quota, capacity: 20 })
       .expect(201);
 
     const listRes = await request(app.getHttpServer()).get(`/programs?field=${field}`).expect(200);

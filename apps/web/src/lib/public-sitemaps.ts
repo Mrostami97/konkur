@@ -37,6 +37,13 @@ type PublicResource = {
   reviewerProfile?: { slug: string } | null;
 };
 
+type PublicAdmissionsCatalogItem = {
+  code: string;
+  source?: {
+    checkedAt?: string | null;
+  } | null;
+};
+
 function escapeXml(value: string) {
   return value.replace(/[<>&'\"]/g, (character) => ({
     "<": "&lt;",
@@ -154,6 +161,28 @@ export async function resourceSitemapEntries(): Promise<SitemapCollection> {
 
 export function reportCardSitemapEntries() {
   return [{ loc: absoluteUrl("/report-cards") }];
+}
+
+export async function admissionsSitemapEntries(): Promise<SitemapCollection> {
+  const [universities, programs] = await Promise.all([
+    safeList<PublicAdmissionsCatalogItem>("/universities"),
+    safeList<PublicAdmissionsCatalogItem>("/programs"),
+  ]);
+  return {
+    complete: universities !== null && programs !== null,
+    entries: uniqueEntries([
+      { loc: absoluteUrl("/admissions") },
+      { loc: absoluteUrl("/programs") },
+      ...(universities ?? []).map((university) => ({
+        loc: absoluteUrl(`/universities/${encodeURIComponent(university.code)}`),
+        lastmod: asIso(university.source?.checkedAt),
+      })),
+      ...(programs ?? []).map((program) => ({
+        loc: absoluteUrl(`/programs/${encodeURIComponent(program.code)}`),
+        lastmod: asIso(program.source?.checkedAt),
+      })),
+    ]),
+  };
 }
 
 export function sitemapXml(entries: SitemapEntry[]) {

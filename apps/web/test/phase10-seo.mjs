@@ -30,7 +30,7 @@ assert.equal(sitemapIndex.response.status, 200);
 assert.match(sitemapIndex.response.headers.get("content-type") ?? "", /application\/xml/);
 assert.match(sitemapIndex.body, /<sitemapindex/);
 const sitemapLocations = [...sitemapIndex.body.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
-assert.equal(sitemapLocations.length, 7);
+assert.equal(sitemapLocations.length, 8);
 
 for (const location of sitemapLocations) {
   const url = new URL(location);
@@ -43,6 +43,11 @@ const pageSitemap = await read("/sitemaps/pages.xml");
 assert.doesNotMatch(pageSitemap.body, /rank-estimate/);
 assert.match(pageSitemap.body, /\/admissions/);
 
+const admissionsSitemap = await read("/sitemaps/admissions.xml");
+assert.equal(admissionsSitemap.response.status, 200);
+assert.match(admissionsSitemap.body, /\/admissions/);
+assert.match(admissionsSitemap.body, /\/programs/);
+
 const rss = await read("/rss.xml");
 assert.equal(rss.response.status, 200);
 assert.match(rss.response.headers.get("content-type") ?? "", /application\/rss\+xml/);
@@ -53,11 +58,14 @@ const robots = await read("/robots.txt");
 assert.equal(robots.response.status, 200);
 assert.match(robots.body, /Disallow: \/admin/);
 assert.match(robots.body, /Sitemap: .*\/sitemap\.xml/);
+assert.match(robots.body, /Allow: \/universities\//);
+assert.match(robots.body, /Allow: \/programs\//);
 
 const llms = await read("/llms.txt");
 assert.equal(llms.response.status, 200);
 assert.match(llms.body, /# kunkur01/);
 assert.match(llms.body, /سیاست اصلاح/);
+assert.match(llms.body, /دانشگاه‌ها و رشته‌محل‌های دارای منبع رسمی/);
 
 const admissions = await read("/admissions");
 assert.equal(admissions.response.status, 200);

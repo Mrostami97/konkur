@@ -2,6 +2,9 @@ import { IsBoolean, IsIn, IsOptional, IsString, IsUUID, Matches, MinLength } fro
 
 export class CreateProgramDto {
   @IsUUID()
+  sourceId!: string;
+
+  @IsUUID()
   universityId!: string;
 
   @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/, { message: "code must be kebab-case" })
