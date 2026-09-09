@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
 import { hashPassword } from "./modules/identity/password-hasher";
 import { seedStaticEditorial } from "./seed-static-editorial";
+import { seedStaticResources } from "./seed-static-resources";
 
 const prisma = new PrismaClient();
 
@@ -167,6 +168,7 @@ export async function seed() {
   await upsertUserWithRole(SEED_STUDENT_PHONE, Role.STUDENT);
   await seedCourseAndProduct(admin.id);
   await seedStaticEditorial(prisma);
+  await seedStaticResources(prisma);
 }
 
 if (require.main === module) {

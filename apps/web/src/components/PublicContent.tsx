@@ -75,6 +75,15 @@ export interface PublicResourceRecord {
   publishedAt: string | null;
   canAccess: boolean;
   externalUrl?: string;
+  catalogProfile?: {
+    learningType?: string;
+    startLevel?: string;
+    coverage?: string;
+    volume?: string;
+    sampleLabel?: string;
+    costLabel?: string;
+    relatedGuideSlugs?: string[];
+  } | null;
   sources: PublicSourceReference[];
   authorProfile: PublicProfileReference | null;
   reviewerProfile: PublicProfileReference | null;

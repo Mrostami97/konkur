@@ -43,6 +43,7 @@ export default async function ResourcePage({ params }: { params: { slug: string 
   const resource = result.resource;
   const path = `/resources/${resource.slug}`;
   const breadcrumbs = [{ name: "خانه", href: "/" }, { name: "منابع", href: "/resources" }, { name: resource.title }];
+  const relatedGuides = resource.catalogProfile?.relatedGuideSlugs ?? [];
   const schemas = [
     {
       "@context": "https://schema.org",
@@ -95,6 +96,34 @@ export default async function ResourcePage({ params }: { params: { slug: string 
 
           <ResourceAccess initial={{ slug: resource.slug, accessMode: resource.accessMode, hostingMode: resource.hostingMode, canAccess: resource.canAccess, externalUrl: resource.externalUrl }} />
 
+          {resource.catalogProfile && (
+            <section className="surface-card" aria-labelledby="resource-fit-title">
+              <div className="section-heading"><div><span className="eyebrow">تناسب منبع</span><h2 id="resource-fit-title">قبل از شروع، این مشخصات را ببین</h2></div></div>
+              <div className="responsive-table">
+                <table>
+                  <tbody>
+                    <tr><th>نوع یادگیری</th><td>{resource.catalogProfile.learningType ?? "ثبت نشده"}</td></tr>
+                    <tr><th>سطح شروع</th><td>{resource.catalogProfile.startLevel ?? "ثبت نشده"}</td></tr>
+                    <tr><th>پوشش</th><td>{resource.catalogProfile.coverage ?? "ثبت نشده"}</td></tr>
+                    <tr><th>حجم</th><td>{resource.catalogProfile.volume ?? "ثبت نشده"}</td></tr>
+                    <tr><th>نمونه</th><td>{resource.catalogProfile.sampleLabel ?? "ثبت نشده"}</td></tr>
+                    <tr><th>هزینه</th><td>{resource.catalogProfile.costLabel ?? accessModeLabel(resource.accessMode)}</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {(resource.subjectCodes.length > 0 || relatedGuides.length > 0) && (
+            <section className="surface-card" aria-labelledby="resource-next-step-title">
+              <div className="section-heading"><div><span className="eyebrow">قدم بعد</span><h2 id="resource-next-step-title">این منبع را در یک مسیر ببین</h2><p>هاب درس، پیش‌نیاز و ترتیب یادگیری را نشان می‌دهد؛ راهنما کمک می‌کند منبع را متناسب با برنامه انتخاب کنی.</p></div></div>
+              <div className="cluster">
+                {resource.subjectCodes.map((code) => <Link className="button button-secondary" href={`/subjects/${code}`} key={code}>هاب درس {findSubjectTitle(code)} ←</Link>)}
+                {relatedGuides.map((slug) => <Link className="button button-secondary" href={`/guides/${slug}`} key={slug}>راهنمای برنامه‌ریزی منبع ←</Link>)}
+              </div>
+            </section>
+          )}
+
           <PublicSourceList sources={resource.sources ?? []} />
         </article>
         <aside className="editorial-aside" aria-label="اطلاعات منبع">
@@ -111,4 +140,14 @@ export default async function ResourcePage({ params }: { params: { slug: string 
       </div>
     </main>
   );
+}
+
+function findSubjectTitle(code: string) {
+  const labels: Record<string, string> = {
+    "data-structures-algorithms": "داده‌ساختار و الگوریتم",
+    "data-structures": "ساختمان داده",
+    algorithms: "طراحی الگوریتم",
+    automata: "نظریه زبان‌ها و ماشین‌ها",
+  };
+  return labels[code] ?? code;
 }

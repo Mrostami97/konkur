@@ -176,6 +176,38 @@ export class UpdateResourceDto {
   @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 }
 
+export class PublicResourcesQueryDto {
+  @IsOptional()
+  @IsEnum(Degree)
+  degree?: Degree;
+
+  @IsOptional()
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  field?: string;
+
+  @IsOptional()
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  subject?: string;
+
+  @IsOptional()
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  topic?: string;
+
+  @IsOptional()
+  @IsEnum(ResourceKind)
+  kind?: ResourceKind;
+
+  @IsOptional()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
+  @IsDateString({ strict: true })
+  reviewedFrom?: string;
+
+  @IsOptional()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
+  @IsDateString({ strict: true })
+  reviewedTo?: string;
+}
+
 export class RejectEditorialDto {
   @IsString()
   @MinLength(1)

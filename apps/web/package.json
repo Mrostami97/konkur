@@ -8,7 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
-    "test": "node test/phase11-corpus.mjs && node test/phase12-corpus.mjs && node test/phase13-corpus.mjs",
+    "test": "node test/phase11-corpus.mjs && node test/phase12-corpus.mjs && node test/phase13-corpus.mjs && node test/phase14-resources.mjs",
     "test:seo": "node test/phase10-seo.mjs",
     "test:phase11:ssr": "node test/phase11-ssr.mjs",
     "test:phase12:ssr": "node test/phase12-ssr.mjs",

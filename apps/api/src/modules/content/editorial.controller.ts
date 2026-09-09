@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import type { Response } from "express";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
@@ -9,6 +9,7 @@ import {
   CreateContentSourceDto,
   CreateContributorDto,
   CreateResourceDto,
+  PublicResourcesQueryDto,
   RejectEditorialDto,
   UpdateContentSourceDto,
   UpdateContributorDto,
@@ -22,8 +23,8 @@ export class ResourcesPublicController {
   constructor(private readonly editorial: EditorialService) {}
 
   @Get()
-  list(@Req() request: RequestWithUser) {
-    return this.editorial.listPublishedResources(request.user?.id);
+  list(@Req() request: RequestWithUser, @Query() query: PublicResourcesQueryDto) {
+    return this.editorial.listPublishedResources(request.user?.id, query);
   }
 
   @Get(":slug")

@@ -92,6 +92,7 @@ jobs:
         run: |
           set -euo pipefail
           pnpm --filter @konkurcom/contracts run test
+          pnpm --filter @konkurcom/web run test
           pnpm --filter @konkurcom/api exec prisma migrate deploy
           pnpm --filter @konkurcom/api run test
           pnpm --filter @konkurcom/api run test:e2e

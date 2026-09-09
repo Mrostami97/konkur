@@ -23,6 +23,7 @@ import {
   CreateContentSourceDto,
   CreateContributorDto,
   CreateResourceDto,
+  PublicResourcesQueryDto,
   SourceLinkDto,
   UpdateContentSourceDto,
   UpdateContributorDto,
@@ -54,6 +55,9 @@ const publicResourceInclude = {
           canonicalUrl: true,
           deepUrl: true,
           checkedAt: true,
+          sourceStatus: true,
+          archivedAt: true,
+          mayLink: true,
           licenseName: true,
           licenseUrl: true,
           attributionText: true,
@@ -117,7 +121,7 @@ type PublishableResource = Pick<
   sources: {
     source: Pick<
       ResourceEditorial["sources"][number]["source"],
-      "archivedAt" | "commercialUseAllowed" | "mayEmbed" | "mayHost" | "rightsBasis" | "sourceStatus"
+      "archivedAt" | "canonicalUrl" | "commercialUseAllowed" | "deepUrl" | "mayEmbed" | "mayHost" | "mayLink" | "rightsBasis" | "sourceStatus"
     >;
   }[];
 };
@@ -464,9 +468,18 @@ export class EditorialService {
     return this.resourceWithPendingVersion(await this.getResourceCanonical(id));
   }
 
-  async listPublishedResources(userId?: string) {
+  async listPublishedResources(userId?: string, query: PublicResourcesQueryDto = {}) {
+    const reviewedAt = this.resourceReviewDateFilter(query.reviewedFrom, query.reviewedTo);
     const resources = await this.prisma.resource.findMany({
-      where: { reviewStatus: ReviewStatus.PUBLISHED },
+      where: {
+        reviewStatus: ReviewStatus.PUBLISHED,
+        ...(query.degree ? { taxonomyDegrees: { has: query.degree } } : {}),
+        ...(query.field ? { taxonomyFields: { has: query.field } } : {}),
+        ...(query.subject ? { subjectCodes: { has: query.subject } } : {}),
+        ...(query.topic ? { topicCodes: { has: query.topic } } : {}),
+        ...(query.kind ? { kind: query.kind } : {}),
+        ...(reviewedAt ? { reviewedAt } : {}),
+      },
       include: publicResourceInclude,
       orderBy: { publishedAt: "desc" },
     });
@@ -517,6 +530,12 @@ export class EditorialService {
       resource.externalUrl &&
       EXTERNAL_HOSTING_MODES.includes(resource.hostingMode)
     ) {
+      if (
+        resource.hostingMode === ResourceHostingMode.EXTERNAL_LINK &&
+        !this.hasActiveLinkPermission(resource.sources, resource.externalUrl)
+      ) {
+        throw new NotFoundException("resource content is not available");
+      }
       return { type: "json", value: { externalUrl: resource.externalUrl } };
     }
     return { type: "json", value: { contentBlocks: resource.contentBlocks } };
@@ -941,6 +960,13 @@ export class EditorialService {
     if (resource.hostingMode === ResourceHostingMode.EXTERNAL_LINK && !resource.externalUrl) {
       throw new BadRequestException("externalUrl is required for EXTERNAL_LINK resources");
     }
+    if (
+      resource.hostingMode === ResourceHostingMode.EXTERNAL_LINK &&
+      resource.externalUrl &&
+      !this.hasActiveLinkPermission(resource.sources, resource.externalUrl)
+    ) {
+      throw new BadRequestException("EXTERNAL_LINK resources require an active source that permits and matches the externalUrl");
+    }
     if (resource.hostingMode === ResourceHostingMode.OFFICIAL_EMBED) {
       if (!resource.externalUrl || !activeSources.some((link) => link.source.mayEmbed)) {
         throw new BadRequestException("an embeddable source and externalUrl are required");
@@ -995,6 +1021,10 @@ export class EditorialService {
   }
 
   private toPublicResource(resource: PublicResourceRecord, canAccess: boolean) {
+    const linkPermitted =
+      resource.hostingMode !== ResourceHostingMode.EXTERNAL_LINK ||
+      Boolean(resource.externalUrl && this.hasActiveLinkPermission(resource.sources, resource.externalUrl));
+    const publicSources = resource.sources.filter((link) => this.isActiveLinkableSource(link.source));
     return {
       id: resource.id,
       slug: resource.slug,
@@ -1010,17 +1040,27 @@ export class EditorialService {
       topicCodes: resource.topicCodes,
       reviewedAt: resource.reviewedAt,
       publishedAt: resource.publishedAt,
-      canAccess,
+      canAccess: canAccess && linkPermitted,
       externalUrl:
-        canAccess && EXTERNAL_HOSTING_MODES.includes(resource.hostingMode)
+        canAccess && linkPermitted && EXTERNAL_HOSTING_MODES.includes(resource.hostingMode)
           ? resource.externalUrl
           : undefined,
-      sources: resource.sources.map((link) => ({
+      catalogProfile: this.publicCatalogProfile(resource.metadata),
+      sources: publicSources.map((link) => ({
         relation: link.relation,
         locator: link.locator,
         claim: link.claim,
         order: link.order,
-        source: link.source,
+        source: {
+          title: link.source.title,
+          publisher: link.source.publisher,
+          canonicalUrl: link.source.canonicalUrl,
+          deepUrl: link.source.deepUrl,
+          checkedAt: link.source.checkedAt,
+          licenseName: link.source.licenseName,
+          licenseUrl: link.source.licenseUrl,
+          attributionText: link.source.attributionText,
+        },
       })),
       authorProfile: resource.authorProfile?.isPublished
         ? { slug: resource.authorProfile.slug, displayName: resource.authorProfile.displayName, roleTitle: resource.authorProfile.roleTitle }
@@ -1029,5 +1069,57 @@ export class EditorialService {
         ? { slug: resource.reviewerProfile.slug, displayName: resource.reviewerProfile.displayName, roleTitle: resource.reviewerProfile.roleTitle }
         : null,
     };
+  }
+
+  private resourceReviewDateFilter(reviewedFrom?: string, reviewedTo?: string): Prisma.DateTimeNullableFilter | undefined {
+    if (!reviewedFrom && !reviewedTo) return undefined;
+    const from = reviewedFrom ? new Date(`${reviewedFrom}T00:00:00.000Z`) : undefined;
+    const toExclusive = reviewedTo ? new Date(`${reviewedTo}T00:00:00.000Z`) : undefined;
+    if (toExclusive) toExclusive.setUTCDate(toExclusive.getUTCDate() + 1);
+    if (from && toExclusive && from >= toExclusive) {
+      throw new BadRequestException("reviewedFrom must not be after reviewedTo");
+    }
+    return {
+      ...(from ? { gte: from } : {}),
+      ...(toExclusive ? { lt: toExclusive } : {}),
+    };
+  }
+
+  private isActiveLinkableSource(source: { archivedAt: Date | null; mayLink: boolean; sourceStatus: string }) {
+    return !source.archivedAt && source.sourceStatus === "ACTIVE" && source.mayLink;
+  }
+
+  private hasActiveLinkPermission(
+    links: { source: { archivedAt: Date | null; canonicalUrl: string; deepUrl: string | null; mayLink: boolean; sourceStatus: string } }[],
+    externalUrl: string,
+  ) {
+    return links.some(
+      (link) =>
+        this.isActiveLinkableSource(link.source) &&
+        (link.source.canonicalUrl === externalUrl || link.source.deepUrl === externalUrl),
+    );
+  }
+
+  private publicCatalogProfile(metadata: Prisma.JsonValue) {
+    if (!this.isRecord(metadata) || !this.isRecord(metadata.catalog)) return null;
+    const catalog = metadata.catalog;
+    const stringValue = (key: string) => typeof catalog[key] === "string" ? catalog[key] as string : undefined;
+    const relatedGuideSlugs = Array.isArray(catalog.relatedGuideSlugs)
+      ? [...new Set(catalog.relatedGuideSlugs.filter(
+          (value): value is string => typeof value === "string" && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value),
+        ))].slice(0, 20)
+      : [];
+    const profile = {
+      learningType: stringValue("learningType"),
+      startLevel: stringValue("startLevel"),
+      coverage: stringValue("coverage"),
+      volume: stringValue("volume"),
+      sampleLabel: stringValue("sampleLabel"),
+      costLabel: stringValue("costLabel"),
+      relatedGuideSlugs,
+    };
+    return Object.values(profile).some((value) => Array.isArray(value) ? value.length > 0 : value !== undefined)
+      ? profile
+      : null;
   }
 }
