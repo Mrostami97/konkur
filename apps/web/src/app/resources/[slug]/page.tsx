@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ResourceAccess } from "../../../components/ResourceAccess";
+import { ResourceStudyActions } from "../../../components/ResourceStudyActions";
 import {
   PublicBreadcrumbs,
   PublicServiceError,
@@ -95,6 +96,7 @@ export default async function ResourcePage({ params }: { params: { slug: string 
           </header>
 
           <ResourceAccess initial={{ slug: resource.slug, accessMode: resource.accessMode, hostingMode: resource.hostingMode, canAccess: resource.canAccess, externalUrl: resource.externalUrl }} />
+          <ResourceStudyActions slug={resource.slug} />
 
           {resource.catalogProfile && (
             <section className="surface-card" aria-labelledby="resource-fit-title">

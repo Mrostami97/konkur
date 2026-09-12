@@ -94,8 +94,14 @@ jobs:
           pnpm --filter @konkurcom/contracts run test
           pnpm --filter @konkurcom/web run test
           pnpm --filter @konkurcom/api exec prisma migrate deploy
+          pnpm --filter @konkurcom/api run migrate:down -- 20260912120000_phase16_personal_learning_path
+          pnpm --filter @konkurcom/api run migration:verify:phase16 -- seed-legacy
+          pnpm --filter @konkurcom/api exec prisma migrate deploy
+          pnpm --filter @konkurcom/api run migration:verify:phase16 -- verify-backfill
+          pnpm --filter @konkurcom/api run migrate:down -- 20260912120000_phase16_personal_learning_path
           pnpm --filter @konkurcom/api run migrate:down -- 20260909130000_phase15_admissions_sources
           pnpm --filter @konkurcom/api exec prisma migrate deploy
+          pnpm --filter @konkurcom/api run migration:verify:phase16 -- cleanup
           pnpm --filter @konkurcom/api run test
           pnpm --filter @konkurcom/api run test:e2e
 

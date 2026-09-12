@@ -1,9 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { IsIn, IsOptional, IsString } from "class-validator";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { PlanningService } from "./planning.service";
 import { UpsertGoalDto } from "./dto/upsert-goal.dto";
 import { LogStudySessionDto } from "./dto/log-study-session.dto";
+import { SavedResourceDto } from "./dto/saved-resource.dto";
+import { CompleteTaskDto } from "./dto/complete-task.dto";
+import { StudyHistoryQueryDto } from "./dto/study-history-query.dto";
 
 class ReplanDto {
   @IsOptional()
@@ -51,8 +54,8 @@ export class PlanningController {
   }
 
   @Post("plan/tasks/:taskId/complete")
-  completeTask(@Param("taskId") taskId: string, @Req() req: RequestWithUser) {
-    return this.planning.completeTask(taskId, req.user!.id);
+  completeTask(@Param("taskId") taskId: string, @Req() req: RequestWithUser, @Body() dto?: CompleteTaskDto) {
+    return this.planning.completeTask(taskId, req.user!.id, dto?.actualMinutes);
   }
 
   @Get("mastery")
@@ -63,5 +66,30 @@ export class PlanningController {
   @Post("study-sessions")
   logStudySession(@Req() req: RequestWithUser, @Body() dto: LogStudySessionDto) {
     return this.planning.logStudySession(req.user!.id, dto);
+  }
+
+  @Get("study-history")
+  studyHistory(@Req() req: RequestWithUser, @Query() query: StudyHistoryQueryDto) {
+    return this.planning.getStudyHistory(req.user!.id, query);
+  }
+
+  @Get("resources/saved")
+  savedResources(@Req() req: RequestWithUser) {
+    return this.planning.listSavedResources(req.user!.id);
+  }
+
+  @Post("resources/saved")
+  saveResource(@Req() req: RequestWithUser, @Body() dto: SavedResourceDto) {
+    return this.planning.saveResource(req.user!.id, dto.resourceSlug);
+  }
+
+  @Delete("resources/saved")
+  removeSavedResource(@Req() req: RequestWithUser, @Body() dto: SavedResourceDto) {
+    return this.planning.removeSavedResource(req.user!.id, dto.resourceSlug);
+  }
+
+  @Post("plan/resources/:slug")
+  addResourceToPlan(@Param("slug") slug: string, @Req() req: RequestWithUser) {
+    return this.planning.addResourceToPlan(req.user!.id, slug);
   }
 }

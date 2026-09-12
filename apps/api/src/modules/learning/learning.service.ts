@@ -152,15 +152,16 @@ export class LearningService {
     if (!lesson) throw new NotFoundException("lesson not found");
 
     await this.assertLessonAccess(userId, lesson);
+    let progress = null;
     if (userId) {
-      await this.prisma.lessonProgress.upsert({
+      progress = await this.prisma.lessonProgress.upsert({
         where: { userId_lessonId: { userId, lessonId } },
         update: { lastViewedAt: new Date() },
         create: { userId, lessonId },
       });
     }
 
-    return lesson;
+    return { ...lesson, progress };
   }
 
   async completeLesson(userId: string, lessonId: string) {
@@ -171,11 +172,83 @@ export class LearningService {
     if (!lesson) throw new NotFoundException("lesson not found");
     await this.assertLessonAccess(userId, lesson);
 
-    return this.prisma.lessonProgress.upsert({
-      where: { userId_lessonId: { userId, lessonId } },
-      update: { completedAt: new Date(), lastViewedAt: new Date() },
-      create: { userId, lessonId, completedAt: new Date() },
+    return this.prisma.$transaction(async (tx) => {
+      // Planning uses this same per-user lock before replacing an active plan,
+      // so lesson completion and its linked task update cannot be split by a
+      // concurrent replan.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${userId}))`;
+      const completedAt = new Date();
+      const progress = await tx.lessonProgress.upsert({
+        where: { userId_lessonId: { userId, lessonId } },
+        update: { completedAt, lastViewedAt: completedAt },
+        create: { userId, lessonId, completedAt, lastViewedAt: completedAt },
+      });
+      const linkedTasks = await tx.task.updateMany({
+        where: {
+          lessonId,
+          status: { not: "DONE" },
+          plan: { userId, status: "ACTIVE" },
+        },
+        data: { status: "DONE", completedAt },
+      });
+      return { ...progress, completedPlanTasks: linkedTasks.count };
+    }, { timeout: 30_000 });
+  }
+
+  /** Activity-based progress only. Completion and last-viewed timestamps are
+   * deliberately kept separate from assessment-derived mastery. */
+  async getLearningProgress(userId: string) {
+    const courses = await this.prisma.course.findMany({
+      where: {
+        isPublished: true,
+        modules: { some: { lessons: { some: { progress: { some: { userId } } } } } },
+      },
+      orderBy: { createdAt: "desc" },
+      include: {
+        modules: {
+          orderBy: { order: "asc" },
+          include: {
+            lessons: {
+              orderBy: { order: "asc" },
+              include: {
+                progress: {
+                  where: { userId },
+                  select: { completedAt: true, lastViewedAt: true },
+                },
+              },
+            },
+          },
+        },
+      },
     });
+
+    return {
+      basis: "LESSON_ACTIVITY",
+      disclaimer: "پیشرفت مطالعه از مشاهده و تکمیل درس‌ها می‌آید و معادل تسلط علمی نیست.",
+      courses: courses.map((course) => {
+        const lessons = course.modules.flatMap((module) => module.lessons);
+        const viewed = lessons.filter((lesson) => lesson.progress.length > 0);
+        const completed = lessons.filter((lesson) => lesson.progress.some((item) => item.completedAt));
+        const latestViewed = [...viewed].sort((left, right) =>
+          right.progress[0].lastViewedAt.getTime() - left.progress[0].lastViewedAt.getTime(),
+        )[0];
+        const latestIndex = latestViewed ? lessons.findIndex((lesson) => lesson.id === latestViewed.id) : -1;
+        const resumeLesson = latestViewed && !latestViewed.progress[0].completedAt
+          ? latestViewed
+          : lessons.slice(latestIndex + 1).find((lesson) => !lesson.progress.some((item) => item.completedAt))
+            ?? lessons.find((lesson) => !lesson.progress.some((item) => item.completedAt));
+        return {
+          course: { slug: course.slug, title: course.title },
+          completedLessons: completed.length,
+          viewedLessons: viewed.length,
+          totalLessons: lessons.length,
+          progressPercent: lessons.length > 0 ? Math.round(completed.length / lessons.length * 100) : 0,
+          resumeLesson: resumeLesson ? { id: resumeLesson.id, title: resumeLesson.title } : null,
+          lastViewedAt: latestViewed?.progress[0].lastViewedAt ?? null,
+          basis: "LESSON_ACTIVITY",
+        };
+      }),
+    };
   }
 
   async hasActiveCourseEntitlement(userId: string, courseId: string, tx?: Tx): Promise<boolean> {

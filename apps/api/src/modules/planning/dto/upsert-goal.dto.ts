@@ -16,4 +16,8 @@ export class UpsertGoalDto {
   @Min(1)
   @Max(100)
   weeklyHours!: number;
+
+  @IsOptional()
+  @IsIn(["BEGINNER", "INTERMEDIATE", "ADVANCED"])
+  selfReportedLevel?: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
 }

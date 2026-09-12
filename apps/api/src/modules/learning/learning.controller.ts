@@ -34,6 +34,12 @@ export class LearningStudentController {
     return this.learning.listMyEnrollments(req.user!.id);
   }
 
+  @Get("me/learning-progress")
+  @UseGuards(SessionAuthGuard)
+  learningProgress(@Req() req: RequestWithUser) {
+    return this.learning.getLearningProgress(req.user!.id);
+  }
+
   @Get("lessons/:id")
   @UseGuards(OptionalSessionAuthGuard)
   getLesson(@Param("id") id: string, @Req() req: RequestWithUser) {

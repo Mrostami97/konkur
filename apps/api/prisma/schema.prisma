@@ -37,6 +37,7 @@ model User {
   attempts           Attempt[]
   goal               Goal?
   studySessions      StudySession[]
+  savedResources     SavedResource[]
   masteryStates      MasteryState[]
   rankEstimates      RankEstimate[]
   choiceList         ChoiceList?
@@ -64,6 +65,13 @@ model Profile {
 enum Degree {
   MASTER
   PHD
+}
+
+enum SelfReportedLevel {
+  UNKNOWN
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
 }
 
 model UserRole {
@@ -353,6 +361,8 @@ model Resource {
   publishedAt       DateTime?
   sources           ResourceSource[]
   productGrants     ProductResourceGrant[]
+  savedBy           SavedResource[]
+  planTasks         Task[]
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
 
@@ -427,6 +437,7 @@ model Lesson {
   isPreview      Boolean          @default(false)
   topics         LessonTopic[]
   progress       LessonProgress[]
+  planTasks      Task[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
@@ -992,16 +1003,17 @@ model Score {
 // Analytics phase 5 needs (Benchmark/Prediction are Phase 6's rank engine).
 // ---------------------------------------------------------------------------
 model Goal {
-  id             String    @id @default(uuid())
-  userId         String    @unique
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  degree         Degree
-  field          String
-  targetExamDate DateTime?
-  weeklyHours    Int
-  plans          Plan[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id                String            @id @default(uuid())
+  userId            String            @unique
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  degree            Degree
+  field             String
+  targetExamDate    DateTime?
+  weeklyHours       Int
+  selfReportedLevel SelfReportedLevel @default(UNKNOWN)
+  plans             Plan[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 
   @@map("goals")
 }
@@ -1012,15 +1024,20 @@ enum PlanStatus {
 }
 
 model Plan {
-  id        String         @id @default(uuid())
-  goalId    String
-  goal      Goal           @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  userId    String
-  status    PlanStatus     @default(ACTIVE)
-  version   Int            @default(1)
-  tasks     Task[]
-  revisions PlanRevision[]
-  createdAt DateTime       @default(now())
+  id                    String            @id @default(uuid())
+  goalId                String
+  goal                  Goal              @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  userId                String
+  goalDegree            Degree
+  goalField             String
+  goalWeeklyHours       Int
+  goalTargetExamDate    DateTime?
+  goalSelfReportedLevel SelfReportedLevel
+  status                PlanStatus        @default(ACTIVE)
+  version               Int               @default(1)
+  tasks                 Task[]
+  revisions             PlanRevision[]
+  createdAt             DateTime          @default(now())
 
   @@index([userId])
   @@index([userId, status])
@@ -1037,6 +1054,10 @@ model Task {
   id               String     @id @default(uuid())
   planId           String
   plan             Plan       @relation(fields: [planId], references: [id], onDelete: Cascade)
+  lessonId         String?
+  lesson           Lesson?    @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  resourceId       String?
+  resource         Resource?  @relation(fields: [resourceId], references: [id], onDelete: SetNull)
   subjectCode      String
   topicCode        String?
   title            String
@@ -1050,7 +1071,26 @@ model Task {
 
   @@index([planId])
   @@index([planId, scheduledFor])
+  @@index([lessonId])
+  @@index([resourceId])
+  @@unique([planId, lessonId])
+  @@unique([planId, resourceId])
   @@map("tasks")
+}
+
+model SavedResource {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resourceId  String
+  resource    Resource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  savedAt     DateTime  @default(now())
+  plannedAt   DateTime?
+  completedAt DateTime?
+
+  @@unique([userId, resourceId])
+  @@index([resourceId])
+  @@map("saved_resources")
 }
 
 // Every (re)plan action is recorded here -- doc §10.2 Phase 5 DoD:
@@ -1067,15 +1107,22 @@ model PlanRevision {
   @@map("plan_revisions")
 }
 
+enum StudySessionSource {
+  UNCLASSIFIED_LEGACY
+  MANUAL
+  TASK_ACTUAL
+}
+
 model StudySession {
-  id          String   @id @default(uuid())
+  id          String             @id @default(uuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjectCode String
   topicCode   String?
   minutes     Int
   taskId      String?
-  loggedAt    DateTime @default(now())
+  source      StudySessionSource @default(MANUAL)
+  loggedAt    DateTime           @default(now())
 
   @@index([userId])
   @@map("study_sessions")
