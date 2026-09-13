@@ -20,5 +20,5 @@ export function assertValidContentBlocks(blocks: unknown[], allowedTypes: Set<st
   });
 }
 
-export const ARTICLE_BLOCK_TYPES = new Set(["text", "heading", "quote", "image", "table", "latex"]);
+export const ARTICLE_BLOCK_TYPES = new Set(["text", "heading", "quote", "image", "table", "latex", "link_group"]);
 export const LESSON_BLOCK_TYPES = new Set(["text", "heading", "image", "video", "latex"]);

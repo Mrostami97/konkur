@@ -112,17 +112,18 @@ rejected, or published record is left alone. The exact legacy payloads are
 kept only as guards in
 `apps/api/src/seed-data/phase17-legacy-editorial-drafts.json`.
 
-Before approval, compare codes 2354 and 2358, their subject groups and
-coefficients against the latest registration booklet and every later Sanjesh
-correction. Confirm that the Computer Science pages still describe the
-documented degree-to-set mapping rather than inventing a separate exam set,
-and keep the written-exam pages separate from CV/interview preparation. Only
-then submit and approve each draft through the normal article review workflow.
+Before approval, compare codes 2247, 2354 and 2358, their subject groups,
+combinations and coefficients against the latest registration booklet and
+every later Sanjesh correction. Confirm that the 2247 pages keep the separate
+Computer Science and Bioinformatics combinations intact, and keep the
+written-exam pages separate from CV/interview preparation. Only then submit
+and approve each draft through the normal article review workflow.
 
-Reverting the code does not delete a created draft version. To undo an
-untouched legacy upgrade, use the existing article-version rollback workflow
-to create a new draft from version 1; for a full deployment rollback, restore
-the pre-deploy backup and redeploy the previous commit.
+Reverting the code does not delete a created draft version. The public
+article-version rollback endpoint cannot target the legacy version 1 here:
+that snapshot is a Draft and version 2 is also pending. Do not delete either
+version or rewrite the Prisma migration ledger. To undo an applied legacy
+upgrade, restore the pre-deploy backup and redeploy the previous commit.
 
 ## Backup / restore
 

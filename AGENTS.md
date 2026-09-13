@@ -382,17 +382,24 @@ Phase 17:
 - The 16 doctoral pages are AI-assisted `article.v2` drafts. They intentionally
   do not appear in the static fallback, sitemap, RSS, search, or `llms.txt`
   until a real human review is recorded through the existing workflow.
-- The official snapshot is the Sanjesh 1406 exam-set notice checked on
-  22 Shahrivar 1405. The final registration booklet was not yet available;
-  every affected page therefore carries a recheck warning and review deadline.
-- The current official notice maps Computer Science graduates to exam set
-  2354; it does not provide a separate Computer Science set for these pages.
-  Do not invent one. Likewise, network security is not listed as a standalone
-  written-exam subject merely because a related doctoral specialization exists.
-- Three legacy drafts already used the final column slugs. The repeatable seed
-  creates version 2 only when version 1, its canonical fields, and all source
-  links still exactly match the checked-in legacy guard. Any human change or
-  non-DRAFT workflow state disables the upgrade; version 1 is never rewritten.
+- The checked 1406 tables have three separate sets in this scope: 2354
+  "Computer Engineering and Science", 2358 "Information Technology
+  Engineering", and 2247 "Computer Science and Bioinformatics". Set 2247
+  uses groups 1+2+3 for Computer Science and 1+4 for Bioinformatics. Never map
+  either path back to 2354, and never infer a coefficient or question count
+  for 2247 from the group numbers. Every affected page remains time-sensitive
+  and carries a recheck warning and review deadline.
+- Network security is not listed as a standalone written-exam subject merely
+  because a related doctoral specialization exists.
+- Five generated legacy drafts are guarded because three column slugs and two
+  shared official-information pages predate the corrected source snapshot.
+  The repeatable seed takes advisory and row locks, then creates version 2 only
+  when version 1, its canonical fields, workflow state, and all source links
+  exactly match the checked-in legacy guard. Any human change disables the
+  upgrade; version 1 is never rewritten.
+- Phase 17 `article.v2` payloads carry a validated `link_group` block for their
+  internal next steps. Article v1 remains unchanged, and older generated
+  article.v2 fixtures are kept byte-stable.
 
 Infrastructure (post-Phase-7 cleanup):
 

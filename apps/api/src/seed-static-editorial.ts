@@ -8,6 +8,10 @@ type SeedSource = (typeof seedData.sources)[number];
 const legacyPhase17Payloads = new Map<string, (typeof phase17LegacyDrafts.articles)[number]>(
   phase17LegacyDrafts.articles.map((payload) => [payload.slug, payload] as const),
 );
+const legacySourceRefreshGuards = new Map<
+  string,
+  (typeof phase17LegacyDrafts.sourceRefreshGuards)[number]
+>(phase17LegacyDrafts.sourceRefreshGuards.map((source) => [source.externalId, source] as const));
 
 function stableJson(value: unknown): string {
   const normalize = (candidate: unknown): unknown => {
@@ -45,17 +49,47 @@ function sourceCreateData(source: SeedSource) {
 
 export async function seedStaticEditorial(prisma: PrismaClient) {
   for (const source of seedData.sources) {
-    await prisma.contentSource.upsert({
-      where: { externalId: source.externalId },
-      // Rights flags are safety policy, so rerunning the seed must apply a
-      // downgrade even when this source was created by an older fixture.
-      update: {
-        rightsBasis: source.rightsBasis,
-        mayLink: source.mayLink,
-        mayAdapt: source.mayAdapt,
-        commercialUseAllowed: source.commercialUseAllowed,
-      },
-      create: sourceCreateData(source),
+    await prisma.$transaction(async (tx) => {
+      // The advisory lock also serializes the not-yet-created case, where a
+      // row-level lock cannot exist. The row lock then coordinates with admin
+      // updates, so the guarded metadata refresh cannot race a human edit.
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`static-editorial-source:${source.externalId}`}))`;
+      const locked = await tx.$queryRaw<Array<{ id: string }>>(
+        Prisma.sql`SELECT "id" FROM "content_sources" WHERE "externalId" = ${source.externalId} FOR UPDATE`,
+      );
+
+      if (locked.length === 0) {
+        await tx.contentSource.create({ data: sourceCreateData(source) });
+        return;
+      }
+
+      const existing = await tx.contentSource.findUniqueOrThrow({ where: { id: locked[0]!.id } });
+      const legacyGuard = legacySourceRefreshGuards.get(source.externalId);
+      const incomingCheckedAt = new Date(source.checkedAt);
+      const mayRefreshGeneratedMetadata = legacyGuard
+        && existing.checkedAt.toISOString() === legacyGuard.checkedAt
+        && stableJson(existing.metadata) === stableJson(legacyGuard.metadata)
+        && incomingCheckedAt.getTime() > existing.checkedAt.getTime();
+
+      await tx.contentSource.update({
+        where: { id: existing.id },
+        // Rights flags are safety policy, so rerunning the seed must apply a
+        // downgrade even when this source was created by an older fixture.
+        // Freshness metadata is different: replace it only when the stored
+        // values still exactly match the previous generated snapshot.
+        data: {
+          rightsBasis: source.rightsBasis,
+          mayLink: source.mayLink,
+          mayAdapt: source.mayAdapt,
+          commercialUseAllowed: source.commercialUseAllowed,
+          ...(mayRefreshGeneratedMetadata
+            ? {
+                checkedAt: incomingCheckedAt,
+                metadata: source.metadata,
+              }
+            : {}),
+        },
+      });
     });
   }
 
@@ -104,10 +138,16 @@ export async function seedStaticEditorial(prisma: PrismaClient) {
     };
 
     await prisma.$transaction(async (tx) => {
-      // Deployment seeds must never replace editorial work. The existence
-      // check and both inserts share a transaction so a partial seed cannot
-      // leave a canonical article without its required version snapshot.
-      const existing = await tx.article.findUnique({ where: { slug: payload.slug } });
+      // Serialize both concurrent seed processes and the not-yet-created case.
+      // Once a row exists, FOR UPDATE also coordinates with normal editorial
+      // UPDATEs. Every guard read and write below happens after these locks.
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`static-editorial-article:${payload.slug}`}))`;
+      const locked = await tx.$queryRaw<Array<{ id: string }>>(
+        Prisma.sql`SELECT "id" FROM "articles" WHERE "slug" = ${payload.slug} FOR UPDATE`,
+      );
+      const existing = locked.length === 0
+        ? null
+        : await tx.article.findUniqueOrThrow({ where: { id: locked[0]!.id } });
       if (existing) {
         const legacyRawPayload = legacyPhase17Payloads.get(payload.slug);
         if (!legacyRawPayload || existing.version !== 1 || existing.reviewStatus !== ReviewStatus.DRAFT) return;
@@ -145,6 +185,9 @@ export async function seedStaticEditorial(prisma: PrismaClient) {
           source: { externalId: source.source_external_id },
         }));
         const canonicalStillMatchesLegacy = existing.externalId === legacyPayload.external_id
+          && existing.authorId === null
+          && existing.provenance === null
+          && stableJson(existing.assets) === stableJson([])
           && existing.contentType === (legacyPayload.content_type.toUpperCase() as ArticleContentType)
           && existing.title === legacyPayload.title
           && existing.summary === legacyPayload.summary
@@ -167,11 +210,19 @@ export async function seedStaticEditorial(prisma: PrismaClient) {
           && existing.publishedAt === null;
         const versionStillMatchesLegacy = currentVersion?.schemaVersion === "article.v2"
           && currentVersion.reviewStatus === ReviewStatus.DRAFT
+          && currentVersion.createdByUserId === null
+          && currentVersion.reviewedByUserId === null
+          && currentVersion.submittedAt === null
+          && currentVersion.reviewedAt === null
+          && currentVersion.reviewNote === null
+          && currentVersion.publishedAt === null
+          && currentVersion.publishedByImportItemId === null
           && stableJson(currentVersion.payload) === stableJson(legacyPayload);
 
-        // The three pre-Phase-17 PhD pages shared the final slugs but carried
-        // obsolete material. Replace only their exact untouched seed payloads,
-        // preserve version 1, and leave every human edit/review state alone.
+        // A small set of pre-Phase-17 pages shared the final slugs but carried
+        // obsolete material or an obsolete source link. Replace only their
+        // exact untouched seed payloads, preserve version 1, and leave every
+        // human edit/review state alone.
         if (
           !canonicalStillMatchesLegacy
           || !versionStillMatchesLegacy

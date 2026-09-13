@@ -111,6 +111,9 @@ if (phase17Corpus.publicationStatus !== "DRAFT" || phase17Corpus.humanReviewRequ
 }
 const phase17Guides = phase17Corpus.pages.map((page) => ({
   ...page,
+  // Phase 17 is the first corpus whose versioned article payload guarantees
+  // deployable next-step links. Keep older generated drafts byte-stable.
+  contentInternalLinks: page.internalLinks,
   author: "تحریریه kunkur01",
   reviewer: "در انتظار بازبینی انسانی",
   sources: page.sourceIds.map((sourceId) => {
@@ -187,7 +190,7 @@ const publishedAt = (value) => {
 };
 const degrees = (degree) => degree === "هر دو" ? ["master", "phd"] : degree === "دکتری" ? ["phd"] : ["master"];
 
-const blocksFor = (sections) => sections.flatMap((section) => {
+const sectionBlocksFor = (sections) => sections.flatMap((section) => {
   const blocks = [{ type: "heading", level: 2, text: section.title }];
   for (const paragraph of section.paragraphs ?? []) blocks.push({ type: "text", text: paragraph });
   if (section.bullets?.length) blocks.push({ type: "text", text: section.bullets.map((item) => "• " + item).join("\n") });
@@ -195,6 +198,30 @@ const blocksFor = (sections) => sections.flatMap((section) => {
   if (section.note) blocks.push({ type: "quote", text: section.note });
   return blocks;
 });
+
+const blocksFor = (sections, internalLinks = []) => {
+  const blocks = sectionBlocksFor(sections);
+  if (!internalLinks.length) return blocks;
+  for (const link of internalLinks) {
+    if (
+      typeof link.href !== "string"
+      || !/^\/[A-Za-z0-9][A-Za-z0-9/_-]*(?:[?#][^\s]*)?$/.test(link.href)
+    ) {
+      throw new Error(`Editorial internal link must be a safe root-relative path: ${link.href}`);
+    }
+  }
+  return [
+    ...blocks,
+    { type: "heading", level: 2, text: "مسیر بعدی" },
+    {
+      type: "link_group",
+      items: internalLinks.map((link) => ({
+        label: `${link.label}: ${link.title}`,
+        href: link.href,
+      })),
+    },
+  ];
+};
 
 const allSources = new Map();
 for (const page of pages) {
@@ -244,7 +271,7 @@ const payloads = pages.map((page) => {
     slug: page.slug,
     summary: page.description,
     quick_answer: page.quickAnswer ?? page.sections[0]?.paragraphs?.[0] ?? page.description,
-    content_blocks: blocksFor(page.sections),
+    content_blocks: blocksFor(page.sections, page.contentInternalLinks),
     taxonomy: {
       major: [page.field],
       tags: [page.category],
@@ -275,6 +302,15 @@ const payloads = pages.map((page) => {
   };
 });
 
-await mkdir(dirname(outputPath), { recursive: true });
-await writeFile(outputPath, JSON.stringify({ sources: [...allSources.values()], articles: payloads }, null, 2) + "\n", "utf8");
-console.log("Generated " + payloads.length + " editorial drafts and " + allSources.size + " sources.");
+const generated = JSON.stringify({ sources: [...allSources.values()], articles: payloads }, null, 2) + "\n";
+if (process.argv.includes("--check")) {
+  const current = await readFile(outputPath, "utf8");
+  if (current !== generated) {
+    throw new Error("editorial-drafts.json is stale; run node scripts/generate-editorial-drafts.mjs from the repository root");
+  }
+  console.log("Editorial draft fixture is current: " + payloads.length + " drafts and " + allSources.size + " sources.");
+} else {
+  await mkdir(dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, generated, "utf8");
+  console.log("Generated " + payloads.length + " editorial drafts and " + allSources.size + " sources.");
+}

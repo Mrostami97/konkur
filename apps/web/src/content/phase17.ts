@@ -5,6 +5,7 @@ export type Phase17Kind = "COLUMN" | "OFFICIAL" | "SPECIALIST" | "PREPARATION";
 export type Phase17Stage = "WRITTEN" | "POST_WRITTEN" | "BOTH";
 export type Phase17Date = `${string}/${string}/${string}`;
 export type Phase17ItemId = `P17-${string}`;
+export type Phase17OfficialSetCode = "2247" | "2354" | "2358" | "2354/2358" | "2247/2354/2358";
 export type Phase17Slug =
   | "phd-computer-engineering-1406"
   | "phd-information-technology-1406"
@@ -51,7 +52,7 @@ export interface Phase17Page {
   readonly degree: Extract<ExamDegree, "دکتری">;
   readonly field: string;
   readonly examYear: 1406;
-  readonly officialSetCode?: string;
+  readonly officialSetCode?: Phase17OfficialSetCode;
   readonly readingMinutes: number;
   readonly quickAnswer: string;
   readonly sections: readonly EditorialSection[];

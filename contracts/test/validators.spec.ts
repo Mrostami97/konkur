@@ -48,6 +48,14 @@ describe("invalid fixtures", () => {
     expect(result.errors.join(" ")).toMatch(/source_checked_at|review_due_at/);
   });
 
+  it("rejects external URLs inside article.v2 internal link groups", () => {
+    const fixture = load(validDir, "article-v2.json");
+    fixture.content_blocks.at(-1).items[0].href = "https://example.com/redirect";
+    const result = validateArticleV2(fixture);
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(" ")).toMatch(/pattern/);
+  });
+
   it("rejects report-card-contains-pii.json (unknown field)", () => {
     const result = validateReportCard(load(invalidDir, "report-card-contains-pii.json"));
     expect(result.valid).toBe(false);

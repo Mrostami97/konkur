@@ -1,7 +1,8 @@
 import "reflect-metadata";
 import { createHash } from "crypto";
+import type { ArticleV2 } from "@konkurcom/contracts";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
-import { ArticleContentType, Degree, Prisma, ReviewStatus, Role } from "@prisma/client";
+import { ArticleContentType, Degree, Prisma, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
 import { Test } from "@nestjs/testing";
 import AdmZip from "adm-zip";
 import cookieParser from "cookie-parser";
@@ -246,6 +247,108 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
         ...dates,
       })
       .expect(201);
+  }
+
+  async function stageLegacyStaticDraft(slug: string) {
+    const rawPayload = phase17LegacyDrafts.articles.find((article) => article.slug === slug);
+    const replacementPayload = staticEditorialSeed.articles.find((article) => article.slug === slug);
+    if (!rawPayload || !replacementPayload) throw new Error("missing static editorial regression fixture for " + slug);
+    const payload = rawPayload as unknown as ArticleV2;
+    const article = await prisma.article.findUniqueOrThrow({ where: { slug } });
+
+    await Promise.all(payload.sources.map((source) =>
+      prisma.contentSource.upsert({
+        where: { externalId: source.source_external_id },
+        update: {},
+        create: {
+          externalId: source.source_external_id,
+          kind: "WEB_PAGE",
+          title: source.locator ?? source.source_external_id,
+          publisher: "Phase 17 legacy-upgrade fixture",
+          canonicalUrl: "https://www.sanjesh.org/",
+          sourceTier: "SECONDARY",
+          checkedAt: new Date(payload.validity.source_checked_at!),
+        },
+      }),
+    ));
+    const legacySourceRows = await prisma.contentSource.findMany({
+      where: { externalId: { in: payload.sources.map((source) => source.source_external_id) } },
+      select: { id: true, externalId: true },
+    });
+    const legacySourceIds = new Map(legacySourceRows.map((source) => [source.externalId, source.id]));
+    expect(legacySourceIds.size).toBe(new Set(payload.sources.map((source) => source.source_external_id)).size);
+
+    await prisma.$transaction(async (tx) => {
+      // Keep this fixture rerunnable against a developer database after a
+      // previous interrupted test run.
+      await tx.contentVersion.deleteMany({
+        where: { entityType: VersionedEntityType.ARTICLE, entityId: article.id, version: { gt: 1 } },
+      });
+      await tx.article.update({
+        where: { id: article.id },
+        data: {
+          authorId: null,
+          externalId: payload.external_id,
+          provenance: Prisma.DbNull,
+          assets: [],
+          contentType: payload.content_type.toUpperCase() as ArticleContentType,
+          title: payload.title,
+          summary: payload.summary,
+          quickAnswer: payload.quick_answer,
+          contentBlocks: payload.content_blocks as unknown as Prisma.InputJsonValue,
+          taxonomyMajor: payload.taxonomy.major,
+          taxonomyTags: payload.taxonomy.tags ?? [],
+          taxonomyDegrees: payload.taxonomy.degrees.map((degree) => degree.toUpperCase() as Degree),
+          taxonomyFields: payload.taxonomy.fields,
+          subjectCodes: payload.taxonomy.subject_codes,
+          topicCodes: payload.taxonomy.topic_codes,
+          seoTitle: payload.seo.title,
+          seoDescription: payload.seo.description,
+          validForYear: payload.validity.exam_year,
+          sourceValidatedAt: payload.validity.source_checked_at ? new Date(payload.validity.source_checked_at) : null,
+          reviewDueAt: payload.validity.review_due_at ? new Date(payload.validity.review_due_at) : null,
+          version: 1,
+          reviewStatus: ReviewStatus.DRAFT,
+          authorProfileId: null,
+          reviewerProfileId: null,
+          reviewedAt: null,
+          publishedAt: null,
+          sources: {
+            deleteMany: {},
+            create: payload.sources.map((source) => ({
+              source: { connect: { id: legacySourceIds.get(source.source_external_id)! } },
+              relation: source.relation,
+              locator: source.locator,
+              claim: source.claim,
+              order: source.order ?? 0,
+            })),
+          },
+        },
+      });
+      await tx.contentVersion.update({
+        where: {
+          entityType_entityId_version: {
+            entityType: VersionedEntityType.ARTICLE,
+            entityId: article.id,
+            version: 1,
+          },
+        },
+        data: {
+          payload: payload as unknown as Prisma.InputJsonValue,
+          schemaVersion: "article.v2",
+          reviewStatus: ReviewStatus.DRAFT,
+          createdByUserId: null,
+          reviewedByUserId: null,
+          submittedAt: null,
+          reviewedAt: null,
+          reviewNote: null,
+          publishedAt: null,
+          publishedByImportItemId: null,
+        },
+      });
+    });
+
+    return { articleId: article.id, legacyPayload: payload, replacementPayload };
   }
 
   it("supports anonymous PUBLIC learning, account progress and paid previews", async () => {
@@ -884,188 +987,148 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     }
   });
 
-  it("upgrades only an untouched legacy PhD draft and preserves its first version", async () => {
-    const legacyPayload = phase17LegacyDrafts.articles.find(
-      (article) => article.slug === "phd-information-technology-1406",
-    )!;
-    const replacementPayload = staticEditorialSeed.articles.find(
-      (article) => article.slug === legacyPayload.slug,
-    )!;
-    const article = await prisma.article.findUniqueOrThrow({ where: { slug: legacyPayload.slug } });
-    await Promise.all(legacyPayload.sources.map((source) =>
-      prisma.contentSource.upsert({
-        where: { externalId: source.source_external_id },
-        update: {},
-        create: {
-          externalId: source.source_external_id,
-          kind: "WEB_PAGE",
-          title: source.locator,
-          publisher: "Phase 17 legacy-upgrade fixture",
-          canonicalUrl: "https://www.sanjesh.org/",
-          sourceTier: "SECONDARY",
-          checkedAt: new Date(legacyPayload.validity.source_checked_at),
-        },
-      }),
-    ));
-    const legacySourceRows = await prisma.contentSource.findMany({
-      where: { externalId: { in: legacyPayload.sources.map((source) => source.source_external_id) } },
-      select: { id: true, externalId: true },
-    });
-    const legacySourceIds = new Map(legacySourceRows.map((source) => [source.externalId, source.id]));
-    expect(legacySourceIds.size).toBe(new Set(legacyPayload.sources.map((source) => source.source_external_id)).size);
-    expect(article.version).toBe(1);
-
-    await prisma.$transaction([
-      prisma.article.update({
-        where: { id: article.id },
+  it("refreshes only untouched generated source metadata and never rolls a human review backward", async () => {
+    const legacyGuard = phase17LegacyDrafts.sourceRefreshGuards[0]!;
+    const generated = staticEditorialSeed.sources.find((source) => source.externalId === legacyGuard.externalId)!;
+    const original = await prisma.contentSource.findUniqueOrThrow({ where: { externalId: legacyGuard.externalId } });
+    try {
+      await prisma.contentSource.update({
+        where: { externalId: legacyGuard.externalId },
         data: {
-          externalId: legacyPayload.external_id,
-          contentType: legacyPayload.content_type.toUpperCase() as ArticleContentType,
-          title: legacyPayload.title,
-          summary: legacyPayload.summary,
-          quickAnswer: legacyPayload.quick_answer,
-          contentBlocks: legacyPayload.content_blocks as unknown as Prisma.InputJsonValue,
-          taxonomyMajor: legacyPayload.taxonomy.major,
-          taxonomyTags: legacyPayload.taxonomy.tags,
-          taxonomyDegrees: legacyPayload.taxonomy.degrees.map((degree) => degree.toUpperCase() as Degree),
-          taxonomyFields: legacyPayload.taxonomy.fields,
-          subjectCodes: legacyPayload.taxonomy.subject_codes,
-          topicCodes: legacyPayload.taxonomy.topic_codes,
-          seoTitle: legacyPayload.seo.title,
-          seoDescription: legacyPayload.seo.description,
-          validForYear: legacyPayload.validity.exam_year,
-          sourceValidatedAt: new Date(legacyPayload.validity.source_checked_at),
-          reviewDueAt: new Date(legacyPayload.validity.review_due_at),
-          reviewStatus: ReviewStatus.DRAFT,
-          authorProfileId: null,
-          reviewerProfileId: null,
-          publishedAt: null,
-          sources: {
-            deleteMany: {},
-            create: legacyPayload.sources.map((source) => ({
-              source: {
-                connect: { id: legacySourceIds.get(source.source_external_id)! },
-              },
-              relation: source.relation,
-              locator: source.locator,
-              order: source.order ?? 0,
-            })),
-          },
-        },
-      }),
-      prisma.contentVersion.update({
-        where: {
-          entityType_entityId_version: {
-            entityType: "ARTICLE",
-            entityId: article.id,
-            version: 1,
-          },
-        },
-        data: {
-          payload: legacyPayload as Prisma.InputJsonValue,
-          schemaVersion: "article.v2",
-          reviewStatus: ReviewStatus.DRAFT,
-        },
-      }),
-    ]);
-
-    await seedStaticEditorial(prisma);
-
-    const upgraded = await prisma.article.findUniqueOrThrow({ where: { id: article.id } });
-    expect(upgraded).toMatchObject({
-      title: replacementPayload.title,
-      summary: replacementPayload.summary,
-      version: 2,
-      reviewStatus: ReviewStatus.DRAFT,
-    });
-    const versions = await prisma.contentVersion.findMany({
-      where: { entityType: "ARTICLE", entityId: article.id },
-      orderBy: { version: "asc" },
-    });
-    expect(versions.map((version) => version.version)).toEqual([1, 2]);
-    expect((versions[0]!.payload as Prisma.JsonObject).title).toBe(legacyPayload.title);
-    expect((versions[1]!.payload as Prisma.JsonObject).title).toBe(replacementPayload.title);
-
-    await seedStaticEditorial(prisma);
-    expect((await prisma.article.findUniqueOrThrow({ where: { id: article.id } })).version).toBe(2);
-  });
-
-  it("never overwrites editorial changes when static drafts are reseeded", async () => {
-    const statuses = [
-      ReviewStatus.DRAFT,
-      ReviewStatus.IN_REVIEW,
-      ReviewStatus.REJECTED,
-      ReviewStatus.PUBLISHED,
-    ];
-    const articles = await prisma.article.findMany({
-      where: { externalId: { startsWith: "static-editorial-" } },
-      orderBy: { slug: "asc" },
-      take: statuses.length,
-    });
-    expect(articles).toHaveLength(statuses.length);
-
-    const fixtures = await Promise.all(articles.map(async (article, index) => {
-      const version = await prisma.contentVersion.findUniqueOrThrow({
-        where: {
-          entityType_entityId_version: {
-            entityType: "ARTICLE",
-            entityId: article.id,
-            version: article.version,
-          },
+          checkedAt: new Date(legacyGuard.checkedAt),
+          metadata: legacyGuard.metadata,
         },
       });
-      return {
-        article,
-        version,
-        changedTitle: `Human editorial change ${statuses[index]!}`,
-        changedStatus: statuses[index]!,
-      };
-    }));
+
+      await seedStaticEditorial(prisma);
+      const refreshed = await prisma.contentSource.findUniqueOrThrow({ where: { externalId: legacyGuard.externalId } });
+      expect(refreshed.checkedAt.toISOString()).toBe(generated.checkedAt);
+      expect(refreshed.metadata).toEqual(generated.metadata);
+
+      const humanCheckedAt = new Date(new Date(generated.checkedAt).getTime() + 86_400_000);
+      const humanMetadata = { humanReview: "keep this source review" };
+      await prisma.contentSource.update({
+        where: { externalId: legacyGuard.externalId },
+        data: { checkedAt: humanCheckedAt, metadata: humanMetadata },
+      });
+      await seedStaticEditorial(prisma);
+      const preserved = await prisma.contentSource.findUniqueOrThrow({ where: { externalId: legacyGuard.externalId } });
+      expect(preserved.checkedAt.toISOString()).toBe(humanCheckedAt.toISOString());
+      expect(preserved.metadata).toEqual(humanMetadata);
+    } finally {
+      await prisma.contentSource.update({
+        where: { externalId: legacyGuard.externalId },
+        data: { checkedAt: original.checkedAt, metadata: original.metadata ?? Prisma.JsonNull },
+      });
+    }
+  });
+
+  it("serializes concurrent seeds while upgrading every guarded legacy draft exactly once", async () => {
+    const fixtures = [];
+    for (const slug of phase17LegacyDrafts.articles.map((article) => article.slug)) {
+      fixtures.push(await stageLegacyStaticDraft(slug));
+    }
+
+    await Promise.all([seedStaticEditorial(prisma), seedStaticEditorial(prisma)]);
+
+    for (const { articleId, legacyPayload, replacementPayload } of fixtures) {
+      const upgraded = await prisma.article.findUniqueOrThrow({ where: { id: articleId } });
+      expect(upgraded).toMatchObject({
+        title: replacementPayload.title,
+        summary: replacementPayload.summary,
+        quickAnswer: replacementPayload.quick_answer,
+        version: 2,
+        reviewStatus: ReviewStatus.DRAFT,
+      });
+      const versions = await prisma.contentVersion.findMany({
+        where: { entityType: VersionedEntityType.ARTICLE, entityId: articleId },
+        orderBy: { version: "asc" },
+      });
+      expect(versions.map((version) => version.version)).toEqual([1, 2]);
+      expect((versions[0]!.payload as Prisma.JsonObject).title).toBe(legacyPayload.title);
+      expect((versions[1]!.payload as Prisma.JsonObject).title).toBe(replacementPayload.title);
+    }
+
+    await seedStaticEditorial(prisma);
+    for (const { articleId } of fixtures) {
+      expect((await prisma.article.findUniqueOrThrow({ where: { id: articleId } })).version).toBe(2);
+    }
+  });
+
+  it("preserves human edits and real workflow states on the actual legacy upgrade slugs", async () => {
+    const editedDraft = await stageLegacyStaticDraft("phd-computer-engineering-1406");
+    const inReview = await stageLegacyStaticDraft("phd-computer-science-1406");
+    const rejected = await stageLegacyStaticDraft("computer-exam-changes-1406");
+    const published = await stageLegacyStaticDraft("official-exam-updates-checklist");
+    const changedTitle = "Human editorial change on a legacy Phase 17 draft";
 
     try {
-      for (const fixture of fixtures) {
-        await prisma.article.update({
-          where: { id: fixture.article.id },
-          data: { title: fixture.changedTitle, reviewStatus: fixture.changedStatus },
-        });
-        await prisma.contentVersion.update({
-          where: { id: fixture.version.id },
-          data: {
-            reviewStatus: fixture.changedStatus,
-            payload: {
-              ...(fixture.version.payload as Prisma.JsonObject),
-              title: fixture.changedTitle,
-            } as Prisma.InputJsonValue,
-          },
-        });
-      }
+      await request(app.getHttpServer())
+        .patch("/admin/articles/" + editedDraft.articleId)
+        .set("Cookie", adminCookie)
+        .send({ title: changedTitle })
+        .expect(200);
+      await request(app.getHttpServer())
+        .post("/admin/articles/" + inReview.articleId + "/submit")
+        .set("Cookie", adminCookie)
+        .expect(201);
+      await request(app.getHttpServer())
+        .post("/admin/articles/" + rejected.articleId + "/submit")
+        .set("Cookie", adminCookie)
+        .expect(201);
+      await request(app.getHttpServer())
+        .post("/admin/articles/" + rejected.articleId + "/reject")
+        .set("Cookie", adminCookie)
+        .send({ reason: "Regression fixture rejection" })
+        .expect(201);
+      await request(app.getHttpServer())
+        .post("/admin/articles/" + published.articleId + "/submit")
+        .set("Cookie", adminCookie)
+        .expect(201);
+      await request(app.getHttpServer())
+        .post("/admin/articles/" + published.articleId + "/approve")
+        .set("Cookie", adminCookie)
+        .expect(201);
 
       await seedStaticEditorial(prisma);
 
-      for (const fixture of fixtures) {
-        const after = await prisma.article.findUniqueOrThrow({ where: { id: fixture.article.id } });
-        const version = await prisma.contentVersion.findUniqueOrThrow({ where: { id: fixture.version.id } });
-        expect(after).toMatchObject({
-          title: fixture.changedTitle,
-          reviewStatus: fixture.changedStatus,
+      const expectations = [
+        { fixture: editedDraft, title: changedTitle, status: ReviewStatus.DRAFT },
+        { fixture: inReview, title: inReview.legacyPayload.title, status: ReviewStatus.IN_REVIEW },
+        { fixture: rejected, title: rejected.legacyPayload.title, status: ReviewStatus.REJECTED },
+        { fixture: published, title: published.legacyPayload.title, status: ReviewStatus.PUBLISHED },
+      ];
+      for (const expectation of expectations) {
+        const article = await prisma.article.findUniqueOrThrow({
+          where: { id: expectation.fixture.articleId },
+          include: { sources: { include: { source: { select: { externalId: true } } }, orderBy: { order: "asc" } } },
         });
-        expect(version.reviewStatus).toBe(fixture.changedStatus);
-        expect((version.payload as Prisma.JsonObject).title).toBe(fixture.changedTitle);
+        const versions = await prisma.contentVersion.findMany({
+          where: { entityType: VersionedEntityType.ARTICLE, entityId: article.id },
+          orderBy: { version: "asc" },
+        });
+        expect(article).toMatchObject({
+          title: expectation.title,
+          reviewStatus: expectation.status,
+          version: 1,
+        });
+        expect(versions).toHaveLength(1);
+        expect(versions[0]!.reviewStatus).toBe(expectation.status);
+        expect((versions[0]!.payload as Prisma.JsonObject).title).toBe(expectation.title);
+        expect(article.sources.map((source) => source.source.externalId)).toEqual(
+          expectation.fixture.legacyPayload.sources.map((source) => source.source_external_id),
+        );
       }
     } finally {
-      for (const fixture of fixtures) {
-        await prisma.article.update({
-          where: { id: fixture.article.id },
-          data: { title: fixture.article.title, reviewStatus: fixture.article.reviewStatus },
-        });
-        await prisma.contentVersion.update({
-          where: { id: fixture.version.id },
-          data: {
-            reviewStatus: fixture.version.reviewStatus,
-            payload: fixture.version.payload as Prisma.InputJsonValue,
-          },
-        });
+      for (const slug of [
+        "phd-computer-engineering-1406",
+        "phd-computer-science-1406",
+        "computer-exam-changes-1406",
+        "official-exam-updates-checklist",
+      ]) {
+        await stageLegacyStaticDraft(slug);
       }
+      await seedStaticEditorial(prisma);
     }
   });
 });

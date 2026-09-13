@@ -47,10 +47,10 @@ const sanjesh1406: EditorialSource = {
 const phd1406: EditorialSource = {
   title: "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
   publisher: "سازمان سنجش آموزش کشور",
-  url: "https://sanjesh.org/_sanjesh/documents/1406/regphd1406.pdf",
+  url: "https://www.sanjesh.org/_sanjesh/documents/1406/regphd1406.pdf",
   publishedAt: "۲۶ اسفند ۱۴۰۴",
   checkedAt: "۲۲ شهریور ۱۴۰۵",
-  supportedClaim: "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+  supportedClaim: "عنوان و کد مجموعه‌های ۲۳۵۴ «مهندسی و علم کامپیوتر»، ۲۳۵۸ «مهندسی فناوری اطلاعات» و ۲۲۴۷ «علوم کامپیوتر و بیوانفورماتیک»؛ مواد و ترکیب‌های امتحانی هر مجموعه و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس برای مجموعه‌های ۲۳۵۴ و ۲۳۵۸",
 };
 
 const primaryChannel: EditorialSource = {

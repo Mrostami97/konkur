@@ -248,6 +248,13 @@ jobs:
           [ -n "$DOCKER" ] || { echo "ERROR: cannot reach the Docker daemon." >&2; exit 1; }
           $DOCKER compose version >/dev/null 2>&1 || { echo "ERROR: Docker compose plugin is missing." >&2; exit 1; }
 
+          # Keep deployments from exhausting the host with build cache and
+          # unreferenced layers. These commands never prune named volumes or an
+          # image referenced by a running/stopped container.
+          echo "== Reclaiming safe Docker cache =="
+          $DOCKER image prune -f >/dev/null || true
+          $DOCKER builder prune -af >/dev/null || true
+
           # rsync is how the source arrives; install it if the image is minimal.
           if ! command -v rsync >/dev/null 2>&1; then
             if command -v dnf >/dev/null 2>&1; then $SUDO dnf -y install rsync || true
@@ -265,6 +272,49 @@ jobs:
 
           $SUDO mkdir -p "$DEPLOY_PATH"
           $SUDO chown -R "$(id -u):$(id -g)" "$DEPLOY_PATH"
+
+          # Runner build output is already inside the images shipped below; it
+          # must not consume a second copy of the same data in the source tree.
+          DEPLOY_ROOT="$(realpath -m "$DEPLOY_PATH")"
+          case "$DEPLOY_ROOT" in
+            /|/opt|/var|/usr|/root|/home)
+              echo "ERROR: refusing cleanup for broad DEPLOY_PATH '$DEPLOY_ROOT'." >&2
+              exit 1
+              ;;
+            /*) ;;
+            *)
+              echo "ERROR: DEPLOY_PATH must resolve to an absolute path." >&2
+              exit 1
+              ;;
+          esac
+
+          for relative in \
+            apps/web/.next \
+            apps/api/dist \
+            contracts/dist \
+            .turbo \
+            coverage \
+            playwright-report \
+            test-results
+          do
+            target="$DEPLOY_ROOT/$relative"
+            case "$target" in
+              "$DEPLOY_ROOT"/*) $SUDO rm -rf -- "$target" ;;
+              *)
+                echo "ERROR: cleanup target escaped DEPLOY_PATH: $target" >&2
+                exit 1
+                ;;
+            esac
+          done
+
+          echo "== Disk after safe cleanup =="
+          df -h "$DEPLOY_ROOT"
+          AVAILABLE_KB="$(df -Pk "$DEPLOY_ROOT" | awk 'NR == 2 { print $4 }')"
+          if [ -z "$AVAILABLE_KB" ] || [ "$AVAILABLE_KB" -lt 2097152 ]; then
+            echo "ERROR: deployment needs at least 2 GiB free after cleanup." >&2
+            $DOCKER system df || true
+            exit 1
+          fi
 
           # Reported back so the runner knows how to talk to this server.
           command -v rsync >/dev/null 2>&1 && echo "has_rsync=yes" || echo "has_rsync=no"
@@ -287,6 +337,8 @@ jobs:
             # .env lives only on the server (secrets, domains) and must survive.
             rsync -az --delete \
               --exclude '.git' --exclude '.env' --exclude 'node_modules' \
+              --exclude '.next' --exclude 'dist' --exclude '.turbo' \
+              --exclude 'coverage' --exclude 'playwright-report' --exclude 'test-results' \
               -e "$SSH" ./ "$REMOTE:$DEPLOY_PATH/"
           else
             echo "No rsync on the server -- falling back to a token-authenticated clone."

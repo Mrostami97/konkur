@@ -1,5 +1,39 @@
 {
-  "purpose": "Exact Phase 16 seed payloads used only to detect and version-replace untouched legacy PhD drafts during the Phase 17 upgrade.",
+  "purpose": "Exact Phase 16 seed payloads and source freshness snapshots used only to detect and version-replace untouched generated records during the Phase 17 upgrade.",
+  "sourceRefreshGuards": [
+    {
+      "externalId": "editorial-source-0acf614bda63129236c4",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "publishedAtText": "۲۰۱۳"
+      }
+    },
+    {
+      "externalId": "editorial-source-02dc8955edf07d3a9b91",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "publishedAtText": "۲۰۱۱"
+      }
+    },
+    {
+      "externalId": "editorial-source-7cccd4c5e57231cacfe4",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "publishedAtText": "۲۰۰۶"
+      }
+    },
+    {
+      "externalId": "editorial-source-bd8f7cb1262dd65dec24",
+      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "supportedClaim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند."
+      }
+    }
+  ],
   "articles": [
     {
       "schema_version": "article.v2",
@@ -301,7 +335,176 @@
         "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-science-1406"
       },
       "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-computer-exam-changes-1406",
+      "content_type": "article",
+      "title": "تغییرات کنکور کامپیوتر ۱۴۰۶ در یک نگاه",
+      "slug": "computer-exam-changes-1406",
+      "summary": "فهرست افزوده‌ها، حذف‌ها و تصمیم‌هایی که داوطلب ارشد یا دکتری باید همین حالا اصلاح کند.",
+      "quick_answer": "در ارشد مهندسی کامپیوتر، جبر خطی و مبانی کامپیوتر و برنامه‌سازی اضافه شده و شش درس از ساختار قبلی کنار رفته‌اند. در ارشد IT هم ساختار سه‌بخشی زبان ۱، ریاضیات ۲ و تخصصی ۴ اعلام شده است. در دکتری، استعداد تحصیلی حذف و تخصصی با ضریب ۵ پررنگ‌تر شده است.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پاسخ کوتاه"
+        },
+        {
+          "type": "text",
+          "text": "در ارشد مهندسی کامپیوتر، جبر خطی و مبانی کامپیوتر و برنامه‌سازی اضافه شده و شش درس از ساختار قبلی کنار رفته‌اند. در ارشد IT هم ساختار سه‌بخشی زبان ۱، ریاضیات ۲ و تخصصی ۴ اعلام شده است. در دکتری، استعداد تحصیلی حذف و تخصصی با ضریب ۵ پررنگ‌تر شده است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه اقدام فوری"
+        },
+        {
+          "type": "text",
+          "text": "• فهرست منابع قدیمی را با نام مجموعهٔ امتحانی خودت تطبیق بده.\n• برنامه را بر پایهٔ پیش‌نیازهای جدید، مخصوصاً برنامه‌سازی و جبر خطی بازچینش کن.\n• صفحهٔ رسمی سازمان سنجش را تا انتشار دفترچه و اصلاحیه‌ها رصد کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرا جدول‌های قدیمی خطرناک‌اند؟"
+        },
+        {
+          "type": "text",
+          "text": "بسیاری از صفحه‌ها و فایل‌های سال‌های قبل هنوز در نتایج جست‌وجو دیده می‌شوند. تاریخ عنوان صفحه به‌تنهایی کافی نیست؛ باید تاریخ انتشار منبع، نام مجموعه، مواد امتحانی و ضرایب هم‌زمان کنترل شوند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و IT"
+        ],
+        "tags": [
+          "خبر و تحلیل"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر و IT"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "تغییرات کنکور کامپیوتر ۱۴۰۶ در یک نگاه",
+        "description": "فهرست افزوده‌ها، حذف‌ها و تصمیم‌هایی که داوطلب ارشد یا دکتری باید همین حالا اصلاح کند."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-50f3b52142efac0715d8",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه و جدول مجموعه‌های امتحانی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:computer-exam-changes-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-official-exam-updates-checklist",
+      "content_type": "article",
+      "title": "چک‌لیست پیگیری اطلاعیه‌های رسمی کنکور ۱۴۰۶",
+      "slug": "official-exam-updates-checklist",
+      "summary": "کدام فایل ملاک است، اصلاحیه را کجا باید دید و چگونه تاریخ اعتبار اطلاعات را کنترل کنیم.",
+      "quick_answer": "کدام فایل ملاک است، اصلاحیه را کجا باید دید و چگونه تاریخ اعتبار اطلاعات را کنترل کنیم.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ترتیب اعتبار"
+        },
+        {
+          "type": "text",
+          "text": "• دفترچهٔ ثبت‌نام سال آزمون\n• اصلاحیه‌های بعد از دفترچه\n• اطلاعیه‌های رسمی سازمان سنجش\n• تحلیل رسانه‌ها و کانال‌ها"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "هر بار چه چیزی را کنترل کنیم؟"
+        },
+        {
+          "type": "text",
+          "text": "• کد و نام مجموعه\n• مواد و ضرایب\n• شرایط مدارک تحصیلی\n• تاریخ ثبت‌نام و آزمون\n• محدودیت مجموعهٔ اصلی یا شناور"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سیاست kunkur01"
+        },
+        {
+          "type": "text",
+          "text": "صفحات زمان‌حساس تاریخ آخرین بازبینی و منبع دارند. اگر مدرک رسمی کافی نباشد، ابهام صریح نوشته می‌شود و حدس به‌جای خبر منتشر نمی‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "tags": [
+          "ثبت‌نام و اخبار رسمی"
+        ],
+        "degrees": [
+          "master",
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر، IT و علوم کامپیوتر"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "چک‌لیست پیگیری اطلاعیه‌های رسمی کنکور ۱۴۰۶",
+        "description": "کدام فایل ملاک است، اصلاحیه را کجا باید دید و چگونه تاریخ اعتبار اطلاعات را کنترل کنیم."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-50f3b52142efac0715d8",
+          "relation": "SUPPORTS",
+          "locator": "اطلاعیه و جدول مجموعه‌های امتحانی کارشناسی ارشد ناپیوسته سال ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:official-exam-updates-checklist"
+      },
+      "review_status": "draft"
     }
   ]
 }
-
