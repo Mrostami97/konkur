@@ -988,23 +988,33 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
   });
 
   it("refreshes only untouched generated source metadata and never rolls a human review backward", async () => {
-    const legacyGuard = phase17LegacyDrafts.sourceRefreshGuards[0]!;
-    const generated = staticEditorialSeed.sources.find((source) => source.externalId === legacyGuard.externalId)!;
-    const original = await prisma.contentSource.findUniqueOrThrow({ where: { externalId: legacyGuard.externalId } });
+    const fixtures = await Promise.all(phase17LegacyDrafts.sourceRefreshGuards.map(async (legacyGuard) => {
+      const generated = staticEditorialSeed.sources.find((source) => source.externalId === legacyGuard.externalId);
+      if (!generated) throw new Error("missing generated source refresh fixture for " + legacyGuard.externalId);
+      const original = await prisma.contentSource.findUniqueOrThrow({ where: { externalId: legacyGuard.externalId } });
+      return { legacyGuard, generated, original };
+    }));
     try {
-      await prisma.contentSource.update({
-        where: { externalId: legacyGuard.externalId },
-        data: {
-          checkedAt: new Date(legacyGuard.checkedAt),
-          metadata: legacyGuard.metadata,
-        },
-      });
+      await Promise.all(
+        fixtures.map(({ legacyGuard }) =>
+          prisma.contentSource.update({
+            where: { externalId: legacyGuard.externalId },
+            data: {
+              checkedAt: new Date(legacyGuard.checkedAt),
+              metadata: legacyGuard.metadata,
+            },
+          }),
+        ),
+      );
 
       await seedStaticEditorial(prisma);
-      const refreshed = await prisma.contentSource.findUniqueOrThrow({ where: { externalId: legacyGuard.externalId } });
-      expect(refreshed.checkedAt.toISOString()).toBe(generated.checkedAt);
-      expect(refreshed.metadata).toEqual(generated.metadata);
+      for (const { legacyGuard, generated } of fixtures) {
+        const refreshed = await prisma.contentSource.findUniqueOrThrow({ where: { externalId: legacyGuard.externalId } });
+        expect(refreshed.checkedAt.toISOString()).toBe(generated.checkedAt);
+        expect(refreshed.metadata).toEqual(generated.metadata);
+      }
 
+      const { legacyGuard, generated } = fixtures[0]!;
       const humanCheckedAt = new Date(new Date(generated.checkedAt).getTime() + 86_400_000);
       const humanMetadata = { humanReview: "keep this source review" };
       await prisma.contentSource.update({
@@ -1016,10 +1026,14 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       expect(preserved.checkedAt.toISOString()).toBe(humanCheckedAt.toISOString());
       expect(preserved.metadata).toEqual(humanMetadata);
     } finally {
-      await prisma.contentSource.update({
-        where: { externalId: legacyGuard.externalId },
-        data: { checkedAt: original.checkedAt, metadata: original.metadata ?? Prisma.JsonNull },
-      });
+      await Promise.all(
+        fixtures.map(({ legacyGuard, original }) =>
+          prisma.contentSource.update({
+            where: { externalId: legacyGuard.externalId },
+            data: { checkedAt: original.checkedAt, metadata: original.metadata ?? Prisma.JsonNull },
+          }),
+        ),
+      );
     }
   });
 
