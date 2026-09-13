@@ -8,7 +8,13 @@
   "quick_answer": "مواد آزمون را از آخرین دفترچه و اصلاحیه رسمی کنترل کنید.",
   "content_blocks": [
     { "type": "heading", "level": 2, "text": "از کجا شروع کنیم؟" },
-    { "type": "text", "text": "ابتدا وضعیت رسمی آزمون و سپس پیش‌نیازهای هر درس را بررسی کنید." }
+    { "type": "text", "text": "ابتدا وضعیت رسمی آزمون و سپس پیش‌نیازهای هر درس را بررسی کنید." },
+    {
+      "type": "link_group",
+      "items": [
+        { "label": "راهنمای درس‌ها", "href": "/subjects" }
+      ]
+    }
   ],
   "taxonomy": {
     "major": ["computer-engineering"],

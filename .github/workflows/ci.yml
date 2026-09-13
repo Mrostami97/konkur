@@ -129,8 +129,40 @@ jobs:
 
       - name: API e2e tests
         run: |
-          set -euo pipefail
-          pnpm --filter @konkurcom/api run test:e2e
+          set +e
+          E2E_RESULTS="$RUNNER_TEMP/api-e2e-results.json"
+          pnpm --filter @konkurcom/api exec jest \
+            --config jest.e2e.config.cjs \
+            --runInBand \
+            --json \
+            --outputFile="$E2E_RESULTS"
+          E2E_STATUS=$?
+          set -e
+
+          # Action log archives are served from a separate storage endpoint
+          # that is not reachable in every support environment. Surface the
+          # actual failing assertions as a check annotation as well, so a
+          # failed integration test remains diagnosable through GitHub's API.
+          if [ "$E2E_STATUS" -ne 0 ] && [ -s "$E2E_RESULTS" ]; then
+            E2E_RESULTS="$E2E_RESULTS" node <<'NODE'
+          const fs = require("node:fs");
+          const report = JSON.parse(fs.readFileSync(process.env.E2E_RESULTS, "utf8"));
+          const failures = report.testResults
+            .flatMap((suite) => suite.assertionResults ?? [])
+            .filter((test) => test.status === "failed")
+            .slice(0, 5)
+            .map((test) => `${test.fullName}\n${(test.failureMessages ?? []).join("\n")}`)
+            .join("\n\n");
+          const escaped = (failures || "Jest failed before reporting an assertion.")
+            .slice(0, 4000)
+            .replaceAll("%", "%25")
+            .replaceAll("\r", "%0D")
+            .replaceAll("\n", "%0A");
+          console.log(`::error title=API e2e failures::${escaped}`);
+          NODE
+          fi
+
+          exit "$E2E_STATUS"
 
       # Built here, on the runner, and shipped to the server as images below --
       # the server never compiles anything. Tags are compose's own defaults

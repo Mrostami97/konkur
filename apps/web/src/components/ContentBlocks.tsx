@@ -1,4 +1,5 @@
 import katex from "katex";
+import Link from "next/link";
 import { API_URL } from "../lib/api";
 
 type Block = { type: string; [key: string]: unknown };
@@ -94,6 +95,29 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
           dangerouslySetInnerHTML={{ __html: renderLatex(String(block.latex ?? "")) }}
         />
       );
+    case "link_group": {
+      const items = Array.isArray(block.items)
+        ? block.items.filter((item): item is { label: string; href: string } => {
+          if (!item || typeof item !== "object") return false;
+          const candidate = item as { label?: unknown; href?: unknown };
+          return typeof candidate.label === "string"
+            && typeof candidate.href === "string"
+            && /^\/[A-Za-z0-9][A-Za-z0-9/_-]*(?:[?#][^\s]*)?$/.test(candidate.href);
+        })
+        : [];
+      if (items.length === 0) return null;
+      return (
+        <nav key={index} aria-label="مسیرهای مرتبط">
+          <ul>
+            {items.map((item) => (
+              <li key={`${item.href}-${item.label}`}>
+                <Link className="text-link" href={item.href}>{item.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      );
+    }
     default:
       return null;
   }

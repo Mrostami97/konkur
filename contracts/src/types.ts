@@ -57,6 +57,11 @@ export interface ArticleV2Source {
   order?: number;
 }
 
+export interface ArticleLinkGroupBlock {
+  type: "link_group";
+  items: { label: string; href: string }[];
+}
+
 export interface ArticleV2 {
   schema_version: "article.v2";
   external_id: string;
@@ -65,7 +70,7 @@ export interface ArticleV2 {
   slug: string;
   summary: string;
   quick_answer: string;
-  content_blocks: ArticleBlock[];
+  content_blocks: (ArticleBlock | ArticleLinkGroupBlock)[];
   taxonomy: {
     major: string[];
     tags?: string[];
