@@ -927,7 +927,9 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
           sources: {
             deleteMany: {},
             create: legacyPayload.sources.map((source) => ({
-              sourceId: legacySourceIds.get(source.source_external_id)!,
+              source: {
+                connect: { id: legacySourceIds.get(source.source_external_id)! },
+              },
               relation: source.relation,
               locator: source.locator,
               order: source.order ?? 0,

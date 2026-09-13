@@ -72,7 +72,9 @@ export async function seedStaticEditorial(prisma: PrismaClient) {
     }
     const payload = validation.data as ArticleV2;
     const sourceLinks = payload.sources.map((source) => ({
-      sourceId: sourceIds.get(source.source_external_id)!,
+      source: {
+        connect: { id: sourceIds.get(source.source_external_id)! },
+      },
       relation: source.relation,
       locator: source.locator,
       claim: source.claim,

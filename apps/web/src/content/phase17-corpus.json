@@ -428,7 +428,7 @@
       "field": "نرم‌افزار و الگوریتم",
       "readingMinutes": 9,
       "quickAnswer": "مبانی کامپیوتر و برنامه‌سازی و داده‌ساختارها و الگوریتم‌ها در هر دو مجموعهٔ ۲۳۵۴ و ۲۳۵۸ حضور دارند. ابتدا این هستهٔ مشترک را با حل مسئله تثبیت کن؛ سپس برای ۲۳۵۴ نظریه زبان‌ها و معماری را و برای ۲۳۵۸ پایگاه داده و شبکه را به آن متصل کن.",
-      "relatedSubjectCodes": ["programming-fundamentals", "data-structures-algorithms", "automata", "databases", "software-engineering"],
+      "relatedSubjectCodes": ["programming-fundamentals", "data-structures-algorithms", "automata", "databases"],
       "sections": [
         {
           "title": "هستهٔ مشترک دو مجموعه",
