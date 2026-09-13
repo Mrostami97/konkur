@@ -37,30 +37,13 @@
       }
     },
     {
-      "externalId": "editorial-source-a571b97f76f925498976",
-      "kind": "WEB_PAGE",
-      "title": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
-      "publisher": "سازمان سنجش آموزش کشور",
-      "canonicalUrl": "https://www.sanjesh.org/",
-      "sourceTier": "PRIMARY_OFFICIAL",
-      "checkedAt": "2026-09-06T00:00:00.000Z",
-      "rightsBasis": "LINK_ONLY",
-      "mayLink": true,
-      "mayAdapt": false,
-      "commercialUseAllowed": false,
-      "attributionText": "سازمان سنجش آموزش کشور — برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
-      "metadata": {
-        "importedFrom": "apps/web/src/content/editorial.ts"
-      }
-    },
-    {
       "externalId": "editorial-source-0acf614bda63129236c4",
       "kind": "WEB_PAGE",
       "title": "Improving Students’ Learning With Effective Learning Techniques",
       "publisher": "Psychological Science in the Public Interest",
       "canonicalUrl": "https://doi.org/10.1177/1529100612453266",
       "sourceTier": "SECONDARY",
-      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "checkedAt": "2026-09-13T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
       "mayLink": true,
       "mayAdapt": false,
@@ -68,6 +51,7 @@
       "attributionText": "Psychological Science in the Public Interest — Improving Students’ Learning With Effective Learning Techniques",
       "metadata": {
         "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "supportedClaim": "کاربرد تمرین بازیابی و تمرین فاصله‌دار به‌جای مرور منفعل",
         "publishedAtText": "۲۰۱۳"
       }
     },
@@ -78,7 +62,7 @@
       "publisher": "Science",
       "canonicalUrl": "https://doi.org/10.1126/science.1199327",
       "sourceTier": "SECONDARY",
-      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "checkedAt": "2026-09-13T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
       "mayLink": true,
       "mayAdapt": false,
@@ -86,6 +70,7 @@
       "attributionText": "Science — Retrieval Practice Produces More Learning than Elaborative Studying",
       "metadata": {
         "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "supportedClaim": "نقش تمرین بازیابی در یادگیری ماندگار",
         "publishedAtText": "۲۰۱۱"
       }
     },
@@ -96,7 +81,7 @@
       "publisher": "Psychological Bulletin",
       "canonicalUrl": "https://doi.org/10.1037/0033-2909.132.3.354",
       "sourceTier": "SECONDARY",
-      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "checkedAt": "2026-09-13T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
       "mayLink": true,
       "mayAdapt": false,
@@ -104,6 +89,7 @@
       "attributionText": "Psychological Bulletin — Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
       "metadata": {
         "importedFrom": "apps/web/src/content/phase12-corpus.json",
+        "supportedClaim": "مزیت توزیع تمرین در زمان نسبت به انباشت مطالعه",
         "publishedAtText": "۲۰۰۶"
       }
     },
@@ -169,7 +155,7 @@
       "publisher": "سازمان سنجش آموزش کشور",
       "canonicalUrl": "https://www.sanjesh.org/",
       "sourceTier": "PRIMARY_OFFICIAL",
-      "checkedAt": "2026-09-08T00:00:00.000Z",
+      "checkedAt": "2026-09-13T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
       "mayLink": true,
       "mayAdapt": false,
@@ -177,7 +163,7 @@
       "attributionText": "سازمان سنجش آموزش کشور — درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
       "metadata": {
         "importedFrom": "apps/web/src/content/phase12-corpus.json",
-        "supportedClaim": "نشانی مرجع برای یافتن آخرین دفترچه‌ها، اطلاعیه‌ها و اصلاحیه‌های سازمان سنجش؛ صفحهٔ اصلی به‌تنهایی جزئیات هیچ سال، کارنامه یا قاعدهٔ انتخاب‌رشته را تأیید نمی‌کند."
+        "supportedClaim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری"
       }
     },
     {
@@ -249,6 +235,44 @@
       "metadata": {
         "importedFrom": "apps/web/src/content/phase13-corpus.json",
         "supportedClaim": "وجود و عنوان رکورد پایان‌نامهٔ «مسایل بهینه‌سازی شبکه روی منابع افرازشده» در کتابخانهٔ دانشگاه صنعتی شریف."
+      }
+    },
+    {
+      "externalId": "editorial-source-966f487ee71806446715",
+      "kind": "WEB_PAGE",
+      "title": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+      "publisher": "سازمان سنجش آموزش کشور",
+      "canonicalUrl": "https://sanjesh.org/_sanjesh/documents/1406/regphd1406.pdf",
+      "sourceTier": "PRIMARY_OFFICIAL",
+      "checkedAt": "2026-09-13T00:00:00.000Z",
+      "publishedAt": "2026-03-17T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "سازمان سنجش آموزش کشور — مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/editorial.ts",
+        "supportedClaim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+        "publishedAtText": "۲۶ اسفند ۱۴۰۴"
+      }
+    },
+    {
+      "externalId": "editorial-source-ccecc8f493bb8ce4b3ac",
+      "kind": "WEB_PAGE",
+      "title": "قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+      "publisher": "سامانه ملی قوانین و مقررات جمهوری اسلامی ایران",
+      "canonicalUrl": "https://qavanin.ir/Law/RelatedIndex/?IDS=2897292065634649375",
+      "sourceTier": "PRIMARY_OFFICIAL",
+      "checkedAt": "2026-09-13T00:00:00.000Z",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayAdapt": false,
+      "commercialUseAllowed": false,
+      "attributionText": "سامانه ملی قوانین و مقررات جمهوری اسلامی ایران — قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+      "metadata": {
+        "importedFrom": "apps/web/src/content/phase17-corpus.json",
+        "supportedClaim": "تفکیک مرحلهٔ آزمون متمرکز از ارزیابی سوابق و مصاحبهٔ علمی در فرایند پذیرش دکتری"
       }
     },
     {
@@ -723,307 +747,6 @@
         "producer_type": "human",
         "producer_name": "تحریریه kunkur01",
         "source_artifact": "apps/web/src/content/editorial.ts:master-computer-science-1406"
-      },
-      "review_status": "draft"
-    },
-    {
-      "schema_version": "article.v2",
-      "external_id": "static-editorial-phd-computer-engineering-1406",
-      "content_type": "guide",
-      "title": "راهنمای کنکور دکتری مهندسی کامپیوتر ۱۴۰۶",
-      "slug": "phd-computer-engineering-1406",
-      "summary": "دروس یکپارچهٔ گرایش‌های دکتری کامپیوتر، حذف استعداد تحصیلی و وزن جدید تخصصی‌ها.",
-      "quick_answer": "برای گرایش‌های دکتری مهندسی کامپیوتر، مواد آزمون متمرکز یکپارچه اعلام شده است. زبان انگلیسی ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ دارد؛ استعداد تحصیلی در ساختار اعلام‌شده حضور ندارد و داده‌ساختار و الگوریتم یک عنوان در بستهٔ تخصصی است.",
-      "content_blocks": [
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "ساختار اعلام‌شده"
-        },
-        {
-          "type": "text",
-          "text": "برای گرایش‌های دکتری مهندسی کامپیوتر، مواد آزمون متمرکز یکپارچه اعلام شده است. زبان انگلیسی ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ دارد؛ استعداد تحصیلی در ساختار اعلام‌شده حضور ندارد و داده‌ساختار و الگوریتم یک عنوان در بستهٔ تخصصی است."
-        },
-        {
-          "type": "table",
-          "headers": [
-            "بخش",
-            "دروس",
-            "ضریب"
-          ],
-          "rows": [
-            [
-              "زبان",
-              "زبان انگلیسی",
-              "۱"
-            ],
-            [
-              "ریاضیات تخصصی",
-              "گسسته، آمار و احتمال مهندسی، جبر خطی",
-              "۵ (در مجموعه تخصصی)"
-            ],
-            [
-              "تخصصی کامپیوتر",
-              "مدار منطقی، معماری، داده‌ساختار و الگوریتم، نظریه زبان‌ها، سیستم‌عامل، هوش مصنوعی",
-              "۵"
-            ]
-          ]
-        },
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "تفاوت مطالعهٔ دکتری با ارشد"
-        },
-        {
-          "type": "text",
-          "text": "• سطح پرسش‌های اعلام‌شده در محدودهٔ دروس ارشد است، اما رقابت و نیاز به دقت بالاتر است.\n• در کنار آزمون کتبی، رزومه، سوابق پژوهشی و آمادگی مصاحبه مسیر جداگانه‌ای دارند.\n• حذف استعداد تحصیلی به معنی انتقال زمان به تخصصی و زبان است، نه حذف کامل مطالعهٔ زبان."
-        }
-      ],
-      "taxonomy": {
-        "major": [
-          "مهندسی کامپیوتر"
-        ],
-        "tags": [
-          "راهنمای جامع ۱۴۰۶"
-        ],
-        "degrees": [
-          "phd"
-        ],
-        "fields": [
-          "مهندسی کامپیوتر"
-        ],
-        "subject_codes": [
-          "english",
-          "discrete-math",
-          "statistics",
-          "linear-algebra",
-          "digital-logic",
-          "computer-architecture",
-          "data-structures-algorithms",
-          "automata",
-          "operating-systems",
-          "artificial-intelligence"
-        ],
-        "topic_codes": []
-      },
-      "seo": {
-        "title": "راهنمای کنکور دکتری مهندسی کامپیوتر ۱۴۰۶",
-        "description": "دروس یکپارچهٔ گرایش‌های دکتری کامپیوتر، حذف استعداد تحصیلی و وزن جدید تخصصی‌ها."
-      },
-      "validity": {
-        "exam_year": 1406,
-        "time_sensitive": true,
-        "source_checked_at": "2026-09-06T00:00:00.000Z",
-        "review_due_at": "2026-11-30T00:00:00.000Z"
-      },
-      "sources": [
-        {
-          "source_external_id": "editorial-source-a571b97f76f925498976",
-          "relation": "SUPPORTS",
-          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
-          "order": 0
-        },
-        {
-          "source_external_id": "editorial-source-08110ffe99548a591190",
-          "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
-          "order": 1
-        }
-      ],
-      "provenance": {
-        "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
-        "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-engineering-1406"
-      },
-      "review_status": "draft"
-    },
-    {
-      "schema_version": "article.v2",
-      "external_id": "static-editorial-phd-information-technology-1406",
-      "content_type": "guide",
-      "title": "راهنمای کنکور دکتری فناوری اطلاعات ۱۴۰۶",
-      "slug": "phd-information-technology-1406",
-      "summary": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد.",
-      "quick_answer": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد.",
-      "content_blocks": [
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "مواد امتحانی"
-        },
-        {
-          "type": "table",
-          "headers": [
-            "سطح",
-            "مواد"
-          ],
-          "rows": [
-            [
-              "عمومی",
-              "زبان انگلیسی؛ استعداد تحصیلی حذف شده است"
-            ],
-            [
-              "کارشناسی",
-              "حل مسئله (داده‌ساختار و الگوریتم)، شبکه (شبکه‌های کامپیوتری و امنیت شبکه)"
-            ],
-            [
-              "کارشناسی ارشد",
-              "مهندسی اطلاعات (پایگاه داده پیشرفته، بازیابی اطلاعات، داده‌کاوی) و خدمات IT (تجارت الکترونیکی، آموزش الکترونیکی)"
-            ]
-          ]
-        },
-        {
-          "type": "quote",
-          "text": "زبان ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ اعلام شده است؛ ملاک نهایی آخرین دفترچه و اصلاحیه است."
-        },
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "ترتیب منطقی مطالعه"
-        },
-        {
-          "type": "text",
-          "text": "• داده‌ساختار و الگوریتم را به‌عنوان بستهٔ حل مسئله و پیش‌نیاز مطالعهٔ دکتری IT قرار بده.\n• شبکهٔ پایه را قبل از امنیت شبکه تثبیت کن.\n• پایگاه داده را به بازیابی اطلاعات و داده‌کاوی متصل بخوان.\n• برای خدمات IT، تعریف‌ها را با مطالعهٔ موردی و مقایسهٔ معماری‌ها مرور کن."
-        }
-      ],
-      "taxonomy": {
-        "major": [
-          "فناوری اطلاعات"
-        ],
-        "tags": [
-          "راهنمای جامع ۱۴۰۶"
-        ],
-        "degrees": [
-          "phd"
-        ],
-        "fields": [
-          "فناوری اطلاعات"
-        ],
-        "subject_codes": [
-          "english",
-          "data-structures-algorithms",
-          "computer-networks",
-          "databases"
-        ],
-        "topic_codes": []
-      },
-      "seo": {
-        "title": "راهنمای کنکور دکتری فناوری اطلاعات ۱۴۰۶",
-        "description": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد."
-      },
-      "validity": {
-        "exam_year": 1406,
-        "time_sensitive": true,
-        "source_checked_at": "2026-09-06T00:00:00.000Z",
-        "review_due_at": "2026-11-30T00:00:00.000Z"
-      },
-      "sources": [
-        {
-          "source_external_id": "editorial-source-a571b97f76f925498976",
-          "relation": "SUPPORTS",
-          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
-          "order": 0
-        }
-      ],
-      "provenance": {
-        "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
-        "source_artifact": "apps/web/src/content/editorial.ts:phd-information-technology-1406"
-      },
-      "review_status": "draft"
-    },
-    {
-      "schema_version": "article.v2",
-      "external_id": "static-editorial-phd-computer-science-1406",
-      "content_type": "guide",
-      "title": "راهنمای کنکور دکتری علوم کامپیوتر ۱۴۰۶",
-      "slug": "phd-computer-science-1406",
-      "summary": "ساختار آزمون دکتری علوم کامپیوتر با تمرکز بر ساختمان گسسته، منطق و نظریهٔ علوم کامپیوتر.",
-      "quick_answer": "در ساختار اعلام‌شده برای ۱۴۰۶، زبان انگلیسی در بخش عمومی و داده‌ساختار و الگوریتم در بستهٔ تخصصی دکتری علوم کامپیوتر قرار دارد. استعداد تحصیلی حذف شده است و جزئیات سطح هر عنوان باید با آخرین دفترچه تطبیق داده شود.",
-      "content_blocks": [
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "مواد اصلی"
-        },
-        {
-          "type": "text",
-          "text": "در ساختار اعلام‌شده برای ۱۴۰۶، زبان انگلیسی در بخش عمومی و داده‌ساختار و الگوریتم در بستهٔ تخصصی دکتری علوم کامپیوتر قرار دارد. استعداد تحصیلی حذف شده است و جزئیات سطح هر عنوان باید با آخرین دفترچه تطبیق داده شود."
-        },
-        {
-          "type": "table",
-          "headers": [
-            "بخش",
-            "مواد"
-          ],
-          "rows": [
-            [
-              "عمومی",
-              "زبان انگلیسی"
-            ],
-            [
-              "تخصصی",
-              "داده‌ساختار و الگوریتم، ساختمان گسسته و منطق"
-            ],
-            [
-              "تخصصی تکمیلی",
-              "نظریه علوم کامپیوتر"
-            ]
-          ]
-        },
-        {
-          "type": "heading",
-          "level": 2,
-          "text": "راهبرد"
-        },
-        {
-          "type": "text",
-          "text": "• اثبات‌نویسی و فهم تعریف‌ها را کنار تست‌زنی پیش ببر.\n• منطق و گسسته را جدا از هم نخوان؛ وابستگی مفهومی آن‌ها زیاد است.\n• برای نظریه، طبقه‌بندی مسائل و مدل‌های محاسباتی را با مثال مرور کن."
-        }
-      ],
-      "taxonomy": {
-        "major": [
-          "علوم کامپیوتر"
-        ],
-        "tags": [
-          "راهنمای جامع ۱۴۰۶"
-        ],
-        "degrees": [
-          "phd"
-        ],
-        "fields": [
-          "علوم کامپیوتر"
-        ],
-        "subject_codes": [
-          "english",
-          "discrete-math",
-          "data-structures-algorithms",
-          "automata"
-        ],
-        "topic_codes": []
-      },
-      "seo": {
-        "title": "راهنمای کنکور دکتری علوم کامپیوتر ۱۴۰۶",
-        "description": "ساختار آزمون دکتری علوم کامپیوتر با تمرکز بر ساختمان گسسته، منطق و نظریهٔ علوم کامپیوتر."
-      },
-      "validity": {
-        "exam_year": 1406,
-        "time_sensitive": true,
-        "source_checked_at": "2026-09-06T00:00:00.000Z",
-        "review_due_at": "2026-11-30T00:00:00.000Z"
-      },
-      "sources": [
-        {
-          "source_external_id": "editorial-source-a571b97f76f925498976",
-          "relation": "SUPPORTS",
-          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
-          "order": 0
-        }
-      ],
-      "provenance": {
-        "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
-        "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-science-1406"
       },
       "review_status": "draft"
     },
@@ -4147,6 +3870,1907 @@
     },
     {
       "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-engineering-1406",
+      "content_type": "guide",
+      "title": "راهنمای دکتری مهندسی کامپیوتر ۱۴۰۶؛ از آزمون کتبی تا مصاحبه",
+      "slug": "phd-computer-engineering-1406",
+      "summary": "نقشهٔ منبع‌دار مسیر دکتری مهندسی کامپیوتر بر پایهٔ مجموعهٔ ۲۳۵۴، با تفکیک روشن مطالعهٔ آزمون متمرکز از رزومه و مصاحبهٔ دانشگاه.",
+      "quick_answer": "برای مسیر دکتری مهندسی کامپیوتر در اطلاعیهٔ فعلی ۱۴۰۶ باید مجموعهٔ ۲۳۵۴ «مهندسی و علم کامپیوتر» را مبنا بگیری. آزمون کتبی شامل زبان با ضریب ۱ و دروس ریاضی و تخصصی با ضریب ۵ است؛ رزومه و مصاحبه مرحله‌ای جدا پس از آزمون متمرکز هستند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر آزمون کتبی"
+        },
+        {
+          "type": "text",
+          "text": "در سند معرفی مجموعه‌های ۱۴۰۶، کد ۲۳۵۴ با عنوان رسمی «مهندسی و علم کامپیوتر» آمده است. زبان انگلیسی یک گروه مستقل است و ریاضیات و دروس تخصصی رایانه در دو گروه دیگر قرار دارند. استعداد تحصیلی در فهرست مواد این سند دیده نمی‌شود."
+        },
+        {
+          "type": "text",
+          "text": "• ابتدا مواد رسمی را به سه بستهٔ زبان، ریاضیات و تخصصی تقسیم کن.\n• برای هر بسته با یک آزمون کوتاه، نقطهٔ شروع واقعی را پیدا کن.\n• نام گرایش مقصد را با دفترچهٔ ثبت‌نام و سپس دفترچهٔ انتخاب رشته دوباره کنترل کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر پس از آزمون کتبی"
+        },
+        {
+          "type": "text",
+          "text": "رزومهٔ آموزشی و پژوهشی و مصاحبهٔ علمی، مادهٔ امتحانی آزمون کتبی نیستند. برای این مرحله باید مدارک قابل راستی‌آزمایی، شرح دقیق پایان‌نامه و توان توضیح مسئلهٔ پژوهشی را جداگانه آماده کنی؛ معیار جزئی هر دانشگاه را فقط از اطلاعیهٔ همان دانشگاه بردار."
+        },
+        {
+          "type": "quote",
+          "text": "نمرهٔ آزمون متمرکز را با امتیاز رزومه یا مصاحبه جمع‌بندی ذهنی نکن؛ این مؤلفه‌ها در مرحله‌ها و توسط مراجع متفاوت ارزیابی می‌شوند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ترتیب تصمیم‌گیری"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "زمان",
+            "تصمیم",
+            "خروجی"
+          ],
+          "rows": [
+            [
+              "اکنون",
+              "تطبیق مجموعهٔ ۲۳۵۴ و سنجش پایه",
+              "فهرست ضعف‌های واقعی"
+            ],
+            [
+              "تا آزمون",
+              "یادگیری، بازیابی و آزمون زمان‌دار",
+              "کارنامهٔ تمرینی"
+            ],
+            [
+              "پس از مجازشدن",
+              "بررسی فراخوان هر دانشگاه",
+              "پروندهٔ رزومه و ارائهٔ پژوهشی"
+            ]
+          ]
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای ستون دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "مهندسی کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "linear-algebra",
+          "digital-logic",
+          "computer-architecture",
+          "data-structures-algorithms",
+          "automata",
+          "operating-systems",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای دکتری مهندسی کامپیوتر ۱۴۰۶؛ از آزمون کتبی تا مصاحبه",
+        "description": "نقشهٔ منبع‌دار مسیر دکتری مهندسی کامپیوتر بر پایهٔ مجموعهٔ ۲۳۵۴، با تفکیک روشن مطالعهٔ آزمون متمرکز از رزومه و مصاحبهٔ دانشگاه."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-ccecc8f493bb8ce4b3ac",
+          "relation": "SUPPORTS",
+          "locator": "قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+          "claim": "تفکیک مرحلهٔ آزمون متمرکز از ارزیابی سوابق و مصاحبهٔ علمی در فرایند پذیرش دکتری",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-engineering-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-information-technology-1406",
+      "content_type": "guide",
+      "title": "راهنمای دکتری فناوری اطلاعات ۱۴۰۶؛ مواد آزمون و مسیر پذیرش",
+      "slug": "phd-information-technology-1406",
+      "summary": "راهنمای مجموعهٔ ۲۳۵۸ مهندسی فناوری اطلاعات با مواد صحیح ۱۴۰۶، ترتیب مطالعه و مرزبندی آزمون کتبی، سوابق پژوهشی و مصاحبه.",
+      "quick_answer": "مبنای رسمی مسیر دکتری فناوری اطلاعات در سند فعلی ۱۴۰۶، مجموعهٔ ۲۳۵۸ است. زبان ضریب ۱ دارد و ریاضیات و تخصصی‌های رایانه ضریب ۵؛ فهرست تخصصی شامل مبانی برنامه‌سازی، داده‌ساختار و الگوریتم، سیستم‌عامل، شبکه، طراحی پایگاه داده و هوش مصنوعی است.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر آزمون کتبی"
+        },
+        {
+          "type": "text",
+          "text": "در اطلاعیهٔ معرفی مجموعه‌ها، همهٔ رشته‌های تحصیلی اجازهٔ شرکت در مجموعهٔ ۲۳۵۸ را دارند؛ اما این مجوز به معنی یکسان‌بودن نقطهٔ شروع نیست. داوطلب تغییررشته‌ای باید ابتدا برنامه‌سازی، گسسته و ساختمان داده را بسازد و سپس شبکه، پایگاه داده، سیستم‌عامل و هوش مصنوعی را به برنامه اضافه کند."
+        },
+        {
+          "type": "quote",
+          "text": "در این ساختار، «مهندسی اطلاعات» و «خدمات فناوری اطلاعات» مادهٔ جداگانهٔ آزمون کتبی ۱۴۰۶ نیستند؛ برنامه را با جدول فعلی سازمان سنجش تطبیق بده."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر پس از آزمون کتبی"
+        },
+        {
+          "type": "text",
+          "text": "پس از مجازشدن، دانشگاه می‌تواند تناسب سوابق و موضوع پژوهشی تو با حوزهٔ گروه را در ارزیابی تخصصی بسنجد. مقاله، پایان‌نامه و سابقهٔ فنی را با مدرک و نقش دقیق خودت آماده کن؛ هیچ‌کدام جای پاسخ‌گویی به مواد آزمون متمرکز را نمی‌گیرند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه خروجی عملی"
+        },
+        {
+          "type": "text",
+          "text": "• یک جدول پوشش برای تمام مواد رسمی ۲۳۵۸ بساز.\n• هر هفته یک مجموعه تست ترکیبی از پایه و تخصصی حل کن.\n• پروندهٔ پژوهشی را در پوشه‌ای مستقل از دفتر خطای آزمون نگه دار."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "فناوری اطلاعات"
+        ],
+        "tags": [
+          "راهنمای ستون دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "programming-fundamentals",
+          "data-structures-algorithms",
+          "operating-systems",
+          "computer-networks",
+          "databases",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای دکتری فناوری اطلاعات ۱۴۰۶؛ مواد آزمون و مسیر پذیرش",
+        "description": "راهنمای مجموعهٔ ۲۳۵۸ مهندسی فناوری اطلاعات با مواد صحیح ۱۴۰۶، ترتیب مطالعه و مرزبندی آزمون کتبی، سوابق پژوهشی و مصاحبه."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-ccecc8f493bb8ce4b3ac",
+          "relation": "SUPPORTS",
+          "locator": "قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+          "claim": "تفکیک مرحلهٔ آزمون متمرکز از ارزیابی سوابق و مصاحبهٔ علمی در فرایند پذیرش دکتری",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-information-technology-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-science-1406",
+      "content_type": "guide",
+      "title": "راهنمای دکتری علوم کامپیوتر ۱۴۰۶؛ تطبیق مدرک با مجموعهٔ ۲۳۵۴",
+      "slug": "phd-computer-science-1406",
+      "summary": "توضیح دقیق جایگاه فارغ‌التحصیل علوم کامپیوتر در اطلاعیهٔ ۱۴۰۶ و جلوگیری از ساختن مجموعه یا مواد امتحانی جداگانه‌ای که در سند رسمی نیامده است.",
+      "quick_answer": "در فایل معرفی فعلی ۱۴۰۶، «علوم کامپیوتر» در فهرست مدارک مرتبط مجموعهٔ ۲۳۵۴ مهندسی و علم کامپیوتر آمده است، نه به‌عنوان یک مجموعهٔ امتحانی مستقل در سه مسیر هدف این سایت. بنابراین مواد آزمون کتبی را از کد ۲۳۵۴ بخوان و عنوان نهایی رشته‌گرایش را در دفترچهٔ ثبت‌نام کنترل کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر آزمون کتبی"
+        },
+        {
+          "type": "text",
+          "text": "رشتهٔ تحصیلی قبلی و مجموعهٔ امتحانی دو مفهوم جدا هستند. سند ۱۴۰۶، دارندگان مدرک کارشناسی ارشد علوم کامپیوتر را در میان رشته‌های مرتبط مجاز برای مجموعهٔ ۲۳۵۴ نام می‌برد. این صفحه از همین نگاشت استفاده می‌کند و برای علوم کامپیوتر جدول ساختگی جدا نمی‌سازد."
+        },
+        {
+          "type": "text",
+          "text": "• کد ۲۳۵۴ و سه گروه زبان، ریاضیات و تخصصی را مبنا قرار بده.\n• بر پایهٔ سابقهٔ ریاضی خودت، زمان بیشتری به سیستم‌ها یا دروس سخت‌افزار بده.\n• هنگام ثبت‌نام، فهرست رشته‌های مرتبط و عنوان گرایش مقصد را دوباره بررسی کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مسیر پس از آزمون کتبی"
+        },
+        {
+          "type": "text",
+          "text": "در مرحلهٔ دانشگاهی، تناسب پایان‌نامه، مقاله و مسئلهٔ پژوهشی با گروه مقصد اهمیت پیدا می‌کند. این مرحله از مواد کتبی جداست؛ آمادگی برای ارائهٔ یک مسئلهٔ نظری یا الگوریتمی نباید به‌عنوان جایگزین تست‌زنی در ماه‌های قبل از آزمون تلقی شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "اگر زمینهٔ تو نظری است"
+        },
+        {
+          "type": "text",
+          "text": "• نظریه زبان‌ها، داده‌ساختار و الگوریتم و ریاضیات گسسته را به یک زنجیرهٔ مفهومی تبدیل کن.\n• مبانی برنامه‌سازی، سیستم‌عامل و معماری را فقط به‌دلیل عنوان مسیر کنار نگذار؛ در گروه تخصصی رسمی حضور دارند.\n• برای مصاحبه، تفاوت کار پژوهشی انجام‌شده با علایق آینده را روشن بیان کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای ستون دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "linear-algebra",
+          "data-structures-algorithms",
+          "automata",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای دکتری علوم کامپیوتر ۱۴۰۶؛ تطبیق مدرک با مجموعهٔ ۲۳۵۴",
+        "description": "توضیح دقیق جایگاه فارغ‌التحصیل علوم کامپیوتر در اطلاعیهٔ ۱۴۰۶ و جلوگیری از ساختن مجموعه یا مواد امتحانی جداگانه‌ای که در سند رسمی نیامده است."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-ccecc8f493bb8ce4b3ac",
+          "relation": "SUPPORTS",
+          "locator": "قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+          "claim": "تفکیک مرحلهٔ آزمون متمرکز از ارزیابی سوابق و مصاحبهٔ علمی در فرایند پذیرش دکتری",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-science-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-engineering-subjects-1406",
+      "content_type": "guide",
+      "title": "مواد و ضرایب دکتری مهندسی و علم کامپیوتر ۱۴۰۶؛ کد ۲۳۵۴",
+      "slug": "phd-computer-engineering-subjects-1406",
+      "summary": "جدول منبع‌دار زبان، ریاضیات و دروس تخصصی مجموعهٔ ۲۳۵۴ و توضیح تغییر مهم ساختار فعلی نسبت به راهنماهای قدیمی آزمون دکتری.",
+      "quick_answer": "در مجموعهٔ ۲۳۵۴، زبان انگلیسی ضریب ۱ دارد و ریاضیات و دروس تخصصی رایانه با ضریب ۵ سنجیده می‌شوند. استعداد تحصیلی در فهرست مواد اطلاعیهٔ فعلی ۱۴۰۶ نیست. همهٔ درس‌های جدول زیر را یک بستهٔ رسمی ببین؛ تعداد سؤال یا بودجه‌بندی اعلام‌نشده به آن اضافه نکن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جدول مواد اعلام‌شده"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "گروه",
+            "مواد",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان انگلیسی",
+              "۱"
+            ],
+            [
+              "ریاضیات",
+              "ریاضیات گسسته، آمار و احتمال مهندسی، جبر خطی",
+              "۵"
+            ],
+            [
+              "تخصصی",
+              "مبانی کامپیوتر و برنامه‌سازی، مدارهای منطقی، معماری کامپیوتر، داده‌ساختارها و الگوریتم‌ها، نظریه زبان‌ها و ماشین‌ها، سیستم‌عامل، هوش مصنوعی",
+              "۵"
+            ]
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "ضریب ۵ قاعدهٔ اعلام‌شده برای دروس غیرزبان است؛ این جدول تعداد سؤال یا سهم هر عنوان داخل گروه را حدس نمی‌زند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تغییر مهم برای برنامه‌های قدیمی"
+        },
+        {
+          "type": "text",
+          "text": "استعداد تحصیلی در مواد آزمون فعلی نیامده و تکیهٔ ضرایب بر زبان ۱ و سایر دروس ۵ است. اگر برنامه یا منبعی بر ساختار سال‌های قدیمی بنا شده، فقط بخش‌هایی را نگه دار که با همین فهرست رسمی تطبیق دارند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کنترل پیش از ثبت‌نام"
+        },
+        {
+          "type": "text",
+          "text": "• عنوان مجموعه و کد ۲۳۵۴ را در دفترچهٔ ثبت‌نام نهایی پیدا کن.\n• اصلاحیه‌های بعدی را از درگاه سنجش بررسی کن.\n• عنوان رشته‌گرایش و دانشگاه مقصد را به‌جای نام محاوره‌ای مسیر ملاک قرار بده."
+        },
+        {
+          "type": "quote",
+          "text": "ملاک نهایی، آخرین دفترچهٔ ثبت‌نام و اصلاحیهٔ منتشرشده توسط سازمان سنجش است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "tags": [
+          "مواد و ضرایب رسمی ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "مهندسی و علم کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "linear-algebra",
+          "programming-fundamentals",
+          "digital-logic",
+          "computer-architecture",
+          "data-structures-algorithms",
+          "automata",
+          "operating-systems",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مواد و ضرایب دکتری مهندسی و علم کامپیوتر ۱۴۰۶؛ کد ۲۳۵۴",
+        "description": "جدول منبع‌دار زبان، ریاضیات و دروس تخصصی مجموعهٔ ۲۳۵۴ و توضیح تغییر مهم ساختار فعلی نسبت به راهنماهای قدیمی آزمون دکتری."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-engineering-subjects-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-information-technology-subjects-1406",
+      "content_type": "guide",
+      "title": "مواد و ضرایب دکتری مهندسی فناوری اطلاعات ۱۴۰۶؛ کد ۲۳۵۸",
+      "slug": "phd-information-technology-subjects-1406",
+      "summary": "فهرست دقیق مواد مجموعهٔ ۲۳۵۸، ضرایب عمومی و تخصصی و اصلاح برداشت‌های قدیمی دربارهٔ مهندسی اطلاعات و خدمات فناوری اطلاعات.",
+      "quick_answer": "برای مجموعهٔ ۲۳۵۸، زبان انگلیسی ضریب ۱ و دو گروه ریاضیات و تخصصی ضریب ۵ دارند. مواد تخصصی فعلی از مبانی رایانه و برنامه‌سازی تا الگوریتم، سیستم‌عامل، شبکه، طراحی پایگاه داده و هوش مصنوعی را پوشش می‌دهد؛ عنوان‌های قدیمی را بدون تطبیق وارد برنامه نکن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "جدول مواد اعلام‌شده"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "گروه",
+            "مواد",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان انگلیسی",
+              "۱"
+            ],
+            [
+              "ریاضیات",
+              "ریاضیات گسسته، آمار و احتمال مهندسی",
+              "۵"
+            ],
+            [
+              "تخصصی",
+              "مبانی کامپیوتر و برنامه‌سازی، داده‌ساختارها و الگوریتم‌ها، سیستم‌عامل، شبکه‌های کامپیوتری، طراحی پایگاه داده‌ها، هوش مصنوعی",
+              "۵"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چه چیزی را از برنامهٔ قدیمی حذف کنیم؟"
+        },
+        {
+          "type": "text",
+          "text": "در اطلاعیهٔ فعلی، عنوان‌هایی مانند بازیابی اطلاعات، داده‌کاوی، تجارت الکترونیکی یا آموزش الکترونیکی به‌عنوان مادهٔ مستقل مجموعهٔ ۲۳۵۸ نیامده‌اند. ممکن است این حوزه‌ها برای پژوهش یا مصاحبهٔ یک گروه دانشگاهی مهم باشند، اما نباید به جدول آزمون کتبی افزوده شوند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه کنترل ضروری"
+        },
+        {
+          "type": "text",
+          "text": "• کد ۲۳۵۸ و مجازبودن رشتهٔ تحصیلی را در دفترچهٔ نهایی کنترل کن.\n• بین عنوان «شبکه‌های کامپیوتری» در آزمون کتبی و حوزهٔ پژوهشی امنیت تفاوت بگذار.\n• بعد از هر اصلاحیه، فهرست درس و منبع شخصی را دوباره تطبیق بده."
+        },
+        {
+          "type": "quote",
+          "text": "ملاک نهایی، آخرین دفترچهٔ ثبت‌نام و اصلاحیهٔ منتشرشده توسط سازمان سنجش است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "tags": [
+          "مواد و ضرایب رسمی ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "مهندسی فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "programming-fundamentals",
+          "data-structures-algorithms",
+          "operating-systems",
+          "computer-networks",
+          "databases",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مواد و ضرایب دکتری مهندسی فناوری اطلاعات ۱۴۰۶؛ کد ۲۳۵۸",
+        "description": "فهرست دقیق مواد مجموعهٔ ۲۳۵۸، ضرایب عمومی و تخصصی و اصلاح برداشت‌های قدیمی دربارهٔ مهندسی اطلاعات و خدمات فناوری اطلاعات."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-information-technology-subjects-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-science-subjects-1406",
+      "content_type": "guide",
+      "title": "مواد دکتری علوم کامپیوتر ۱۴۰۶؛ چرا مجموعهٔ ۲۳۵۴ مبناست؟",
+      "slug": "phd-computer-science-subjects-1406",
+      "summary": "نگاشت منبع‌دار مدرک علوم کامپیوتر به مجموعهٔ مهندسی و علم کامپیوتر و نمایش مواد واقعی آزمون، بدون اختراع کد یا جدول مستقل.",
+      "quick_answer": "علوم کامپیوتر در سند فعلی ۱۴۰۶ جزو مدارک مرتبط مجاز برای مجموعهٔ ۲۳۵۴ است. برای این مسیر، همان زبان ضریب ۱ و گروه‌های ریاضی و تخصصی ضریب ۵ ملاک‌اند؛ صفحهٔ جدا برای علوم کامپیوتر فقط نگاشت و برنامه را توضیح می‌دهد و مجموعهٔ رسمی تازه‌ای نمی‌سازد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "نگاشت رسمی مدرک و مجموعه"
+        },
+        {
+          "type": "text",
+          "text": "در بخش رشته‌های مرتبط مجموعهٔ ۲۳۵۴، علوم کامپیوتر صریحاً در کنار مهندسی کامپیوتر، مهندسی و علم کامپیوتر، مهندسی فناوری اطلاعات، برق، علوم ریاضی و چند رشتهٔ دیگر آمده است. مجازبودن برای شرکت با پذیرش در هر رشته‌گرایش یا دانشگاه یکسان نیست."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مواد کتبی همان مجموعهٔ ۲۳۵۴ است"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "گروه",
+            "جمع‌بندی",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان انگلیسی",
+              "۱"
+            ],
+            [
+              "ریاضیات",
+              "گسسته، آمار و احتمال مهندسی، جبر خطی",
+              "۵"
+            ],
+            [
+              "تخصصی",
+              "مبانی رایانه و برنامه‌سازی، سخت‌افزار، الگوریتم، نظریه، سیستم‌عامل و هوش مصنوعی",
+              "۵"
+            ]
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "برای نام کامل تک‌تک مواد، جدول مجموعهٔ ۲۳۵۴ را ببین؛ این خلاصه جای متن رسمی را نمی‌گیرد."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "برنامه را بر اساس شکاف پایه بساز"
+        },
+        {
+          "type": "text",
+          "text": "• اگر زمینهٔ نظری قوی است، مبانی سخت‌افزار و سیستم‌عامل را زودتر تشخیص بده.\n• اگر برنامه‌سازی قوی است، اثبات، گسسته و نظریه زبان‌ها را با تست ارزیابی کن.\n• تا انتشار دفترچهٔ نهایی از نسبت‌دادن گرایش یا ظرفیت مشخص به این مجموعه خودداری کن."
+        },
+        {
+          "type": "quote",
+          "text": "ملاک نهایی، آخرین دفترچهٔ ثبت‌نام و اصلاحیهٔ منتشرشده توسط سازمان سنجش است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "مواد و ضرایب رسمی ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "linear-algebra",
+          "programming-fundamentals",
+          "digital-logic",
+          "computer-architecture",
+          "data-structures-algorithms",
+          "automata",
+          "operating-systems",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "مواد دکتری علوم کامپیوتر ۱۴۰۶؛ چرا مجموعهٔ ۲۳۵۴ مبناست؟",
+        "description": "نگاشت منبع‌دار مدرک علوم کامپیوتر به مجموعهٔ مهندسی و علم کامپیوتر و نمایش مواد واقعی آزمون، بدون اختراع کد یا جدول مستقل."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-science-subjects-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-architecture-study-guide",
+      "content_type": "guide",
+      "title": "راهنمای مطالعهٔ معماری سیستم‌های کامپیوتری برای دکتری ۱۴۰۶",
+      "slug": "phd-computer-architecture-study-guide",
+      "summary": "ترتیب مطالعهٔ مدار منطقی، معماری و سیستم‌عامل در مجموعهٔ ۲۳۵۴ با تمرکز بر حل مسئله، اتصال پیش‌نیازها و سنجش واقعی یادگیری.",
+      "quick_answer": "در مجموعهٔ ۲۳۵۴، مدارهای منطقی، معماری کامپیوتر و سیستم‌عامل داخل گروه تخصصی رسمی قرار دارند. آن‌ها را سه جزیره نبین: نمایش داده و منطق دیجیتال را به مسیر داده و حافظه در معماری وصل کن و سپس اثر تصمیم‌های سخت‌افزاری را در فرایند، حافظه و هم‌روندی سیستم‌عامل دنبال کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "زنجیرهٔ پیش‌نیاز"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "گام",
+            "تمرکز",
+            "نشانهٔ عبور"
+          ],
+          "rows": [
+            [
+              "۱",
+              "مدار منطقی و نمایش داده",
+              "مدار و مسیر داده را بدون حفظ شکل تحلیل می‌کنی"
+            ],
+            [
+              "۲",
+              "معماری، پردازنده و حافظه",
+              "تأخیر و رفتار دستور را مرحله‌به‌مرحله توضیح می‌دهی"
+            ],
+            [
+              "۳",
+              "سیستم‌عامل و مدیریت منابع",
+              "پیوند سخت‌افزار با حافظه، وقفه و هم‌روندی را می‌فهمی"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تمرین به‌جای بازخوانی"
+        },
+        {
+          "type": "text",
+          "text": "• پس از هر مبحث، یک مسئله را بدون دیدن راه‌حل بازسازی کن.\n• خطا را به مفهوم، محاسبه یا بی‌دقتی طبقه‌بندی کن.\n• در مرور فاصله‌دار، سؤال‌های غلط و مرزی را دوباره حل کن؛ فقط پاسخ را نخوان."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرز این راهنما"
+        },
+        {
+          "type": "text",
+          "text": "این صفحه ترتیب آموزشی پیشنهاد می‌کند و تعداد سؤال یا بودجه‌بندی رسمی ادعا نمی‌کند. دامنهٔ نهایی آزمون از عنوان‌های مجموعهٔ ۲۳۵۴ و دفترچهٔ ثبت‌نام می‌آید؛ پژوهش معماری یا ارائهٔ پایان‌نامه به مرحلهٔ مصاحبه مربوط است."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "معماری سیستم‌های کامپیوتری"
+        ],
+        "tags": [
+          "راهنمای تخصصی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "معماری سیستم‌های کامپیوتری"
+        ],
+        "subject_codes": [
+          "digital-logic",
+          "computer-architecture",
+          "operating-systems"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای مطالعهٔ معماری سیستم‌های کامپیوتری برای دکتری ۱۴۰۶",
+        "description": "ترتیب مطالعهٔ مدار منطقی، معماری و سیستم‌عامل در مجموعهٔ ۲۳۵۴ با تمرکز بر حل مسئله، اتصال پیش‌نیازها و سنجش واقعی یادگیری."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "claim": "کاربرد تمرین بازیابی و تمرین فاصله‌دار به‌جای مرور منفعل",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "claim": "نقش تمرین بازیابی در یادگیری ماندگار",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-architecture-study-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-software-algorithms-study-guide",
+      "content_type": "guide",
+      "title": "راهنمای نرم‌افزار و الگوریتم دکتری ۱۴۰۶ برای مجموعه‌های ۲۳۵۴ و ۲۳۵۸",
+      "slug": "phd-software-algorithms-study-guide",
+      "summary": "مسیر مشترک مبانی برنامه‌سازی و داده‌ساختار و الگوریتم در دو مجموعه و تفاوت ادامهٔ مطالعه برای مهندسی و علم کامپیوتر و فناوری اطلاعات.",
+      "quick_answer": "مبانی کامپیوتر و برنامه‌سازی و داده‌ساختارها و الگوریتم‌ها در هر دو مجموعهٔ ۲۳۵۴ و ۲۳۵۸ حضور دارند. ابتدا این هستهٔ مشترک را با حل مسئله تثبیت کن؛ سپس برای ۲۳۵۴ نظریه زبان‌ها و معماری را و برای ۲۳۵۸ پایگاه داده و شبکه را به آن متصل کن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "هستهٔ مشترک دو مجموعه"
+        },
+        {
+          "type": "text",
+          "text": "• پیچیدگی را همراه با کد یا شبه‌کد تحلیل کن، نه به‌صورت فرمول جدا.\n• ساختار داده را با عملیات، هزینه و شرط انتخاب مقایسه کن.\n• الگوریتم را یک بار از صفر بنویس و سپس روی ورودی مرزی اجرا کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "بعد از هستهٔ مشترک"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "مجموعه",
+            "اتصال بعدی",
+            "دلیل"
+          ],
+          "rows": [
+            [
+              "۲۳۵۴",
+              "نظریه زبان‌ها، معماری و سیستم‌عامل",
+              "پوشش کامل گروه تخصصی مهندسی و علم کامپیوتر"
+            ],
+            [
+              "۲۳۵۸",
+              "پایگاه داده، شبکه و سیستم‌عامل",
+              "پوشش کامل گروه تخصصی مهندسی فناوری اطلاعات"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرخهٔ هفتگی"
+        },
+        {
+          "type": "text",
+          "text": "یک نوبت یادگیری، یک نوبت بازیابی بدون جزوه و یک نوبت تست ترکیبی بساز. سرعت را فقط روی سؤال‌هایی بسنج که راه‌حلشان را می‌فهمی؛ کم‌کردن زمان روی الگوی حفظ‌شده، شاهد تسلط نیست."
+        },
+        {
+          "type": "quote",
+          "text": "این راهنما منبع یا تعداد تست مشخصی را بهترین معرفی نمی‌کند؛ انتخاب منبع باید با سطح شروع و زمان در دسترس سازگار باشد."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "نرم‌افزار و الگوریتم"
+        ],
+        "tags": [
+          "راهنمای تخصصی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "نرم‌افزار و الگوریتم"
+        ],
+        "subject_codes": [
+          "programming-fundamentals",
+          "data-structures-algorithms",
+          "automata",
+          "databases",
+          "software-engineering"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای نرم‌افزار و الگوریتم دکتری ۱۴۰۶ برای مجموعه‌های ۲۳۵۴ و ۲۳۵۸",
+        "description": "مسیر مشترک مبانی برنامه‌سازی و داده‌ساختار و الگوریتم در دو مجموعه و تفاوت ادامهٔ مطالعه برای مهندسی و علم کامپیوتر و فناوری اطلاعات."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "claim": "نقش تمرین بازیابی در یادگیری ماندگار",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "claim": "مزیت توزیع تمرین در زمان نسبت به انباشت مطالعه",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-software-algorithms-study-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-artificial-intelligence-study-guide",
+      "content_type": "guide",
+      "title": "راهنمای مطالعهٔ هوش مصنوعی برای آزمون دکتری ۱۴۰۶",
+      "slug": "phd-artificial-intelligence-study-guide",
+      "summary": "جایگاه رسمی هوش مصنوعی در هر دو مجموعهٔ ۲۳۵۴ و ۲۳۵۸ و روشی برای مطالعهٔ مفهومی، حل مسئله و مرور بدون ادعای بودجه‌بندی قطعی.",
+      "quick_answer": "هوش مصنوعی در گروه تخصصی هر دو مجموعهٔ ۲۳۵۴ و ۲۳۵۸ آمده است. مطالعه را از نمایش مسئله و جست‌وجو به استدلال و یادگیری وصل کن، اما دامنه را از روی سؤال‌های پراکنده حدس نزن؛ هر مبحث باید با بازیابی تعریف، مقایسهٔ روش‌ها و حل مسئله سنجیده شود.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "سه لایهٔ مطالعه"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "لایه",
+            "کار",
+            "آزمون خودسنجی"
+          ],
+          "rows": [
+            [
+              "مفهوم",
+              "تعریف مسئله و فرض‌های روش",
+              "می‌توانی دو روش را با معیار درست مقایسه کنی؟"
+            ],
+            [
+              "محاسبه",
+              "اجرای مرحله‌ای روی مثال کوچک",
+              "نتیجه را بدون پرش بازسازی می‌کنی؟"
+            ],
+            [
+              "انتخاب",
+              "تشخیص روش مناسب و محدودیت آن",
+              "گزینهٔ نزدیک اما نادرست را رد می‌کنی؟"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پیش‌نیاز را پنهان نکن"
+        },
+        {
+          "type": "text",
+          "text": "• ضعف احتمال یا جبر خطی را هنگام برخورد با مسئله ثبت و هدفمند ترمیم کن.\n• پیچیدگی جست‌وجو را به داده‌ساختار و الگوریتم وصل کن.\n• فرمول را همراه با معنا، ورودی و محدودیتش یاد بگیر."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرور و سنجش"
+        },
+        {
+          "type": "text",
+          "text": "کارت بازیابی برای تعریف‌ها کافی است، اما جای حل مسئله را نمی‌گیرد. در پایان هر چرخه، چند سؤال ناهمگون را بدون برچسب مبحث حل کن تا تشخیص روش نیز سنجیده شود. این پیشنهاد آموزشی است و تعداد سؤال رسمی برای هوش مصنوعی اعلام نمی‌کند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "هوش مصنوعی"
+        ],
+        "tags": [
+          "راهنمای تخصصی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "هوش مصنوعی"
+        ],
+        "subject_codes": [
+          "artificial-intelligence",
+          "statistics",
+          "linear-algebra",
+          "data-structures-algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای مطالعهٔ هوش مصنوعی برای آزمون دکتری ۱۴۰۶",
+        "description": "جایگاه رسمی هوش مصنوعی در هر دو مجموعهٔ ۲۳۵۴ و ۲۳۵۸ و روشی برای مطالعهٔ مفهومی، حل مسئله و مرور بدون ادعای بودجه‌بندی قطعی."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "claim": "کاربرد تمرین بازیابی و تمرین فاصله‌دار به‌جای مرور منفعل",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "claim": "نقش تمرین بازیابی در یادگیری ماندگار",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-artificial-intelligence-study-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-networks-secure-computing-study-guide",
+      "content_type": "guide",
+      "title": "راهنمای شبکه و رایانش امن برای دکتری ۱۴۰۶؛ مرز درس و گرایش",
+      "slug": "phd-networks-secure-computing-study-guide",
+      "summary": "توضیح جایگاه شبکه‌های کامپیوتری در مجموعهٔ ۲۳۵۸ و تفاوت آن با عنوان‌های پژوهشی امنیت و مهندسی دفاع سایبری در مرحلهٔ پذیرش.",
+      "quick_answer": "«شبکه‌های کامپیوتری» مادهٔ تخصصی صریح مجموعهٔ ۲۳۵۸ است، اما «امنیت شبکه» در جدول فعلی این مجموعه عنوان جداگانه ندارد. همچنین وجود عنوان مهندسی دفاع سایبری زیر مجموعهٔ ۲۳۵۴ به معنی اضافه‌شدن یک درس امنیت مستقل به آزمون کتبی نیست؛ نام درس و نام رشته‌گرایش را یکی نگیر.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آنچه برای آزمون کتبی قطعی است"
+        },
+        {
+          "type": "text",
+          "text": "در کد ۲۳۵۸، شبکه‌های کامپیوتری داخل گروه تخصصی آمده است. مطالعه را از لایه‌بندی و انتقال داده به مسیریابی و خدمات شبکه پیش ببر و هر مفهوم را با سناریوی خرابی یا انتخاب پروتکل بسنج. دامنهٔ دقیق‌تر را فقط از دفترچه و سؤال‌های رسمی استخراج کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آنچه به گرایش و مصاحبه مربوط است"
+        },
+        {
+          "type": "text",
+          "text": "امنیت، رایانش امن یا دفاع سایبری می‌تواند عنوان پژوهشی یا رشته‌گرایش مقصد باشد. این عنوان‌ها برای آماده‌سازی رزومه و گفت‌وگوی پژوهشی مهم‌اند، اما تا وقتی در مواد آزمون نیامده‌اند نباید به‌عنوان درس کتبی مستقل برنامه‌ریزی شوند."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "روش مطالعهٔ مسئله‌محور"
+        },
+        {
+          "type": "text",
+          "text": "• هر پروتکل را با مسئله‌ای که حل می‌کند و هزینه‌ای که می‌پردازد مقایسه کن.\n• جریان بسته را روی یک توپولوژی کوچک مرحله‌به‌مرحله دنبال کن.\n• خطاهای محاسباتی و خطاهای مفهومی را در دفتر خطا جدا ثبت کن."
+        },
+        {
+          "type": "quote",
+          "text": "صفحه بودجه‌بندی یا تعداد سؤال امنیت را حدس نمی‌زند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "شبکه و رایانش امن"
+        ],
+        "tags": [
+          "راهنمای تخصصی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "شبکه و رایانش امن"
+        ],
+        "subject_codes": [
+          "computer-networks",
+          "operating-systems",
+          "data-structures-algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای شبکه و رایانش امن برای دکتری ۱۴۰۶؛ مرز درس و گرایش",
+        "description": "توضیح جایگاه شبکه‌های کامپیوتری در مجموعهٔ ۲۳۵۸ و تفاوت آن با عنوان‌های پژوهشی امنیت و مهندسی دفاع سایبری در مرحلهٔ پذیرش."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "claim": "نقش تمرین بازیابی در یادگیری ماندگار",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-networks-secure-computing-study-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-information-technology-study-guide",
+      "content_type": "guide",
+      "title": "راهنمای تخصصی فناوری اطلاعات برای آزمون دکتری ۱۴۰۶",
+      "slug": "phd-information-technology-study-guide",
+      "summary": "نقشهٔ پیش‌نیاز و مطالعهٔ مجموعهٔ ۲۳۵۸ برای داوطلبان فناوری اطلاعات، با پوشش دقیق مواد فعلی و حذف عنوان‌های قدیمی از برنامهٔ کتبی.",
+      "quick_answer": "برای ۲۳۵۸، یک ستون پایه از گسسته، احتمال، برنامه‌سازی و الگوریتم بساز؛ سپس سیستم‌عامل، شبکه، طراحی پایگاه داده و هوش مصنوعی را روی آن سوار کن. حوزه‌های مدیریتی یا خدمات IT فقط وقتی وارد برنامهٔ آزمون کتبی می‌شوند که در سند رسمی تازه صریحاً اضافه شده باشند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "نقشهٔ پیش‌نیاز"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "ستون",
+            "درس‌ها",
+            "ترتیب پیشنهادی"
+          ],
+          "rows": [
+            [
+              "حل مسئله",
+              "برنامه‌سازی، داده‌ساختار و الگوریتم",
+              "از اجرای کد به تحلیل پیچیدگی"
+            ],
+            [
+              "سیستم و داده",
+              "سیستم‌عامل، شبکه، طراحی پایگاه داده",
+              "از منابع محلی به ارتباط و ذخیره‌سازی"
+            ],
+            [
+              "مدل‌سازی",
+              "گسسته، احتمال، هوش مصنوعی",
+              "از مدل صوری به استدلال و یادگیری"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "برنامهٔ تغییررشته‌ای"
+        },
+        {
+          "type": "text",
+          "text": "• در هفته‌های اول هم‌زمان بیش از دو شکاف پایه را باز نکن.\n• پس از هر فصل، با سؤال بدون راهنما مشخص کن که ضعف آموزش است یا بازیابی.\n• درس‌های سیستم را با نمودار جریان داده و حالت خلاصه کن، نه فهرست تعریف‌ها."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کنترل دامنه"
+        },
+        {
+          "type": "text",
+          "text": "این راهنما از فهرست ۱۴۰۶ پیروی می‌کند و بازیابی اطلاعات، داده‌کاوی، تجارت الکترونیکی یا آموزش الکترونیکی را مادهٔ کتبی فعلی معرفی نمی‌کند. این حوزه‌ها ممکن است برای علاقهٔ پژوهشی یا مصاحبهٔ دانشگاه معنا داشته باشند، اما مرحلهٔ جدا هستند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "فناوری اطلاعات"
+        ],
+        "tags": [
+          "راهنمای تخصصی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "discrete-math",
+          "statistics",
+          "programming-fundamentals",
+          "data-structures-algorithms",
+          "operating-systems",
+          "computer-networks",
+          "databases",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای تخصصی فناوری اطلاعات برای آزمون دکتری ۱۴۰۶",
+        "description": "نقشهٔ پیش‌نیاز و مطالعهٔ مجموعهٔ ۲۳۵۸ برای داوطلبان فناوری اطلاعات، با پوشش دقیق مواد فعلی و حذف عنوان‌های قدیمی از برنامهٔ کتبی."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "claim": "کاربرد تمرین بازیابی و تمرین فاصله‌دار به‌جای مرور منفعل",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "claim": "مزیت توزیع تمرین در زمان نسبت به انباشت مطالعه",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-information-technology-study-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-science-research-path",
+      "content_type": "guide",
+      "title": "علوم کامپیوتر و مسیر پژوهشی دکتری؛ برنامهٔ کتبی را چگونه جدا کنیم؟",
+      "slug": "phd-computer-science-research-path",
+      "summary": "راهنمای داوطلب علوم کامپیوتر برای پوشش کامل مواد مجموعهٔ ۲۳۵۴ و ساخت پروندهٔ پژوهشی مستقل، بدون حذف درس‌های سیستم و سخت‌افزار.",
+      "quick_answer": "پایهٔ نظری قوی کمک می‌کند، اما آزمون کتبی مجموعهٔ ۲۳۵۴ فقط نظریه و الگوریتم نیست؛ مدار منطقی، معماری، سیستم‌عامل، برنامه‌سازی و هوش مصنوعی نیز در مواد رسمی‌اند. مسیر پژوهشی را جداگانه برای مرحلهٔ دانشگاهی بساز و آن را بهانهٔ حذف مواد کتبی نکن.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پوشش آزمون کتبی"
+        },
+        {
+          "type": "text",
+          "text": "• گسسته، آمار و احتمال و جبر خطی را با حل مسئله نگه دار.\n• داده‌ساختار و الگوریتم و نظریه زبان‌ها را به‌صورت پیوسته بخوان.\n• برای سخت‌افزار و سیستم، تشخیص پایه بگیر و هیچ عنوان رسمی را صرفاً به‌دلیل گرایش نظری حذف نکن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ساخت مسیر پژوهشی جدا"
+        },
+        {
+          "type": "text",
+          "text": "یک مسئلهٔ پژوهشی را با چهار جزء بنویس: مسئله، خلأ، روش احتمالی و معیار ارزیابی. این متن برای روشن‌کردن فکر و آمادگی مرحلهٔ دانشگاهی است؛ پاسخ آزمون کتبی یا تضمین پذیرش محسوب نمی‌شود."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "دو تقویم، نه یک فهرست شلوغ"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "تقویم",
+            "کار",
+            "شاهد پیشرفت"
+          ],
+          "rows": [
+            [
+              "کتبی",
+              "مطالعه، بازیابی و آزمون ترکیبی",
+              "پاسخ و زمان واقعی"
+            ],
+            [
+              "پژوهشی",
+              "مرور پایان‌نامه و صورت‌بندی مسئله",
+              "مدرک و ارائهٔ قابل توضیح"
+            ]
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "تا قبل از مجازشدن، زمان مسیر پژوهشی نباید پوشش حداقلی مواد رسمی را از بین ببرد."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر و پژوهش"
+        ],
+        "tags": [
+          "راهنمای تخصصی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "علوم کامپیوتر و پژوهش"
+        ],
+        "subject_codes": [
+          "discrete-math",
+          "linear-algebra",
+          "data-structures-algorithms",
+          "automata",
+          "computer-architecture",
+          "operating-systems",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "علوم کامپیوتر و مسیر پژوهشی دکتری؛ برنامهٔ کتبی را چگونه جدا کنیم؟",
+        "description": "راهنمای داوطلب علوم کامپیوتر برای پوشش کامل مواد مجموعهٔ ۲۳۵۴ و ساخت پروندهٔ پژوهشی مستقل، بدون حذف درس‌های سیستم و سخت‌افزار."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-ccecc8f493bb8ce4b3ac",
+          "relation": "SUPPORTS",
+          "locator": "قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+          "claim": "تفکیک مرحلهٔ آزمون متمرکز از ارزیابی سوابق و مصاحبهٔ علمی در فرایند پذیرش دکتری",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "claim": "نقش تمرین بازیابی در یادگیری ماندگار",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-science-research-path"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-written-exam-study-plan",
+      "content_type": "guide",
+      "title": "برنامه‌ریزی آزمون کتبی دکتری کامپیوتر و IT ۱۴۰۶",
+      "slug": "phd-written-exam-study-plan",
+      "summary": "روش ساخت برنامه از روی مجموعهٔ رسمی، زمان در دسترس و شاهد آزمون، بدون سهم‌بندی ساختگی برای درس‌ها و بدون مخلوط‌کردن مصاحبه با مطالعهٔ کتبی.",
+      "quick_answer": "برنامه را از کد مجموعه شروع کن، نه از فهرست منابع دیگران. برای هر گروه رسمی یک آزمون تشخیصی بگیر، درس‌ها را بر اساس شکاف و پیش‌نیاز مرتب کن و هر هفته بازیابی و تست ترکیبی داشته باش. رزومه و مصاحبه در این تقویم فقط یک بازهٔ محدود و مستقل دارند.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "هفتهٔ صفر: قرارداد برنامه"
+        },
+        {
+          "type": "text",
+          "text": "• مجموعهٔ ۲۳۵۴ یا ۲۳۵۸ را قطعی و موادش را عین سند ثبت کن.\n• ساعت خالص قابل تکرار را بنویس؛ روز ایده‌آل را معیار نگذار.\n• از هر درس چند سؤال متنوع حل کن و نتیجه را به ضعف مفهوم، بازیابی یا سرعت تفکیک کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چرخهٔ چهارمرحله‌ای"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "مرحله",
+            "کار",
+            "خروجی"
+          ],
+          "rows": [
+            [
+              "یادگیری",
+              "فهم مفهوم و مثال پایه",
+              "یادداشت کوتاه مسئله‌محور"
+            ],
+            [
+              "بازیابی",
+              "بازسازی بدون جزوه",
+              "فهرست شکاف‌ها"
+            ],
+            [
+              "تمرین",
+              "حل سؤال ناهمگون",
+              "دفتر خطا"
+            ],
+            [
+              "سنجش",
+              "آزمون زمان‌دار",
+              "دقت، زمان و مبحث خطا"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "بازبرنامه‌ریزی با شاهد"
+        },
+        {
+          "type": "text",
+          "text": "ضریب ۵ اهمیت گروه‌های غیرزبان را نشان می‌دهد، اما سهم ساعت هر درس را به‌تنهایی تعیین نمی‌کند. تغییر برنامه را با عملکرد آزمون، حجم باقی‌مانده و پیش‌نیاز انجام بده. تعداد فصل خوانده‌شده بدون سنجش، دلیل کافی برای کم‌کردن مرور نیست."
+        },
+        {
+          "type": "quote",
+          "text": "این تقویم برای آزمون کتبی است. آماده‌سازی رزومه و مصاحبه باید در پرونده و بازهٔ جدا ثبت شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "کامپیوتر و فناوری اطلاعات"
+        ],
+        "tags": [
+          "برنامه‌ریزی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "کامپیوتر و فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "data-structures-algorithms"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "برنامه‌ریزی آزمون کتبی دکتری کامپیوتر و IT ۱۴۰۶",
+        "description": "روش ساخت برنامه از روی مجموعهٔ رسمی، زمان در دسترس و شاهد آزمون، بدون سهم‌بندی ساختگی برای درس‌ها و بدون مخلوط‌کردن مصاحبه با مطالعهٔ کتبی."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-0acf614bda63129236c4",
+          "relation": "SUPPORTS",
+          "locator": "Improving Students’ Learning With Effective Learning Techniques",
+          "claim": "کاربرد تمرین بازیابی و تمرین فاصله‌دار به‌جای مرور منفعل",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "claim": "نقش تمرین بازیابی در یادگیری ماندگار",
+          "order": 2
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "claim": "مزیت توزیع تمرین در زمان نسبت به انباشت مطالعه",
+          "order": 3
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-written-exam-study-plan"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-english-study-guide",
+      "content_type": "guide",
+      "title": "راهنمای زبان انگلیسی آزمون دکتری کامپیوتر و IT ۱۴۰۶",
+      "slug": "phd-english-study-guide",
+      "summary": "برنامهٔ پیوستهٔ واژگان، درک مطلب و بازیابی برای درس زبان با ضریب ۱، بدون حذف زبان و بدون نسبت‌دادن قالب سؤال اعلام‌نشده به دفترچه.",
+      "quick_answer": "زبان انگلیسی در ساختار فعلی دکتری ۱۴۰۶ ضریب ۱ دارد و حذف نشده است. به‌جای دوره‌های سنگین و مقطعی، مطالعهٔ کوتاه و پیوسته بساز: واژه در متن، خواندن زمان‌دار، ثبت دلیل خطا و مرور فاصله‌دار. ضریب کمتر به معنی صفرکردن زبان نیست.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "واژه را داخل متن بازیابی کن"
+        },
+        {
+          "type": "text",
+          "text": "• واژهٔ تازه را همراه با جمله و نقش آن ثبت کن.\n• در مرور، ابتدا معنا یا کاربرد را بدون دیدن پاسخ بازیابی کن.\n• واژه‌های پرتکرارِ خطادار را زودتر از فهرست‌های بلند مرور کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "درک مطلب را مرحله‌ای زمان‌دار کن"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "مرحله",
+            "تمرکز",
+            "ثبت"
+          ],
+          "rows": [
+            [
+              "آموزشی",
+              "ساختار متن و مرجع ضمیر",
+              "دلیل هر پاسخ"
+            ],
+            [
+              "نیمه‌زمان‌دار",
+              "حفظ دقت با محدودیت نرم",
+              "زمان هر متن"
+            ],
+            [
+              "آزمونی",
+              "ترکیب چند متن بدون توقف",
+              "دقت و خطای تصمیم"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "نسبت زبان با تخصصی"
+        },
+        {
+          "type": "text",
+          "text": "گروه‌های غیرزبان ضریب ۵ دارند، پس برنامه باید این تفاوت را ببیند؛ بااین‌حال سهم زمان زبان را بر پایهٔ تشخیص خودت تنظیم کن. اگر زبان قوی است، مرور نگهدارنده کافی است؛ اگر هر متن را نیمه‌کاره رها می‌کنی، بازهٔ پیوستهٔ بیشتری لازم داری."
+        },
+        {
+          "type": "quote",
+          "text": "اطلاعیهٔ معرفی مجموعه‌ها ضریب را اعلام می‌کند، نه تعداد قطعی سؤال یا قالب نهایی دفترچه."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "زبان انگلیسی دکتری"
+        ],
+        "tags": [
+          "برنامه‌ریزی دکتری"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "زبان انگلیسی دکتری"
+        ],
+        "subject_codes": [
+          "english"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای زبان انگلیسی آزمون دکتری کامپیوتر و IT ۱۴۰۶",
+        "description": "برنامهٔ پیوستهٔ واژگان، درک مطلب و بازیابی برای درس زبان با ضریب ۱، بدون حذف زبان و بدون نسبت‌دادن قالب سؤال اعلام‌نشده به دفترچه."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-966f487ee71806446715",
+          "relation": "SUPPORTS",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-02dc8955edf07d3a9b91",
+          "relation": "SUPPORTS",
+          "locator": "Retrieval Practice Produces More Learning than Elaborative Studying",
+          "claim": "نقش تمرین بازیابی در یادگیری ماندگار",
+          "order": 1
+        },
+        {
+          "source_external_id": "editorial-source-7cccd4c5e57231cacfe4",
+          "relation": "SUPPORTS",
+          "locator": "Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis",
+          "claim": "مزیت توزیع تمرین در زمان نسبت به انباشت مطالعه",
+          "order": 2
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-english-study-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-research-cv-guide",
+      "content_type": "guide",
+      "title": "راهنمای رزومهٔ پژوهشی دکتری؛ پروندهٔ مستند برای مرحلهٔ دانشگاه",
+      "slug": "phd-research-cv-guide",
+      "summary": "روش مرتب‌کردن سوابق آموزشی، پژوهشی و فنی با مدرک و نقش دقیق، همراه با هشدار دربارهٔ تفاوت معیار دانشگاه‌ها و ممنوعیت ادعای تأییدنشده.",
+      "quick_answer": "رزومهٔ دکتری فهرست صفت‌ها نیست؛ هر ادعا باید عنوان، تاریخ، نقش تو و مدرک قابل بررسی داشته باشد. این پرونده برای مرحلهٔ پس از آزمون کتبی آماده می‌شود و مادهٔ امتحانی نیست. امتیاز و مدرک لازم را از فراخوان همان دانشگاه بگیر، چون جزئیات ارزیابی می‌تواند متفاوت باشد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "پرونده را از ادعا به شاهد تبدیل کن"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بخش",
+            "اطلاعات لازم",
+            "شاهد"
+          ],
+          "rows": [
+            [
+              "پایان‌نامه",
+              "عنوان، مسئله، روش و سهم شخصی",
+              "صفحهٔ عنوان و چکیدهٔ نهایی"
+            ],
+            [
+              "مقاله",
+              "وضعیت واقعی، نویسندگان و شناسه",
+              "نسخه یا صفحهٔ ناشر"
+            ],
+            [
+              "پروژه",
+              "مسئله، نقش، خروجی و محدودیت",
+              "مخزن، گزارش یا تأییدیهٔ مجاز"
+            ],
+            [
+              "آموزش",
+              "درس، نمره یا مهارت مرتبط",
+              "ریز‌نمرات یا گواهی معتبر"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "چیزهایی که نباید بهتر از واقعیت نوشته شوند"
+        },
+        {
+          "type": "text",
+          "text": "• مقالهٔ ارسال‌شده را پذیرفته‌شده معرفی نکن.\n• عضویت در یک پروژه را با طراحی یا اجرای کل پروژه یکی ندان.\n• نام ابزار را بدون توضیح کاری که با آن انجام داده‌ای ردیف نکن.\n• مدرک خصوصی یا حاوی اطلاعات دیگران را بدون مجوز عمومی نکن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرز آزمون کتبی و ارزیابی سوابق"
+        },
+        {
+          "type": "text",
+          "text": "قانون پذیرش، آزمون متمرکز را از سوابق آموزشی و پژوهشی و مصاحبه جدا می‌کند. رزومه را می‌توان پیشاپیش مرتب کرد، اما نتیجهٔ آزمون یا دعوت دانشگاه را پیش‌بینی نمی‌کند. پس از اعلام مجازشدن، نسخهٔ رزومه را با فراخوان هر دانشگاه تطبیق بده."
+        },
+        {
+          "type": "quote",
+          "text": "هیچ امتیاز ثابت یا فهرست مدارک یکسانی برای همهٔ دانشگاه‌ها در این صفحه ادعا نمی‌شود."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "رزومهٔ پژوهشی"
+        ],
+        "tags": [
+          "پس از آزمون کتبی"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "رزومهٔ پژوهشی"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای رزومهٔ پژوهشی دکتری؛ پروندهٔ مستند برای مرحلهٔ دانشگاه",
+        "description": "روش مرتب‌کردن سوابق آموزشی، پژوهشی و فنی با مدرک و نقش دقیق، همراه با هشدار دربارهٔ تفاوت معیار دانشگاه‌ها و ممنوعیت ادعای تأییدنشده."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-ccecc8f493bb8ce4b3ac",
+          "relation": "SUPPORTS",
+          "locator": "قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+          "claim": "تفکیک مرحلهٔ آزمون متمرکز از ارزیابی سوابق و مصاحبهٔ علمی در فرایند پذیرش دکتری",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-research-cv-guide"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-interview-preparation",
+      "content_type": "guide",
+      "title": "آمادگی مصاحبهٔ دکتری کامپیوتر؛ از پایان‌نامه تا گفت‌وگوی پژوهشی",
+      "slug": "phd-interview-preparation",
+      "summary": "چک‌لیست صادقانهٔ آمادگی مرحلهٔ دانشگاه برای توضیح پایان‌نامه، سوابق و جهت پژوهشی، بدون ارائهٔ پرسش ساختگی یا معیار یکسان برای همهٔ دانشگاه‌ها.",
+      "quick_answer": "مصاحبهٔ دکتری مرحله‌ای پس از آزمون کتبی است و دانشگاه آن را بر اساس فراخوان و ضوابط خودش اجرا می‌کند. برای آمادگی، پایان‌نامه و نقش واقعی‌ات را دقیق توضیح بده، یک مسئلهٔ پژوهشی قابل نقد آماده کن و مدارک را با اطلاعیهٔ همان دانشگاه تطبیق بده؛ پاسخ حفظی و ادعای بزرگ جای شاهد را نمی‌گیرد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ارائهٔ سه‌دقیقه‌ای پایان‌نامه"
+        },
+        {
+          "type": "text",
+          "text": "• مسئله را در یک جمله و بدون مقدمهٔ عمومی بگو.\n• روش را به انتخاب‌های اصلی و دلیل آن‌ها محدود کن.\n• نتیجه را با معیار واقعی و محدودیت کار توضیح بده.\n• سهم شخصی خودت را از کار استاد، همکار یا ابزار جدا کن."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تمرین گفت‌وگوی پژوهشی"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "پرسش",
+            "هدف پاسخ",
+            "خطای رایج"
+          ],
+          "rows": [
+            [
+              "چرا این مسئله؟",
+              "اهمیت و خلأ قابل توضیح",
+              "کلی‌گویی دربارهٔ اهمیت فناوری"
+            ],
+            [
+              "چرا این روش؟",
+              "مقایسه با گزینهٔ جایگزین",
+              "نام‌بردن ابزار بدون استدلال"
+            ],
+            [
+              "محدودیت کار چیست؟",
+              "شناخت مرز نتیجه",
+              "ادعای بی‌نقص‌بودن"
+            ],
+            [
+              "گام بعدی چیست؟",
+              "فرضیهٔ قابل آزمون",
+              "فهرست موضوع‌های نامرتبط"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مرز آزمون کتبی و مصاحبه"
+        },
+        {
+          "type": "text",
+          "text": "مجازشدن در آزمون متمرکز به‌تنهایی پذیرش نهایی نیست و کیفیت رزومه نیز جای نمرهٔ کتبی را نمی‌گیرد. زمان، مدارک، شیوهٔ برگزاری و معیارهای جزئی را از فراخوان دانشگاه مقصد بررسی کن و نسخهٔ عمومی یا قدیمی را به همهٔ دانشگاه‌ها تعمیم نده."
+        },
+        {
+          "type": "quote",
+          "text": "این صفحه پرسش قطعی مصاحبه یا امتیاز ثابت برای مقاله، پایان‌نامه و زبان ادعا نمی‌کند."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مصاحبهٔ دکتری"
+        ],
+        "tags": [
+          "پس از آزمون کتبی"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "مصاحبهٔ دکتری"
+        ],
+        "subject_codes": [],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "آمادگی مصاحبهٔ دکتری کامپیوتر؛ از پایان‌نامه تا گفت‌وگوی پژوهشی",
+        "description": "چک‌لیست صادقانهٔ آمادگی مرحلهٔ دانشگاه برای توضیح پایان‌نامه، سوابق و جهت پژوهشی، بدون ارائهٔ پرسش ساختگی یا معیار یکسان برای همهٔ دانشگاه‌ها."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-13T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-ccecc8f493bb8ce4b3ac",
+          "relation": "SUPPORTS",
+          "locator": "قانون سنجش و پذیرش دانشجو در دوره‌های تحصیلات تکمیلی در دانشگاه‌ها و مراکز آموزش عالی کشور",
+          "claim": "تفکیک مرحلهٔ آزمون متمرکز از ارزیابی سوابق و مصاحبهٔ علمی در فرایند پذیرش دکتری",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+          "relation": "SUPPORTS",
+          "locator": "درگاه اطلاع‌رسانی سازمان سنجش آموزش کشور",
+          "claim": "مرجع انتشار دفترچهٔ ثبت‌نام، اصلاحیه‌ها و اطلاعیه‌های بعدی آزمون دکتری",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "external_ai",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-interview-preparation"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
       "external_id": "static-editorial-computer-exam-changes-1406",
       "content_type": "article",
       "title": "تغییرات کنکور کامپیوتر ۱۴۰۶ در یک نگاه",
@@ -4217,9 +5841,10 @@
           "order": 0
         },
         {
-          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "source_external_id": "editorial-source-966f487ee71806446715",
           "relation": "SUPPORTS",
-          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
           "order": 1
         }
       ],
@@ -4688,9 +6313,10 @@
           "order": 0
         },
         {
-          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "source_external_id": "editorial-source-966f487ee71806446715",
           "relation": "SUPPORTS",
-          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "locator": "مجموعه‌های امتحانی آزمون ورودی مقطع دکتری (Ph.D.) نیمه‌متمرکز سال ۱۴۰۶",
+          "claim": "عنوان و کد مجموعه‌های ۲۳۵۴ و ۲۳۵۸، مواد امتحانی، رشته‌های مرتبط و قاعدهٔ ضریب ۱ زبان و ضریب ۵ سایر دروس",
           "order": 1
         }
       ],

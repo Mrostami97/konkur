@@ -54,12 +54,12 @@ Before deploy:
     docker compose exec api pnpm run seed
 
 The seed is repeatable. It creates the unpublished contributor profile, keeps
-the existing paid course grant, and stages the 14 current static editorial
-pages as article.v2 drafts without changing their public routes or publishing
-an unreviewed byline. Once one of those slugs exists, later seed runs leave its
-canonical record, workflow status, source links and revision payload untouched
-so deployment cannot erase editorial work. Regenerate the checked-in draft fixture after an
-intentional edit to apps/web/src/content/editorial.ts:
+the existing paid course grant, and stages the current generated editorial
+pages as article.v2 drafts without publishing an unreviewed byline. Once one
+of those slugs exists, later seed runs leave its canonical record, workflow
+status, source links and revision payload untouched so deployment cannot erase
+editorial work. Regenerate the checked-in draft fixture after an intentional
+edit to an editorial corpus:
 
     node scripts/generate-editorial-drafts.mjs
 
@@ -88,6 +88,41 @@ published resource stays canonical and available while its next revision is a
 draft, in review, or rejected; only approval promotes the revision atomically.
 This limits ordinary link sharing; it is not DRM and cannot prevent screenshots
 or a determined client from saving received bytes.
+
+### Phase 17 doctoral corpus and safe draft upgrade
+
+The 16 doctoral guides live in
+`apps/web/src/content/phase17-corpus.json`. They are AI-assisted editorial
+drafts, so the generated article.v2 payloads must retain
+`review_status=draft`, `producer_type=external_ai`, an empty human byline,
+and the official-source review deadline. They must not be added to the static
+guide fallback, sitemap, RSS, search index, or `llms.txt` before a real human
+reviewer approves them.
+
+Before deployment or after changing this corpus:
+
+    node scripts/generate-editorial-drafts.mjs
+    node apps/web/test/phase17-corpus.mjs
+
+Take the normal database backup before deploying, then run the repeatable
+seed. Three pre-Phase-17 drafts used the final column slugs. The seed upgrades
+only an exact, untouched version-1 copy of those legacy payloads and source
+links, creates version 2, and preserves version 1. Any changed, submitted,
+rejected, or published record is left alone. The exact legacy payloads are
+kept only as guards in
+`apps/api/src/seed-data/phase17-legacy-editorial-drafts.json`.
+
+Before approval, compare codes 2354 and 2358, their subject groups and
+coefficients against the latest registration booklet and every later Sanjesh
+correction. Confirm that the Computer Science pages still describe the
+documented degree-to-set mapping rather than inventing a separate exam set,
+and keep the written-exam pages separate from CV/interview preparation. Only
+then submit and approve each draft through the normal article review workflow.
+
+Reverting the code does not delete a created draft version. To undo an
+untouched legacy upgrade, use the existing article-version rollback workflow
+to create a new draft from version 1; for a full deployment rollback, restore
+the pre-deploy backup and redeploy the previous commit.
 
 ## Backup / restore
 

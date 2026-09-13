@@ -1,0 +1,307 @@
+{
+  "purpose": "Exact Phase 16 seed payloads used only to detect and version-replace untouched legacy PhD drafts during the Phase 17 upgrade.",
+  "articles": [
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-engineering-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور دکتری مهندسی کامپیوتر ۱۴۰۶",
+      "slug": "phd-computer-engineering-1406",
+      "summary": "دروس یکپارچهٔ گرایش‌های دکتری کامپیوتر، حذف استعداد تحصیلی و وزن جدید تخصصی‌ها.",
+      "quick_answer": "برای گرایش‌های دکتری مهندسی کامپیوتر، مواد آزمون متمرکز یکپارچه اعلام شده است. زبان انگلیسی ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ دارد؛ استعداد تحصیلی در ساختار اعلام‌شده حضور ندارد و داده‌ساختار و الگوریتم یک عنوان در بستهٔ تخصصی است.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ساختار اعلام‌شده"
+        },
+        {
+          "type": "text",
+          "text": "برای گرایش‌های دکتری مهندسی کامپیوتر، مواد آزمون متمرکز یکپارچه اعلام شده است. زبان انگلیسی ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ دارد؛ استعداد تحصیلی در ساختار اعلام‌شده حضور ندارد و داده‌ساختار و الگوریتم یک عنوان در بستهٔ تخصصی است."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بخش",
+            "دروس",
+            "ضریب"
+          ],
+          "rows": [
+            [
+              "زبان",
+              "زبان انگلیسی",
+              "۱"
+            ],
+            [
+              "ریاضیات تخصصی",
+              "گسسته، آمار و احتمال مهندسی، جبر خطی",
+              "۵ (در مجموعه تخصصی)"
+            ],
+            [
+              "تخصصی کامپیوتر",
+              "مدار منطقی، معماری، داده‌ساختار و الگوریتم، نظریه زبان‌ها، سیستم‌عامل، هوش مصنوعی",
+              "۵"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تفاوت مطالعهٔ دکتری با ارشد"
+        },
+        {
+          "type": "text",
+          "text": "• سطح پرسش‌های اعلام‌شده در محدودهٔ دروس ارشد است، اما رقابت و نیاز به دقت بالاتر است.\n• در کنار آزمون کتبی، رزومه، سوابق پژوهشی و آمادگی مصاحبه مسیر جداگانه‌ای دارند.\n• حذف استعداد تحصیلی به معنی انتقال زمان به تخصصی و زبان است، نه حذف کامل مطالعهٔ زبان."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "مهندسی کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "مهندسی کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "statistics",
+          "linear-algebra",
+          "digital-logic",
+          "computer-architecture",
+          "data-structures-algorithms",
+          "automata",
+          "operating-systems",
+          "artificial-intelligence"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور دکتری مهندسی کامپیوتر ۱۴۰۶",
+        "description": "دروس یکپارچهٔ گرایش‌های دکتری کامپیوتر، حذف استعداد تحصیلی و وزن جدید تخصصی‌ها."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 0
+        },
+        {
+          "source_external_id": "editorial-source-08110ffe99548a591190",
+          "relation": "SUPPORTS",
+          "locator": "کانال اصلی kunkur01",
+          "order": 1
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-engineering-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-information-technology-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور دکتری فناوری اطلاعات ۱۴۰۶",
+      "slug": "phd-information-technology-1406",
+      "summary": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد.",
+      "quick_answer": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مواد امتحانی"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "سطح",
+            "مواد"
+          ],
+          "rows": [
+            [
+              "عمومی",
+              "زبان انگلیسی؛ استعداد تحصیلی حذف شده است"
+            ],
+            [
+              "کارشناسی",
+              "حل مسئله (داده‌ساختار و الگوریتم)، شبکه (شبکه‌های کامپیوتری و امنیت شبکه)"
+            ],
+            [
+              "کارشناسی ارشد",
+              "مهندسی اطلاعات (پایگاه داده پیشرفته، بازیابی اطلاعات، داده‌کاوی) و خدمات IT (تجارت الکترونیکی، آموزش الکترونیکی)"
+            ]
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "زبان ضریب ۱ و مجموعهٔ تخصصی ضریب ۵ اعلام شده است؛ ملاک نهایی آخرین دفترچه و اصلاحیه است."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ترتیب منطقی مطالعه"
+        },
+        {
+          "type": "text",
+          "text": "• داده‌ساختار و الگوریتم را به‌عنوان بستهٔ حل مسئله و پیش‌نیاز مطالعهٔ دکتری IT قرار بده.\n• شبکهٔ پایه را قبل از امنیت شبکه تثبیت کن.\n• پایگاه داده را به بازیابی اطلاعات و داده‌کاوی متصل بخوان.\n• برای خدمات IT، تعریف‌ها را با مطالعهٔ موردی و مقایسهٔ معماری‌ها مرور کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "فناوری اطلاعات"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "فناوری اطلاعات"
+        ],
+        "subject_codes": [
+          "english",
+          "data-structures-algorithms",
+          "computer-networks",
+          "databases"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور دکتری فناوری اطلاعات ۱۴۰۶",
+        "description": "مواد کارشناسی و ارشد دکتری IT، ضرایب تازه و برنامهٔ مطالعه‌ای که شبکه، حل مسئله و مهندسی اطلاعات را پیوند می‌دهد."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:phd-information-technology-1406"
+      },
+      "review_status": "draft"
+    },
+    {
+      "schema_version": "article.v2",
+      "external_id": "static-editorial-phd-computer-science-1406",
+      "content_type": "guide",
+      "title": "راهنمای کنکور دکتری علوم کامپیوتر ۱۴۰۶",
+      "slug": "phd-computer-science-1406",
+      "summary": "ساختار آزمون دکتری علوم کامپیوتر با تمرکز بر ساختمان گسسته، منطق و نظریهٔ علوم کامپیوتر.",
+      "quick_answer": "در ساختار اعلام‌شده برای ۱۴۰۶، زبان انگلیسی در بخش عمومی و داده‌ساختار و الگوریتم در بستهٔ تخصصی دکتری علوم کامپیوتر قرار دارد. استعداد تحصیلی حذف شده است و جزئیات سطح هر عنوان باید با آخرین دفترچه تطبیق داده شود.",
+      "content_blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "مواد اصلی"
+        },
+        {
+          "type": "text",
+          "text": "در ساختار اعلام‌شده برای ۱۴۰۶، زبان انگلیسی در بخش عمومی و داده‌ساختار و الگوریتم در بستهٔ تخصصی دکتری علوم کامپیوتر قرار دارد. استعداد تحصیلی حذف شده است و جزئیات سطح هر عنوان باید با آخرین دفترچه تطبیق داده شود."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "بخش",
+            "مواد"
+          ],
+          "rows": [
+            [
+              "عمومی",
+              "زبان انگلیسی"
+            ],
+            [
+              "تخصصی",
+              "داده‌ساختار و الگوریتم، ساختمان گسسته و منطق"
+            ],
+            [
+              "تخصصی تکمیلی",
+              "نظریه علوم کامپیوتر"
+            ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "راهبرد"
+        },
+        {
+          "type": "text",
+          "text": "• اثبات‌نویسی و فهم تعریف‌ها را کنار تست‌زنی پیش ببر.\n• منطق و گسسته را جدا از هم نخوان؛ وابستگی مفهومی آن‌ها زیاد است.\n• برای نظریه، طبقه‌بندی مسائل و مدل‌های محاسباتی را با مثال مرور کن."
+        }
+      ],
+      "taxonomy": {
+        "major": [
+          "علوم کامپیوتر"
+        ],
+        "tags": [
+          "راهنمای جامع ۱۴۰۶"
+        ],
+        "degrees": [
+          "phd"
+        ],
+        "fields": [
+          "علوم کامپیوتر"
+        ],
+        "subject_codes": [
+          "english",
+          "discrete-math",
+          "data-structures-algorithms",
+          "automata"
+        ],
+        "topic_codes": []
+      },
+      "seo": {
+        "title": "راهنمای کنکور دکتری علوم کامپیوتر ۱۴۰۶",
+        "description": "ساختار آزمون دکتری علوم کامپیوتر با تمرکز بر ساختمان گسسته، منطق و نظریهٔ علوم کامپیوتر."
+      },
+      "validity": {
+        "exam_year": 1406,
+        "time_sensitive": true,
+        "source_checked_at": "2026-09-06T00:00:00.000Z",
+        "review_due_at": "2026-11-30T00:00:00.000Z"
+      },
+      "sources": [
+        {
+          "source_external_id": "editorial-source-a571b97f76f925498976",
+          "relation": "SUPPORTS",
+          "locator": "برنامه پذیرش و مواد امتحانی آزمون دکتری ۱۴۰۶",
+          "order": 0
+        }
+      ],
+      "provenance": {
+        "producer_type": "human",
+        "producer_name": "تحریریه kunkur01",
+        "source_artifact": "apps/web/src/content/editorial.ts:phd-computer-science-1406"
+      },
+      "review_status": "draft"
+    }
+  ]
+}
+

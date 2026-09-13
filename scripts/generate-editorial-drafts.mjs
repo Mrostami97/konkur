@@ -1,37 +1,47 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import vm from "node:vm";
-import ts from "../apps/api/node_modules/typescript/lib/typescript.js";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const sourcePath = resolve(projectRoot, "apps/web/src/content/editorial.ts");
 const phase12SourcePath = resolve(projectRoot, "apps/web/src/content/phase12-corpus.json");
 const phase13SourcePath = resolve(projectRoot, "apps/web/src/content/phase13-corpus.json");
+const phase17SourcePath = resolve(projectRoot, "apps/web/src/content/phase17-corpus.json");
 const outputPath = resolve(projectRoot, "apps/api/src/seed-data/editorial-drafts.json");
 
-const source = await readFile(sourcePath, "utf8");
-const javascript = ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
-  fileName: sourcePath,
-}).outputText;
-const commonJsModule = { exports: {} };
-vm.runInNewContext(
-  javascript,
-  {
-    exports: commonJsModule.exports,
-    module: commonJsModule,
-    require: () => { throw new Error("editorial.ts must not import runtime dependencies"); },
-    __filename: sourcePath,
-    __dirname: dirname(sourcePath),
-    console,
-    Date,
-  },
-  { filename: sourcePath },
-);
+let editorialModule;
+if (process.features.typescript) {
+  // Node 22.6+ can strip erasable TypeScript syntax itself. Keeping this path
+  // lets editors regenerate the fixture without a prior workspace install.
+  editorialModule = await import(pathToFileURL(sourcePath).href);
+} else {
+  // CI currently runs Node 20, so use the workspace-pinned compiler there.
+  const { default: ts } = await import("../apps/api/node_modules/typescript/lib/typescript.js");
+  const source = await readFile(sourcePath, "utf8");
+  const javascript = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    fileName: sourcePath,
+  }).outputText;
+  const commonJsModule = { exports: {} };
+  vm.runInNewContext(
+    javascript,
+    {
+      exports: commonJsModule.exports,
+      module: commonJsModule,
+      require: () => { throw new Error("editorial.ts must not import runtime dependencies"); },
+      __filename: sourcePath,
+      __dirname: dirname(sourcePath),
+      console,
+      Date,
+    },
+    { filename: sourcePath },
+  );
+  editorialModule = commonJsModule.exports;
+}
 
-const { guides, articles, editorialDateIso } = commonJsModule.exports;
+const { guides, articles, editorialDateIso } = editorialModule;
 const phase12Corpus = JSON.parse(await readFile(phase12SourcePath, "utf8"));
 const phase12ReviewedAt = phase12Corpus.reviewedAt
   .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
@@ -95,10 +105,46 @@ const phase13Pages = [...phase13Corpus.decisionPages, ...phase13Corpus.caseStudi
   sourceArtifact: "apps/web/src/content/phase13-corpus.json:" + page.slug,
   producerType: "external_ai",
 }));
+const phase17Corpus = JSON.parse(await readFile(phase17SourcePath, "utf8"));
+if (phase17Corpus.publicationStatus !== "DRAFT" || phase17Corpus.humanReviewRequired !== true) {
+  throw new Error("Phase 17 content must remain DRAFT until a real human review is recorded");
+}
+const phase17Guides = phase17Corpus.pages.map((page) => ({
+  ...page,
+  author: "تحریریه kunkur01",
+  reviewer: "در انتظار بازبینی انسانی",
+  sources: page.sourceIds.map((sourceId) => {
+    const item = phase17Corpus.sources[sourceId];
+    if (!item) throw new Error(`Unknown Phase 17 source: ${sourceId} (${page.slug})`);
+    const existingPhase12Source = Object.values(phase12Corpus.sources).find((candidate) =>
+      candidate.publisher === item.publisher
+      && candidate.title === item.title
+      && candidate.url === item.url,
+    );
+    const existingPhase13Source = Object.values(phase13Corpus.sources).find((candidate) =>
+      candidate.publisher === item.publisher
+      && candidate.title === item.title
+      && candidate.url === item.url,
+    );
+    return {
+      ...item,
+      sourceArtifact: existingPhase12Source
+        ? "apps/web/src/content/phase12-corpus.json"
+        : existingPhase13Source
+          ? "apps/web/src/content/phase13-corpus.json"
+          : "apps/web/src/content/phase17-corpus.json",
+    };
+  }),
+  relatedSubjects: page.relatedSubjectCodes,
+  sourceArtifact: "apps/web/src/content/phase17-corpus.json:" + page.slug,
+  timeSensitive: true,
+  producerType: "external_ai",
+}));
 const pages = [
   ...guides.map((page) => ({ ...page, contentType: "guide", sourceArtifact: "apps/web/src/content/editorial.ts:" + page.slug, producerType: "human" })),
   ...phase12Guides.map((page) => ({ ...page, contentType: "guide" })),
   ...phase13Pages.filter((page) => page.kind === "DECISION").map((page) => ({ ...page, contentType: "guide" })),
+  ...phase17Guides.map((page) => ({ ...page, contentType: "guide" })),
   ...articles.map((page) => ({ ...page, contentType: "article", sourceArtifact: "apps/web/src/content/editorial.ts:" + page.slug, producerType: "human" })),
   ...phase13Pages.filter((page) => page.kind === "CASE_STUDY").map((page) => ({ ...page, contentType: "case_study" })),
 ];
@@ -128,6 +174,12 @@ const publishedAt = (value) => {
     // 1 Tir 1405 is 22 June 2026. Date.UTC safely rolls into July.
     return new Date(Date.UTC(2026, 5, 21 + day)).toISOString();
   }
+  const esfandDate = normalized.match(/^(\d{1,2})\s+اسفند\s+1404$/);
+  const esfandDay = Number(esfandDate?.[1]);
+  if (Number.isInteger(esfandDay) && esfandDay >= 1 && esfandDay <= 29) {
+    // 1 Esfand 1404 is 20 February 2026. Date.UTC safely rolls into March.
+    return new Date(Date.UTC(2026, 1, 19 + esfandDay)).toISOString();
+  }
   // A year-only value is useful provenance but is not precise enough for a
   // DateTime column; retain it in metadata without inventing a month/day.
   if (/^\d{4}$/.test(normalized)) return undefined;
@@ -151,6 +203,9 @@ for (const page of pages) {
     const isReusableFirstParty = item.publisher === "kunkur01";
     const isFirstPartyMetadata = isReusableFirstParty
       || item.publisher.includes("آرشیو مستندات آموزشی محمد رستمی");
+    const isPrimaryOfficial = item.publisher.includes("سنجش")
+      || item.publisher.includes("وزارت علوم")
+      || item.publisher.includes("سامانه ملی قوانین");
     const itemPublishedAt = item.publishedAt ? publishedAt(item.publishedAt) : undefined;
     allSources.set(externalId, {
       externalId,
@@ -158,7 +213,7 @@ for (const page of pages) {
       title: item.title,
       publisher: item.publisher,
       canonicalUrl: item.url,
-      sourceTier: item.publisher.includes("سنجش") || item.publisher.includes("وزارت علوم") ? "PRIMARY_OFFICIAL" : isFirstPartyMetadata ? "FIRST_PARTY" : "SECONDARY",
+      sourceTier: isPrimaryOfficial ? "PRIMARY_OFFICIAL" : isFirstPartyMetadata ? "FIRST_PARTY" : "SECONDARY",
       checkedAt: checkedAt(item.checkedAt),
       ...(itemPublishedAt ? { publishedAt: itemPublishedAt } : {}),
       rightsBasis: isReusableFirstParty ? "OWNED_BY_PUBLISHER" : "LINK_ONLY",

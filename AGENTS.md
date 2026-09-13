@@ -112,7 +112,16 @@ against (§11, "دامنه بیش‌ازحد").
 | 6 | Rank & admissions engine | **Done** |
 | 7 | Growth & scale | **Done** |
 | 8 | Competitive research & editorial policy | **Done** |
-| 9 | Editorial content/commerce foundation | **Done — this repo state** |
+| 9 | Editorial content/commerce foundation | **Done** |
+| 10 | Public content architecture & SEO | **Done** |
+| 11 | Master's subject and pillar pages | **Done** |
+| 12 | Planning and official-information guides | **Done** |
+| 13 | Decision, evidence, and trust pages | **Done** |
+| 14 | Resource library and owned archive | **Done** |
+| 15 | Report-card bank and university choice | **Done** |
+| 16 | Personal learning path | **Done** |
+| 17 | Doctoral content expansion | **Done — this repo state** |
+| 18 | Polish, release, and measurement | **Next** |
 
 ## Known simplifications (carry these into later phases' risk lists)
 
@@ -367,6 +376,23 @@ Phase 7:
   shell -- no real offline-first strategy (no precaching, no background sync),
   no push notifications, and placeholder icons (solid-color "K360" text,
   generated locally) since no real brand assets were supplied (docx §12.1).
+
+Phase 17:
+
+- The 16 doctoral pages are AI-assisted `article.v2` drafts. They intentionally
+  do not appear in the static fallback, sitemap, RSS, search, or `llms.txt`
+  until a real human review is recorded through the existing workflow.
+- The official snapshot is the Sanjesh 1406 exam-set notice checked on
+  22 Shahrivar 1405. The final registration booklet was not yet available;
+  every affected page therefore carries a recheck warning and review deadline.
+- The current official notice maps Computer Science graduates to exam set
+  2354; it does not provide a separate Computer Science set for these pages.
+  Do not invent one. Likewise, network security is not listed as a standalone
+  written-exam subject merely because a related doctoral specialization exists.
+- Three legacy drafts already used the final column slugs. The repeatable seed
+  creates version 2 only when version 1, its canonical fields, and all source
+  links still exactly match the checked-in legacy guard. Any human change or
+  non-DRAFT workflow state disables the upgrade; version 1 is never rewritten.
 
 Infrastructure (post-Phase-7 cleanup):
 

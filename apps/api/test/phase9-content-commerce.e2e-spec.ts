@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { createHash } from "crypto";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
-import { Degree, Prisma, ReviewStatus, Role } from "@prisma/client";
+import { ArticleContentType, Degree, Prisma, ReviewStatus, Role } from "@prisma/client";
 import { Test } from "@nestjs/testing";
 import AdmZip from "adm-zip";
 import cookieParser from "cookie-parser";
@@ -13,6 +13,7 @@ import { PrismaService } from "../src/prisma/prisma.service";
 import { seed, SEED_ADMIN_PHONE } from "../src/seed";
 import { seedStaticEditorial } from "../src/seed-static-editorial";
 import staticEditorialSeed from "../src/seed-data/editorial-drafts.json";
+import phase17LegacyDrafts from "../src/seed-data/phase17-legacy-editorial-drafts.json";
 
 class CapturingOtpProvider implements OtpProvider {
   sent: { phone: string; code: string }[] = [];
@@ -855,6 +856,16 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     expect(phase13Payloads.filter((article) => article.content_type === "case_study")).toHaveLength(6);
     const phase13Slugs = new Set(phase13Payloads.map((article) => article.slug));
     expect(migrated.filter((article) => phase13Slugs.has(article.slug))).toHaveLength(14);
+    const phase17Payloads = staticEditorialSeed.articles.filter((article) =>
+      article.provenance.source_artifact.startsWith("apps/web/src/content/phase17-corpus.json:"),
+    );
+    expect(phase17Payloads).toHaveLength(16);
+    expect(phase17Payloads.every((article) => article.content_type === "guide")).toBe(true);
+    expect(phase17Payloads.every((article) => article.review_status === "draft")).toBe(true);
+    expect(phase17Payloads.every((article) => article.provenance.producer_type === "external_ai")).toBe(true);
+    expect(phase17Payloads.every((article) => article.taxonomy.degrees.length === 1 && article.taxonomy.degrees[0] === "phd")).toBe(true);
+    const phase17Slugs = new Set(phase17Payloads.map((article) => article.slug));
+    expect(migrated.filter((article) => phase17Slugs.has(article.slug))).toHaveLength(16);
     for (const article of migrated) {
       expect(article.reviewStatus).toBe("DRAFT");
       const revision = await prisma.contentVersion.findUnique({
@@ -868,6 +879,97 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       });
       expect(revision).toMatchObject({ schemaVersion: "article.v2", reviewStatus: "DRAFT" });
     }
+    for (const article of phase17Payloads) {
+      await request(app.getHttpServer()).get("/articles/" + article.slug).expect(404);
+    }
+  });
+
+  it("upgrades only an untouched legacy PhD draft and preserves its first version", async () => {
+    const legacyPayload = phase17LegacyDrafts.articles.find(
+      (article) => article.slug === "phd-information-technology-1406",
+    )!;
+    const replacementPayload = staticEditorialSeed.articles.find(
+      (article) => article.slug === legacyPayload.slug,
+    )!;
+    const article = await prisma.article.findUniqueOrThrow({ where: { slug: legacyPayload.slug } });
+    const legacySourceRows = await prisma.contentSource.findMany({
+      where: { externalId: { in: legacyPayload.sources.map((source) => source.source_external_id) } },
+      select: { id: true, externalId: true },
+    });
+    const legacySourceIds = new Map(legacySourceRows.map((source) => [source.externalId, source.id]));
+    expect(article.version).toBe(1);
+
+    await prisma.$transaction([
+      prisma.article.update({
+        where: { id: article.id },
+        data: {
+          externalId: legacyPayload.external_id,
+          contentType: legacyPayload.content_type.toUpperCase() as ArticleContentType,
+          title: legacyPayload.title,
+          summary: legacyPayload.summary,
+          quickAnswer: legacyPayload.quick_answer,
+          contentBlocks: legacyPayload.content_blocks as unknown as Prisma.InputJsonValue,
+          taxonomyMajor: legacyPayload.taxonomy.major,
+          taxonomyTags: legacyPayload.taxonomy.tags,
+          taxonomyDegrees: legacyPayload.taxonomy.degrees.map((degree) => degree.toUpperCase() as Degree),
+          taxonomyFields: legacyPayload.taxonomy.fields,
+          subjectCodes: legacyPayload.taxonomy.subject_codes,
+          topicCodes: legacyPayload.taxonomy.topic_codes,
+          seoTitle: legacyPayload.seo.title,
+          seoDescription: legacyPayload.seo.description,
+          validForYear: legacyPayload.validity.exam_year,
+          sourceValidatedAt: new Date(legacyPayload.validity.source_checked_at),
+          reviewDueAt: new Date(legacyPayload.validity.review_due_at),
+          reviewStatus: ReviewStatus.DRAFT,
+          authorProfileId: null,
+          reviewerProfileId: null,
+          publishedAt: null,
+          sources: {
+            deleteMany: {},
+            create: legacyPayload.sources.map((source) => ({
+              sourceId: legacySourceIds.get(source.source_external_id)!,
+              relation: source.relation,
+              locator: source.locator,
+              order: source.order ?? 0,
+            })),
+          },
+        },
+      }),
+      prisma.contentVersion.update({
+        where: {
+          entityType_entityId_version: {
+            entityType: "ARTICLE",
+            entityId: article.id,
+            version: 1,
+          },
+        },
+        data: {
+          payload: legacyPayload as Prisma.InputJsonValue,
+          schemaVersion: "article.v2",
+          reviewStatus: ReviewStatus.DRAFT,
+        },
+      }),
+    ]);
+
+    await seedStaticEditorial(prisma);
+
+    const upgraded = await prisma.article.findUniqueOrThrow({ where: { id: article.id } });
+    expect(upgraded).toMatchObject({
+      title: replacementPayload.title,
+      summary: replacementPayload.summary,
+      version: 2,
+      reviewStatus: ReviewStatus.DRAFT,
+    });
+    const versions = await prisma.contentVersion.findMany({
+      where: { entityType: "ARTICLE", entityId: article.id },
+      orderBy: { version: "asc" },
+    });
+    expect(versions.map((version) => version.version)).toEqual([1, 2]);
+    expect((versions[0]!.payload as Prisma.JsonObject).title).toBe(legacyPayload.title);
+    expect((versions[1]!.payload as Prisma.JsonObject).title).toBe(replacementPayload.title);
+
+    await seedStaticEditorial(prisma);
+    expect((await prisma.article.findUniqueOrThrow({ where: { id: article.id } })).version).toBe(2);
   });
 
   it("never overwrites editorial changes when static drafts are reseeded", async () => {
