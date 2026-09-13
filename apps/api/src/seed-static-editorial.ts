@@ -53,7 +53,7 @@ export async function seedStaticEditorial(prisma: PrismaClient) {
       // The advisory lock also serializes the not-yet-created case, where a
       // row-level lock cannot exist. The row lock then coordinates with admin
       // updates, so the guarded metadata refresh cannot race a human edit.
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`static-editorial-source:${source.externalId}`}))`;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`static-editorial-source:${source.externalId}`}))`;
       const locked = await tx.$queryRaw<Array<{ id: string }>>(
         Prisma.sql`SELECT "id" FROM "content_sources" WHERE "externalId" = ${source.externalId} FOR UPDATE`,
       );
@@ -141,7 +141,7 @@ export async function seedStaticEditorial(prisma: PrismaClient) {
       // Serialize both concurrent seed processes and the not-yet-created case.
       // Once a row exists, FOR UPDATE also coordinates with normal editorial
       // UPDATEs. Every guard read and write below happens after these locks.
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`static-editorial-article:${payload.slug}`}))`;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`static-editorial-article:${payload.slug}`}))`;
       const locked = await tx.$queryRaw<Array<{ id: string }>>(
         Prisma.sql`SELECT "id" FROM "articles" WHERE "slug" = ${payload.slug} FOR UPDATE`,
       );
