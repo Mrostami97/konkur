@@ -892,11 +892,27 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       (article) => article.slug === legacyPayload.slug,
     )!;
     const article = await prisma.article.findUniqueOrThrow({ where: { slug: legacyPayload.slug } });
+    await Promise.all(legacyPayload.sources.map((source) =>
+      prisma.contentSource.upsert({
+        where: { externalId: source.source_external_id },
+        update: {},
+        create: {
+          externalId: source.source_external_id,
+          kind: "WEB_PAGE",
+          title: source.locator,
+          publisher: "Phase 17 legacy-upgrade fixture",
+          canonicalUrl: "https://www.sanjesh.org/",
+          sourceTier: "SECONDARY",
+          checkedAt: new Date(legacyPayload.validity.source_checked_at),
+        },
+      }),
+    ));
     const legacySourceRows = await prisma.contentSource.findMany({
       where: { externalId: { in: legacyPayload.sources.map((source) => source.source_external_id) } },
       select: { id: true, externalId: true },
     });
     const legacySourceIds = new Map(legacySourceRows.map((source) => [source.externalId, source.id]));
+    expect(legacySourceIds.size).toBe(new Set(legacyPayload.sources.map((source) => source.source_external_id)).size);
     expect(article.version).toBe(1);
 
     await prisma.$transaction([
