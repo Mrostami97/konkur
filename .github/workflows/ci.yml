@@ -412,26 +412,51 @@ jobs:
           $DOCKER compose up -d --no-build || $DOCKER compose up -d --build
 
           # /healthz reports real connectivity to every dependency the API has
-          # (Postgres, MinIO/S3), not just "the process started". Hit it through
-          # nginx by IP via --resolve so no public DNS is needed. curl runs in a
-          # container too, not assumed to be on the host.
+          # (Postgres, MinIO/S3), not just "the process started". Hit both the
+          # API and the web app through nginx by IP via --resolve so a deploy
+          # cannot be marked healthy while the public site returns 502. curl
+          # runs in a container too, not assumed to be on the host.
           API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
           API_DOMAIN="${API_DOMAIN:-api.localhost}"
+          WEB_DOMAIN="$(grep -E '^WEB_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
+          WEB_DOMAIN="${WEB_DOMAIN:-localhost}"
           RESPONSE=""
+          API_HEALTHY=0
           for _ in $(seq 1 60); do
             RESPONSE="$($DOCKER run --rm --network host curlimages/curl:latest \
               -sk --resolve "${API_DOMAIN}:443:127.0.0.1" \
               "https://${API_DOMAIN}/healthz" || true)"
             if echo "$RESPONSE" | grep -q '"status":"ok"'; then
-              echo "Healthy: $RESPONSE"
+              API_HEALTHY=1
+              echo "API healthy: $RESPONSE"
+              break
+            fi
+            sleep 3
+          done
+
+          if [ "$API_HEALTHY" -ne 1 ]; then
+            echo "ERROR: API not healthy after 180s. Last /healthz response: ${RESPONSE:-<no response>}" >&2
+            $DOCKER compose ps || true
+            $DOCKER compose logs --tail 80 api nginx || true
+            exit 1
+          fi
+
+          WEB_STATUS=""
+          for _ in $(seq 1 60); do
+            WEB_STATUS="$($DOCKER run --rm --network host curlimages/curl:latest \
+              -sk -o /dev/null -w '%{http_code}' \
+              --resolve "${WEB_DOMAIN}:443:127.0.0.1" \
+              "https://${WEB_DOMAIN}/" || true)"
+            if [ "$WEB_STATUS" = "200" ]; then
+              echo "Web healthy: HTTPS / returned 200."
               exit 0
             fi
             sleep 3
           done
 
-          echo "ERROR: not healthy after 180s. Last /healthz response: ${RESPONSE:-<no response>}" >&2
+          echo "ERROR: web not healthy after 180s. Last HTTPS / status: ${WEB_STATUS:-<no response>}" >&2
           $DOCKER compose ps || true
-          $DOCKER compose logs --tail 50 api || true
+          $DOCKER compose logs --tail 80 web nginx || true
           exit 1
           UP
 
