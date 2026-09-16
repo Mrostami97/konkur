@@ -24,4 +24,4 @@ COPY --from=build /repo/contracts ./contracts
 COPY --from=build /repo/apps/api ./apps/api
 WORKDIR /repo/apps/api
 EXPOSE 3001
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/main.js"]
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/bootstrap-admin.js && node dist/main.js"]

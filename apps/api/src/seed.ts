@@ -1,12 +1,14 @@
 import { Prisma, PrismaClient, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
-import { hashPassword } from "./modules/identity/password-hasher";
+import {
+  ensureSeedAdmin,
+  SEED_ADMIN_PHONE,
+} from "./seed-admin";
 import { seedStaticEditorial } from "./seed-static-editorial";
 import { seedStaticResources } from "./seed-static-resources";
 
 const prisma = new PrismaClient();
 
-export const SEED_ADMIN_PHONE = "+989120000001";
-export const SEED_ADMIN_PASSWORD = "123";
+export { SEED_ADMIN_PASSWORD, SEED_ADMIN_PHONE } from "./seed-admin";
 export const SEED_STUDENT_PHONE = "+989120000002";
 export const SEED_COURSE_SLUG = "ce-algorithms-bootcamp";
 export const SEED_PRODUCT_SLUG = "ce-algorithms-bootcamp";
@@ -143,15 +145,7 @@ async function seedCourseAndProduct(authorId: string) {
 }
 
 export async function seed() {
-  const admin = await upsertUserWithRole(SEED_ADMIN_PHONE, Role.ADMIN);
-  // Keep the fixture repeatable without overwriting an administrator's
-  // deliberately changed password on subsequent seed runs.
-  if (!admin.passwordHash) {
-    await prisma.user.update({
-      where: { id: admin.id },
-      data: { passwordHash: await hashPassword(SEED_ADMIN_PASSWORD) },
-    });
-  }
+  const { user: admin } = await ensureSeedAdmin(prisma);
   await prisma.contributorProfile.upsert({
     where: { slug: "mohammad-rostami" },
     update: { userId: admin.id },
