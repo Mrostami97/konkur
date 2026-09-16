@@ -300,6 +300,8 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_PASS: ${{ secrets.SSH_PASS }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_WEB_DOMAIN: ${{ vars.WEB_DOMAIN }}
+          DEPLOY_API_DOMAIN: ${{ vars.API_DOMAIN }}
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
@@ -314,8 +316,16 @@ jobs:
           # "ERROR:  is not a git checkout" against an empty path.
           DEPLOY_PATH="${DEPLOY_PATH:-/opt/app}"
           SSH_USER="${SSH_USER:-root}"
+          DEPLOY_WEB_DOMAIN="${DEPLOY_WEB_DOMAIN:-kunkur01.ir}"
+          DEPLOY_API_DOMAIN="${DEPLOY_API_DOMAIN:-api.$DEPLOY_WEB_DOMAIN}"
+          for domain in "$DEPLOY_WEB_DOMAIN" "$DEPLOY_API_DOMAIN"; do
+            if ! printf '%s\n' "$domain" | grep -Eiq '^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$'; then
+              echo "ERROR: invalid deployment hostname: '$domain'." >&2
+              exit 1
+            fi
+          done
           REMOTE="$SSH_USER@$SSH_HOST"
-          echo "Deploying to $REMOTE:$DEPLOY_PATH"
+          echo "Deploying to $REMOTE:$DEPLOY_PATH for https://$DEPLOY_WEB_DOMAIN"
 
           mkdir -p ~/.ssh
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
@@ -518,6 +528,18 @@ jobs:
           # ---- 4. start services, then wait for /healthz -------------------
           cat > /tmp/up.sh <<'UP'
           cd "$DEPLOY_PATH"
+          # Persist the validated production hostnames so manual compose
+          # restarts and host reboots use the same public routing as CI.
+          touch .env
+          for assignment in "WEB_DOMAIN=$WEB_DOMAIN" "API_DOMAIN=$API_DOMAIN"; do
+            key="${assignment%%=*}"
+            if grep -q "^${key}=" .env; then
+              sed -i "s|^${key}=.*|${assignment}|" .env
+            else
+              printf '%s\n' "$assignment" >> .env
+            fi
+          done
+
           # --no-build: use the images the runner just shipped. Falling back to
           # a local build keeps a botched image transfer from taking the site
           # down, at the cost of a slow deploy.
@@ -552,6 +574,7 @@ jobs:
           fi
 
           WEB_STATUS=""
+          WEB_HEALTHY=0
           for _ in $(seq 1 60); do
             WEB_STATUS="$($DOCKER run --rm --network host curlimages/curl:latest \
               -sk -o /dev/null -w '%{http_code}' \
@@ -559,16 +582,57 @@ jobs:
               "https://${WEB_DOMAIN}/" || true)"
             if [ "$WEB_STATUS" = "200" ]; then
               echo "Web healthy: HTTPS / returned 200."
-              exit 0
+              WEB_HEALTHY=1
+              break
             fi
             sleep 3
           done
 
-          echo "ERROR: web not healthy after 180s. Last HTTPS / status: ${WEB_STATUS:-<no response>}" >&2
-          $DOCKER compose ps || true
-          $DOCKER compose logs --tail 80 web nginx || true
-          exit 1
+          if [ "$WEB_HEALTHY" -ne 1 ]; then
+            echo "ERROR: web not healthy after 180s. Last HTTPS / status: ${WEB_STATUS:-<no response>}" >&2
+            $DOCKER compose ps || true
+            $DOCKER compose logs --tail 80 web nginx || true
+            exit 1
+          fi
+
+          # A bootstrap self-signed certificate is enough for containers to
+          # start, but not enough for users or search crawlers. Keep the deploy
+          # open until Certbot has installed a publicly trusted certificate and
+          # nginx has reloaded it. Deliberately omit -k here.
+          TRUSTED_TLS_STATUS=""
+          TRUSTED_TLS=0
+          for _ in $(seq 1 120); do
+            TRUSTED_TLS_STATUS="$($DOCKER run --rm --network host curlimages/curl:latest \
+              -sS -o /dev/null -w '%{http_code}' \
+              --resolve "${WEB_DOMAIN}:443:127.0.0.1" \
+              "https://${WEB_DOMAIN}/" 2>/dev/null || true)"
+            if [ "$TRUSTED_TLS_STATUS" = "200" ]; then
+              TRUSTED_TLS=1
+              echo "Trusted TLS active: HTTPS / returned 200 without -k."
+              break
+            fi
+            sleep 3
+          done
+
+          if [ "$TRUSTED_TLS" -ne 1 ]; then
+            echo "ERROR: no trusted public TLS certificate after 360s. Last status: ${TRUSTED_TLS_STATUS:-<no response>}" >&2
+            $DOCKER compose ps || true
+            $DOCKER compose logs --tail 120 certbot nginx || true
+            exit 1
+          fi
+
+          REDIRECT_HEADERS="$($DOCKER run --rm --network host curlimages/curl:latest \
+            -sS -D - -o /dev/null \
+            --resolve "${WEB_DOMAIN}:80:127.0.0.1" \
+            "http://${WEB_DOMAIN}/phase18-probe" || true)"
+          printf '%s\n' "$REDIRECT_HEADERS" | tr -d '\r' | grep -q '^HTTP/1.1 308'
+          printf '%s\n' "$REDIRECT_HEADERS" | tr -d '\r' \
+            | grep -Fqi "location: https://${WEB_DOMAIN}/phase18-probe"
+          echo "Canonical HTTP redirect verified for $WEB_DOMAIN."
           UP
 
           echo "== Starting services and waiting for /healthz =="
-          run_remote /tmp/up.sh "DEPLOY_PATH='$DEPLOY_PATH'"
+          run_remote /tmp/up.sh \
+            "DEPLOY_PATH='$DEPLOY_PATH'" \
+            "WEB_DOMAIN='$DEPLOY_WEB_DOMAIN'" \
+            "API_DOMAIN='$DEPLOY_API_DOMAIN'"

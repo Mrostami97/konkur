@@ -27,6 +27,7 @@ append_san() {
 certificate_pair_is_valid() {
   [ -s "$CERT_FILE" ] && [ -s "$KEY_FILE" ] || return 1
   openssl x509 -in "$CERT_FILE" -noout >/dev/null 2>&1 || return 1
+  openssl x509 -in "$CERT_FILE" -noout -checkhost "$WEB_DOMAIN" >/dev/null 2>&1 || return 1
   openssl pkey -in "$KEY_FILE" -check -noout >/dev/null 2>&1 || return 1
 
   # debian:slim intentionally omits `cmp` (diffutils). Compare SHA-256
