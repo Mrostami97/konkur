@@ -117,8 +117,16 @@ services:
       - "443:443"
     command:
       - /bin/sh
-      - -c
-      - /bin/sh /usr/local/bin/watch-certs.sh & exec nginx -g 'daemon off;'
+      - -ec
+      - |
+        # The official nginx entrypoint only renders /etc/nginx/templates when
+        # its first argument is `nginx`. Because this service also needs a
+        # certificate watcher, explicitly run the entrypoint once for config
+        # rendering/validation before starting the watcher and foreground
+        # master process.
+        /docker-entrypoint.sh nginx -t
+        /bin/sh /usr/local/bin/watch-certs.sh &
+        exec nginx -g 'daemon off;'
 
   certbot:
     image: certbot/certbot:v5.8.0

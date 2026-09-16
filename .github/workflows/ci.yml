@@ -265,6 +265,25 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: docker compose build api web
 
+      # Exercise the exact bootstrap volume and nginx entrypoint path used on
+      # the server. This catches regressions where a command override bypasses
+      # nginx's template renderer and silently serves the stock welcome page.
+      - name: Validate nginx TLS gateway bootstrap
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          WEB_DOMAIN: kunkur01.ir
+          API_DOMAIN: api.kunkur01.ir
+          TLS_MODE: selfsigned
+        run: |
+          set -euo pipefail
+          docker compose config --quiet
+          docker compose run --rm --no-deps certs-init
+          CERT_REUSE_OUTPUT="$(docker compose run --rm --no-deps certs-init)"
+          echo "$CERT_REUSE_OUTPUT"
+          echo "$CERT_REUSE_OUTPUT" | grep -q 'keeping it'
+          docker compose run --rm --no-deps nginx \
+            /bin/sh -ec '/docker-entrypoint.sh nginx -t'
+
       # Deploy is the tail of this same job: steps run in order and stop at the
       # first failure, so this only runs if everything above was green.
       #

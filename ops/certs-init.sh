@@ -26,26 +26,28 @@ append_san() {
 
 certificate_pair_is_valid() {
   [ -s "$CERT_FILE" ] && [ -s "$KEY_FILE" ] || return 1
+  openssl x509 -in "$CERT_FILE" -noout >/dev/null 2>&1 || return 1
+  openssl pkey -in "$KEY_FILE" -check -noout >/dev/null 2>&1 || return 1
 
-  cert_pub="$CERT_DIR/.cert-public.$$"
-  key_pub="$CERT_DIR/.key-public.$$"
-  if ! openssl x509 -in "$CERT_FILE" -pubkey -noout 2>/dev/null \
-      | openssl pkey -pubin -outform DER > "$cert_pub" 2>/dev/null; then
-    rm -f "$cert_pub" "$key_pub"
+  # debian:slim intentionally omits `cmp` (diffutils). Compare SHA-256
+  # fingerprints using OpenSSL itself so an already-issued ACME certificate is
+  # preserved on subsequent deployments instead of being replaced by another
+  # temporary self-signed pair.
+  if ! cert_pub_hash="$(
+    openssl x509 -in "$CERT_FILE" -pubkey -noout 2>/dev/null \
+      | openssl pkey -pubin -outform DER 2>/dev/null \
+      | openssl dgst -sha256 2>/dev/null
+  )"; then
     return 1
   fi
-  if ! openssl pkey -in "$KEY_FILE" -pubout -outform DER > "$key_pub" 2>/dev/null; then
-    rm -f "$cert_pub" "$key_pub"
+  if ! key_pub_hash="$(
+    openssl pkey -in "$KEY_FILE" -pubout -outform DER 2>/dev/null \
+      | openssl dgst -sha256 2>/dev/null
+  )"; then
     return 1
   fi
 
-  if cmp -s "$cert_pub" "$key_pub"; then
-    result=0
-  else
-    result=1
-  fi
-  rm -f "$cert_pub" "$key_pub"
-  return "$result"
+  [ -n "$cert_pub_hash" ] && [ "$cert_pub_hash" = "$key_pub_hash" ]
 }
 
 case "$TLS_MODE" in
