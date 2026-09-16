@@ -3,41 +3,73 @@ import Link from "next/link";
 import { apiGetPublic } from "../../lib/api";
 import { EmptyState, PageHeader } from "../../components/ui";
 import { pageMetadata } from "../../lib/seo";
+import {
+  buildCourseCatalog,
+  type CatalogCourse,
+  type CatalogProduct,
+} from "./catalog";
 
-export const metadata: Metadata = pageMetadata({
-  title: "دوره‌های کنکور ارشد و دکتری کامپیوتر",
-  description: "دوره‌های منتشرشدهٔ کنکورصفریک با مسیر یادگیری و دسترسی روشن برای داوطلبان کنکور کامپیوتر.",
-  path: "/courses",
-});
+async function loadCatalog() {
+  let courses: CatalogCourse[] | null;
+  try {
+    courses = await apiGetPublic<CatalogCourse[]>("/courses");
+  } catch {
+    return { courses: null, products: [], unavailable: true, productCatalogUnavailable: true };
+  }
 
-interface Product {
-  slug: string;
-  title: string;
-  description: string;
-  prices?: { amountRial: number }[];
+  if (!courses) {
+    return { courses: null, products: [], unavailable: true, productCatalogUnavailable: true };
+  }
+
+  try {
+    const products = await apiGetPublic<CatalogProduct[]>("/products");
+    return {
+      courses,
+      products: products ?? [],
+      unavailable: false,
+      productCatalogUnavailable: products === null,
+    };
+  } catch {
+    return { courses, products: [], unavailable: false, productCatalogUnavailable: true };
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const result = await loadCatalog();
+  return pageMetadata({
+    title: "دوره‌های کنکور ارشد و دکتری کامپیوتر",
+    description: "دوره‌های منتشرشدهٔ کنکورصفریک با مسیر یادگیری و دسترسی روشن برای داوطلبان کنکور کامپیوتر.",
+    path: "/courses",
+    noIndex: result.unavailable,
+  });
 }
 
 export default async function CoursesPage() {
-  let products: Product[] | null = null;
-  try {
-    products = await apiGetPublic<Product[]>("/products");
-  } catch {
-    products = null;
-  }
+  const result = await loadCatalog();
+  const catalog = result.courses
+    ? buildCourseCatalog(result.courses, result.products, result.productCatalogUnavailable)
+    : null;
 
   return (
     <main className="page-container">
       <PageHeader eyebrow="یادگیری هدفمند" title="دوره‌ها" description="مسیرهای آموزشی ارشد و دکتری کامپیوتر را بر اساس هدف و زمانت انتخاب کن." />
-      {!products ? (
+      {!catalog ? (
         <EmptyState title="فهرست دوره‌ها در دسترس نیست" description="اتصال به سرویس محتوا برقرار نشد؛ بعداً دوباره امتحان کن." />
-      ) : products.length === 0 ? (
+      ) : catalog.length === 0 ? (
         <EmptyState title="هنوز دوره‌ای منتشر نشده است" description="به‌محض انتشار دورهٔ جدید، اینجا نمایش داده می‌شود." />
       ) : (
         <div className="course-grid">
-          {products.map((product) => (
-            <article className="catalog-card" key={product.slug}>
-              <div><div className="catalog-card-meta"><span>دورهٔ تخصصی</span><span>یادگیری</span></div><Link href={`/courses/${product.slug}`}><h3>{product.title}</h3></Link><p>{product.description}</p></div>
-              <div className="catalog-card-footer">{product.prices?.[0] ? <strong>{product.prices[0].amountRial.toLocaleString("fa-IR")} تومان</strong> : <span className="muted-copy">جزئیات در صفحهٔ دوره</span>}<Link className="button button-secondary" href={`/courses/${product.slug}`}>مشاهده دوره ←</Link></div>
+          {catalog.map((item) => (
+            <article className="catalog-card" key={item.course.slug}>
+              <div>
+                <div className="catalog-card-meta"><span>{item.accessLabel}</span><span>یادگیری</span></div>
+                <Link href={item.href}><h3>{item.course.title}</h3></Link>
+                <p>{item.course.description}</p>
+              </div>
+              <div className="catalog-card-footer">
+                <strong>{item.priceLabel}</strong>
+                <Link className="button button-secondary" href={item.href}>{item.ctaLabel}</Link>
+              </div>
             </article>
           ))}
         </div>

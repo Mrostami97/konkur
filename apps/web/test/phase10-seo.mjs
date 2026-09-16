@@ -30,7 +30,8 @@ assert.equal(sitemapIndex.response.status, 200);
 assert.match(sitemapIndex.response.headers.get("content-type") ?? "", /application\/xml/);
 assert.match(sitemapIndex.body, /<sitemapindex/);
 const sitemapLocations = [...sitemapIndex.body.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
-assert.equal(sitemapLocations.length, 8);
+assert.equal(sitemapLocations.length, 9);
+assert.equal(new Set(sitemapLocations).size, sitemapLocations.length, "sitemap index entries must be unique");
 
 for (const location of sitemapLocations) {
   const url = new URL(location);
@@ -42,6 +43,14 @@ for (const location of sitemapLocations) {
 const pageSitemap = await read("/sitemaps/pages.xml");
 assert.doesNotMatch(pageSitemap.body, /rank-estimate/);
 assert.match(pageSitemap.body, /\/admissions/);
+
+const courseSitemap = await read("/sitemaps/courses.xml");
+assert.equal(courseSitemap.response.status, 200);
+const courseLocations = [...courseSitemap.body.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
+assert.ok(courseLocations.length > 0, "the seeded published course must appear in the course sitemap");
+assert.equal(new Set(courseLocations).size, courseLocations.length, "course detail URLs must not be duplicated");
+assert.ok(courseLocations.every((location) => location.startsWith(`${canonicalOrigin}/courses/`)));
+assert.ok(!courseLocations.includes(`${canonicalOrigin}/courses`), "the course index belongs only to the pages sitemap");
 
 const admissionsSitemap = await read("/sitemaps/admissions.xml");
 assert.equal(admissionsSitemap.response.status, 200);

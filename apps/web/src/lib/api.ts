@@ -1,10 +1,18 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 
-/** Server-only override so SSR requests hit the API directly on the docker
- * network instead of round-tripping through the public HTTPS domain (which
- * doesn't resolve there, and wouldn't validate against a self-signed cert
- * anyway). Falls back to the public URL when unset (e.g. local `pnpm dev`). */
-const INTERNAL_API_URL = process.env.INTERNAL_API_URL ?? API_URL;
+/**
+ * Browser requests deliberately use the site's own `/api` gateway by default.
+ * This keeps login, media, and paid-resource requests on the canonical origin
+ * and avoids baking a deployment-specific API hostname into the client bundle.
+ * Developers can still opt into a separate origin with NEXT_PUBLIC_API_URL.
+ */
+export const API_URL = PUBLIC_API_URL || "/api";
+
+/** Server-only override so SSR requests hit the API directly on the Docker
+ * network instead of round-tripping through public DNS and TLS. Local
+ * development falls back to the API's conventional localhost port. */
+const INTERNAL_API_URL =
+  process.env.INTERNAL_API_URL ?? PUBLIC_API_URL ?? "http://localhost:3001";
 
 export class ApiError extends Error {
   constructor(

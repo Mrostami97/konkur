@@ -126,14 +126,15 @@ function pageHref(searchParams: ReportCardSearchParams, page: number): string {
   return query ? `/report-cards?${query}` : "/report-cards";
 }
 
-export function generateMetadata({ searchParams }: { searchParams: ReportCardSearchParams }): Metadata {
+export async function generateMetadata({ searchParams }: { searchParams: ReportCardSearchParams }): Promise<Metadata> {
   const page = requestedPage(searchParams.page);
   const hasQuery = Object.values(searchParams).some((value) => first(value) !== "");
+  const result = await loadPageData(searchParams, page);
   return pageMetadata({
     title: page > 1 ? `بانک کارنامه‌های عمومی؛ صفحهٔ ${toPersianDigits(page)}` : "بانک کارنامه‌های عمومی کنکور کامپیوتر",
     description: "نمونه‌های ناشناس و رضایت‌دار کارنامه‌های کنکور کامپیوتر، همراه با حجم نمونه و محدودیت‌های مقایسه.",
     path: "/report-cards",
-    noIndex: hasQuery,
+    noIndex: hasQuery || result.reportUnavailable,
   });
 }
 
@@ -217,7 +218,16 @@ export default async function ReportCardsPage({ searchParams }: { searchParams: 
   const path = "/report-cards";
   const breadcrumbs = [{ name: "خانه", href: "/" }, { name: "کارنامه‌ها" }];
   if (result.reportUnavailable) {
-    return <main className="page-container"><PublicServiceError label="بانک کارنامه" /></main>;
+    return (
+      <main className="page-container">
+        <PageHeader
+          eyebrow="دادهٔ مستند و رضایت‌محور"
+          title="بانک کارنامه‌های عمومی"
+          description="هنگام قطعی سرویس، هیچ دادهٔ خالی یا قدیمی به‌جای کارنامه‌های رضایت‌دار نمایش داده نمی‌شود."
+        />
+        <PublicServiceError label="بانک کارنامه" />
+      </main>
+    );
   }
   const emptyData: PublicReportCardsResponse = {
     items: [], page, limit: 12, total: 0, totalPages: 0,

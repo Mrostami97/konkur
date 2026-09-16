@@ -18,6 +18,11 @@ import { SessionAuthGuard, RequestWithUser } from "./guards/session-auth.guard";
 
 const SESSION_COOKIE = "session";
 const SESSION_TTL_HOURS = Number(process.env.SESSION_TTL_HOURS ?? 720);
+const SESSION_COOKIE_SECURITY = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+};
 
 @Controller("auth")
 export class IdentityController {
@@ -48,8 +53,7 @@ export class IdentityController {
       ip: req.ip,
     });
     res.cookie(SESSION_COOKIE, token, {
-      httpOnly: true,
-      sameSite: "lax",
+      ...SESSION_COOKIE_SECURITY,
       maxAge: SESSION_TTL_HOURS * 3_600_000,
     });
     return { user };
@@ -73,8 +77,7 @@ export class IdentityController {
       ip: req.ip,
     });
     res.cookie(SESSION_COOKIE, token, {
-      httpOnly: true,
-      sameSite: "lax",
+      ...SESSION_COOKIE_SECURITY,
       maxAge: SESSION_TTL_HOURS * 3_600_000,
     });
     return { user };
@@ -85,7 +88,7 @@ export class IdentityController {
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const token = req.cookies?.[SESSION_COOKIE];
     if (token) await this.identity.logout(token);
-    res.clearCookie(SESSION_COOKIE);
+    res.clearCookie(SESSION_COOKIE, SESSION_COOKIE_SECURITY);
     return { loggedOut: true };
   }
 

@@ -1,21 +1,62 @@
 server {
-    listen 80;
+    listen 80 default_server;
+    listen [::]:80 default_server;
     server_name ${WEB_DOMAIN};
-    return 301 https://$host$request_uri;
+
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+        default_type text/plain;
+        try_files $uri =404;
+    }
+
+    location / {
+        return 308 https://${WEB_DOMAIN}$request_uri;
+    }
 }
 
 server {
     listen 80;
-    server_name ${API_DOMAIN};
-    return 301 https://$host$request_uri;
+    listen [::]:80;
+    server_name www.${WEB_DOMAIN};
+
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+        default_type text/plain;
+        try_files $uri =404;
+    }
+
+    location / {
+        return 308 https://${WEB_DOMAIN}$request_uri;
+    }
 }
 
 server {
-    listen 443 ssl;
+    listen 80;
+    listen [::]:80;
+    server_name ${API_DOMAIN};
+
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+        default_type text/plain;
+        try_files $uri =404;
+    }
+
+    location / {
+        return 308 https://${API_DOMAIN}$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
     server_name ${WEB_DOMAIN};
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_cache shared:TLS:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
 
     # Docker's embedded DNS (127.0.0.11) re-resolves the upstream on every
     # request (via the $upstream variable) instead of once at nginx startup,
@@ -23,21 +64,63 @@ server {
     # require restarting nginx too.
     resolver 127.0.0.11 valid=10s;
 
+    # Browser traffic uses a same-origin API prefix. Strip `/api/` before
+    # proxying because the Nest application exposes routes such as `/auth`
+    # and `/healthz` at its root. Using a variable keeps Docker DNS dynamic
+    # across API container recreation, just like the web upstream below.
+    location = /api {
+        return 308 /api/;
+    }
+
+    location ^~ /api/ {
+        set $api_upstream http://api:3001;
+        rewrite ^/api/(.*)$ /$1 break;
+        proxy_pass $api_upstream;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Prefix /api;
+    }
+
     location / {
         set $upstream http://web:3000;
         proxy_pass $upstream;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 
 server {
     listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name www.${WEB_DOMAIN};
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_cache shared:TLS:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    return 308 https://${WEB_DOMAIN}$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
     server_name ${API_DOMAIN};
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_cache shared:TLS:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
 
     resolver 127.0.0.11 valid=10s;
 
@@ -46,6 +129,8 @@ server {
         proxy_pass $upstream;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }

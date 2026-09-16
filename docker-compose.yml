@@ -77,8 +77,9 @@ services:
     depends_on:
       - api
     environment:
-      NEXT_PUBLIC_API_URL: https://${API_DOMAIN:-api.localhost}
       INTERNAL_API_URL: http://api:3001
+      GOOGLE_SITE_VERIFICATION: ${GOOGLE_SITE_VERIFICATION:-}
+      BING_SITE_VERIFICATION: ${BING_SITE_VERIFICATION:-}
 
   certs-init:
     image: debian:12-slim
@@ -88,6 +89,7 @@ services:
     environment:
       WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
       API_DOMAIN: ${API_DOMAIN:-api.localhost}
+      TLS_MODE: ${TLS_MODE:-auto}
     command: sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null && sh /certs-init.sh"
 
   nginx:
@@ -103,15 +105,47 @@ services:
     environment:
       WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
       API_DOMAIN: ${API_DOMAIN:-api.localhost}
+      NGINX_ENVSUBST_FILTER: ^(WEB_DOMAIN|API_DOMAIN)$$
+      CERT_RELOAD_INTERVAL_SECONDS: ${CERT_RELOAD_INTERVAL_SECONDS:-60}
     volumes:
       - ./ops/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./ops/nginx/watch-certs.sh:/usr/local/bin/watch-certs.sh:ro
       - nginx_certs:/etc/nginx/certs:ro
+      - acme_challenge:/var/www/certbot:ro
     ports:
       - "80:80"
       - "443:443"
+    command:
+      - /bin/sh
+      - -c
+      - /bin/sh /usr/local/bin/watch-certs.sh & exec nginx -g 'daemon off;'
+
+  certbot:
+    image: certbot/certbot:v5.8.0
+    restart: unless-stopped
+    depends_on:
+      nginx:
+        condition: service_started
+    environment:
+      TLS_MODE: ${TLS_MODE:-auto}
+      WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
+      API_DOMAIN: ${API_DOMAIN:-api.localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+      ACME_STAGING: ${ACME_STAGING:-0}
+      ACME_RENEW_INTERVAL_SECONDS: ${ACME_RENEW_INTERVAL_SECONDS:-43200}
+      ACME_RETRY_INTERVAL_SECONDS: ${ACME_RETRY_INTERVAL_SECONDS:-300}
+    volumes:
+      - letsencrypt_data:/etc/letsencrypt
+      - acme_challenge:/var/www/certbot
+      - nginx_certs:/active-certs
+      - ./ops/nginx/certbot-renew.sh:/certbot-renew.sh:ro
+    entrypoint: ["/bin/sh"]
+    command: ["/certbot-renew.sh"]
 
 volumes:
   postgres_data:
   redis_data:
   minio_data:
   nginx_certs:
+  letsencrypt_data:
+  acme_challenge:

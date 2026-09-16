@@ -9,6 +9,9 @@ import { StructuredData } from "../components/StructuredData";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "../lib/seo";
 import "./globals.css";
 
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+const bingSiteVerification = process.env.BING_SITE_VERIFICATION?.trim();
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: "کنکورصفریک | مرجع کنکور ارشد و دکتری کامپیوتر", template: "%s | کنکورصفریک" },
@@ -21,6 +24,14 @@ export const metadata: Metadata = {
   openGraph: { type: "website", locale: "fa_IR", siteName: SITE_NAME, title: "کنکورصفریک", description: SITE_DESCRIPTION, url: "/", images: [{ url: "/brand/konkurcom-logo.png", width: 600, height: 600, alt: SITE_NAME }] },
   twitter: { card: "summary_large_image", title: "کنکورصفریک", description: SITE_DESCRIPTION, images: ["/brand/konkurcom-logo.png"] },
   manifest: "/manifest.json",
+  ...(googleSiteVerification || bingSiteVerification
+    ? {
+        verification: {
+          ...(googleSiteVerification ? { google: googleSiteVerification } : {}),
+          ...(bingSiteVerification ? { other: { "msvalidate.01": bingSiteVerification } } : {}),
+        },
+      }
+    : {}),
 };
 
 export const viewport: Viewport = {

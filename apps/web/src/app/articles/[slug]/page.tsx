@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { EditorialPageView } from "../../../components/EditorialPageView";
 import {
   PublicArticleView,
@@ -66,10 +66,13 @@ async function relatedTaxonomy(article: PublicArticleRecord): Promise<RelatedPub
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const result = await loadArticle(params.slug);
   if (result.article) {
-    if (result.article.contentType === "GUIDE") redirect(`/guides/${result.article.slug}`);
+    if (result.article.contentType === "GUIDE") permanentRedirect(`/guides/${result.article.slug}`);
     return <PublicArticleView article={result.article} related={await relatedTaxonomy(result.article)} />;
   }
   const legacy = findEditorialPage(params.slug);
-  if (!legacy || !articles.some((item) => item.slug === params.slug)) notFound();
+  if (!legacy || !articles.some((item) => item.slug === params.slug)) {
+    if (result.unavailable) throw new Error("Public content service is unavailable");
+    notFound();
+  }
   return <EditorialPageView page={legacy} basePath="/articles" />;
 }

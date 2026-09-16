@@ -16,6 +16,7 @@
     "migrate:down": "pnpm --filter api run migrate:down",
     "migrate:reset": "pnpm --filter api prisma migrate reset --force",
     "seed": "pnpm --filter api run seed",
+    "indexnow:submit": "node scripts/submit-indexnow.mjs",
     "dev:api": "pnpm --filter api run start:dev",
     "dev:web": "pnpm --filter web run dev"
   }

@@ -129,16 +129,18 @@ async function loadCatalog(filters: ProgramFilters) {
   }
 }
 
-export function generateMetadata({ searchParams }: { searchParams: SearchParams }): Metadata {
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
   const hasFilters = Object.keys(searchParams).length > 0;
+  const result = await loadCatalog(requestedFilters(searchParams));
+  const noIndex = hasFilters || result.unavailable;
   return {
     ...pageMetadata({
       title: "رشته‌محل‌ها و دانشگاه‌های کنکور کامپیوتر",
       description: "جست‌وجوی رشته‌محل‌های ارشد و دکتری کامپیوتر که به منبع رسمی و تاریخ بررسی مشخص متصل‌اند.",
       path: "/programs",
-      noIndex: hasFilters,
+      noIndex,
     }),
-    robots: hasFilters ? { index: false, follow: true } : { index: true, follow: true },
+    robots: noIndex ? { index: false, follow: true } : { index: true, follow: true },
   };
 }
 
@@ -190,7 +192,16 @@ export default async function ProgramsPage({ searchParams }: { searchParams: Sea
   const breadcrumbs = [{ name: "خانه", href: "/" }, { name: "انتخاب‌رشته", href: "/admissions" }, { name: "رشته‌محل‌ها" }];
 
   if (result.unavailable) {
-    return <main className="page-container"><PublicServiceError label="فهرست رشته‌محل‌های رسمی" /></main>;
+    return (
+      <main className="page-container">
+        <PageHeader
+          eyebrow="دادهٔ رسمی انتخاب‌رشته"
+          title="دانشگاه‌ها و رشته‌محل‌ها"
+          description="داده‌های این صفحه به منبع رسمی متصل‌اند و هنگام قطعی سرویس، نتیجهٔ خالی یا قدیمی نمایش داده نمی‌شود."
+        />
+        <PublicServiceError label="فهرست رشته‌محل‌های رسمی" />
+      </main>
+    );
   }
 
   const fields = [...new Set(result.allPrograms.map((item) => item.field))].sort((a, b) => fieldLabel(a).localeCompare(fieldLabel(b), "fa"));

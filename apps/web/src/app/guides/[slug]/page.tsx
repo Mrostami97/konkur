@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { EditorialPageView } from "../../../components/EditorialPageView";
 import {
   PublicArticleView,
@@ -72,12 +72,15 @@ export default async function GuidePage({ params }: { params: { slug: string } }
   const result = await loadGuide(params.slug);
   const phase12 = findPhase12Page(params.slug);
   if (result.article) {
-    if (result.article.contentType !== "GUIDE") redirect(`/articles/${result.article.slug}`);
+    if (result.article.contentType !== "GUIDE") permanentRedirect(`/articles/${result.article.slug}`);
     const view = <PublicArticleView article={result.article} related={await relatedTaxonomy(result.article)} />;
     return phase12 ? <div data-phase12="verified-guide">{view}</div> : view;
   }
   const staticGuide = findEditorialPage(params.slug) ?? findPhase12EditorialPage(params.slug);
-  if (!staticGuide || ![...guides, ...phase12EditorialPages].some((item) => item.slug === params.slug)) notFound();
+  if (!staticGuide || ![...guides, ...phase12EditorialPages].some((item) => item.slug === params.slug)) {
+    if (result.unavailable) throw new Error("Public content service is unavailable");
+    notFound();
+  }
   const view = (
     <EditorialPageView
       page={staticGuide}

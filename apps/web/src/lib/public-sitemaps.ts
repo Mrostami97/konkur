@@ -29,6 +29,11 @@ type PublicTaxonomy = {
   updatedAt?: string | null;
 };
 
+type PublicCourse = {
+  slug: string;
+  updatedAt?: string | null;
+};
+
 type PublicResource = {
   slug: string;
   publishedAt?: string | null;
@@ -143,6 +148,17 @@ export async function topicSitemapEntries(): Promise<SitemapCollection> {
     loc: absoluteUrl(`/topics/${topic.slug}`),
     lastmod: asIso(topic.updatedAt),
   }))) };
+}
+
+export async function courseSitemapEntries(): Promise<SitemapCollection> {
+  const loaded = await safeList<PublicCourse>("/courses");
+  return {
+    complete: loaded !== null,
+    entries: uniqueEntries((loaded ?? []).map((course) => ({
+      loc: absoluteUrl(`/courses/${course.slug}`),
+      lastmod: asIso(course.updatedAt),
+    }))),
+  };
 }
 
 export async function resourceSitemapEntries(): Promise<SitemapCollection> {

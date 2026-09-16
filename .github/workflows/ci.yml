@@ -91,6 +91,17 @@ jobs:
           pnpm --filter @konkurcom/api run migrate:down -- 20260909130000_phase15_admissions_sources
           pnpm --filter @konkurcom/api exec prisma migrate deploy
           pnpm --filter @konkurcom/api run migration:verify:phase16 -- cleanup
+
+          # Verify every checked-in reversible migration, in strict reverse
+          # order, against the now-clean test database. Re-applying all four
+          # proves their down paths leave Prisma's migration ledger and the
+          # pre-existing schema in a deployable state.
+          pnpm --filter @konkurcom/api run migrate:down -- 20260912120000_phase16_personal_learning_path
+          pnpm --filter @konkurcom/api run migrate:down -- 20260909130000_phase15_admissions_sources
+          pnpm --filter @konkurcom/api run migrate:down -- 20260906200000_phase9_content_commerce
+          pnpm --filter @konkurcom/api run migrate:down -- 20260906120000_password_auth
+          pnpm --filter @konkurcom/api exec prisma migrate deploy
+          pnpm --filter @konkurcom/api exec prisma migrate status
           pnpm --filter @konkurcom/api run test
 
       # Only four API e2e specs need real S3. Starting MinIO here keeps install,
@@ -163,6 +174,88 @@ jobs:
           fi
 
           exit "$E2E_STATUS"
+
+      # Exercise the real production Next server against a real Nest/Postgres/
+      # MinIO stack. Unit and corpus tests cannot prove HTTP status codes,
+      # canonical metadata, generated sitemaps, RSS, or server-rendered HTML.
+      - name: Public SSR and SEO smoke tests
+        env:
+          PORT: "3001"
+          FRONTEND_URL: http://127.0.0.1:3012
+          INTERNAL_API_URL: http://127.0.0.1:3001
+          NEXT_PUBLIC_SITE_URL: https://kunkur01.ir
+          WEB_TEST_BASE_URL: http://127.0.0.1:3012
+          WEB_TEST_CANONICAL_ORIGIN: https://kunkur01.ir
+        run: |
+          set -euo pipefail
+
+          API_LOG="$RUNNER_TEMP/api-ssr-smoke.log"
+          WEB_LOG="$RUNNER_TEMP/web-ssr-smoke.log"
+          API_PID=""
+          WEB_PID=""
+          cleanup() {
+            [ -z "$WEB_PID" ] || kill "$WEB_PID" 2>/dev/null || true
+            [ -z "$API_PID" ] || kill "$API_PID" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          pnpm --filter @konkurcom/api run seed
+          pnpm --filter @konkurcom/api run start >"$API_LOG" 2>&1 &
+          API_PID=$!
+
+          API_READY=0
+          for _ in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:3001/healthz >/dev/null; then
+              API_READY=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$API_READY" -ne 1 ]; then
+            echo "API did not become ready for SSR smoke tests." >&2
+            cat "$API_LOG" >&2 || true
+            exit 1
+          fi
+
+          pnpm --filter @konkurcom/web exec next start \
+            --hostname 127.0.0.1 --port 3012 >"$WEB_LOG" 2>&1 &
+          WEB_PID=$!
+
+          WEB_READY=0
+          for _ in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:3012/ >/dev/null; then
+              WEB_READY=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$WEB_READY" -ne 1 ]; then
+            echo "Web did not become ready for SSR smoke tests." >&2
+            cat "$WEB_LOG" >&2 || true
+            exit 1
+          fi
+
+          set +e
+          pnpm --filter @konkurcom/web run test:seo && \
+            pnpm --filter @konkurcom/web run test:phase11:ssr && \
+            pnpm --filter @konkurcom/web run test:phase12:ssr && \
+            pnpm --filter @konkurcom/web run test:phase13:ssr && \
+            SITE_URL=https://kunkur01.ir SITE_FETCH_URL=http://127.0.0.1:3012 \
+              pnpm run indexnow:submit -- --dry-run
+          SSR_STATUS=$?
+          set -e
+          if [ "$SSR_STATUS" -ne 0 ]; then
+            echo "SSR/SEO smoke test server logs:" >&2
+            cat "$API_LOG" >&2 || true
+            cat "$WEB_LOG" >&2 || true
+            exit "$SSR_STATUS"
+          fi
+
+      # This isolated dev-server fixture supplies deterministic 404, 503 and
+      # content-type responses. It verifies hard 404s and permanent redirects
+      # without depending on mutable seed content.
+      - name: Dynamic route HTTP semantics
+        run: pnpm --filter @konkurcom/web run test:phase18:routing
 
       # Built here, on the runner, and shipped to the server as images below --
       # the server never compiles anything. Tags are compose's own defaults
@@ -416,16 +509,14 @@ jobs:
           # API and the web app through nginx by IP via --resolve so a deploy
           # cannot be marked healthy while the public site returns 502. curl
           # runs in a container too, not assumed to be on the host.
-          API_DOMAIN="$(grep -E '^API_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
-          API_DOMAIN="${API_DOMAIN:-api.localhost}"
           WEB_DOMAIN="$(grep -E '^WEB_DOMAIN=' .env 2>/dev/null | cut -d= -f2- || true)"
           WEB_DOMAIN="${WEB_DOMAIN:-localhost}"
           RESPONSE=""
           API_HEALTHY=0
           for _ in $(seq 1 60); do
             RESPONSE="$($DOCKER run --rm --network host curlimages/curl:latest \
-              -sk --resolve "${API_DOMAIN}:443:127.0.0.1" \
-              "https://${API_DOMAIN}/healthz" || true)"
+              -sk --resolve "${WEB_DOMAIN}:443:127.0.0.1" \
+              "https://${WEB_DOMAIN}/api/healthz" || true)"
             if echo "$RESPONSE" | grep -q '"status":"ok"'; then
               API_HEALTHY=1
               echo "API healthy: $RESPONSE"
