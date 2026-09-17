@@ -59,7 +59,7 @@ pnpm dev:web
 
 ## Administrator bootstrap
 
-There is **no usable administrator credential in source code**.
+There is **no production administrator credential in source code**. The test suite uses an explicitly test-only credential against disposable test databases; application startup and direct seeding outside `NODE_ENV=test` never fall back to it.
 
 Administrator bootstrap is disabled unless both values are explicitly supplied at runtime:
 
