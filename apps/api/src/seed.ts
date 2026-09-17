@@ -1,18 +1,42 @@
 import { Prisma, PrismaClient, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
 import {
   ensureSeedAdmin,
-  SEED_ADMIN_PHONE,
+  getBootstrapAdminCredentials,
+  SeedAdminCredentials,
 } from "./seed-admin";
 import { seedStaticEditorial } from "./seed-static-editorial";
 import { seedStaticResources } from "./seed-static-resources";
 
 const prisma = new PrismaClient();
 
-export { SEED_ADMIN_PASSWORD, SEED_ADMIN_PHONE } from "./seed-admin";
+// These credentials exist only for isolated Jest/E2E databases. `seed()`
+// refuses to use them outside NODE_ENV=test; direct/dev/production seeding
+// requires explicit bootstrap credentials from the environment.
+export const SEED_ADMIN_PHONE = "+989120000001";
+export const SEED_ADMIN_PASSWORD = "konkur-e2e-only-not-for-production";
 export const SEED_STUDENT_PHONE = "+989120000002";
 export const SEED_COURSE_SLUG = "ce-algorithms-bootcamp";
 export const SEED_PRODUCT_SLUG = "ce-algorithms-bootcamp";
 export const SEED_ARTICLE_SLUG = "big-o-refresher";
+
+function resolveSeedAdminCredentials(
+  credentials?: SeedAdminCredentials,
+): SeedAdminCredentials {
+  if (credentials) {
+    return credentials;
+  }
+
+  if (process.env.NODE_ENV === "test") {
+    return {
+      phone: SEED_ADMIN_PHONE,
+      password: SEED_ADMIN_PASSWORD,
+    };
+  }
+
+  throw new Error(
+    "Seed requires explicit administrator credentials outside NODE_ENV=test",
+  );
+}
 
 async function upsertUserWithRole(phone: string, role: Role) {
   const user = await prisma.user.upsert({
@@ -144,8 +168,9 @@ async function seedCourseAndProduct(authorId: string) {
   });
 }
 
-export async function seed() {
-  const { user: admin } = await ensureSeedAdmin(prisma);
+export async function seed(credentials?: SeedAdminCredentials) {
+  const resolvedCredentials = resolveSeedAdminCredentials(credentials);
+  const { user: admin } = await ensureSeedAdmin(prisma, resolvedCredentials);
   await prisma.contributorProfile.upsert({
     where: { slug: "mohammad-rostami" },
     update: { userId: admin.id },
@@ -166,10 +191,18 @@ export async function seed() {
 }
 
 if (require.main === module) {
-  seed()
+  const credentials = getBootstrapAdminCredentials();
+
+  if (!credentials) {
+    throw new Error(
+      "Direct seed requires BOOTSTRAP_ADMIN_PHONE and BOOTSTRAP_ADMIN_PASSWORD; no production administrator credential is provided",
+    );
+  }
+
+  seed(credentials)
     .then(() => {
       // eslint-disable-next-line no-console
-      console.log("Seed complete: admin=%s student=%s", SEED_ADMIN_PHONE, SEED_STUDENT_PHONE);
+      console.log("Seed complete: admin=%s student=%s", credentials.phone, SEED_STUDENT_PHONE);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

@@ -10,7 +10,7 @@
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\" --ext .ts",
     "test": "jest --config jest.config.cjs",
     "test:e2e": "jest --config jest.e2e.config.cjs",
-    "seed": "ts-node -r tsconfig-paths/register src/seed.ts",
+    "seed": "ts-node -r tsconfig-paths/register src/seed-runner.ts",
     "migrate:down": "ts-node -r tsconfig-paths/register src/migrate-down.ts",
     "migration:verify:phase16": "ts-node -r tsconfig-paths/register src/verify-phase16-migration.ts",
     "prisma": "prisma"
