@@ -1,60 +1,120 @@
-# kunkur01 (کنکورصفریک)
+# Konkur — educational platform for CS/IT entrance exams
 
-## Secrets to configure
+Konkur is an actively developed Persian educational platform for graduate and doctoral Computer Science, Computer Engineering, and Information Technology entrance-exam workflows.
 
-There is a single deploy target (production), driven by one `docker-compose.yml`.
+This repository contains the web application, API, shared contracts, database migrations, editorial/content tooling, deployment automation, and production-oriented infrastructure used by the project.
 
-### GitHub Actions repo secrets (for the deploy steps in `.github/workflows/ci.yml`)
+## What is in the repository
 
-**Required**
+- **Web:** Next.js application with Persian/RTL UI, public content, student flows, and admin-facing surfaces.
+- **API:** NestJS + Prisma service for identity, content, resources, entitlements, educational data, and application workflows.
+- **Data:** PostgreSQL migrations and validated shared schemas/contracts.
+- **Object storage:** MinIO/S3-compatible media and resource storage.
+- **Infrastructure:** Docker Compose, nginx TLS termination, Certbot automation, backups/restore tooling, and GitHub Actions CI/CD.
+- **Editorial workflow:** versioned content, source/provenance metadata, draft/review controls, and generated corpus validation.
 
-| Secret | Purpose |
-|---|---|
-| `SSH_HOST` | Target server to deploy to |
-| `SSH_USER` | SSH user on that server |
-| `SSH_KEY` | Private key for that user (primary auth method) |
-| `DEPLOY_PATH` | Absolute path on the server holding the checked-out repo |
+The project is a product codebase, not only a demo. Some roadmap areas remain under active development; `TODO.md` and the documents under `docs/` describe current phases and constraints.
 
-**Optional**
+## Repository layout
 
-| Secret | Purpose |
-|---|---|
-| `SSH_PASS` | Password fallback, only used if the server has no key configured for `SSH_USER` |
+```text
+apps/
+  api/       NestJS/Prisma backend
+  web/       Next.js frontend
+contracts/   shared schemas, validators, and fixtures
+docs/        architecture, content, research, and phase notes
+ops/         deployment, TLS, backup/restore, and nginx tooling
+scripts/     repository and content automation
+```
 
-### Root `.env` (repo root, read by `docker-compose.yml`)
+## Requirements
 
-**Required**
+- Node.js 20+
+- pnpm 9.12+
+- Docker Engine + Docker Compose plugin for the full stack
+
+## Quick start
+
+```bash
+git clone https://github.com/Mrostami97/konkur.git
+cd konkur
+corepack enable
+pnpm install --frozen-lockfile
+cp .env.example .env
+docker compose up -d --build
+```
+
+For workspace-only development you can also run:
+
+```bash
+pnpm build
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm dev:api
+pnpm dev:web
+```
+
+`docker-compose.yml` is also the production stack, so do not expose the local/default configuration to the public internet. Replace every production password in `.env` with a strong unique value.
+
+## Administrator bootstrap
+
+There is **no usable administrator credential in source code**.
+
+Administrator bootstrap is disabled unless both values are explicitly supplied at runtime:
+
+```dotenv
+BOOTSTRAP_ADMIN_PHONE=
+BOOTSTRAP_ADMIN_PASSWORD=
+```
+
+If only one is provided, startup fails rather than silently creating an unexpected account. After initial provisioning, keep the administrator password under normal account management and remove bootstrap values when they are no longer needed.
+
+## Configuration
+
+Start from `.env.example`. Important production-only values include:
 
 | Variable | Purpose |
-|---|---|
-| `POSTGRES_PASSWORD` | Postgres password |
-| `MINIO_ROOT_PASSWORD` | MinIO root password (also used as the API's S3 secret key) |
+| --- | --- |
+| `POSTGRES_PASSWORD` | PostgreSQL password |
+| `MINIO_ROOT_PASSWORD` | MinIO root/S3 secret |
+| `WEB_DOMAIN` | Canonical public hostname |
+| `TLS_MODE` | `auto`, `acme`, or `selfsigned` |
+| `ACME_EMAIL` | Let's Encrypt expiry/contact email |
+| `BOOTSTRAP_ADMIN_PHONE` | Optional initial administrator phone |
+| `BOOTSTRAP_ADMIN_PASSWORD` | Optional initial administrator password |
 
-**Optional** (default shown)
+GitHub Actions deployment additionally uses repository secrets such as `SSH_HOST`, `SSH_USER`, `SSH_KEY`, and `DEPLOY_PATH`. Never commit their real values.
 
-| Variable | Purpose | Default |
-|---|---|---|
-| `WEB_DOMAIN` | Canonical public hostname for the web app and ACME certificate | `localhost` |
-| `API_DOMAIN` | Optional legacy API hostname; browser traffic normally uses same-origin `/api` | `api.localhost` |
-| `TLS_MODE` | `auto` uses ACME for public names and self-signed TLS for localhost; also accepts `acme` or `selfsigned` | `auto` |
-| `ACME_EMAIL` | Address for certificate-expiry notices (recommended in production) | empty |
-| `ACME_STAGING` | Set to `1` while testing ACME without production rate limits | `0` |
-| `GOOGLE_SITE_VERIFICATION` | Search Console HTML verification token, when using the URL-prefix method | empty |
-| `BING_SITE_VERIFICATION` | Bing Webmaster Tools `msvalidate.01` verification token | empty |
-| `SESSION_TTL_HOURS` | Session cookie lifetime | `720` |
-| `OTP_TTL_MINUTES` | OTP code lifetime | `5` |
-| `OTP_MAX_ATTEMPTS` | OTP verify attempts before lockout | `5` |
+Detailed deployment, TLS, backup/restore, migration, rollback, and health-check procedures are documented in [`ops/runbook.md`](ops/runbook.md).
 
-## TLS
+## Testing and CI
 
-`nginx` terminates TLS and reverse-proxies the web app plus the same-origin
-`/api` gateway. In production (`TLS_MODE=auto` with a public `WEB_DOMAIN`),
-Certbot obtains and renews a Let's Encrypt certificate through the HTTP-01
-webroot challenge. A temporary self-signed certificate lets nginx start before
-the first issuance; nginx validates and hot-reloads renewed certificate files.
+The GitHub Actions workflow builds the workspaces, runs lint/type checking, unit and integration tests, validates production images and TLS bootstrap, and deploys only from `main` after the preceding gates succeed.
 
-For local development, `TLS_MODE=auto` keeps self-signed TLS. The derived
-`www.<WEB_DOMAIN>` alias and `API_DOMAIN` are added to the public certificate only when they resolve in
-public DNS, so an optional hostname cannot block issuance for the canonical
-site. The browser does not require `API_DOMAIN`: authenticated requests use
-`https://<WEB_DOMAIN>/api/...`.
+Before opening a pull request, run the checks relevant to your change:
+
+```bash
+pnpm build
+pnpm lint
+pnpm typecheck
+pnpm test
+```
+
+Behavior changes should include regression tests. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Security and privacy
+
+Do not put real credentials, private keys, production `.env` files, session material, or student PII in commits, fixtures, issues, or logs.
+
+For vulnerability reporting and credential-handling rules, see [`SECURITY.md`](SECURITY.md).
+
+## Contributing
+
+Contributions are welcome when they preserve the project's validation, provenance, privacy, and review rules. Start with [`CONTRIBUTING.md`](CONTRIBUTING.md) and keep pull requests focused and testable.
+
+## License
+
+Original project source code and documentation are available under the [MIT License](LICENSE), except where a file or directory states otherwise.
+
+Third-party fonts, images, documents, dependencies, trademarks, and other assets are **not automatically relicensed under MIT**. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) before redistributing non-code assets.
