@@ -1,14 +1,21 @@
+import { randomBytes } from "node:crypto";
 import { Prisma, PrismaClient, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
 import {
   ensureSeedAdmin,
-  SEED_ADMIN_PHONE,
+  getBootstrapAdminCredentials,
+  SeedAdminCredentials,
 } from "./seed-admin";
 import { seedStaticEditorial } from "./seed-static-editorial";
 import { seedStaticResources } from "./seed-static-resources";
 
 const prisma = new PrismaClient();
 
-export { SEED_ADMIN_PASSWORD, SEED_ADMIN_PHONE } from "./seed-admin";
+// Programmatic test seeds use a synthetic phone and a fresh random password for
+// each Node process. The password is exported only so the E2E suite can verify
+// password login against the exact credential it just seeded; there is no
+// reusable password literal in source control.
+export const SEED_ADMIN_PHONE = "+989120000001";
+export const SEED_ADMIN_PASSWORD = randomBytes(24).toString("base64url");
 export const SEED_STUDENT_PHONE = "+989120000002";
 export const SEED_COURSE_SLUG = "ce-algorithms-bootcamp";
 export const SEED_PRODUCT_SLUG = "ce-algorithms-bootcamp";
@@ -144,8 +151,13 @@ async function seedCourseAndProduct(authorId: string) {
   });
 }
 
-export async function seed() {
-  const { user: admin } = await ensureSeedAdmin(prisma);
+export async function seed(
+  credentials: SeedAdminCredentials = {
+    phone: SEED_ADMIN_PHONE,
+    password: SEED_ADMIN_PASSWORD,
+  },
+) {
+  const { user: admin } = await ensureSeedAdmin(prisma, credentials);
   await prisma.contributorProfile.upsert({
     where: { slug: "mohammad-rostami" },
     update: { userId: admin.id },
@@ -166,10 +178,18 @@ export async function seed() {
 }
 
 if (require.main === module) {
-  seed()
+  const credentials = getBootstrapAdminCredentials();
+
+  if (!credentials) {
+    throw new Error(
+      "Direct seed requires BOOTSTRAP_ADMIN_PHONE and BOOTSTRAP_ADMIN_PASSWORD; no default administrator credential is provided",
+    );
+  }
+
+  seed(credentials)
     .then(() => {
       // eslint-disable-next-line no-console
-      console.log("Seed complete: admin=%s student=%s", SEED_ADMIN_PHONE, SEED_STUDENT_PHONE);
+      console.log("Seed complete: admin=%s student=%s", credentials.phone, SEED_STUDENT_PHONE);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
