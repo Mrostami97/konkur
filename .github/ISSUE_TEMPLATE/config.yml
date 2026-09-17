@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Mrostami97/konkur/security
+    about: Do not disclose vulnerabilities or credentials in a public issue. Follow SECURITY.md.
