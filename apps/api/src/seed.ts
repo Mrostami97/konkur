@@ -1,4 +1,3 @@
-import { randomBytes } from "node:crypto";
 import { Prisma, PrismaClient, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
 import {
   ensureSeedAdmin,
@@ -10,16 +9,34 @@ import { seedStaticResources } from "./seed-static-resources";
 
 const prisma = new PrismaClient();
 
-// Programmatic test seeds use a synthetic phone and a fresh random password for
-// each Node process. The password is exported only so the E2E suite can verify
-// password login against the exact credential it just seeded; there is no
-// reusable password literal in source control.
+// These credentials exist only for isolated Jest/E2E databases. `seed()`
+// refuses to use them outside NODE_ENV=test; direct/dev/production seeding
+// requires explicit bootstrap credentials from the environment.
 export const SEED_ADMIN_PHONE = "+989120000001";
-export const SEED_ADMIN_PASSWORD = randomBytes(24).toString("base64url");
+export const SEED_ADMIN_PASSWORD = "konkur-e2e-only-not-for-production";
 export const SEED_STUDENT_PHONE = "+989120000002";
 export const SEED_COURSE_SLUG = "ce-algorithms-bootcamp";
 export const SEED_PRODUCT_SLUG = "ce-algorithms-bootcamp";
 export const SEED_ARTICLE_SLUG = "big-o-refresher";
+
+function resolveSeedAdminCredentials(
+  credentials?: SeedAdminCredentials,
+): SeedAdminCredentials {
+  if (credentials) {
+    return credentials;
+  }
+
+  if (process.env.NODE_ENV === "test") {
+    return {
+      phone: SEED_ADMIN_PHONE,
+      password: SEED_ADMIN_PASSWORD,
+    };
+  }
+
+  throw new Error(
+    "Seed requires explicit administrator credentials outside NODE_ENV=test",
+  );
+}
 
 async function upsertUserWithRole(phone: string, role: Role) {
   const user = await prisma.user.upsert({
@@ -151,13 +168,9 @@ async function seedCourseAndProduct(authorId: string) {
   });
 }
 
-export async function seed(
-  credentials: SeedAdminCredentials = {
-    phone: SEED_ADMIN_PHONE,
-    password: SEED_ADMIN_PASSWORD,
-  },
-) {
-  const { user: admin } = await ensureSeedAdmin(prisma, credentials);
+export async function seed(credentials?: SeedAdminCredentials) {
+  const resolvedCredentials = resolveSeedAdminCredentials(credentials);
+  const { user: admin } = await ensureSeedAdmin(prisma, resolvedCredentials);
   await prisma.contributorProfile.upsert({
     where: { slug: "mohammad-rostami" },
     update: { userId: admin.id },
@@ -182,7 +195,7 @@ if (require.main === module) {
 
   if (!credentials) {
     throw new Error(
-      "Direct seed requires BOOTSTRAP_ADMIN_PHONE and BOOTSTRAP_ADMIN_PASSWORD; no default administrator credential is provided",
+      "Direct seed requires BOOTSTRAP_ADMIN_PHONE and BOOTSTRAP_ADMIN_PASSWORD; no production administrator credential is provided",
     );
   }
 
