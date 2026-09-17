@@ -256,12 +256,15 @@ builds, the runner ships.
   "ERROR:  is not a git checkout" against an empty path. `.env` and
   `node_modules` are excluded from the sync so server-side secrets survive
   `--delete`.
-- **The images.** `docker compose build api web` runs on the runner, and both
-  images are streamed to the server in a single `docker save | gzip | docker
-  load` (one stream, so their shared base layers dedupe). The server then runs
-  `docker compose up -d --no-build` and compiles nothing. If that fails for
-  any reason it falls back to `up -d --build`, so a botched image transfer
-  can't take the site down — it just makes that one deploy slow.
+- **The images.** `docker compose build api web` runs on the runner. The web
+  image uses Next.js standalone output and the API image contains production
+  dependencies only, keeping the deployment payload bounded. Both images are
+  saved to one verified gzip archive, then rsync reports progress and preserves
+  a resumable partial under `.deploy-images/`. SSH keepalives and three transfer
+  attempts prevent a transient connection reset from discarding hours of work.
+  The server loads the completed archive and runs `docker compose up -d
+  --no-build`, so it compiles nothing. If startup fails it still falls back to
+  `up -d --build`, keeping the previous containers available during transfer.
 - The post-deploy `/healthz` wait (below) also runs `curl` in a container
   (`curlimages/curl`), not on the host.
 

@@ -265,6 +265,28 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: docker compose build api web
 
+      - name: Validate production image runtimes and size
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          docker run --rm --entrypoint sh konkurcom-360-api:latest -ec \
+            'test -f dist/main.js && test -f dist/bootstrap-admin.js && test -x node_modules/.bin/prisma'
+          docker run --rm --entrypoint sh konkurcom-360-web:latest -ec \
+            'test -f apps/web/server.js && test -d apps/web/.next/static && test -d apps/web/public'
+
+          API_BYTES="$(docker image inspect --format '{{.Size}}' konkurcom-360-api:latest)"
+          WEB_BYTES="$(docker image inspect --format '{{.Size}}' konkurcom-360-web:latest)"
+          TOTAL_BYTES=$((API_BYTES + WEB_BYTES))
+          echo "API image: $((API_BYTES / 1024 / 1024)) MiB"
+          echo "Web image: $((WEB_BYTES / 1024 / 1024)) MiB"
+          echo "Combined images: $((TOTAL_BYTES / 1024 / 1024)) MiB"
+          if [ "$API_BYTES" -gt $((900 * 1024 * 1024)) ] || \
+             [ "$WEB_BYTES" -gt $((900 * 1024 * 1024)) ] || \
+             [ "$TOTAL_BYTES" -gt $((1400 * 1024 * 1024)) ]; then
+            echo "ERROR: production images exceed the bounded deployment budget." >&2
+            exit 1
+          fi
+
       # Exercise the exact bootstrap volume and nginx entrypoint path used on
       # the server. This catches regressions where a command override bypasses
       # nginx's template renderer and silently serves the stock welcome page.
@@ -332,14 +354,15 @@ jobs:
 
           # SSH_KEY is primary; SSH_PASS is the fallback (via sshpass, reading
           # the password from the environment rather than argv).
+          SSH_OPTIONS="-o ServerAliveInterval=30 -o ServerAliveCountMax=6 -o TCPKeepAlive=yes -o ConnectTimeout=30"
           if [ -n "${SSH_KEY:-}" ]; then
             printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
             chmod 600 ~/.ssh/deploy_key
-            SSH="ssh -i $HOME/.ssh/deploy_key -o BatchMode=yes"
+            SSH="ssh -i $HOME/.ssh/deploy_key -o BatchMode=yes $SSH_OPTIONS"
           elif [ -n "${SSH_PASS:-}" ]; then
             sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
             export SSHPASS="$SSH_PASS"
-            SSH="sshpass -e ssh"
+            SSH="sshpass -e ssh $SSH_OPTIONS"
           else
             echo "ERROR: neither SSH_KEY nor SSH_PASS is set." >&2
             exit 1
@@ -479,18 +502,13 @@ jobs:
           PROVISION_OUT="$(run_remote /tmp/provision.sh "DEPLOY_PATH='$DEPLOY_PATH'")"
           echo "$PROVISION_OUT"
 
-          RDOCKER="docker"
-          if echo "$PROVISION_OUT" | grep -q 'docker_sudo=yes'; then
-            RDOCKER="sudo docker"
-          fi
-
           # ---- 2. ship the source (compose file, ops/, Dockerfiles) -------
           echo "== Shipping source =="
           if echo "$PROVISION_OUT" | grep -q 'has_rsync=yes'; then
             # --delete keeps the server free of files deleted upstream, but
             # .env lives only on the server (secrets, domains) and must survive.
             rsync -az --delete \
-              --exclude '.git' --exclude '.env' --exclude 'node_modules' \
+              --exclude '.git' --exclude '.env' --exclude '.deploy-images' --exclude 'node_modules' \
               --exclude '.next' --exclude 'dist' --exclude '.turbo' \
               --exclude 'coverage' --exclude 'playwright-report' --exclude 'test-results' \
               -e "$SSH" ./ "$REMOTE:$DEPLOY_PATH/"
@@ -517,13 +535,58 @@ jobs:
           fi
 
           # ---- 3. ship the images built above -----------------------------
-          # Saving both in one stream lets their shared base layers dedupe.
-          # `docker load` detects the gzip itself. This is what lets the server
-          # skip building entirely.
-          echo "== Shipping images =="
+          # Materialize the compressed archive before opening SSH. The old
+          # streaming pipe had no progress, no resumability and lost the whole
+          # transfer when the VPS connection reset after more than two hours.
+          # rsync keeps a verified partial on the server, reports progress and
+          # retries the same immutable archive without rebuilding it.
+          echo "== Preparing deployment image archive =="
+          IMAGE_ARCHIVE="$RUNNER_TEMP/konkur-images-${GITHUB_SHA}.tar.gz"
+          REMOTE_IMAGE_DIR="$DEPLOY_PATH/.deploy-images"
+          REMOTE_IMAGE_ARCHIVE="$REMOTE_IMAGE_DIR/konkur-images-${GITHUB_SHA}.tar.gz"
           docker save konkurcom-360-api:latest konkurcom-360-web:latest \
-            | gzip -1 \
-            | $SSH "$REMOTE" "$RDOCKER load"
+            | gzip -1 > "$IMAGE_ARCHIVE"
+          gzip -t "$IMAGE_ARCHIVE"
+          echo "Archive size: $(du -h "$IMAGE_ARCHIVE" | awk '{print $1}')"
+
+          cat > /tmp/prepare-image-dir.sh <<'PREPARE_IMAGE_DIR'
+          case "$DEPLOY_IMAGE_DIR" in
+            /*/.deploy-images) ;;
+            *) echo "ERROR: refusing unbounded deployment image directory." >&2; exit 1 ;;
+          esac
+          mkdir -p "$DEPLOY_IMAGE_DIR"
+          find "$DEPLOY_IMAGE_DIR" -maxdepth 1 -type f -mtime +2 -delete
+          PREPARE_IMAGE_DIR
+          run_remote /tmp/prepare-image-dir.sh "DEPLOY_IMAGE_DIR='$REMOTE_IMAGE_DIR'"
+
+          IMAGE_TRANSFERRED=0
+          for attempt in 1 2 3; do
+            echo "== Shipping images (attempt $attempt/3) =="
+            if rsync -a --partial --append-verify --human-readable \
+              --info=progress2 --timeout=600 \
+              -e "$SSH" "$IMAGE_ARCHIVE" "$REMOTE:$REMOTE_IMAGE_ARCHIVE"; then
+              IMAGE_TRANSFERRED=1
+              break
+            fi
+            echo "Image transfer attempt $attempt failed; the next attempt will resume the verified partial." >&2
+            sleep 10
+          done
+          if [ "$IMAGE_TRANSFERRED" -ne 1 ]; then
+            echo "ERROR: image archive transfer failed after three attempts." >&2
+            exit 1
+          fi
+
+          cat > /tmp/load-images.sh <<'LOAD_IMAGES'
+          case "$IMAGE_ARCHIVE" in
+            /*/.deploy-images/konkur-images-*.tar.gz) ;;
+            *) echo "ERROR: refusing image archive outside the deployment staging directory." >&2; exit 1 ;;
+          esac
+          [ -s "$IMAGE_ARCHIVE" ] || { echo "ERROR: transferred image archive is empty." >&2; exit 1; }
+          echo "== Loading deployment images on the server =="
+          $DOCKER load --input "$IMAGE_ARCHIVE"
+          rm -f -- "$IMAGE_ARCHIVE"
+          LOAD_IMAGES
+          run_remote /tmp/load-images.sh "IMAGE_ARCHIVE='$REMOTE_IMAGE_ARCHIVE'"
 
           # ---- 4. start services, then wait for /healthz -------------------
           cat > /tmp/up.sh <<'UP'
