@@ -228,8 +228,9 @@ Until a real server exists, the job logs "deploy skipped: SSH_HOST not set" and
 exits 0 so it never blocks CI.
 
 **Everything the server needs is auto-provisioned on every deploy run.** The
-server compiles nothing and needs no GitHub credential of its own: the runner
-builds, the runner ships.
+server compiles nothing and needs no persistent GitHub credential of its own:
+the runner builds and publishes immutable images, and the server pulls them
+with the workflow's short-lived token.
 
 - **Docker Engine + the Compose plugin.** If `docker` isn't on `PATH`, the
   deploy script installs it, using `sudo` when the SSH user isn't root:
@@ -258,13 +259,15 @@ builds, the runner ships.
   `--delete`.
 - **The images.** `docker compose build api web` runs on the runner. The web
   image uses Next.js standalone output and the API image contains production
-  dependencies only, keeping the deployment payload bounded. Both images are
-  saved to one verified gzip archive, then rsync reports progress and preserves
-  a resumable partial under `.deploy-images/`. SSH keepalives and three transfer
-  attempts prevent a transient connection reset from discarding hours of work.
-  The server loads the completed archive and runs `docker compose up -d
-  --no-build`, so it compiles nothing. If startup fails it still falls back to
-  `up -d --build`, keeping the previous containers available during transfer.
+  dependencies only, keeping the deployment payload bounded. After validation,
+  CI pushes both commit-addressed images to GitHub Container Registry. The VPS
+  authenticates with the workflow's masked, job-scoped `GITHUB_TOKEN`, pulls
+  content-addressed layers directly from GHCR, then removes the temporary Docker
+  auth directory. This replaces the runner-to-VPS SSH archive path, which was
+  too slow for production delivery. The server tags the verified images with
+  Compose's local names and runs `docker compose up -d --no-build`, so it
+  compiles nothing. If startup fails it still falls back to `up -d --build`,
+  keeping the previous containers available while the new images are pulled.
 - The post-deploy `/healthz` wait (below) also runs `curl` in a container
   (`curlimages/curl`), not on the host.
 

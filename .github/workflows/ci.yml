@@ -12,6 +12,7 @@ concurrency:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   build-test-deploy:
@@ -306,6 +307,27 @@ jobs:
           docker compose run --rm --no-deps nginx \
             /bin/sh -ec '/docker-entrypoint.sh nginx -t'
 
+      # Publish the already-tested production images to GHCR. Pulling registry
+      # layers from the VPS is dramatically faster and resumable at the layer
+      # level; the old single SSH archive transferred only 137 MiB in six hours.
+      - name: Publish production images to GHCR
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          REPOSITORY_LC="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          API_IMAGE="ghcr.io/${REPOSITORY_LC}-api:${GITHUB_SHA}"
+          WEB_IMAGE="ghcr.io/${REPOSITORY_LC}-web:${GITHUB_SHA}"
+
+          printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+
+          docker tag konkurcom-360-api:latest "$API_IMAGE"
+          docker tag konkurcom-360-web:latest "$WEB_IMAGE"
+          docker push "$API_IMAGE"
+          docker push "$WEB_IMAGE"
+
       # Deploy is the tail of this same job: steps run in order and stop at the
       # first failure, so this only runs if everything above was green.
       #
@@ -325,6 +347,7 @@ jobs:
           DEPLOY_WEB_DOMAIN: ${{ vars.WEB_DOMAIN }}
           DEPLOY_API_DOMAIN: ${{ vars.API_DOMAIN }}
           GH_TOKEN: ${{ github.token }}
+          GHCR_USER: ${{ github.actor }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
@@ -534,59 +557,64 @@ jobs:
               "DEPLOY_PATH='$DEPLOY_PATH'" "REPO='$REPO'" "GH_TOKEN='$GH_TOKEN'"
           fi
 
-          # ---- 3. ship the images built above -----------------------------
-          # Materialize the compressed archive before opening SSH. The old
-          # streaming pipe had no progress, no resumability and lost the whole
-          # transfer when the VPS connection reset after more than two hours.
-          # rsync keeps a verified partial on the server, reports progress and
-          # retries the same immutable archive without rebuilding it.
-          echo "== Preparing deployment image archive =="
-          IMAGE_ARCHIVE="$RUNNER_TEMP/konkur-images-${GITHUB_SHA}.tar.gz"
-          REMOTE_IMAGE_DIR="$DEPLOY_PATH/.deploy-images"
-          REMOTE_IMAGE_ARCHIVE="$REMOTE_IMAGE_DIR/konkur-images-${GITHUB_SHA}.tar.gz"
-          docker save konkurcom-360-api:latest konkurcom-360-web:latest \
-            | gzip -1 > "$IMAGE_ARCHIVE"
-          gzip -t "$IMAGE_ARCHIVE"
-          echo "Archive size: $(du -h "$IMAGE_ARCHIVE" | awk '{print $1}')"
+          # ---- 3. pull the images built above -----------------------------
+          # The VPS downloads compressed, content-addressed layers from GHCR.
+          # This avoids the extremely slow runner-to-VPS SSH data path and lets
+          # Docker reuse completed layers on retries.
+          REPOSITORY_LC="$(printf '%s' "$REPO" | tr '[:upper:]' '[:lower:]')"
+          API_IMAGE="ghcr.io/${REPOSITORY_LC}-api:${GITHUB_SHA}"
+          WEB_IMAGE="ghcr.io/${REPOSITORY_LC}-web:${GITHUB_SHA}"
 
-          cat > /tmp/prepare-image-dir.sh <<'PREPARE_IMAGE_DIR'
-          case "$DEPLOY_IMAGE_DIR" in
-            /*/.deploy-images) ;;
-            *) echo "ERROR: refusing unbounded deployment image directory." >&2; exit 1 ;;
+          cat > /tmp/pull-images.sh <<'PULL_IMAGES'
+          case "$API_IMAGE" in
+            ghcr.io/*-api:*) ;;
+            *) echo "ERROR: invalid API image reference." >&2; exit 1 ;;
           esac
-          mkdir -p "$DEPLOY_IMAGE_DIR"
-          find "$DEPLOY_IMAGE_DIR" -maxdepth 1 -type f -mtime +2 -delete
-          PREPARE_IMAGE_DIR
-          run_remote /tmp/prepare-image-dir.sh "DEPLOY_IMAGE_DIR='$REMOTE_IMAGE_DIR'"
+          case "$WEB_IMAGE" in
+            ghcr.io/*-web:*) ;;
+            *) echo "ERROR: invalid web image reference." >&2; exit 1 ;;
+          esac
 
-          IMAGE_TRANSFERRED=0
-          for attempt in 1 2 3; do
-            echo "== Shipping images (attempt $attempt/3) =="
-            if rsync -a --partial --append-verify --human-readable \
-              --info=progress2 --timeout=600 \
-              -e "$SSH" "$IMAGE_ARCHIVE" "$REMOTE:$REMOTE_IMAGE_ARCHIVE"; then
-              IMAGE_TRANSFERRED=1
-              break
+          DOCKER_CONFIG_DIR="$(mktemp -d)"
+          cleanup_registry_auth() {
+            if [ "$DOCKER" = "docker" ]; then
+              docker --config "$DOCKER_CONFIG_DIR" logout ghcr.io >/dev/null 2>&1 || true
+            else
+              $SUDO docker --config "$DOCKER_CONFIG_DIR" logout ghcr.io >/dev/null 2>&1 || true
             fi
-            echo "Image transfer attempt $attempt failed; the next attempt will resume the verified partial." >&2
-            sleep 10
-          done
-          if [ "$IMAGE_TRANSFERRED" -ne 1 ]; then
-            echo "ERROR: image archive transfer failed after three attempts." >&2
-            exit 1
+            rm -rf -- "$DOCKER_CONFIG_DIR"
+          }
+          trap cleanup_registry_auth EXIT
+
+          if [ "$DOCKER" = "docker" ]; then
+            printf '%s' "$GH_TOKEN" | docker --config "$DOCKER_CONFIG_DIR" login ghcr.io -u "$GHCR_USER" --password-stdin
+            docker --config "$DOCKER_CONFIG_DIR" pull "$API_IMAGE"
+            docker --config "$DOCKER_CONFIG_DIR" pull "$WEB_IMAGE"
+          else
+            printf '%s' "$GH_TOKEN" | $SUDO docker --config "$DOCKER_CONFIG_DIR" login ghcr.io -u "$GHCR_USER" --password-stdin
+            $SUDO docker --config "$DOCKER_CONFIG_DIR" pull "$API_IMAGE"
+            $SUDO docker --config "$DOCKER_CONFIG_DIR" pull "$WEB_IMAGE"
           fi
 
-          cat > /tmp/load-images.sh <<'LOAD_IMAGES'
-          case "$IMAGE_ARCHIVE" in
-            /*/.deploy-images/konkur-images-*.tar.gz) ;;
-            *) echo "ERROR: refusing image archive outside the deployment staging directory." >&2; exit 1 ;;
+          $DOCKER image inspect "$API_IMAGE" >/dev/null
+          $DOCKER image inspect "$WEB_IMAGE" >/dev/null
+          $DOCKER tag "$API_IMAGE" konkurcom-360-api:latest
+          $DOCKER tag "$WEB_IMAGE" konkurcom-360-web:latest
+
+          # Remove only obsolete archives from the old bounded staging folder.
+          OLD_IMAGE_DIR="$DEPLOY_PATH/.deploy-images"
+          case "$OLD_IMAGE_DIR" in
+            /*/.deploy-images)
+              find "$OLD_IMAGE_DIR" -maxdepth 1 -type f -name 'konkur-images-*.tar.gz' -delete 2>/dev/null || true
+              ;;
           esac
-          [ -s "$IMAGE_ARCHIVE" ] || { echo "ERROR: transferred image archive is empty." >&2; exit 1; }
-          echo "== Loading deployment images on the server =="
-          $DOCKER load --input "$IMAGE_ARCHIVE"
-          rm -f -- "$IMAGE_ARCHIVE"
-          LOAD_IMAGES
-          run_remote /tmp/load-images.sh "IMAGE_ARCHIVE='$REMOTE_IMAGE_ARCHIVE'"
+          PULL_IMAGES
+          run_remote /tmp/pull-images.sh \
+            "DEPLOY_PATH='$DEPLOY_PATH'" \
+            "API_IMAGE='$API_IMAGE'" \
+            "WEB_IMAGE='$WEB_IMAGE'" \
+            "GHCR_USER='$GHCR_USER'" \
+            "GH_TOKEN='$GH_TOKEN'"
 
           # ---- 4. start services, then wait for /healthz -------------------
           cat > /tmp/up.sh <<'UP'
