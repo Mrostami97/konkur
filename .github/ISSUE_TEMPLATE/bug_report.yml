@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a reproducible defect in the public project
+title: "bug: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include passwords, tokens, private keys, student PII, or undisclosed vulnerabilities. Use the security reporting process in SECURITY.md for sensitive issues.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest reliable sequence that reproduces the issue.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit or version
+      description: Commit SHA, branch, or release where the issue occurs.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Web
+        - API
+        - Database / migrations
+        - Contracts / validation
+        - Content / editorial tooling
+        - CI / deployment / ops
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Relevant logs or screenshots
+      description: Redact all secrets and personal data before posting.
