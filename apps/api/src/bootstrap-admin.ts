@@ -1,16 +1,28 @@
 import { PrismaClient } from "@prisma/client";
-import { ensureSeedAdmin, SEED_ADMIN_PHONE } from "./seed-admin";
+import {
+  ensureSeedAdmin,
+  getBootstrapAdminCredentials,
+} from "./seed-admin";
 
 const prisma = new PrismaClient();
 
 async function bootstrapAdmin() {
-  const { passwordInitialized } = await ensureSeedAdmin(prisma);
-  // Do not log the password or its hash. This message is intentionally safe
-  // for production deployment logs.
+  const credentials = getBootstrapAdminCredentials();
+
+  if (!credentials) {
+    // eslint-disable-next-line no-console
+    console.log(
+      "Administrator bootstrap skipped: BOOTSTRAP_ADMIN_PHONE and BOOTSTRAP_ADMIN_PASSWORD are not configured",
+    );
+    return;
+  }
+
+  const { passwordInitialized } = await ensureSeedAdmin(prisma, credentials);
+
+  // Do not log the administrator phone, password, or password hash.
   // eslint-disable-next-line no-console
   console.log(
-    "Administrator bootstrap complete: phone=%s password=%s",
-    SEED_ADMIN_PHONE,
+    "Administrator bootstrap complete: password=%s",
     passwordInitialized ? "initialized" : "preserved",
   );
 }
