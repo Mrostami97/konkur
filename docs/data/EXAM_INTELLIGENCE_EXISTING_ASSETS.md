@@ -185,3 +185,56 @@ After safe integration it can power:
 - Knowledge Graph evidence links
 
 It should become part of the future Knowledge Graph/evidence layer, but it must not delay the current Product Completion priority.
+
+
+## Owner directive: maximize use of all available data
+
+The owner explicitly wants the ecosystem to make use of **all available data** rather than discarding useful records.
+
+This means future integration should preserve every useful field and source record in the internal data layer, subject to validation and provenance.
+
+Use a three-tier policy instead of deleting data:
+
+### Tier A — Public product data
+Data that can be safely and lawfully exposed directly in user-facing features, subject to privacy and source validation.
+
+Examples:
+- factual exam year/rank/score fields where publication is permitted
+- official university/program/capacity data
+- owner-provided or owner-authorized records
+- anonymized records with valid consent/rights
+
+### Tier B — Derived/aggregated product data
+Raw records remain internal, but validated derived outputs may be used publicly when lawful.
+
+Examples:
+- distributions
+- medians/percentiles
+- similar-scorecard retrieval
+- rank/admission model features
+- aggregated historical trends
+- benchmark ranges
+- anonymized cohort statistics
+
+### Tier C — Internal-only evidence
+Keep the record and provenance internally for research, QA, deduplication, model validation, reconciliation, and competitor/market intelligence, but do not expose the raw record publicly until rights/privacy constraints are resolved.
+
+Examples:
+- competitor-originated records whose republication rights are unclear
+- source workbooks with restrictive reuse notes
+- records with insufficient consent
+- private/raw provenance fields
+
+### Implementation rule
+
+Do **not** throw away Tier B or Tier C records merely because they cannot be published verbatim.
+
+Instead:
+1. preserve them in a private evidence/warehouse layer;
+2. retain source/provenance and rights metadata;
+3. mark allowed uses explicitly;
+4. expose only the permitted projection to public APIs;
+5. allow approved derived analytics to use the broader internal dataset when legally and ethically permissible;
+6. keep model training datasets versioned and reproducible.
+
+The desired outcome is maximum information value with minimum unnecessary data loss, while keeping public output compliant and auditable.
