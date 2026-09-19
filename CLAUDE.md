@@ -171,3 +171,23 @@ Sources eventually include:
 Competitor content is for need/gap discovery only. Never copy or paragraph-rewrite competitor content.
 
 The site runtime remains AI-free. Any research/writing agent runs externally and may only produce import/review artifacts; it never writes canonical Postgres data directly.
+
+
+## Learning growth, bank access and AEO
+
+Owner-approved product model:
+- `docs/roadmap/LEARNING_GROWTH_ACCESS_AND_AEO.md`
+
+Current Product Completion must already respect these business rules:
+
+- public Subject/Topic/Guide pages show only a configurable sample of relevant questions;
+- full bank access is entitlement-controlled server-side;
+- Question Bank remains independently sellable;
+- purchasing a Course includes the related Question Bank access at no additional charge;
+- weak/base-deficient and strong students follow different planning paths;
+- self-reported level is not mastery;
+- mastery is assessment-evidence based;
+- study load grows gradually from real behavior;
+- AEO is an additional discovery strategy, not a replacement for SEO.
+
+Do not send locked question content to unauthorized clients and hide it only with CSS/JavaScript.
