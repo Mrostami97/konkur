@@ -272,6 +272,18 @@ After 18A:
 
 ---
 
+# Student Need Intelligence — continuous demand layer
+
+Before/during Phase 19, implement the staged roadmap in:
+
+- `docs/roadmap/STUDENT_NEED_INTELLIGENCE_CONTENT_ENGINE.md`
+
+This layer discovers recurring student needs from first-party behavior, public competitor/Telegram signals, search-market data, and official changes; clusters and scores them; then produces evidence-backed Content Opportunities and Briefs.
+
+Important: runtime remains AI-free. External research/writing agents may generate import-contract drafts only; they never publish directly.
+
+---
+
 # Phase 19 — Content Ecosystem Integration
 
 Goal: make content a product surface, not an isolated publishing section.
