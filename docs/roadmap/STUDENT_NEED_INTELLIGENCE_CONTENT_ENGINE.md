@@ -1454,3 +1454,32 @@ Supporting KPIs:
 - refresh SLA compliance
 
 The editorial organization should optimize these metrics, not monthly article volume.
+
+
+# 30. AEO + gated question-bank interaction
+
+Need-driven content must not accidentally expose the paid bank.
+
+For topic/concept pages:
+
+- provide a useful direct answer;
+- show a configurable small sample of questions;
+- show aggregate/historical context where valid;
+- keep the remaining bank behind entitlement;
+- connect the page to the exact course/lesson and bank scope;
+- change CTA based on entitlement state.
+
+Course buyers receive the related Question Bank entitlement automatically, while the bank remains independently sellable.
+
+AEO is implemented on top of normal SEO, not instead of it.
+
+Use:
+- answer-first structure;
+- explicit entities/relationships;
+- source/freshness metadata;
+- original first-party data;
+- crawlable public text;
+- appropriate structured data;
+- OAI-SearchBot access for eligible public routes.
+
+Do not expose locked questions in structured data or hidden page payloads.
