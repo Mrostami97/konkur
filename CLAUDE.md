@@ -1,0 +1,124 @@
+# CLAUDE.md — current owner priorities
+
+Read this file **before** touching code. Then read `AGENTS.md`, `TODO.md`, and the roadmap documents referenced below.
+
+This file records the owner's current execution priority as of 2026-09-19. Existing phase checkmarks do **not** mean the product is considered complete from a real user/admin perspective.
+
+## Current priority: Product Completion first
+
+The owner does not consider kunkur01 launch-ready yet. The current priority is to turn the existing codebase into a polished, usable educational product before final release polish, Knowledge Graph work, or advanced programmatic SEO.
+
+### Build now
+
+1. Professional Persian RTL UI/UX across the whole mother site.
+2. A real, usable admin panel for daily operations.
+3. Student-facing question-bank UX.
+4. Complete exam-taking, result, and review UX.
+5. Course authoring/management and course-consumption UX.
+6. Account/dashboard, entitlements, commerce, content, report-card, admissions, and analytics UX where backend support already exists.
+7. Loading/error/empty states, broken actions, dead routes, unfinished forms, permission gaps, and any fake/mock production data.
+8. Responsive behavior on mobile, tablet, and desktop.
+9. Preserve all existing SEO, public slugs, provenance, review, and source rules.
+
+Detailed scope:
+- `docs/roadmap/PRODUCT_COMPLETION_AND_KNOWLEDGE_GRAPH.md`
+
+## Do not implement yet
+
+Until Product Completion is explicitly accepted by the owner, do **not** start:
+
+- Neo4j or another graph database.
+- Large taxonomy or Question-schema rewrites solely for Knowledge Graph needs.
+- Runtime AI/LLM features.
+- Programmatic SEO page explosion.
+- Adaptive learning driven by a future graph.
+- Large migrations whose only purpose is future graph capability.
+
+Current work should remain compatible with those future phases, but should not build them prematurely.
+
+## Long-term product direction: strong Knowledge Graph
+
+The owner has chosen a strong Knowledge Graph as the long-term content architecture of کنکورصفرویک.
+
+Target semantic chain:
+
+`Exam → Subject → Topic → Subtopic → Question → Solution → Article/Guide → Resource → Course → Module → Lesson → Product`
+
+Admissions/evidence chain:
+
+`University → Program → Capacity → ReportCard / Admission evidence`
+
+Future typed relations include:
+
+- `PART_OF`
+- `PREREQUISITE_OF`
+- `RELATED_TO`
+- `TESTS`
+- `TEACHES`
+- `EXPLAINS`
+- `USES`
+- `OFTEN_CONFUSED_WITH`
+- `ALTERNATIVE_METHOD_TO`
+
+Do not hard-code current UI/data flows in ways that make these relations impossible later.
+
+## Content ecosystem direction
+
+Public content is not an isolated blog. Eventually every useful page should connect to appropriate learning and commercial nodes:
+
+`Guide/Article → Subject/Topic → relevant Lesson/Course → related Questions → practice Exam`
+
+Example:
+
+`Dijkstra guide → Shortest Path topic → Graph module → course lesson → Dijkstra questions → short practice exam`
+
+Competitor research is used only to identify user needs, intent, content gaps, stale information, and opportunities. Never copy, scrape-and-rewrite, or closely imitate competitor prose.
+
+Detailed content direction:
+- `docs/content/KNOWLEDGE_GRAPH_CONTENT_STRATEGY.md`
+
+## Existing exam-result/report-card data
+
+A production-oriented exam intelligence dataset already exists outside the public repository and must be treated as an existing asset, not as something to redesign from zero.
+
+Inventory and integration notes:
+- `docs/data/EXAM_INTELLIGENCE_EXISTING_ASSETS.md`
+
+Do not publish or commit raw scorecard/result data to this public repository unless rights, privacy, provenance, and publication policy have been explicitly reviewed.
+
+## Brand and canonical domain
+
+- Brand: **کنکورصفرویک**
+- Latin name: **kunkur01**
+- Canonical domain: **https://kunkur01.ir**
+
+Do not rename the brand or canonical domain.
+
+## Existing SEO must survive Product Completion
+
+Regression-test and preserve:
+
+- canonical metadata
+- dynamic metadata
+- sitemap index and child sitemaps
+- robots
+- JSON-LD / structured data
+- RSS
+- `llms.txt`
+- public SSR behavior
+- noindex rules for private/duplicate/search/filter states
+- current public slugs unless an explicit redirect migration is approved
+
+## Execution method
+
+For each Product Completion workstream:
+
+1. Audit existing implementation first.
+2. Distinguish “route exists” from “feature is actually usable”.
+3. Implement real backend/frontend/admin behavior; no cosmetic-only completion.
+4. Do not add fake data to make incomplete screens appear finished.
+5. Verify permissions and server-side enforcement.
+6. Run relevant typecheck, lint, unit/integration/E2E tests and build.
+7. Record remaining debt honestly.
+
+The next major architecture phase after Product Completion and release stabilization is Knowledge Graph + content/course/question integration.
