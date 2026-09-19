@@ -11,6 +11,7 @@ describe("planBookletJobs", () => {
       year: 1403,
       bookletCode: "IT-A",
       originalPath: "it/1403/a.pdf",
+      identityVerified: true,
     },
     {
       sha256: "2".repeat(64),
@@ -20,6 +21,7 @@ describe("planBookletJobs", () => {
       year: 1401,
       bookletCode: "CE-X",
       originalPath: "ce/1401/x.pdf",
+      identityVerified: true,
     },
     {
       sha256: "3".repeat(64),
@@ -29,6 +31,7 @@ describe("planBookletJobs", () => {
       year: 1403,
       bookletCode: "164C",
       originalPath: "ce/1403/a.pdf",
+      identityVerified: true,
     },
     {
       sha256: "4".repeat(64),
@@ -38,6 +41,7 @@ describe("planBookletJobs", () => {
       year: 1403,
       bookletCode: "164C",
       originalPath: "ce/1403/a-mirror.pdf",
+      identityVerified: true,
     },
     {
       sha256: "5".repeat(64),
@@ -47,6 +51,7 @@ describe("planBookletJobs", () => {
       year: 1403,
       bookletCode: "164C",
       originalPath: "ce/1403/key.pdf",
+      identityVerified: true,
     },
     {
       sha256: "6".repeat(64),
@@ -56,6 +61,7 @@ describe("planBookletJobs", () => {
       year: 1403,
       bookletCode: "164C",
       originalPath: "ce/1403/correction.pdf",
+      identityVerified: true,
     },
   ];
 
@@ -86,5 +92,11 @@ describe("planBookletJobs", () => {
     expect(planBookletJobs(entries, ["computer-engineering", "it"])).toEqual(
       planBookletJobs(entries, ["computer-engineering", "it"]),
     );
+  });
+
+  it("refuses filename-inferred or otherwise unverified exam identity", () => {
+    expect(() =>
+      planBookletJobs([{ ...entries[0], identityVerified: false }]),
+    ).toThrow("Unverified catalog identity");
   });
 });
