@@ -148,3 +148,26 @@ The goal is maximum legitimate use of the complete dataset for:
 - future Knowledge Graph evidence
 
 Never silently delete or ignore valuable records because of publication restrictions; retain them internally with the correct access/use classification.
+
+
+## Student Need Intelligence / content roadmap
+
+After Product Completion and release stabilization, the content system must evolve into a continuous Student Need Intelligence loop.
+
+Primary roadmap:
+- `docs/roadmap/STUDENT_NEED_INTELLIGENCE_CONTENT_ENGINE.md`
+
+Core direction:
+
+`student need signal → Need Cluster → priority score → Content Opportunity → Brief → external draft agent → Staging/Validate/Review/Publish → Course/Question/Tool links → performance feedback`
+
+Sources eventually include:
+- first-party site/search/support/product behavior;
+- public competitor sites;
+- public competitor Telegram channels/Q&A sources where collection is permitted;
+- Search Console/Bing query data;
+- official sources for fact validation.
+
+Competitor content is for need/gap discovery only. Never copy or paragraph-rewrite competitor content.
+
+The site runtime remains AI-free. Any research/writing agent runs externally and may only produce import/review artifacts; it never writes canonical Postgres data directly.
