@@ -11,6 +11,7 @@ export interface CatalogEntry {
   bookletCode?: string;
   examCode?: string;
   originalPath: string;
+  identityVerified: boolean;
 }
 
 export interface BookletJob {
@@ -34,6 +35,13 @@ export function planBookletJobs(
   entries: CatalogEntry[],
   majorPriority: string[] = [],
 ): BookletJob[] {
+  const unverified = entries.find(
+    (entry) => entry.role !== "other" && !entry.identityVerified,
+  );
+  if (unverified) {
+    throw new Error(`Unverified catalog identity: ${unverified.originalPath}`);
+  }
+
   const groups = new Map<string, BookletJob>();
 
   const stableEntries = [...entries].sort(
