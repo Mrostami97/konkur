@@ -56,7 +56,7 @@ Responsibilities:
 - identify MIME/type and page count;
 - group by degree, major, year, booklet code, and document role;
 - detect exact binary duplicates and likely variants;
-- record source-authority evidence.
+- record source-authority evidence;\n- require year/major/booklet identity to be verified from document content before the Booklet Job Planner may schedule it; filename/folder inference is never sufficient.
 
 Output: `source_catalog.json` and `source_catalog.csv`.
 
