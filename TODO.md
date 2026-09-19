@@ -290,7 +290,13 @@
 - [ ] `P18A-10` حذف dead button/link، placeholder، mock/fake production data، form ناقص، stateهای loading/error/empty ناقص و permission gap.
 - [ ] `P18A-11` حفظ و regression-test زیرساخت SEO موجود: canonical، sitemap، robots، JSON-LD، RSS، llms.txt، SSR و noindex.
 - [ ] `P18A-12` typecheck/lint/test/E2E/build برای workstreamهای تغییرکرده و ثبت بدهی باقی‌مانده.
-- [ ] `P18A-GATE` مالک بتواند جریان‌های عادی دانشجو و ادمین را بدون دخالت مستقیم کد/DB انجام دهد؛ سپس فاز ۱۸ انتشار ادامه یابد.
+- [ ] `P18A-13` پیاده‌سازی access model بانک تست: نمونه عمومی configurable، full bank پشت entitlement، جلوگیری از نشت دادهٔ قفل‌شده در API/SSR/payload.
+- [ ] `P18A-14` افزودن grant تمیز برای Question Bank در Commerce و امکان فروش مستقل بانک تست.
+- [ ] `P18A-15` خرید دوره باید بانک تست مرتبط همان دوره را بدون هزینهٔ جدا فعال کند؛ این benefit در Admin/Product/Account واضح باشد.
+- [ ] `P18A-16` onboarding/plan UX برای مسیر Foundation / Standard / Acceleration با حفظ مرز self-report و mastery evidence.
+- [ ] `P18A-17` طراحی Today/Plan برای افزایش تدریجی workload و جداسازی زمان مطالعه، پیشرفت محتوا و تسلط.
+- [ ] `P18A-18` حفظ SEO و افزودن الزامات AEO پایه: answer-first، entity clarity، منابع/تازگی، crawler access عمومی و paywall-safe presentation.
+- [ ] `P18A-GATE` مالک بتواند جریان‌های عادی دانشجو و ادمین را بدون دخالت مستقیم کد/DB انجام دهد؛ دسترسی بانک/دوره مطابق مدل تجاری باشد؛ سپس فاز ۱۸ انتشار ادامه یابد.
 
 ## فاز ۱۸ — پولیش، انتشار و سنجش
 
