@@ -3,9 +3,9 @@
 > این فایل مرجع اجرایی برنامهٔ چندفازی kunkur01 است. هر مورد فقط پس از پیاده‌سازی، آزمون و بازبینی تیک می‌خورد.
 
 - آخرین به‌روزرسانی: ۱۴۰۵/۰۶/۲۵
-- فاز فعال: فاز ۱۸ — پولیش، انتشار و سنجش
+- فاز فعال: فاز ۱۸A — تکمیل واقعی محصول، پنل و UI/UX (فاز ۱۸ انتشار پس از آن)
 - commit مرتبط: `c46243d` نقطهٔ شروع فاز ۱۸ روی `main`؛ commit نهایی پس از تکمیل Gate ثبت می‌شود
-- وضعیت آزمون‌ها: تست مستقل HTTP routing فاز ۱۸ محلی PASS؛ مجموعهٔ کامل CI، SSR/SEO، استقرار و بازبینی دستی هنوز باید روی نسخهٔ نهایی اجرا و ثبت شود
+- وضعیت آزمون‌ها: تست مستقل HTTP routing فاز ۱۸ محلی PASS است، اما مالک محصول سامانه را هنوز از نظر UI/UX، پنل مدیریت و جریان‌های اصلی کامل نمی‌داند؛ بنابراین Gate انتشار تا پایان فاز ۱۸A متوقف است
 - قانون اجرا: هر فاز Gate، commit و push مستقل دارد؛ ادامهٔ فاز بعد فقط پس از بسته‌شدن فاز جاری انجام می‌شود.
 - قانون انتشار: صفحات محتوایی تا زمان بازبینی واقعی کاربر Draft می‌مانند.
 - قانون انتساب: نام «محمد رستمی» فقط پس از بازبینی واقعی او به‌عنوان نویسنده یا بازبین نمایش داده می‌شود.
@@ -274,6 +274,24 @@
 - آزمون‌ها: generator با `--check` همگامی کامل corpus و fixture را می‌سنجد؛ تست‌ها متن، SEO، source claim، سه کد، ترکیب‌های ۲۲۴۷، لینک‌های داخلی قابل‌کلیک و عدم بازنویسی کار انسانی را پوشش می‌دهند. unit/typecheck/lint/build محلی PASS است و E2E کامل PostgreSQL شرط merge باقی می‌ماند.
 - محدوده: Gate فاز ۱۷ بسته شد؛ CSS عمومی، schema، بانک سؤال و آزمون‌ساز تغییر نکرد و Codebase Memory استفاده نشد.
 
+## فاز ۱۸A — تکمیل محصول، پنل و UI/UX
+
+> این فاز به دستور مالک پروژه قبل از فاز ۱۸ اجرا می‌شود. وجود route/API به‌تنهایی به‌معنای کامل‌بودن feature نیست. مرجع جزئیات: `CLAUDE.md` و `docs/roadmap/PRODUCT_COMPLETION_AND_KNOWLEDGE_GRAPH.md`.
+
+- [ ] `P18A-01` audit کامل تجربهٔ عمومی و یکپارچه‌سازی Design System فارسی/RTL روی موبایل، تبلت و دسکتاپ.
+- [ ] `P18A-02` تکمیل صفحهٔ اصلی و ناوبری به‌عنوان اکوسیستم واحد: محتوا، درس، بانک سؤال، آزمون، دوره، برنامه، رتبه/انتخاب‌رشته و منابع.
+- [ ] `P18A-03` تکمیل Dashboard ادمین و وضعیت‌های عملیاتی واقعی.
+- [ ] `P18A-04` تکمیل مدیریت سؤال: فهرست، جست‌وجو، فیلتر، مشاهده، ایجاد/ویرایش، provenance، review/publish و assetها.
+- [ ] `P18A-05` تکمیل مدیریت آزمون و تجربهٔ آزمون کاربر: شروع/ادامه، timer، navigation، autosave موجود، submit، نتیجه و review.
+- [ ] `P18A-06` تکمیل مدیریت دوره، module، lesson، preview، access mode، product linkage و تجربهٔ مصرف دوره.
+- [ ] `P18A-07` تکمیل Article/Guide/Resource/Taxonomy editorهای موردنیاز عملیات روزمره بدون دستکاری DB.
+- [ ] `P18A-08` تکمیل Users/Roles/Entitlements/Commerce/ReportCards/Admissions/Analytics UI بر مبنای backend واقعی موجود.
+- [ ] `P18A-09` تکمیل account/dashboard دانشجو: دوره‌ها، ادامه مطالعه، آزمون‌ها، نتایج، منابع ذخیره‌شده، برنامه و entitlementها.
+- [ ] `P18A-10` حذف dead button/link، placeholder، mock/fake production data، form ناقص، stateهای loading/error/empty ناقص و permission gap.
+- [ ] `P18A-11` حفظ و regression-test زیرساخت SEO موجود: canonical، sitemap، robots، JSON-LD، RSS، llms.txt، SSR و noindex.
+- [ ] `P18A-12` typecheck/lint/test/E2E/build برای workstreamهای تغییرکرده و ثبت بدهی باقی‌مانده.
+- [ ] `P18A-GATE` مالک بتواند جریان‌های عادی دانشجو و ادمین را بدون دخالت مستقیم کد/DB انجام دهد؛ سپس فاز ۱۸ انتشار ادامه یابد.
+
 ## فاز ۱۸ — پولیش، انتشار و سنجش
 
 - [ ] `P18-01` اجرای `typecheck` برای workspaceهای مرتبط.
@@ -295,6 +313,40 @@
 - یادداشت `P18-05`: CI مسیر down/up هر چهار migration دارای `down.sql` را به‌ترتیب معکوس اجرا می‌کند و سپس تمام migrationها را دوباره اعمال می‌کند؛ تیک فقط پس از PASS شدن run نهایی زده می‌شود.
 - یادداشت `P18-06`: CI علاوه بر تست‌های corpus، سرور production وب و API واقعی را بالا می‌آورد و canonical، sitemap، structured data، RSS و SSR را می‌سنجد؛ fixture مستقل نیز hard 404، redirect دائمی و خطای upstream را کنترل می‌کند.
 - یادداشت `P18-13`: این خط تا زمان وجود مدرک ثبت در حساب‌های Search Console و Bing تیک نمی‌خورد؛ آماده‌سازی فنی یا ارسال IndexNow به‌تنهایی معادل ثبت دو سرویس نیست.
+
+## فازهای پس از انتشار — اکوسیستم محتوا و Knowledge Graph
+
+> مبنای استراتژیک: کنکورصفرویک باید یک Knowledge Graph زنده باشد، نه مجموعه‌ای از مقاله‌های جدا. اجرای فنی این بخش تا پایان ۱۸A و تثبیت انتشار عقب می‌ماند؛ طراحی سازگار از همین حالا حفظ شود.
+
+### فاز ۱۹ — اتصال اکوسیستم محتوا به محصول
+
+- [ ] `P19-01` اتصال Article/Guide به Subject/Topic به‌صورت قابل مدیریت.
+- [ ] `P19-02` اتصال محتوای عمومی به Course/Module/Lesson مرتبط بدون hard-code سراسری.
+- [ ] `P19-03` اتصال محتوا به Question set و practice Exam مرتبط.
+- [ ] `P19-04` اتصال CTA تجاری فقط پس از پاسخ اصلی و با Product مناسب.
+- [ ] `P19-05` استفاده از تحقیق رقبا فقط برای intent/gap/freshness؛ محتوای مستقل، منبع‌دار و بهتر تولید شود.
+
+### فاز ۲۰ — Knowledge Graph Foundation
+
+- [ ] `P20-01` سلسله‌مراتب Subject → Topic → Subtopic/Concept.
+- [ ] `P20-02` edgeهای typed مانند PART_OF، PREREQUISITE_OF، RELATED_TO، USES، OFTEN_CONFUSED_WITH و ALTERNATIVE_METHOD_TO.
+- [ ] `P20-03` نرمال‌سازی رابطهٔ Question/Article/Resource/Course/Lesson با Topic به‌جای اتکای بلندمدت به آرایهٔ code.
+- [ ] `P20-04` مدل ExamSeries/ExamEdition و اتصال دفترچه، کلید و سؤال.
+- [ ] `P20-05` Graph API برای prerequisite، related content/questions، course coverage و history.
+- [ ] `P20-06` PostgreSQL/Prisma مبنا بماند؛ Neo4j فقط با شواهد واقعی نیاز/performance.
+
+### فاز ۲۱ — Question Intelligence
+
+- [ ] `P21-01` اتصال pipeline PDF/OCR به provenance و taxonomy گراف.
+- [ ] `P21-02` نگهداری کلید اولیه/نهایی، اختلاف، حل، بازبین، نسخه و وضعیت review هر سؤال.
+- [ ] `P21-03` آمار تاریخی topicها، related practice و اتصال به exam builder.
+
+### دیتاست کارنامه/Exam Intelligence موجود
+
+- دیتاست production-oriented کارنامه از قبل وجود دارد؛ inventory در `docs/data/EXAM_INTELLIGENCE_EXISTING_ASSETS.md` ثبت شده است.
+- بر اساس inventory موجود: ۱۵۸۰ نتیجه، ۸۴۹۶ ردیف درصد درسی، ۶۱۲۳ ردیف رتبه و ۹۶۲ پذیرش موجود است.
+- این داده از صفر طراحی نشود. بعد از Product Completion یک integration task جدا برای تطبیق schema فعلی، privacy/provenance، dedup و ingestion رسمی ایجاد شود.
+- raw dataset در ریپوی عمومی قرار نگیرد مگر پس از بازبینی صریح حقوق/حریم خصوصی.
 
 ## قابلیت آینده — بانک سؤال و آزمون‌ساز
 
