@@ -318,6 +318,26 @@
 
 > مبنای استراتژیک: کنکورصفرویک باید یک Knowledge Graph زنده باشد، نه مجموعه‌ای از مقاله‌های جدا. اجرای فنی این بخش تا پایان ۱۸A و تثبیت انتشار عقب می‌ماند؛ طراحی سازگار از همین حالا حفظ شود.
 
+### SNI — موتور پایش نیاز دانشجو و کارخانه محتوا
+
+> مرجع کامل: `docs/roadmap/STUDENT_NEED_INTELLIGENCE_CONTENT_ENGINE.md`. این مسیر بعد از تکمیل محصول/تثبیت انتشار اجرا می‌شود و با فاز ۱۹، Knowledge Graph و Question Intelligence یکپارچه است.
+
+- [ ] `SNI-01` تعریف Source Registry برای منابع خودی، رسمی، سایت رقبا، کانال‌های عمومی تلگرام و ورودی‌های مجاز گروه‌های پرسش‌وپاسخ.
+- [ ] `SNI-02` تعریف NeedObservation و NeedCluster با intent، مرحله سفر داوطلب، رشته/مقطع، درس/مبحث، freshness و provenance.
+- [ ] `SNI-03` dedup/cluster سوال‌های هم‌معنا و ساخت taxonomy نیازهای دانشجو.
+- [ ] `SNI-04` امتیازدهی نسخه‌دار نیازها بر اساس frequency، trend، first-party demand، competitor gap، search opportunity، graph gap، course/question fit و evidence readiness.
+- [ ] `SNI-05` ساخت CompetitorGap matrix به‌ازای هر Need Cluster؛ بدون کپی متن رقبا.
+- [ ] `SNI-06` انتخاب action صحیح: create/refresh/merge/add-section/tool/question-set/course-gap/no-action.
+- [ ] `SNI-07` Content Brief قراردادی شامل intent، outline، منابع رسمی، first-party data، graph nodes، course/lesson/question/tool links و freshness policy.
+- [ ] `SNI-08` عامل پژوهش/نویسندگی بیرون از Runtime فقط Draft قراردادی بسازد و خروجی را از Staging → Validate → Review → Publish عبور دهد.
+- [ ] `SNI-09` داشبورد ادمین Need Intelligence: inbox، clusters، trend، score، gaps، opportunities، briefs، refresh queue و coverage.
+- [ ] `SNI-10` اتصال محتوای منتشرشده به Course/Module/Lesson، Question set، Exam، Resource و ابزار مرتبط.
+- [ ] `SNI-11` ingest سیگنال‌های first-party: site search/no-result، CRM/support، question/course behavior و Search Console.
+- [ ] `SNI-12` پایش incremental منابع عمومی رقبا و Telegram با رعایت دسترسی/حریم خصوصی/حقوق و بدون mirrorکردن محتوا.
+- [ ] `SNI-13` freshness engine و triggerهای روزانه/هفتگی/ماهانه/فصلی.
+- [ ] `SNI-14` feedback loop از Search + engagement + next-action + course/question/tool progression به امتیاز نیاز و refresh.
+- [ ] `SNI-GATE` معیار اصلی به‌جای تعداد مقاله: Demand-weighted Need Coverage؛ همهٔ P0/P1ها evidence، brief، وضعیت پوشش و مسیر اقدام بعدی داشته باشند.
+
 ### فاز ۱۹ — اتصال اکوسیستم محتوا به محصول
 
 - [ ] `P19-01` اتصال Article/Guide به Subject/Topic به‌صورت قابل مدیریت.
