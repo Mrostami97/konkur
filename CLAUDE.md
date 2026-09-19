@@ -122,3 +122,29 @@ For each Product Completion workstream:
 7. Record remaining debt honestly.
 
 The next major architecture phase after Product Completion and release stabilization is Knowledge Graph + content/course/question integration.
+
+## Data utilization directive
+
+The owner wants the project to make use of **all available exam/result/report-card data**.
+
+Do not simplify by dropping records merely because some cannot be exposed publicly.
+
+Implement future data integration with three usage levels:
+
+- public/direct
+- derived/aggregated
+- internal-only evidence
+
+Preserve raw provenance and rights metadata, and make public API projections explicit.
+
+The goal is maximum legitimate use of the complete dataset for:
+- report-card exploration
+- similar-scorecard search
+- rank estimation
+- admission benchmarking
+- analytics
+- SEO/data pages
+- planning/personalization
+- future Knowledge Graph evidence
+
+Never silently delete or ignore valuable records because of publication restrictions; retain them internally with the correct access/use classification.
