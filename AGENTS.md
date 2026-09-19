@@ -6,6 +6,23 @@ is a distilled operating summary for whoever — human or coding agent —
 implements the next phase. If anything here conflicts with the docx, the docx
 wins; update this file to match.
 
+
+## Current owner priority override — 2026-09-19
+
+The owner does **not** consider the current system product-complete or launch-ready yet, despite earlier implementation phases being marked Done. Before final release-polish work, complete **Phase 18A — Product Completion & UI/UX** as defined in `CLAUDE.md` and `docs/roadmap/PRODUCT_COMPLETION_AND_KNOWLEDGE_GRAPH.md`.
+
+Current order of execution:
+
+1. Product Completion & UI/UX
+2. Release stabilization
+3. Content ecosystem integration
+4. Knowledge Graph foundation
+5. Question Intelligence / programmatic SEO / adaptive learning
+
+Do not start Knowledge Graph migrations, Neo4j, runtime AI, or large future-schema rewrites during Product Completion. Preserve existing SEO, canonical URLs, provenance, ingestion/review boundaries, and the final brand/domain: **کنکورصفرویک / kunkur01 / https://kunkur01.ir**.
+
+A substantial report-card/exam-intelligence dataset already exists outside this public repo; see `docs/data/EXAM_INTELLIGENCE_EXISTING_ASSETS.md`. Do not redesign that data domain from zero and do not publish the raw dataset without explicit privacy/rights review.
+
 ## The one rule that overrides everything else
 
 **Implement exactly one phase per session.** Never start phase N+1 in the same
@@ -121,7 +138,11 @@ against (§11, "دامنه بیش‌ازحد").
 | 15 | Report-card bank and university choice | **Done** |
 | 16 | Personal learning path | **Done** |
 | 17 | Doctoral content expansion | **Done — this repo state** |
-| 18 | Polish, release, and measurement | **Next** |
+| 18A | Product Completion & UI/UX | **Next — owner priority** |
+| 18 | Polish, release, and measurement | **After 18A** |
+| 19 | Content ecosystem integration | **Planned after release stabilization** |
+| 20 | Knowledge Graph foundation | **Planned** |
+| 21 | Question Intelligence | **Planned** |
 
 ## Known simplifications (carry these into later phases' risk lists)
 
