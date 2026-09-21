@@ -3,9 +3,18 @@ import { Reflector } from "@nestjs/core";
 import { Role } from "@prisma/client";
 import { RolesGuard } from "../src/modules/identity/guards/roles.guard";
 
-function buildContext(user: { roles: Role[] } | undefined, required: Role[] | undefined) {
+function buildContext(
+  user: { roles: Role[] } | undefined,
+  required: Role[] | undefined,
+  isPublic?: boolean,
+) {
   const reflector = {
-    getAllAndOverride: jest.fn(() => required),
+    // Mirrors Reflector#getAllAndOverride: first call in the guard reads
+    // IS_PUBLIC_KEY, second reads ROLES_KEY.
+    getAllAndOverride: jest
+      .fn()
+      .mockReturnValueOnce(isPublic)
+      .mockReturnValueOnce(required),
   } as unknown as Reflector;
   const context = {
     getHandler: () => ({}),
@@ -18,8 +27,20 @@ function buildContext(user: { roles: Role[] } | undefined, required: Role[] | un
 }
 
 describe("RolesGuard", () => {
-  it("allows access when no roles are required", () => {
+  it("fails closed when no roles are required and the route is not @Public()", () => {
     const { reflector, context } = buildContext(undefined, undefined);
+    const guard = new RolesGuard(reflector);
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it("fails closed when @Roles is set to an empty array", () => {
+    const { reflector, context } = buildContext({ roles: [Role.STUDENT] }, []);
+    const guard = new RolesGuard(reflector);
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it("allows access when the route is explicitly @Public()", () => {
+    const { reflector, context } = buildContext(undefined, undefined, true);
     const guard = new RolesGuard(reflector);
     expect(guard.canActivate(context)).toBe(true);
   });

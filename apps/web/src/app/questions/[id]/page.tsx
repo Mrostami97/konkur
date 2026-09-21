@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiFetch } from "../../../lib/api";
+import { apiFetch, ApiError } from "../../../lib/api";
 import { ContentBlocks } from "../../../components/ContentBlocks";
+import { EmptyState, PageHeader } from "../../../components/ui";
 
 interface Block {
   type: string;
@@ -14,6 +16,14 @@ interface Option {
   blocks: Block[];
 }
 
+/**
+ * The public question payload never carries `correctOption` or
+ * `solutionBlocks` -- the API's public read path (question-bank.service.ts
+ * PUBLIC_QUESTION_SELECT) is structurally incapable of returning them, for
+ * any caller, since there is no entitlement model yet to decide who may see
+ * the answer key. Do not add those fields back here without a real
+ * authorized endpoint behind them.
+ */
 interface Question {
   id: string;
   subjectCode: string;
@@ -23,52 +33,94 @@ interface Question {
   topicCodes: string[];
   stemBlocks: Block[];
   options: Option[];
-  correctOption: number;
-  solutionBlocks: Block[];
   assets: { media_key: string; checksum: string }[];
   version: number;
 }
 
 export default function QuestionDetailPage({ params }: { params: { id: string } }) {
   const [question, setQuestion] = useState<Question | null>(null);
-  const [revealed, setRevealed] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    apiFetch<Question>(`/questions/${params.id}`).then(setQuestion).catch(() => {});
+    (async () => {
+      try {
+        const data = await apiFetch<Question>(`/questions/${params.id}`);
+        setQuestion(data);
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 404) setNotFound(true);
+        else setMessage("اتصال به بانک سؤال برقرار نشد.");
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [params.id]);
 
-  if (!question) return <main style={{ padding: "2rem" }}>در حال بارگذاری...</main>;
+  if (loading) {
+    return (
+      <main className="page-container">
+        <div className="surface-card loading-state">در حال بارگذاری سؤال…</div>
+      </main>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <main className="page-container">
+        <EmptyState
+          title="سؤال پیدا نشد"
+          description="ممکن است این سؤال هنوز منتشر نشده یا نشانی آن تغییر کرده باشد."
+          action={
+            <Link className="button button-secondary" href="/questions">
+              بازگشت به بانک سؤال
+            </Link>
+          }
+        />
+      </main>
+    );
+  }
+
+  if (!question) {
+    return (
+      <main className="page-container">
+        {message && (
+          <div className="form-error" role="alert">
+            {message}
+          </div>
+        )}
+      </main>
+    );
+  }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <p style={{ fontSize: "0.85rem", color: "#486581" }}>
-        {question.subjectCode} — {question.examMajor} — {question.examYear} — نسخه {question.version}
-      </p>
-      <ContentBlocks blocks={question.stemBlocks} assets={question.assets} />
+    <main className="page-container">
+      <PageHeader
+        eyebrow={`${question.subjectCode} — ${question.examMajor} — ${question.examYear}`}
+        title="متن سؤال"
+        description={`نسخه ${question.version}`}
+        action={
+          <Link className="button button-secondary" href="/questions">
+            بازگشت به بانک سؤال
+          </Link>
+        }
+      />
 
-      <ol style={{ paddingInlineStart: "1.5rem" }}>
-        {question.options.map((option) => (
-          <li
-            key={option.number}
-            style={{
-              margin: "0.5rem 0",
-              fontWeight: revealed && option.number === question.correctOption ? "bold" : "normal",
-              color: revealed && option.number === question.correctOption ? "green" : "inherit",
-            }}
-          >
-            <ContentBlocks blocks={option.blocks} assets={question.assets} />
-          </li>
-        ))}
-      </ol>
+      <article className="editorial-body surface-card">
+        <ContentBlocks blocks={question.stemBlocks} assets={question.assets} />
+        <ol style={{ paddingInlineStart: "1.5rem" }}>
+          {question.options.map((option) => (
+            <li key={option.number} style={{ margin: "0.5rem 0" }}>
+              <ContentBlocks blocks={option.blocks} assets={question.assets} />
+            </li>
+          ))}
+        </ol>
+      </article>
 
-      {!revealed ? (
-        <button onClick={() => setRevealed(true)}>نمایش پاسخ و راه‌حل</button>
-      ) : (
-        <div style={{ background: "#F4F8FB", padding: "1rem", borderRadius: 6 }}>
-          <strong>راه‌حل</strong>
-          <ContentBlocks blocks={question.solutionBlocks} assets={question.assets} />
-        </div>
-      )}
+      <EmptyState
+        title="پاسخ و راه‌حل قفل است"
+        description="نمایش پاسخ صحیح و راه‌حل این سؤال به دسترسی بانک سؤال نیاز دارد. این بخش هنوز برای هیچ حسابی -- حتی حساب‌های خریداری‌شده -- در دسترس نیست، چون مدل دسترسی هنوز پیاده‌سازی نشده است."
+      />
     </main>
   );
 }

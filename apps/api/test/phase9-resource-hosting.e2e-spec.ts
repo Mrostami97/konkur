@@ -358,7 +358,17 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
       data: { hostingMode: "METADATA_ONLY", sourceArtifactId: null },
     });
     await request(app.getHttpServer()).get(`/media/${referencedArtifact.checksumWithoutPrefix}`).expect(404);
-    const redirect = await request(app.getHttpServer()).get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`).redirects(0);
+
+    // The resource denial above must not sweep up unrelated media: this
+    // artifact still resolves. It now needs a session, because an artifact
+    // that no public Question or published Article references is not public
+    // media -- see MediaController. Narrowing "any session" to a real
+    // per-artifact check waits on the entitlement model.
+    await request(app.getHttpServer()).get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`).expect(403);
+    const redirect = await request(app.getHttpServer())
+      .get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`)
+      .set("Cookie", adminCookie)
+      .redirects(0);
     expect(redirect.status).toBe(302);
     expect(redirect.headers.location).toContain("objects.example.test");
   });

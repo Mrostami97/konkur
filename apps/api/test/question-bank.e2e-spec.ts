@@ -159,7 +159,8 @@ describe("Taxonomy + Question Bank (e2e)", () => {
     expect(question.version).toBe(1);
 
     const publicRes = await request(app.getHttpServer()).get(`/questions/${question.id}`).expect(200);
-    expect(publicRes.body.correctOption).toBe(2);
+    expect(publicRes.body.correctOption).toBeUndefined();
+    expect(publicRes.body.solutionBlocks).toBeUndefined();
     expect(publicRes.body.options).toHaveLength(4);
 
     const versionsRes = await request(app.getHttpServer())
@@ -167,6 +168,117 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .set("Cookie", adminCookie)
       .expect(200);
     expect(versionsRes.body).toHaveLength(1);
+  });
+
+  it("never leaks correctOption/solutionBlocks to anonymous or unentitled callers", async () => {
+    const externalId = `no-leak-${Date.now()}`;
+    const jobRes = await request(app.getHttpServer())
+      .post("/admin/questions")
+      .set("Cookie", adminCookie)
+      .send(questionDto(externalId, "algorithms", 1405))
+      .expect(201);
+    const itemsRes = await request(app.getHttpServer())
+      .get(`/admin/import/${jobRes.body.id}/items`)
+      .set("Cookie", adminCookie)
+      .expect(200);
+    await request(app.getHttpServer())
+      .post("/admin/import/items/review")
+      .set("Cookie", adminCookie)
+      .send({ itemIds: [itemsRes.body[0].id], decision: "APPROVE" })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post(`/admin/import/${jobRes.body.id}/publish`)
+      .set("Cookie", adminCookie)
+      .expect(201);
+    const question = await prisma.question.findUniqueOrThrow({ where: { externalId } });
+
+    // Anonymous: neither getById nor list ever returns the answer key.
+    const anonById = await request(app.getHttpServer()).get(`/questions/${question.id}`).expect(200);
+    expect(anonById.body.correctOption).toBeUndefined();
+    expect(anonById.body.solutionBlocks).toBeUndefined();
+
+    const anonList = await request(app.getHttpServer())
+      .get(`/questions?subjectCode=algorithms`)
+      .expect(200);
+    expect(anonList.body.items.length).toBeGreaterThan(0);
+    for (const item of anonList.body.items) {
+      expect(item.correctOption).toBeUndefined();
+      expect(item.solutionBlocks).toBeUndefined();
+    }
+
+    // Logged-in but with no entitlement model to grant access: same result.
+    const unentitledCookie = await (async () => {
+      const phone = randomPhone();
+      await request(app.getHttpServer()).post("/auth/otp/request").send({ phone }).expect(200);
+      const code = otpProvider.sent[otpProvider.sent.length - 1].code;
+      const res = await request(app.getHttpServer())
+        .post("/auth/otp/verify")
+        .send({ phone, code })
+        .expect(200);
+      return res.headers["set-cookie"][0] as string;
+    })();
+
+    const studentById = await request(app.getHttpServer())
+      .get(`/questions/${question.id}`)
+      .set("Cookie", unentitledCookie)
+      .expect(200);
+    expect(studentById.body.correctOption).toBeUndefined();
+    expect(studentById.body.solutionBlocks).toBeUndefined();
+
+    const studentList = await request(app.getHttpServer())
+      .get(`/questions?subjectCode=algorithms`)
+      .set("Cookie", unentitledCookie)
+      .expect(200);
+    for (const item of studentList.body.items) {
+      expect(item.correctOption).toBeUndefined();
+      expect(item.solutionBlocks).toBeUndefined();
+    }
+  });
+
+  it("denies anonymous media access to an artifact not (yet) part of any public content", async () => {
+    const externalId = `staged-only-${Date.now()}`;
+    const imageBuf = Buffer.from("fake-png-for-staged-media-test");
+    const checksum = sha256(imageBuf);
+    const zip = buildZip(
+      {
+        schema_version: "question.v1",
+        external_id: externalId,
+        exam: { degree: "master", major: "computer-engineering", year: 1405 },
+        subject_code: "algorithms",
+        topic_codes: ["asymptotic-analysis"],
+        stem_blocks: [{ type: "image", media_key: "fig1" }],
+        options: [
+          { number: 1, blocks: [{ type: "text", text: "A" }] },
+          { number: 2, blocks: [{ type: "text", text: "B" }] },
+          { number: 3, blocks: [{ type: "text", text: "C" }] },
+          { number: 4, blocks: [{ type: "text", text: "D" }] },
+        ],
+        correct_option: 1,
+        solution_blocks: [{ type: "text", text: "..." }],
+        assets: [{ media_key: "fig1", filename: "fig1.png", mime_type: "image/png", checksum: `sha256:${checksum}` }],
+        provenance: { producer_type: "human", source_artifact: "staged-only-test" },
+      },
+      [{ name: "fig1.png", buffer: imageBuf }],
+    );
+
+    // Stage the artifact but never approve/publish it, so no Question or
+    // Article row references its checksum in `assets` yet.
+    await request(app.getHttpServer())
+      .post("/admin/import")
+      .set("Cookie", adminCookie)
+      .attach("file", zip, "import.zip")
+      .expect(201);
+
+    const anonRes = await request(app.getHttpServer()).get(`/media/${checksum}`).redirects(0);
+    expect(anonRes.status).toBe(403);
+
+    // An authenticated caller (no per-artifact entitlement model yet, so any
+    // identified session) is allowed through, unlike the anonymous caller.
+    const authedRes = await request(app.getHttpServer())
+      .get(`/media/${checksum}`)
+      .set("Cookie", adminCookie)
+      .redirects(0);
+    expect(authedRes.status).toBe(302);
   });
 
   it("filters the question bank by subject, exam year, and free-text", async () => {

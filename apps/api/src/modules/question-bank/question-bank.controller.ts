@@ -1,17 +1,20 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
+import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
 import { QuestionBankService } from "./question-bank.service";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 
 @Controller("questions")
+@UseGuards(OptionalSessionAuthGuard)
 export class QuestionsPublicController {
   constructor(private readonly questionBank: QuestionBankService) {}
 
   @Get()
   list(
+    @Req() req: RequestWithUser,
     @Query("subjectCode") subjectCode?: string,
     @Query("topicCode") topicCode?: string,
     @Query("examDegree") examDegree?: "master" | "phd",
@@ -21,21 +24,24 @@ export class QuestionsPublicController {
     @Query("page") page?: string,
     @Query("pageSize") pageSize?: string,
   ) {
-    return this.questionBank.list({
-      subjectCode,
-      topicCode,
-      examDegree,
-      examMajor,
-      examYear: examYear ? Number(examYear) : undefined,
-      q,
-      page: page ? Number(page) : undefined,
-      pageSize: pageSize ? Number(pageSize) : undefined,
-    });
+    return this.questionBank.list(
+      {
+        subjectCode,
+        topicCode,
+        examDegree,
+        examMajor,
+        examYear: examYear ? Number(examYear) : undefined,
+        q,
+        page: page ? Number(page) : undefined,
+        pageSize: pageSize ? Number(pageSize) : undefined,
+      },
+      req.user,
+    );
   }
 
   @Get(":id")
-  getById(@Param("id") id: string) {
-    return this.questionBank.getById(id);
+  getById(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.questionBank.getById(id, req.user);
   }
 }
 
