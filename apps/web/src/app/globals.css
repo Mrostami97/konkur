@@ -24,15 +24,15 @@
      and navy/gold (CSHub) out of reach, and teal is both open and already this
      brand's. Amber is the one warm note, reserved for "new" and "needs
      attention", so warmth is always load-bearing rather than decorative. */
-  --ink: #0d2b2a;
-  --muted: #5b7a78;
-  --navy: #0d2b2a;
+  --ink: #0f2540;
+  --muted: #5c7089;
+  --navy: #0f2540;
   --teal: #0ab39b;
   --teal-dark: #068573;
   --sky: #e6f7f4;
-  --line: #dbe8e4;
+  --line: #e3e9ef;
   --surface: #ffffff;
-  --background: #f1f6f4;
+  --background: #ffffff;
   --warm: #e0791f;
   --warm-wash: #fdf1e7;
   --shadow: 0 1px 2px rgba(13, 43, 42, 0.04), 0 14px 36px rgba(13, 43, 42, 0.06);
@@ -85,10 +85,10 @@
   --elev-3: 0 8px 24px rgba(17, 44, 78, 0.09), 0 2px 6px rgba(17, 44, 78, 0.04);
   --elev-4: 0 18px 44px rgba(17, 44, 78, 0.13), 0 4px 12px rgba(17, 44, 78, 0.06);
 
-  --line-soft: #e4efeb;
-  --line-strong: #c6dbd5;
-  --surface-sunken: #f7fbfa;
-  --surface-hover: #eff6f4;
+  --line-soft: #eef2f6;
+  --line-strong: #cdd7e1;
+  --surface-sunken: #f7f9fb;
+  --surface-hover: #f1f5f9;
 
   /* Semantic colours. Only --danger existed before (as .button-danger), so
      success/warning/info states had nothing to use and were hand-coded. */

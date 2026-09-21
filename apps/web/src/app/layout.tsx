@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
-import { AuthStatus } from "../components/AuthStatus";
 import { PublicChrome } from "../components/PublicChrome";
+import { SiteHeader } from "../components/SiteHeader";
 import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 import { StructuredData } from "../components/StructuredData";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "../lib/seo";
@@ -49,25 +49,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
         ]} />
         <PublicChrome>
-        <header className="site-header">
-          <div className="nav-wrap">
-            <Link href="/" className="brand" aria-label="کنکورصفریک">
-              <span className="brand-logo-wrap"><Image className="brand-logo" src="/brand/konkurcom-logo.png" alt="" width={64} height={64} priority /></span>
-              <span className="brand-copy">
-                <strong>کنکورصفریک</strong>
-                <span>kunkur01 · مرجع کنکور کامپیوتر</span>
-              </span>
-            </Link>
-            <nav className="main-nav" aria-label="منوی اصلی">
-              <Link className="nav-link" href="/guides"><span>▤</span> راهنمای ۱۴۰۶</Link>
-              <Link className="nav-link" href="/subjects"><span>◈</span> درس‌ها</Link>
-              <Link className="nav-link" href="/articles"><span>✦</span> مقاله‌ها</Link>
-              <Link className="nav-link" href="/resources"><span>↓</span> منابع رایگان</Link>
-              <Link className="nav-link" href="/admissions"><span>◎</span> انتخاب‌رشته</Link>
-            </nav>
-            <span className="auth-link"><AuthStatus /></span>
-          </div>
-        </header>
+          <SiteHeader />
         </PublicChrome>
         {children}
         <PublicChrome>
