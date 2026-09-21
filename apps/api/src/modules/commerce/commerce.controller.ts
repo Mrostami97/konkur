@@ -8,7 +8,7 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { CreatePriceDto } from "./dto/create-price.dto";
 import { CheckoutDto } from "./dto/checkout.dto";
 import { GrantEntitlementDto, RevokeEntitlementDto } from "./dto/grant-entitlement.dto";
-import { GrantCourseDto, GrantResourceDto } from "./dto/grant-product-item.dto";
+import { GrantCourseDto, GrantQuestionBankDto, GrantResourceDto } from "./dto/grant-product-item.dto";
 
 @Controller("products")
 export class ProductsPublicController {
@@ -98,6 +98,12 @@ export class CommerceAdminController {
   @Roles(Role.ADMIN)
   addResourceGrant(@Param("id") id: string, @Body() dto: GrantResourceDto) {
     return this.commerce.addResourceGrant(id, dto.resourceId);
+  }
+
+  @Post("products/:id/bank-grants")
+  @Roles(Role.ADMIN)
+  addBankGrant(@Param("id") id: string, @Body() dto: GrantQuestionBankDto) {
+    return this.commerce.addBankGrant(id, dto.subjectCode);
   }
 
   @Post("entitlements/:id/revoke")

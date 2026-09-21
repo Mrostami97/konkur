@@ -17,12 +17,13 @@ interface Option {
 }
 
 /**
- * The public question payload never carries `correctOption` or
- * `solutionBlocks` -- the API's public read path (question-bank.service.ts
- * PUBLIC_QUESTION_SELECT) is structurally incapable of returning them, for
- * any caller, since there is no entitlement model yet to decide who may see
- * the answer key. Do not add those fields back here without a real
- * authorized endpoint behind them.
+ * Everything below `version` is optional because the API decides server-side
+ * how much of a question this caller may see (question-bank.service.ts
+ * `getById`): a sample question or one whose subject the caller has active
+ * bank access to arrives whole, and anything else arrives as metadata alone
+ * -- no stem, no options, no answer key. The locked fields were never sent
+ * to this client, so they are not fetched-then-hidden, and there is no other
+ * endpoint to "get" them from.
  */
 interface Question {
   id: string;
@@ -31,10 +32,13 @@ interface Question {
   examMajor: string;
   examYear: number;
   topicCodes: string[];
-  stemBlocks: Block[];
-  options: Option[];
-  assets: { media_key: string; checksum: string }[];
+  assets?: { media_key: string; checksum: string }[];
+  isSample: boolean;
   version: number;
+  stemBlocks?: Block[];
+  options?: Option[];
+  correctOption?: number;
+  solutionBlocks?: Block[];
 }
 
 export default function QuestionDetailPage({ params }: { params: { id: string } }) {
@@ -106,21 +110,44 @@ export default function QuestionDetailPage({ params }: { params: { id: string } 
         }
       />
 
-      <article className="editorial-body surface-card">
-        <ContentBlocks blocks={question.stemBlocks} assets={question.assets} />
-        <ol style={{ paddingInlineStart: "1.5rem" }}>
-          {question.options.map((option) => (
-            <li key={option.number} style={{ margin: "0.5rem 0" }}>
-              <ContentBlocks blocks={option.blocks} assets={question.assets} />
-            </li>
-          ))}
-        </ol>
-      </article>
+      {question.stemBlocks && question.options ? (
+        <article className="editorial-body surface-card">
+          <ContentBlocks blocks={question.stemBlocks} assets={question.assets} />
+          <ol style={{ paddingInlineStart: "1.5rem" }}>
+            {question.options.map((option) => (
+              <li
+                key={option.number}
+                style={{
+                  margin: "0.5rem 0",
+                  fontWeight: question.correctOption === option.number ? 700 : undefined,
+                }}
+              >
+                <ContentBlocks blocks={option.blocks} assets={question.assets} />
+                {question.correctOption === option.number && (
+                  <span style={{ marginInlineStart: "0.5rem", color: "#1a7f45" }}>(پاسخ صحیح)</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </article>
+      ) : null}
 
-      <EmptyState
-        title="پاسخ و راه‌حل قفل است"
-        description="نمایش پاسخ صحیح و راه‌حل این سؤال به دسترسی بانک سؤال نیاز دارد. این بخش هنوز برای هیچ حسابی -- حتی حساب‌های خریداری‌شده -- در دسترس نیست، چون مدل دسترسی هنوز پیاده‌سازی نشده است."
-      />
+      {question.solutionBlocks ? (
+        <section className="surface-card">
+          <span className="eyebrow">راه‌حل</span>
+          <ContentBlocks blocks={question.solutionBlocks} assets={question.assets} />
+        </section>
+      ) : (
+        <EmptyState
+          title="این سؤال قفل است"
+          description="متن، گزینه‌ها و راه‌حل این سؤال فقط برای حساب‌هایی نمایش داده می‌شود که دسترسی بانک سؤال این درس را دارند. سؤال‌های نمونهٔ این درس آزادند."
+          action={
+            <Link className="button button-primary" href="/courses">
+              مشاهدهٔ دوره‌ها و دسترسی بانک سؤال ←
+            </Link>
+          }
+        />
+      )}
     </main>
   );
 }

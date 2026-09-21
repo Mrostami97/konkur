@@ -19,6 +19,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { ARTICLE_BLOCK_TYPES, LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/content-blocks";
 import { AuditService } from "../audit/audit.service";
 import { ObjectStorageService } from "../ingestion/object-storage.service";
+import { AccessService } from "../access/access.service";
 import {
   CreateContentSourceDto,
   CreateContributorDto,
@@ -132,6 +133,7 @@ export class EditorialService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly storage: ObjectStorageService,
+    private readonly access: AccessService,
   ) {}
 
   listSources() {
@@ -545,19 +547,7 @@ export class EditorialService {
     if (accessMode === AccessMode.PUBLIC) return true;
     if (accessMode === AccessMode.ACCOUNT) return Boolean(userId);
     if (!userId) return false;
-    const now = new Date();
-    return Boolean(
-      await this.prisma.entitlement.findFirst({
-        where: {
-          userId,
-          startAt: { lte: now },
-          revokedAt: null,
-          OR: [{ endAt: null }, { endAt: { gt: now } }],
-          product: { resourceGrants: { some: { resourceId } } },
-        },
-        select: { id: true },
-      }),
-    );
+    return this.access.hasActiveResourceAccess(userId, resourceId);
   }
 
   private async getResourceCanonical(id: string): Promise<ResourceEditorial> {

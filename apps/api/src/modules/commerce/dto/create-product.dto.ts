@@ -12,8 +12,8 @@ export class CreateProductDto {
   @MinLength(1)
   description!: string;
 
-  @IsIn(["COURSE", "RESOURCE", "BUNDLE"])
-  kind!: "COURSE" | "RESOURCE" | "BUNDLE";
+  @IsIn(["COURSE", "RESOURCE", "BUNDLE", "QUESTION_BANK"])
+  kind!: "COURSE" | "RESOURCE" | "BUNDLE" | "QUESTION_BANK";
 
   @IsOptional()
   @IsUUID()
@@ -28,4 +28,17 @@ export class CreateProductDto {
   @IsArray()
   @IsUUID(undefined, { each: true })
   resourceIds?: string[];
+
+  /**
+   * Question-bank subject codes this product grants (owner decision: bank
+   * access is SUBJECT-scoped, not whole-bank/per-topic). For a QUESTION_BANK
+   * product this is the product's own bank scope; for a COURSE product it is
+   * how "purchasing this course includes its question bank" is expressed --
+   * an explicit product-configuration choice, not derived from lesson
+   * topics.
+   */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  questionBankSubjectCodes?: string[];
 }

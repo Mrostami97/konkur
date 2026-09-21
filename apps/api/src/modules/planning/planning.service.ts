@@ -11,6 +11,7 @@ import {
 } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { LearningService } from "../learning/learning.service";
+import { AccessService } from "../access/access.service";
 import { UpsertGoalDto } from "./dto/upsert-goal.dto";
 import { LogStudySessionDto } from "./dto/log-study-session.dto";
 import { StudyHistoryQueryDto } from "./dto/study-history-query.dto";
@@ -162,6 +163,7 @@ export class PlanningService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly learning: LearningService,
+    private readonly access: AccessService,
   ) {}
 
   // --- Goal -------------------------------------------------------------
@@ -290,18 +292,7 @@ export class PlanningService {
     accessMode: AccessMode,
   ) {
     if (accessMode === AccessMode.PUBLIC || accessMode === AccessMode.ACCOUNT) return true;
-    const now = new Date();
-    const entitlement = await db.entitlement.findFirst({
-      where: {
-        userId,
-        startAt: { lte: now },
-        revokedAt: null,
-        OR: [{ endAt: null }, { endAt: { gt: now } }],
-        product: { resourceGrants: { some: { resourceId } } },
-      },
-      select: { id: true },
-    });
-    return Boolean(entitlement);
+    return this.access.hasActiveResourceAccess(userId, resourceId, db);
   }
 
   /** Deterministic planning from real assessment evidence, published learning

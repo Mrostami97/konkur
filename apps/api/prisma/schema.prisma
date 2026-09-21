@@ -493,24 +493,28 @@ enum ProductKind {
   COURSE
   RESOURCE
   BUNDLE
+  // Phase 17 (doc/roadmap/LEARNING_GROWTH_ACCESS_AND_AEO.md §2.3): the
+  // Question Bank is independently sellable, separate from any Course.
+  QUESTION_BANK
 }
 
 model Product {
-  id             String                 @id @default(uuid())
-  slug           String                 @unique
-  title          String
-  description    String
-  kind           ProductKind
-  courseId       String?
-  course         Course?                @relation(fields: [courseId], references: [id])
-  isActive       Boolean                @default(true)
-  prices         Price[]
-  orderItems     OrderItem[]
-  entitlements   Entitlement[]
-  courseGrants   ProductCourseGrant[]
-  resourceGrants ProductResourceGrant[]
-  createdAt      DateTime               @default(now())
-  updatedAt      DateTime               @updatedAt
+  id                 String                      @id @default(uuid())
+  slug               String                      @unique
+  title              String
+  description        String
+  kind               ProductKind
+  courseId           String?
+  course             Course?                     @relation(fields: [courseId], references: [id])
+  isActive           Boolean                     @default(true)
+  prices             Price[]
+  orderItems         OrderItem[]
+  entitlements       Entitlement[]
+  courseGrants       ProductCourseGrant[]
+  resourceGrants     ProductResourceGrant[]
+  questionBankGrants ProductQuestionBankGrant[]
+  createdAt          DateTime                    @default(now())
+  updatedAt          DateTime                    @updatedAt
 
   @@map("products")
 }
@@ -535,6 +539,29 @@ model ProductResourceGrant {
   @@id([productId, resourceId])
   @@index([resourceId])
   @@map("product_resource_grants")
+}
+
+// Phase 17 (doc/roadmap/LEARNING_GROWTH_ACCESS_AND_AEO.md §2-3): bank access
+// is SUBJECT-scoped (owner decision) -- a grant unlocks "the question bank
+// for subject X", not the whole bank and not per-topic. A Course product can
+// carry one of these alongside its ProductCourseGrant(s) so purchasing the
+// course includes the related bank at no extra charge, and the bank stays
+// independently sellable as its own QUESTION_BANK product.
+//
+// Scoped by `subjectCode` (a plain string), matching Question.subjectCode --
+// not a Subject.id foreign key. Question/Article never FK to Subject (see
+// the "Taxonomy" comment above the Subject model below); a grant that FK'd
+// to Subject while the questions it gates stayed loose-stringed would be an
+// inconsistent hybrid, and would require every subject used in ingested
+// question data to first exist as a catalog row.
+model ProductQuestionBankGrant {
+  productId   String
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subjectCode String
+
+  @@id([productId, subjectCode])
+  @@index([subjectCode])
+  @@map("product_question_bank_grants")
 }
 
 model Price {
@@ -658,12 +685,21 @@ model Question {
   source         Json?
   provenance     Json
   version        Int        @default(1)
+  // Phase 17 (doc/roadmap/LEARNING_GROWTH_ACCESS_AND_AEO.md §2.1): admin-set
+  // flag -- NOT auto-selected. A sample question is fully public, including
+  // `correctOption`/`solutionBlocks`: it is the shop-window/AEO asset for its
+  // subject. Everything not flagged is gated behind subject bank access
+  // (question-bank.service.ts). Defaults to false so every existing and
+  // newly-ingested question stays gated until an admin deliberately flags
+  // it. No admin UI sets this yet -- direct DB update only.
+  isSample       Boolean    @default(false)
   examItems      ExamItem[]
   answers        Answer[]
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
   @@index([subjectCode])
+  @@index([subjectCode, isSample])
   @@map("questions")
 }
 

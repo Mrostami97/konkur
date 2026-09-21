@@ -21,14 +21,31 @@ export class CommerceService {
   async createProduct(actorId: string, dto: CreateProductDto) {
     const courseIds = [...new Set([...(dto.courseIds ?? []), ...(dto.courseId ? [dto.courseId] : [])])];
     const resourceIds = [...new Set(dto.resourceIds ?? [])];
+    // Bank access is SUBJECT-scoped (owner decision): a grant unlocks the
+    // bank for one subject. A COURSE product may carry these alongside its
+    // course grant -- that is how "purchasing the course includes the bank"
+    // is expressed (explicit product configuration, not derived from lesson
+    // topics). A QUESTION_BANK product's own scope is exactly one subject,
+    // mirroring "COURSE grants exactly one course"; multi-subject bundling
+    // goes through BUNDLE like everything else.
+    const bankSubjectCodes = [...new Set(dto.questionBankSubjectCodes ?? [])];
     if (dto.kind === "COURSE" && (courseIds.length !== 1 || resourceIds.length > 0)) {
       throw new BadRequestException("COURSE products must grant exactly one course");
     }
-    if (dto.kind === "RESOURCE" && (resourceIds.length !== 1 || courseIds.length > 0)) {
+    if (
+      dto.kind === "RESOURCE" &&
+      (resourceIds.length !== 1 || courseIds.length > 0 || bankSubjectCodes.length > 0)
+    ) {
       throw new BadRequestException("RESOURCE products must grant exactly one resource");
     }
-    if (dto.kind === "BUNDLE" && courseIds.length + resourceIds.length < 2) {
-      throw new BadRequestException("BUNDLE products must grant at least two courses or resources");
+    if (
+      dto.kind === "QUESTION_BANK" &&
+      (bankSubjectCodes.length !== 1 || courseIds.length > 0 || resourceIds.length > 0)
+    ) {
+      throw new BadRequestException("QUESTION_BANK products must grant exactly one subject");
+    }
+    if (dto.kind === "BUNDLE" && courseIds.length + resourceIds.length + bankSubjectCodes.length < 2) {
+      throw new BadRequestException("BUNDLE products must grant at least two courses, resources, or bank subjects");
     }
 
     const product = await this.prisma.product.create({
@@ -43,6 +60,9 @@ export class CommerceService {
         courseGrants: courseIds.length ? { create: courseIds.map((courseId) => ({ courseId })) } : undefined,
         resourceGrants: resourceIds.length
           ? { create: resourceIds.map((resourceId) => ({ resourceId })) }
+          : undefined,
+        questionBankGrants: bankSubjectCodes.length
+          ? { create: bankSubjectCodes.map((subjectCode) => ({ subjectCode })) }
           : undefined,
       },
     });
@@ -70,6 +90,7 @@ export class CommerceService {
         course: true,
         courseGrants: { include: { course: true } },
         resourceGrants: { include: { resource: { select: { id: true, slug: true, title: true } } } },
+        questionBankGrants: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -82,6 +103,7 @@ export class CommerceService {
         prices: { where: { isActive: true }, take: 1 },
         courseGrants: { include: { course: { select: { id: true, slug: true, title: true, isPublished: true } } } },
         resourceGrants: { include: { resource: { select: { id: true, slug: true, title: true, reviewStatus: true } } } },
+        questionBankGrants: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -100,6 +122,7 @@ export class CommerceService {
         prices: { where: { isActive: true }, take: 1 },
         courseGrants: { include: { course: { select: { id: true, slug: true, title: true, isPublished: true } } } },
         resourceGrants: { include: { resource: { select: { id: true, slug: true, title: true, reviewStatus: true } } } },
+        questionBankGrants: true,
       },
     });
     if (
@@ -316,6 +339,7 @@ export class CommerceService {
               where: { resource: { reviewStatus: "PUBLISHED" } },
               include: { resource: { select: { id: true, slug: true, title: true } } },
             },
+            questionBankGrants: true,
           },
         },
       },
@@ -338,11 +362,13 @@ export class CommerceService {
     const active = (await this.listMyEntitlements(userId)).filter((item) => item.status === "ACTIVE");
     const courses = new Map<string, unknown>();
     const resources = new Map<string, unknown>();
+    const questionBankSubjects = new Set<string>();
     for (const entitlement of active) {
       for (const grant of entitlement.product.courseGrants) courses.set(grant.course.id, grant.course);
       for (const grant of entitlement.product.resourceGrants) resources.set(grant.resource.id, grant.resource);
+      for (const grant of entitlement.product.questionBankGrants) questionBankSubjects.add(grant.subjectCode);
     }
-    return { courses: [...courses.values()], resources: [...resources.values()] };
+    return { courses: [...courses.values()], resources: [...resources.values()], questionBankSubjects: [...questionBankSubjects] };
   }
 
   async addCourseGrant(productId: string, courseId: string) {
@@ -360,6 +386,15 @@ export class CommerceService {
       where: { productId_resourceId: { productId, resourceId } },
       update: {},
       create: { productId, resourceId },
+    });
+  }
+
+  async addBankGrant(productId: string, subjectCode: string) {
+    await this.ensureBundle(productId);
+    return this.prisma.productQuestionBankGrant.upsert({
+      where: { productId_subjectCode: { productId, subjectCode } },
+      update: {},
+      create: { productId, subjectCode },
     });
   }
 

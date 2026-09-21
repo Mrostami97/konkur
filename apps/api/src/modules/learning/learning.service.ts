@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException, UnauthorizedExceptio
 import { AccessMode, EnrollmentSource, Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
+import { AccessService } from "../access/access.service";
 import { LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/content-blocks";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
@@ -14,6 +15,7 @@ export class LearningService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly access: AccessService,
   ) {}
 
   // --- Admin/author authoring -------------------------------------------------
@@ -252,21 +254,7 @@ export class LearningService {
   }
 
   async hasActiveCourseEntitlement(userId: string, courseId: string, tx?: Tx): Promise<boolean> {
-    const db = tx ?? this.prisma;
-    const now = new Date();
-    const entitlement = await db.entitlement.findFirst({
-      where: {
-        userId,
-        startAt: { lte: now },
-        revokedAt: null,
-        OR: [{ endAt: null }, { endAt: { gt: now } }],
-        product: {
-          OR: [{ courseId }, { courseGrants: { some: { courseId } } }],
-        },
-      },
-      select: { id: true },
-    });
-    return Boolean(entitlement);
+    return this.access.hasActiveCourseAccess(userId, courseId, tx);
   }
 
   private async assertLessonAccess(

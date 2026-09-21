@@ -158,10 +158,14 @@ describe("Taxonomy + Question Bank (e2e)", () => {
     const question = await prisma.question.findUniqueOrThrow({ where: { externalId } });
     expect(question.version).toBe(1);
 
+    // Freshly authored questions are not samples, so an anonymous permalink
+    // request gets locked metadata only -- no stem, no options, no key.
     const publicRes = await request(app.getHttpServer()).get(`/questions/${question.id}`).expect(200);
     expect(publicRes.body.correctOption).toBeUndefined();
     expect(publicRes.body.solutionBlocks).toBeUndefined();
-    expect(publicRes.body.options).toHaveLength(4);
+    expect(publicRes.body.options).toBeUndefined();
+    expect(publicRes.body.stemBlocks).toBeUndefined();
+    expect(publicRes.body.subjectCode).toBe("algorithms");
 
     const versionsRes = await request(app.getHttpServer())
       .get(`/admin/content/QUESTION/${question.id}/versions`)
@@ -233,6 +237,186 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       expect(item.correctOption).toBeUndefined();
       expect(item.solutionBlocks).toBeUndefined();
     }
+  });
+
+  it("gates the answer key by subject bank access: sample vs locked, across anonymous/unentitled/subject-entitled/course-purchase-derived callers", async () => {
+    const suffix = Date.now();
+    const bankSubject = `bank-subject-${suffix}`;
+    const courseSubject = `bank-course-subject-${suffix}`;
+
+    async function authorPublish(externalId: string, subjectCode: string) {
+      const jobRes = await request(app.getHttpServer())
+        .post("/admin/questions")
+        .set("Cookie", adminCookie)
+        .send(questionDto(externalId, subjectCode, 1405))
+        .expect(201);
+      const itemsRes = await request(app.getHttpServer())
+        .get(`/admin/import/${jobRes.body.id}/items`)
+        .set("Cookie", adminCookie)
+        .expect(200);
+      await request(app.getHttpServer())
+        .post("/admin/import/items/review")
+        .set("Cookie", adminCookie)
+        .send({ itemIds: [itemsRes.body[0].id], decision: "APPROVE" })
+        .expect(201);
+      await request(app.getHttpServer())
+        .post(`/admin/import/${jobRes.body.id}/publish`)
+        .set("Cookie", adminCookie)
+        .expect(201);
+      return prisma.question.findUniqueOrThrow({ where: { externalId } });
+    }
+
+    async function login() {
+      const phone = randomPhone();
+      await request(app.getHttpServer()).post("/auth/otp/request").send({ phone }).expect(200);
+      const code = otpProvider.sent[otpProvider.sent.length - 1].code;
+      const res = await request(app.getHttpServer()).post("/auth/otp/verify").send({ phone, code }).expect(200);
+      return { cookie: res.headers["set-cookie"][0] as string, userId: res.body.user.id as string };
+    }
+
+    // Admin flags a sample the same way the doc says it must happen today:
+    // a direct DB write, since there is no admin UI for it yet.
+    const sample = await authorPublish(`bank-sample-${suffix}`, bankSubject);
+    await prisma.question.update({ where: { id: sample.id }, data: { isSample: true } });
+    const locked = await authorPublish(`bank-locked-${suffix}`, bankSubject);
+    const lockedViaCourse = await authorPublish(`bank-locked-course-${suffix}`, courseSubject);
+
+    // --- Anonymous ------------------------------------------------------
+    const anonSample = await request(app.getHttpServer()).get(`/questions/${sample.id}`).expect(200);
+    expect(anonSample.body.correctOption).toBe(2);
+    expect(anonSample.body.solutionBlocks).toBeDefined();
+
+    const anonLocked = await request(app.getHttpServer()).get(`/questions/${locked.id}`).expect(200);
+    expect(anonLocked.body.correctOption).toBeUndefined();
+    expect(anonLocked.body.solutionBlocks).toBeUndefined();
+    // The permalink is not a way around the gate: a non-sample question the
+    // caller has no bank access to carries no stem or options either, only
+    // locked metadata. The question text itself is the paid asset.
+    expect(anonLocked.body.options).toBeUndefined();
+    expect(anonLocked.body.stemBlocks).toBeUndefined();
+
+    const anonList = await request(app.getHttpServer()).get(`/questions?subjectCode=${bankSubject}`).expect(200);
+    const anonLockedItem = anonList.body.items.find((item: any) => item.id === locked.id);
+    expect(anonLockedItem.correctOption).toBeUndefined();
+    expect(anonLockedItem.solutionBlocks).toBeUndefined();
+    // list browsing of a locked item carries no stem/options either --
+    // browsing many stems at once is "full bank browsing", which the bank
+    // access model gates; the row still appears (locked metadata) rather
+    // than being silently dropped, so a UI can show it as a locked row.
+    expect(anonLockedItem.stemBlocks).toBeUndefined();
+    expect(anonLockedItem.options).toBeUndefined();
+    expect(anonLockedItem.subjectCode).toBe(bankSubject);
+    const anonSampleItem = anonList.body.items.find((item: any) => item.id === sample.id);
+    expect(anonSampleItem.correctOption).toBe(2);
+    expect(anonSampleItem.stemBlocks).toBeDefined();
+
+    // --- Logged in, no entitlement: identical outcome to anonymous ------
+    const unentitled = await login();
+    const unentitledLocked = await request(app.getHttpServer())
+      .get(`/questions/${locked.id}`)
+      .set("Cookie", unentitled.cookie)
+      .expect(200);
+    expect(unentitledLocked.body.correctOption).toBeUndefined();
+    expect(unentitledLocked.body.solutionBlocks).toBeUndefined();
+
+    // --- Subject-entitled: standalone QUESTION_BANK product, manually
+    // granted (stands in for a completed purchase) -----------------------
+    const bankProductRes = await request(app.getHttpServer())
+      .post("/admin/products")
+      .set("Cookie", adminCookie)
+      .send({
+        slug: `bank-product-${suffix}`,
+        title: "Bank product",
+        description: "bank access",
+        kind: "QUESTION_BANK",
+        questionBankSubjectCodes: [bankSubject],
+      })
+      .expect(201);
+
+    const bankStudent = await login();
+    await request(app.getHttpServer())
+      .post("/admin/entitlements/grant")
+      .set("Cookie", adminCookie)
+      .send({
+        userId: bankStudent.userId,
+        productId: bankProductRes.body.id,
+        grantedVia: "MANUAL",
+        reason: "e2e subject grant",
+      })
+      .expect(201);
+
+    const entitledLocked = await request(app.getHttpServer())
+      .get(`/questions/${locked.id}`)
+      .set("Cookie", bankStudent.cookie)
+      .expect(200);
+    expect(entitledLocked.body.correctOption).toBe(2);
+    expect(entitledLocked.body.solutionBlocks).toBeDefined();
+
+    const entitledList = await request(app.getHttpServer())
+      .get(`/questions?subjectCode=${bankSubject}`)
+      .set("Cookie", bankStudent.cookie)
+      .expect(200);
+    const entitledLockedItem = entitledList.body.items.find((item: any) => item.id === locked.id);
+    expect(entitledLockedItem.correctOption).toBe(2);
+    expect(entitledLockedItem.stemBlocks).toBeDefined();
+
+    // The grant is subject-scoped -- it does not unlock a different subject.
+    const entitledCrossSubject = await request(app.getHttpServer())
+      .get(`/questions/${lockedViaCourse.id}`)
+      .set("Cookie", bankStudent.cookie)
+      .expect(200);
+    expect(entitledCrossSubject.body.correctOption).toBeUndefined();
+
+    // --- Course-purchase-derived: a COURSE product carrying a bank grant
+    // for courseSubject: buying the course includes that subject's bank at
+    // no extra charge -----------------------------------------------------
+    const courseRes = await request(app.getHttpServer())
+      .post("/admin/courses")
+      .set("Cookie", adminCookie)
+      .send({ slug: `bank-course-${suffix}`, title: "Course with bank", description: "d" })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post(`/admin/courses/${courseRes.body.id}/publish`)
+      .set("Cookie", adminCookie)
+      .expect(201);
+
+    const courseProductRes = await request(app.getHttpServer())
+      .post("/admin/products")
+      .set("Cookie", adminCookie)
+      .send({
+        slug: `bank-course-product-${suffix}`,
+        title: "Course + bank",
+        description: "d",
+        kind: "COURSE",
+        courseId: courseRes.body.id,
+        questionBankSubjectCodes: [courseSubject],
+      })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post(`/admin/products/${courseProductRes.body.id}/prices`)
+      .set("Cookie", adminCookie)
+      .send({ amountRial: 100000 })
+      .expect(201);
+
+    const courseStudent = await login();
+    await request(app.getHttpServer())
+      .post("/checkout")
+      .set("Cookie", courseStudent.cookie)
+      .send({ productId: courseProductRes.body.id })
+      .expect(201);
+
+    const courseStudentAnswer = await request(app.getHttpServer())
+      .get(`/questions/${lockedViaCourse.id}`)
+      .set("Cookie", courseStudent.cookie)
+      .expect(200);
+    expect(courseStudentAnswer.body.correctOption).toBe(2);
+
+    // The course purchase does not grant the unrelated bank-only subject.
+    const courseStudentOtherSubject = await request(app.getHttpServer())
+      .get(`/questions/${locked.id}`)
+      .set("Cookie", courseStudent.cookie)
+      .expect(200);
+    expect(courseStudentOtherSubject.body.correctOption).toBeUndefined();
   });
 
   it("denies anonymous media access to an artifact not (yet) part of any public content", async () => {

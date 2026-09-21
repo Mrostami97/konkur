@@ -1,4 +1,4 @@
-import { IsUUID } from "class-validator";
+import { IsString, IsUUID, MinLength } from "class-validator";
 
 export class GrantCourseDto {
   @IsUUID()
@@ -8,4 +8,10 @@ export class GrantCourseDto {
 export class GrantResourceDto {
   @IsUUID()
   resourceId!: string;
+}
+
+export class GrantQuestionBankDto {
+  @IsString()
+  @MinLength(1)
+  subjectCode!: string;
 }

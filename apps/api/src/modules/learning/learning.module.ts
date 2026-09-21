@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AuditModule } from "../audit/audit.module";
 import { IdentityModule } from "../identity/identity.module";
+import { AccessModule } from "../access/access.module";
 import {
   CoursesPublicController,
   LearningAdminController,
@@ -9,7 +10,7 @@ import {
 import { LearningService } from "./learning.service";
 
 @Module({
-  imports: [AuditModule, IdentityModule],
+  imports: [AuditModule, IdentityModule, AccessModule],
   controllers: [CoursesPublicController, LearningStudentController, LearningAdminController],
   providers: [LearningService],
   exports: [LearningService],
