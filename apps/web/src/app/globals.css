@@ -16,16 +16,107 @@
 
 :root {
   --font-persian: "IRANYekan", "Yekan", "IRANYekanX", "IRANYekan", "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
-  --ink: #10243f;
-  --muted: #6b7c93;
-  --navy: #112c4e;
-  --teal: #10b9a6;
-  --teal-dark: #078f84;
-  --sky: #eaf7f7;
-  --line: #dbe7ef;
+  /* Light and quiet. The ground is a barely-tinted canvas rather than white:
+     white surfaces float on it, which is what gives the page depth without
+     spending a shadow on every block.
+
+     Teal is the single accent -- a competitor scan put purple (KonkurComputer)
+     and navy/gold (CSHub) out of reach, and teal is both open and already this
+     brand's. Amber is the one warm note, reserved for "new" and "needs
+     attention", so warmth is always load-bearing rather than decorative. */
+  --ink: #0d2b2a;
+  --muted: #5b7a78;
+  --navy: #0d2b2a;
+  --teal: #0ab39b;
+  --teal-dark: #068573;
+  --sky: #e6f7f4;
+  --line: #dbe8e4;
   --surface: #ffffff;
-  --background: #f5f8fc;
-  --shadow: 0 22px 55px rgba(17, 44, 78, 0.1);
+  --background: #f1f6f4;
+  --warm: #e0791f;
+  --warm-wash: #fdf1e7;
+  --shadow: 0 1px 2px rgba(13, 43, 42, 0.04), 0 14px 36px rgba(13, 43, 42, 0.06);
+
+  /* Design system scales. The palette above predates these and is kept as-is
+     so the public pages it styles are untouched; everything below is what
+     product and admin surfaces are built from. Steps are deliberately few --
+     a scale you can hold in your head is a scale people actually follow. */
+
+  /* 4px base. --sp-4 (16px) is the default gutter, --sp-6 (24px) separates
+     sections, --sp-8 (32px) separates major regions. */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* Persian text needs more line-height than Latin at the same size; these
+     pairs are set together so the two never drift apart. */
+  --text-xs: 0.75rem;   --leading-xs: 1.6;
+  --text-sm: 0.8125rem; --leading-sm: 1.65;
+  --text-base: 0.9375rem; --leading-base: 1.75;
+  --text-md: 1rem;      --leading-md: 1.75;
+  --text-lg: 1.125rem;  --leading-lg: 1.6;
+  --text-xl: 1.375rem;  --leading-xl: 1.5;
+  --text-2xl: 1.75rem;  --leading-2xl: 1.4;
+  --text-3xl: 2.25rem;  --leading-3xl: 1.25;
+
+  /* Only three weights. IRANYekan ships one file, so anything else is a
+     synthesised fake-bold -- see font-synthesis on body. */
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --weight-bold: 700;
+
+  /* Close-range, low-opacity elevation. The legacy --shadow above is a
+     22px/55px drop that reads as heavy next to these. */
+  --elev-1: 0 1px 2px rgba(17, 44, 78, 0.06);
+  --elev-2: 0 2px 8px rgba(17, 44, 78, 0.07), 0 1px 2px rgba(17, 44, 78, 0.04);
+  --elev-3: 0 8px 24px rgba(17, 44, 78, 0.09), 0 2px 6px rgba(17, 44, 78, 0.04);
+  --elev-4: 0 18px 44px rgba(17, 44, 78, 0.13), 0 4px 12px rgba(17, 44, 78, 0.06);
+
+  --line-soft: #e4efeb;
+  --line-strong: #c6dbd5;
+  --surface-sunken: #f7fbfa;
+  --surface-hover: #eff6f4;
+
+  /* Semantic colours. Only --danger existed before (as .button-danger), so
+     success/warning/info states had nothing to use and were hand-coded. */
+  --success: #0f8a53;
+  --success-soft: #e8f6ee;
+  --warning: #a86b00;
+  --warning-soft: #fdf3e2;
+  --danger: #c33c3c;
+  --danger-soft: #fdeceb;
+  --info: #2b6cb0;
+  --info-soft: #eaf2fb;
+
+  --focus-ring: 0 0 0 3px rgba(16, 185, 166, 0.35);
+
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 260ms;
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+/* Respect the OS setting rather than animating regardless. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -35,10 +126,9 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 8% 6%, rgba(16, 185, 166, 0.11), transparent 28rem),
-    radial-gradient(circle at 96% 17%, rgba(84, 153, 255, 0.09), transparent 26rem),
-    var(--background);
+  /* Flat. The two tinted radials that used to sit here pulled a second hue
+     (blue) into a palette that is meant to read as one colour. */
+  background: var(--background);
   font-family: var(--font-persian);
   font-size: 16px;
   font-weight: 400;
@@ -58,8 +148,8 @@ button:disabled { cursor: not-allowed; opacity: 0.58; }
   position: sticky;
   top: 0;
   z-index: 20;
-  border-bottom: 1px solid rgba(219, 231, 239, 0.9);
-  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--background) 88%, transparent);
   backdrop-filter: blur(18px);
 }
 
@@ -98,8 +188,11 @@ button:disabled { cursor: not-allowed; opacity: 0.58; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.8rem; }
 .hero-degree { display: flex; align-items: center; gap: 0.7rem; margin-top: 1.15rem; color: var(--muted); font-size: 0.78rem; font-weight: 800; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 46px; padding: 0.7rem 1.15rem; border: 0; border-radius: 13px; font-weight: 800; transition: transform 160ms ease, box-shadow 160ms ease; }
-.button:hover { transform: translateY(-2px); }
-.button-primary { color: #fff; background: linear-gradient(135deg, var(--teal), #2f72e8); box-shadow: 0 12px 26px rgba(16, 185, 166, 0.22); }
+/* Colour shift rather than a lift: the hover-jump reads dated, and a button
+   that moves under the cursor is harder to hit. */
+.button:hover { transform: none; }
+.button-primary { color: #fff; background: var(--teal); box-shadow: none; }
+.button-primary:hover { background: var(--teal-dark); }
 .button-secondary { border: 1px solid var(--line); color: var(--navy); background: var(--surface); }
 
 .hero-visual { position: relative; min-height: 360px; }
@@ -293,7 +386,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 
 /* Public knowledge experience ------------------------------------------------ */
-.home-hero-wrap { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, #f8fbff 0%, #eefbf8 52%, #eff5ff 100%); }
+.home-hero-wrap { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--background); }
 .home-hero-wrap::before { position: absolute; inset: 0; opacity: 0; background-image: none; content: ""; }
 .home-hero { position: relative; display: grid; grid-template-columns: 1.04fr .96fr; align-items: center; gap: 4.5rem; min-height: 660px; padding-top: 5rem; padding-bottom: 5rem; }
 .home-trust-line { display: inline-flex; align-items: center; gap: .75rem; padding: .35rem .4rem .35rem .8rem; border: 1px solid #cae8e2; border-radius: 999px; color: var(--muted); background: rgba(255,255,255,.78); font-size: .72rem; }
@@ -388,7 +481,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .channel-stack span, .channel-stack small { color: var(--muted); font-size: .7rem; }
 .channel-stack strong { color: var(--navy); font: 800 1.15rem/1.7 "Segoe UI",sans-serif; direction: ltr; text-align: right; }
 
-.site-footer { padding: 3.5rem max(1.5rem,calc((100vw - 1180px)/2)) 1.5rem; color: #c2d1df; background: #0c2139; }
+.site-footer { padding: 3.5rem max(1.5rem,calc((100vw - 1180px)/2)) 1.5rem; color: var(--muted); background: var(--surface); border-top: 1px solid var(--line); }
 .footer-grid { display: grid; grid-template-columns: 1.4fr repeat(3,1fr); gap: 2rem; }
 .footer-grid > div { display: grid; align-content: start; gap: .55rem; }
 .footer-grid strong { color: white; font-size: .88rem; }
@@ -629,7 +722,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   --paper: #fbfdff;
 }
 
-.site-header { border-bottom-color: rgba(210, 224, 235, .7); background: rgba(251, 253, 255, .82); box-shadow: 0 8px 30px rgba(9, 35, 62, .045); }
+.site-header { border-bottom-color: var(--line); background: color-mix(in srgb, var(--background) 85%, transparent); box-shadow: none; }
 .nav-wrap { min-height: 82px; }
 .brand-logo-wrap { width: 60px; height: 60px; border-color: rgba(198, 222, 232, .9); border-radius: 18px; box-shadow: 0 12px 28px rgba(43, 137, 208, .18); }
 .brand-copy strong { color: var(--navy); }
@@ -641,7 +734,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .nav-link:hover { border-color: #d9efeb; }
 .auth-link { box-shadow: 0 6px 18px rgba(16,185,166,.08); }
 
-.home-hero-wrap { background: radial-gradient(circle at 82% 12%, rgba(100, 124, 245, .13), transparent 25rem), radial-gradient(circle at 16% 65%, rgba(16,185,166,.12), transparent 28rem), linear-gradient(135deg, #f8fbff 0%, #effbf9 52%, #f4f5ff 100%); }
+.home-hero-wrap { background: var(--background); }
 .home-hero-wrap::before { opacity: 0; background-image: none; }
 .home-hero { min-height: 700px; gap: 5.2rem; padding-top: 5.7rem; padding-bottom: 5.5rem; }
 .home-hero-copy h1 { max-width: 760px; font-size: clamp(3.15rem, 6.6vw, 6.1rem); letter-spacing: -.065em; }

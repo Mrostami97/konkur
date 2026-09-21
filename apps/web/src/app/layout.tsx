@@ -4,10 +4,12 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
 import { AuthStatus } from "../components/AuthStatus";
+import { PublicChrome } from "../components/PublicChrome";
 import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 import { StructuredData } from "../components/StructuredData";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "../lib/seo";
 import "./globals.css";
+import "./design-system.css";
 
 const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 const bingSiteVerification = process.env.BING_SITE_VERIFICATION?.trim();
@@ -46,6 +48,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom"] },
           { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
         ]} />
+        <PublicChrome>
         <header className="site-header">
           <div className="nav-wrap">
             <Link href="/" className="brand" aria-label="کنکورصفریک">
@@ -65,7 +68,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <span className="auth-link"><AuthStatus /></span>
           </div>
         </header>
+        </PublicChrome>
         {children}
+        <PublicChrome>
         <footer className="site-footer">
           <div className="footer-grid">
             <div className="footer-brand"><span className="brand-logo-wrap footer-logo-wrap"><Image className="brand-logo" src="/brand/konkurcom-logo.png" alt="" width={72} height={72} /></span><div><strong>کنکورصفریک <small>kunkur01</small></strong><p>مسیر روشن‌تر برای ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.</p></div></div>
@@ -82,6 +87,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Link href="/rank-estimate"><span>↗</span><small>تحلیل</small></Link>
           <Link href="/account"><span>◎</span><small>حساب من</small></Link>
         </nav>
+        </PublicChrome>
         <ServiceWorkerRegistration />
       </body>
     </html>
