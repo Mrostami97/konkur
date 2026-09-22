@@ -432,6 +432,9 @@
 .ds-table tbody tr:hover { background: var(--surface-hover); }
 .ds-table td { line-height: var(--leading-base); vertical-align: top; }
 .ds-table-numeric { font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Row actions stay on one line so a row is one line tall; the wrapper scrolls
+ * horizontally when the panel is too narrow for them. */
+.ds-table-actions { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: nowrap; white-space: nowrap; }
 
 .ds-pagination {
   display: flex;

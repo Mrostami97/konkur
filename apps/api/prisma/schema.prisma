@@ -691,8 +691,17 @@ model Question {
   // subject. Everything not flagged is gated behind subject bank access
   // (question-bank.service.ts). Defaults to false so every existing and
   // newly-ingested question stays gated until an admin deliberately flags
-  // it. No admin UI sets this yet -- direct DB update only.
+  // it, from the bank screen in the admin panel. Retiring a question clears
+  // this flag: a retired question must not keep acting as a shop-window.
   isSample       Boolean    @default(false)
+  // A retired question leaves the bank and can no longer be added to an exam,
+  // but the row stays: ExamItem and Answer reference it without a cascade, so
+  // deleting one that has ever been sat is refused by the database, and even
+  // where a delete would succeed it would destroy what a past attempt's report
+  // renders from. Reads filter on this rather than on a boolean so the panel
+  // can also show when, and `retiredReason` records why.
+  retiredAt      DateTime?
+  retiredReason  String?
   examItems      ExamItem[]
   answers        Answer[]
   createdAt      DateTime   @default(now())
@@ -700,6 +709,8 @@ model Question {
 
   @@index([subjectCode])
   @@index([subjectCode, isSample])
+  @@index([retiredAt])
+  @@index([subjectCode, retiredAt])
   @@map("questions")
 }
 

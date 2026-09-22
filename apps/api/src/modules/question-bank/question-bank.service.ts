@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { Degree, Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { IngestionService } from "../ingestion/ingestion.service";
 import { AccessService } from "../access/access.service";
+import { AuditService } from "../audit/audit.service";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 import type { SessionUser } from "../identity/identity.service";
 
@@ -80,6 +81,7 @@ export class QuestionBankService {
     private readonly prisma: PrismaService,
     private readonly ingestion: IngestionService,
     private readonly access: AccessService,
+    private readonly audit: AuditService,
   ) {}
 
   /**
@@ -96,7 +98,10 @@ export class QuestionBankService {
     const page = filters.page && filters.page > 0 ? filters.page : 1;
     const pageSize = filters.pageSize && filters.pageSize > 0 && filters.pageSize <= 100 ? filters.pageSize : 20;
 
-    const where: Prisma.QuestionWhereInput = {};
+    // A retired question is out of the bank. It stays readable to admin for
+    // history and for past attempt reports, but no public or student path may
+    // surface it again.
+    const where: Prisma.QuestionWhereInput = { retiredAt: null };
     if (filters.subjectCode) where.subjectCode = filters.subjectCode;
     if (filters.topicCode) where.topicCodes = { has: filters.topicCode };
     if (filters.examDegree) where.examDegree = filters.examDegree.toUpperCase() as Degree;
@@ -158,7 +163,12 @@ export class QuestionBankService {
    * hidden client-side.
    */
   async getById(id: string, requester?: SessionUser): Promise<LockedQuestion | AnsweredQuestion> {
-    const locked = await this.prisma.question.findUnique({ where: { id }, select: LOCKED_QUESTION_SELECT });
+    // Matches `list`: a retired question is gone from the bank, and a stale
+    // permalink must not be the one way back to it.
+    const locked = await this.prisma.question.findFirst({
+      where: { id, retiredAt: null },
+      select: LOCKED_QUESTION_SELECT,
+    });
     if (!locked) throw new NotFoundException("question not found");
 
     const unlocked =
@@ -186,6 +196,121 @@ export class QuestionBankService {
 
   async listVersions(id: string) {
     return this.ingestion.listVersions("QUESTION", id);
+  }
+
+  /**
+   * Admin listing. Unlike the public path this shows retired questions too --
+   * an operator needs to see what was taken out of the bank and why, and needs
+   * a way back to a question they retired by mistake.
+   */
+  async listForAdmin(filters: QuestionFilters & { includeRetired?: boolean }) {
+    const page = filters.page && filters.page > 0 ? filters.page : 1;
+    const pageSize = filters.pageSize && filters.pageSize > 0 && filters.pageSize <= 100 ? filters.pageSize : 20;
+
+    const where: Prisma.QuestionWhereInput = {};
+    if (!filters.includeRetired) where.retiredAt = null;
+    if (filters.subjectCode) where.subjectCode = filters.subjectCode;
+    if (filters.topicCode) where.topicCodes = { has: filters.topicCode };
+    if (filters.examDegree) where.examDegree = filters.examDegree.toUpperCase() as Degree;
+    if (filters.examMajor) where.examMajor = filters.examMajor;
+    if (filters.examYear) where.examYear = filters.examYear;
+    if (filters.q) {
+      where.OR = [
+        { externalId: { contains: filters.q, mode: "insensitive" } },
+        { subjectCode: { contains: filters.q, mode: "insensitive" } },
+        { examMajor: { contains: filters.q, mode: "insensitive" } },
+        { topicCodes: { has: filters.q } },
+      ];
+    }
+
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.question.findMany({
+        where,
+        select: { ...ANSWERED_QUESTION_SELECT, retiredAt: true, retiredReason: true },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { createdAt: "desc" },
+      }),
+      this.prisma.question.count({ where }),
+    ]);
+
+    return { items, total, page, pageSize };
+  }
+
+  /**
+   * Retires a question rather than deleting it. ExamItem and Answer reference
+   * Question without a cascade, so a delete of anything ever sat is refused by
+   * the database — and even where it would succeed it would destroy what a
+   * past attempt's report renders from. Retiring also clears the sample flag,
+   * because a retired question must not keep acting as a subject's public
+   * shop-window.
+   */
+  async retire(actorId: string, id: string, reason: string) {
+    const question = await this.prisma.question.findUnique({
+      where: { id },
+      select: { id: true, externalId: true, retiredAt: true },
+    });
+    if (!question) throw new NotFoundException("question not found");
+    if (question.retiredAt) throw new BadRequestException("question is already retired");
+
+    const [updated, examUses] = await this.prisma.$transaction([
+      this.prisma.question.update({
+        where: { id },
+        data: { retiredAt: new Date(), retiredReason: reason, isSample: false },
+        select: { id: true, externalId: true, retiredAt: true, retiredReason: true },
+      }),
+      this.prisma.examItem.count({ where: { questionId: id } }),
+    ]);
+
+    await this.audit.log({ actorUserId: actorId, action: "question.retired", targetType: "Question", targetId: id, metadata: { reason, examUses } });
+    return { ...updated, examUses };
+  }
+
+  /** Returns a retired question to the bank. It comes back gated: the sample
+   * flag is not restored, since flagging is a separate deliberate decision. */
+  async restore(actorId: string, id: string) {
+    const question = await this.prisma.question.findUnique({ where: { id }, select: { id: true, retiredAt: true } });
+    if (!question) throw new NotFoundException("question not found");
+    if (!question.retiredAt) throw new BadRequestException("question is not retired");
+
+    const updated = await this.prisma.question.update({
+      where: { id },
+      data: { retiredAt: null, retiredReason: null },
+      select: { id: true, externalId: true, retiredAt: true },
+    });
+
+    await this.audit.log({ actorUserId: actorId, action: "question.restored", targetType: "Question", targetId: id });
+    return updated;
+  }
+
+  /**
+   * Sets the public-sample flag. This is the first way to set it outside a
+   * direct database write: a sample is fully public including its answer key,
+   * so it is an editorial decision and is audited as one.
+   */
+  async setSample(actorId: string, id: string, isSample: boolean) {
+    const question = await this.prisma.question.findUnique({
+      where: { id },
+      select: { id: true, retiredAt: true },
+    });
+    if (!question) throw new NotFoundException("question not found");
+    if (question.retiredAt && isSample) {
+      throw new BadRequestException("a retired question cannot be made a public sample");
+    }
+
+    const updated = await this.prisma.question.update({
+      where: { id },
+      data: { isSample },
+      select: { id: true, externalId: true, isSample: true },
+    });
+
+    await this.audit.log({
+      actorUserId: actorId,
+      action: isSample ? "question.sample_set" : "question.sample_cleared",
+      targetType: "Question",
+      targetId: id,
+    });
+    return updated;
   }
 
   async createDirect(actorId: string, dto: CreateQuestionDto) {

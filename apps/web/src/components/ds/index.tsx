@@ -293,6 +293,8 @@ export function ConfirmDialog({
   confirmLabel = "تأیید",
   tone = "primary",
   busy,
+  confirmDisabled,
+  children,
   onConfirm,
   onCancel,
 }: {
@@ -302,6 +304,12 @@ export function ConfirmDialog({
   confirmLabel?: string;
   tone?: "primary" | "danger";
   busy?: boolean;
+  /** Blocks confirmation while the body below is incomplete -- used when the
+   * dialog collects something, e.g. a mandatory reason. */
+  confirmDisabled?: boolean;
+  /** Optional body between the description and the buttons, for a dialog that
+   * asks for a detail rather than only a yes/no. */
+  children?: ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -334,11 +342,12 @@ export function ConfirmDialog({
           {title}
         </h2>
         {description && <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>{description}</p>}
+        {children && <div style={{ marginTop: "var(--sp-4)" }}>{children}</div>}
         <div className="ds-row" style={{ marginTop: "var(--sp-6)", justifyContent: "flex-end" }}>
           <Button variant="ghost" onClick={onCancel} disabled={busy}>
             انصراف
           </Button>
-          <Button variant={tone} onClick={onConfirm} loading={busy}>
+          <Button variant={tone} onClick={onConfirm} loading={busy} disabled={confirmDisabled}>
             {confirmLabel}
           </Button>
         </div>

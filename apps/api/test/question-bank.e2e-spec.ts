@@ -610,4 +610,66 @@ describe("Taxonomy + Question Bank (e2e)", () => {
     expect(res.status).toBe(302);
     expect(res.headers.location).toMatch(/^http/);
   });
+it("retires a question out of the bank without destroying it, and can restore it", async () => {
+    const externalId = `retire-${Date.now()}`;
+    const jobRes = await request(app.getHttpServer())
+      .post("/admin/questions")
+      .set("Cookie", adminCookie)
+      .send(questionDto(externalId, "algorithms", 1405))
+      .expect(201);
+    const itemsRes = await request(app.getHttpServer())
+      .get(`/admin/import/${jobRes.body.id}/items`)
+      .set("Cookie", adminCookie)
+      .expect(200);
+    await request(app.getHttpServer())
+      .post("/admin/import/items/review")
+      .set("Cookie", adminCookie)
+      .send({ itemIds: [itemsRes.body[0].id], decision: "APPROVE" })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post(`/admin/import/${jobRes.body.id}/publish`)
+      .set("Cookie", adminCookie)
+      .expect(201);
+    const question = await prisma.question.findUniqueOrThrow({ where: { externalId } });
+
+    // Visible in the bank before retirement.
+    await request(app.getHttpServer()).get(`/questions/${question.id}`).expect(200);
+
+    await request(app.getHttpServer())
+      .post(`/admin/questions/${question.id}/retire`)
+      .set("Cookie", adminCookie)
+      .send({ reason: "پاسخ نادرست بود" })
+      .expect(201);
+
+    // Gone from every public path -- list and the permalink alike.
+    await request(app.getHttpServer()).get(`/questions/${question.id}`).expect(404);
+    const publicList = await request(app.getHttpServer()).get("/questions?subjectCode=algorithms").expect(200);
+    expect(publicList.body.items.some((item: any) => item.id === question.id)).toBe(false);
+
+    // The row survives, so a past attempt report still has something to read.
+    const retired = await prisma.question.findUniqueOrThrow({ where: { id: question.id } });
+    expect(retired.retiredAt).not.toBeNull();
+    expect(retired.retiredReason).toBe("پاسخ نادرست بود");
+    expect(retired.isSample).toBe(false);
+
+    // Admin can still see it when asking for retired rows.
+    const adminList = await request(app.getHttpServer())
+      .get("/admin/questions?includeRetired=true&subjectCode=algorithms")
+      .set("Cookie", adminCookie)
+      .expect(200);
+    expect(adminList.body.items.some((item: any) => item.id === question.id)).toBe(true);
+
+    // A retired question cannot be made a public sample.
+    await request(app.getHttpServer())
+      .post(`/admin/questions/${question.id}/sample`)
+      .set("Cookie", adminCookie)
+      .send({ isSample: true })
+      .expect(400);
+
+    await request(app.getHttpServer())
+      .post(`/admin/questions/${question.id}/restore`)
+      .set("Cookie", adminCookie)
+      .expect(201);
+    await request(app.getHttpServer()).get(`/questions/${question.id}`).expect(200);
+  });
 });
