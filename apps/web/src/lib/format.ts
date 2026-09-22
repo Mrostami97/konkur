@@ -13,3 +13,15 @@ export function toEnglishDigits(value: string): string {
 export function formatPersianNumber(value: number, options?: Intl.NumberFormatOptions): string {
   return new Intl.NumberFormat("fa-IR", options).format(value);
 }
+
+/** Money is stored and sent as an integer count of rial; only the display
+ * carries the unit. */
+export function formatRial(amountRial: number): string {
+  return `${amountRial.toLocaleString("fa-IR")} ریال`;
+}
+
+/** Revenue shares are stored in basis points so the arithmetic stays in
+ * integers; people read percent. */
+export function formatSharePercent(basisPoints: number): string {
+  return `${formatPersianNumber(basisPoints / 100, { maximumFractionDigits: 2 })}٪`;
+}

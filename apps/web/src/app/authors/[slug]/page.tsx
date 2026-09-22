@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContentBlocks } from "../../../components/ContentBlocks";
 import {
@@ -37,6 +38,14 @@ interface ContributorResource {
   href: string;
 }
 
+interface TaughtCourse {
+  slug: string;
+  title: string;
+  description: string;
+  subject: { code: string; title: string } | null;
+  href: string;
+}
+
 interface PublicContributor {
   kind: "PERSON" | "ORGANIZATION";
   slug: string;
@@ -52,6 +61,7 @@ interface PublicContributor {
   reviewedArticles: ContributorArticle[];
   authoredResources: ContributorResource[];
   reviewedResources: ContributorResource[];
+  taughtCourses: TaughtCourse[];
 }
 
 async function loadContributor(slug: string) {
@@ -198,6 +208,27 @@ export default async function AuthorPage({ params }: { params: { slug: string } 
         </section>
       )}
 
+      {contributor.taughtCourses.length > 0 && (
+        <section className="surface-card" aria-labelledby="author-courses">
+          <div className="section-heading">
+            <div>
+              <h2 id="author-courses">دوره‌هایی که تدریس می‌کند</h2>
+              <p>دوره‌های منتشرشده‌ای که این مدرس، مدرس آن‌هاست.</p>
+            </div>
+            <a href="/consultations">رزرو مشاوره ←</a>
+          </div>
+          <div className="pg-grid pg-grid-wide">
+            {contributor.taughtCourses.map((course) => (
+              <Link className="pg-card" href={course.href} key={course.slug}>
+                <h3>{course.title}</h3>
+                {course.subject && <span className="pg-card-meta">{course.subject.title}</span>}
+                <p>{course.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       <RelatedContentGrid
         title="مطالب منتشرشده"
         description="مقاله‌ها، راهنماها و منابعی که نویسندگی آن‌ها در سامانه ثبت و منتشر شده است."
@@ -208,7 +239,7 @@ export default async function AuthorPage({ params }: { params: { slug: string } 
         description="محتواهایی که بازبینی این مشارکت‌کننده برای نسخهٔ عمومی آن‌ها ثبت شده است."
         items={reviewed}
       />
-      {authored.length === 0 && reviewed.length === 0 && (
+      {authored.length === 0 && reviewed.length === 0 && contributor.taughtCourses.length === 0 && (
         <EmptyState
           title="هنوز محتوای عمومی به این پروفایل متصل نشده است"
           description="فقط محتواهای منتشرشده و دارای انتساب تأییدشده در این فهرست می‌آیند."

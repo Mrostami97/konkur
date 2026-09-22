@@ -17,6 +17,7 @@ const NAV = [
   { href: "/questions", label: "بانک سؤال" },
   { href: "/exams", label: "آزمون‌ها" },
   { href: "/courses", label: "دوره‌ها" },
+  { href: "/consultations", label: "مشاوره" },
   { href: "/articles", label: "مقاله‌ها" },
   { href: "/admissions", label: "انتخاب‌رشته" },
 ];

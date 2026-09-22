@@ -45,6 +45,24 @@ export class AccessService {
     return Boolean(entitlement);
   }
 
+  /**
+   * The active entitlements a user holds for one product, oldest first.
+   *
+   * Unlike the boolean helpers, this returns the rows themselves, because
+   * consultation session quota is counted per entitlement: buying the same
+   * package twice gives two independent quotas, and a booking has to say
+   * which one it draws against. Oldest first so the quota that expires
+   * soonest is the one spent first.
+   */
+  async activeEntitlementsForProduct(userId: string, productId: string, tx?: AccessTx) {
+    const db = tx ?? this.prisma;
+    return db.entitlement.findMany({
+      where: { userId, productId, ...this.entitlementWindow(new Date()) },
+      select: { id: true, startAt: true, endAt: true },
+      orderBy: { startAt: "asc" },
+    });
+  }
+
   /** Course access: bought directly (Product.courseId) or via an explicit
    * ProductCourseGrant (a bundle/multi-course product). */
   async hasActiveCourseAccess(userId: string, courseId: string, tx?: AccessTx): Promise<boolean> {

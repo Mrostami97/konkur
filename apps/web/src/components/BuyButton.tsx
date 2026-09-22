@@ -3,45 +3,51 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { apiFetch, ApiError } from "../lib/api";
+import { Alert, Button } from "./ds";
 
-export function BuyButton({ productId }: { productId: string }) {
+export function BuyButton({
+  productId,
+  label = "خرید دوره",
+  redirectTo = "/account",
+}: {
+  productId: string;
+  /** What this purchase is, in the shopper's words -- a course and a
+   * consultation package are not the same act. */
+  label?: string;
+  /** Where to land afterwards. A consultation sends the student to the screen
+   * where they book the session they have just paid for, not to a generic
+   * account page that would leave them wondering what to do next. */
+  redirectTo?: string;
+}) {
   const router = useRouter();
-  const [state, setState] = useState<"idle" | "loading" | "error">("idle");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleBuy() {
-    setState("loading");
+    setLoading(true);
     setError(null);
     try {
       await apiFetch("/checkout", { method: "POST", body: { productId } });
-      router.push("/account");
+      router.push(redirectTo);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         router.push("/login");
         return;
       }
-      setState("error");
       setError(err instanceof Error ? err.message : "خرید ناموفق بود");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div>
-      <button
-        onClick={handleBuy}
-        disabled={state === "loading"}
-        style={{
-          background: "#243B53",
-          color: "white",
-          border: "none",
-          borderRadius: 6,
-          padding: "0.6rem 1.2rem",
-          cursor: "pointer",
-        }}
-      >
-        {state === "loading" ? "در حال پردازش..." : "خرید دوره"}
-      </button>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+    <div className="ds-stack-sm">
+      <div>
+        <Button variant="primary" onClick={handleBuy} loading={loading}>
+          {label}
+        </Button>
+      </div>
+      {error && <Alert tone="danger">{error}</Alert>}
     </div>
   );
 }

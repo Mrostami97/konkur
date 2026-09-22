@@ -196,12 +196,15 @@ export default function AccountPage() {
   const [historyError, setHistoryError] = useState<{ sessions: string | null; plans: string | null }>({ sessions: null, plans: null });
   const [revisions, setRevisions] = useState<PlanRevision[]>([]);
   const [loading, setLoading] = useState(true);
+  // An instructor is an account linked to a contributor profile, which only
+  // the API knows -- it is not a role on the session.
+  const [isInstructor, setIsInstructor] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
 
   useEffect(() => {
     (async () => {
       try {
-        const [meRes, profileRes, enrollmentsRes, entitlementsRes, masteryRes, revisionsRes, learningRes, historyRes] = await Promise.all([
+        const [meRes, profileRes, enrollmentsRes, entitlementsRes, masteryRes, revisionsRes, learningRes, historyRes, instructorRes] = await Promise.all([
           apiFetch<Me>("/auth/me"),
           apiFetch<Profile>("/me/profile"),
           apiFetch<Enrollment[]>("/me/enrollments"),
@@ -210,8 +213,11 @@ export default function AccountPage() {
           apiFetch<PlanRevision[]>("/me/plan/revisions").catch(() => []),
           apiFetch<unknown>("/me/learning-progress").catch(() => ({ courses: [] })),
           apiFetch<unknown>("/me/study-history?limit=10").catch(() => ({ sessions: [], plans: [] })),
+          // 403 here just means "not an instructor", which is the common case.
+          apiFetch<unknown>("/me/instructor").then(() => true).catch(() => false),
         ]);
         setMe(meRes);
+        setIsInstructor(instructorRes === true);
         setProfile(profileRes);
         setEnrollments(enrollmentsRes);
         setEntitlements(entitlementsRes);

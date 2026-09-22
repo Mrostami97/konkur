@@ -262,6 +262,23 @@ export class ContentDiscoveryService {
           orderBy: { publishedAt: "desc" },
           select: { slug: true, title: true, summary: true, kind: true, accessMode: true, publishedAt: true },
         },
+        // Courses the person teaches belong on this page rather than a second
+        // public page for the same person: one human, one canonical URL. The
+        // revenue share on the link is commercial and stays out of it.
+        taughtCourses: {
+          where: { course: { isPublished: true } },
+          orderBy: { sortOrder: "asc" },
+          select: {
+            course: {
+              select: {
+                slug: true,
+                title: true,
+                description: true,
+                subject: { select: { code: true, title: true } },
+              },
+            },
+          },
+        },
       },
     });
     if (!contributor) throw new NotFoundException("contributor not found");
@@ -291,6 +308,10 @@ export class ContentDiscoveryService {
       reviewedResources: contributor.reviewedResources.map((resource) => ({
         ...resource,
         href: `/resources/${resource.slug}`,
+      })),
+      taughtCourses: contributor.taughtCourses.map(({ course }) => ({
+        ...course,
+        href: `/courses/${course.slug}`,
       })),
     };
   }

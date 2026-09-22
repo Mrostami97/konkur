@@ -17,6 +17,7 @@ import { PlanningModule } from "./modules/planning/planning.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { AdmissionsModule } from "./modules/admissions/admissions.module";
 import { CrmModule } from "./modules/crm/crm.module";
+import { InstructorsModule } from "./modules/instructors/instructors.module";
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { CrmModule } from "./modules/crm/crm.module";
     AnalyticsModule,
     AdmissionsModule,
     CrmModule,
+    InstructorsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

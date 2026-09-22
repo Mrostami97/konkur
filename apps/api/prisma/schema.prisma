@@ -19,30 +19,31 @@ enum Role {
 }
 
 model User {
-  id                 String              @id @default(uuid())
-  phone              String              @unique
+  id                   String                @id @default(uuid())
+  phone                String                @unique
   // Nullable so OTP-only users continue to work. Password authentication is
   // enabled for users that have a password credential provisioned.
-  passwordHash       String?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  roles              UserRole[]
-  sessions           Session[]
-  otpCodes           OtpCode[]
-  consents           Consent[]
-  profile            Profile?
-  enrollments        Enrollment[]
-  orders             Order[]
-  entitlements       Entitlement[]       @relation("EntitlementUser")
-  attempts           Attempt[]
-  goal               Goal?
-  studySessions      StudySession[]
-  savedResources     SavedResource[]
-  masteryStates      MasteryState[]
-  rankEstimates      RankEstimate[]
-  choiceList         ChoiceList?
-  lead               Lead?
-  contributorProfile ContributorProfile?
+  passwordHash         String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  roles                UserRole[]
+  sessions             Session[]
+  otpCodes             OtpCode[]
+  consents             Consent[]
+  profile              Profile?
+  enrollments          Enrollment[]
+  orders               Order[]
+  entitlements         Entitlement[]         @relation("EntitlementUser")
+  attempts             Attempt[]
+  goal                 Goal?
+  studySessions        StudySession[]
+  savedResources       SavedResource[]
+  masteryStates        MasteryState[]
+  rankEstimates        RankEstimate[]
+  choiceList           ChoiceList?
+  lead                 Lead?
+  contributorProfile   ContributorProfile?
+  consultationBookings ConsultationBooking[] @relation("ConsultationStudent")
 
   @@map("users")
 }
@@ -249,27 +250,54 @@ model Article {
 }
 
 model ContributorProfile {
-  id                String          @id @default(uuid())
-  userId            String?         @unique
-  user              User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
-  kind              ContributorKind @default(PERSON)
-  slug              String          @unique
-  displayName       String
-  roleTitle         String?
-  shortBio          String?
-  bioBlocks         Json            @default("[]")
-  avatarUrl         String?
-  thesisUrl         String?
-  sameAs            String[]        @default([])
-  isPublished       Boolean         @default(false)
-  authoredArticles  Article[]       @relation("ArticleAuthor")
-  reviewedArticles  Article[]       @relation("ArticleReviewer")
-  authoredResources Resource[]      @relation("ResourceAuthor")
-  reviewedResources Resource[]      @relation("ResourceReviewer")
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  id                    String                 @id @default(uuid())
+  userId                String?                @unique
+  user                  User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  kind                  ContributorKind        @default(PERSON)
+  slug                  String                 @unique
+  displayName           String
+  roleTitle             String?
+  shortBio              String?
+  bioBlocks             Json                   @default("[]")
+  avatarUrl             String?
+  thesisUrl             String?
+  sameAs                String[]               @default([])
+  isPublished           Boolean                @default(false)
+  authoredArticles      Article[]              @relation("ArticleAuthor")
+  reviewedArticles      Article[]              @relation("ArticleReviewer")
+  authoredResources     Resource[]             @relation("ResourceAuthor")
+  reviewedResources     Resource[]             @relation("ResourceReviewer")
+  taughtCourses         CourseInstructor[]
+  consultationOfferings ConsultationOffering[]
+  consultationBookings  ConsultationBooking[]  @relation("ConsultationInstructor")
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
 
   @@map("contributor_profiles")
+}
+
+/// Who teaches a course, and on what share of its revenue.
+///
+/// An instructor is a ContributorProfile -- the same row that already backs
+/// /authors/[slug] -- rather than a parallel entity, so one person has one
+/// public identity whether they wrote an article, reviewed a resource or
+/// taught a course.
+model CourseInstructor {
+  courseId             String
+  course               Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  contributorProfileId String
+  contributorProfile   ContributorProfile @relation(fields: [contributorProfileId], references: [id], onDelete: Cascade)
+
+  /// Basis points (10000 = 100%). Integer on purpose: instructor payouts are
+  /// computed from this and a float cannot hold 32.5% exactly. The service
+  /// rejects a set of shares on one course that sums above 10000.
+  revenueShareBp Int      @default(0)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@id([courseId, contributorProfileId])
+  @@index([contributorProfileId])
+  @@map("course_instructors")
 }
 
 model ContentSource {
@@ -305,9 +333,9 @@ model ContentSource {
   archivedAt           DateTime?
   articleLinks         ArticleSource[]
   resourceLinks        ResourceSource[]
-  universityRecords    University[]          @relation("UniversityOfficialSource")
-  programRecords       Program[]             @relation("ProgramOfficialSource")
-  capacityRecords      Capacity[]            @relation("CapacityOfficialSource")
+  universityRecords    University[]     @relation("UniversityOfficialSource")
+  programRecords       Program[]        @relation("ProgramOfficialSource")
+  capacityRecords      Capacity[]       @relation("CapacityOfficialSource")
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt
 
@@ -408,6 +436,7 @@ model Course {
   products      Product[]
   productGrants ProductCourseGrant[]
   enrollments   Enrollment[]
+  instructors   CourseInstructor[]
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
 
@@ -496,25 +525,118 @@ enum ProductKind {
   // Phase 17 (doc/roadmap/LEARNING_GROWTH_ACCESS_AND_AEO.md §2.3): the
   // Question Bank is independently sellable, separate from any Course.
   QUESTION_BANK
+  // A booked consultation with an instructor, single session or package.
+  CONSULTATION
+}
+
+enum ConsultationKind {
+  SINGLE_SESSION
+  PACKAGE
+}
+
+/// REQUESTED  paid, student proposed times, waiting on the instructor
+/// CONFIRMED  instructor fixed a time
+/// COMPLETED  the session happened
+/// CANCELLED  called off by either side; returns the session to the quota
+/// NO_SHOW    booked time passed unused; consumes the quota
+enum ConsultationBookingStatus {
+  REQUESTED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+/// What an instructor sells: one session, or a package of sessions with a
+/// deadline (the "annual until konkur" product).
+///
+/// Backed by a Product so the price, order, payment and entitlement all come
+/// from the commerce tables that already exist rather than a second, parallel
+/// payment path.
+model ConsultationOffering {
+  id                  String                @id @default(uuid())
+  instructorProfileId String
+  instructorProfile   ContributorProfile    @relation(fields: [instructorProfileId], references: [id], onDelete: Restrict)
+  productId           String                @unique
+  product             Product               @relation(fields: [productId], references: [id], onDelete: Restrict)
+  kind                ConsultationKind
+  /// Sessions included. The booking service counts bookings down against it.
+  sessionQuota        Int                   @default(1)
+  durationMinutes     Int                   @default(45)
+  /// The deadline the package runs to -- the konkur date. Copied onto the
+  /// entitlement's endAt at checkout, so expiry is evaluated by AccessService
+  /// like every other entitlement rather than by a rule of its own.
+  validUntil          DateTime?
+  headline            String
+  description         String
+  isActive            Boolean               @default(true)
+  bookings            ConsultationBooking[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  @@index([instructorProfileId])
+  @@map("consultation_offerings")
+}
+
+/// One session drawn against what a student bought.
+///
+/// There is no availability calendar on purpose: the student proposes times,
+/// the instructor confirms one of them or any other time, and the student can
+/// cancel if it does not suit.
+model ConsultationBooking {
+  id                  String                    @id @default(uuid())
+  offeringId          String
+  offering            ConsultationOffering      @relation(fields: [offeringId], references: [id], onDelete: Restrict)
+  /// What paid for this session. Quota is counted per entitlement, so buying
+  /// the same package twice gives two independent quotas.
+  entitlementId       String
+  entitlement         Entitlement               @relation(fields: [entitlementId], references: [id], onDelete: Restrict)
+  studentUserId       String
+  student             User                      @relation("ConsultationStudent", fields: [studentUserId], references: [id], onDelete: Restrict)
+  /// Denormalized from the offering so an instructor's queue never joins
+  /// through it, and a booking keeps naming whoever actually took it.
+  instructorProfileId String
+  instructorProfile   ContributorProfile        @relation("ConsultationInstructor", fields: [instructorProfileId], references: [id], onDelete: Restrict)
+  status              ConsultationBookingStatus @default(REQUESTED)
+  /// Times the student proposed, as ISO strings.
+  requestedSlots      Json                      @default("[]")
+  studentNote         String?
+  scheduledAt         DateTime?
+  durationMinutes     Int
+  /// Meeting link, or a note for a phone or in-person session. Only ever
+  /// projected to the two participants.
+  meetingUrl          String?
+  instructorNote      String?
+  completedAt         DateTime?
+  cancelledAt         DateTime?
+  cancelReason        String?
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+
+  @@index([instructorProfileId, status])
+  @@index([studentUserId])
+  @@index([entitlementId])
+  @@map("consultation_bookings")
 }
 
 model Product {
-  id                 String                      @id @default(uuid())
-  slug               String                      @unique
-  title              String
-  description        String
-  kind               ProductKind
-  courseId           String?
-  course             Course?                     @relation(fields: [courseId], references: [id])
-  isActive           Boolean                     @default(true)
-  prices             Price[]
-  orderItems         OrderItem[]
-  entitlements       Entitlement[]
-  courseGrants       ProductCourseGrant[]
-  resourceGrants     ProductResourceGrant[]
-  questionBankGrants ProductQuestionBankGrant[]
-  createdAt          DateTime                    @default(now())
-  updatedAt          DateTime                    @updatedAt
+  id                   String                     @id @default(uuid())
+  slug                 String                     @unique
+  title                String
+  description          String
+  kind                 ProductKind
+  courseId             String?
+  course               Course?                    @relation(fields: [courseId], references: [id])
+  isActive             Boolean                    @default(true)
+  prices               Price[]
+  orderItems           OrderItem[]
+  entitlements         Entitlement[]
+  courseGrants         ProductCourseGrant[]
+  resourceGrants       ProductResourceGrant[]
+  questionBankGrants   ProductQuestionBankGrant[]
+  consultationOffering ConsultationOffering?
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
 
   @@map("products")
 }
@@ -643,18 +765,19 @@ enum EntitlementGrantSource {
 }
 
 model Entitlement {
-  id              String                 @id @default(uuid())
-  userId          String
-  user            User                   @relation("EntitlementUser", fields: [userId], references: [id], onDelete: Cascade)
-  productId       String
-  product         Product                @relation(fields: [productId], references: [id])
-  grantedVia      EntitlementGrantSource
-  reason          String?
-  grantedByUserId String?
-  startAt         DateTime               @default(now())
-  endAt           DateTime?
-  revokedAt       DateTime?
-  createdAt       DateTime               @default(now())
+  id                   String                 @id @default(uuid())
+  userId               String
+  user                 User                   @relation("EntitlementUser", fields: [userId], references: [id], onDelete: Cascade)
+  productId            String
+  product              Product                @relation(fields: [productId], references: [id])
+  grantedVia           EntitlementGrantSource
+  reason               String?
+  grantedByUserId      String?
+  startAt              DateTime               @default(now())
+  endAt                DateTime?
+  revokedAt            DateTime?
+  createdAt            DateTime               @default(now())
+  consultationBookings ConsultationBooking[]
 
   @@index([userId])
   @@index([productId])
@@ -1116,12 +1239,12 @@ model Task {
   completedAt      DateTime?
   createdAt        DateTime   @default(now())
 
+  @@unique([planId, lessonId])
+  @@unique([planId, resourceId])
   @@index([planId])
   @@index([planId, scheduledFor])
   @@index([lessonId])
   @@index([resourceId])
-  @@unique([planId, lessonId])
-  @@unique([planId, resourceId])
   @@map("tasks")
 }
 
@@ -1242,8 +1365,8 @@ model Program {
   field        String
   tuitionType  TuitionType
   hasDormitory Boolean          @default(false)
-  sourceId      String?
-  source        ContentSource?  @relation("ProgramOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
+  sourceId     String?
+  source       ContentSource?   @relation("ProgramOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
   capacities   Capacity[]
   choiceItems  ChoiceListItem[]
   createdAt    DateTime         @default(now())

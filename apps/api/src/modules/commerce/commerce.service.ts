@@ -147,6 +147,7 @@ export class CommerceService {
         course: { select: { isPublished: true } },
         courseGrants: { include: { course: { select: { isPublished: true } } } },
         resourceGrants: { include: { resource: { select: { reviewStatus: true } } } },
+        consultationOffering: { select: { isActive: true, validUntil: true } },
       },
     });
     if (
@@ -155,7 +156,14 @@ export class CommerceService {
       product.prices.length === 0 ||
       (product.courseId && !product.course?.isPublished) ||
       product.courseGrants.some((grant) => !grant.course.isPublished) ||
-      product.resourceGrants.some((grant) => grant.resource.reviewStatus !== "PUBLISHED")
+      product.resourceGrants.some((grant) => grant.resource.reviewStatus !== "PUBLISHED") ||
+      // A consultation whose offering is switched off, or whose deadline has
+      // passed, must not be sellable: the student would be buying sessions
+      // they could never book.
+      (product.consultationOffering &&
+        (!product.consultationOffering.isActive ||
+          (product.consultationOffering.validUntil !== null &&
+            product.consultationOffering.validUntil <= new Date())))
     ) {
       throw new NotFoundException("product not available for purchase");
     }
@@ -203,7 +211,16 @@ export class CommerceService {
         },
       });
       const entitlement = await tx.entitlement.create({
-        data: { userId, productId, grantedVia: EntitlementGrantSource.ORDER },
+        data: {
+          userId,
+          productId,
+          grantedVia: EntitlementGrantSource.ORDER,
+          // A consultation package runs to a deadline -- the konkur date for
+          // the annual product. Carrying it onto the entitlement means expiry
+          // is evaluated by AccessService like every other entitlement,
+          // rather than by a rule that only consultations would know about.
+          endAt: product.consultationOffering?.validUntil ?? undefined,
+        },
       });
       for (const courseId of this.productCourseIds(product)) {
         await this.learning.enrollFromEntitlement(userId, courseId, tx);
