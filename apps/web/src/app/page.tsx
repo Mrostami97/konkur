@@ -62,6 +62,17 @@ const SUBJECT_ICONS: Record<string, keyof typeof ICONS> = {
 
 const NEW_IN_1406 = new Set(["linear-algebra", "programming-fundamentals"]);
 
+/** Which exam package a subject sits in. This drives the card tint, so the
+ * colour carries the grouping a candidate has to know rather than decorating
+ * the grid. Anything unlisted falls back to the core package. */
+const SUBJECT_PACKAGE: Record<string, "math" | "core" | "lang" | "it"> = {
+  "discrete-math": "math",
+  statistics: "math",
+  "linear-algebra": "math",
+  english: "lang",
+  "it-management": "it",
+};
+
 /** The page routes by where someone is in their preparation, not by what the
  * site happens to offer: a visitor can tell which of these three describes
  * them, where they could not tell which of six feature cards was for them. */
@@ -205,6 +216,11 @@ export default async function HomePage() {
           <div>
             <h2>درس‌ها، با وضعیت واقعی ۱۴۰۶</h2>
             <p>ضریب، بسته و جایگاه هر درس در ساختار آزمون — بدون اینکه لازم باشد دفترچه را خودت بخوانی.</p>
+            <p className="hp-legend">
+              <span className="hp-key hp-k-core" />بستهٔ تخصصی
+              <span className="hp-key hp-k-math" />بستهٔ ریاضیات
+              <span className="hp-key hp-k-lang" />زبان
+            </p>
           </div>
           <Link href="/subjects">همهٔ {toPersianDigits(subjects.length)} درس ←</Link>
         </div>
@@ -212,7 +228,11 @@ export default async function HomePage() {
           {featured.map((subject) => {
             const isNew = NEW_IN_1406.has(subject.slug);
             return (
-              <Link className={`hp-subject ${isNew ? "hp-subject-new" : ""}`} href={`/subjects/${subject.slug}`} key={subject.slug}>
+              <Link
+                className={`hp-subject hp-p-${SUBJECT_PACKAGE[subject.slug] ?? "core"} ${isNew ? "hp-subject-new" : ""}`}
+                href={`/subjects/${subject.slug}`}
+                key={subject.slug}
+              >
                 <span className="hp-subject-top">
                   <span className="hp-ico"><Icon name={SUBJECT_ICONS[subject.slug] ?? "graph"} /></span>
                   {isNew && <span className="hp-flag">جدید ۱۴۰۶</span>}

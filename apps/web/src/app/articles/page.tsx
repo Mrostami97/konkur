@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { PageHeader } from "../../components/ui";
 import {
   contentTypeLabel,
   formatPublicDate,
@@ -33,49 +32,54 @@ export default async function ArticlesPage() {
   const legacyOnly = legacyArticles.filter((article) => !publishedSlugs.has(article.slug));
 
   return (
-    <main className="page-container">
-      <PageHeader
-        eyebrow="کتابخانهٔ kunkur01"
-        title="مقاله‌های کاربردی، نه محتوای پُرکننده"
-        description="فقط مطالب منتشرشدهٔ تحریریه نمایش داده می‌شوند؛ هر مطلب تاریخ اعتبار، منبع و وضعیت انتساب روشن دارد."
-      />
-      <div className="content-filter-row" aria-label="نوع مطالب">
-        <span className="active">مقاله‌های منتشرشده</span>
-        <span>تحلیل</span>
-        <span>خبر</span>
-        <span>مطالعهٔ موردی</span>
+    <main className="pg">
+      <div className="pg-hero-wrap">
+        <div className="pg-shell pg-hero">
+          <p className="pg-eyebrow">کتابخانهٔ kunkur01</p>
+          <h1>مقاله‌های کاربردی، نه محتوای پُرکننده</h1>
+          <p className="pg-lede">
+            فقط مطالب منتشرشدهٔ تحریریه نمایش داده می‌شوند؛ هر مطلب تاریخ اعتبار، منبع و وضعیت
+            انتساب روشن دارد.
+          </p>
+        </div>
       </div>
 
       {apiUnavailable && (
-        <aside className="official-disclaimer">
-          <strong>نسخهٔ آفلاین</strong>
-          <p>سرویس محتوا در دسترس نیست؛ مطالب پایهٔ سایت نمایش داده می‌شوند و ممکن است تازه‌ترین ویرایش تحریریه هنوز در دسترس نباشد.</p>
-        </aside>
+        <div className="pg-shell pg-band">
+          <div className="ds-alert ds-alert-warning">
+            <span>
+              <strong>نسخهٔ آفلاین.</strong> سرویس محتوا در دسترس نیست؛ مطالب پایهٔ سایت نمایش داده
+              می‌شوند و ممکن است تازه‌ترین ویرایش تحریریه هنوز در دسترس نباشد.
+            </span>
+          </div>
+        </div>
       )}
-      <div className="article-grid editorial-card-grid">
-        {apiArticles.map((article) => (
-          <Link className="article-card editorial-card" key={article.slug} href={`/articles/${article.slug}`}>
-            <div className="article-card-top">
-              <span className="article-meta">{contentTypeLabel(article.contentType)}</span>
-              {article.publishedAt && <span>{formatPublicDate(article.publishedAt)}</span>}
-            </div>
-            <h2>{article.title}</h2>
-            <p>{article.summary}</p>
-            <div className="article-card-footer">
-              <span>{article.authorProfile?.displayName ?? "تحریریهٔ کنکورصفریک"}</span>
-              <span>مطالعه ←</span>
-            </div>
-          </Link>
-        ))}
-        {legacyOnly.map((article) => (
-          <Link className="article-card editorial-card" key={article.slug} href={`/articles/${article.slug}`}>
-            <div className="article-card-top"><span className="article-meta">{article.category}</span><span>{article.degree}</span></div>
-            <h2>{article.title}</h2>
-            <p>{article.description}</p>
-            <div className="article-card-footer"><span>{article.category}</span><span>{toPersianDigits(article.readingMinutes)} دقیقه ←</span></div>
-          </Link>
-        ))}
-      </div>
+
+      <section className="pg-shell pg-sec">
+        <div className="pg-grid pg-grid-wide">
+          {apiArticles.map((article) => (
+            <Link className="pg-card" key={article.slug} href={`/articles/${article.slug}`}>
+              <span className="pg-badge">{contentTypeLabel(article.contentType)}</span>
+              <b>{article.title}</b>
+              <small>{article.summary}</small>
+              <span className="pg-card-action pg-card-meta">
+                {article.authorProfile?.displayName ?? "تحریریهٔ کنکورصفریک"}
+                {article.publishedAt ? ` · ${formatPublicDate(article.publishedAt)}` : ""}
+              </span>
+            </Link>
+          ))}
+          {legacyOnly.map((article) => (
+            <Link className="pg-card" key={article.slug} href={`/articles/${article.slug}`}>
+              <span className="pg-badge">{article.category}</span>
+              <b>{article.title}</b>
+              <small>{article.description}</small>
+              <span className="pg-card-action pg-card-meta">
+                {article.degree} · {toPersianDigits(article.readingMinutes)} دقیقه
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

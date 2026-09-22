@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { apiGetPublic } from "../../lib/api";
-import { EmptyState, PageHeader } from "../../components/ui";
+import { EmptyState } from "../../components/ui";
 import { pageMetadata } from "../../lib/seo";
 import {
   buildCourseCatalog,
@@ -51,29 +51,42 @@ export default async function CoursesPage() {
     : null;
 
   return (
-    <main className="page-container">
-      <PageHeader eyebrow="یادگیری هدفمند" title="دوره‌ها" description="مسیرهای آموزشی ارشد و دکتری کامپیوتر را بر اساس هدف و زمانت انتخاب کن." />
-      {!catalog ? (
-        <EmptyState title="فهرست دوره‌ها در دسترس نیست" description="اتصال به سرویس محتوا برقرار نشد؛ بعداً دوباره امتحان کن." />
-      ) : catalog.length === 0 ? (
-        <EmptyState title="هنوز دوره‌ای منتشر نشده است" description="به‌محض انتشار دورهٔ جدید، اینجا نمایش داده می‌شود." />
-      ) : (
-        <div className="course-grid">
-          {catalog.map((item) => (
-            <article className="catalog-card" key={item.course.slug}>
-              <div>
-                <div className="catalog-card-meta"><span>{item.accessLabel}</span><span>یادگیری</span></div>
-                <Link href={item.href}><h3>{item.course.title}</h3></Link>
-                <p>{item.course.description}</p>
-              </div>
-              <div className="catalog-card-footer">
-                <strong>{item.priceLabel}</strong>
-                <Link className="button button-secondary" href={item.href}>{item.ctaLabel}</Link>
-              </div>
-            </article>
-          ))}
+    <main className="pg">
+      <div className="pg-hero-wrap">
+        <div className="pg-shell pg-hero">
+          <p className="pg-eyebrow">یادگیری هدفمند</p>
+          <h1>دوره‌ها</h1>
+          <p className="pg-lede">مسیرهای آموزشی ارشد و دکتری کامپیوتر را بر اساس هدف و زمانت انتخاب کن.</p>
         </div>
-      )}
+      </div>
+
+      <section className="pg-shell pg-sec">
+        {!catalog ? (
+          <EmptyState
+            title="فهرست دوره‌ها در دسترس نیست"
+            description="اتصال به سرویس محتوا برقرار نشد؛ بعداً دوباره امتحان کن."
+          />
+        ) : catalog.length === 0 ? (
+          <EmptyState
+            title="هنوز دوره‌ای منتشر نشده است"
+            description="به‌محض انتشار دورهٔ جدید، اینجا نمایش داده می‌شود."
+          />
+        ) : (
+          <div className="pg-grid pg-grid-wide">
+            {catalog.map((item) => (
+              <article className="pg-card" key={item.course.slug}>
+                <span className="pg-badge">{item.accessLabel}</span>
+                <b>{item.course.title}</b>
+                <small>{item.course.description}</small>
+                <span className="pg-card-action pg-card-row">
+                  <strong className="pg-price">{item.priceLabel}</strong>
+                  <Link className="button button-secondary" href={item.href}>{item.ctaLabel}</Link>
+                </span>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

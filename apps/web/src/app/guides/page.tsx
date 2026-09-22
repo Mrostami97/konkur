@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "../../components/ui";
 import { formatPublicDate, type PublicArticleRecord } from "../../components/PublicContent";
 import { guides as legacyGuides } from "../../content/editorial";
 import { phase12EditorialPages } from "../../content/phase12";
@@ -29,57 +28,64 @@ export default async function GuidesPage() {
   const staticOnly = [...legacyGuides, ...phase12EditorialPages].filter((guide) => !publishedSlugs.has(guide.slug));
 
   return (
-    <main className="page-container">
-      <PageHeader
-        eyebrow="راهنمای منبع‌دار"
-        title="از انتخاب مسیر تا برنامهٔ هفته و روز آزمون"
-        description="راهنماهای اجرایی مطالعه و صفحات رسمی ۱۴۰۶، با پاسخ کوتاه، تاریخ بررسی، منبع و قدم بعدی روشن."
-      />
-      {apiUnavailable && (
-        <aside className="official-disclaimer">
-          <strong>نسخهٔ آفلاین</strong>
-          <p>اتصال به سرویس محتوا برقرار نیست؛ راهنماهای پایه نمایش داده می‌شوند و دفترچه و اصلاحیهٔ رسمی همچنان ملاک نهایی‌اند.</p>
-        </aside>
-      )}
-      <div className="guide-grid">
-        {apiGuides.map((guide) => (
-          <Link href={`/guides/${guide.slug}`} className="guide-card" key={guide.slug}>
-            <div className="guide-card-index">{guide.validForYear ? toDegreeMark(guide.taxonomyDegrees) : "Guide"}</div>
-            <div>
-              <span>{guide.taxonomyFields.join(" · ") || "راهنمای تحریریه"}</span>
-              <h2>{guide.title}</h2>
-              <p>{guide.summary}</p>
-              <div className="guide-card-meta">
-                <span>{guide.reviewedAt ? `بررسی ${formatPublicDate(guide.reviewedAt)}` : "تاریخ بررسی منتشرنشده"}</span>
-                <strong>مشاهده راهنما ←</strong>
-              </div>
-            </div>
-          </Link>
-        ))}
-        {staticOnly.map((guide) => (
-          <Link href={`/guides/${guide.slug}`} className="guide-card" key={guide.slug}>
-            <div className="guide-card-index">{staticDegreeMark(guide.degree)}</div>
-            <div>
-              <span>{guide.category} · {guide.field}</span>
-              <h2>{guide.title}</h2>
-              <p>{guide.description}</p>
-              <div className="guide-card-meta"><span>بررسی {guide.reviewedAt}</span><strong>مشاهده راهنما ←</strong></div>
-            </div>
-          </Link>
-        ))}
+    <main className="pg">
+      <div className="pg-hero-wrap">
+        <div className="pg-shell pg-hero">
+          <p className="pg-eyebrow">راهنمای منبع‌دار</p>
+          <h1>از انتخاب مسیر تا برنامهٔ هفته و روز آزمون</h1>
+          <p className="pg-lede">راهنماهای اجرایی مطالعه و صفحات رسمی ۱۴۰۶، با پاسخ کوتاه، تاریخ بررسی، منبع و قدم بعدی روشن.</p>
+        </div>
       </div>
+
+      {apiUnavailable && (
+        <div className="pg-shell pg-band">
+          <div className="ds-alert ds-alert-warning">
+            <span>
+              <strong>نسخهٔ آفلاین.</strong> اتصال به سرویس محتوا برقرار نیست؛ راهنماهای پایه نمایش
+              داده می‌شوند و دفترچه و اصلاحیهٔ رسمی همچنان ملاک نهایی‌اند.
+            </span>
+          </div>
+        </div>
+      )}
+
+      <section className="pg-shell pg-sec">
+        <div className="pg-grid pg-grid-wide">
+          {apiGuides.map((guide) => (
+            <Link href={`/guides/${guide.slug}`} className="pg-card" key={guide.slug}>
+              <span className="pg-badge">{guide.validForYear ? toDegreeMark(guide.taxonomyDegrees) : "راهنما"}</span>
+              <span className="pg-card-meta">{guide.taxonomyFields.join(" · ") || "راهنمای تحریریه"}</span>
+              <b>{guide.title}</b>
+              <small>{guide.summary}</small>
+              <span className="pg-card-action pg-card-meta">
+                {guide.reviewedAt ? `بررسی ${formatPublicDate(guide.reviewedAt)}` : "تاریخ بررسی منتشرنشده"}
+              </span>
+            </Link>
+          ))}
+          {staticOnly.map((guide) => (
+            <Link href={`/guides/${guide.slug}`} className="pg-card" key={guide.slug}>
+              <span className="pg-badge">{staticDegreeMark(guide.degree)}</span>
+              <span className="pg-card-meta">{guide.category} · {guide.field}</span>
+              <b>{guide.title}</b>
+              <small>{guide.description}</small>
+              <span className="pg-card-action pg-card-meta">بررسی {guide.reviewedAt}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
 
+/* The badge is read by Persian-speaking candidates, so it names the degree in
+   Persian rather than as an "MSc"/"PhD" abbreviation. */
 function staticDegreeMark(degree: string) {
-  if (degree === "ارشد") return "MSc";
-  if (degree === "دکتری") return "PhD";
-  return "M/P";
+  if (degree === "ارشد") return "ارشد";
+  if (degree === "دکتری") return "دکتری";
+  return "ارشد و دکتری";
 }
 
 function toDegreeMark(degrees: string[]) {
-  if (degrees.length === 1 && degrees[0] === "PHD") return "PhD";
-  if (degrees.length === 1 && degrees[0] === "MASTER") return "MSc";
-  return "Guide";
+  if (degrees.length === 1 && degrees[0] === "PHD") return "دکتری";
+  if (degrees.length === 1 && degrees[0] === "MASTER") return "ارشد";
+  return "راهنما";
 }

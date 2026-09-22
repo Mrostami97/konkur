@@ -131,6 +131,86 @@
   .hd-cta { padding: var(--sp-3); }
 }
 
+/* ------------------------------------------------------------- page layer */
+
+/* The shared vocabulary every public and product page is built from. It was
+   extracted from the home page once that design settled, so a screen never
+   has to reinvent a section rhythm, a card or a tint -- which is how the
+   ~250 one-off classes in globals.css accumulated in the first place.
+   Accent hues are the same three the home page uses. */
+
+.pg { --pg-max: 78rem; }
+.pg-shell { width: min(var(--pg-max), 100%); margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
+.pg-sec { padding-block: clamp(2.4rem, 5.5vw, 4rem); }
+.pg-sec-line { border-top: 1px solid var(--line); }
+
+/* page opener */
+.pg-hero-wrap { background: linear-gradient(180deg, var(--accent-wash, #eaf1fd) 0%, var(--surface) 90%); }
+.pg-hero { padding-block: clamp(2.2rem, 4.5vw, 3.2rem) clamp(1.4rem, 3vw, 2rem); }
+.pg-eyebrow { margin: 0; font-size: var(--text-sm); color: var(--muted); }
+.pg-hero h1 { margin: var(--sp-3) 0 0; font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1.25; letter-spacing: -.035em; font-weight: var(--weight-bold); color: var(--ink); max-width: 24ch; text-wrap: balance; }
+.pg-lede { margin: var(--sp-4) 0 0; max-width: 56ch; color: var(--muted); line-height: 1.95; font-size: var(--text-md); }
+
+/* section heading with an optional trailing link */
+.pg-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-4); flex-wrap: wrap; margin-bottom: var(--sp-6); }
+.pg-head h2 { margin: 0; font-size: clamp(1.3rem, 2.6vw, 1.75rem); font-weight: var(--weight-bold); letter-spacing: -.03em; color: var(--ink); }
+.pg-head p { margin: var(--sp-2) 0 0; max-width: 52ch; color: var(--muted); line-height: 1.85; font-size: var(--text-base); }
+.pg-head a { color: #164bab; font-size: var(--text-base); font-weight: var(--weight-medium); text-decoration: none; white-space: nowrap; }
+.pg-head a:hover { text-decoration: underline; }
+
+/* card grids -- `--pg-min` sets how narrow a column may get before wrapping */
+.pg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--pg-min, 14rem), 1fr)); gap: var(--sp-4); }
+.pg-grid-wide { --pg-min: 17rem; }
+.pg-grid-flush { gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.pg-grid-flush > * { border-radius: 0; border: none; }
+
+.pg-card {
+  display: flex; flex-direction: column; gap: var(--sp-3);
+  padding: var(--sp-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-decoration: none;
+  transition: border-color var(--motion-base) var(--ease),
+              transform var(--motion-base) var(--ease),
+              box-shadow var(--motion-base) var(--ease);
+}
+.pg-card:hover { transform: translateY(-2px); box-shadow: var(--elev-3); }
+.pg-card:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(28, 95, 214, .35); }
+.pg-card b { font-size: var(--text-md); font-weight: var(--weight-medium); color: var(--ink); line-height: 1.6; }
+.pg-card small { font-size: var(--text-sm); color: var(--muted); line-height: 1.85; }
+.pg-card-meta { font-size: var(--text-xs); color: var(--muted); font-variant-numeric: tabular-nums; }
+/* Pushes a card's action to the bottom edge so a row of cards with uneven
+   copy still lines its buttons up. */
+.pg-card-action { margin-top: auto; padding-top: var(--sp-3); }
+.pg-card-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); flex-wrap: wrap; }
+.pg-price { font-size: var(--text-md); color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.pg-badge { align-self: flex-start; padding: var(--sp-1) var(--sp-3); border-radius: var(--radius-pill); background: #eaf1fd; color: #164bab; font-size: var(--text-xs); font-weight: var(--weight-medium); }
+
+/* icon tile */
+.pg-ico { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; flex: none; border-radius: var(--radius-md); background: #fff; }
+.pg-ico svg { width: 1.3rem; height: 1.3rem; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Tints. A tint is a claim that the card belongs to a group, so apply one
+   only where the grouping is real and stated somewhere on the page. */
+.pg-t-blue   { background: #f3f7fe; border-color: #dce7fa; } .pg-t-blue   .pg-ico { color: #1c5fd6; } .pg-t-blue:hover   { border-color: #1c5fd6; }
+.pg-t-teal   { background: #eff9f7; border-color: #d2ebe5; } .pg-t-teal   .pg-ico { color: #068573; } .pg-t-teal:hover   { border-color: #0ab39b; }
+.pg-t-violet { background: #f5f2fd; border-color: #e4ddf8; } .pg-t-violet .pg-ico { color: #5b50c4; } .pg-t-violet:hover { border-color: #5b50c4; }
+.pg-t-amber  { background: #fdf4ec; border-color: #f6e3cf; } .pg-t-amber  .pg-ico { color: #b9701a; } .pg-t-amber:hover  { border-color: #e0791f; }
+
+.pg-key { display: inline-block; width: .7rem; height: .7rem; border-radius: 3px; }
+.pg-legend { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; font-size: var(--text-xs); color: var(--muted); }
+.pg-legend .pg-key:not(:first-child) { margin-inline-start: var(--sp-4); }
+
+/* closing panel */
+.pg-panel { padding: clamp(1.6rem, 4vw, 2.6rem); border-radius: var(--radius-xl); background: linear-gradient(135deg, #eaf1fd, #e6f7f4); }
+
+/* The two spacing jobs that otherwise get written inline on every page: an
+   action sitting under hero copy, and a band that needs air above it. */
+.pg-hero-action { display: inline-flex; margin-top: var(--sp-6); }
+.pg-band { padding-block: var(--sp-6) 0; }
+
 /* ---------------------------------------------------------------- surfaces */
 
 .ds-card {
@@ -437,6 +517,52 @@
 }
 @keyframes ds-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ds-pop { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* ------------------------------------------------------------- exam sitting */
+
+/* The exam-taking screen needs a persistent sense of "where am I / what's
+   left" across a long scroll of questions -- a bare top-to-bottom list left
+   students unable to jump around or see how much was left undone before
+   submitting. */
+
+.exam-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-2);
+}
+.exam-timer { font-variant-numeric: tabular-nums; font-size: var(--text-xl); color: var(--ink); direction: ltr; }
+.exam-timer-warn { color: var(--danger); }
+
+.qnav { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.qnav-btn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  transition: border-color var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease);
+}
+.qnav-btn:hover { border-color: var(--teal-dark); }
+.qnav-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.qnav-btn-answered { background: var(--success-soft); border-color: var(--success); color: var(--success); }
+.qnav-key-answered { background: var(--success); }
+.qnav-key-open { background: var(--surface); border: 1px solid var(--line-strong); }
 
 /* ------------------------------------------------------------- admin shell */
 

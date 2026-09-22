@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "../../components/ui";
 import { findSubject, subjects as legacySubjects } from "../../content/editorial";
 import { phase11MasterTracks } from "../../content/phase11";
 import { apiGetPublic } from "../../lib/api";
@@ -35,72 +34,82 @@ export default async function SubjectsPage() {
   const canonicalSlugs = new Set(subjects.map((subject) => subject.slug));
   const legacyOnly = legacySubjects.filter((subject) => !canonicalSlugs.has(subject.slug));
 
+  const totalSubjects = subjects.length + legacyOnly.length;
+
   return (
-    <main className="page-container">
-      <PageHeader
-        eyebrow="نقشهٔ دانش"
-        title="درس‌ها را جدا نخوان؛ مسیرشان را ببین"
-        description="سرفصل مرجع، جایگاه رسمی در سه مجموعهٔ ارشد ۱۴۰۶، پیش‌نیاز و ترتیب شروع هر درس را در یک صفحه ببین."
-        action={<Link className="button button-primary" href="/guides">دیدن مسیرهای آزمون ←</Link>}
-      />
+    <main className="pg">
+      <div className="pg-hero-wrap">
+        <div className="pg-shell pg-hero">
+          <p className="pg-eyebrow">نقشهٔ دانش</p>
+          <h1>درس‌ها را جدا نخوان؛ مسیرشان را ببین</h1>
+          <p className="pg-lede">سرفصل مرجع، جایگاه رسمی در سه مجموعهٔ ارشد ۱۴۰۶، پیش‌نیاز و ترتیب شروع هر درس را در یک صفحه ببین.</p>
+          <Link className="button button-primary pg-hero-action" href="/guides">دیدن مسیرهای آزمون ←</Link>
+        </div>
+      </div>
 
       {apiUnavailable && (
-        <aside className="official-disclaimer">
-          <strong>نسخهٔ آفلاین</strong>
-          <p>سرویس نقشهٔ دانش در دسترس نیست؛ درس‌های پایه نمایش داده می‌شوند و ممکن است آخرین ویرایش taxonomy هنوز در دسترس نباشد.</p>
-        </aside>
-      )}
-      <section className="subjects-intro" aria-label="خلاصهٔ نقشهٔ دانش">
-        <div><span className="subjects-intro-kicker">نقشهٔ یکپارچه</span><h2>درس، مبحث و پیش‌نیاز در یک مسیر</h2><p>هر صفحه از جدول رسمی آزمون و سرفصل دانشگاهی تفکیک می‌کند تا عنوان آزمونی با دامنهٔ آموزش اشتباه نشود.</p></div>
-        <div className="subjects-intro-metrics"><div><strong>{toPersianDigits(subjects.length + legacyOnly.length)}</strong><span>درس در دسترس</span></div></div>
-      </section>
-
-      <section className="track-snapshot" aria-labelledby="master-tracks-title">
-        <div className="track-snapshot-heading">
-          <span className="eyebrow">سه مسیر رسمی ارشد</span>
-          <h2 id="master-tracks-title">ابتدا مجموعه‌ات را انتخاب کن</h2>
-          <p>مواد ۱۴۰۶ برای مجموعه‌های ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ یکسان نیستند؛ صفحهٔ هر مسیر جدول دقیق خودش را دارد.</p>
+        <div className="pg-shell pg-band">
+          <div className="ds-alert ds-alert-warning">
+            <strong>نسخهٔ آفلاین.</strong>&nbsp;سرویس نقشهٔ دانش در دسترس نیست؛ درس‌های پایه نمایش داده می‌شوند و ممکن است آخرین ویرایش taxonomy هنوز در دسترس نباشد.
+          </div>
         </div>
-        <div className="track-snapshot-grid">
+      )}
+
+      <section className="pg-shell pg-sec" aria-labelledby="master-tracks-title">
+        <div className="pg-head">
+          <div>
+            <h2 id="master-tracks-title">ابتدا مجموعه‌ات را انتخاب کن</h2>
+            <p>مواد ۱۴۰۶ برای مجموعه‌های ۱۲۷۷، ۱۲۷۶ و ۱۲۰۹ یکسان نیستند؛ صفحهٔ هر مسیر جدول دقیق خودش را دارد.</p>
+          </div>
+        </div>
+        <div className="pg-grid pg-grid-wide">
           {Object.values(phase11MasterTracks).map((track) => (
-            <Link className="track-snapshot-card track-snapshot-card-featured" href={`/guides/${track.guideSlug}`} key={track.guideSlug}>
-              <span>مجموعهٔ {toPersianDigits(track.collectionCode)}</span>
-              <strong>{track.officialName}</strong>
+            <Link className="pg-card" href={`/guides/${track.guideSlug}`} key={track.guideSlug}>
+              <span className="pg-card-meta">مجموعهٔ {toPersianDigits(track.collectionCode)}</span>
+              <b>{track.officialName}</b>
               <small>مواد، ضرایب و صفحهٔ درس‌ها ←</small>
             </Link>
           ))}
         </div>
       </section>
 
-      <div className="subject-grid">
-        {subjects.map((subject) => {
-          const editorial = findSubject(subject.slug);
-          return (
-            <Link className="subject-card" href={`/subjects/${subject.slug}`} key={subject.slug}>
-              <div className="subject-monogram">{editorial?.accent ?? subject.code.slice(0, 3).toUpperCase()}</div>
-              <div>
-                <span className="subject-status">{editorial?.status1406 ?? "درس مرجع"}</span>
-                <h2>{subject.title}</h2>
-                {(subject.description ?? editorial?.description) && <p>{subject.description ?? editorial?.description}</p>}
-                {editorial && <div className="subject-tags">{editorial.tracks.slice(0, 3).map((track) => <span key={track}>{track}</span>)}</div>}
-                <span className="subject-card-link">سرفصل و مسیر یادگیری ←</span>
-              </div>
-            </Link>
-          );
-        })}
-        {legacyOnly.map((subject) => (
-          <Link className="subject-card" href={`/subjects/${subject.slug}`} key={subject.slug}>
-            <div className="subject-monogram">{subject.accent}</div>
-            <div>
-              <span className="subject-status">{subject.status1406}</span>
-              <h2>{subject.title}</h2>
-              <p>{subject.description}</p>
-              <div className="subject-tags">{subject.tracks.slice(0, 3).map((track) => <span key={track}>{track}</span>)}</div>
-              <span className="subject-card-link">مشاهدهٔ سرفصل و مسیر ←</span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <section className="pg-shell pg-sec pg-sec-line" aria-label="خلاصهٔ نقشهٔ دانش">
+        <div className="pg-head">
+          <div>
+            <h2>{toPersianDigits(totalSubjects)} درس در دسترس</h2>
+            <p>هر صفحه از جدول رسمی آزمون و سرفصل دانشگاهی تفکیک می‌کند تا عنوان آزمونی با دامنهٔ آموزش اشتباه نشود.</p>
+          </div>
+        </div>
+        {totalSubjects === 0 ? (
+          <div className="ds-empty">
+            <span className="ds-empty-icon" aria-hidden="true">✦</span>
+            <strong>هنوز درسی ثبت نشده است</strong>
+            <p>به‌محض انتشار نقشهٔ دانش، درس‌ها اینجا نمایش داده می‌شوند.</p>
+          </div>
+        ) : (
+          <div className="pg-grid">
+            {subjects.map((subject) => {
+              const editorial = findSubject(subject.slug);
+              return (
+                <Link className="pg-card" href={`/subjects/${subject.slug}`} key={subject.slug}>
+                  <span className="pg-ico" aria-hidden="true">{editorial?.accent ?? subject.code.slice(0, 3).toUpperCase()}</span>
+                  <span className="pg-card-meta">{editorial?.status1406 ?? "درس مرجع"}</span>
+                  <b>{subject.title}</b>
+                  {(subject.description ?? editorial?.description) && <small>{subject.description ?? editorial?.description}</small>}
+                </Link>
+              );
+            })}
+            {legacyOnly.map((subject) => (
+              <Link className="pg-card" href={`/subjects/${subject.slug}`} key={subject.slug}>
+                <span className="pg-ico" aria-hidden="true">{subject.accent}</span>
+                <span className="pg-card-meta">{subject.status1406}</span>
+                <b>{subject.title}</b>
+                <small>{subject.description}</small>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }
