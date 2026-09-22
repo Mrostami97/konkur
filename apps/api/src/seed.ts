@@ -168,6 +168,31 @@ async function seedCourseAndProduct(authorId: string) {
   });
 }
 
+/**
+ * A destination card for development and tests.
+ *
+ * Checkout refuses to open an order when no active card is configured, so
+ * without one every commerce test would fail at a step unrelated to what it
+ * is testing. The number is a deliberately invalid placeholder -- a real
+ * deployment configures its own card in the admin panel, and this row should
+ * be deactivated there on any environment that takes real money.
+ */
+async function seedDevelopmentBankAccount() {
+  await prisma.bankAccount.upsert({
+    where: { cardNumber: DEV_BANK_CARD_NUMBER },
+    update: {},
+    create: {
+      bankName: "بانک نمونه (فقط برای توسعه)",
+      holderName: "حساب آزمایشی",
+      cardNumber: DEV_BANK_CARD_NUMBER,
+      isActive: true,
+      sortOrder: 0,
+    },
+  });
+}
+
+export const DEV_BANK_CARD_NUMBER = "6037999999999999";
+
 export async function seed(credentials?: SeedAdminCredentials) {
   const resolvedCredentials = resolveSeedAdminCredentials(credentials);
   const { user: admin } = await ensureSeedAdmin(prisma, resolvedCredentials);
@@ -185,6 +210,7 @@ export async function seed(credentials?: SeedAdminCredentials) {
     },
   });
   await upsertUserWithRole(SEED_STUDENT_PHONE, Role.STUDENT);
+  await seedDevelopmentBankAccount();
   await seedCourseAndProduct(admin.id);
   await seedStaticEditorial(prisma);
   await seedStaticResources(prisma);

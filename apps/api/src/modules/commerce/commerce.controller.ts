@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
-import { Role } from "@prisma/client";
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { PaymentStatus, Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
@@ -9,6 +9,8 @@ import { CreatePriceDto } from "./dto/create-price.dto";
 import { CheckoutDto } from "./dto/checkout.dto";
 import { GrantEntitlementDto, RevokeEntitlementDto } from "./dto/grant-entitlement.dto";
 import { GrantCourseDto, GrantQuestionBankDto, GrantResourceDto } from "./dto/grant-product-item.dto";
+import { RejectPaymentDto, SubmitReceiptDto } from "./dto/submit-receipt.dto";
+import { BankAccountDto } from "./dto/bank-account.dto";
 
 @Controller("products")
 export class ProductsPublicController {
@@ -40,6 +42,11 @@ export class CommerceStudentController {
     return this.commerce.listMyOrders(req.user!.id);
   }
 
+  @Get("me/orders/:id")
+  myOrder(@Req() req: RequestWithUser, @Param("id") id: string) {
+    return this.commerce.getMyOrder(req.user!.id, id);
+  }
+
   @Get("me/entitlements")
   myEntitlements(@Req() req: RequestWithUser) {
     return this.commerce.listMyEntitlements(req.user!.id);
@@ -48,6 +55,13 @@ export class CommerceStudentController {
   @Get("me/library")
   myLibrary(@Req() req: RequestWithUser) {
     return this.commerce.listMyLibrary(req.user!.id);
+  }
+
+  /** The buyer states they have transferred. This only queues the claim for
+   * review; it grants nothing. */
+  @Post("me/orders/:id/receipt")
+  submitReceipt(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: SubmitReceiptDto) {
+    return this.commerce.submitReceipt(req.user!.id, id, dto);
   }
 }
 
@@ -116,5 +130,44 @@ export class CommerceAdminController {
   @Roles(Role.ADMIN, Role.FINANCE)
   listOrders() {
     return this.commerce.listAllOrders();
+  }
+
+  // --- card transfers --------------------------------------------------------
+
+  @Get("payments")
+  @Roles(Role.ADMIN, Role.FINANCE)
+  listPayments(@Query("status") status?: PaymentStatus) {
+    return this.commerce.listPaymentsForReview(status);
+  }
+
+  /** The only path in the card flow that grants access. */
+  @Post("payments/:id/confirm")
+  @Roles(Role.ADMIN, Role.FINANCE)
+  confirmPayment(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.commerce.confirmPayment(req.user!.id, id);
+  }
+
+  @Post("payments/:id/reject")
+  @Roles(Role.ADMIN, Role.FINANCE)
+  rejectPayment(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: RejectPaymentDto) {
+    return this.commerce.rejectPayment(req.user!.id, id, dto.reason);
+  }
+
+  @Get("bank-accounts")
+  @Roles(Role.ADMIN, Role.FINANCE)
+  listBankAccounts() {
+    return this.commerce.listBankAccounts();
+  }
+
+  @Post("bank-accounts")
+  @Roles(Role.ADMIN)
+  createBankAccount(@Req() req: RequestWithUser, @Body() dto: BankAccountDto) {
+    return this.commerce.createBankAccount(req.user!.id, dto);
+  }
+
+  @Patch("bank-accounts/:id")
+  @Roles(Role.ADMIN)
+  updateBankAccount(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: BankAccountDto) {
+    return this.commerce.updateBankAccount(req.user!.id, id, dto);
   }
 }

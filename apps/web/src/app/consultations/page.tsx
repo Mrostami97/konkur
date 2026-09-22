@@ -100,11 +100,7 @@ export default async function ConsultationsPage() {
                 )}
 
                 <div className="pg-card-action">
-                  <BuyButton
-                    productId={offering.productId}
-                    label="خرید و رزرو"
-                    redirectTo="/account/consultations"
-                  />
+                  <BuyButton productId={offering.productId} label="ثبت سفارش و پرداخت" />
                   <p className="pg-card-meta" style={{ marginTop: "var(--sp-2)" }}>
                     <Link href={`/authors/${offering.instructorProfile.slug}`}>دربارهٔ مدرس</Link>
                   </p>

@@ -736,10 +736,38 @@ model OrderItem {
   @@map("order_items")
 }
 
+/// PENDING          order opened, nothing transferred yet
+/// AWAITING_REVIEW  buyer says they transferred and gave a tracking code
+/// SUCCEEDED        an operator matched it against the bank statement
+/// REJECTED         checked and not found, or did not match
+/// FAILED           kept for the online-gateway path
 enum PaymentStatus {
   PENDING
+  AWAITING_REVIEW
   SUCCEEDED
+  REJECTED
   FAILED
+}
+
+/// A destination card for card-to-card transfers, managed from the admin
+/// panel. These are the seller's own published numbers, shown to buyers, but
+/// only an active one is ever offered so a closed account cannot keep taking
+/// money.
+model BankAccount {
+  id         String    @id @default(uuid())
+  bankName   String
+  holderName String
+  /// Digits only; formatting is a display concern.
+  cardNumber String    @unique
+  iban       String?
+  isActive   Boolean   @default(true)
+  sortOrder  Int       @default(0)
+  payments   Payment[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([isActive])
+  @@map("bank_accounts")
 }
 
 model Payment {
@@ -753,7 +781,29 @@ model Payment {
   createdAt   DateTime      @default(now())
   paidAt      DateTime?
 
+  /// Where the buyer was told to send the money.
+  bankAccountId String?
+  bankAccount   BankAccount? @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+
+  /// The short code the buyer puts in the transfer description and the
+  /// operator matches against the statement. Unique, so one code never
+  /// stands for two orders.
+  referenceCode String? @unique
+
+  /// The buyer's own claim about the transfer. Unverified until an operator
+  /// confirms it, which is why none of it grants anything by itself.
+  receiptTrackingCode  String?
+  receiptPaidAt        DateTime?
+  receiptFromCardLast4 String?
+  receiptNote          String?
+  receiptSubmittedAt   DateTime?
+
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  rejectionReason  String?
+
   @@index([orderId])
+  @@index([status])
   @@map("payments")
 }
 

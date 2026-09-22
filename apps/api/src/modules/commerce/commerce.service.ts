@@ -1,11 +1,17 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { randomBytes } from "crypto";
 import { EntitlementGrantSource, OrderStatus, PaymentStatus, ProductKind } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { LearningService } from "../learning/learning.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { CreatePriceDto } from "./dto/create-price.dto";
-import { PAYMENT_PROVIDER, PaymentProvider } from "./payment-provider";
+import { BankAccountDto } from "./dto/bank-account.dto";
+import { SubmitReceiptDto } from "./dto/submit-receipt.dto";
+
+/** Recorded on Payment.provider so the card flow's rows stay distinguishable
+ * from anything a future online gateway writes. */
+export const CARD_TRANSFER_PROVIDER = "card-transfer";
 
 @Injectable()
 export class CommerceService {
@@ -13,7 +19,6 @@ export class CommerceService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly learning: LearningService,
-    @Inject(PAYMENT_PROVIDER) private readonly paymentProvider: PaymentProvider,
   ) {}
 
   // --- Admin catalog management ---------------------------------------------
@@ -139,6 +144,15 @@ export class CommerceService {
 
   // --- Checkout ---------------------------------------------------------------
 
+  /**
+   * Opens an order and asks the buyer to transfer the money.
+   *
+   * Nothing is granted here. A card transfer lands in a bank account this
+   * system cannot query, so the only thing that can say the money arrived is
+   * a person looking at the statement -- see `confirmPayment`. Checkout used
+   * to charge a sandbox provider and grant access in the same transaction,
+   * which is how an online gateway behaves and is exactly wrong for this.
+   */
   async checkout(userId: string, productId: string) {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
@@ -169,50 +183,218 @@ export class CommerceService {
     }
     const price = product.prices[0];
 
-    const order = await this.prisma.order.create({
+    // Without a destination card there is nowhere to send the money, so an
+    // order would strand the buyer. Better to refuse than to take an order
+    // nobody can pay.
+    const bankAccount = await this.prisma.bankAccount.findFirst({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
+    if (!bankAccount) {
+      throw new BadRequestException("no active bank account is configured to receive transfers");
+    }
+
+    const referenceCode = await this.allocateReferenceCode();
+
+    const order = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.order.create({
+        data: {
+          userId,
+          status: OrderStatus.PENDING,
+          totalAmountRial: price.amountRial,
+          items: {
+            create: [{ productId, priceId: price.id, quantity: 1, amountRial: price.amountRial }],
+          },
+        },
+      });
+      await tx.payment.create({
+        data: {
+          orderId: created.id,
+          provider: CARD_TRANSFER_PROVIDER,
+          providerRef: `card-${referenceCode}`,
+          status: PaymentStatus.PENDING,
+          amountRial: price.amountRial,
+          bankAccountId: bankAccount.id,
+          referenceCode,
+        },
+      });
+      return created;
+    });
+
+    await this.audit.log({
+      actorUserId: userId,
+      action: "order.opened",
+      targetType: "Order",
+      targetId: order.id,
+      metadata: { productId, amountRial: price.amountRial, referenceCode },
+    });
+
+    return this.prisma.order.findUniqueOrThrow({
+      where: { id: order.id },
+      include: { items: true, payments: { include: { bankAccount: true } } },
+    });
+  }
+
+  /**
+   * A short code the buyer writes in the transfer description and the
+   * operator matches against the statement.
+   *
+   * The alphabet leaves out characters that are misread when copied off a
+   * screen into a banking app by hand (0/O, 1/I/L), because a mistyped code
+   * is a transfer nobody can match. Unique in the database; the retry is for
+   * the rare collision rather than correctness, which the constraint holds.
+   */
+  private async allocateReferenceCode(): Promise<string> {
+    const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const bytes = randomBytes(8);
+      const code = Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join("");
+      const existing = await this.prisma.payment.findUnique({
+        where: { referenceCode: code },
+        select: { id: true },
+      });
+      if (!existing) return code;
+    }
+    throw new BadRequestException("could not allocate a payment reference code");
+  }
+
+  /**
+   * The buyer states they have transferred, and gives what an operator needs
+   * to find it on the statement.
+   *
+   * Nothing here is trusted: it moves the payment into the review queue and
+   * no further. Resubmission is allowed after a rejection, because the usual
+   * reason for one is a mistyped tracking code.
+   */
+  async submitReceipt(userId: string, orderId: string, dto: SubmitReceiptDto) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { payments: true },
+    });
+    // Not "not yours" -- a buyer has no business learning that an order id
+    // exists on someone else's account.
+    if (!order || order.userId !== userId) throw new NotFoundException("order not found");
+    if (order.status === OrderStatus.PAID) throw new BadRequestException("this order is already paid");
+    if (order.status === OrderStatus.CANCELED) throw new BadRequestException("this order was cancelled");
+
+    const payment = order.payments.find((row) => row.provider === CARD_TRANSFER_PROVIDER);
+    if (!payment) throw new BadRequestException("this order has no card transfer to confirm");
+    if (payment.status === PaymentStatus.SUCCEEDED) {
+      throw new BadRequestException("this payment is already confirmed");
+    }
+    if (payment.status === PaymentStatus.AWAITING_REVIEW) {
+      throw new BadRequestException("this receipt is already waiting to be checked");
+    }
+
+    const paidAt = new Date(dto.paidAt);
+    if (Number.isNaN(paidAt.getTime())) throw new BadRequestException("paidAt must be a valid date");
+    // A transfer cannot have happened before the order existed or in the
+    // future; both mean the buyer picked the wrong date.
+    if (paidAt.getTime() > Date.now() + 60_000) {
+      throw new BadRequestException("paidAt cannot be in the future");
+    }
+    if (paidAt < order.createdAt) {
+      throw new BadRequestException("paidAt cannot be before the order was opened");
+    }
+
+    const updated = await this.prisma.payment.update({
+      where: { id: payment.id },
       data: {
-        userId,
-        status: OrderStatus.PENDING,
-        totalAmountRial: price.amountRial,
-        items: {
-          create: [{ productId, priceId: price.id, quantity: 1, amountRial: price.amountRial }],
+        status: PaymentStatus.AWAITING_REVIEW,
+        receiptTrackingCode: dto.trackingCode,
+        receiptPaidAt: paidAt,
+        receiptFromCardLast4: dto.fromCardLast4,
+        receiptNote: dto.note,
+        receiptSubmittedAt: new Date(),
+        // A resubmission clears the previous verdict, so the queue does not
+        // show a rejection reason next to a fresh claim.
+        rejectionReason: null,
+        reviewedAt: null,
+        reviewedByUserId: null,
+      },
+      include: { bankAccount: true },
+    });
+
+    await this.audit.log({
+      actorUserId: userId,
+      action: "payment.receipt_submitted",
+      targetType: "Payment",
+      targetId: payment.id,
+      metadata: { orderId, trackingCode: dto.trackingCode },
+    });
+    return updated;
+  }
+
+  /** The review queue: card transfers a buyer says they have made. */
+  async listPaymentsForReview(status?: PaymentStatus) {
+    return this.prisma.payment.findMany({
+      where: {
+        provider: CARD_TRANSFER_PROVIDER,
+        status: status ?? PaymentStatus.AWAITING_REVIEW,
+      },
+      orderBy: { receiptSubmittedAt: "asc" },
+      include: {
+        bankAccount: true,
+        order: {
+          include: {
+            user: { select: { id: true, phone: true, profile: { select: { displayName: true } } } },
+            items: { include: { product: { select: { id: true, title: true, kind: true } } } },
+          },
         },
       },
     });
+  }
 
-    const charge = await this.paymentProvider.charge(order.id, price.amountRial);
+  /**
+   * An operator has found the transfer on the statement. This is the only
+   * path in the card flow that grants anything.
+   *
+   * The whole fulfilment runs in one transaction and re-reads the payment
+   * inside it, so two operators clicking confirm at the same moment cannot
+   * both grant an entitlement for the same order.
+   */
+  async confirmPayment(adminId: string, paymentId: string) {
+    const result = await this.prisma.$transaction(async (tx) => {
+      const payment = await tx.payment.findUnique({
+        where: { id: paymentId },
+        include: { order: { include: { items: true } } },
+      });
+      if (!payment) throw new NotFoundException("payment not found");
+      if (payment.status === PaymentStatus.SUCCEEDED) {
+        throw new BadRequestException("this payment is already confirmed");
+      }
+      if (payment.order.status === OrderStatus.PAID) {
+        throw new BadRequestException("this order is already paid");
+      }
 
-    if (!charge.succeeded) {
-      await this.prisma.$transaction([
-        this.prisma.order.update({ where: { id: order.id }, data: { status: OrderStatus.FAILED } }),
-        this.prisma.payment.create({
-          data: {
-            orderId: order.id,
-            provider: this.paymentProvider.name,
-            providerRef: charge.providerRef,
-            status: PaymentStatus.FAILED,
-            amountRial: price.amountRial,
-          },
-        }),
-      ]);
-      throw new BadRequestException("payment failed");
-    }
+      const productId = payment.order.items[0]?.productId;
+      if (!productId) throw new BadRequestException("this order has no items");
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.order.update({ where: { id: order.id }, data: { status: OrderStatus.PAID } });
-      await tx.payment.create({
-        data: {
-          orderId: order.id,
-          provider: this.paymentProvider.name,
-          providerRef: charge.providerRef,
-          status: PaymentStatus.SUCCEEDED,
-          amountRial: price.amountRial,
-          paidAt: new Date(),
+      const product = await tx.product.findUnique({
+        where: { id: productId },
+        include: {
+          courseGrants: true,
+          consultationOffering: { select: { validUntil: true } },
         },
       });
+      if (!product) throw new NotFoundException("product not found");
+
+      const now = new Date();
+      await tx.payment.update({
+        where: { id: paymentId },
+        data: {
+          status: PaymentStatus.SUCCEEDED,
+          paidAt: payment.receiptPaidAt ?? now,
+          reviewedAt: now,
+          reviewedByUserId: adminId,
+          rejectionReason: null,
+        },
+      });
+      await tx.order.update({ where: { id: payment.orderId }, data: { status: OrderStatus.PAID } });
+
       const entitlement = await tx.entitlement.create({
         data: {
-          userId,
+          userId: payment.order.userId,
           productId,
           grantedVia: EntitlementGrantSource.ORDER,
           // A consultation package runs to a deadline -- the konkur date for
@@ -223,29 +405,124 @@ export class CommerceService {
         },
       });
       for (const courseId of this.productCourseIds(product)) {
-        await this.learning.enrollFromEntitlement(userId, courseId, tx);
+        await this.learning.enrollFromEntitlement(payment.order.userId, courseId, tx);
       }
       await tx.outboxEvent.create({
         data: {
           eventType: "EntitlementActivated",
-          payload: { userId, productId, entitlementId: entitlement.id, orderId: order.id },
+          payload: {
+            userId: payment.order.userId,
+            productId,
+            entitlementId: entitlement.id,
+            orderId: payment.orderId,
+          },
         },
       });
-      return { entitlement };
+
+      return { orderId: payment.orderId, userId: payment.order.userId, productId, entitlementId: entitlement.id };
     });
 
     await this.audit.log({
-      actorUserId: userId,
-      action: "order.paid",
-      targetType: "Order",
-      targetId: order.id,
-      metadata: { productId, amountRial: price.amountRial },
+      actorUserId: adminId,
+      action: "payment.confirmed",
+      targetType: "Payment",
+      targetId: paymentId,
+      metadata: result,
     });
 
-    return this.prisma.order.findUniqueOrThrow({
-      where: { id: order.id },
-      include: { items: true, payments: true },
+    return this.prisma.payment.findUniqueOrThrow({
+      where: { id: paymentId },
+      include: { order: { include: { items: true } } },
     });
+  }
+
+  /** The transfer was not on the statement, or did not match. The buyer can
+   * correct their claim and submit again. */
+  async rejectPayment(adminId: string, paymentId: string, reason: string) {
+    const payment = await this.prisma.payment.findUnique({ where: { id: paymentId } });
+    if (!payment) throw new NotFoundException("payment not found");
+    if (payment.status === PaymentStatus.SUCCEEDED) {
+      throw new BadRequestException("a confirmed payment cannot be rejected; revoke the entitlement instead");
+    }
+
+    const updated = await this.prisma.payment.update({
+      where: { id: paymentId },
+      data: {
+        status: PaymentStatus.REJECTED,
+        reviewedAt: new Date(),
+        reviewedByUserId: adminId,
+        rejectionReason: reason,
+      },
+    });
+
+    await this.audit.log({
+      actorUserId: adminId,
+      action: "payment.rejected",
+      targetType: "Payment",
+      targetId: paymentId,
+      metadata: { orderId: payment.orderId, reason },
+    });
+    return updated;
+  }
+
+  // --- destination cards -----------------------------------------------------
+
+  async listBankAccounts() {
+    return this.prisma.bankAccount.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
+  }
+
+  async createBankAccount(adminId: string, dto: BankAccountDto) {
+    const cardNumber = dto.cardNumber.replace(/\D/g, "");
+    if (cardNumber.length !== 16) throw new BadRequestException("cardNumber must be 16 digits");
+
+    const account = await this.prisma.bankAccount.create({
+      data: {
+        bankName: dto.bankName,
+        holderName: dto.holderName,
+        cardNumber,
+        iban: dto.iban,
+        isActive: dto.isActive ?? true,
+        sortOrder: dto.sortOrder ?? 0,
+      },
+    });
+    await this.audit.log({
+      actorUserId: adminId,
+      action: "bank_account.created",
+      targetType: "BankAccount",
+      targetId: account.id,
+      // The card number is what this row is; the audit records the last four
+      // so a change is traceable without copying the whole number around.
+      metadata: { bankName: dto.bankName, holderName: dto.holderName, last4: cardNumber.slice(-4) },
+    });
+    return account;
+  }
+
+  async updateBankAccount(adminId: string, id: string, dto: BankAccountDto) {
+    const existing = await this.prisma.bankAccount.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException("bank account not found");
+
+    const cardNumber = dto.cardNumber.replace(/\D/g, "");
+    if (cardNumber.length !== 16) throw new BadRequestException("cardNumber must be 16 digits");
+
+    const account = await this.prisma.bankAccount.update({
+      where: { id },
+      data: {
+        bankName: dto.bankName,
+        holderName: dto.holderName,
+        cardNumber,
+        iban: dto.iban,
+        isActive: dto.isActive ?? existing.isActive,
+        sortOrder: dto.sortOrder ?? existing.sortOrder,
+      },
+    });
+    await this.audit.log({
+      actorUserId: adminId,
+      action: "bank_account.updated",
+      targetType: "BankAccount",
+      targetId: id,
+      metadata: { isActive: account.isActive, last4: cardNumber.slice(-4) },
+    });
+    return account;
   }
 
   // --- Manual / gift entitlements (doc §8.1: admin can grant gift/trial/
@@ -337,9 +614,27 @@ export class CommerceService {
   async listMyOrders(userId: string) {
     return this.prisma.order.findMany({
       where: { userId },
-      include: { items: true, payments: true },
+      include: {
+        items: { include: { product: { select: { id: true, slug: true, title: true, kind: true } } } },
+        // The destination card comes with the order: an unpaid order is
+        // useless to the buyer without somewhere to send the money.
+        payments: { include: { bankAccount: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
+  }
+
+  /** One order, for the page where a buyer pays for it. */
+  async getMyOrder(userId: string, orderId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        items: { include: { product: { select: { id: true, slug: true, title: true, kind: true } } } },
+        payments: { include: { bankAccount: true } },
+      },
+    });
+    if (!order || order.userId !== userId) throw new NotFoundException("order not found");
+    return order;
   }
 
   async listMyEntitlements(userId: string) {

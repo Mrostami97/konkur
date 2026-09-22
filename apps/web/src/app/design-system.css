@@ -1014,3 +1014,41 @@ a.ds-kpi:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   .acc-band-inner { padding: var(--sp-6) var(--sp-4) var(--sp-4); }
   .acc-body { padding: var(--sp-5) var(--sp-4) var(--sp-10); }
 }
+
+/* ------------------------------------------------------- card transfer pay */
+
+/* The number the buyer has to copy into a banking app by hand. Big, spaced
+   and monospaced-by-numerals, because a mistyped digit is a transfer that
+   goes nowhere and a support ticket. */
+.pay-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  padding: var(--sp-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunken);
+}
+.pay-number {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .12em;
+  direction: ltr;
+  color: var(--ink);
+}
+.pay-ref {
+  display: inline-block;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-md);
+  background: var(--sky);
+  color: var(--teal-dark);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: .18em;
+  direction: ltr;
+}
+.pay-steps { margin: 0; padding-inline-start: 1.25rem; color: var(--muted); line-height: 2; }
+.pay-steps strong { color: var(--ink); }

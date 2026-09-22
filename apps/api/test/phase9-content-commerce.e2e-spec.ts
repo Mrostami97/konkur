@@ -7,6 +7,7 @@ import { Test } from "@nestjs/testing";
 import AdmZip from "adm-zip";
 import cookieParser from "cookie-parser";
 import request from "supertest";
+import { purchaseProduct } from "./helpers/purchase";
 import { AppModule } from "../src/app.module";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
 import { ObjectStorageService } from "../src/modules/ingestion/object-storage.service";
@@ -427,12 +428,11 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       .get("/resources/" + paidResourceSlug + "/content")
       .set("Cookie", resourceBuyer.cookie)
       .expect(403);
-    await request(app.getHttpServer())
-      .post("/checkout")
-      .set("Cookie", resourceBuyer.cookie)
-      .send({ productId: resourceProductId })
-      .expect(201)
-      .expect((response) => expect(response.body.status).toBe("PAID"));
+    await purchaseProduct(app, {
+      buyerCookie: resourceBuyer.cookie,
+      adminCookie,
+      productId: resourceProductId,
+    });
     await request(app.getHttpServer())
       .get("/resources/" + paidResourceSlug + "/content")
       .set("Cookie", resourceBuyer.cookie)
@@ -443,12 +443,11 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       .expect(403);
 
     const bundleBuyer = await login(randomPhone());
-    await request(app.getHttpServer())
-      .post("/checkout")
-      .set("Cookie", bundleBuyer.cookie)
-      .send({ productId: bundleProductId })
-      .expect(201)
-      .expect((response) => expect(response.body.status).toBe("PAID"));
+    await purchaseProduct(app, {
+      buyerCookie: bundleBuyer.cookie,
+      adminCookie,
+      productId: bundleProductId,
+    });
     await request(app.getHttpServer())
       .get("/resources/" + paidResourceSlug + "/content")
       .set("Cookie", bundleBuyer.cookie)

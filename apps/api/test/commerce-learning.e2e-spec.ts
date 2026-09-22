@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import cookieParser from "cookie-parser";
 import request from "supertest";
+import { purchaseConfirm, purchaseProduct } from "./helpers/purchase";
 import { AppModule } from "../src/app.module";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
 import {
@@ -60,6 +61,9 @@ describe("Register -> purchase -> access -> consume lesson (e2e)", () => {
   }
 
   it("runs the full registration -> purchase -> access -> consumption path, and blocks unauthorized access", async () => {
+    // Confirming a card transfer takes an operator, so this path needs one.
+    const { cookie: adminCookie } = await loginAs(SEED_ADMIN_PHONE);
+
     // 1. Portal: public catalog + syllabus are visible before login.
     const productsRes = await request(app.getHttpServer()).get("/products").expect(200);
     const product = productsRes.body.find((p: any) => p.slug === SEED_PRODUCT_SLUG);
@@ -83,13 +87,24 @@ describe("Register -> purchase -> access -> consume lesson (e2e)", () => {
     // 3. Unauthorized access is prevented: no entitlement yet -> lesson is gated.
     await request(app.getHttpServer()).get(`/lessons/${lessonId}`).set("Cookie", cookie).expect(403);
 
-    // 4. Purchase: checkout against the sandbox payment provider.
+    // 4. Purchase: open the order, state the transfer, operator confirms it.
+    //    Checkout alone grants nothing -- the money arrives out of band.
     const checkoutRes = await request(app.getHttpServer())
       .post("/checkout")
       .set("Cookie", cookie)
       .send({ productId: product.id })
       .expect(201);
-    expect(checkoutRes.body.status).toBe("PAID");
+    expect(checkoutRes.body.status).toBe("PENDING");
+
+    // Still gated: the buyer has an order, not access.
+    await request(app.getHttpServer()).get(`/lessons/${lessonId}`).set("Cookie", cookie).expect(403);
+
+    await purchaseConfirm(app, {
+      buyerCookie: cookie,
+      adminCookie,
+      orderId: checkoutRes.body.id,
+      paymentId: checkoutRes.body.payments[0].id,
+    });
 
     // 5. Access: entitlement + enrollment now exist.
     const entitlementsRes = await request(app.getHttpServer())
@@ -138,11 +153,8 @@ describe("Register -> purchase -> access -> consume lesson (e2e)", () => {
 
     const phone = randomPhone();
     const { cookie } = await loginAs(phone);
-    await request(app.getHttpServer())
-      .post("/checkout")
-      .set("Cookie", cookie)
-      .send({ productId: product.id })
-      .expect(201);
+    const { cookie: adminCookie } = await loginAs(SEED_ADMIN_PHONE);
+    await purchaseProduct(app, { buyerCookie: cookie, adminCookie, productId: product.id });
     await request(app.getHttpServer()).get(`/lessons/${lessonId}`).set("Cookie", cookie).expect(200);
 
     const entitlementsRes = await request(app.getHttpServer())
@@ -151,7 +163,6 @@ describe("Register -> purchase -> access -> consume lesson (e2e)", () => {
       .expect(200);
     const entitlementId = entitlementsRes.body.find((e: any) => e.productId === product.id).id;
 
-    const { cookie: adminCookie } = await loginAs(SEED_ADMIN_PHONE);
     await request(app.getHttpServer())
       .post(`/admin/entitlements/${entitlementId}/revoke`)
       .set("Cookie", adminCookie)

@@ -4,6 +4,7 @@ import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import cookieParser from "cookie-parser";
 import request from "supertest";
+import { purchaseProduct } from "./helpers/purchase";
 import AdmZip from "adm-zip";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
@@ -399,11 +400,11 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .expect(201);
 
     const courseStudent = await login();
-    await request(app.getHttpServer())
-      .post("/checkout")
-      .set("Cookie", courseStudent.cookie)
-      .send({ productId: courseProductRes.body.id })
-      .expect(201);
+    await purchaseProduct(app, {
+      buyerCookie: courseStudent.cookie,
+      adminCookie,
+      productId: courseProductRes.body.id,
+    });
 
     const courseStudentAnswer = await request(app.getHttpServer())
       .get(`/questions/${lockedViaCourse.id}`)

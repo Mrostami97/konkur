@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import cookieParser from "cookie-parser";
 import request from "supertest";
+import { purchaseProduct } from "./helpers/purchase";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
@@ -139,11 +140,7 @@ describe("Instructors + paid consultations (e2e)", () => {
       include: { prices: true },
     });
 
-    await request(app.getHttpServer())
-      .post("/checkout")
-      .set("Cookie", studentCookie)
-      .send({ productId: product.id })
-      .expect(201);
+    await purchaseProduct(app, { buyerCookie: studentCookie, adminCookie, productId: product.id });
 
     const res = await request(app.getHttpServer())
       .get("/me/instructor/sales")
@@ -227,11 +224,7 @@ describe("Instructors + paid consultations (e2e)", () => {
     });
 
     it("carries the package deadline onto the entitlement at checkout", async () => {
-      await request(app.getHttpServer())
-        .post("/checkout")
-        .set("Cookie", studentCookie)
-        .send({ productId })
-        .expect(201);
+      await purchaseProduct(app, { buyerCookie: studentCookie, adminCookie, productId });
 
       const entitlement = await prisma.entitlement.findFirstOrThrow({
         where: { productId },

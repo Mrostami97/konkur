@@ -7,34 +7,35 @@ import { Alert, Button } from "./ds";
 
 export function BuyButton({
   productId,
-  label = "خرید دوره",
-  redirectTo = "/account",
+  label = "ثبت سفارش",
 }: {
   productId: string;
   /** What this purchase is, in the shopper's words -- a course and a
    * consultation package are not the same act. */
   label?: string;
-  /** Where to land afterwards. A consultation sends the student to the screen
-   * where they book the session they have just paid for, not to a generic
-   * account page that would leave them wondering what to do next. */
-  redirectTo?: string;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Checkout opens an order; it does not pay for it. Payment is card-to-card,
+   * so the next screen is the one with the card number, the exact amount and
+   * the receipt form -- not the account page, which would leave the buyer
+   * with an order and no idea what to do with it.
+   */
   async function handleBuy() {
     setLoading(true);
     setError(null);
     try {
-      await apiFetch("/checkout", { method: "POST", body: { productId } });
-      router.push(redirectTo);
+      const order = await apiFetch<{ id: string }>("/checkout", { method: "POST", body: { productId } });
+      router.push(`/account/orders/${order.id}`);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         router.push("/login");
         return;
       }
-      setError(err instanceof Error ? err.message : "خرید ناموفق بود");
+      setError(err instanceof Error ? err.message : "ثبت سفارش ناموفق بود");
     } finally {
       setLoading(false);
     }
