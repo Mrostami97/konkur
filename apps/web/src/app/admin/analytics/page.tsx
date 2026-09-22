@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AdminGuard } from "../../../components/AdminGuard";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
+import { toPersianDigits } from "../../../lib/format";
+import {
+  AdminPageHeader,
+  Alert,
+  Button,
+  Card,
+  ConfirmDialog,
+  DataState,
+  TableWrap,
+} from "../../../components/ds";
 
 interface Backtest {
   id: string;
@@ -14,74 +23,108 @@ interface Backtest {
   computedAt: string;
 }
 
-function AnalyticsAdmin() {
-  const [backtests, setBacktests] = useState<Backtest[]>([]);
-  const [running, setRunning] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const percent = (value: number, digits = 0) => `${toPersianDigits((value * 100).toFixed(digits))}٪`;
 
-  async function load() {
-    setBacktests(await apiFetch<Backtest[]>("/admin/analytics/backtests"));
-  }
+export default function AnalyticsAdminPage() {
+  const [backtests, setBacktests] = useState<Backtest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [running, setRunning] = useState(false);
+  const [runError, setRunError] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setBacktests(await apiFetch<Backtest[]>("/admin/analytics/backtests"));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "خواندن فهرست بک‌تست‌ها ممکن نشد.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    load().catch(() => {});
-  }, []);
+    void load();
+  }, [load]);
 
   async function runBacktest() {
     setRunning(true);
-    setError(null);
+    setRunError(null);
     try {
       await apiFetch("/admin/analytics/backtest", { method: "POST" });
+      setConfirming(false);
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "بک‌تست ناموفق بود");
+      setRunError(err instanceof Error ? err.message : "بک‌تست ناموفق بود.");
+      setConfirming(false);
     } finally {
       setRunning(false);
     }
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>بک‌تست تخمین رتبه</h1>
-      <p style={{ fontSize: "0.85rem", color: "#486581" }}>
-        هر کارنامه به‌عنوان یک نمونه آزمایشی در نظر گرفته می‌شود؛ رتبه آن با استفاده از سایر کارنامه‌های
-        مشابه تخمین زده می‌شود و با رتبه واقعی مقایسه می‌گردد.
-      </p>
-      <button onClick={runBacktest} disabled={running}>
-        {running ? "در حال اجرا..." : "اجرای بک‌تست جدید"}
-      </button>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+    <>
+      <AdminPageHeader
+        title="بک‌تست تخمین رتبه"
+        description="هر کارنامه به‌عنوان یک نمونهٔ آزمایشی در نظر گرفته می‌شود؛ رتبه‌اش با کارنامه‌های مشابه تخمین زده و با رتبهٔ واقعی مقایسه می‌شود."
+        action={<Button variant="primary" onClick={() => setConfirming(true)}>اجرای بک‌تست تازه</Button>}
+      />
 
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: "right" }}>نسخه</th>
-            <th style={{ textAlign: "right" }}>نمونه</th>
-            <th style={{ textAlign: "right" }}>پوشش ۵۰٪</th>
-            <th style={{ textAlign: "right" }}>پوشش ۸۰٪</th>
-            <th style={{ textAlign: "right" }}>میانگین خطای درصدی</th>
-          </tr>
-        </thead>
-        <tbody>
-          {backtests.map((b) => (
-            <tr key={b.id} style={{ borderBottom: "1px solid #D7E2EA" }}>
-              <td style={{ padding: "0.4rem" }}>{b.estimatorVersion}</td>
-              <td style={{ padding: "0.4rem" }}>{b.sampleSize}</td>
-              <td style={{ padding: "0.4rem" }}>{(b.coverageP50 * 100).toFixed(0)}٪</td>
-              <td style={{ padding: "0.4rem" }}>{(b.coverageP80 * 100).toFixed(0)}٪</td>
-              <td style={{ padding: "0.4rem" }}>{(b.meanAbsPercentError * 100).toFixed(1)}٪</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </main>
-  );
-}
+      {runError && <Alert tone="danger">{runError}</Alert>}
 
-export default function AnalyticsAdminPage() {
-  return (
-    <AdminGuard>
-      <AnalyticsAdmin />
-    </AdminGuard>
+      <Card padded={false}>
+        <div className="ds-card-head">
+          <div>
+            <h2 className="ds-card-title">بک‌تست‌های اجراشده</h2>
+            <p>پوشش یعنی چند درصد رتبه‌های واقعی داخل بازهٔ اعلام‌شده افتاده‌اند.</p>
+          </div>
+        </div>
+        <div className={`ds-card-body ${backtests.length && !loading && !error ? "ds-card-body-flush" : ""}`}>
+          <DataState
+            loading={loading}
+            error={error}
+            isEmpty={backtests.length === 0}
+            onRetry={load}
+            emptyTitle="هنوز بک‌تستی اجرا نشده"
+            emptyDescription="برای سنجش دقت تخمین‌گر، یک بک‌تست اجرا کنید."
+          >
+            <TableWrap>
+              <thead>
+                <tr>
+                  <th>نسخهٔ تخمین‌گر</th>
+                  <th>حجم نمونه</th>
+                  <th>پوشش ۵۰٪</th>
+                  <th>پوشش ۸۰٪</th>
+                  <th>میانگین خطای درصدی</th>
+                </tr>
+              </thead>
+              <tbody>
+                {backtests.map((item) => (
+                  <tr key={item.id}>
+                    <td className="ds-code">{item.estimatorVersion}</td>
+                    <td className="ds-table-numeric">{toPersianDigits(item.sampleSize)}</td>
+                    <td className="ds-table-numeric">{percent(item.coverageP50)}</td>
+                    <td className="ds-table-numeric">{percent(item.coverageP80)}</td>
+                    <td className="ds-table-numeric">{percent(item.meanAbsPercentError, 1)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </TableWrap>
+          </DataState>
+        </div>
+      </Card>
+
+      <ConfirmDialog
+        open={confirming}
+        title="اجرای بک‌تست تازه؟"
+        description="این کار روی همهٔ کارنامه‌های موجود اجرا می‌شود و بسته به حجم داده ممکن است طول بکشد."
+        confirmLabel="اجرا کن"
+        busy={running}
+        onConfirm={runBacktest}
+        onCancel={() => setConfirming(false)}
+      />
+    </>
   );
 }

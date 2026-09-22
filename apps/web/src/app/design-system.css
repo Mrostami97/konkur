@@ -668,3 +668,39 @@
   .admin-topbar { padding: var(--sp-3) var(--sp-4); }
   .admin-content { padding: var(--sp-4); }
 }
+
+/* ------------------------------------------------------- admin page parts */
+
+/* A titled band at the top of a card, above a table that fills the rest of
+   it. Repeated on almost every admin list, so it lives here rather than as
+   an inline style per page. */
+.ds-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-4); flex-wrap: wrap;
+  padding: var(--sp-5);
+  border-bottom: 1px solid var(--line-soft);
+}
+.ds-card-head h2 { margin: 0; font-size: var(--text-lg); font-weight: var(--weight-bold); color: var(--ink); letter-spacing: -.02em; }
+.ds-card-head p { margin: var(--sp-1) 0 0; font-size: var(--text-sm); color: var(--muted); }
+
+/* Body of a card whose content is a table: the table draws its own edges, so
+   the body carries no padding of its own. */
+.ds-card-body { padding: var(--sp-5); }
+.ds-card-body-flush { padding: 0; }
+
+/* Identifiers, codes and slugs are Latin and read left-to-right even inside
+   an RTL table. */
+.ds-code { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+
+.ds-form { display: flex; flex-direction: column; gap: var(--sp-4); margin-top: var(--sp-5); }
+
+.ds-card-title { margin: 0; font-size: var(--text-lg); font-weight: var(--weight-bold); color: var(--ink); letter-spacing: -.02em; }
+
+/* A row of small figures above a table. Deliberately not a big-number hero:
+   these are context for the list below, not the point of the page. */
+.ds-stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--sp-4); }
+.ds-stat-label { display: block; font-size: var(--text-sm); color: var(--muted); }
+.ds-stat-value { display: block; margin-top: var(--sp-1); font-size: var(--text-xl); font-weight: var(--weight-bold); color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+
+.ds-funnel-step { display: inline-flex; align-items: center; gap: var(--sp-2); }
+.ds-funnel-step strong { font-size: var(--text-md); color: var(--ink); font-variant-numeric: tabular-nums; }
