@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../lib/api";
 import { formatPersianNumber, formatRial, formatSharePercent } from "../../lib/format";
-import { AdminPageHeader, Badge, Card, DataState, TableWrap } from "../../components/ds";
+import { AdminPageHeader, Badge, BarChart, Card, DataState, Kpi, KpiGrid, TableWrap } from "../../components/ds";
+import { PanelIcon } from "../../components/PanelIcons";
 
 interface CourseSales {
   courseId: string;
@@ -63,27 +64,63 @@ export default function InstructorSalesPage() {
       >
         {data && (
           <div className="ds-stack-lg">
+            <KpiGrid>
+              <Kpi
+                label="سهم شما از فروش"
+                value={formatRial(data.totals.shareRial)}
+                hint="مبلغی که بابت این دوره‌ها به شما می‌رسد"
+                icon={<PanelIcon name="money" />}
+                tone="success"
+                small
+              />
+              <Kpi
+                label="فروش ناخالص دوره‌های شما"
+                value={formatRial(data.totals.grossRial)}
+                hint="کل مبلغی که دانشجویان پرداخت کرده‌اند"
+                icon={<PanelIcon name="commerce" />}
+                tone="warm"
+                small
+              />
+              <Kpi
+                label="دانشجویان ثبت‌نام‌شده"
+                value={formatPersianNumber(data.totals.students)}
+                hint={`در ${formatPersianNumber(data.courses.length)} دوره`}
+                icon={<PanelIcon name="students" />}
+                tone="info"
+              />
+            </KpiGrid>
+
             <Card>
-              <div className="ds-stat-row">
-                <div>
-                  <span className="ds-stat-label">سهم شما از فروش</span>
-                  <span className="ds-stat-value">{formatRial(data.totals.shareRial)}</span>
-                </div>
-                <div>
-                  <span className="ds-stat-label">فروش ناخالص دوره‌های شما</span>
-                  <span className="ds-stat-value">{formatRial(data.totals.grossRial)}</span>
-                </div>
-                <div>
-                  <span className="ds-stat-label">دانشجویان ثبت‌نام‌شده</span>
-                  <span className="ds-stat-value">{formatPersianNumber(data.totals.students)}</span>
-                </div>
-              </div>
-              <p className="ds-hint" style={{ marginTop: "var(--sp-4)" }}>
+              <p className="ds-hint" style={{ margin: 0 }}>
                 «فروش ناخالص» مبلغی است که دانشجو پرداخت کرده و «سهم شما» همان مبلغ ضرب در درصد قرارداد شما
                 برای هر دوره است. در بسته‌هایی که چند دوره را با هم می‌فروشند، مبلغ به‌طور مساوی بین دوره‌های
                 همان بسته تقسیم می‌شود و بعد سهم شما حساب می‌گردد. گرد کردن همیشه رو به پایین است.
               </p>
             </Card>
+
+            {data.monthly.length > 0 && (
+              <Card padded={false}>
+                <div className="ds-card-head">
+                  <div>
+                    <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+                      سهم شما به تفکیک ماه
+                    </h2>
+                    <p className="ds-subtitle" style={{ marginTop: "var(--sp-1)" }}>
+                      دوازده ماه اخیر. روی هر ستون نگه دارید تا مبلغ دقیق را ببینید.
+                    </p>
+                  </div>
+                </div>
+                <div style={{ padding: "var(--sp-5)" }}>
+                  <BarChart
+                    points={data.monthly.slice(-12).map((point) => ({
+                      label: point.month.slice(2),
+                      value: point.shareRial,
+                    }))}
+                    formatValue={formatRial}
+                  />
+                </div>
+              </Card>
+            )}
 
             <Card padded={false}>
               <div className="ds-card-head">
@@ -129,35 +166,6 @@ export default function InstructorSalesPage() {
               </TableWrap>
             </Card>
 
-            {data.monthly.length > 0 && (
-              <Card padded={false}>
-                <div className="ds-card-head">
-                  <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-                    روند ماهانه
-                  </h2>
-                </div>
-                <TableWrap>
-                  <thead>
-                    <tr>
-                      <th>ماه</th>
-                      <th>تعداد خرید</th>
-                      <th>فروش ناخالص</th>
-                      <th>سهم شما</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.monthly.map((point) => (
-                      <tr key={point.month}>
-                        <td className="ds-table-numeric">{point.month}</td>
-                        <td className="ds-table-numeric">{formatPersianNumber(point.orders)}</td>
-                        <td className="ds-table-numeric">{formatRial(point.grossRial)}</td>
-                        <td className="ds-table-numeric">{formatRial(point.shareRial)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </TableWrap>
-              </Card>
-            )}
           </div>
         )}
       </DataState>

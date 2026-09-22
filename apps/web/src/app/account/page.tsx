@@ -5,7 +5,23 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
-import { EmptyState, PageHeader, ProgressBar, StatCard } from "../../components/ui";
+import { ProgressBar } from "../../components/ui";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  DsEmptyState,
+  Field,
+  FieldRow,
+  Input,
+  Kpi,
+  KpiGrid,
+  Select,
+  SkeletonRows,
+} from "../../components/ds";
+import { PanelIcon } from "../../components/PanelIcons";
+import { AccountShell } from "./AccountShell";
 
 interface Me {
   user: { id: string; phone: string; roles: string[] };
@@ -297,143 +313,431 @@ export default function AccountPage() {
     }
   }
 
-  if (loading) return <main className="page-container"><div className="surface-card loading-state">در حال بارگذاری حساب…</div></main>;
+  if (loading) {
+    return (
+      <AccountShell title="حساب من">
+        <SkeletonRows rows={4} height="6rem" />
+      </AccountShell>
+    );
+  }
   if (!me) return null;
 
+  const greetingName = profile?.displayName?.trim() || "خوش آمدی";
+  const staff = me.user.roles.some((role) => ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE", "MENTOR"].includes(role));
+  const studyMinutes = studySessions.reduce((sum, session) => sum + (session.minutes ?? 0), 0);
+  // The most useful thing on a student dashboard is where to pick up, so the
+  // first course with a resume point is lifted out of the progress list.
+  const resumeCourse = learningProgress.find((item) => (item.resumeLesson ?? item.nextLesson)?.id);
+  // A brand-new account has nothing in any section. Rendering six identical
+  // "nothing here yet" cards is a wall that tells the student they have
+  // failed at something; one card that says what to do next is the same
+  // information and a better first minute.
+  const isNewAccount =
+    enrollments.length === 0 &&
+    entitlements.length === 0 &&
+    mastery.length === 0 &&
+    studySessions.length === 0 &&
+    learningProgress.length === 0 &&
+    planHistory.length === 0 &&
+    revisions.length === 0;
+  const resumeLesson = resumeCourse ? (resumeCourse.resumeLesson ?? resumeCourse.nextLesson) : null;
+
   return (
-    <main className="page-container">
-      <PageHeader eyebrow="فضای شخصی" title="حساب من" description="پروفایل، دسترسی‌ها، فعالیت مطالعه و شواهد سنجش را بدون آمیختن با یکدیگر ببین." action={<button className="button button-secondary" onClick={logout}>خروج از حساب</button>} />
-      <section className="content-grid">
-        <div className="surface-card">
-          <div className="account-identity"><div className="avatar-placeholder">{me.user.phone.slice(-2)}</div><div><strong>{me.user.phone}</strong><p className="muted-copy">نقش‌ها: {me.user.roles.join(", ")}</p></div></div>
-          {me.user.roles.some((role) => ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE", "MENTOR"].includes(role)) && (
-            <Link className="quick-link-highlight" href="/admin">ورود به پنل ادمین ←</Link>
+    <AccountShell
+      title={greetingName}
+      subtitle="پیشرفت مطالعه، دسترسی‌ها و شواهد سنجش‌ات، بدون آمیختن با هم."
+      chips={
+        <>
+          <span className="acc-chip">{me.user.phone}</span>
+          {profile?.targetDegree && <span className="acc-chip">هدف: {degreeLabel(profile.targetDegree)}</span>}
+          {profile?.targetField && <span className="acc-chip">{profile.targetField}</span>}
+          {staff && <span className="acc-chip">{me.user.roles.join("، ")}</span>}
+        </>
+      }
+      action={
+        <div className="ds-row" style={{ gap: "var(--sp-2)" }}>
+          {staff && (
+            <Link className="ds-btn ds-btn-secondary ds-btn-sm" href="/admin">
+              پنل مدیریت
+            </Link>
           )}
-
-          <h2>پروفایل</h2>
-          {profile && (
-            <form className="field-grid" onSubmit={saveProfile}>
-              <label className="field-group"><span>نام نمایشی</span><input className="field-input" value={profile.displayName ?? ""} onChange={(e) => setProfile({ ...profile, displayName: e.target.value })} /></label>
-              <label className="field-group"><span>مقطع هدف</span><select className="field-input" value={profile.targetDegree ?? ""} onChange={(e) => setProfile({ ...profile, targetDegree: e.target.value })}>
-                <option value="">—</option><option value="MASTER">ارشد</option><option value="PHD">دکتری</option>
-              </select></label>
-              <label className="field-group"><span>رشتهٔ هدف</span><input className="field-input" value={profile.targetField ?? ""} onChange={(e) => setProfile({ ...profile, targetField: e.target.value })} /></label>
-              <button className="button button-primary" type="submit">{saveState === "saving" ? "در حال ذخیره…" : "ذخیره تغییرات"}</button>
-              {saveState === "saved" && <span className="success-message">ذخیره شد</span>}
-            </form>
+          {isInstructor && (
+            <Link className="ds-btn ds-btn-secondary ds-btn-sm" href="/instructor">
+              پنل مدرس
+            </Link>
           )}
+          <Button size="sm" onClick={logout}>
+            خروج از حساب
+          </Button>
         </div>
-        <div className="stats-grid account-stats">
-          <StatCard label="درس‌های تکمیل‌شده" value={toPersianDigits(learningTotals.completed)} detail="فعالیت مطالعه ثبت‌شده" tone="teal" />
-          <StatCard label="دسترسی‌ها" value={toPersianDigits(entitlements.length)} detail="محصولات فعال حساب" tone="blue" />
-          <StatCard label="موضوعات ارزیابی‌شده" value={toPersianDigits(mastery.length)} detail="دارای شواهد پاسخ" tone="purple" />
-        </div>
-      </section>
+      }
+    >
+      <div className="ds-stack-lg">
+        <KpiGrid>
+          <Kpi
+            label="دوره‌های من"
+            value={toPersianDigits(enrollments.length)}
+            hint="دوره‌های ثبت‌نام‌شده"
+            icon={<PanelIcon name="course" />}
+            tone="info"
+          />
+          <Kpi
+            label="درس‌های تکمیل‌شده"
+            value={toPersianDigits(learningTotals.completed)}
+            hint="فعالیت مطالعه، نه نمره"
+            icon={<PanelIcon name="check" />}
+          />
+          <Kpi
+            label="زمان مطالعهٔ ثبت‌شده"
+            value={`${toPersianDigits(Math.round(studyMinutes / 60))} ساعت`}
+            hint={`${toPersianDigits(studySessions.length)} جلسهٔ ثبت‌شده`}
+            icon={<PanelIcon name="clock" />}
+            tone="warm"
+          />
+          <Kpi
+            label="موضوعات ارزیابی‌شده"
+            value={toPersianDigits(mastery.length)}
+            hint="دارای شواهد پاسخ"
+            icon={<PanelIcon name="chart" />}
+            tone="success"
+          />
+        </KpiGrid>
 
-      <section className="content-grid-wide account-sections">
-        <div className="surface-card">
-          <span className="eyebrow">فعالیت، نه نمره</span>
-          <h2>پیشرفت مطالعه</h2>
-          <p className="muted-copy">این بخش فقط بازدید و تکمیل درس‌ها را گزارش می‌کند و دربارهٔ میزان یادگیری علمی ادعایی ندارد.</p>
-          {learningProgress.length === 0 ? (
-            <EmptyState title="هنوز فعالیت درسی ثبت نشده" description="با شروع یک درس، نقطهٔ ادامه و تکمیل‌های واقعی اینجا نمایش داده می‌شوند." action={<Link className="button button-secondary" href="/courses">مشاهدهٔ دوره‌ها</Link>} />
-          ) : (
-            <ul className="quick-links">
-              {learningProgress.map((item, index) => {
-                const total = totalLessons(item);
-                const completed = completedLessons(item);
-                const resume = item.resumeLesson ?? item.nextLesson;
-                return (
-                  <li key={`${courseSlug(item)}-${index}`}>
-                    <strong>{courseTitle(item)}</strong>
-                    <p className="muted-copy">{total > 0 ? `${toPersianDigits(completed)} از ${toPersianDigits(total)} درس تکمیل شده` : `${toPersianDigits(item.viewedLessons ?? 0)} درس مشاهده شده`}</p>
-                    {total > 0 && <ProgressBar value={progressPercent(item)} label="پیشرفت تکمیل درس" />}
-                    {resume?.id ? <Link href={`/lessons/${resume.id}`}>ادامهٔ مطالعهٔ {resume.title ?? "درس"} ←</Link> : courseSlug(item) && <Link href={`/courses/${courseSlug(item)}`}>مشاهدهٔ دوره ←</Link>}
+        {resumeLesson?.id && (
+          <div className="acc-resume">
+            <div>
+              <strong>ادامهٔ {courseTitle(resumeCourse!)}</strong>
+              <p>
+                درس بعدی: {resumeLesson.title ?? "درس"}
+                {totalLessons(resumeCourse!) > 0 &&
+                  ` · ${toPersianDigits(completedLessons(resumeCourse!))} از ${toPersianDigits(totalLessons(resumeCourse!))} درس تکمیل شده`}
+              </p>
+            </div>
+            <Link className="ds-btn ds-btn-primary" href={`/lessons/${resumeLesson.id}`}>
+              ادامه بده
+            </Link>
+          </div>
+        )}
+
+        {isNewAccount ? (
+          <Card>
+            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+              از کجا شروع کنیم؟
+            </h2>
+            <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)", marginBottom: "var(--sp-5)" }}>
+              حساب شما تازه است و هنوز فعالیتی ثبت نشده. هر کدام از این سه مسیر را که شروع کنید، پیشرفت و
+              شواهد سنجش‌تان از همان لحظه همین‌جا جمع می‌شود.
+            </p>
+            <div className="pg-grid pg-grid-wide">
+              <Link className="pg-card" href="/courses">
+                <h3>یک دوره را شروع کن</h3>
+                <p>از ابتدای یک درس شروع کن؛ نقطهٔ ادامه‌ات همیشه بالای همین صفحه می‌آید.</p>
+              </Link>
+              <Link className="pg-card" href="/questions">
+                <h3>در بانک سؤال تمرین کن</h3>
+                <p>نمونه‌سؤال‌های عمومی برای همه باز است و برای دیدن کل بانک هر درس، دسترسی لازم می‌شود.</p>
+              </Link>
+              <Link className="pg-card" href="/consultations">
+                <h3>مشاوره رزرو کن</h3>
+                <p>یک جلسه برای تعیین مسیر، یا بستهٔ سالیانه‌ای که تا روز کنکور همراهت باشد.</p>
+              </Link>
+            </div>
+          </Card>
+        ) : (
+        <div className="pg-grid pg-grid-wide">
+          <Card>
+            <span className="ds-eyebrow">فعالیت، نه نمره</span>
+            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)", marginTop: "var(--sp-2)" }}>
+              پیشرفت مطالعه
+            </h2>
+            <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>
+              این بخش فقط بازدید و تکمیل درس‌ها را گزارش می‌کند و دربارهٔ میزان یادگیری علمی ادعایی ندارد.
+            </p>
+            {learningProgress.length === 0 ? (
+              <DsEmptyState
+                title="هنوز فعالیت درسی ثبت نشده"
+                description="با شروع یک درس، نقطهٔ ادامه و تکمیل‌های واقعی اینجا نمایش داده می‌شوند."
+                action={
+                  <Link className="ds-btn ds-btn-secondary" href="/courses">
+                    مشاهدهٔ دوره‌ها
+                  </Link>
+                }
+              />
+            ) : (
+              <ul className="quick-links">
+                {learningProgress.map((item, index) => {
+                  const total = totalLessons(item);
+                  const completed = completedLessons(item);
+                  const resume = item.resumeLesson ?? item.nextLesson;
+                  return (
+                    <li key={`${courseSlug(item)}-${index}`}>
+                      <strong>{courseTitle(item)}</strong>
+                      <p className="muted-copy">
+                        {total > 0
+                          ? `${toPersianDigits(completed)} از ${toPersianDigits(total)} درس تکمیل شده`
+                          : `${toPersianDigits(item.viewedLessons ?? 0)} درس مشاهده شده`}
+                      </p>
+                      {total > 0 && <ProgressBar value={progressPercent(item)} label="پیشرفت تکمیل درس" />}
+                      {resume?.id ? (
+                        <Link href={`/lessons/${resume.id}`}>ادامهٔ مطالعهٔ {resume.title ?? "درس"} ←</Link>
+                      ) : (
+                        courseSlug(item) && <Link href={`/courses/${courseSlug(item)}`}>مشاهدهٔ دوره ←</Link>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </Card>
+
+          <Card>
+            <span className="ds-eyebrow">سنجش مبتنی بر شواهد</span>
+            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)", marginTop: "var(--sp-2)" }}>
+              تسلط علمی
+            </h2>
+            <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>
+              تسلط فقط از پاسخ‌های ارزیابی‌شده محاسبه می‌شود؛ تکمیل درس یا ساعت مطالعه به‌تنهایی شاهد تسلط
+              نیست.
+            </p>
+            {mastery.length === 0 ? (
+              <DsEmptyState
+                title="هنوز شاهد ارزیابی وجود ندارد"
+                description="پس از پاسخ به سؤال‌های ارزیابی‌شده، امتیاز و میزان اطمینان اینجا ثبت می‌شوند."
+                action={
+                  <Link className="ds-btn ds-btn-secondary" href="/exams">
+                    رفتن به آزمون‌ها
+                  </Link>
+                }
+              />
+            ) : (
+              <ul className="quick-links">
+                {mastery.map((item) => (
+                  <li key={`${item.subjectCode}-${item.topicCode}`}>
+                    <strong>
+                      {item.subjectCode} / {item.topicCode}
+                    </strong>
+                    <p className="muted-copy">
+                      امتیاز مبتنی بر پاسخ‌ها: {toPersianDigits((item.masteryScore * 100).toFixed(0))}٪ · اطمینان:{" "}
+                      {item.confidence}
+                      {typeof item.evidenceCount === "number"
+                        ? ` · ${toPersianDigits(item.evidenceCount)} شاهد`
+                        : ""}
+                    </p>
                   </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
+                ))}
+              </ul>
+            )}
+          </Card>
 
-        <div className="surface-card">
-          <span className="eyebrow">سنجش مبتنی بر شواهد</span>
-          <h2>تسلط علمی</h2>
-          <p className="muted-copy">تسلط فقط از پاسخ‌های ارزیابی‌شده محاسبه می‌شود؛ تکمیل درس یا ساعت مطالعه به‌تنهایی شاهد تسلط نیست.</p>
-          {mastery.length === 0 ? (
-            <EmptyState title="هنوز شاهد ارزیابی وجود ندارد" description="پس از پاسخ به سؤال‌های ارزیابی‌شده، امتیاز و میزان اطمینان اینجا ثبت می‌شوند." action={<Link className="button button-secondary" href="/exams">رفتن به آزمون‌ها</Link>} />
+          <Card>
+            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+              دوره‌های من
+            </h2>
+            {enrollments.length === 0 ? (
+              <DsEmptyState
+                title="دوره‌ای در حساب نیست"
+                description="دوره‌های ثبت‌شده اینجا نمایش داده می‌شوند."
+                action={
+                  <Link className="ds-btn ds-btn-secondary" href="/courses">
+                    مشاهدهٔ دوره‌ها
+                  </Link>
+                }
+              />
+            ) : (
+              <ul className="quick-links">
+                {enrollments.map((item) => (
+                  <li key={item.id}>
+                    <Link href={`/courses/${item.course.slug}`}>{item.course.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+
+          <Card>
+            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+              دسترسی‌های من
+            </h2>
+            {entitlements.length === 0 ? (
+              <DsEmptyState
+                title="دسترسی فعالی نیست"
+                description="دسترسی‌های خریداری یا اعطاشده اینجا قرار می‌گیرند."
+              />
+            ) : (
+              <ul className="quick-links">
+                {entitlements.map((item) => (
+                  <li key={item.id}>
+                    <strong>{item.product.title}</strong>
+                    <p className="muted-copy">نحوهٔ دسترسی: {item.grantedVia}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+
+          <Card>
+            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+              جلسه‌های مطالعه
+            </h2>
+            {studySessions.length === 0 ? (
+              <DsEmptyState
+                title="هنوز جلسه‌ای ثبت نشده"
+                description="زمان واقعی‌ای که هنگام تکمیل وارد می‌کنی و ثبت‌های دستی، بدون وابستگی به سال آزمون در سابقه می‌مانند."
+              />
+            ) : (
+              <>
+                <ul className="quick-links">
+                  {studySessions.map((session) => (
+                    <li key={session.id}>
+                      <strong>
+                        {session.subjectCode}
+                        {session.topicCode ? ` / ${session.topicCode}` : ""}
+                      </strong>
+                      <p className="muted-copy">
+                        {toPersianDigits(session.minutes)} دقیقه · {dateLabel(session.loggedAt)} ·{" "}
+                        {session.source === "TASK_ACTUAL"
+                          ? "زمان واقعی ثبت‌شده برای کار"
+                          : session.source === "MANUAL"
+                            ? "ثبت دستی"
+                            : "نوع ثبت در نسخهٔ قدیمی مشخص نیست"}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                {sessionNextCursor && (
+                  <Button onClick={() => void loadMoreHistory("sessions")} loading={historyBusy === "sessions"} disabled={historyBusy !== null}>
+                    نمایش جلسه‌های قدیمی‌تر
+                  </Button>
+                )}
+                {historyError.sessions && <Alert tone="danger">{historyError.sessions}</Alert>}
+              </>
+            )}
+          </Card>
+
+          <Card>
+            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+              نسخه‌های برنامه
+            </h2>
+            {planHistory.length === 0 ? (
+              <DsEmptyState
+                title="هنوز برنامه‌ای در تاریخچه نیست"
+                description="نسخه‌های قبلی برنامه با مشخصات هدف همان زمان نگهداری می‌شوند."
+              />
+            ) : (
+              <>
+                <ul className="quick-links">
+                  {planHistory.map((plan) => {
+                    const snapshot = plan.goalSnapshot;
+                    const degree = snapshot?.degree ?? plan.goalDegree;
+                    const field = snapshot?.field ?? plan.goalField;
+                    const weeklyHours = snapshot?.weeklyHours ?? plan.goalWeeklyHours;
+                    const level = snapshot?.selfReportedLevel ?? plan.goalSelfReportedLevel;
+                    return (
+                      <li key={plan.id}>
+                        <strong>
+                          برنامهٔ {degreeLabel(degree)}
+                          {plan.version ? ` · نسخهٔ ${toPersianDigits(plan.version)}` : ""}
+                        </strong>
+                        <p className="muted-copy">
+                          {field ?? "رشته ثبت نشده"}
+                          {typeof weeklyHours === "number" ? ` · ${toPersianDigits(weeklyHours)} ساعت در هفته` : ""} ·{" "}
+                          {levelLabel(level)} · {dateLabel(plan.createdAt)}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {planNextCursor && (
+                  <Button onClick={() => void loadMoreHistory("plans")} loading={historyBusy === "plans"} disabled={historyBusy !== null}>
+                    نمایش نسخه‌های قدیمی‌تر
+                  </Button>
+                )}
+                {historyError.plans && <Alert tone="danger">{historyError.plans}</Alert>}
+              </>
+            )}
+          </Card>
+        </div>
+        )}
+
+        {!isNewAccount && (
+        <Card>
+          <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+            تاریخچهٔ تغییر برنامه
+          </h2>
+          {revisions.length === 0 ? (
+            <DsEmptyState
+              title="هنوز تغییری ثبت نشده"
+              description="دلیل ساخت و بازبرنامه‌ریزی‌های آینده اینجا ثبت می‌شود."
+            />
           ) : (
             <ul className="quick-links">
-              {mastery.map((item) => (
-                <li key={`${item.subjectCode}-${item.topicCode}`}>
-                  <strong>{item.subjectCode} / {item.topicCode}</strong>
-                  <p className="muted-copy">امتیاز مبتنی بر پاسخ‌ها: {toPersianDigits((item.masteryScore * 100).toFixed(0))}٪ · اطمینان: {item.confidence}{typeof item.evidenceCount === "number" ? ` · ${toPersianDigits(item.evidenceCount)} شاهد` : ""}</p>
+              {revisions.map((revision) => (
+                <li key={revision.id}>
+                  <strong>{revision.summary}</strong>
+                  <p className="muted-copy">
+                    {revision.reasonCode} · {dateLabel(revision.createdAt)}
+                  </p>
                 </li>
               ))}
             </ul>
           )}
-        </div>
-
-        <div className="surface-card">
-          <h2>دوره‌های من</h2>
-          {enrollments.length === 0 ? (
-            <EmptyState title="دوره‌ای در حساب نیست" description="دوره‌های ثبت‌شده اینجا نمایش داده می‌شوند." action={<Link className="button button-secondary" href="/courses">مشاهدهٔ دوره‌ها</Link>} />
-          ) : (
-            <ul className="quick-links">{enrollments.map((item) => <li key={item.id}><Link href={`/courses/${item.course.slug}`}>{item.course.title}</Link></li>)}</ul>
-          )}
-        </div>
-
-        <div className="surface-card">
-          <h2>دسترسی‌های من</h2>
-          {entitlements.length === 0 ? (
-            <EmptyState title="دسترسی فعالی نیست" description="دسترسی‌های خریداری یا اعطاشده اینجا قرار می‌گیرند." />
-          ) : (
-            <ul className="quick-links">{entitlements.map((item) => <li key={item.id}><strong>{item.product.title}</strong><p className="muted-copy">نحوهٔ دسترسی: {item.grantedVia}</p></li>)}</ul>
-          )}
-        </div>
-
-        <div className="surface-card">
-          <h2>جلسه‌های مطالعه</h2>
-          {studySessions.length === 0 ? (
-            <EmptyState title="هنوز جلسه‌ای ثبت نشده" description="زمان واقعی‌ای که هنگام تکمیل وارد می‌کنی و ثبت‌های دستی، بدون وابستگی به سال آزمون در سابقه می‌مانند." />
-          ) : (
-            <>
-              <ul className="quick-links">{studySessions.map((session) => <li key={session.id}><strong>{session.subjectCode}{session.topicCode ? ` / ${session.topicCode}` : ""}</strong><p className="muted-copy">{toPersianDigits(session.minutes)} دقیقه · {dateLabel(session.loggedAt)} · {session.source === "TASK_ACTUAL" ? "زمان واقعی ثبت‌شده برای کار" : session.source === "MANUAL" ? "ثبت دستی" : "نوع ثبت در نسخهٔ قدیمی مشخص نیست"}</p></li>)}</ul>
-              {sessionNextCursor && <button className="button button-secondary" type="button" onClick={() => void loadMoreHistory("sessions")} disabled={historyBusy !== null}>{historyBusy === "sessions" ? "در حال بارگذاری…" : "نمایش جلسه‌های قدیمی‌تر"}</button>}
-              {historyError.sessions && <p className="muted-copy" role="alert">{historyError.sessions}</p>}
-            </>
-          )}
-        </div>
-
-        <div className="surface-card">
-          <h2>نسخه‌های برنامه</h2>
-          {planHistory.length === 0 ? (
-            <EmptyState title="هنوز برنامه‌ای در تاریخچه نیست" description="نسخه‌های قبلی برنامه با مشخصات هدف همان زمان نگهداری می‌شوند." />
-          ) : (
-            <>
-            <ul className="quick-links">{planHistory.map((plan) => {
-              const snapshot = plan.goalSnapshot;
-              const degree = snapshot?.degree ?? plan.goalDegree;
-              const field = snapshot?.field ?? plan.goalField;
-              const weeklyHours = snapshot?.weeklyHours ?? plan.goalWeeklyHours;
-              const level = snapshot?.selfReportedLevel ?? plan.goalSelfReportedLevel;
-              return <li key={plan.id}><strong>برنامهٔ {degreeLabel(degree)}{plan.version ? ` · نسخهٔ ${toPersianDigits(plan.version)}` : ""}</strong><p className="muted-copy">{field ?? "رشته ثبت نشده"}{typeof weeklyHours === "number" ? ` · ${toPersianDigits(weeklyHours)} ساعت در هفته` : ""} · {levelLabel(level)} · {dateLabel(plan.createdAt)}</p></li>;
-            })}</ul>
-            {planNextCursor && <button className="button button-secondary" type="button" onClick={() => void loadMoreHistory("plans")} disabled={historyBusy !== null}>{historyBusy === "plans" ? "در حال بارگذاری…" : "نمایش نسخه‌های قدیمی‌تر"}</button>}
-            {historyError.plans && <p className="muted-copy" role="alert">{historyError.plans}</p>}
-            </>
-          )}
-        </div>
-      </section>
-
-      <section className="surface-card revision-section">
-        <h2>تاریخچهٔ تغییر برنامه</h2>
-        {revisions.length === 0 ? (
-          <EmptyState title="هنوز تغییری ثبت نشده" description="دلیل ساخت و بازبرنامه‌ریزی‌های آینده اینجا ثبت می‌شود." />
-        ) : (
-          <ul>{revisions.map((revision) => <li key={revision.id}>[{revision.reasonCode}] {revision.summary} — {dateLabel(revision.createdAt)}</li>)}</ul>
+        </Card>
         )}
-      </section>
-    </main>
+
+        {/* Settings, not dashboard: a form is what you come here to change,
+            not what you come here to see, so it sits after the state. */}
+        <Card>
+          <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
+            پروفایل
+          </h2>
+          <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)", marginBottom: "var(--sp-5)" }}>
+            نام نمایشی و هدف کنکور شما. برنامهٔ مطالعه و پیشنهادها بر همین پایه ساخته می‌شوند.
+          </p>
+          {profile && (
+            <form className="ds-stack" onSubmit={saveProfile}>
+              <FieldRow>
+                <Field label="نام نمایشی">
+                  {(props) => (
+                    <Input
+                      {...props}
+                      value={profile.displayName ?? ""}
+                      onChange={(e) => setProfile({ ...profile, displayName: e.target.value })}
+                    />
+                  )}
+                </Field>
+                <Field label="مقطع هدف">
+                  {(props) => (
+                    <Select
+                      {...props}
+                      value={profile.targetDegree ?? ""}
+                      onChange={(e) => setProfile({ ...profile, targetDegree: e.target.value })}
+                    >
+                      <option value="">—</option>
+                      <option value="MASTER">ارشد</option>
+                      <option value="PHD">دکتری</option>
+                    </Select>
+                  )}
+                </Field>
+              </FieldRow>
+              <Field label="رشتهٔ هدف">
+                {(props) => (
+                  <Input
+                    {...props}
+                    value={profile.targetField ?? ""}
+                    onChange={(e) => setProfile({ ...profile, targetField: e.target.value })}
+                  />
+                )}
+              </Field>
+              <div className="ds-row">
+                <Button type="submit" variant="primary" loading={saveState === "saving"}>
+                  ذخیره تغییرات
+                </Button>
+                {saveState === "saved" && <Badge tone="success">ذخیره شد</Badge>}
+              </div>
+            </form>
+          )}
+        </Card>
+      </div>
+    </AccountShell>
   );
 }

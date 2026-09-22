@@ -355,3 +355,91 @@ export function ConfirmDialog({
     </div>
   );
 }
+
+/* ------------------------------------------------------------- panel tiles */
+
+/**
+ * The KPI tile every panel opens with: a label, one large number, and a line
+ * of context. `href` turns it into a link to the screen the number came from,
+ * which is what makes a dashboard a way in rather than a wall of figures.
+ *
+ * `value` is a string because the caller has already formatted it -- rial,
+ * Persian digits, a percent -- and this component must not quietly reformat
+ * a number it does not know the unit of.
+ */
+export function Kpi({
+  label,
+  value,
+  hint,
+  icon,
+  tone = "teal",
+  href,
+  small,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  icon?: ReactNode;
+  tone?: "teal" | "warm" | "info" | "success";
+  href?: string;
+  /** For a long value such as a rial amount, which would otherwise wrap. */
+  small?: boolean;
+}) {
+  const body = (
+    <>
+      <div className="ds-kpi-top">
+        <span className="ds-kpi-label">{label}</span>
+        {icon && <span className={`ds-kpi-ico${tone === "teal" ? "" : ` ds-kpi-ico-${tone}`}`}>{icon}</span>}
+      </div>
+      <span className={`ds-kpi-value${small ? " ds-kpi-value-sm" : ""}`}>{value}</span>
+      {hint && <span className="ds-kpi-hint">{hint}</span>}
+    </>
+  );
+
+  if (href) {
+    return (
+      <a className="ds-kpi" href={href}>
+        {body}
+      </a>
+    );
+  }
+  return <div className="ds-kpi">{body}</div>;
+}
+
+export function KpiGrid({ children }: { children: ReactNode }) {
+  return <div className="ds-kpi-grid">{children}</div>;
+}
+
+/**
+ * A bar chart for a short series -- a revenue trend, a month-by-month count.
+ *
+ * Bars are sized against the largest value in the series, so a series of
+ * small numbers still fills the frame and a single outlier does not flatten
+ * the rest into invisibility. An all-zero series would divide by zero, so it
+ * renders as the empty state instead of a row of full-height bars.
+ */
+export function BarChart({
+  points,
+  formatValue,
+  emptyLabel = "داده‌ای برای نمایش نیست",
+}: {
+  points: { label: string; value: number }[];
+  formatValue: (value: number) => string;
+  emptyLabel?: string;
+}) {
+  const max = points.reduce((highest, point) => Math.max(highest, point.value), 0);
+  if (points.length === 0 || max <= 0) {
+    return <div className="ds-chart-empty">{emptyLabel}</div>;
+  }
+
+  return (
+    <div className="ds-chart" role="img" aria-label={points.map((p) => `${p.label}: ${formatValue(p.value)}`).join("، ")}>
+      {points.map((point) => (
+        <div className="ds-chart-col" key={point.label} title={`${point.label} — ${formatValue(point.value)}`}>
+          <span className="ds-chart-bar" style={{ height: `${Math.max(2, (point.value / max) * 100)}%` }} />
+          <span className="ds-chart-x">{point.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}

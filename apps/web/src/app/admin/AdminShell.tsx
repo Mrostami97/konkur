@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { AdminGuard, useStaffRoles } from "../../components/AdminGuard";
+import { PanelIcon, type IconName } from "../../components/PanelIcons";
 
-type NavLink = { href: string; label: string; roles: string[] };
+type NavLink = { href: string; label: string; icon: IconName; roles: string[] };
 
 /**
  * Grouped so the sidebar reflects how the work actually splits, rather than
@@ -20,31 +21,31 @@ const NAV_GROUPS: { title: string; links: NavLink[] }[] = [
   {
     title: "محتوا",
     links: [
-      { href: "/admin/articles", label: "مقاله‌ها", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
-      { href: "/admin/resources", label: "منابع آموزشی", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
-      { href: "/admin/content-sources", label: "منابع و مستندات", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
-      { href: "/admin/contributors", label: "نویسندگان و مدرسان", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
-      { href: "/admin/taxonomy", label: "طبقه‌بندی موضوعی", roles: ["AUTHOR", "ADMIN"] },
+      { href: "/admin/articles", label: "مقاله‌ها", icon: "article", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
+      { href: "/admin/resources", label: "منابع آموزشی", icon: "resource", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
+      { href: "/admin/content-sources", label: "منابع و مستندات", icon: "source", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
+      { href: "/admin/contributors", label: "نویسندگان و مدرسان", icon: "people", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
+      { href: "/admin/taxonomy", label: "طبقه‌بندی موضوعی", icon: "tag", roles: ["AUTHOR", "ADMIN"] },
     ],
   },
   {
     title: "سنجش و آموزش",
     links: [
-      { href: "/admin/questions", label: "بانک سؤال", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
-      { href: "/admin/exams", label: "آزمون‌ها", roles: ["AUTHOR", "ADMIN"] },
-      { href: "/admin/courses", label: "دوره‌ها", roles: ["AUTHOR", "ADMIN"] },
-      { href: "/admin/import", label: "ورود داده", roles: ["REVIEWER", "ADMIN"] },
+      { href: "/admin/questions", label: "بانک سؤال", icon: "question", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
+      { href: "/admin/exams", label: "آزمون‌ها", icon: "exam", roles: ["AUTHOR", "ADMIN"] },
+      { href: "/admin/courses", label: "دوره‌ها", icon: "course", roles: ["AUTHOR", "ADMIN"] },
+      { href: "/admin/import", label: "ورود داده", icon: "import", roles: ["REVIEWER", "ADMIN"] },
     ],
   },
   {
     title: "کسب‌وکار",
     links: [
-      { href: "/admin/commerce", label: "فروش و دسترسی‌ها", roles: ["ADMIN", "FINANCE"] },
-      { href: "/admin/instructors", label: "مدرسان و سهم درآمد", roles: ["ADMIN", "FINANCE"] },
-      { href: "/admin/consultations", label: "مشاوره", roles: ["ADMIN", "FINANCE"] },
-      { href: "/admin/crm", label: "CRM و رشد", roles: ["ADMIN", "MENTOR"] },
-      { href: "/admin/analytics", label: "بک‌تست تخمین رتبه", roles: ["ADMIN"] },
-      { href: "/admin/admissions", label: "دانشگاه‌ها و گرایش‌ها", roles: ["ADMIN"] },
+      { href: "/admin/commerce", label: "فروش و دسترسی‌ها", icon: "commerce", roles: ["ADMIN", "FINANCE"] },
+      { href: "/admin/instructors", label: "مدرسان و سهم درآمد", icon: "instructor", roles: ["ADMIN", "FINANCE"] },
+      { href: "/admin/consultations", label: "مشاوره", icon: "consult", roles: ["ADMIN", "FINANCE"] },
+      { href: "/admin/crm", label: "CRM و رشد", icon: "crm", roles: ["ADMIN", "MENTOR"] },
+      { href: "/admin/analytics", label: "بک‌تست تخمین رتبه", icon: "chart", roles: ["ADMIN"] },
+      { href: "/admin/admissions", label: "دانشگاه‌ها و گرایش‌ها", icon: "university", roles: ["ADMIN"] },
     ],
   },
 ];
@@ -79,9 +80,15 @@ function AdminChrome({ children }: { children: ReactNode }) {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link className="admin-sidebar-brand" href="/admin">
-          کنکورصفریک
-          <small>پنل مدیریت</small>
+          <span className="admin-sidebar-mark" aria-hidden="true">
+            ۰۱
+          </span>
+          <span>
+            کنکورصفریک
+            <small>پنل مدیریت</small>
+          </span>
         </Link>
+
         {visibleGroups.map((group) => (
           <nav className="admin-nav-group" key={group.title} aria-label={group.title}>
             <p className="admin-nav-group-title">{group.title}</p>
@@ -92,11 +99,26 @@ function AdminChrome({ children }: { children: ReactNode }) {
                 className="admin-nav-link"
                 aria-current={active?.href === link.href ? "page" : undefined}
               >
+                <span className="admin-nav-ico">
+                  <PanelIcon name={link.icon} />
+                </span>
                 {link.label}
               </Link>
             ))}
           </nav>
         ))}
+
+        <div className="admin-sidebar-foot">
+          <Link className="admin-sidebar-user" href="/account">
+            <span className="admin-sidebar-avatar" aria-hidden="true">
+              ح
+            </span>
+            <div>
+              <strong>حساب من</strong>
+              <small>{roles.join("، ")}</small>
+            </div>
+          </Link>
+        </div>
       </aside>
 
       <div className="admin-main">

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
+import { AccountShell } from "../AccountShell";
 import { formatPersianNumber } from "../../../lib/format";
 import {
   Alert,
@@ -170,15 +171,28 @@ export default function MyConsultationsPage() {
 
   const nothingAtAll = access.length === 0 && bookings.length === 0;
 
-  return (
-    <div className="ds-stack-lg">
-      <header>
-        <h1 className="ds-title">مشاوره‌های من</h1>
-        <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>
-          سهمیهٔ جلسه‌هایتان و وضعیت هر جلسه. زمان را شما پیشنهاد می‌دهید و مدرس تأیید می‌کند.
-        </p>
-      </header>
+  const remaining = access.reduce((sum, item) => sum + item.sessionsRemaining, 0);
+  const upcoming = bookings.filter((item) => item.status === "CONFIRMED").length;
+  const awaiting = bookings.filter((item) => item.status === "REQUESTED").length;
 
+  return (
+    <AccountShell
+      title="مشاوره‌های من"
+      subtitle="سهمیهٔ جلسه‌هایتان و وضعیت هر جلسه. زمان را شما پیشنهاد می‌دهید و مدرس تأیید می‌کند."
+      chips={
+        <>
+          <span className="acc-chip">{formatPersianNumber(remaining)} جلسهٔ باقی‌مانده</span>
+          {upcoming > 0 && <span className="acc-chip">{formatPersianNumber(upcoming)} جلسهٔ زمان‌دار</span>}
+          {awaiting > 0 && <span className="acc-chip">{formatPersianNumber(awaiting)} در انتظار تأیید</span>}
+        </>
+      }
+      action={
+        <Link className="ds-btn ds-btn-secondary ds-btn-sm" href="/consultations">
+          رزرو مشاورهٔ تازه
+        </Link>
+      }
+    >
+    <div className="ds-stack-lg">
       {actionError && <Alert tone="danger">{actionError}</Alert>}
       {notice && !actionError && <Alert tone="success">{notice}</Alert>}
 
@@ -412,5 +426,6 @@ export default function MyConsultationsPage() {
         )}
       </ConfirmDialog>
     </div>
+    </AccountShell>
   );
 }
