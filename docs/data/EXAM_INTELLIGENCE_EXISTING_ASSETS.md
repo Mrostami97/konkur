@@ -151,6 +151,12 @@ Therefore future integration must distinguish:
 
 Do not assume that technical possession equals publication/commercial-use permission.
 
+## Integration plan
+
+The execution plan for the ten steps below — migrations, the ingestion contract, the
+internal evidence layer, and the acceptance tests each stage has to pass — is in
+[`docs/roadmap/EXAM_DATA_INTEGRATION_PLAN.md`](../roadmap/EXAM_DATA_INTEGRATION_PLAN.md).
+
 ## Integration decision
 
 Do not merge these assets blindly into the current Prisma schema.
