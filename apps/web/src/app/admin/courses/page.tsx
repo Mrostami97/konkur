@@ -22,6 +22,8 @@ interface Course {
   id: string;
   slug: string;
   title: string;
+  description?: string;
+  spotPlayerCourseId?: string | null;
   isPublished: boolean;
   modules?: ModuleWithLessons[];
 }
@@ -209,11 +211,16 @@ export default function CoursesAdminPage() {
   const [slug, setSlug] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [spotPlayerCourseId, setSpotPlayerCourseId] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
   const [expanded, setExpanded] = useState<string | null>(null);
   const [publishTarget, setPublishTarget] = useState<Course | null>(null);
+  const [videoTarget, setVideoTarget] = useState<Course | null>(null);
+  const [videoId, setVideoId] = useState("");
+  const [videoBusy, setVideoBusy] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
 
   const load = useCallback(async () => {
@@ -237,7 +244,15 @@ export default function CoursesAdminPage() {
     setCreating(true);
     setCreateError(null);
     try {
-      await apiFetch("/admin/courses", { method: "POST", body: { slug, title, description } });
+      await apiFetch("/admin/courses", {
+        method: "POST",
+        body: {
+          slug,
+          title,
+          description,
+          ...(spotPlayerCourseId.trim() ? { spotPlayerCourseId: spotPlayerCourseId.trim() } : {}),
+        },
+      });
       setSlug("");
       setTitle("");
       setDescription("");
@@ -246,6 +261,32 @@ export default function CoursesAdminPage() {
       setCreateError(err instanceof Error ? err.message : "ساخت دوره ناموفق بود.");
     } finally {
       setCreating(false);
+    }
+  }
+
+  /** The course update endpoint takes the whole course, so the fields that
+   * are not being edited here are sent back unchanged. */
+  async function saveVideoId() {
+    const course = videoTarget;
+    if (!course) return;
+    setVideoBusy(true);
+    setVideoError(null);
+    try {
+      await apiFetch(`/admin/courses/${course.id}`, {
+        method: "PATCH",
+        body: {
+          slug: course.slug,
+          title: course.title,
+          description: course.description ?? "",
+          ...(videoId.trim() ? { spotPlayerCourseId: videoId.trim() } : {}),
+        },
+      });
+      setVideoTarget(null);
+      await load();
+    } catch (err) {
+      setVideoError(err instanceof Error ? err.message : "ذخیرهٔ شناسهٔ ویدیو ممکن نشد.");
+    } finally {
+      setVideoBusy(false);
     }
   }
 
@@ -286,6 +327,19 @@ export default function CoursesAdminPage() {
             <Field label="توضیح" hint="در فهرست عمومی دوره‌ها دیده می‌شود" required>
               {(props) => <Textarea {...props} value={description} onChange={(event) => setDescription(event.target.value)} required />}
             </Field>
+            <Field
+              label="شناسهٔ دوره در اسپات‌پلیر"
+              hint="اگر ویدیوهای این دوره در اسپات‌پلیر هستند، شناسهٔ دوره را از پنل اسپات‌پلیر اینجا بگذارید. خالی یعنی این دوره ویدیو ندارد."
+            >
+              {(props) => (
+                <Input
+                  {...props}
+                  dir="ltr"
+                  value={spotPlayerCourseId}
+                  onChange={(event) => setSpotPlayerCourseId(event.target.value)}
+                />
+              )}
+            </Field>
             {createError && <Alert tone="danger">{createError}</Alert>}
             <div><Button type="submit" variant="primary" loading={creating}>ساخت دوره</Button></div>
           </form>
@@ -315,12 +369,27 @@ export default function CoursesAdminPage() {
                           <span className="ds-hint" style={{ margin: 0 }}>
                             {toPersianDigits(course.modules?.length ?? 0)} سرفصل
                           </span>
+                          {course.spotPlayerCourseId ? (
+                            <Badge tone="info">ویدیو در اسپات‌پلیر</Badge>
+                          ) : (
+                            <Badge>بدون ویدیو</Badge>
+                          )}
                         </div>
                       </div>
                       <div className="ds-row">
                         {!course.isPublished && (
                           <Button size="sm" variant="primary" onClick={() => setPublishTarget(course)}>انتشار</Button>
                         )}
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setVideoId(course.spotPlayerCourseId ?? "");
+                            setVideoError(null);
+                            setVideoTarget(course);
+                          }}
+                        >
+                          تنظیم ویدیو
+                        </Button>
                         <Button size="sm" onClick={() => setExpanded(expanded === course.id ? null : course.id)}>
                           {expanded === course.id ? "بستن" : "سرفصل‌ها و درس‌ها"}
                         </Button>
@@ -334,6 +403,30 @@ export default function CoursesAdminPage() {
           </div>
         </Card>
       </div>
+
+      <ConfirmDialog
+        open={videoTarget !== null}
+        title={`ویدیوی «${videoTarget?.title ?? ""}»`}
+        description="شناسهٔ دوره را از پنل اسپات‌پلیر بردارید و اینجا بگذارید. خالی گذاشتن یعنی این دوره ویدیو ندارد و بخش ویدیو روی صفحهٔ دوره نشان داده نمی‌شود."
+        confirmLabel="ذخیره"
+        busy={videoBusy}
+        onConfirm={() => void saveVideoId()}
+        onCancel={() => {
+          setVideoTarget(null);
+          setVideoError(null);
+        }}
+      >
+        <Field label="شناسهٔ دوره در اسپات‌پلیر">
+          {(props) => (
+            <Input {...props} dir="ltr" value={videoId} onChange={(event) => setVideoId(event.target.value)} />
+          )}
+        </Field>
+        {videoError && (
+          <div style={{ marginTop: "var(--sp-3)" }}>
+            <Alert tone="danger">{videoError}</Alert>
+          </div>
+        )}
+      </ConfirmDialog>
 
       <ConfirmDialog
         open={publishTarget !== null}

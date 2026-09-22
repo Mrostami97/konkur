@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { apiGetPublic } from "../../../lib/api";
 import { BuyButton } from "../../../components/BuyButton";
+import { VideoLicensePanel } from "../../../components/VideoLicensePanel";
 import { CourseProgressPanel } from "../../../components/CourseProgressPanel";
 import { StructuredData } from "../../../components/StructuredData";
 import { EmptyState, PageHeader } from "../../../components/ui";
@@ -24,6 +25,7 @@ interface CourseModule {
 }
 
 interface Course {
+  id: string;
   slug: string;
   title: string;
   description: string;
@@ -118,6 +120,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
 
       <section className="content-grid">
         <CourseProgressPanel courseSlug={course.slug} firstLessonId={firstLessonId} />
+        <VideoLicensePanel courseId={course.id} />
         <div className="surface-card">
           <span className="eyebrow">دسترسی دوره</span>
           <h2>{accessMode === "PUBLIC" ? "شروع رایگان" : accessMode === "ACCOUNT" ? "شروع با حساب کاربری" : purchasableProduct ? "تهیهٔ دوره" : "وضعیت دسترسی"}</h2>

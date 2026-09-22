@@ -30,4 +30,11 @@ export class CreateCourseDto {
   @IsArray()
   @IsString({ each: true })
   fieldTargets?: string[];
+
+  /** The course id on SpotPlayer, where this course's videos live. Leave
+   * unset for a course with no video component. */
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  spotPlayerCourseId?: string;
 }

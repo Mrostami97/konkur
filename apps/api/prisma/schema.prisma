@@ -44,6 +44,7 @@ model User {
   lead                 Lead?
   contributorProfile   ContributorProfile?
   consultationBookings ConsultationBooking[] @relation("ConsultationStudent")
+  spotPlayerLicenses   SpotPlayerLicense[]
 
   @@map("users")
 }
@@ -437,6 +438,10 @@ model Course {
   productGrants ProductCourseGrant[]
   enrollments   Enrollment[]
   instructors   CourseInstructor[]
+  /// The course id on SpotPlayer, the offline DRM player the videos live in.
+  /// Null means this course has no video component.
+  spotPlayerCourseId String?
+  spotPlayerLicenses SpotPlayerLicense[]
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
 
@@ -1586,4 +1591,29 @@ model Campaign {
   createdAt DateTime @default(now())
 
   @@map("campaigns")
+}
+
+/// A SpotPlayer licence issued to one student for one course.
+///
+/// SpotPlayer is an offline DRM player: the student installs the app and
+/// enters a key issued to them personally. It will happily issue a second
+/// licence for the same person, and each one is a separate seat, so the
+/// unique pair below is what stops a refresh or a retry from spending one.
+model SpotPlayerLicense {
+  id                  String   @id @default(uuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId            String
+  course              Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  /// SpotPlayer's own id, kept so the licence can be edited or revoked there.
+  spotPlayerLicenseId String
+  /// What the student types into the player, and the link that comes with it.
+  licenseKey          String
+  licenseUrl          String
+  issuedAt            DateTime @default(now())
+  createdAt           DateTime @default(now())
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@map("spot_player_licenses")
 }

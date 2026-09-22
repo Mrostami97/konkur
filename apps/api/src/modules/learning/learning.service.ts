@@ -31,6 +31,26 @@ export class LearningService {
     return course;
   }
 
+  /**
+   * Edits a course after creation. There was no update path at all before
+   * this, so a course could never be corrected or given a SpotPlayer id --
+   * every existing course would have had to be recreated to gain video.
+   */
+  async updateCourse(actorId: string, courseId: string, dto: CreateCourseDto) {
+    const existing = await this.prisma.course.findUnique({ where: { id: courseId } });
+    if (!existing) throw new NotFoundException("course not found");
+
+    const course = await this.prisma.course.update({ where: { id: courseId }, data: dto });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "course.updated",
+      targetType: "Course",
+      targetId: courseId,
+      metadata: { slug: dto.slug, spotPlayerCourseId: dto.spotPlayerCourseId ?? null },
+    });
+    return course;
+  }
+
   async publishCourse(courseId: string, actorId: string) {
     const course = await this.prisma.course.update({
       where: { id: courseId },
@@ -77,10 +97,31 @@ export class LearningService {
     });
   }
 
+  /**
+   * The public syllabus.
+   *
+   * An explicit select rather than `include`, so this states what a public
+   * endpoint returns instead of returning the whole row minus whatever
+   * somebody remembered to strip. `spotPlayerCourseId` is the field that
+   * made the difference concrete -- it is operational configuration, and
+   * knowing it grants nothing, but a public page has no reason to carry it
+   * and the next such column should not leak by default either.
+   */
   async getCourseSyllabus(slug: string) {
     const course = await this.prisma.course.findUnique({
       where: { slug },
-      include: {
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        description: true,
+        isPublished: true,
+        accessMode: true,
+        subjectId: true,
+        degreeTargets: true,
+        fieldTargets: true,
+        createdAt: true,
+        updatedAt: true,
         modules: {
           orderBy: { order: "asc" },
           include: {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -8,6 +8,7 @@ import { LearningService } from "./learning.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto } from "./dto/create-lesson.dto";
+import { SpotPlayerService } from "./spotplayer.service";
 
 @Controller("courses")
 export class CoursesPublicController {
@@ -26,7 +27,10 @@ export class CoursesPublicController {
 
 @Controller()
 export class LearningStudentController {
-  constructor(private readonly learning: LearningService) {}
+  constructor(
+    private readonly learning: LearningService,
+    private readonly spotPlayer: SpotPlayerService,
+  ) {}
 
   @Get("me/enrollments")
   @UseGuards(SessionAuthGuard)
@@ -51,6 +55,22 @@ export class LearningStudentController {
   completeLesson(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.learning.completeLesson(req.user!.id, id);
   }
+
+  /** Whether this course has video and whether the integration is switched
+   * on. Readable without a licence so the course page can say which it is. */
+  @Get("courses/:courseId/video")
+  @UseGuards(SessionAuthGuard)
+  videoStatus(@Param("courseId") courseId: string) {
+    return this.spotPlayer.videoStatus(courseId);
+  }
+
+  /** The student's own SpotPlayer licence, issued on first ask. Entitlement
+   * is rechecked every time, not only at issuance. */
+  @Post("courses/:courseId/video-license")
+  @UseGuards(SessionAuthGuard)
+  videoLicense(@Param("courseId") courseId: string, @Req() req: RequestWithUser) {
+    return this.spotPlayer.getOrIssueLicense(req.user!.id, courseId);
+  }
 }
 
 @Controller("admin")
@@ -67,6 +87,11 @@ export class LearningAdminController {
   @Post("courses")
   createCourse(@Req() req: RequestWithUser, @Body() dto: CreateCourseDto) {
     return this.learning.createCourse(req.user!.id, dto);
+  }
+
+  @Patch("courses/:id")
+  updateCourse(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: CreateCourseDto) {
+    return this.learning.updateCourse(req.user!.id, id, dto);
   }
 
   @Post("courses/:id/publish")
