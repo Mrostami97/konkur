@@ -1,21 +1,24 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { AdminGuard } from "../../../../../components/AdminGuard";
 import { apiFetch } from "../../../../../lib/api";
+import {
+  AdminPageHeader,
+  Alert,
+  Badge,
+  Button,
+  Card,
+  DataState,
+  Field,
+  FieldRow,
+  Input,
+  Select,
+  TableWrap,
+} from "../../../../../components/ds";
 
-interface CaseItem {
-  id: string;
-  subject: string;
-  status: string;
-}
-
-interface InteractionItem {
-  id: string;
-  type: string;
-  note: string;
-  createdAt: string;
-}
+interface CaseItem { id: string; subject: string; status: string }
+interface InteractionItem { id: string; type: string; note: string; createdAt: string }
 
 interface LeadDetail {
   id: string;
@@ -27,103 +30,225 @@ interface LeadDetail {
   interactions: InteractionItem[];
 }
 
-function LeadDetail({ leadId }: { leadId: string }) {
+const STAGE_LABEL: Record<string, { label: string; tone: "neutral" | "info" | "success" | "warning" }> = {
+  LEAD: { label: "سرنخ", tone: "neutral" },
+  ACTIVATED: { label: "فعال‌شده", tone: "info" },
+  AT_RISK: { label: "در معرض ریزش", tone: "warning" },
+  QUALIFIED: { label: "واجد شرایط", tone: "info" },
+  CUSTOMER: { label: "مشتری", tone: "success" },
+  ADVOCATE: { label: "مروّج", tone: "success" },
+};
+
+const INTERACTION_LABEL: Record<string, string> = {
+  note: "یادداشت",
+  call: "تماس",
+  risk_alert: "هشدار ریزش",
+};
+
+export default function LeadDetailPage({ params }: { params: { id: string } }) {
+  const leadId = params.id;
   const [lead, setLead] = useState<LeadDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [recomputing, setRecomputing] = useState(false);
+
   const [caseSubject, setCaseSubject] = useState("");
+  const [caseBusy, setCaseBusy] = useState(false);
+
   const [interactionType, setInteractionType] = useState("note");
   const [interactionNote, setInteractionNote] = useState("");
+  const [interactionBusy, setInteractionBusy] = useState(false);
 
   const load = useCallback(async () => {
-    setLead(await apiFetch<LeadDetail>(`/admin/crm/leads/${leadId}`));
+    setLoading(true);
+    setError(null);
+    try {
+      setLead(await apiFetch<LeadDetail>(`/admin/crm/leads/${leadId}`));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "خواندن اطلاعات سرنخ ممکن نشد.");
+    } finally {
+      setLoading(false);
+    }
   }, [leadId]);
 
   useEffect(() => {
-    load().catch(() => {});
+    void load();
   }, [load]);
 
-  async function recompute() {
-    await apiFetch(`/admin/crm/leads/${leadId}/recompute`, { method: "POST" });
-    await load();
+  async function run(work: () => Promise<unknown>, onDone: () => void, setBusy: (value: boolean) => void, failure: string) {
+    setBusy(true);
+    setActionError(null);
+    try {
+      await work();
+      onDone();
+      await load();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : failure);
+    } finally {
+      setBusy(false);
+    }
   }
 
-  async function addCase(e: FormEvent) {
-    e.preventDefault();
-    await apiFetch(`/admin/crm/leads/${leadId}/cases`, { method: "POST", body: { subject: caseSubject } });
-    setCaseSubject("");
-    await load();
-  }
-
-  async function resolveCase(caseId: string) {
-    await apiFetch(`/admin/crm/cases/${caseId}/resolve`, { method: "POST" });
-    await load();
-  }
-
-  async function addInteraction(e: FormEvent) {
-    e.preventDefault();
-    await apiFetch(`/admin/crm/leads/${leadId}/interactions`, {
-      method: "POST",
-      body: { type: interactionType, note: interactionNote },
-    });
-    setInteractionNote("");
-    await load();
-  }
-
-  if (!lead) return <main style={{ padding: "2rem" }}>در حال بارگذاری...</main>;
+  const stage = lead ? STAGE_LABEL[lead.stage] : undefined;
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>{lead.user.phone}</h1>
-      <p>
-        مرحله: <strong>{lead.stage}</strong>
-        <button onClick={recompute} style={{ marginInlineStart: "0.5rem" }}>
-          بازمحاسبه مرحله
-        </button>
-      </p>
-      <p>منبع: {lead.source ?? "—"} {lead.campaignCode ? `(${lead.campaignCode})` : ""}</p>
+    <>
+      <AdminPageHeader
+        title={lead?.user.phone ?? "سرنخ"}
+        description="پرونده‌ها و تعامل‌های این کاربر. مرحله از روی رفتار واقعی محاسبه می‌شود، نه دستی."
+        action={<Link className="ds-btn ds-btn-secondary ds-btn-sm" href="/admin/crm">بازگشت به فهرست</Link>}
+      />
 
-      <h2>پرونده‌ها</h2>
-      <form onSubmit={addCase} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.6rem" }}>
-        <input placeholder="موضوع" value={caseSubject} onChange={(e) => setCaseSubject(e.target.value)} required />
-        <button type="submit">ایجاد پرونده</button>
-      </form>
-      <ul>
-        {lead.cases.map((c) => (
-          <li key={c.id}>
-            {c.subject} — {c.status}
-            {c.status === "OPEN" && (
-              <button onClick={() => resolveCase(c.id)} style={{ marginInlineStart: "0.5rem" }}>
-                حل شد
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+      {actionError && <Alert tone="danger">{actionError}</Alert>}
 
-      <h2>تعاملات</h2>
-      <form onSubmit={addInteraction} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.6rem" }}>
-        <select value={interactionType} onChange={(e) => setInteractionType(e.target.value)}>
-          <option value="note">یادداشت</option>
-          <option value="call">تماس</option>
-          <option value="risk_alert">هشدار ریزش</option>
-        </select>
-        <input placeholder="متن" value={interactionNote} onChange={(e) => setInteractionNote(e.target.value)} required style={{ flex: 1 }} />
-        <button type="submit">ثبت</button>
-      </form>
-      <ul>
-        {lead.interactions.map((i) => (
-          <li key={i.id}>
-            [{i.type}] {i.note} — {new Date(i.createdAt).toLocaleDateString("fa-IR")}
-          </li>
-        ))}
-      </ul>
-    </main>
-  );
-}
+      <DataState loading={loading} error={error} onRetry={load} skeletonRows={3}>
+        {lead && (
+          <div className="ds-stack-lg">
+            <Card>
+              <div className="ds-row-between">
+                <div className="ds-row">
+                  {stage ? <Badge tone={stage.tone}>{stage.label}</Badge> : <Badge>{lead.stage}</Badge>}
+                  <span className="ds-subtitle">
+                    منبع: {lead.source ?? "—"}
+                    {lead.campaignCode ? <span className="ds-code"> ({lead.campaignCode})</span> : null}
+                  </span>
+                </div>
+                <Button
+                  size="sm"
+                  loading={recomputing}
+                  onClick={() => run(
+                    () => apiFetch(`/admin/crm/leads/${leadId}/recompute`, { method: "POST" }),
+                    () => {},
+                    setRecomputing,
+                    "بازمحاسبهٔ مرحله ناموفق بود.",
+                  )}
+                >
+                  بازمحاسبهٔ مرحله
+                </Button>
+              </div>
+            </Card>
 
-export default function LeadDetailPage({ params }: { params: { id: string } }) {
-  return (
-    <AdminGuard>
-      <LeadDetail leadId={params.id} />
-    </AdminGuard>
+            <Card>
+              <h2 className="ds-card-title">پروندهٔ تازه</h2>
+              <form
+                className="ds-form"
+                onSubmit={(event: FormEvent) => {
+                  event.preventDefault();
+                  void run(
+                    () => apiFetch(`/admin/crm/leads/${leadId}/cases`, { method: "POST", body: { subject: caseSubject } }),
+                    () => setCaseSubject(""),
+                    setCaseBusy,
+                    "ساخت پرونده ناموفق بود.",
+                  );
+                }}
+              >
+                <Field label="موضوع پرونده" hint="مثلاً «مشکل در دسترسی دوره»" required>
+                  {(props) => <Input {...props} value={caseSubject} onChange={(event) => setCaseSubject(event.target.value)} required />}
+                </Field>
+                <div><Button type="submit" variant="primary" loading={caseBusy}>ساخت پرونده</Button></div>
+              </form>
+            </Card>
+
+            <Card padded={false}>
+              <div className="ds-card-head"><h2 className="ds-card-title">پرونده‌ها</h2></div>
+              <div className={`ds-card-body ${lead.cases.length ? "ds-card-body-flush" : ""}`}>
+                {lead.cases.length === 0 ? (
+                  <p className="ds-subtitle">پرونده‌ای برای این کاربر ثبت نشده است.</p>
+                ) : (
+                  <TableWrap>
+                    <thead><tr><th>موضوع</th><th>وضعیت</th><th /></tr></thead>
+                    <tbody>
+                      {lead.cases.map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.subject}</td>
+                          <td>
+                            <Badge tone={item.status === "OPEN" ? "warning" : "success"}>
+                              {item.status === "OPEN" ? "باز" : "بسته"}
+                            </Badge>
+                          </td>
+                          <td>
+                            {item.status === "OPEN" && (
+                              <Button
+                                size="sm"
+                                onClick={() => run(
+                                  () => apiFetch(`/admin/crm/cases/${item.id}/resolve`, { method: "POST" }),
+                                  () => {},
+                                  () => {},
+                                  "بستن پرونده ناموفق بود.",
+                                )}
+                              >
+                                بستن پرونده
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </TableWrap>
+                )}
+              </div>
+            </Card>
+
+            <Card>
+              <h2 className="ds-card-title">ثبت تعامل</h2>
+              <form
+                className="ds-form"
+                onSubmit={(event: FormEvent) => {
+                  event.preventDefault();
+                  void run(
+                    () => apiFetch(`/admin/crm/leads/${leadId}/interactions`, {
+                      method: "POST",
+                      body: { type: interactionType, note: interactionNote },
+                    }),
+                    () => setInteractionNote(""),
+                    setInteractionBusy,
+                    "ثبت تعامل ناموفق بود.",
+                  );
+                }}
+              >
+                <FieldRow>
+                  <Field label="نوع تعامل" required>
+                    {(props) => (
+                      <Select {...props} value={interactionType} onChange={(event) => setInteractionType(event.target.value)}>
+                        {Object.entries(INTERACTION_LABEL).map(([value, label]) => (
+                          <option key={value} value={value}>{label}</option>
+                        ))}
+                      </Select>
+                    )}
+                  </Field>
+                  <Field label="متن" required>
+                    {(props) => <Input {...props} value={interactionNote} onChange={(event) => setInteractionNote(event.target.value)} required />}
+                  </Field>
+                </FieldRow>
+                <div><Button type="submit" variant="primary" loading={interactionBusy}>ثبت تعامل</Button></div>
+              </form>
+            </Card>
+
+            <Card padded={false}>
+              <div className="ds-card-head"><h2 className="ds-card-title">تعامل‌ها</h2></div>
+              <div className={`ds-card-body ${lead.interactions.length ? "ds-card-body-flush" : ""}`}>
+                {lead.interactions.length === 0 ? (
+                  <p className="ds-subtitle">هنوز تعاملی ثبت نشده است.</p>
+                ) : (
+                  <TableWrap>
+                    <thead><tr><th>نوع</th><th>متن</th><th>تاریخ</th></tr></thead>
+                    <tbody>
+                      {lead.interactions.map((item) => (
+                        <tr key={item.id}>
+                          <td><Badge>{INTERACTION_LABEL[item.type] ?? item.type}</Badge></td>
+                          <td>{item.note}</td>
+                          <td className="ds-table-numeric">{new Date(item.createdAt).toLocaleDateString("fa-IR")}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </TableWrap>
+                )}
+              </div>
+            </Card>
+          </div>
+        )}
+      </DataState>
+    </>
   );
 }

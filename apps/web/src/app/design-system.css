@@ -724,3 +724,19 @@
 
 .ds-plain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
 .ds-plain-list li { padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-sm); background: var(--surface); font-size: var(--text-base); color: var(--ink); }
+
+/* Expanded row beneath a table row: raw payloads and validation output. */
+.ds-detail-cell { display: grid; gap: var(--sp-3); padding: var(--sp-4); background: var(--surface-sunken); border-radius: var(--radius-md); }
+.ds-payload {
+  margin: 0; padding: var(--sp-4);
+  max-height: 22rem; overflow: auto;
+  direction: ltr; text-align: left;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: var(--text-xs); line-height: 1.7;
+  background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--radius-sm);
+  white-space: pre-wrap; word-break: break-word;
+}
+
+.ds-textarea-sm { min-height: 5.5rem; }
+.ds-field-flex { flex: 1 1 16rem; }
+.ds-auto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: var(--sp-4); }

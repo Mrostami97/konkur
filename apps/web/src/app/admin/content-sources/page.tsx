@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { AdminGuard } from "../../../components/AdminGuard";
 import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
 import { apiFetch } from "../../../lib/api";
 
@@ -207,7 +206,7 @@ function ContentSourcesAdmin() {
   }
 
   return (
-    <main className="page-container">
+    <>
       <PageHeader
         eyebrow="پنل تحریریه"
         title="منابع محتوا"
@@ -218,21 +217,21 @@ function ContentSourcesAdmin() {
         <SectionHeader
           title={editingId ? "ویرایش منبع" : "ثبت منبع جدید"}
           description={editingId ? "شناسهٔ خارجی هنگام ویرایش ثابت می‌ماند." : "فیلدهای ستاره‌دار برای ثبت اولیه ضروری‌اند."}
-          action={editingId ? <button className="button button-secondary" type="button" onClick={resetForm}>انصراف از ویرایش</button> : undefined}
+          action={editingId ? <button className="ds-btn ds-btn-secondary" type="button" onClick={resetForm}>انصراف از ویرایش</button> : undefined}
         />
         <form className="field-grid" onSubmit={saveSource} aria-busy={saving}>
           <div className="field-grid field-grid-two">
             <label className="field-group">
               <span>عنوان منبع *</span>
-              <input className="field-input" value={form.title} onChange={(event) => updateField("title", event.target.value)} required />
+              <input className="ds-input" value={form.title} onChange={(event) => updateField("title", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>ناشر *</span>
-              <input className="field-input" value={form.publisher} onChange={(event) => updateField("publisher", event.target.value)} required />
+              <input className="ds-input" value={form.publisher} onChange={(event) => updateField("publisher", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>نوع منبع *</span>
-              <select className="field-input" value={form.kind} onChange={(event) => updateField("kind", event.target.value)} required>
+              <select className="ds-select" value={form.kind} onChange={(event) => updateField("kind", event.target.value)} required>
                 <option value="OFFICIAL_NOTICE">اطلاعیهٔ رسمی</option>
                 <option value="WEB_PAGE">صفحهٔ وب</option>
                 <option value="TELEGRAM_POST">پست تلگرام</option>
@@ -244,7 +243,7 @@ function ContentSourcesAdmin() {
             </label>
             <label className="field-group">
               <span>سطح اعتبار *</span>
-              <select className="field-input" value={form.sourceTier} onChange={(event) => updateField("sourceTier", event.target.value)} required>
+              <select className="ds-select" value={form.sourceTier} onChange={(event) => updateField("sourceTier", event.target.value)} required>
                 <option value="PRIMARY">اولیه / رسمی</option>
                 <option value="SECONDARY">ثانویه</option>
                 <option value="OWNED">متعلق به kunkur01</option>
@@ -252,27 +251,27 @@ function ContentSourcesAdmin() {
             </label>
             <label className="field-group">
               <span>نشانی اصلی *</span>
-              <input className="field-input" type="url" dir="ltr" value={form.canonicalUrl} onChange={(event) => updateField("canonicalUrl", event.target.value)} required />
+              <input className="ds-input" type="url" dir="ltr" value={form.canonicalUrl} onChange={(event) => updateField("canonicalUrl", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>تاریخ آخرین بررسی *</span>
-              <input className="field-input" type="date" dir="ltr" value={form.checkedAt} onChange={(event) => updateField("checkedAt", event.target.value)} required />
+              <input className="ds-input" type="date" dir="ltr" value={form.checkedAt} onChange={(event) => updateField("checkedAt", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>پدیدآورنده</span>
-              <input className="field-input" value={form.creator} onChange={(event) => updateField("creator", event.target.value)} />
+              <input className="ds-input" value={form.creator} onChange={(event) => updateField("creator", event.target.value)} />
             </label>
             <label className="field-group">
               <span>شناسهٔ خارجی</span>
-              <input className="field-input" dir="ltr" value={form.externalId} onChange={(event) => updateField("externalId", event.target.value)} disabled={Boolean(editingId)} />
+              <input className="ds-input" dir="ltr" value={form.externalId} onChange={(event) => updateField("externalId", event.target.value)} disabled={Boolean(editingId)} />
             </label>
             <label className="field-group">
               <span>دامنه‌های اعتبار (با ویرگول)</span>
-              <input className="field-input" value={form.authorityScopes} onChange={(event) => updateField("authorityScopes", event.target.value)} placeholder="مثلاً مواد آزمون، تاریخ ثبت‌نام" />
+              <input className="ds-input" value={form.authorityScopes} onChange={(event) => updateField("authorityScopes", event.target.value)} placeholder="مثلاً مواد آزمون، تاریخ ثبت‌نام" />
             </label>
             <label className="field-group">
               <span>مبنای حقوقی استفاده</span>
-              <select className="field-input" value={form.rightsBasis} onChange={(event) => updateField("rightsBasis", event.target.value)}>
+              <select className="ds-select" value={form.rightsBasis} onChange={(event) => updateField("rightsBasis", event.target.value)}>
                 <option value="LINK_ONLY">فقط پیوند</option>
                 <option value="OWNED">مالکیت kunkur01</option>
                 <option value="LICENSED">دارای مجوز</option>
@@ -284,7 +283,7 @@ function ContentSourcesAdmin() {
 
           <label className="field-group">
             <span>متن انتساب</span>
-            <textarea className="field-input" rows={3} value={form.attributionText} onChange={(event) => updateField("attributionText", event.target.value)} />
+            <textarea className="ds-textarea" rows={3} value={form.attributionText} onChange={(event) => updateField("attributionText", event.target.value)} />
           </label>
 
           <fieldset className="surface-card surface-card-muted">
@@ -307,7 +306,7 @@ function ContentSourcesAdmin() {
             </div>
           </fieldset>
 
-          <button className="button button-primary" type="submit" disabled={saving}>
+          <button className="ds-btn ds-btn-primary" type="submit" disabled={saving}>
             {saving ? "در حال ذخیره…" : editingId ? "ذخیرهٔ تغییرات" : "ثبت منبع"}
           </button>
         </form>
@@ -332,9 +331,9 @@ function ContentSourcesAdmin() {
                 <p className="muted-copy">{source.kind} · {source.rightsBasis}</p>
                 <a className="text-link" href={source.canonicalUrl} target="_blank" rel="noreferrer">مشاهدهٔ منبع اصلی ↗</a>
                 <div className="hero-actions">
-                  <button className="button button-secondary" type="button" onClick={() => startEdit(source)} disabled={Boolean(source.archivedAt) || busyId === source.id}>ویرایش</button>
+                  <button className="ds-btn ds-btn-secondary" type="button" onClick={() => startEdit(source)} disabled={Boolean(source.archivedAt) || busyId === source.id}>ویرایش</button>
                   {!source.archivedAt && (
-                    <button className="button button-danger" type="button" onClick={() => void archiveSource(source)} disabled={busyId === source.id}>
+                    <button className="ds-btn ds-btn-danger" type="button" onClick={() => void archiveSource(source)} disabled={busyId === source.id}>
                       {busyId === source.id ? "در حال آرشیو…" : "آرشیو"}
                     </button>
                   )}
@@ -344,14 +343,12 @@ function ContentSourcesAdmin() {
           </div>
         )}
       </section>
-    </main>
+    </>
   );
 }
 
 export default function ContentSourcesAdminPage() {
   return (
-    <AdminGuard>
-      <ContentSourcesAdmin />
-    </AdminGuard>
+    <ContentSourcesAdmin />
   );
 }

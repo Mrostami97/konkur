@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { AdminGuard } from "../../../components/AdminGuard";
 import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
 import { apiFetch } from "../../../lib/api";
 
@@ -508,12 +507,12 @@ function ArticlesAdmin() {
   }
 
   return (
-    <main className="page-container">
+    <>
       <PageHeader
         eyebrow="تحریریهٔ نسخه‌دار"
         title="مدیریت مقاله‌های article.v2"
         description="متن، سئو، طبقه‌بندی، اعتبار زمانی و منبع را یک‌جا ثبت کنید. انتشار فقط از مسیر ارسال، بازبینی و تأیید انجام می‌شود."
-        action={<Link className="button button-secondary" href="/admin">بازگشت به پنل</Link>}
+        action={<Link className="ds-btn ds-btn-secondary" href="/admin">بازگشت به پنل</Link>}
       />
 
       <form className="field-grid" onSubmit={saveArticle}>
@@ -521,26 +520,26 @@ function ArticlesAdmin() {
           <SectionHeader
             title={editing ? "ویرایش نسخهٔ تحریریه" : "پیش‌نویس جدید"}
             description={editing ? "تغییرها فقط روی نسخهٔ در حال ویرایش ذخیره می‌شوند." : "شناسهٔ مسیر پس از ایجاد تغییر نمی‌کند."}
-            action={editing ? <button className="button button-secondary" type="button" onClick={resetEditor}>انصراف</button> : undefined}
+            action={editing ? <button className="ds-btn ds-btn-secondary" type="button" onClick={resetEditor}>انصراف</button> : undefined}
           />
           <div className="field-grid field-grid-two">
             <label className="field-group">
               <span>شناسهٔ مسیر (slug)</span>
-              <input className="field-input" dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*" value={form.slug} onChange={(event) => updateField("slug", event.target.value)} disabled={Boolean(editing)} required />
+              <input className="ds-input" dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*" value={form.slug} onChange={(event) => updateField("slug", event.target.value)} disabled={Boolean(editing)} required />
             </label>
             <label className="field-group">
               <span>نوع محتوا</span>
-              <select className="field-input" value={form.contentType} onChange={(event) => updateField("contentType", event.target.value as ContentType)}>
+              <select className="ds-select" value={form.contentType} onChange={(event) => updateField("contentType", event.target.value as ContentType)}>
                 {Object.entries(CONTENT_TYPE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </select>
             </label>
             <label className="field-group">
               <span>عنوان</span>
-              <input className="field-input" value={form.title} onChange={(event) => updateField("title", event.target.value)} required />
+              <input className="ds-input" value={form.title} onChange={(event) => updateField("title", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>نویسندهٔ تأییدشده</span>
-              <select className="field-input" value={form.authorProfileId} onChange={(event) => updateField("authorProfileId", event.target.value)}>
+              <select className="ds-select" value={form.authorProfileId} onChange={(event) => updateField("authorProfileId", event.target.value)}>
                 <option value="">بدون انتساب عمومی</option>
                 {contributors.map((contributor) => (
                   <option key={contributor.id} value={contributor.id}>
@@ -552,15 +551,15 @@ function ArticlesAdmin() {
           </div>
           <label className="field-group">
             <span>خلاصه</span>
-            <textarea className="field-input" rows={3} value={form.summary} onChange={(event) => updateField("summary", event.target.value)} required />
+            <textarea className="ds-textarea" rows={3} value={form.summary} onChange={(event) => updateField("summary", event.target.value)} required />
           </label>
           <label className="field-group">
             <span>پاسخ کوتاه ابتدای صفحه</span>
-            <textarea className="field-input" rows={3} value={form.quickAnswer} onChange={(event) => updateField("quickAnswer", event.target.value)} required />
+            <textarea className="ds-textarea" rows={3} value={form.quickAnswer} onChange={(event) => updateField("quickAnswer", event.target.value)} required />
           </label>
           <label className="field-group">
             <span>بلوک‌های محتوا (JSON)</span>
-            <textarea className="field-input" dir="ltr" rows={12} spellCheck={false} value={form.contentJson} onChange={(event) => updateField("contentJson", event.target.value)} required />
+            <textarea className="ds-textarea" dir="ltr" rows={12} spellCheck={false} value={form.contentJson} onChange={(event) => updateField("contentJson", event.target.value)} required />
           </label>
         </section>
 
@@ -569,31 +568,31 @@ function ArticlesAdmin() {
           <div className="field-grid field-grid-two">
             <label className="field-group">
               <span>عنوان سئو (حداکثر ۷۰ نویسه)</span>
-              <input className="field-input" maxLength={70} value={form.seoTitle} onChange={(event) => updateField("seoTitle", event.target.value)} required />
+              <input className="ds-input" maxLength={70} value={form.seoTitle} onChange={(event) => updateField("seoTitle", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>توضیح سئو (حداکثر ۱۸۰ نویسه)</span>
-              <textarea className="field-input" maxLength={180} rows={2} value={form.seoDescription} onChange={(event) => updateField("seoDescription", event.target.value)} required />
+              <textarea className="ds-textarea" maxLength={180} rows={2} value={form.seoDescription} onChange={(event) => updateField("seoDescription", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>حوزهٔ اصلی</span>
-              <input className="field-input" dir="ltr" value={form.taxonomyMajor} onChange={(event) => updateField("taxonomyMajor", event.target.value)} required />
+              <input className="ds-input" dir="ltr" value={form.taxonomyMajor} onChange={(event) => updateField("taxonomyMajor", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>برچسب‌ها</span>
-              <input className="field-input" value={form.taxonomyTags} onChange={(event) => updateField("taxonomyTags", event.target.value)} />
+              <input className="ds-input" value={form.taxonomyTags} onChange={(event) => updateField("taxonomyTags", event.target.value)} />
             </label>
             <label className="field-group">
               <span>رشته‌ها</span>
-              <input className="field-input" dir="ltr" value={form.taxonomyFields} onChange={(event) => updateField("taxonomyFields", event.target.value)} />
+              <input className="ds-input" dir="ltr" value={form.taxonomyFields} onChange={(event) => updateField("taxonomyFields", event.target.value)} />
             </label>
             <label className="field-group">
               <span>کد درس‌ها</span>
-              <input className="field-input" dir="ltr" value={form.subjectCodes} onChange={(event) => updateField("subjectCodes", event.target.value)} />
+              <input className="ds-input" dir="ltr" value={form.subjectCodes} onChange={(event) => updateField("subjectCodes", event.target.value)} />
             </label>
             <label className="field-group">
               <span>کد مبحث‌ها</span>
-              <input className="field-input" dir="ltr" value={form.topicCodes} onChange={(event) => updateField("topicCodes", event.target.value)} />
+              <input className="ds-input" dir="ltr" value={form.topicCodes} onChange={(event) => updateField("topicCodes", event.target.value)} />
             </label>
             <fieldset className="field-group" style={{ border: 0, padding: 0, margin: 0 }}>
               <span>مقطع</span>
@@ -610,16 +609,16 @@ function ArticlesAdmin() {
           <div className="field-grid field-grid-two">
             <label className="field-group">
               <span>سال آزمون (اختیاری)</span>
-              <input className="field-input" type="number" min={1300} max={1600} value={form.validForYear} onChange={(event) => updateField("validForYear", event.target.value)} />
+              <input className="ds-input" type="number" min={1300} max={1600} value={form.validForYear} onChange={(event) => updateField("validForYear", event.target.value)} />
             </label>
             <span />
             <label className="field-group">
               <span>آخرین بررسی منبع</span>
-              <input className="field-input" type="datetime-local" value={form.sourceValidatedAt} onChange={(event) => updateField("sourceValidatedAt", event.target.value)} required={Boolean(form.validForYear)} />
+              <input className="ds-input" type="datetime-local" value={form.sourceValidatedAt} onChange={(event) => updateField("sourceValidatedAt", event.target.value)} required={Boolean(form.validForYear)} />
             </label>
             <label className="field-group">
               <span>موعد بازبینی بعدی</span>
-              <input className="field-input" type="datetime-local" value={form.reviewDueAt} onChange={(event) => updateField("reviewDueAt", event.target.value)} required={Boolean(form.validForYear)} />
+              <input className="ds-input" type="datetime-local" value={form.reviewDueAt} onChange={(event) => updateField("reviewDueAt", event.target.value)} required={Boolean(form.validForYear)} />
             </label>
           </div>
 
@@ -629,36 +628,36 @@ function ArticlesAdmin() {
                 <div className="field-grid field-grid-two">
                   <label className="field-group">
                     <span>منبع {Number(index + 1).toLocaleString("fa-IR")}</span>
-                    <select className="field-input" value={row.sourceId} onChange={(event) => updateSourceRow(index, { sourceId: event.target.value })} required>
+                    <select className="ds-select" value={row.sourceId} onChange={(event) => updateSourceRow(index, { sourceId: event.target.value })} required>
                       <option value="">انتخاب منبع فعال</option>
                       {availableSources.map((source) => <option key={source.id} value={source.id}>{source.title} — {source.publisher}</option>)}
                     </select>
                   </label>
                   <label className="field-group">
                     <span>نوع ارتباط</span>
-                    <select className="field-input" value={row.relation} onChange={(event) => updateSourceRow(index, { relation: event.target.value as SourceRelation })}>
+                    <select className="ds-select" value={row.relation} onChange={(event) => updateSourceRow(index, { relation: event.target.value as SourceRelation })}>
                       {Object.entries(RELATION_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                     </select>
                   </label>
                   <label className="field-group">
                     <span>محل استناد (اختیاری)</span>
-                    <input className="field-input" value={row.locator} onChange={(event) => updateSourceRow(index, { locator: event.target.value })} />
+                    <input className="ds-input" value={row.locator} onChange={(event) => updateSourceRow(index, { locator: event.target.value })} />
                   </label>
                   <label className="field-group">
                     <span>ادعای پشتیبانی‌شده (اختیاری)</span>
-                    <input className="field-input" value={row.claim} onChange={(event) => updateSourceRow(index, { claim: event.target.value })} />
+                    <input className="ds-input" value={row.claim} onChange={(event) => updateSourceRow(index, { claim: event.target.value })} />
                   </label>
                 </div>
-                <button className="button button-danger" type="button" onClick={() => removeSourceRow(index)}>حذف این اتصال</button>
+                <button className="ds-btn ds-btn-danger" type="button" onClick={() => removeSourceRow(index)}>حذف این اتصال</button>
               </div>
             ))}
-            <button className="button button-secondary" type="button" onClick={addSourceRow}>افزودن منبع دیگر</button>
+            <button className="ds-btn ds-btn-secondary" type="button" onClick={addSourceRow}>افزودن منبع دیگر</button>
           </div>
         </section>
 
         {error && <p className="form-error" role="alert">{error}</p>}
         {notice && <p className="success-message" role="status">{notice}</p>}
-        <button className="button button-primary" type="submit" disabled={busyKey === "editor"}>
+        <button className="ds-btn ds-btn-primary" type="submit" disabled={busyKey === "editor"}>
           {busyKey === "editor" ? "در حال ذخیره…" : editing ? "ذخیرهٔ نسخه" : "ایجاد پیش‌نویس"}
         </button>
       </form>
@@ -695,22 +694,22 @@ function ArticlesAdmin() {
                   {isLegacy && <p className="muted-copy">این رکورد با قرارداد قدیمی ثبت شده و برای ویرایش باید به نسخهٔ جدید منتقل شود.</p>}
 
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    <Link className="button button-secondary" href={`/admin/articles/${article.id}/preview`}>پیش‌نمایش کارکنان</Link>
+                    <Link className="ds-btn ds-btn-secondary" href={`/admin/articles/${article.id}/preview`}>پیش‌نمایش کارکنان</Link>
                     {article.reviewStatus === "PUBLISHED" && status === "PUBLISHED" && (
-                      <button className="button button-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void beginRevision(article)}>
+                      <button className="ds-btn ds-btn-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void beginRevision(article)}>
                         {busyKey === `revise-${article.id}` ? "در حال ساخت…" : "ساخت نسخهٔ جدید"}
                       </button>
                     )}
                     {revision && !isLegacy && (status === "DRAFT" || status === "REJECTED") && (
-                      <button className="button button-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void transition(article, "submit")}>ارسال برای بررسی</button>
+                      <button className="ds-btn ds-btn-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void transition(article, "submit")}>ارسال برای بررسی</button>
                     )}
                     {revision && !isLegacy && (status === "DRAFT" || status === "REJECTED") && (
-                      <button className="button button-secondary" type="button" onClick={() => populateEditor(article, revision)}>ویرایش نسخه</button>
+                      <button className="ds-btn ds-btn-secondary" type="button" onClick={() => populateEditor(article, revision)}>ویرایش نسخه</button>
                     )}
                     {revision && status === "IN_REVIEW" && (
                       <>
-                        <button className="button button-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void transition(article, "approve")}>تأیید</button>
-                        <button className="button button-danger" type="button" onClick={() => setRejectingId(article.id)}>رد با دلیل</button>
+                        <button className="ds-btn ds-btn-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void transition(article, "approve")}>تأیید</button>
+                        <button className="ds-btn ds-btn-danger" type="button" onClick={() => setRejectingId(article.id)}>رد با دلیل</button>
                       </>
                     )}
                   </div>
@@ -719,11 +718,11 @@ function ArticlesAdmin() {
                     <div className="field-grid" style={{ marginTop: "1rem" }}>
                       <label className="field-group">
                         <span>دلیل اصلاح</span>
-                        <input className="field-input" value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} />
+                        <input className="ds-input" value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} />
                       </label>
                       <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <button className="button button-danger" type="button" onClick={() => void transition(article, "reject")}>ثبت رد</button>
-                        <button className="button button-secondary" type="button" onClick={() => { setRejectingId(null); setRejectionReason(""); }}>انصراف</button>
+                        <button className="ds-btn ds-btn-danger" type="button" onClick={() => void transition(article, "reject")}>ثبت رد</button>
+                        <button className="ds-btn ds-btn-secondary" type="button" onClick={() => { setRejectingId(null); setRejectionReason(""); }}>انصراف</button>
                       </div>
                     </div>
                   )}
@@ -733,14 +732,12 @@ function ArticlesAdmin() {
           </div>
         )}
       </section>
-    </main>
+    </>
   );
 }
 
 export default function ArticlesAdminPage() {
   return (
-    <AdminGuard>
-      <ArticlesAdmin />
-    </AdminGuard>
+    <ArticlesAdmin />
   );
 }

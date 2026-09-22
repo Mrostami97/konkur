@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { AdminGuard } from "../../../components/AdminGuard";
 import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
 import { apiFetch } from "../../../lib/api";
 
@@ -178,7 +177,7 @@ function ContributorsAdmin() {
   }
 
   return (
-    <main className="page-container">
+    <>
       <PageHeader
         eyebrow="پنل تحریریه"
         title="مشارکت‌کنندگان"
@@ -189,61 +188,61 @@ function ContributorsAdmin() {
         <SectionHeader
           title={editingId ? "ویرایش پروفایل" : "پروفایل جدید"}
           description={editingId ? "نامک هنگام ویرایش ثابت می‌ماند." : "پروفایل تازه به‌صورت پیش‌نویس ساخته می‌شود، مگر انتشار را فعال کنید."}
-          action={editingId ? <button className="button button-secondary" type="button" onClick={resetForm}>انصراف از ویرایش</button> : undefined}
+          action={editingId ? <button className="ds-btn ds-btn-secondary" type="button" onClick={resetForm}>انصراف از ویرایش</button> : undefined}
         />
 
         <form className="field-grid" onSubmit={saveContributor} aria-busy={saving}>
           <div className="field-grid field-grid-two">
             <label className="field-group">
               <span>نوع پروفایل *</span>
-              <select className="field-input" value={form.kind} onChange={(event) => updateField("kind", event.target.value as ContributorKind)}>
+              <select className="ds-select" value={form.kind} onChange={(event) => updateField("kind", event.target.value as ContributorKind)}>
                 <option value="PERSON">شخص</option>
                 <option value="ORGANIZATION">سازمان / تحریریه</option>
               </select>
             </label>
             <label className="field-group">
               <span>نام نمایشی *</span>
-              <input className="field-input" value={form.displayName} onChange={(event) => updateField("displayName", event.target.value)} required />
+              <input className="ds-input" value={form.displayName} onChange={(event) => updateField("displayName", event.target.value)} required />
             </label>
             <label className="field-group">
               <span>نامک لاتین *</span>
-              <input className="field-input" dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*" value={form.slug} onChange={(event) => updateField("slug", event.target.value.toLowerCase())} disabled={Boolean(editingId)} required />
+              <input className="ds-input" dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*" value={form.slug} onChange={(event) => updateField("slug", event.target.value.toLowerCase())} disabled={Boolean(editingId)} required />
             </label>
             <label className="field-group">
               <span>عنوان نقش</span>
-              <input className="field-input" value={form.roleTitle} onChange={(event) => updateField("roleTitle", event.target.value)} placeholder="مثلاً نویسنده یا بازبین علمی" />
+              <input className="ds-input" value={form.roleTitle} onChange={(event) => updateField("roleTitle", event.target.value)} placeholder="مثلاً نویسنده یا بازبین علمی" />
             </label>
             <label className="field-group">
               <span>شناسهٔ کاربر (UUID)</span>
-              <input className="field-input" dir="ltr" value={form.userId} onChange={(event) => updateField("userId", event.target.value)} />
+              <input className="ds-input" dir="ltr" value={form.userId} onChange={(event) => updateField("userId", event.target.value)} />
             </label>
             <label className="field-group">
               <span>نشانی تصویر</span>
-              <input className="field-input" type="url" dir="ltr" value={form.avatarUrl} onChange={(event) => updateField("avatarUrl", event.target.value)} />
+              <input className="ds-input" type="url" dir="ltr" value={form.avatarUrl} onChange={(event) => updateField("avatarUrl", event.target.value)} />
             </label>
             <label className="field-group">
               <span>لینک پایان‌نامه</span>
-              <input className="field-input" type="url" dir="ltr" value={form.thesisUrl} onChange={(event) => updateField("thesisUrl", event.target.value)} />
+              <input className="ds-input" type="url" dir="ltr" value={form.thesisUrl} onChange={(event) => updateField("thesisUrl", event.target.value)} />
             </label>
             <label className="field-group">
               <span>پیوندهای معتبر (هر خط یک URL)</span>
-              <textarea className="field-input" rows={3} dir="ltr" value={form.sameAs} onChange={(event) => updateField("sameAs", event.target.value)} />
+              <textarea className="ds-textarea" rows={3} dir="ltr" value={form.sameAs} onChange={(event) => updateField("sameAs", event.target.value)} />
             </label>
           </div>
 
           <label className="field-group">
             <span>معرفی کوتاه</span>
-            <textarea className="field-input" rows={3} value={form.shortBio} onChange={(event) => updateField("shortBio", event.target.value)} />
+            <textarea className="ds-textarea" rows={3} value={form.shortBio} onChange={(event) => updateField("shortBio", event.target.value)} />
           </label>
           <label className="field-group">
             <span>معرفی کامل</span>
-            <textarea className="field-input" rows={7} value={form.longBio} onChange={(event) => updateField("longBio", event.target.value)} />
+            <textarea className="ds-textarea" rows={7} value={form.longBio} onChange={(event) => updateField("longBio", event.target.value)} />
           </label>
           <label className="field-group">
             <span><input type="checkbox" checked={form.isPublished} onChange={(event) => updateField("isPublished", event.target.checked)} /> پروفایل برای نمایش عمومی تأیید شده است</span>
           </label>
 
-          <button className="button button-primary" type="submit" disabled={saving}>
+          <button className="ds-btn ds-btn-primary" type="submit" disabled={saving}>
             {saving ? "در حال ذخیره…" : editingId ? "ذخیرهٔ تغییرات" : "ساخت پروفایل"}
           </button>
         </form>
@@ -268,7 +267,7 @@ function ContributorsAdmin() {
                 {contributor.shortBio && <p>{contributor.shortBio}</p>}
                 <p className="muted-copy" dir="ltr">/{contributor.slug}</p>
                 <div className="hero-actions">
-                  <button className="button button-secondary" type="button" onClick={() => startEdit(contributor)} disabled={busyId === contributor.id}>ویرایش</button>
+                  <button className="ds-btn ds-btn-secondary" type="button" onClick={() => startEdit(contributor)} disabled={busyId === contributor.id}>ویرایش</button>
                   <button className={contributor.isPublished ? "button button-danger" : "button button-primary"} type="button" onClick={() => void togglePublished(contributor)} disabled={busyId === contributor.id}>
                     {busyId === contributor.id ? "در حال ثبت…" : contributor.isPublished ? "لغو انتشار" : "انتشار"}
                   </button>
@@ -278,14 +277,12 @@ function ContributorsAdmin() {
           </div>
         )}
       </section>
-    </main>
+    </>
   );
 }
 
 export default function ContributorsAdminPage() {
   return (
-    <AdminGuard>
-      <ContributorsAdmin />
-    </AdminGuard>
+    <ContributorsAdmin />
   );
 }

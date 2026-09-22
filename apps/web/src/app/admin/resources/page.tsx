@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { AdminGuard } from "../../../components/AdminGuard";
 import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
 import { apiFetch } from "../../../lib/api";
 
@@ -424,12 +423,12 @@ function ResourcesAdmin() {
   }
 
   return (
-    <main className="page-container">
+    <>
       <PageHeader
         eyebrow="تحریریه و کتابخانه"
         title="مدیریت منابع آموزشی"
         description="جزوه، ویدئو، دفترچه و پیوندهای معتبر را با سطح دسترسی، مستندات و چرخهٔ بازبینی مدیریت کنید."
-        action={editingId ? <button className="button button-secondary" onClick={resetForm}>انصراف از ویرایش</button> : undefined}
+        action={editingId ? <button className="ds-btn ds-btn-secondary" onClick={resetForm}>انصراف از ویرایش</button> : undefined}
       />
 
       {error && <p className="form-error" role="alert">{error}</p>}
@@ -445,12 +444,12 @@ function ResourcesAdmin() {
           <div className="field-grid field-grid-two">
             <label className="field-group">
               <span>عنوان *</span>
-              <input className="field-input" required value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
+              <input className="ds-input" required value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
             </label>
             <label className="field-group">
               <span>نامک لاتین *</span>
               <input
-                className="field-input"
+                className="ds-input"
                 dir="ltr"
                 required
                 disabled={Boolean(editingId)}
@@ -462,12 +461,12 @@ function ResourcesAdmin() {
             {!editingId && (
               <label className="field-group">
                 <span>شناسهٔ بیرونی (اختیاری)</span>
-                <input className="field-input" dir="ltr" value={form.externalId} onChange={(event) => setForm({ ...form, externalId: event.target.value })} />
+                <input className="ds-input" dir="ltr" value={form.externalId} onChange={(event) => setForm({ ...form, externalId: event.target.value })} />
               </label>
             )}
             <label className="field-group">
               <span>نویسنده</span>
-              <select className="field-input" value={form.authorProfileId} onChange={(event) => setForm({ ...form, authorProfileId: event.target.value })}>
+              <select className="ds-select" value={form.authorProfileId} onChange={(event) => setForm({ ...form, authorProfileId: event.target.value })}>
                 <option value="">بدون انتساب عمومی</option>
                 {contributors.map((contributor) => (
                   <option key={contributor.id} value={contributor.id}>
@@ -480,36 +479,36 @@ function ResourcesAdmin() {
 
           <label className="field-group">
             <span>خلاصه *</span>
-            <textarea className="field-input" style={{ minHeight: 88 }} required value={form.summary} onChange={(event) => setForm({ ...form, summary: event.target.value })} />
+            <textarea className="ds-textarea ds-textarea-sm" required value={form.summary} onChange={(event) => setForm({ ...form, summary: event.target.value })} />
           </label>
           <label className="field-group">
             <span>توضیح تکمیلی</span>
-            <textarea className="field-input" style={{ minHeight: 110 }} value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
+            <textarea className="ds-textarea" style={{ minHeight: 110 }} value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
           </label>
 
           <div className="field-grid field-grid-two">
             <label className="field-group">
               <span>نوع منبع *</span>
-              <select className="field-input" value={form.kind} onChange={(event) => setForm({ ...form, kind: event.target.value as ResourceKind })}>
+              <select className="ds-select" value={form.kind} onChange={(event) => setForm({ ...form, kind: event.target.value as ResourceKind })}>
                 {RESOURCE_KINDS.map((kind) => <option key={kind} value={kind}>{KIND_LABELS[kind]}</option>)}
               </select>
             </label>
             <label className="field-group">
               <span>سطح دسترسی *</span>
-              <select className="field-input" value={form.accessMode} onChange={(event) => setForm({ ...form, accessMode: event.target.value as AccessMode })}>
+              <select className="ds-select" value={form.accessMode} onChange={(event) => setForm({ ...form, accessMode: event.target.value as AccessMode })}>
                 {ACCESS_MODES.map((mode) => <option key={mode} value={mode}>{ACCESS_LABELS[mode]}</option>)}
               </select>
             </label>
             <label className="field-group">
               <span>روش میزبانی *</span>
-              <select className="field-input" value={form.hostingMode} onChange={(event) => changeHostingMode(event.target.value as HostingMode)}>
+              <select className="ds-select" value={form.hostingMode} onChange={(event) => changeHostingMode(event.target.value as HostingMode)}>
                 {HOSTING_MODES.map((mode) => <option key={mode} value={mode}>{HOSTING_LABELS[mode]}</option>)}
               </select>
             </label>
             <label className="field-group">
               <span>شناسهٔ فایل بارگذاری‌شده</span>
               <input
-                className="field-input"
+                className="ds-input"
                 dir="ltr"
                 placeholder="UUID"
                 disabled={!PROTECTED_HOSTING_MODES.has(form.hostingMode)}
@@ -522,7 +521,7 @@ function ResourcesAdmin() {
           <label className="field-group">
             <span>نشانی بیرونی</span>
             <input
-              className="field-input"
+              className="ds-input"
               dir="ltr"
               type="url"
               placeholder="https://..."
@@ -534,7 +533,7 @@ function ResourcesAdmin() {
           <label className="field-group">
             <span>بلوک‌های محتوا (JSON)</span>
             <textarea
-              className="field-input"
+              className="ds-input"
               dir="ltr"
               spellCheck={false}
               style={{ minHeight: 190, fontFamily: "ui-monospace, SFMono-Regular, Consolas, monospace", lineHeight: 1.6 }}
@@ -552,16 +551,16 @@ function ResourcesAdmin() {
             </div>
           </div>
           <div className="field-grid field-grid-two">
-            <label className="field-group"><span>رشته‌ها</span><input className="field-input" value={form.taxonomyFields} onChange={(event) => setForm({ ...form, taxonomyFields: event.target.value })} /></label>
-            <label className="field-group"><span>کد درس‌ها</span><input className="field-input" dir="ltr" value={form.subjectCodes} onChange={(event) => setForm({ ...form, subjectCodes: event.target.value })} /></label>
-            <label className="field-group"><span>کد مبحث‌ها</span><input className="field-input" dir="ltr" value={form.topicCodes} onChange={(event) => setForm({ ...form, topicCodes: event.target.value })} /></label>
+            <label className="field-group"><span>رشته‌ها</span><input className="ds-input" value={form.taxonomyFields} onChange={(event) => setForm({ ...form, taxonomyFields: event.target.value })} /></label>
+            <label className="field-group"><span>کد درس‌ها</span><input className="ds-input" dir="ltr" value={form.subjectCodes} onChange={(event) => setForm({ ...form, subjectCodes: event.target.value })} /></label>
+            <label className="field-group"><span>کد مبحث‌ها</span><input className="ds-input" dir="ltr" value={form.topicCodes} onChange={(event) => setForm({ ...form, topicCodes: event.target.value })} /></label>
           </div>
 
           <SectionHeader title="اسناد و منابع" description="رابطه، محل استناد و ادعای پشتیبانی‌شده برای هر سند مستقل ثبت می‌شود." />
           <div style={{ display: "flex", alignItems: "end", gap: "0.65rem", flexWrap: "wrap" }}>
-            <label className="field-group" style={{ flex: "1 1 260px" }}>
+            <label className="field-group ds-field-flex">
               <span>افزودن سند</span>
-              <select className="field-input" value={sourceToAdd} onChange={(event) => setSourceToAdd(event.target.value)}>
+              <select className="ds-select" value={sourceToAdd} onChange={(event) => setSourceToAdd(event.target.value)}>
                 <option value="">یک منبع را انتخاب کنید</option>
                 {availableSources.map((source) => (
                   <option key={source.id} value={source.id}>
@@ -571,7 +570,7 @@ function ResourcesAdmin() {
                 ))}
               </select>
             </label>
-            <button className="button button-secondary" type="button" disabled={!sourceToAdd} onClick={addSource}>اتصال منبع</button>
+            <button className="ds-btn ds-btn-secondary" type="button" disabled={!sourceToAdd} onClick={addSource}>اتصال منبع</button>
           </div>
 
           <div style={{ display: "grid", gap: "0.75rem", marginTop: "1rem" }}>
@@ -581,19 +580,19 @@ function ResourcesAdmin() {
                 <div className="surface-card surface-card-muted" key={source.sourceId}>
                   <div style={{ display: "flex", alignItems: "start", justifyContent: "space-between", gap: "1rem" }}>
                     <div><strong>{sourceInfo?.title ?? source.sourceId}</strong><div className="muted-copy">{sourceInfo?.publisher}</div></div>
-                    <button className="button button-danger" type="button" onClick={() => removeSource(index)}>حذف اتصال</button>
+                    <button className="ds-btn ds-btn-danger" type="button" onClick={() => removeSource(index)}>حذف اتصال</button>
                   </div>
                   <div className="field-grid field-grid-two">
-                    <label className="field-group"><span>نوع رابطه *</span><input className="field-input" dir="ltr" value={source.relation} onChange={(event) => updateSource(index, { relation: event.target.value })} /></label>
-                    <label className="field-group"><span>محل استناد</span><input className="field-input" value={source.locator} onChange={(event) => updateSource(index, { locator: event.target.value })} /></label>
+                    <label className="field-group"><span>نوع رابطه *</span><input className="ds-input" dir="ltr" value={source.relation} onChange={(event) => updateSource(index, { relation: event.target.value })} /></label>
+                    <label className="field-group"><span>محل استناد</span><input className="ds-input" value={source.locator} onChange={(event) => updateSource(index, { locator: event.target.value })} /></label>
                   </div>
-                  <label className="field-group"><span>ادعای پشتیبانی‌شده</span><textarea className="field-input" value={source.claim} onChange={(event) => updateSource(index, { claim: event.target.value })} /></label>
+                  <label className="field-group"><span>ادعای پشتیبانی‌شده</span><textarea className="ds-textarea" value={source.claim} onChange={(event) => updateSource(index, { claim: event.target.value })} /></label>
                 </div>
               );
             })}
           </div>
 
-          <button className="button button-primary" style={{ marginTop: "1.25rem" }} type="submit" disabled={saving}>
+          <button className="ds-btn ds-btn-primary" style={{ marginTop: "1.25rem" }} type="submit" disabled={saving}>
             {saving ? "در حال ذخیره..." : editingId ? "ذخیرهٔ پیش‌نویس" : "ساخت پیش‌نویس"}
           </button>
         </form>
@@ -620,7 +619,7 @@ function ResourcesAdmin() {
         ) : resources.length === 0 ? (
           <EmptyState title="هنوز منبعی ثبت نشده است" description="فرم بالا نخستین منبع مستند کتابخانه را می‌سازد." />
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+          <div className="ds-auto-grid">
             {resources.map((resource) => (
               <article className="surface-card" key={resource.id}>
                 <div style={{ display: "flex", alignItems: "start", justifyContent: "space-between", gap: "0.75rem" }}>
@@ -641,18 +640,18 @@ function ResourcesAdmin() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                   {(resource.reviewStatus === "DRAFT" || resource.reviewStatus === "REJECTED") && (
                     <>
-                      <button className="button button-secondary" disabled={busyId === resource.id} onClick={() => void beginEdit(resource.id)}>ویرایش</button>
-                      <button className="button button-primary" disabled={busyId === resource.id} onClick={() => void transition(resource, "submit")}>ارسال برای بررسی</button>
+                      <button className="ds-btn ds-btn-secondary" disabled={busyId === resource.id} onClick={() => void beginEdit(resource.id)}>ویرایش</button>
+                      <button className="ds-btn ds-btn-primary" disabled={busyId === resource.id} onClick={() => void transition(resource, "submit")}>ارسال برای بررسی</button>
                     </>
                   )}
                   {resource.reviewStatus === "IN_REVIEW" && (
                     <>
-                      <button className="button button-primary" disabled={busyId === resource.id} onClick={() => void transition(resource, "approve")}>تأیید و انتشار</button>
-                      <button className="button button-danger" disabled={busyId === resource.id} onClick={() => void transition(resource, "reject")}>رد با دلیل</button>
+                      <button className="ds-btn ds-btn-primary" disabled={busyId === resource.id} onClick={() => void transition(resource, "approve")}>تأیید و انتشار</button>
+                      <button className="ds-btn ds-btn-danger" disabled={busyId === resource.id} onClick={() => void transition(resource, "reject")}>رد با دلیل</button>
                     </>
                   )}
                   {resource.reviewStatus === "PUBLISHED" && (
-                    <button className="button button-secondary" disabled={busyId === resource.id} onClick={() => void transition(resource, "revise")}>ساخت نسخهٔ تازه</button>
+                    <button className="ds-btn ds-btn-secondary" disabled={busyId === resource.id} onClick={() => void transition(resource, "revise")}>ساخت نسخهٔ تازه</button>
                   )}
                 </div>
               </article>
@@ -660,14 +659,12 @@ function ResourcesAdmin() {
           </div>
         )}
       </section>
-    </main>
+    </>
   );
 }
 
 export default function ResourcesAdminPage() {
   return (
-    <AdminGuard>
-      <ResourcesAdmin />
-    </AdminGuard>
+    <ResourcesAdmin />
   );
 }

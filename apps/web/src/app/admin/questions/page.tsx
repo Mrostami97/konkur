@@ -69,7 +69,7 @@ function QuestionList() {
 
   return (
     <Card padded={false}>
-      <div style={{ padding: "var(--sp-4)", borderBottom: "1px solid var(--line-soft)" }}>
+      <div className="ds-card-head">
         <form
           className="ds-row"
           onSubmit={(event) => {
