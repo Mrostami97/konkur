@@ -704,3 +704,23 @@
 
 .ds-funnel-step { display: inline-flex; align-items: center; gap: var(--sp-2); }
 .ds-funnel-step strong { font-size: var(--text-md); color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* A bordered block inside a card -- one row of a list that can expand. */
+.ds-panel { padding: var(--sp-5); border: 1px solid var(--line-soft); border-radius: var(--radius-lg); background: var(--surface); }
+
+/* Disclosure whose contents are fetched on first open, so the summary must
+   look interactive even before anything is loaded. */
+.ds-details { border: 1px solid var(--line-soft); border-radius: var(--radius-md); background: var(--surface-sunken); }
+.ds-details > summary { padding: var(--sp-3) var(--sp-4); cursor: pointer; font-size: var(--text-base); font-weight: var(--weight-medium); color: var(--ink); list-style: none; }
+.ds-details > summary::-webkit-details-marker { display: none; }
+.ds-details > summary::before { content: "▸"; display: inline-block; margin-inline-end: var(--sp-2); color: var(--muted); transition: transform var(--motion-fast) var(--ease); }
+.ds-details[open] > summary::before { transform: rotate(-90deg); }
+.ds-details > summary:hover { color: var(--teal-dark); }
+.ds-details-body { padding: 0 var(--sp-4) var(--sp-4); display: grid; gap: var(--sp-3); }
+
+/* One authored content block: type selector, body, remove. */
+.ds-block-row { display: flex; align-items: flex-start; gap: var(--sp-3); }
+@media (max-width: 720px) { .ds-block-row { flex-wrap: wrap; } }
+
+.ds-plain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+.ds-plain-list li { padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-sm); background: var(--surface); font-size: var(--text-base); color: var(--ink); }

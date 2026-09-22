@@ -1,120 +1,29 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { AdminGuard } from "../../../components/AdminGuard";
 import { apiFetch } from "../../../lib/api";
+import { toPersianDigits } from "../../../lib/format";
+import {
+  AdminPageHeader,
+  Alert,
+  Badge,
+  Button,
+  Card,
+  ConfirmDialog,
+  DataState,
+  Field,
+  FieldRow,
+  Input,
+  Select,
+  Textarea,
+} from "../../../components/ds";
 
 interface Course {
   id: string;
   slug: string;
   title: string;
   isPublished: boolean;
-}
-
-function ModuleForm({ courseId, onAdded }: { courseId: string; onAdded: () => void }) {
-  const [title, setTitle] = useState("");
-
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    await apiFetch(`/admin/courses/${courseId}/modules`, {
-      method: "POST",
-      body: { title, order: 1 },
-    });
-    setTitle("");
-    onAdded();
-  }
-
-  return (
-    <form onSubmit={submit} style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
-      <input
-        placeholder="عنوان سرفصل جدید"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
-      <button type="submit">افزودن سرفصل</button>
-    </form>
-  );
-}
-
-function LessonForm({ moduleId, onAdded }: { moduleId: string; onAdded: () => void }) {
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    await apiFetch(`/admin/modules/${moduleId}/lessons`, {
-      method: "POST",
-      body: { title, order: 1, contentBlocks: [{ type: "text", text }] },
-    });
-    setTitle("");
-    setText("");
-    onAdded();
-  }
-
-  return (
-    <form onSubmit={submit} style={{ display: "flex", gap: "0.5rem", marginTop: "0.3rem" }}>
-      <input placeholder="عنوان درس" value={title} onChange={(e) => setTitle(e.target.value)} required />
-      <input placeholder="متن درس" value={text} onChange={(e) => setText(e.target.value)} required />
-      <button type="submit">افزودن درس</button>
-    </form>
-  );
-}
-
-function CoursesAdmin() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [slug, setSlug] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [expanded, setExpanded] = useState<string | null>(null);
-
-  async function load() {
-    setCourses(await apiFetch<Course[]>("/admin/courses"));
-  }
-
-  useEffect(() => {
-    load().catch(() => {});
-  }, []);
-
-  async function createCourse(e: FormEvent) {
-    e.preventDefault();
-    await apiFetch("/admin/courses", { method: "POST", body: { slug, title, description } });
-    setSlug("");
-    setTitle("");
-    setDescription("");
-    await load();
-  }
-
-  async function publish(id: string) {
-    await apiFetch(`/admin/courses/${id}/publish`, { method: "POST" });
-    await load();
-  }
-
-  return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>مدیریت دوره‌ها</h1>
-
-      <h2>دوره جدید</h2>
-      <form onSubmit={createCourse}>
-        <input placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        <input placeholder="عنوان" value={title} onChange={(e) => setTitle(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        <textarea placeholder="توضیحات" value={description} onChange={(e) => setDescription(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        <button type="submit">ایجاد دوره</button>
-      </form>
-
-      <h2>همه دوره‌ها</h2>
-      {courses.map((c) => (
-        <div key={c.id} style={{ border: "1px solid #D7E2EA", borderRadius: 6, padding: "0.8rem", marginBottom: "0.8rem" }}>
-          <strong>{c.title}</strong> — {c.isPublished ? "منتشرشده" : "پیش‌نویس"}
-          {!c.isPublished && <button onClick={() => publish(c.id)} style={{ marginInlineStart: "0.5rem" }}>انتشار</button>}
-          <button onClick={() => setExpanded(expanded === c.id ? null : c.id)} style={{ marginInlineStart: "0.5rem" }}>
-            {expanded === c.id ? "بستن" : "مدیریت سرفصل‌ها"}
-          </button>
-          {expanded === c.id && <CourseModulesEditor courseId={c.id} />}
-        </div>
-      ))}
-    </main>
-  );
+  modules?: ModuleWithLessons[];
 }
 
 interface ModuleWithLessons {
@@ -123,40 +32,318 @@ interface ModuleWithLessons {
   lessons: { id: string; title: string }[];
 }
 
-function CourseModulesEditor({ courseId }: { courseId: string }) {
-  const [modules, setModules] = useState<ModuleWithLessons[]>([]);
+/** Only the block types that can be authored from text alone. image, video
+ * and chart carry an asset reference, and the panel has no media upload, so
+ * offering them here would produce blocks that render as "media not found". */
+const BLOCK_TYPES = [
+  { value: "text", label: "پاراگراف" },
+  { value: "heading", label: "عنوان" },
+  { value: "quote", label: "نقل‌قول" },
+  { value: "latex", label: "فرمول (LaTeX)" },
+] as const;
 
-  const reload = useCallback(async () => {
-    const list = await apiFetch<{ id: string; modules: ModuleWithLessons[] }[]>("/admin/courses");
-    setModules(list.find((c) => c.id === courseId)?.modules ?? []);
-  }, [courseId]);
+type BlockType = (typeof BLOCK_TYPES)[number]["value"];
+interface DraftBlock { id: number; type: BlockType; value: string }
 
-  useEffect(() => {
-    reload().catch(() => {});
-  }, [reload]);
+let blockId = 0;
+const newBlock = (): DraftBlock => ({ id: (blockId += 1), type: "text", value: "" });
+
+function toContentBlock(block: DraftBlock) {
+  if (block.type === "heading") return { type: "heading", level: 2, text: block.value };
+  if (block.type === "quote") return { type: "quote", text: block.value };
+  if (block.type === "latex") return { type: "latex", latex: block.value };
+  return { type: "text", text: block.value };
+}
+
+function LessonForm({ moduleId, onAdded }: { moduleId: string; onAdded: () => void }) {
+  const [title, setTitle] = useState("");
+  const [blocks, setBlocks] = useState<DraftBlock[]>([newBlock()]);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    const filled = blocks.filter((block) => block.value.trim().length > 0);
+    if (filled.length === 0) {
+      setError("درس باید دست‌کم یک بلوک با محتوا داشته باشد.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await apiFetch(`/admin/modules/${moduleId}/lessons`, {
+        method: "POST",
+        body: { title, order: 1, contentBlocks: filled.map(toContentBlock) },
+      });
+      setTitle("");
+      setBlocks([newBlock()]);
+      onAdded();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "افزودن درس ناموفق بود.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
-    <div style={{ marginTop: "0.6rem", paddingInlineStart: "1rem" }}>
-      {modules.map((mod) => (
-        <div key={mod.id} style={{ marginBottom: "0.6rem" }}>
-          <strong>{mod.title}</strong>
-          <ul>
-            {mod.lessons.map((lesson) => (
-              <li key={lesson.id}>{lesson.title}</li>
-            ))}
-          </ul>
-          <LessonForm moduleId={mod.id} onAdded={reload} />
+    <form onSubmit={submit} className="ds-form">
+      <Field label="عنوان درس" required>
+        {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} required />}
+      </Field>
+
+      <div>
+        <span className="ds-label">محتوای درس</span>
+        <div className="ds-stack-sm">
+          {blocks.map((block, index) => (
+            <div className="ds-block-row" key={block.id}>
+              <div style={{ width: "10rem" }}>
+                <Select
+                  value={block.type}
+                  aria-label={`نوع بلوک ${toPersianDigits(index + 1)}`}
+                  onChange={(event) =>
+                    setBlocks(blocks.map((item) => (item.id === block.id ? { ...item, type: event.target.value as BlockType } : item)))
+                  }
+                >
+                  {BLOCK_TYPES.map((type) => (
+                    <option key={type.value} value={type.value}>{type.label}</option>
+                  ))}
+                </Select>
+              </div>
+              <div className="ds-grow">
+                <Textarea
+                  value={block.value}
+                  aria-label={`متن بلوک ${toPersianDigits(index + 1)}`}
+                  onChange={(event) =>
+                    setBlocks(blocks.map((item) => (item.id === block.id ? { ...item, value: event.target.value } : item)))
+                  }
+                />
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                type="button"
+                aria-label="حذف بلوک"
+                disabled={blocks.length === 1}
+                onClick={() => setBlocks(blocks.filter((item) => item.id !== block.id))}
+              >
+                حذف
+              </Button>
+            </div>
+          ))}
         </div>
+        <p className="ds-hint">
+          تصویر، ویدئو و نمودار از این فرم ساخته نمی‌شوند چون به فایل رسانه نیاز دارند و پنل هنوز
+          آپلود رسانه ندارد؛ این بلوک‌ها فقط از مسیر ورود دادهٔ zip وارد می‌شوند.
+        </p>
+        <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock()])}>
+          افزودن بلوک
+        </Button>
+      </div>
+
+      {error && <Alert tone="danger">{error}</Alert>}
+      <div><Button type="submit" variant="primary" loading={busy}>افزودن درس</Button></div>
+    </form>
+  );
+}
+
+function ModuleForm({ courseId, nextOrder, onAdded }: { courseId: string; nextOrder: number; onAdded: () => void }) {
+  const [title, setTitle] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await apiFetch(`/admin/courses/${courseId}/modules`, { method: "POST", body: { title, order: nextOrder } });
+      setTitle("");
+      onAdded();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "افزودن سرفصل ناموفق بود.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="ds-form">
+      <Field label="عنوان سرفصل تازه" required>
+        {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} required />}
+      </Field>
+      {error && <Alert tone="danger">{error}</Alert>}
+      <div><Button type="submit" loading={busy}>افزودن سرفصل</Button></div>
+    </form>
+  );
+}
+
+function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => void }) {
+  const modules = course.modules ?? [];
+  return (
+    <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
+      {modules.map((module) => (
+        <details className="ds-details" key={module.id}>
+          <summary>
+            {module.title} — {toPersianDigits(module.lessons.length)} درس
+          </summary>
+          <div className="ds-details-body">
+            {module.lessons.length > 0 && (
+              <ul className="ds-plain-list">
+                {module.lessons.map((lesson) => <li key={lesson.id}>{lesson.title}</li>)}
+              </ul>
+            )}
+            <LessonForm moduleId={module.id} onAdded={onChanged} />
+          </div>
+        </details>
       ))}
-      <ModuleForm courseId={courseId} onAdded={reload} />
+      <ModuleForm courseId={course.id} nextOrder={modules.length + 1} onAdded={onChanged} />
     </div>
   );
 }
 
 export default function CoursesAdminPage() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [slug, setSlug] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [publishTarget, setPublishTarget] = useState<Course | null>(null);
+  const [publishing, setPublishing] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setCourses(await apiFetch<Course[]>("/admin/courses"));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "خواندن فهرست دوره‌ها ممکن نشد.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  async function createCourse(event: FormEvent) {
+    event.preventDefault();
+    setCreating(true);
+    setCreateError(null);
+    try {
+      await apiFetch("/admin/courses", { method: "POST", body: { slug, title, description } });
+      setSlug("");
+      setTitle("");
+      setDescription("");
+      await load();
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : "ساخت دوره ناموفق بود.");
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function publish() {
+    if (!publishTarget) return;
+    setPublishing(true);
+    try {
+      await apiFetch(`/admin/courses/${publishTarget.id}/publish`, { method: "POST" });
+      setPublishTarget(null);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "انتشار دوره ناموفق بود.");
+      setPublishTarget(null);
+    } finally {
+      setPublishing(false);
+    }
+  }
+
   return (
-    <AdminGuard>
-      <CoursesAdmin />
-    </AdminGuard>
+    <>
+      <AdminPageHeader
+        title="دوره‌ها"
+        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. ویرایش و حذف پس از ساخت هنوز از پنل ممکن نیست."
+      />
+
+      <div className="ds-stack-lg">
+        <Card>
+          <h2 className="ds-card-title">دورهٔ تازه</h2>
+          <form onSubmit={createCourse} className="ds-form">
+            <FieldRow>
+              <Field label="نشانی یکتا (slug)" hint="در نشانی صفحهٔ دوره استفاده می‌شود؛ لاتین و بدون فاصله" required>
+                {(props) => <Input {...props} value={slug} onChange={(event) => setSlug(event.target.value)} required />}
+              </Field>
+              <Field label="عنوان دوره" required>
+                {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} required />}
+              </Field>
+            </FieldRow>
+            <Field label="توضیح" hint="در فهرست عمومی دوره‌ها دیده می‌شود" required>
+              {(props) => <Textarea {...props} value={description} onChange={(event) => setDescription(event.target.value)} required />}
+            </Field>
+            {createError && <Alert tone="danger">{createError}</Alert>}
+            <div><Button type="submit" variant="primary" loading={creating}>ساخت دوره</Button></div>
+          </form>
+        </Card>
+
+        <Card padded={false}>
+          <div className="ds-card-head"><h2 className="ds-card-title">همهٔ دوره‌ها</h2></div>
+          <div className="ds-card-body">
+            <DataState
+              loading={loading}
+              error={error}
+              isEmpty={courses.length === 0}
+              onRetry={load}
+              emptyTitle="هنوز دوره‌ای ساخته نشده"
+              emptyDescription="با فرم بالا اولین دوره را بسازید."
+            >
+              <div className="ds-stack">
+                {courses.map((course) => (
+                  <div className="ds-panel" key={course.id}>
+                    <div className="ds-row-between">
+                      <div>
+                        <strong>{course.title}</strong>
+                        <div className="ds-row" style={{ marginTop: "var(--sp-2)" }}>
+                          <Badge tone={course.isPublished ? "success" : "neutral"}>
+                            {course.isPublished ? "منتشرشده" : "پیش‌نویس"}
+                          </Badge>
+                          <span className="ds-hint" style={{ margin: 0 }}>
+                            {toPersianDigits(course.modules?.length ?? 0)} سرفصل
+                          </span>
+                        </div>
+                      </div>
+                      <div className="ds-row">
+                        {!course.isPublished && (
+                          <Button size="sm" variant="primary" onClick={() => setPublishTarget(course)}>انتشار</Button>
+                        )}
+                        <Button size="sm" onClick={() => setExpanded(expanded === course.id ? null : course.id)}>
+                          {expanded === course.id ? "بستن" : "سرفصل‌ها و درس‌ها"}
+                        </Button>
+                      </div>
+                    </div>
+                    {expanded === course.id && <CourseEditor course={course} onChanged={load} />}
+                  </div>
+                ))}
+              </div>
+            </DataState>
+          </div>
+        </Card>
+      </div>
+
+      <ConfirmDialog
+        open={publishTarget !== null}
+        title={`انتشار «${publishTarget?.title ?? ""}»؟`}
+        description="پس از انتشار، دوره در فهرست عمومی دیده می‌شود و لغو انتشار از پنل ممکن نیست."
+        confirmLabel="منتشر کن"
+        busy={publishing}
+        onConfirm={publish}
+        onCancel={() => setPublishTarget(null)}
+      />
+    </>
   );
 }

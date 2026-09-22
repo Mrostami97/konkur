@@ -1,8 +1,23 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-import { AdminGuard } from "../../../components/AdminGuard";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
+import { toPersianDigits } from "../../../lib/format";
+import {
+  AdminPageHeader,
+  Alert,
+  Badge,
+  Button,
+  Card,
+  ConfirmDialog,
+  DataState,
+  Field,
+  FieldRow,
+  Input,
+  Select,
+  TableWrap,
+  Textarea,
+} from "../../../components/ds";
 
 interface Exam {
   id: string;
@@ -13,57 +28,154 @@ interface Exam {
   forms: { _count: { items: number } }[];
 }
 
-function ExamItemForm({ examId, onAdded }: { examId: string; onAdded: () => void }) {
-  const [questionId, setQuestionId] = useState("");
-  const [order, setOrder] = useState("0");
+interface QuestionRow {
+  id: string;
+  externalId: string;
+  subjectCode: string;
+  examMajor: string;
+  examYear: number;
+}
 
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    await apiFetch(`/admin/exams/${examId}/items`, {
-      method: "POST",
-      body: { questionId, order: Number(order) },
-    });
-    setQuestionId("");
-    onAdded();
+interface Psychometrics {
+  attemptCount: number;
+  items: { questionId: string; difficulty: number; discrimination: number; sampleSize: number }[];
+}
+
+/**
+ * Before this existed the only way to add a question was to paste its raw
+ * UUID, and nothing in the panel listed those ids — so the exam builder was
+ * effectively unusable. This searches the public question endpoint, which
+ * already supports subject and free-text filters.
+ */
+function QuestionPicker({ examId, onAdded }: { examId: string; onAdded: () => void }) {
+  const [subjectCode, setSubjectCode] = useState("");
+  const [query, setQuery] = useState("");
+  const [rows, setRows] = useState<QuestionRow[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [addingId, setAddingId] = useState<string | null>(null);
+
+  async function search(event: FormEvent) {
+    event.preventDefault();
+    setSearching(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ pageSize: "10" });
+      if (subjectCode) params.set("subjectCode", subjectCode);
+      if (query) params.set("q", query);
+      const data = await apiFetch<{ items: QuestionRow[] }>(`/questions?${params}`);
+      setRows(data.items);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "جست‌وجوی سؤال ممکن نشد.");
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  async function add(questionId: string) {
+    setAddingId(questionId);
+    setError(null);
+    try {
+      await apiFetch(`/admin/exams/${examId}/items`, { method: "POST", body: { questionId, order: 0 } });
+      onAdded();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "افزودن سؤال ناموفق بود.");
+    } finally {
+      setAddingId(null);
+    }
   }
 
   return (
-    <form onSubmit={submit} style={{ display: "flex", gap: "0.5rem", marginTop: "0.4rem" }}>
-      <input placeholder="questionId" value={questionId} onChange={(e) => setQuestionId(e.target.value)} required />
-      <input placeholder="ترتیب" value={order} onChange={(e) => setOrder(e.target.value)} style={{ width: "4rem" }} />
-      <button type="submit">افزودن سؤال</button>
-    </form>
+    <div className="ds-stack">
+      <form onSubmit={search} className="ds-row">
+        <div style={{ width: "10rem" }}>
+          <Input placeholder="کد درس" value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} aria-label="کد درس" />
+        </div>
+        <div className="ds-grow" style={{ minWidth: "10rem" }}>
+          <Input placeholder="جست‌وجو در کد درس، گرایش یا مبحث" value={query} onChange={(event) => setQuery(event.target.value)} aria-label="جست‌وجو" />
+        </div>
+        <Button type="submit" loading={searching}>جست‌وجو</Button>
+      </form>
+
+      {error && <Alert tone="danger">{error}</Alert>}
+
+      {rows.length > 0 && (
+        <TableWrap>
+          <thead><tr><th>شناسه بیرونی</th><th>درس</th><th>سال</th><th /></tr></thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.id}>
+                <td className="ds-code">{row.externalId}</td>
+                <td>{row.subjectCode}</td>
+                <td className="ds-table-numeric">{toPersianDigits(row.examYear)}</td>
+                <td>
+                  <Button size="sm" variant="primary" loading={addingId === row.id} onClick={() => add(row.id)}>
+                    افزودن
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </TableWrap>
+      )}
+    </div>
   );
 }
 
-function Psychometrics({ examId }: { examId: string }) {
-  const [data, setData] = useState<any>(null);
+function PsychometricsPanel({ examId }: { examId: string }) {
+  const [data, setData] = useState<Psychometrics | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
-    setData(await apiFetch(`/admin/exams/${examId}/psychometrics`));
+    if (data || loading) return;
+    setLoading(true);
+    setError(null);
+    try {
+      setData(await apiFetch<Psychometrics>(`/admin/exams/${examId}/psychometrics`));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "خواندن روان‌سنجی ممکن نشد.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <details style={{ marginTop: "0.4rem" }}>
-      <summary onClick={load}>روان‌سنجی</summary>
-      {data && (
-        <div style={{ fontSize: "0.85rem" }}>
-          <p>تعداد آزمون‌های ثبت‌شده: {data.attemptCount}</p>
-          <ul>
-            {data.items.map((item: any) => (
-              <li key={item.questionId}>
-                {item.questionId.slice(0, 8)}… — دشواری: {item.difficulty.toFixed(2)} — تمایز: {item.discrimination.toFixed(2)} (n={item.sampleSize})
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+    <details className="ds-details" onToggle={(event) => { if ((event.target as HTMLDetailsElement).open) void load(); }}>
+      <summary>روان‌سنجی سؤال‌ها</summary>
+      <div className="ds-details-body">
+        {loading && <p className="ds-subtitle">در حال خواندن…</p>}
+        {error && <Alert tone="danger">{error}</Alert>}
+        {data && (data.items.length === 0 ? (
+          <p className="ds-subtitle">هنوز تلاشی روی این آزمون ثبت نشده، پس آماری محاسبه نشده است.</p>
+        ) : (
+          <>
+            <p className="ds-subtitle">تلاش ثبت‌شده: {toPersianDigits(data.attemptCount)}</p>
+            <TableWrap>
+              <thead><tr><th>سؤال</th><th>دشواری</th><th>تمایز</th><th>نمونه</th></tr></thead>
+              <tbody>
+                {data.items.map((item) => (
+                  <tr key={item.questionId}>
+                    <td className="ds-code">{item.questionId.slice(0, 8)}…</td>
+                    <td className="ds-table-numeric">{toPersianDigits(item.difficulty.toFixed(2))}</td>
+                    <td className="ds-table-numeric">{toPersianDigits(item.discrimination.toFixed(2))}</td>
+                    <td className="ds-table-numeric">{toPersianDigits(item.sampleSize)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </TableWrap>
+          </>
+        ))}
+      </div>
     </details>
   );
 }
 
-function ExamsAdmin() {
+export default function ExamsAdminPage() {
   const [exams, setExams] = useState<Exam[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [slug, setSlug] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -71,87 +183,189 @@ function ExamsAdmin() {
   const [durationMinutes, setDurationMinutes] = useState("30");
   const [subjectCode, setSubjectCode] = useState("");
   const [questionCount, setQuestionCount] = useState("5");
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [publishTarget, setPublishTarget] = useState<Exam | null>(null);
+  const [publishing, setPublishing] = useState(false);
 
-  async function load() {
-    setExams(await apiFetch<Exam[]>("/admin/exams"));
-  }
-
-  useEffect(() => {
-    load().catch(() => {});
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setExams(await apiFetch<Exam[]>("/admin/exams"));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "خواندن فهرست آزمون‌ها ممکن نشد.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  async function createExam(e: FormEvent) {
-    e.preventDefault();
-    await apiFetch("/admin/exams", {
-      method: "POST",
-      body: {
-        slug,
-        title,
-        description,
-        mode,
-        durationMinutes: Number(durationMinutes),
-        ...(mode === "DYNAMIC" ? { subjectCode, questionCount: Number(questionCount) } : {}),
-      },
-    });
-    setSlug("");
-    setTitle("");
-    setDescription("");
-    await load();
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  async function createExam(event: FormEvent) {
+    event.preventDefault();
+    setCreating(true);
+    setCreateError(null);
+    try {
+      await apiFetch("/admin/exams", {
+        method: "POST",
+        body: {
+          slug,
+          title,
+          description,
+          mode,
+          durationMinutes: Number(durationMinutes),
+          ...(mode === "DYNAMIC" ? { subjectCode, questionCount: Number(questionCount) } : {}),
+        },
+      });
+      setSlug("");
+      setTitle("");
+      setDescription("");
+      await load();
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : "ساخت آزمون ناموفق بود.");
+    } finally {
+      setCreating(false);
+    }
   }
 
-  async function publish(id: string) {
-    await apiFetch(`/admin/exams/${id}/publish`, { method: "POST" });
-    await load();
+  async function publish() {
+    if (!publishTarget) return;
+    setPublishing(true);
+    try {
+      await apiFetch(`/admin/exams/${publishTarget.id}/publish`, { method: "POST" });
+      setPublishTarget(null);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "انتشار آزمون ناموفق بود.");
+      setPublishTarget(null);
+    } finally {
+      setPublishing(false);
+    }
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>مدیریت آزمون‌ها</h1>
+    <>
+      <AdminPageHeader
+        title="آزمون‌ها"
+        description="آزمون ثابت سؤال‌هایش را دستی می‌گیرد؛ آزمون پویا در لحظهٔ شروع از بانک همان درس سؤال برمی‌دارد."
+      />
 
-      <h2>آزمون جدید</h2>
-      <form onSubmit={createExam}>
-        <input placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        <input placeholder="عنوان" value={title} onChange={(e) => setTitle(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        <textarea placeholder="توضیحات" value={description} onChange={(e) => setDescription(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        <select value={mode} onChange={(e) => setMode(e.target.value as "STATIC" | "DYNAMIC")} style={{ display: "block", marginBottom: "0.4rem" }}>
-          <option value="STATIC">ثابت (سؤالات دستی)</option>
-          <option value="DYNAMIC">پویا (تصادفی از یک درس)</option>
-        </select>
-        <input placeholder="مدت (دقیقه)" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-        {mode === "DYNAMIC" && (
-          <>
-            <input placeholder="subject_code" value={subjectCode} onChange={(e) => setSubjectCode(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-            <input placeholder="تعداد سؤال" value={questionCount} onChange={(e) => setQuestionCount(e.target.value)} required style={{ display: "block", width: "100%", padding: "0.4rem", marginBottom: "0.4rem" }} />
-          </>
-        )}
-        <button type="submit">ایجاد آزمون</button>
-      </form>
+      <div className="ds-stack-lg">
+        <Card>
+          <h2 className="ds-card-title">آزمون تازه</h2>
+          <form onSubmit={createExam} className="ds-form">
+            <FieldRow>
+              <Field label="نشانی یکتا (slug)" hint="در نشانی صفحهٔ آزمون استفاده می‌شود؛ لاتین و بدون فاصله" required>
+                {(props) => <Input {...props} value={slug} onChange={(event) => setSlug(event.target.value)} required />}
+              </Field>
+              <Field label="عنوان آزمون" required>
+                {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} required />}
+              </Field>
+            </FieldRow>
 
-      <h2>همه آزمون‌ها</h2>
-      {exams.map((exam) => (
-        <div key={exam.id} style={{ border: "1px solid #D7E2EA", borderRadius: 6, padding: "0.8rem", marginBottom: "0.8rem" }}>
-          <strong>{exam.title}</strong> — {exam.mode} — {exam.isPublished ? "منتشرشده" : "پیش‌نویس"}
-          {!exam.isPublished && <button onClick={() => publish(exam.id)} style={{ marginInlineStart: "0.5rem" }}>انتشار</button>}
-          <button onClick={() => setExpanded(expanded === exam.id ? null : exam.id)} style={{ marginInlineStart: "0.5rem" }}>
-            {expanded === exam.id ? "بستن" : "مدیریت"}
-          </button>
-          {expanded === exam.id && (
-            <div>
-              {exam.mode === "STATIC" && <ExamItemForm examId={exam.id} onAdded={load} />}
-              <Psychometrics examId={exam.id} />
-            </div>
-          )}
-        </div>
-      ))}
-    </main>
-  );
-}
+            <Field label="توضیح" hint="در فهرست عمومی آزمون‌ها دیده می‌شود" required>
+              {(props) => <Textarea {...props} value={description} onChange={(event) => setDescription(event.target.value)} required />}
+            </Field>
 
-export default function ExamsAdminPage() {
-  return (
-    <AdminGuard>
-      <ExamsAdmin />
-    </AdminGuard>
+            <FieldRow>
+              <Field label="نوع آزمون" required>
+                {(props) => (
+                  <Select {...props} value={mode} onChange={(event) => setMode(event.target.value as "STATIC" | "DYNAMIC")}>
+                    <option value="STATIC">ثابت — سؤال‌ها را خودتان انتخاب می‌کنید</option>
+                    <option value="DYNAMIC">پویا — از بانک یک درس سؤال برمی‌دارد</option>
+                  </Select>
+                )}
+              </Field>
+              <Field label="مدت (دقیقه)" required>
+                {(props) => (
+                  <Input {...props} value={durationMinutes} onChange={(event) => setDurationMinutes(event.target.value)} inputMode="numeric" required />
+                )}
+              </Field>
+            </FieldRow>
+
+            {mode === "DYNAMIC" && (
+              <FieldRow>
+                <Field label="کد درس" hint="بانک همین درس مبنای انتخاب سؤال است" required>
+                  {(props) => <Input {...props} value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} required />}
+                </Field>
+                <Field label="تعداد سؤال" hint="اگر بانک به این تعداد سؤال منتشرشده نداشته باشد، شروع آزمون خطا می‌دهد" required>
+                  {(props) => (
+                    <Input {...props} value={questionCount} onChange={(event) => setQuestionCount(event.target.value)} inputMode="numeric" required />
+                  )}
+                </Field>
+              </FieldRow>
+            )}
+
+            {createError && <Alert tone="danger">{createError}</Alert>}
+            <div><Button type="submit" variant="primary" loading={creating}>ساخت آزمون</Button></div>
+          </form>
+        </Card>
+
+        <Card padded={false}>
+          <div className="ds-card-head"><h2 className="ds-card-title">همهٔ آزمون‌ها</h2></div>
+          <div className="ds-card-body">
+            <DataState
+              loading={loading}
+              error={error}
+              isEmpty={exams.length === 0}
+              onRetry={load}
+              emptyTitle="هنوز آزمونی ساخته نشده"
+              emptyDescription="با فرم بالا اولین آزمون را بسازید."
+            >
+              <div className="ds-stack">
+                {exams.map((exam) => (
+                  <div className="ds-panel" key={exam.id}>
+                    <div className="ds-row-between">
+                      <div>
+                        <strong>{exam.title}</strong>
+                        <div className="ds-row" style={{ marginTop: "var(--sp-2)" }}>
+                          <Badge tone={exam.isPublished ? "success" : "neutral"}>
+                            {exam.isPublished ? "منتشرشده" : "پیش‌نویس"}
+                          </Badge>
+                          <Badge tone="info">{exam.mode === "STATIC" ? "ثابت" : "پویا"}</Badge>
+                          <span className="ds-hint" style={{ margin: 0 }}>
+                            {toPersianDigits(exam.forms?.[0]?._count?.items ?? 0)} سؤال
+                          </span>
+                        </div>
+                      </div>
+                      <div className="ds-row">
+                        {!exam.isPublished && (
+                          <Button size="sm" variant="primary" onClick={() => setPublishTarget(exam)}>انتشار</Button>
+                        )}
+                        <Button size="sm" onClick={() => setExpanded(expanded === exam.id ? null : exam.id)}>
+                          {expanded === exam.id ? "بستن" : "مدیریت"}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {expanded === exam.id && (
+                      <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
+                        {exam.mode === "STATIC" && <QuestionPicker examId={exam.id} onAdded={load} />}
+                        <PsychometricsPanel examId={exam.id} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </DataState>
+          </div>
+        </Card>
+      </div>
+
+      <ConfirmDialog
+        open={publishTarget !== null}
+        title={`انتشار «${publishTarget?.title ?? ""}»؟`}
+        description="پس از انتشار، آزمون برای کاربران قابل شروع می‌شود و این کار از پنل برگشت‌پذیر نیست."
+        confirmLabel="منتشر کن"
+        busy={publishing}
+        onConfirm={publish}
+        onCancel={() => setPublishTarget(null)}
+      />
+    </>
   );
 }
