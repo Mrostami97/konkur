@@ -47,7 +47,9 @@ export default function RankEstimatePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    apiFetch<Estimate>("/me/rank-estimates/latest").then(setEstimate).catch(() => {});
+    // A first-time visitor has no previous estimate, so a failure here is
+    // the ordinary case rather than an error worth showing.
+    apiFetch<Estimate>("/me/rank-estimates/latest").then(setEstimate).catch(() => setEstimate(null));
   }, []);
 
   function updateScore(index: number, field: "subjectCode" | "percent", value: string) {
