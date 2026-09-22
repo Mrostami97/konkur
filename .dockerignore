@@ -1,0 +1,43 @@
+# Docker build context exclusions.
+#
+# Both apps/web/Dockerfile and apps/api/Dockerfile install dependencies inside
+# the image and then COPY the source on top. Without this file the host's
+# node_modules lands on that install and breaks it: a workspace node_modules
+# created on Windows has no runnable `next`, so `next build` dies with
+# MODULE_NOT_FOUND on apps/web/node_modules/next/dist/bin/next.
+#
+# It is also what keeps the context small. With node_modules and .next included
+# the context was ~784 MB, nearly all of it files no build stage reads.
+
+# Dependencies are always installed inside the image.
+node_modules
+**/node_modules
+
+# Build output is regenerated in the image; a stale copy only misleads it.
+**/.next
+**/dist
+**/*.tsbuildinfo
+
+# Version control and CI metadata.
+.git
+.gitattributes
+.github
+
+# Local environment and secrets must never be baked into an image.
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Tooling, editor and assistant state.
+.claude
+.impeccable
+.vscode
+.idea
+**/.pytest_cache
+**/__pycache__
+**/*.pyc
+
+# Documentation and binaries that no build stage reads.
+docs
+*.docx
