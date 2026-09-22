@@ -1,0 +1,47 @@
+# Line endings.
+#
+# The repository already stores LF everywhere. What this file fixes is the
+# working tree: with core.autocrlf=true (the Git for Windows default) a
+# checkout rewrites text files to CRLF, and two things then break on Windows
+# that are fine on Linux and in CI.
+#
+# 1. `scripts/generate-editorial-drafts.mjs --check` regenerates a fixture in
+#    memory with LF and compares it byte-for-byte against the file on disk.
+#    A CRLF checkout can never match, so `pnpm test` fails on Windows with a
+#    "stale fixture" error that has nothing to do with the fixture.
+#
+# 2. Shell scripts under ops/ run inside Linux containers. They are mounted
+#    from the working tree by docker-compose, not copied from the repo, so a
+#    CRLF checkout is what the container actually executes -- and a script
+#    whose shebang ends in \r fails with "bad interpreter".
+#
+# Declaring the endings here makes them a property of the repository rather
+# than of each contributor's git config.
+
+# Normalise to LF in the repository; let the platform decide the checkout for
+# anything not pinned below.
+* text=auto
+
+# Executed on Linux -- must be LF in the working tree on every platform.
+*.sh text eol=lf
+ops/** text eol=lf
+
+# Compared byte-for-byte against generator output, which emits LF.
+apps/api/src/seed-data/*.json text eol=lf
+
+# Generated and read by tooling that assumes LF.
+*.mjs text eol=lf
+*.cjs text eol=lf
+
+# Never touch these.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+*.docx binary
+*.sqlite binary
+*.exe binary
