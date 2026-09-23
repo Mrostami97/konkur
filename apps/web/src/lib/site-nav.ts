@@ -54,6 +54,7 @@ export const LEARN_MENU: NavMenu = {
       title: "تمرین",
       links: [
         { href: "/questions", label: "بانک سؤال", hint: "تست‌های کنکور به تفکیک مبحث", glyph: "list" },
+        { href: "/practice", label: "آزمون‌ساز", hint: "آزمون تمرینی از درس و مبحث دلخواه", glyph: "spark" },
         { href: "/exams", label: "آزمون‌ها", hint: "آزمون زمان‌دار با کارنامه", glyph: "target" },
       ],
     },

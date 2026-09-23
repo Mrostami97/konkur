@@ -10,6 +10,12 @@ import { StandingPanel } from "./StandingPanel";
 import "./report.css";
 
 interface Block { type: string; [key: string]: unknown }
+
+/** The konkur percentage: a wrong answer cancels a third of a right one. */
+function konkurPercent(score: { correctCount: number; wrongCount: number; unansweredCount: number }) {
+  const total = score.correctCount + score.wrongCount + score.unansweredCount;
+  return total > 0 ? ((3 * score.correctCount - score.wrongCount) / (3 * total)) * 100 : 0;
+}
 interface Option { number: number; blocks: Block[] }
 
 interface ReportItem {
@@ -26,6 +32,8 @@ interface ReportItem {
 
 interface Report {
   examTitle: string;
+  examId: string;
+  isPractice: boolean;
   status: string;
   score: {
     correctCount: number;
@@ -75,8 +83,8 @@ export default function ReportPage({ params }: { params: { id: string } }) {
               <div>
                 <div className="rp-summary">
                   <div className="rp-cell">
-                    <span>درصد صحیح</span>
-                    <strong>{toPersianDigits(report.score.percentCorrect.toFixed(1))}٪</strong>
+                    <span>درصد با نمرهٔ منفی</span>
+                    <strong>{toPersianDigits(konkurPercent(report.score).toFixed(1))}٪</strong>
                   </div>
                   <div className="rp-cell rp-cell-good">
                     <span>پاسخ صحیح</span>
@@ -92,12 +100,12 @@ export default function ReportPage({ params }: { params: { id: string } }) {
                   </div>
                 </div>
                 <p className="rp-version">
-                  نسخهٔ نمره‌دهی: <span className="ds-code">{report.score.scoreVersion}</span> — نمرهٔ خام{" "}
-                  {toPersianDigits(report.score.rawScore)}
+                  درصد بدون نمرهٔ منفی: {toPersianDigits(report.score.percentCorrect.toFixed(1))}٪ — هر پاسخ غلط یک‌سوم یک
+                  پاسخ درست را خنثی می‌کند، مثل کنکور.
                 </p>
               </div>
 
-              {report.status === "SUBMITTED" && <StandingPanel attemptId={params.id} />}
+              {report.status === "SUBMITTED" && !report.isPractice && <StandingPanel attemptId={params.id} />}
 
               <div className="ds-stack">
                 {report.items.map((item, index) => {
@@ -146,7 +154,11 @@ export default function ReportPage({ params }: { params: { id: string } }) {
 
               <div className="ds-row">
                 <Link className="ds-btn ds-btn-secondary" href="/account/exams">آزمون‌ها و رتبه‌های من</Link>
-                <Link className="ds-btn ds-btn-ghost" href="/exams">آزمون‌های دیگر</Link>
+                {report.isPractice ? (
+                  <Link className="ds-btn ds-btn-ghost" href="/practice">آزمون تمرینی تازه</Link>
+                ) : (
+                  <Link className="ds-btn ds-btn-ghost" href="/exams">آزمون‌های دیگر</Link>
+                )}
               </div>
             </div>
           )}

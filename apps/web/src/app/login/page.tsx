@@ -4,6 +4,14 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { apiFetch } from "../../lib/api";
 
+/** Where to land after signing in: a same-site path from `?next=`, never an
+ * absolute or protocol-relative URL (that would make login an open redirect). */
+function nextPath(): string {
+  if (typeof window === "undefined") return "/account";
+  const next = new URLSearchParams(window.location.search).get("next");
+  return next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : "/account";
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [method, setMethod] = useState<"otp" | "password">("otp");
@@ -34,7 +42,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await apiFetch("/auth/otp/verify", { method: "POST", body: { phone, code } });
-      router.push("/account");
+      router.push(nextPath());
     } catch (err) {
       setError(err instanceof Error ? err.message : "کد نامعتبر است");
     } finally {
@@ -48,7 +56,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await apiFetch("/auth/password/login", { method: "POST", body: { phone, password } });
-      router.push("/account");
+      router.push(nextPath());
     } catch (err) {
       setError(err instanceof Error ? err.message : "ورود با رمز عبور ناموفق بود");
     } finally {

@@ -46,6 +46,7 @@ model User {
   consultationBookings ConsultationBooking[] @relation("ConsultationStudent")
   spotPlayerLicenses   SpotPlayerLicense[]
   coachPlans           CoachPlan[]           @relation("CoachPlanStudent")
+  practiceExams        Exam[]                @relation("PracticeExams")
 
   @@map("users")
 }
@@ -1153,11 +1154,18 @@ model Exam {
   questionCount   Int?
   isPublished     Boolean    @default(false)
   createdBy       String?
+  // A practice exam a student built for themselves in the test builder. It is
+  // never listed in the catalog and only its owner may start it. The owner is
+  // nulled if the account goes, but the flag keeps it out of the admin list.
+  isPractice      Boolean    @default(false)
+  ownerUserId     String?
+  owner           User?      @relation("PracticeExams", fields: [ownerUserId], references: [id], onDelete: SetNull)
   forms           ExamForm[]
   attempts        Attempt[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
+  @@index([ownerUserId, createdAt])
   @@map("exams")
 }
 

@@ -12,6 +12,7 @@ const publicPages = [
   "/evidence",
   "/exams",
   "/instructors",
+  "/practice",
   "/source-policy",
 ] as const;
 

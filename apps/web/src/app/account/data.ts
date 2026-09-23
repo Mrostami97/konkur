@@ -58,7 +58,7 @@ export interface MyAttempt {
   startedAt: string;
   deadlineAt: string;
   submittedAt: string | null;
-  exam: { id: string; slug: string; title: string; durationMinutes: number };
+  exam: { id: string; slug: string; title: string; durationMinutes: number; isPractice?: boolean };
   score: {
     correctCount: number;
     wrongCount: number;
