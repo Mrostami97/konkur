@@ -142,6 +142,7 @@
 }
 .hd-promo::after { content: ""; position: absolute; inset-inline-start: -30%; bottom: -45%; width: 12rem; height: 12rem; border-radius: 50%; background: rgba(255,255,255,.12); }
 .hd-promo-violet { background: linear-gradient(145deg, #7c3aed, #1c5fd6); box-shadow: 0 12px 30px rgba(124, 58, 237, 0.25); }
+.hd-promo-teal { background: linear-gradient(145deg, #0e7c6b, #0f2540); box-shadow: 0 12px 30px rgba(6, 133, 115, 0.25); }
 .hd-promo-icon { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; margin-bottom: var(--sp-2); border-radius: 12px; background: rgba(255,255,255,.18); }
 .hd-promo-icon svg { width: 1.35rem; height: 1.35rem; }
 .hd-promo strong { font-size: var(--text-md); }

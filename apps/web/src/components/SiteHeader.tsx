@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { apiFetch } from "../lib/api";
 import { EXAM_DATES, daysUntil } from "../lib/exam-dates";
 import { toPersianDigits } from "../lib/format";
-import { MEGA_MENUS, SUBJECT_FAMILIES, TELEGRAM_URL, type NavMenu } from "../lib/site-nav";
+import { GUIDES_MENU as GUIDES, LEARN_MENU as LEARN, PRACTICE_MENU as PRACTICE, SUBJECT_FAMILIES, TELEGRAM_URL, TOOLS_MENU as TOOLS, type NavMenu } from "../lib/site-nav";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
 
 export interface NavSubject {
@@ -15,7 +15,6 @@ export interface NavSubject {
   title: string;
 }
 
-const [LEARN, GUIDES, TOOLS] = MEGA_MENUS;
 
 /**
  * One bar covering every area of the product, organised as mega menus: each
@@ -160,6 +159,15 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
     </Link>
   );
 
+  const practicePromo = (
+    <Link href="/practice" className="hd-promo hd-promo-teal">
+      <span className="hd-promo-icon"><Glyph name="spark" /></span>
+      <strong>آزمون خودت را بساز</strong>
+      <small>درس، مبحث و تعداد تست با تو؛ فقط ندیده‌ها یا فقط اشتباه‌هایت</small>
+      <span className="hd-promo-go">رفتن به آزمون‌ساز ←</span>
+    </Link>
+  );
+
   const countdownPromo = (
     <Link href="/guides/registration-calendar-1406" className="hd-promo hd-promo-violet">
       <span className="hd-promo-icon"><Glyph name="calendar" /></span>
@@ -242,6 +250,11 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
               </div>
               <Link href="/subjects" className="hd-panel-all">نقشهٔ همهٔ درس‌ها، ضرایب و پیش‌نیازها ←</Link>
             </div>
+          </div>
+
+          <div className="hd-menu" onMouseEnter={() => hoverOpen(PRACTICE.id)}>
+            {megaTrigger(PRACTICE)}
+            {megaPanel(PRACTICE, practicePromo)}
           </div>
 
           <Link

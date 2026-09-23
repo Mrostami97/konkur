@@ -50,12 +50,34 @@ export const LEARN_MENU: NavMenu = {
         { href: "/consultations", label: "مشاوره و رفع اشکال", hint: "تک‌جلسه‌ای یا سالیانه تا کنکور", glyph: "chat" },
       ],
     },
+  ],
+};
+
+/**
+ * Practice has its own menu: the question bank, the test builder and the
+ * timed exams are the free way into the site, and folding them under
+ * "courses" hid them behind the paid offer.
+ */
+export const PRACTICE_MENU: NavMenu = {
+  id: "practice",
+  label: "تمرین و آزمون",
+  href: "/practice",
+  allLabel: "ساختن آزمون تمرینی",
+  columns: [
     {
-      title: "تمرین",
+      title: "تمرین رایگان",
       links: [
-        { href: "/questions", label: "بانک سؤال", hint: "تست‌های کنکور به تفکیک مبحث", glyph: "list" },
+        { href: "/questions", label: "بانک سؤال", hint: "تست‌های کنکور به تفکیک درس و مبحث", glyph: "list" },
         { href: "/practice", label: "آزمون‌ساز", hint: "آزمون تمرینی از درس و مبحث دلخواه", glyph: "spark" },
-        { href: "/exams", label: "آزمون‌ها", hint: "آزمون زمان‌دار با کارنامه", glyph: "target" },
+        { href: "/subjects", label: "درس‌نامهٔ هر درس", hint: "سرفصل، پیش‌نیاز و مسیر مطالعه", glyph: "book" },
+      ],
+    },
+    {
+      title: "سنجش",
+      links: [
+        { href: "/exams", label: "آزمون‌های زمان‌دار", hint: "مثل جلسهٔ کنکور، با رتبه و تراز", glyph: "target" },
+        { href: "/account/exams", label: "کارنامه و روند من", hint: "درصدها، رتبه‌ها و مباحث ضعیف", glyph: "curve" },
+        { href: "/rank-estimate", label: "تخمین رتبه", hint: "از درصدها به بازهٔ رتبه", glyph: "compass" },
       ],
     },
   ],
@@ -124,7 +146,7 @@ export const TOOLS_MENU: NavMenu = {
   ],
 };
 
-export const MEGA_MENUS: NavMenu[] = [LEARN_MENU, GUIDES_MENU, TOOLS_MENU];
+export const MEGA_MENUS: NavMenu[] = [LEARN_MENU, PRACTICE_MENU, GUIDES_MENU, TOOLS_MENU];
 
 /** Subject families, in the order the header lists them. */
 export const SUBJECT_FAMILIES: { tone: "violet" | "teal" | "blue" | "rose" | "amber"; title: string }[] = [

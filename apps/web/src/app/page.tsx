@@ -139,7 +139,7 @@ function coursePrice(course: Course, products: Product[]) {
 // --- page ------------------------------------------------------------------------
 
 export default async function HomePage() {
-  const [achievements, summary, courses, products, videos, offerings, published] = await Promise.all([
+  const [achievements, summary, courses, products, videos, offerings, published, bank, exams] = await Promise.all([
     safe<Achievement[]>("/achievements?limit=40"),
     safe<AchievementSummary>("/achievements/summary"),
     safe<Course[]>("/courses"),
@@ -147,7 +147,12 @@ export default async function HomePage() {
     safe<FreeVideo[]>("/resources?kind=VIDEO"),
     safe<ConsultationOffering[]>("/consultations"),
     safe<PublicArticleRecord[]>("/articles"),
+    // Only the total is read: the bank's size, not its questions.
+    safe<{ total: number }>("/questions?pageSize=1"),
+    safe<{ id: string }[]>("/exams"),
   ]);
+  const bankSize = bank?.total ?? 0;
+  const examCount = exams?.length ?? 0;
 
   const results = achievements ?? [];
   const featured = results.filter((row) => row.isFeatured).slice(0, 3);
@@ -526,6 +531,85 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* ----------------------------------------------------------- practice */}
+      <section className="h-sec h-practice" id="practice">
+        <div className="h-wrap">
+          <header className="h-head h-head-row">
+            <div>
+              <p className="h-kicker">
+                <span className="h-free-badge">رایگان</span> تمرین و سنجش
+              </p>
+              <h2>با تست کنکور تمرین کن، نه فقط با خواندن</h2>
+              <p>
+                نمونه‌تست‌های هر درس برای همه باز است؛ با آزمون‌ساز از همان‌ها آزمون زمان‌دار بساز و در کارنامه ببین
+                کدام مبحث تمرین بیشتری می‌خواهد.
+              </p>
+            </div>
+            <Link href="/questions" className="h-link">
+              بانک سؤال ←
+            </Link>
+          </header>
+          <div className="h-practice-grid">
+            <Link href="/practice" className="h-builder">
+              <span className="h-builder-tag">آزمون‌ساز</span>
+              <h3>آزمون تمرینی خودت را بساز</h3>
+              <p>درس و مبحث را انتخاب کن، تعداد تست و زمان را تعیین کن؛ یا فقط سؤال‌هایی را بزن که قبلاً اشتباه زده‌ای.</p>
+              <div className="h-builder-mock" aria-hidden="true">
+                <div className="h-builder-row">
+                  <span className="is-on">ساختمان داده</span>
+                  <span>گسسته</span>
+                  <span>سیستم‌عامل</span>
+                </div>
+                <div className="h-builder-row">
+                  <span className="is-on">فقط اشتباه‌ها</span>
+                  <span>۲۰ تست</span>
+                  <span>۳۰ دقیقه</span>
+                </div>
+              </div>
+              <span className="h-builder-go">ساختن آزمون ←</span>
+            </Link>
+            <div className="h-practice-cards">
+              <Link href="/questions" className="h-pcard">
+                <span className="h-pcard-icon h-t-blue"><Glyph name="list" /></span>
+                <span>
+                  <b>بانک سؤال کنکور</b>
+                  <small>
+                    {bankSize > 0
+                      ? `${toPersianDigits(bankSize.toLocaleString("en-US"))} تست به تفکیک درس، مبحث و سال`
+                      : "تست‌های کنکور به تفکیک درس، مبحث و سال"}
+                  </small>
+                </span>
+              </Link>
+              <Link href="/exams" className="h-pcard">
+                <span className="h-pcard-icon h-t-violet"><Glyph name="target" /></span>
+                <span>
+                  <b>آزمون‌های زمان‌دار</b>
+                  <small>
+                    {examCount > 0
+                      ? `${toPersianDigits(examCount)} آزمون با رتبه، تراز و کارنامه`
+                      : "مثل جلسهٔ کنکور، با رتبه، تراز و کارنامه"}
+                  </small>
+                </span>
+              </Link>
+              <Link href="/subjects" className="h-pcard">
+                <span className="h-pcard-icon h-t-teal"><Glyph name="book" /></span>
+                <span>
+                  <b>درس‌نامهٔ هر درس</b>
+                  <small>سرفصل، پیش‌نیاز، خطاهای رایج و مسیر مطالعه</small>
+                </span>
+              </Link>
+              <Link href="/rank-estimate" className="h-pcard">
+                <span className="h-pcard-icon h-t-amber"><Glyph name="compass" /></span>
+                <span>
+                  <b>تخمین رتبه</b>
+                  <small>از درصدهای آزمون به بازهٔ رتبه و انتخاب‌رشته</small>
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ------------------------------------------------------------- tracks */}
       <section className="h-sec h-tracks-sec">

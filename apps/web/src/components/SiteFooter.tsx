@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GUIDES_MENU, LEARN_MENU, TELEGRAM_URL, TOOLS_MENU } from "../lib/site-nav";
+import { GUIDES_MENU, LEARN_MENU, PRACTICE_MENU, TELEGRAM_URL, TOOLS_MENU } from "../lib/site-nav";
 import { Glyph, SubjectGlyph } from "./SubjectIcon";
 
 interface FooterSubject {
@@ -25,7 +25,9 @@ const TRUST_LINKS = [
 export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
   const learn = LEARN_MENU.columns.flatMap((column) => column.links);
   const guides = GUIDES_MENU.columns[0].links.concat(GUIDES_MENU.columns[1].links.slice(0, 2));
-  const tools = TOOLS_MENU.columns.flatMap((column) => column.links).filter((link) => link.href !== "/evidence");
+  const tools = TOOLS_MENU.columns.flatMap((column) => column.links).filter((link) => link.href !== "/evidence" && link.href !== "/rank-estimate");
+  // The account page is not a public destination; the footer is a site map.
+  const practice = PRACTICE_MENU.columns.flatMap((column) => column.links).filter((link) => !link.href.startsWith("/account") && link.href !== "/subjects");
 
   return (
     <footer className="ft">
@@ -61,6 +63,8 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
           <strong>یادگیری</strong>
           {learn.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
           <Link href="/results">نتایج شاگردان</Link>
+          <strong className="ft-sub">تمرین و آزمون</strong>
+          {practice.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
         </nav>
 
         <nav className="ft-col" aria-label="درس‌ها">

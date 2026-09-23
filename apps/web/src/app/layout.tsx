@@ -75,7 +75,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Link href="/"><Glyph name="building" /><small>خانه</small></Link>
           <Link href="/courses"><Glyph name="play" /><small>دوره‌ها</small></Link>
           <Link className="mobile-nav-main" href="/results"><Glyph name="trophy" /><small>نتایج</small></Link>
-          <Link href="/free-videos"><Glyph name="spark" /><small>رایگان</small></Link>
+          <Link href="/practice"><Glyph name="target" /><small>تمرین</small></Link>
           <Link href="/account"><Glyph name="compass" /><small>حساب من</small></Link>
         </nav>
         </PublicChrome>
