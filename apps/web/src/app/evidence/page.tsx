@@ -1,110 +1,195 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { PageHeader, SectionHeader, StatCard } from "../../components/ui";
 import { StructuredData } from "../../components/StructuredData";
-import { alignmentEvidence, evidenceStats, learningEvidence, questionDesignEvidence, sourceDocuments, studentResults, type EvidenceDocument } from "../../content/evidence";
-import { pageMetadata } from "../../lib/seo";
+import { EvidenceFigures } from "../../components/EvidenceFigures";
+import { alignmentEvidence, archiveLinks, evidenceStats, matchedQuestions, questionDesignEvidence, studentResults, studentVideo, type EvidenceDocument } from "../../content/evidence";
+import { absoluteUrl, pageMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "نتایج دانشجویان، مستندات آموزشی و سابقه طراحی سؤال",
-  description: "نمونه‌ای از نتایج ثبت‌شده دانشجویان، تحلیل سؤالات کنکور، تطبیق مطالب آموزشی با آزمون‌های واقعی و سوابق آموزشی محمد رستمی.",
+  title: "نتیجهٔ شاگردها و تطبیق کلاس با کنکور، با سند",
+  description:
+    "سؤالی که محمد رستمی تألیف کرد و در کنکور ۱۴۰۱ آمد، ۹ تست از ۱۲ تست ساختمان داده و الگوریتم ۱۴۰۵ که در کلاس کار شده بود و نتیجهٔ شاگردها؛ هرکدام با لینک پست اصلی.",
   path: "/evidence",
 });
 
-const thesisUrl = "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";
+const thesisUrl =
+  "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";
 
-function EvidenceCard({ item }: { item: EvidenceDocument }) {
+const allDocuments = [questionDesignEvidence, alignmentEvidence, ...matchedQuestions, ...studentResults, ...archiveLinks];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "نتیجهٔ شاگردها و تطبیق کلاس با کنکور",
+  url: absoluteUrl("/evidence"),
+  inLanguage: "fa-IR",
+  // The Person is described in full on /about; referencing its @id keeps one identity.
+  about: { "@id": absoluteUrl("/about#mohammad-rostami") },
+  mainEntity: {
+    "@type": "ItemList",
+    name: "مستندات کلاس‌های محمد رستمی",
+    description: "ادعاهای خوداظهاری از آرشیو مدرس، هرکدام با لینک پست اصلی؛ مستقلاً راستی‌آزمایی نشده‌اند.",
+    numberOfItems: allDocuments.length,
+    itemListElement: allDocuments.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.title,
+      url: item.telegramUrl,
+    })),
+  },
+};
+
+function ResultCard({ item }: { item: EvidenceDocument }) {
   return (
-    <article className="surface-card">
-      <div className="article-card-top"><span className="article-meta">{item.category}</span><span>{item.year}</span></div>
+    <article className="surface-card evidence-card">
+      <div className="article-card-top">
+        <span className="article-meta">{item.subject}</span>
+        {item.year !== "—" && <span>کنکور {item.year}</span>}
+      </div>
+      <strong className="evidence-metric">{item.metric}</strong>
+      {item.student && <span className="evidence-student">{item.student}</span>}
       <h3>{item.title}</h3>
-      <p><strong>{item.subject}</strong></p>
+      <EvidenceFigures images={item.images} />
       <p>{item.description}</p>
-      <strong>{item.metric}</strong>
-      <div className="article-card-footer"><span>ادعای ثبت‌شده در آرشیو</span><a className="text-link" href={item.telegramUrl} target="_blank" rel="noreferrer">مشاهده مستند اصلی ↗</a></div>
+      <div className="evidence-links evidence-source">
+        {item.telegramUrl && (
+          <a className="text-link" href={item.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
+        )}
+        {item.related && (
+          <a className="text-link" href={item.related.url} target="_blank" rel="noopener noreferrer">{item.related.label} ↗</a>
+        )}
+      </div>
     </article>
   );
 }
 
 export default function EvidencePage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "نتایج دانشجویان، مستندات آموزشی و سابقه طراحی سؤال",
-    inLanguage: "fa-IR",
-    about: {
-      "@type": "Person",
-      name: "محمد رستمی",
-      subjectOf: { "@type": "CreativeWork", name: "پایان‌نامه در کتابخانهٔ دانشگاه صنعتی شریف", url: thesisUrl },
-    },
-    mainEntity: {
-      "@type": "ItemList",
-      name: "فهرست ادعاها و مستندات آموزشی kunkur01",
-      description: "نمونه‌های خوداظهاری از نتایج، تطبیق سؤال و محتوای آموزشی همراه با پیوند سند اصلی و محدودیت راستی‌آزمایی.",
-    },
-  };
-
   return (
-    <main className="page-container">
+    <main className="page-container trust-page about-page">
       <StructuredData data={jsonLd} />
       <PageHeader
-        eyebrow="مستندات و نتایج"
-        title="نتایج دانشجویان، مستندات آموزشی و سابقه طراحی سؤال"
-        description="نمونه‌ای از نتایج ثبت‌شده دانشجویان، تحلیل سؤالات کنکور، تطبیق مطالب آموزشی با آزمون‌های واقعی و سوابق آموزشی. به جای ادعا، مستندات را ببینید."
+        eyebrow="سند، نه ادعا"
+        title="هر عددی که از کلاس‌هایم می‌گویم، اینجا کنار سندش است"
+        description="نتیجهٔ شاگردها، سؤال‌هایی از کنکور که پیش‌تر در کلاس کار شده بود، و سؤالی که تألیف کرده بودم و در کنکور ۱۴۰۱ آمد. هر مورد به پست اصلی‌اش لینک دارد؛ خودت ببین و قضاوت کن."
       />
 
-      <section className="content-grid" aria-label="معرفی مدرس و پایان‌نامه">
-        <div className="surface-card">
-          <span className="eyebrow">محمد رستمی</span>
-          <h2>مسیر آموزشی بر پایهٔ حل مسئله و مستندات</h2>
-          <p>این صفحه نمونه‌هایی از نتایج منتشرشده، تحلیل سؤال، محتوای آموزشی و سابقهٔ طراحی سؤال را کنار هم قرار می‌دهد. هر مورد به مستند اصلی خود لینک دارد و به‌عنوان تضمین نتیجهٔ مشابه برای همهٔ داوطلبان ارائه نمی‌شود.</p>
-          <div className="subject-tags"><span>دانش‌آموختهٔ دانشگاه صنعتی شریف</span><span>الگوریتم و محاسبات</span><a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">@konkurcom</a></div>
-          <a className="button button-primary" href={thesisUrl} target="_blank" rel="noreferrer">مشاهدهٔ پایان‌نامه در کتابخانهٔ شریف ↗</a>
+      <section aria-label="خلاصهٔ مستندات" className="evidence-stats">
+        {evidenceStats.map((stat) => (
+          <StatCard key={stat.label} label={stat.label} value={stat.value} detail={stat.detail} tone={stat.tone} />
+        ))}
+      </section>
+
+      <aside className="official-disclaimer evidence-honesty" aria-label="پیش از خواندن">
+        <strong>پیش از اینکه به این عددها تکیه کنی</strong>
+        <p>
+          همهٔ این موارد از آرشیو خودم در تلگرام آمده‌اند و هیچ نهاد مستقلی تأییدشان نکرده؛ من هم از آن‌ها برای معرفی
+          کلاس‌هایم استفاده می‌کنم، پس حق داری با تردید نگاهشان کنی. هر مورد یک نمونه است، از یک درس و یک سال، و قول
+          نمی‌دهد نتیجهٔ تو هم همین شود. سند اصلی کنار هر کارت هست.
+        </p>
+      </aside>
+
+      <div className="trust-layout about-grid evidence-feature">
+        <section className="surface-card about-card about-card-dark">
+          <span className="eyebrow eyebrow-dark">طراحی سؤال · {questionDesignEvidence.subject}</span>
+          <h2>{questionDesignEvidence.title}</h2>
+          <p>{questionDesignEvidence.description}</p>
+          <EvidenceFigures images={questionDesignEvidence.images} />
+          <a className="button button-light" href={questionDesignEvidence.telegramUrl} target="_blank" rel="noopener noreferrer">
+            دیدن پست اصلی ↗
+          </a>
+        </section>
+
+        <section className="surface-card about-card">
+          <span className="eyebrow">تطبیق کلاس با کنکور {alignmentEvidence.year}</span>
+          <h2>{alignmentEvidence.title}</h2>
+          <p>{alignmentEvidence.description}</p>
+          {alignmentEvidence.topics && (
+            <div className="subject-tags" aria-label="مبحث‌هایی که هم در کلاس بود و هم در کنکور">
+              {alignmentEvidence.topics.map((topic) => <span key={topic}>{topic}</span>)}
+            </div>
+          )}
+          <div className="evidence-links">
+            <a className="text-link" href={alignmentEvidence.telegramUrl} target="_blank" rel="noopener noreferrer">فایل تطبیق ↗</a>
+            {alignmentEvidence.related && (
+              <a className="text-link" href={alignmentEvidence.related.url} target="_blank" rel="noopener noreferrer">{alignmentEvidence.related.label} ↗</a>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <section aria-labelledby="matched-questions">
+        <SectionHeader
+          title="سخت‌ترین سؤال‌ها، قبلاً سر کلاس"
+          description="چند سؤال کنکور که پیش از آزمون، خودش یا عینش در کلاس حل شده بود."
+        />
+        <div className="content-grid-wide" id="matched-questions">
+          {matchedQuestions.map((item) => <ResultCard item={item} key={item.id} />)}
         </div>
-        <div className="surface-card"><Image src="/brand/mohammad-rostami.png" alt="محمد رستمی" width={320} height={320} priority style={{ width: "100%", height: "auto", borderRadius: "16px" }} /></div>
       </section>
 
-      <section aria-label="آمارهای شاخص">
-        <SectionHeader title="آمارهای شاخص" description="نمونه‌هایی از نتایج ثبت‌شده در مستندات آموزشی." />
-        <div className="stats-grid">{evidenceStats.map((stat) => <StatCard key={stat.label} {...stat} />)}</div>
-        <div className="official-disclaimer"><strong>یادآوری</strong><p>این موارد نمونه‌هایی از نتایج ثبت‌شده هستند و تضمین نتیجهٔ مشابه برای همهٔ داوطلبان نیستند.</p></div>
-        <div className="official-disclaimer">
-          <strong>شفافیت منبع و تعارض منافع</strong>
-          <p>این نمونه‌ها از آرشیوی متعلق به مدرس و مالک kunkur01 آمده‌اند، تأیید مستقل محسوب نمی‌شوند و ممکن است در معرفی آموزش او به کار روند. برای داوری، سند اصلی و محدودیت اندازهٔ نمونه را بررسی کنید. نام اشخاص بدون ثبت رضایت صریح در سایت بازنشر نمی‌شود.</p>
+      <section aria-labelledby="student-results">
+        <SectionHeader
+          title="نتیجهٔ شاگردها"
+          description="درصد و تعداد پاسخ درست شاگردها، همان‌طور که در آرشیو ثبت شده."
+        />
+        <div className="content-grid-wide evidence-results" id="student-results">
+          {studentResults.map((item) => <ResultCard item={item} key={item.id} />)}
         </div>
       </section>
 
-      <section aria-label="نتایج شاخص دانشجویان">
-        <SectionHeader title="نتایج شاخص دانشجویان" description="هر کارت از دادهٔ جداگانه ساخته شده و مستند اصلی آن در دسترس است." />
-        <div className="content-grid-wide">{studentResults.map((item) => <EvidenceCard item={item} key={item.id} />)}</div>
+      <section className="surface-card evidence-video" aria-labelledby="student-video">
+        <div>
+          <span className="eyebrow">ویدئو · {studentVideo.duration}</span>
+          <h2 id="student-video">{studentVideo.title}</h2>
+          <p>{studentVideo.description}</p>
+          <a className="text-link" href={studentVideo.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
+        </div>
+        <video controls preload="metadata" playsInline src={studentVideo.src}>
+          مرورگرت پخش ویدئو را پشتیبانی نمی‌کند؛ <a href={studentVideo.src}>فایل ویدئو را دانلود کن</a>.
+        </video>
       </section>
 
-      <section aria-label="رتبه‌ها و مسیرهای موفقیت">
-        <SectionHeader title="رتبه‌ها و مسیرهای موفقیت" description="نمونه‌های رتبه و کارنامه در مستندات منتشرشده." />
-        <div className="content-grid-wide">
-          <div className="surface-card"><span className="feature-icon">۱۷</span><h3>رتبهٔ ۱۷ نرم‌افزار</h3><p>ادعای درج‌شده در پست آرشیوی، در کنار نتیجهٔ ۱۶ پاسخ صحیح از ۱۹ تست دکتری؛ بدون راستی‌آزمایی مستقل.</p><a className="text-link" href="https://t.me/Konkur_answer/4753" target="_blank" rel="noreferrer">مشاهده مستند ↗</a></div>
-          <div className="surface-card"><span className="feature-icon">۲۶</span><h3>رتبهٔ ۲۶ هوش</h3><p>ادعای درج‌شده در همان پست آرشیوی نتیجهٔ دکتری؛ بدون راستی‌آزمایی مستقل.</p><a className="text-link" href="https://t.me/Konkur_answer/4753" target="_blank" rel="noreferrer">مشاهده مستند ↗</a></div>
+      <section aria-labelledby="archive-links">
+        <SectionHeader
+          title="بیشتر در آرشیو"
+          description="فایل کامل تطبیق، سال‌های قبل، کلیدهای بعد از کنکور و یک جلسه از کلاس."
+        />
+        <div className="resource-grid" id="archive-links">
+          {archiveLinks.map((item) => (
+            <a className="resource-card" href={item.telegramUrl} target="_blank" rel="noopener noreferrer" key={item.id}>
+              <span aria-hidden="true">↗</span>
+              <h2>{item.title}</h2>
+              <p>{item.description}</p>
+              <strong>{item.metric}{item.year !== "—" ? ` · ${item.year}` : ""}</strong>
+            </a>
+          ))}
         </div>
       </section>
 
-      <section aria-label="تطبیق آموزش با سؤالات واقعی کنکور">
-        <SectionHeader title="تطبیق آموزش با سؤالات واقعی کنکور" description="هم‌پوشانی مطالب تدریس‌شده با یک نمونهٔ آزمون واقعی." />
-        <div className="surface-card"><div className="article-card-top"><span className="article-meta">{alignmentEvidence.year} · {alignmentEvidence.subject}</span><span>{alignmentEvidence.metric}</span></div><h3>{alignmentEvidence.title}</h3><p>{alignmentEvidence.description}</p><div className="subject-tags"><span>Merge Sorted Lists</span><span>Quick Sort</span><span>Insertion Sort</span><span>Huffman</span><span>MST</span><span>روابط بازگشتی</span><span>Hash</span></div><a className="button button-secondary" href={alignmentEvidence.telegramUrl} target="_blank" rel="noreferrer">مشاهده مستند اصلی ↗</a></div>
+      <section className="surface-card evidence-author">
+        <Image src="/brand/mohammad-rostami.png" alt="محمد رستمی" width={72} height={72} style={{ objectFit: "cover" }} />
+        <div>
+          <strong>محمد رستمی</strong>
+          <p>
+            کارشناس ارشد نرم‌افزار، گرایش الگوریتم و محاسبات، از دانشگاه صنعتی شریف و چند ترم دستیار آموزشی همان‌جا.{" "}
+            <a className="text-link" href={thesisUrl} target="_blank" rel="noreferrer">پایان‌نامه در کتابخانهٔ شریف ↗</a>
+          </p>
+        </div>
+        <Link className="text-link" href="/about">بیشتر دربارهٔ من ←</Link>
       </section>
 
-      <section aria-label="از تحلیل سؤال تا طراحی سؤال">
-        <SectionHeader title="از تحلیل سؤال تا طراحی سؤال" description="سابقهٔ آموزشی برای شناخت سبک تحلیل و طراحی سؤال، نه تضمین پیش‌بینی کنکور." />
-        <div className="surface-card"><div className="article-card-top"><span className="article-meta">{questionDesignEvidence.year} · {questionDesignEvidence.subject}</span><span>سابقه آموزشی</span></div><h3>{questionDesignEvidence.title}</h3><p>{questionDesignEvidence.metric}</p><p>{questionDesignEvidence.description}</p><a className="button button-secondary" href={questionDesignEvidence.telegramUrl} target="_blank" rel="noreferrer">مشاهده مستند اصلی ↗</a></div>
-      </section>
-
-      <section aria-label="نمونه آموزش‌ها و تحلیل‌ها">
-        <SectionHeader title="نمونه آموزش‌ها و تحلیل‌ها" description="ویدئو، جزوه، حل تمرین و تحلیل سؤال از آرشیو مستند." />
-        <div className="resource-grid">{learningEvidence.map((item) => <a className="resource-card" href={item.telegramUrl} target="_blank" rel="noreferrer" key={item.id}><span>↗</span><h2>{item.title}</h2><p>{item.description}</p><strong>{item.metric} · مشاهده در تلگرام</strong></a>)}</div>
-      </section>
-
-      <section aria-label="لینک مستندات اصلی">
-        <SectionHeader title="لینک مستندات اصلی" description="برای هر مورد، منبع اصلی در تلگرام حفظ شده است." />
-        <div className="content-grid-wide">{sourceDocuments.map((item) => <EvidenceCard item={item} key={item.id} />)}</div>
+      <section className="about-cta">
+        <div>
+          <span className="eyebrow eyebrow-dark">قدم بعدی</span>
+          <h2>به‌جای عددها، خود کلاس را امتحان کن</h2>
+          <p>چند جلسه از دوره رایگان روی سایت است. اگر هم نمی‌دانی از کجا شروع کنی، یک جلسهٔ مشاوره بگذار.</p>
+        </div>
+        <div className="evidence-cta-actions">
+          <Link className="button button-light" href="/courses">جلسه‌های رایگان</Link>
+          <Link className="button evidence-cta-secondary" href="/consultations">مشاوره با من</Link>
+        </div>
       </section>
     </main>
   );

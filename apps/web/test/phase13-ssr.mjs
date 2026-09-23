@@ -141,22 +141,32 @@ for (const { route } of phase13Routes) {
   assert.doesNotMatch(llms.body, new RegExp(escapedRegExp(`${canonicalOrigin}${route}`)), `llms.txt must omit ${route}`);
 }
 
+// Each claim was checked against its Telegram post on 2026-09-23 and must keep
+// both its wording and the post it came from.
 const evidenceClaims = [
-  { claim: "۱۰۰٪", source: "https://t.me/Konkur_answer/4666" },
-  { claim: "۱۰ پاسخ صحیح از ۱۱ سؤال معتبر", source: "https://t.me/Konkur_answer/3609" },
-  { claim: "۹ تست صحیح", source: "https://t.me/Konkur_answer/4767" },
-  { claim: "۹ سؤال از ۱۲ سؤال مشابه یا منطبق با مطالب تدریس‌شده", source: "https://t.me/Konkur_answer/4767" },
-  { claim: "۱۶ پاسخ صحیح از ۱۹ تست", source: "https://t.me/Konkur_answer/4753" },
-  { claim: "نمونه سؤال طراحی‌شده توسط مدرس که در کنکور مطرح شده است", source: "https://t.me/Konkur_answer/3922" },
+  { claim: "سؤالی که تألیف کرده بودم، در کنکور ۱۴۰۱ آمد", source: "https://t.me/Konkur_answer/3060" },
+  { claim: "نُه‌تا در کلاس کار شده بود", source: "https://t.me/Konkur_answer/4986" },
+  { claim: "۱۰ پاسخ درست از ۱۱ سؤال معتبر", source: "https://t.me/Konkur_answer/4978" },
+  { claim: "۹ تست صحیح", source: "https://t.me/Konkur_answer/4979" },
+  { claim: "۱۰۰٪ نظریه و رتبهٔ ۲۷ در سهمیه", source: "https://t.me/Konkur_answer/3609" },
+  { claim: "جاروب صفحه", source: "https://t.me/Konkur_answer/4544" },
+  { claim: "رتبهٔ ۱۷ نرم‌افزار و ۲۶ هوش مصنوعی در دکتری", source: "https://t.me/Konkur_answer/3910" },
+  { claim: "رتبهٔ ۳۸ ارشد فناوری اطلاعات", source: "https://t.me/Konkur_answer/4981" },
+  { claim: "رتبهٔ ۸ آی‌تی و ۱۶ مهندسی کامپیوتر", source: "https://t.me/Konkur_answer/3997" },
 ];
 const evidence = await read("/evidence");
 assert.equal(evidence.response.status, 200, "the existing evidence hub must remain public");
 assert.equal(canonicalOf(evidence.body), `${canonicalOrigin}/evidence`);
 assert.equal(h1Count(evidence.body), 1, "the evidence hub must render exactly one h1");
-assert.match(evidence.body, /شفافیت منبع و تعارض منافع/, "the evidence hub must disclose its first-party commercial interest");
-assert.match(evidence.body, /تأیید مستقل محسوب نمی‌شوند/, "the evidence hub must disclose the lack of independent verification");
-assert.match(evidence.body, /رضایت صریح/, "the evidence hub must explain its consent boundary");
-assert.doesNotMatch(evidence.body, /آقای کریمی|شیوا خوش‌نام/, "identifiable student names must stay private without recorded consent");
+assert.match(evidence.body, /برای معرفی\s+کلاس‌هایم استفاده می‌کنم/, "the evidence hub must disclose its first-party commercial interest");
+assert.match(evidence.body, /هیچ نهاد مستقلی تأییدشان نکرده/, "the evidence hub must disclose the lack of independent verification");
+// The owner asked for student names to be shown as the original posts give them.
+for (const name of ["آرش ذوالفقاری", "حسین قبیله", "آقای کاظمی", "مبین شریفی‌راد", "شیوا خوش‌نام"]) {
+  assert.match(evidence.body, new RegExp(escapedRegExp(name)), `the evidence hub must credit ${name}`);
+}
+for (const image of ["/evidence/1401-authored-question.jpg", "/evidence/1405-data-answers-a.jpg", "/evidence/phd-student-sources.mp4"]) {
+  assert.match(evidence.body, new RegExp(escapedRegExp(image)), `the evidence hub must host its own copy of ${image}`);
+}
 assert.match(evidence.body, /\"@type\":\"ItemList\"/, "evidence structured data must describe a bounded item list, not verified outcome data");
 const evidenceHrefs = hrefsOf(evidence.body);
 const exactThesisUrl = "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";

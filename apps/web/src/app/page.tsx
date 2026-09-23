@@ -441,7 +441,7 @@ export default async function HomePage() {
                   <Glyph name={doc.category === "طراحی سؤال" ? "spark" : "trophy"} />
                 </span>
                 <span>
-                  <small>{doc.category} · {doc.subject}{doc.year !== "—" ? ` · ${doc.year}` : ""}</small>
+                  <small>{doc.student ? `${doc.student} · ` : ""}{doc.category} · {doc.subject}{doc.year !== "—" ? ` · ${doc.year}` : ""}</small>
                   <strong>{doc.metric}</strong>
                   <em>{doc.description}</em>
                 </span>
