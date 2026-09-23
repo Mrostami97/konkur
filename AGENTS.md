@@ -19,7 +19,7 @@ Current order of execution:
 4. Knowledge Graph foundation
 5. Question Intelligence / programmatic SEO / adaptive learning
 
-Do not start Knowledge Graph migrations, Neo4j, runtime AI, or large future-schema rewrites during Product Completion. Preserve existing SEO, canonical URLs, provenance, ingestion/review boundaries, and the final brand/domain: **کنکورصفرویک / kunkur01 / https://kunkur01.ir**.
+Do not start Knowledge Graph migrations, Neo4j, runtime AI, or large future-schema rewrites during Product Completion. Preserve existing SEO, canonical URLs, provenance, ingestion/review boundaries, and the final brand/domain: **کنکورصفریک / kunkur01 / https://kunkur01.ir**.
 
 A substantial report-card/exam-intelligence dataset already exists outside this public repo; see `docs/data/EXAM_INTELLIGENCE_EXISTING_ASSETS.md`. Do not redesign that data domain from zero and do not publish the raw dataset without explicit privacy/rights review.
 

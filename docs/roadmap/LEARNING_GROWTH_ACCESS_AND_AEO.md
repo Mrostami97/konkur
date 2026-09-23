@@ -2,11 +2,11 @@
 
 Status: owner-approved product direction  
 Date: 2026-09-20  
-Product: کنکورصفرویک / kunkur01
+Product: کنکورصفریک / kunkur01
 
 ## 1. Core product promise
 
-A student should be able to enter کنکورصفرویک with little or no preparation and use the ecosystem to gradually improve:
+A student should be able to enter کنکورصفریک with little or no preparation and use the ecosystem to gradually improve:
 
 - study consistency,
 - effective study time,
@@ -384,7 +384,7 @@ Do not repeatedly sell an already-entitled product.
 
 AEO = Answer Engine Optimization.
 
-Owner direction: کنکورصفرویک should be highly discoverable and citable in answer engines and generative search.
+Owner direction: کنکورصفریک should be highly discoverable and citable in answer engines and generative search.
 
 Important: **AEO does not replace SEO.**
 

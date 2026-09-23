@@ -1,11 +1,11 @@
-# کنکورصفرویک — Knowledge Graph Content Strategy
+# کنکورصفریک — Knowledge Graph Content Strategy
 
 Status: owner-approved strategic direction  
 Date: 2026-09-19
 
 ## Core principle
 
-کنکورصفرویک should not compete by publishing “more articles”. It should become a connected, source-backed knowledge system for computer-science entrance exams.
+کنکورصفریک should not compete by publishing “more articles”. It should become a connected, source-backed knowledge system for computer-science entrance exams.
 
 Every substantial content page should answer two questions:
 

@@ -2,12 +2,12 @@
 
 Status: owner-approved strategic roadmap  
 Date: 2026-09-20  
-Product: کنکورصفرویک / kunkur01  
+Product: کنکورصفریک / kunkur01  
 Canonical domain: https://kunkur01.ir
 
 ## 0. North Star
 
-کنکورصفرویک should continuously learn what Computer Engineering / IT / Computer Science Master's and PhD candidates actually need, turn those needs into structured opportunities, create original and better content, connect that content to the Knowledge Graph, courses, lessons, questions, exams, resources, rank/admissions tools, and then measure whether the content solved the need.
+کنکورصفریک should continuously learn what Computer Engineering / IT / Computer Science Master's and PhD candidates actually need, turn those needs into structured opportunities, create original and better content, connect that content to the Knowledge Graph, courses, lessons, questions, exams, resources, rank/admissions tools, and then measure whether the content solved the need.
 
 This is **not** a bulk AI-blog system.
 

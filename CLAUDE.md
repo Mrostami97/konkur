@@ -38,7 +38,7 @@ Current work should remain compatible with those future phases, but should not b
 
 ## Long-term product direction: strong Knowledge Graph
 
-The owner has chosen a strong Knowledge Graph as the long-term content architecture of کنکورصفرویک.
+The owner has chosen a strong Knowledge Graph as the long-term content architecture of کنکورصفریک.
 
 Target semantic chain:
 
@@ -88,7 +88,7 @@ Do not publish or commit raw scorecard/result data to this public repository unl
 
 ## Brand and canonical domain
 
-- Brand: **کنکورصفرویک**
+- Brand: **کنکورصفریک**
 - Latin name: **kunkur01**
 - Canonical domain: **https://kunkur01.ir**
 
