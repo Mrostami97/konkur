@@ -59,8 +59,11 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
     case "table": {
       const rows = Array.isArray(block.rows) ? (block.rows as string[][]) : [];
       const headers = Array.isArray(block.headers) ? (block.headers as string[]) : [];
+      // Wide tables scroll sideways on a phone instead of squeezing every
+      // column to a few characters.
       return (
-        <table key={index} style={{ borderCollapse: "collapse", width: "100%" }}>
+        <div key={index} style={{ overflowX: "auto", margin: "0.75rem 0" }}>
+        <table style={{ borderCollapse: "collapse", width: "100%", minWidth: headers.length >= 4 ? "38rem" : undefined }}>
           {headers.length > 0 && (
             <thead>
               <tr>
@@ -84,6 +87,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
             ))}
           </tbody>
         </table>
+        </div>
       );
     }
     case "latex":
