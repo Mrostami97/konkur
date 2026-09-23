@@ -279,7 +279,8 @@ export class AssessmentService {
         throw new BadRequestException("DYNAMIC exam is missing subjectCode/questionCount");
       }
       const candidates = await this.prisma.question.findMany({
-        where: { subjectCode: exam.subjectCode },
+        // A retired question has left the bank: it must not reach a new form.
+        where: { subjectCode: exam.subjectCode, retiredAt: null },
         select: { id: true },
       });
       if (candidates.length < exam.questionCount) {
