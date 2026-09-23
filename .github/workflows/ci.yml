@@ -83,21 +83,43 @@ jobs:
           set -euo pipefail
           pnpm --filter @konkurcom/contracts run test
           pnpm --filter @konkurcom/web run test
+
+          # migrate:down only ever undoes the latest applied migration, so a
+          # drill aimed at an older one must first undo everything added after
+          # it, newest first. The list is read from the migrations directory
+          # rather than written out here: a hard-coded list silently broke the
+          # drill the first time a newer migration landed. Every newer
+          # migration's down.sql is exercised on the way.
+          roll_back_after() {
+            local target="$1"
+            local migration
+            for migration in $(ls -1 apps/api/prisma/migrations | grep -E '^[0-9]{14}_' | sort -r); do
+              [ "$migration" = "$target" ] && return 0
+              pnpm --filter @konkurcom/api run migrate:down -- "$migration"
+            done
+            echo "migration $target not found" >&2
+            return 1
+          }
+          phase16=20260912120000_phase16_personal_learning_path
+
           pnpm --filter @konkurcom/api exec prisma migrate deploy
-          pnpm --filter @konkurcom/api run migrate:down -- 20260912120000_phase16_personal_learning_path
+          roll_back_after "$phase16"
+          pnpm --filter @konkurcom/api run migrate:down -- "$phase16"
           pnpm --filter @konkurcom/api run migration:verify:phase16 -- seed-legacy
           pnpm --filter @konkurcom/api exec prisma migrate deploy
           pnpm --filter @konkurcom/api run migration:verify:phase16 -- verify-backfill
-          pnpm --filter @konkurcom/api run migrate:down -- 20260912120000_phase16_personal_learning_path
+          roll_back_after "$phase16"
+          pnpm --filter @konkurcom/api run migrate:down -- "$phase16"
           pnpm --filter @konkurcom/api run migrate:down -- 20260909130000_phase15_admissions_sources
           pnpm --filter @konkurcom/api exec prisma migrate deploy
           pnpm --filter @konkurcom/api run migration:verify:phase16 -- cleanup
 
           # Verify every checked-in reversible migration, in strict reverse
-          # order, against the now-clean test database. Re-applying all four
-          # proves their down paths leave Prisma's migration ledger and the
+          # order, against the now-clean test database, then re-apply them all:
+          # their down paths must leave Prisma's migration ledger and the
           # pre-existing schema in a deployable state.
-          pnpm --filter @konkurcom/api run migrate:down -- 20260912120000_phase16_personal_learning_path
+          roll_back_after "$phase16"
+          pnpm --filter @konkurcom/api run migrate:down -- "$phase16"
           pnpm --filter @konkurcom/api run migrate:down -- 20260909130000_phase15_admissions_sources
           pnpm --filter @konkurcom/api run migrate:down -- 20260906200000_phase9_content_commerce
           pnpm --filter @konkurcom/api run migrate:down -- 20260906120000_password_auth

@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import { PrismaClient } from "@prisma/client";
+import { splitSqlStatements } from "./sql-statements";
 
 /**
  * Prisma intentionally exposes forward-only `migrate deploy`. This small
@@ -31,7 +32,7 @@ async function main() {
       throw new Error("only the latest applied migration may be rolled back");
     }
 
-    const statements = sql.split(";").map((part) => part.trim()).filter(Boolean);
+    const statements = splitSqlStatements(sql);
     // Rollback guards and schema changes must be atomic. If a down file finds
     // Phase-specific data that cannot be represented by the previous schema,
     // the guard fails and PostgreSQL restores every statement in this block.
