@@ -25,6 +25,7 @@ const NAV_GROUPS: { title: string; links: NavLink[] }[] = [
       { href: "/admin/resources", label: "منابع آموزشی", icon: "resource", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
       { href: "/admin/content-sources", label: "منابع و مستندات", icon: "source", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
       { href: "/admin/contributors", label: "نویسندگان و مدرسان", icon: "people", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
+      { href: "/admin/achievements", label: "نتایج شاگردان", icon: "trophy", roles: ["ADMIN"] },
       { href: "/admin/taxonomy", label: "طبقه‌بندی موضوعی", icon: "tag", roles: ["AUTHOR", "ADMIN"] },
     ],
   },

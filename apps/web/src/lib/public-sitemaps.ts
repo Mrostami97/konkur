@@ -36,6 +36,8 @@ type PublicCourse = {
 
 type PublicResource = {
   slug: string;
+  kind?: string;
+  externalUrl?: string | null;
   publishedAt?: string | null;
   reviewedAt?: string | null;
   authorProfile?: { slug: string } | null;
@@ -165,14 +167,32 @@ export async function resourceSitemapEntries(): Promise<SitemapCollection> {
   const loaded = await safeList<PublicResource>("/resources");
   const published = loaded ?? [];
   const authors = published.flatMap((resource) => [resource.authorProfile?.slug, resource.reviewerProfile?.slug]).filter((slug): slug is string => Boolean(slug));
+  // The free-videos landing page lists only link-cleared external lectures;
+  // it is indexable (and so belongs here) only while at least one exists.
+  const hasFreeVideos = published.some((resource) => resource.kind === "VIDEO" && Boolean(resource.externalUrl));
   return { complete: loaded !== null, entries: uniqueEntries([
     { loc: absoluteUrl("/resources") },
+    ...(hasFreeVideos ? [{ loc: absoluteUrl("/free-videos") }] : []),
     ...published.map((resource) => ({
       loc: absoluteUrl(`/resources/${resource.slug}`),
       lastmod: asIso(resource.reviewedAt ?? resource.publishedAt),
     })),
     ...authors.map((slug) => ({ loc: absoluteUrl(`/authors/${slug}`) })),
   ]) };
+}
+
+/**
+ * The student-results page, only while it has published rows: with none it
+ * renders noindex, and a sitemap must not list a page that asks not to be
+ * indexed. An unreachable API leaves it out rather than failing the sitemap.
+ */
+export async function resultsSitemapEntries(): Promise<SitemapEntry[]> {
+  try {
+    const summary = await apiGetPublic<{ total: number }>("/achievements/summary");
+    return summary && summary.total > 0 ? [{ loc: absoluteUrl("/results") }] : [];
+  } catch {
+    return [];
+  }
 }
 
 export function reportCardSitemapEntries() {

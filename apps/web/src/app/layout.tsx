@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
 import { PublicChrome } from "../components/PublicChrome";
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { Glyph } from "../components/SubjectIcon";
 import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 import { StructuredData } from "../components/StructuredData";
+import { subjects } from "../content/editorial";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "../lib/seo";
 import "./globals.css";
 import "./design-system.css";
@@ -40,6 +42,21 @@ export const viewport: Viewport = {
   themeColor: "#243B53",
 };
 
+// The header lists every subject; the footer only the ones most candidates
+// look for, so its column stays the height of its neighbours.
+const NAV_SUBJECTS = subjects.map(({ slug, title }) => ({ slug, title }));
+const FOOTER_SUBJECT_SLUGS = [
+  "data-structures-algorithms",
+  "algorithms",
+  "digital-logic",
+  "computer-architecture",
+  "operating-systems",
+  "discrete-math",
+  "artificial-intelligence",
+  "databases",
+];
+const FOOTER_SUBJECTS = FOOTER_SUBJECT_SLUGS.flatMap((slug) => NAV_SUBJECTS.filter((subject) => subject.slug === slug));
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fa" dir="rtl">
@@ -49,25 +66,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
         ]} />
         <PublicChrome>
-          <SiteHeader />
+          <SiteHeader subjects={NAV_SUBJECTS} />
         </PublicChrome>
         {children}
         <PublicChrome>
-        <footer className="site-footer">
-          <div className="footer-grid">
-            <div className="footer-brand"><span className="brand-logo-wrap footer-logo-wrap"><Image className="brand-logo" src="/brand/konkurcom-logo.png" alt="" width={72} height={72} /></span><div><strong>کنکورصفریک <small>kunkur01</small></strong><p>مسیر روشن‌تر برای ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.</p></div></div>
-            <div><strong>مسیرهای مطالعه</strong><Link href="/guides">راهنمای آزمون ۱۴۰۶</Link><Link href="/subjects">صفحهٔ درس‌ها</Link><Link href="/articles">مقاله‌ها</Link></div>
-            <div><strong>اعتماد و شفافیت</strong><Link href="/about">دربارهٔ محمد رستمی</Link><Link href="/editorial-policy">روش تولید محتوا</Link><Link href="/source-policy">سیاست منبع و حق نشر</Link><Link href="/corrections">سیاست اصلاح</Link></div>
-            <div><strong>کانال رسمی</strong><a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">@konkurcom — خبر، آموزش و منابع</a></div>
-          </div>
-          <div className="footer-bottom"><span>© ۱۴۰۵ کنکورصفریک · kunkur01</span><span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند.</span></div>
-        </footer>
+        <SiteFooter subjects={FOOTER_SUBJECTS} />
         <nav className="mobile-nav" aria-label="ناوبری موبایل">
-          <Link href="/today"><span>◷</span><small>امروز</small></Link>
-          <Link href="/courses"><span>◈</span><small>یادگیری</small></Link>
-          <Link className="mobile-nav-main" href="/exams"><span>✓</span><small>آزمون</small></Link>
-          <Link href="/rank-estimate"><span>↗</span><small>تحلیل</small></Link>
-          <Link href="/account"><span>◎</span><small>حساب من</small></Link>
+          <Link href="/"><Glyph name="building" /><small>خانه</small></Link>
+          <Link href="/courses"><Glyph name="play" /><small>دوره‌ها</small></Link>
+          <Link className="mobile-nav-main" href="/results"><Glyph name="trophy" /><small>نتایج</small></Link>
+          <Link href="/free-videos"><Glyph name="spark" /><small>رایگان</small></Link>
+          <Link href="/account"><Glyph name="compass" /><small>حساب من</small></Link>
         </nav>
         </PublicChrome>
         <ServiceWorkerRegistration />

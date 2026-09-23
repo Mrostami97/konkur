@@ -481,15 +481,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .channel-stack span, .channel-stack small { color: var(--muted); font-size: .7rem; }
 .channel-stack strong { color: var(--navy); font: 800 1.15rem/1.7 "Segoe UI",sans-serif; direction: ltr; text-align: right; }
 
-.site-footer { padding: 3.5rem max(1.5rem,calc((100vw - 1180px)/2)) 1.5rem; color: var(--muted); background: var(--surface); border-top: 1px solid var(--line); }
-.footer-grid { display: grid; grid-template-columns: 1.4fr repeat(3,1fr); gap: 2rem; }
-.footer-grid > div { display: grid; align-content: start; gap: .55rem; }
-.footer-grid strong { color: white; font-size: .88rem; }
-.footer-grid a { color: #aebfd0; font-size: .75rem; }
-.footer-grid a:hover { color: #5ee0cb; }
-.footer-brand { grid-template-columns: auto 1fr !important; }
-.footer-brand p { max-width: 270px; margin: .25rem 0; color: #98adbf; font-size: .75rem; }
-.footer-bottom { display: flex; justify-content: space-between; gap: 1rem; padding-top: 1.5rem; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,.1); color: #8098ac; font-size: .68rem; }
 
 .guide-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
 .guide-card { display: grid; grid-template-columns: 76px 1fr; gap: 1.1rem; padding: 1.35rem; border: 1px solid var(--line); border-radius: 22px; background: rgba(255,255,255,.88); transition: 180ms ease; }
@@ -680,7 +671,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .editorial-layout { grid-template-columns: 1fr; }
   .editorial-aside { position: static; grid-template-columns: 1fr 1fr; }
   .subject-journey { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 620px) {
@@ -702,8 +692,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .editorial-dates { grid-column: 1 / -1; text-align: right; }
   .editorial-aside { grid-template-columns: 1fr; }
   .official-disclaimer, .resource-process { align-items: stretch; flex-direction: column; }
-  .footer-grid { grid-template-columns: 1fr; }
-.footer-bottom { flex-direction: column; }
   .about-hero { grid-template-columns: 1fr; padding: 1.3rem; }
   .about-hero-art { width: 112px; height: 112px; border-radius: 30px; }
   .about-hero-art span { font-size: 4rem; }
@@ -726,9 +714,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .nav-wrap { min-height: 82px; }
 .brand-logo-wrap { width: 60px; height: 60px; border-color: rgba(198, 222, 232, .9); border-radius: 18px; box-shadow: 0 12px 28px rgba(43, 137, 208, .18); }
 .brand-copy strong { color: var(--navy); }
-.footer-logo-wrap { width: 68px; height: 68px; border-radius: 20px; box-shadow: 0 10px 24px rgba(17,44,78,.1); }
-.footer-brand strong { display: block; }
-.footer-brand strong small { margin-right: .4rem; color: var(--muted); font-size: .68em; font-weight: 700; }
 .brand-copy strong { letter-spacing: -.02em; }
 .nav-link { border: 1px solid transparent; }
 .nav-link:hover { border-color: #d9efeb; }

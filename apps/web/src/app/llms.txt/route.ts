@@ -4,7 +4,14 @@ import { apiGetPublic } from "../../lib/api";
 import { absoluteUrl } from "../../lib/seo";
 
 type PublicArticle = { slug: string; title: string; summary: string; contentType?: string | null };
-type PublicCatalogItem = { slug: string; title: string; summary?: string | null; description?: string | null };
+type PublicCatalogItem = {
+  slug: string;
+  title: string;
+  summary?: string | null;
+  description?: string | null;
+  kind?: string;
+  externalUrl?: string | null;
+};
 type PublicUniversity = { code: string; title: string; city: string };
 type PublicProgram = {
   code: string;
@@ -36,6 +43,13 @@ export async function GET() {
     safeList<PublicUniversity>("/universities"),
     safeList<PublicProgram>("/programs"),
   ]);
+  let resultsCount = 0;
+  try {
+    resultsCount = (await apiGetPublic<{ total: number }>("/achievements/summary"))?.total ?? 0;
+  } catch {
+    resultsCount = 0;
+  }
+  const hasFreeVideos = resourceResult.items.some((item) => item.kind === "VIDEO" && Boolean(item.externalUrl));
   const publishedSlugs = new Set(articleResult.items.map((item) => item.slug));
   const canonicalGuides = [...articleResult.items.filter((item) => item.contentType === "GUIDE")];
   const canonicalArticles = [...articleResult.items.filter((item) => item.contentType !== "GUIDE")];
@@ -87,6 +101,8 @@ export async function GET() {
     `- [سیاست اصلاح](${absoluteUrl("/corrections")})`,
     `- [دربارهٔ محمد رستمی و تحریریه](${absoluteUrl("/about")})`,
     `- [مستندات آموزشی و نتایج](${absoluteUrl("/evidence")})`,
+    ...(resultsCount > 0 ? [`- [نتایج و رتبه‌های شاگردان](${absoluteUrl("/results")}): نتیجه‌های منتشرشده با رضایت خود شاگرد`] : []),
+    ...(hasFreeVideos ? [`- [ویدیوی رایگان دروس](${absoluteUrl("/free-videos")}): پیوند به کلاس‌های ضبط‌شدهٔ رایگان دانشگاهی`] : []),
     `- [کارنامه‌های دارای رضایت انتشار](${absoluteUrl("/report-cards")})`,
     `- [جست‌وجوی محتوای سایت](${absoluteUrl("/search")})`,
     `- [RSS](${absoluteUrl("/rss.xml")})`,
