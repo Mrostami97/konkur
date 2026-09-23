@@ -244,22 +244,6 @@
 .h-tone-dot { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 10px; flex: none; }
 .h-tone-dot svg { width: 1.1rem; height: 1.1rem; }
 
-.h-count-strip {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.75rem, 3vw, 2rem);
-  flex-wrap: wrap;
-  margin-top: clamp(1.75rem, 4vw, 2.75rem);
-  padding: 0.85rem 1.25rem;
-  border-radius: 16px;
-  font-size: 0.9rem;
-  color: rgba(226, 238, 247, 0.85);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.h-count-strip b { font-size: 1.15rem; font-weight: 900; color: #fff; }
-.h-count-strip a { margin-inline-start: auto; font-size: 0.8rem; color: #9ff3e4; text-decoration: none; }
-.h-count-strip a:hover { text-decoration: underline; }
 
 /* ---------------------------------------------------------------- tones */
 
@@ -475,69 +459,13 @@
 .h-record-doc-go { margin-inline-start: auto; color: var(--h-blue); font-weight: 800; }
 .h-record-note { margin: 1rem 0 0; color: var(--h-muted); font-size: 0.78rem; text-align: center; }
 
-.h-why { background: #0b2036; color: #fff; }
-.h-why .h-head p { color: rgba(226, 238, 247, 0.75); }
-.h-why .h-kicker { color: #9ff3e4; }
-.h-why-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; }
-.h-why-card {
-  padding: 1.4rem;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-.h-why-card:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-3px); }
-.h-why-ico {
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 14px;
-  color: #34e0c5;
-  background: rgba(52, 224, 197, 0.12);
-}
-.h-why-ico svg { width: 1.55rem; height: 1.55rem; }
-.h-why-card h3 { margin: 1rem 0 0; font-size: 1.05rem; font-weight: 800; }
-.h-why-card p { margin: 0.5rem 0 0; font-size: 0.875rem; line-height: 1.9; color: rgba(226, 238, 247, 0.72); }
 
-/* ------------------------------------------------------------- subjects */
-
-.h-subjects { display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 0.85rem; }
-.h-subject {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-  padding: 1rem;
-  border-radius: 18px;
-  color: inherit;
-  text-decoration: none;
-  background: var(--h-card);
-  border: 1px solid var(--h-line);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-.h-subject:hover { transform: translateY(-3px); box-shadow: var(--h-shadow-hover); }
+/* Subject-tone hover borders, used by the subject chips on the free-videos page. */
 .h-ts-teal:hover { border-color: #9fe3d6; }
 .h-ts-blue:hover { border-color: #b7cdf8; }
 .h-ts-violet:hover { border-color: #cdb6f8; }
 .h-ts-amber:hover { border-color: #f3cf8f; }
 .h-ts-rose:hover { border-color: #f6b3c2; }
-.h-subject-ico { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; flex: none; border-radius: 14px; }
-.h-subject-ico svg { width: 1.45rem; height: 1.45rem; }
-.h-subject-text { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
-.h-subject-text b { font-size: 0.95rem; font-weight: 800; }
-.h-subject-text small { font-size: 0.75rem; line-height: 1.7; color: var(--h-muted); }
-.h-subject-free {
-  position: absolute;
-  inset-block-start: -0.55rem;
-  inset-inline-end: 0.85rem;
-  padding: 0.12rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.66rem;
-  font-weight: 800;
-  color: #fff;
-  background: var(--h-teal);
-}
 
 /* --------------------------------------------------------------- tracks */
 
@@ -577,25 +505,6 @@
 
 /* ---------------------------------------------------------------- tools */
 
-.h-tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-.h-tool {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.9rem;
-  padding: 1.15rem;
-  border-radius: 20px;
-  color: inherit;
-  text-decoration: none;
-  background: var(--h-card);
-  border: 1px solid var(--h-line);
-  box-shadow: var(--h-shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.h-tool:hover { transform: translateY(-3px); box-shadow: var(--h-shadow-hover); }
-.h-tool-ico { display: grid; place-items: center; width: 3rem; height: 3rem; flex: none; border-radius: 16px; }
-.h-tool-ico svg { width: 1.55rem; height: 1.55rem; }
-.h-tool b { display: block; font-size: 1rem; font-weight: 800; }
-.h-tool small { display: block; margin-top: 0.3rem; font-size: 0.8rem; line-height: 1.75; color: var(--h-muted); }
 
 /* --------------------------------------------------------- consultation */
 
@@ -624,8 +533,6 @@
 
 /* ------------------------------------------------------------ countdown */
 
-.h-countdown { padding-block: clamp(2.5rem, 6vw, 4rem); }
-.h-countdown-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
 .h-cd {
   display: flex;
   flex-direction: column;
@@ -674,38 +581,6 @@
 
 /* ------------------------------------------------------------------ faq */
 
-.h-faq-sec { background: var(--h-soft); }
-.h-faq-wrap { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 2rem; align-items: start; }
-.h-faq { display: grid; gap: 0.75rem; }
-.h-faq details { border-radius: 18px; background: var(--h-card); border: 1px solid var(--h-line); }
-.h-faq summary {
-  position: relative;
-  padding: 1.05rem 1.25rem;
-  padding-inline-end: 3rem;
-  font-weight: 800;
-  line-height: 1.7;
-  cursor: pointer;
-  list-style: none;
-}
-.h-faq summary::-webkit-details-marker { display: none; }
-.h-faq summary::after {
-  content: "+";
-  position: absolute;
-  inset-inline-end: 1.1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: grid;
-  place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 999px;
-  font-size: 1.1rem;
-  color: var(--h-teal-d);
-  background: var(--h-teal-w);
-}
-.h-faq details[open] summary::after { content: "−"; }
-.h-faq details p { margin: 0; padding: 0 1.25rem; line-height: 1.95; color: var(--h-muted); font-size: 0.925rem; }
-.h-faq details a { display: inline-block; margin: 0.6rem 1.25rem 1.1rem; font-size: 0.85rem; font-weight: 700; color: var(--h-blue); }
 
 /* ------------------------------------------------------------ responsive */
 
@@ -718,29 +593,22 @@
   .h-fan-card { width: 8.5rem; }
   .h-fan-0 { width: 9.5rem; }
   .h-courses,
-  .h-why-grid,
-  .h-tools,
   .h-articles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .h-featured,
   .h-tracks { grid-template-columns: minmax(0, 1fr); }
-  .h-consult-grid,
-  .h-faq-wrap { grid-template-columns: minmax(0, 1fr); }
+  .h-consult-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 640px) {
   .h-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .h-courses,
-  .h-why-grid,
-  .h-tools,
   .h-articles,
-  .h-consult-cards,
-  .h-countdown-grid { grid-template-columns: minmax(0, 1fr); }
+  .h-consult-cards { grid-template-columns: minmax(0, 1fr); }
   .h-search { border-radius: 18px; flex-wrap: wrap; padding: 0.5rem; }
   .h-search input { padding: 0.35rem 0.25rem; }
   .h-search button { width: 100%; }
   .h-fan-3,
   .h-fan-4 { display: none; }
-  .h-count-strip a { margin-inline-start: 0; }
   .h-wall { grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr)); }
 }
 

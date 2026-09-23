@@ -3,11 +3,11 @@ import Link from "next/link";
 import { publicArticlePath, type PublicArticleRecord } from "../components/PublicContent";
 import { FreeVideoCard, lectureSubject, type FreeVideo } from "../components/FreeVideoCard";
 import { StructuredData } from "../components/StructuredData";
-import { Glyph, SubjectGlyph, SUBJECT_TONE, type GlyphName } from "../components/SubjectIcon";
-import { articles as editorialArticles, guides, subjects } from "../content/editorial";
+import { Glyph, SubjectGlyph, SUBJECT_TONE } from "../components/SubjectIcon";
+import { subjects } from "../content/editorial";
 import { evidenceStats, questionDesignEvidence, studentResults } from "../content/evidence";
 import { API_URL, apiGetPublic } from "../lib/api";
-import { daysUntil, EXAM_DATES, EXAM_DATES_SOURCE } from "../lib/exam-dates";
+import { daysUntil, EXAM_DATES } from "../lib/exam-dates";
 import { formatPersianNumber, formatRial, toPersianDigits } from "../lib/format";
 import { absoluteUrl, pageMetadata, SITE_NAME } from "../lib/seo";
 import "./home.css";
@@ -113,48 +113,6 @@ const TRACKS = [
   },
 ] as const;
 
-const TOOLS: { href: string; title: string; body: string; icon: GlyphName; tone: string }[] = [
-  { href: "/rank-estimate", title: "تخمین رتبه", body: "با درصدهایت، بازهٔ رتبه و سطح اطمینانش را ببین.", icon: "target", tone: "violet" },
-  { href: "/choices", title: "لیست انتخاب رشته", body: "دانشگاه و گرایش‌ها را بچین و پیش‌نویس بساز.", icon: "list", tone: "teal" },
-  { href: "/report-cards", title: "کارنامه‌های قبولی", body: "درصد، تراز و رتبهٔ پذیرفته‌شده‌های سال‌های قبل.", icon: "trophy", tone: "amber" },
-  { href: "/programs", title: "ظرفیت و گرایش‌ها", body: "کدام دانشگاه چه گرایشی و چند ظرفیت دارد.", icon: "building", tone: "blue" },
-  { href: "/today", title: "برنامهٔ امروز من", body: "کار امروزت را بدان و مطالعه‌ات را ثبت کن.", icon: "calendar", tone: "rose" },
-  { href: "/guides", title: "راهنمای رسمی ۱۴۰۶", body: "مواد، ضرایب و مجموعه‌ها از اطلاعیهٔ رسمی.", icon: "book", tone: "teal" },
-];
-
-const STRENGTHS: { icon: GlyphName; title: string; body: string }[] = [
-  {
-    icon: "trophy",
-    title: "نتیجهٔ واقعی، با نام و رضایت",
-    body: "هر رتبه‌ای که اینجا می‌بینی مال یک شاگرد واقعی است که خودش رضایت داده نامش دیده شود؛ عدد ساختگی نداریم.",
-  },
-  {
-    icon: "play",
-    title: "ویدیوی رایگان برای هر درس",
-    body: "برای شروع هر درس، بهترین کلاس ضبط‌شدهٔ رایگان دانشگاهی را کنار دوره‌ها گذاشته‌ایم.",
-  },
-  {
-    icon: "shield",
-    title: "منبع رسمی و تاریخ بازبینی",
-    body: "مواد، ضرایب و تاریخ‌ها از اطلاعیهٔ رسمی سنجش؛ روی هر صفحه می‌نویسیم کِی بازبینی شده.",
-  },
-  {
-    icon: "chat",
-    title: "مشاوره با خود مدرس",
-    body: "جلسهٔ تکی یا بستهٔ سالیانه تا روز کنکور؛ زمان را خودت پیشنهاد می‌دهی.",
-  },
-  {
-    icon: "layers",
-    title: "همه‌چیز زیر یک حساب",
-    body: "دوره، برنامه، تخمین رتبه و انتخاب رشته در یک جا؛ لازم نیست بین سایت‌ها بچرخی.",
-  },
-  {
-    icon: "spark",
-    title: "مطابق ساختار ۱۴۰۶",
-    body: "جبر خطی و مبانی برنامه‌سازی که امسال اضافه شد، و درس‌هایی که کنار رفت، همه به‌روز است.",
-  },
-];
-
 const RANK_TONES = ["gold", "silver", "bronze"] as const;
 
 function mediaUrl(path: string) {
@@ -198,17 +156,10 @@ export default async function HomePage() {
   const catalogue = courses ?? [];
   const productList = products ?? [];
   const freeVideos = (videos ?? []).filter((video): video is FreeVideo & { externalUrl: string } => Boolean(video.externalUrl));
-  const videoSubjects = new Set(freeVideos.flatMap((video) => video.subjectCodes));
   const consultations = offerings ?? [];
-  const latestArticles = (published ?? []).slice(0, 6);
+  const latestArticles = (published ?? []).slice(0, 3);
 
   const masterDays = daysUntil(EXAM_DATES.master1406.iso);
-  const phdDays = daysUntil(EXAM_DATES.phd1406.iso);
-
-  const faqs = [...guides, ...editorialArticles]
-    .filter((page) => page.quickAnswer)
-    .slice(0, 5)
-    .map((page) => ({ q: page.title, a: page.quickAnswer!, href: `/guides/${page.slug}` }));
 
   // Extends the site-wide WebSite entity from the layout (same @id) with the
   // search box, rather than declaring a second, competing site entity.
@@ -353,17 +304,6 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="h-wrap">
-          <div className="h-count-strip">
-            <span>
-              <b>{toPersianDigits(masterDays)}</b> روز تا {EXAM_DATES.master1406.label}
-            </span>
-            <span>
-              <b>{toPersianDigits(phdDays)}</b> روز تا {EXAM_DATES.phd1406.label}
-            </span>
-            <Link href={EXAM_DATES_SOURCE.href}>{EXAM_DATES_SOURCE.label} ←</Link>
-          </div>
-        </div>
       </section>
 
       {/* ------------------------------------------------------- results wall */}
@@ -501,7 +441,7 @@ export default async function HomePage() {
                   <Glyph name={doc.category === "طراحی سؤال" ? "spark" : "trophy"} />
                 </span>
                 <span>
-                  <small>{doc.category} · {doc.subject}{doc.year !== "—" ? ` · ${doc.year}` : ""}</small>
+                  <small>{doc.student ? `${doc.student} · ` : ""}{doc.category} · {doc.subject}{doc.year !== "—" ? ` · ${doc.year}` : ""}</small>
                   <strong>{doc.metric}</strong>
                   <em>{doc.description}</em>
                 </span>
@@ -579,67 +519,13 @@ export default async function HomePage() {
               </Link>
             </header>
             <div className="h-videos">
-              {freeVideos.map((video) => (
+              {freeVideos.slice(0, 6).map((video) => (
                 <FreeVideoCard video={video} key={video.slug} />
               ))}
             </div>
           </div>
         </section>
       )}
-
-      {/* ---------------------------------------------------------- strengths */}
-      <section className="h-sec h-why">
-        <div className="h-wrap">
-          <header className="h-head h-head-center">
-            <p className="h-kicker">چرا {SITE_NAME}</p>
-            <h2>چیزی که جای دیگر پیدا نمی‌کنی</h2>
-          </header>
-          <div className="h-why-grid">
-            {STRENGTHS.map((item) => (
-              <div className="h-why-card" key={item.title}>
-                <span className="h-why-ico">
-                  <Glyph name={item.icon} />
-                </span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------- subjects */}
-      <section className="h-sec" id="subjects">
-        <div className="h-wrap">
-          <header className="h-head h-head-row">
-            <div>
-              <p className="h-kicker">نقشهٔ درس‌ها</p>
-              <h2>{toPersianDigits(subjects.length)} درس، با وضعیت واقعی ۱۴۰۶</h2>
-              <p>ضریب و جایگاه هر درس در مجموعه‌های امسال، پیش‌نیازش و از کجا شروع کنی.</p>
-            </div>
-            <Link href="/subjects" className="h-link">
-              همهٔ درس‌ها ←
-            </Link>
-          </header>
-          <div className="h-subjects">
-            {subjects.map((subject) => {
-              const tone = SUBJECT_TONE[subject.slug] ?? "teal";
-              return (
-                <Link href={`/subjects/${subject.slug}`} className={`h-subject h-ts-${tone}`} key={subject.slug}>
-                  <span className={`h-subject-ico h-t-${tone}`}>
-                    <SubjectGlyph slug={subject.slug} />
-                  </span>
-                  <span className="h-subject-text">
-                    <b>{subject.title}</b>
-                    <small>{subject.status1406}</small>
-                  </span>
-                  {videoSubjects.has(subject.slug) && <span className="h-subject-free">ویدیوی رایگان</span>}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* ------------------------------------------------------------- tracks */}
       <section className="h-sec h-tracks-sec">
@@ -665,29 +551,6 @@ export default async function HomePage() {
                 </Link>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------------- tools */}
-      <section className="h-sec">
-        <div className="h-wrap">
-          <header className="h-head">
-            <p className="h-kicker">ابزارهای رایگان</p>
-            <h2>از تخمین رتبه تا انتخاب رشته</h2>
-          </header>
-          <div className="h-tools">
-            {TOOLS.map((tool) => (
-              <Link href={tool.href} className="h-tool" key={tool.href}>
-                <span className={`h-tool-ico h-t-${tool.tone}`}>
-                  <Glyph name={tool.icon} />
-                </span>
-                <span>
-                  <b>{tool.title}</b>
-                  <small>{tool.body}</small>
-                </span>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
@@ -724,26 +587,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ---------------------------------------------------------- countdown */}
-      <section className="h-sec h-countdown">
-        <div className="h-wrap h-countdown-grid">
-          <div className="h-cd h-cd-master">
-            <span>روزشمار {EXAM_DATES.master1406.label}</span>
-            <b>{toPersianDigits(masterDays)}</b>
-            <small>روز مانده · {EXAM_DATES.master1406.dateLabel}</small>
-          </div>
-          <div className="h-cd h-cd-phd">
-            <span>روزشمار {EXAM_DATES.phd1406.label}</span>
-            <b>{toPersianDigits(phdDays)}</b>
-            <small>روز مانده · {EXAM_DATES.phd1406.dateLabel}</small>
-          </div>
-          <p className="h-cd-src">
-            <Link href={EXAM_DATES_SOURCE.href}>{EXAM_DATES_SOURCE.label}</Link> — پیش از هر اقدام، اطلاعیهٔ روز سنجش
-            را هم ببین.
-          </p>
-        </div>
-      </section>
-
       {/* ----------------------------------------------------------- articles */}
       {latestArticles.length > 0 && (
         <section className="h-sec">
@@ -772,26 +615,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ---------------------------------------------------------------- faq */}
-      {faqs.length > 0 && (
-        <section className="h-sec h-faq-sec">
-          <div className="h-wrap h-faq-wrap">
-            <header className="h-head">
-              <p className="h-kicker">پرسش‌های پرتکرار</p>
-              <h2>جواب کوتاه، با منبع</h2>
-            </header>
-            <div className="h-faq">
-              {faqs.map((faq) => (
-                <details key={faq.q}>
-                  <summary>{faq.q}</summary>
-                  <p>{faq.a}</p>
-                  <Link href={faq.href}>ادامه در راهنما ←</Link>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </main>
   );
 }

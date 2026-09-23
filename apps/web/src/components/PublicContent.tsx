@@ -3,6 +3,11 @@ import type { ReactNode } from "react";
 import { ContentBlocks } from "./ContentBlocks";
 import { StructuredData } from "./StructuredData";
 import { EmptyState } from "./ui";
+import { NextSteps, readingNextSteps } from "./reading/NextSteps";
+import { ReadingHero } from "./reading/ReadingHero";
+import { ReadingProgress } from "./reading/ReadingProgress";
+import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
+import { findSubject } from "../content/editorial";
 import { absoluteUrl } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
 
@@ -352,34 +357,33 @@ export function PublicArticleView({
     })),
   };
 
-  return (
-    <main className="editorial-shell">
-      <StructuredData data={[articleSchema, webPageSchema, breadcrumbSchema]} />
-      <PublicBreadcrumbs items={breadcrumbItems} />
-      <div className="editorial-layout">
-        <article className="editorial-article">
-          <header className="editorial-hero">
-            <div className="editorial-kickers">
-              <span className="eyebrow">{contentTypeLabel(article.contentType)}</span>
-              {article.taxonomyDegrees.map((degree) => <span key={degree}>{degreeLabel(degree)}</span>)}
-              {article.validForYear && <span>ویژهٔ {toPersianDigits(article.validForYear)}</span>}
-            </div>
-            <h1>{article.title}</h1>
-            <p className="editorial-deck">{article.summary}</p>
-            <div className="editorial-byline">
-              {article.authorProfile && <span className="author-avatar" aria-hidden="true">{article.authorProfile.displayName.slice(0, 1)}</span>}
-              <div>
-                {article.authorProfile && <ProfileLine profile={article.authorProfile} prefix="نویسنده:" />}
-                {article.reviewerProfile && <ProfileLine profile={article.reviewerProfile} prefix="بازبین:" />}
-                {!article.authorProfile && !article.reviewerProfile && <span>انتساب تحریریه هنوز منتشر نشده است.</span>}
-              </div>
-              <div className="editorial-dates">
-                {publishedAt && <span>انتشار {publishedAt}</span>}
-                {reviewedAt && <span>آخرین بررسی {reviewedAt}</span>}
-              </div>
-            </div>
-          </header>
+  const leadSubject = article.subjectCodes.map((code) => findSubject(code)).find(Boolean);
+  const tone = leadSubject ? SUBJECT_TONE[leadSubject.slug] ?? "blue" : article.contentType === "GUIDE" ? "teal" : "blue";
 
+  return (
+    <main className="rd-page">
+      <ReadingProgress />
+      <StructuredData data={[articleSchema, webPageSchema, breadcrumbSchema]} />
+      <ReadingHero
+        tone={tone}
+        crumbs={breadcrumbItems}
+        chips={[
+          contentTypeLabel(article.contentType),
+          ...article.taxonomyDegrees.map((degree) => degreeLabel(degree)),
+          ...(article.validForYear ? [`ویژهٔ ${toPersianDigits(article.validForYear)}`] : []),
+        ]}
+        title={article.title}
+        deck={article.summary}
+        meta={[
+          ...(reviewedAt ? [<span key="reviewed"><Glyph name="shield" />آخرین بررسی <b>{reviewedAt}</b></span>] : []),
+          ...(publishedAt ? [<span key="published"><Glyph name="calendar" />انتشار <b>{publishedAt}</b></span>] : []),
+          ...(article.sources.length > 0 ? [<span key="sources"><Glyph name="list" /><b>{toPersianDigits(article.sources.length)}</b> منبع</span>] : []),
+        ]}
+        art={leadSubject ? <SubjectGlyph slug={leadSubject.slug} /> : <Glyph name={article.contentType === "GUIDE" ? "compass" : "book"} />}
+      />
+
+      <div className="rd-wrap rd-layout">
+        <article className="rd-main">
           {article.quickAnswer && (
             <aside className="answer-first" aria-labelledby="quick-answer-title">
               <strong id="quick-answer-title">پاسخ سریع</strong>
@@ -407,24 +411,47 @@ export function PublicArticleView({
             <EmptyState title="متن کامل هنوز در دسترس نیست" description="این صفحه فقط اطلاعات انتشارِ تأییدشده را نمایش می‌دهد." />
           )}
 
+          <section className="rd-author" aria-label="تهیه و بازبینی">
+            <span className="rd-author-mark" aria-hidden="true">{article.authorProfile?.displayName.slice(0, 1) ?? "ک"}</span>
+            <div>
+              {article.authorProfile || article.reviewerProfile ? (
+                <strong>
+                  {article.authorProfile && <ProfileLine profile={article.authorProfile} prefix="نویسنده:" />}
+                  {article.authorProfile && article.reviewerProfile && " · "}
+                  {article.reviewerProfile && <ProfileLine profile={article.reviewerProfile} prefix="بازبین:" />}
+                </strong>
+              ) : (
+                <strong>تهیه و بازبینی: تحریریهٔ کنکورصفریک</strong>
+              )}
+              <p>
+                {article.authorProfile || article.reviewerProfile ? "" : "این مطلب را تحریریهٔ کنکورصفریک بر پایهٔ منابع ذکرشده تهیه کرده است. "}
+                روش کار ما را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.
+              </p>
+            </div>
+          </section>
+
           <PublicSourceList sources={article.sources ?? []} />
           <RelatedContentGrid items={related} description="پیوندهای تأییدشده بر اساس درس، مبحث و پروندهٔ همین محتوا." />
+          <NextSteps
+            lead="خواندن کافی نیست؛ از همین‌جا مطالعه را شروع کن."
+            steps={readingNextSteps(leadSubject ? { slug: leadSubject.slug, shortTitle: leadSubject.shortTitle } : undefined)}
+          />
         </article>
 
-        <aside className="editorial-aside" aria-label="راهنمای صفحه">
+        <aside className="rd-aside" aria-label="راهنمای صفحه">
           {sections.length > 0 && (
-            <div className="surface-card toc-card">
+            <div className="rd-toc">
               <strong>در این صفحه</strong>
               <nav aria-label="فهرست مطالب">
                 {sections.map((section) => <a key={section.id} href={`#${section.id}`}>{section.title}</a>)}
               </nav>
             </div>
           )}
-          <div className="surface-card telegram-card">
-            <span className="telegram-icon" aria-hidden="true">↗</span>
+          <div className="rd-side-cta">
             <strong>کانال رسمی کنکورصفریک</strong>
             <p>خبرها، آموزش‌ها و اصلاحیه‌های مطالب را از منبع رسمی دنبال کنید.</p>
-            <a className="button button-primary" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
+            <a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
+            <Link href="/free-videos">ویدیوی رایگان هر درس</Link>
           </div>
         </aside>
       </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { SubjectPage } from "../content/editorial";
 import {
   phase11MasterTracks,
@@ -9,7 +10,7 @@ import {
 import { toPersianDigits } from "../lib/format";
 import { SectionHeader } from "./ui";
 
-function officialPlacements(slug: Phase11SubjectSlug) {
+export function officialPlacements(slug: Phase11SubjectSlug) {
   return Object.values(phase11MasterTracks).flatMap((track) =>
     track.bundles
       .filter((bundle) => bundle.subjectSlugs.includes(slug))
@@ -17,7 +18,7 @@ function officialPlacements(slug: Phase11SubjectSlug) {
   );
 }
 
-function coefficientLabel(bundle: Phase11ExamBundle) {
+export function coefficientLabel(bundle: Phase11ExamBundle) {
   if (bundle.coefficientsByCode) {
     return `کد ۱: ضریب ${toPersianDigits(bundle.coefficientsByCode["1"])} · کد ۲: ضریب ${toPersianDigits(bundle.coefficientsByCode["2"])}`;
   }
@@ -27,21 +28,24 @@ function coefficientLabel(bundle: Phase11ExamBundle) {
 export function Phase11SubjectEditorial({
   subject,
   content,
+  beforeSources,
 }: {
   subject: SubjectPage;
   content: Phase11SubjectContent;
+  /** Rendered just above the sources, so the page closes on its citations. */
+  beforeSources?: ReactNode;
 }) {
   const placements = officialPlacements(content.slug);
   const syllabus = subject.syllabus ?? [];
 
   return (
     <>
-      <aside className="answer-first" aria-labelledby="phase11-quick-answer-title" data-phase11="verified-subject-hub">
+      <aside id="quick-answer" className="answer-first" aria-labelledby="phase11-quick-answer-title" data-phase11="verified-subject-hub">
         <strong id="phase11-quick-answer-title">پاسخ سریع برای آزمون ۱۴۰۶</strong>
         <p>{content.quickAnswer}</p>
       </aside>
 
-      <section className="track-snapshot" aria-labelledby="phase11-exam-status-title">
+      <section id="exam-status" className="track-snapshot" aria-labelledby="phase11-exam-status-title">
         <div className="track-snapshot-heading">
           <span className="eyebrow">جایگاه در جدول رسمی</span>
           <h2 id="phase11-exam-status-title">این درس در کدام مسیر می‌آید؟</h2>
@@ -71,7 +75,7 @@ export function Phase11SubjectEditorial({
         </div>
       </section>
 
-      <section className="syllabus-panel" aria-labelledby="phase11-syllabus-title">
+      <section id="syllabus" className="syllabus-panel" aria-labelledby="phase11-syllabus-title">
         <div className="section-heading syllabus-heading">
           <div>
             <span className="eyebrow">سرفصل آموزشی مرجع</span>
@@ -98,7 +102,7 @@ export function Phase11SubjectEditorial({
         </div>
       </section>
 
-      <section aria-labelledby="phase11-study-path-title">
+      <section id="study-path" className="rd-study" aria-labelledby="phase11-study-path-title">
         <SectionHeader
           title="از کجا شروع کنم؟"
           description="یک ترتیب پیشنهادی برای تبدیل سرفصل به مسیر مطالعه؛ نه برنامهٔ یکسان برای همه."
@@ -128,7 +132,9 @@ export function Phase11SubjectEditorial({
         </div>
       </section>
 
-      <section className="sources-box" aria-labelledby="phase11-sources-title">
+      {beforeSources}
+
+      <section id="sources" className="sources-box" aria-labelledby="phase11-sources-title">
         <div>
           <span>منابع و اعتبارسنجی</span>
           <h2 id="phase11-sources-title">منابع این صفحه</h2>

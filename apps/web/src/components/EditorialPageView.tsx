@@ -4,6 +4,23 @@ import { absoluteUrl } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
 import { StructuredData } from "./StructuredData";
 import { RelatedContentGrid, type RelatedPublicItem } from "./PublicContent";
+import { NextSteps, readingNextSteps } from "./reading/NextSteps";
+import { ReadingHero } from "./reading/ReadingHero";
+import { ReadingProgress } from "./reading/ReadingProgress";
+import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
+
+/**
+ * The answer-first line. A page without a written quick answer used to fall
+ * back to its own deck, so the reader saw the same sentence twice; the first
+ * section's key points say something the deck does not.
+ */
+function quickAnswer(page: EditorialPage) {
+  if (page.quickAnswer) return page.quickAnswer;
+  const first = page.sections[0];
+  if (first?.paragraphs?.[0]) return first.paragraphs[0];
+  if (first?.bullets?.length) return `${first.title}: ${first.bullets.join("، ")}.`;
+  return page.description;
+}
 
 export function EditorialPageView({
   page,
@@ -26,9 +43,12 @@ export function EditorialPageView({
     { name: basePath === "/guides" ? "راهنماها" : "مقاله‌ها", item: absoluteUrl(basePath) },
     { name: page.title, item: absoluteUrl(path) },
   ];
+  const lead = relatedSubjects[0];
+  const tone = lead ? SUBJECT_TONE[lead.slug] ?? "blue" : basePath === "/guides" ? "teal" : "blue";
 
   return (
-    <main className="editorial-shell">
+    <main className="rd-page">
+      <ReadingProgress />
       <StructuredData
         data={[
           {
@@ -50,32 +70,26 @@ export function EditorialPageView({
           },
         ]}
       />
-      <nav className="breadcrumbs" aria-label="مسیر صفحه">
-        {breadcrumbs.map((item, index) => (
-          <span key={item.item}>
-            {index > 0 && <i aria-hidden="true">/</i>}
-            {index === breadcrumbs.length - 1 ? item.name : <Link href={new URL(item.item).pathname}>{item.name}</Link>}
-          </span>
-        ))}
-      </nav>
 
-      <div className="editorial-layout">
-        <article className="editorial-article">
-          <header className="editorial-hero">
-            <div className="editorial-kickers">
-              <span className="eyebrow">{page.category}</span>
-              <span>{page.degree}</span>
-              <span>{page.field}</span>
-            </div>
-            <h1>{page.title}</h1>
-            <p className="editorial-deck">{page.description}</p>
-            <div className="editorial-byline">
-              <span className="author-avatar" aria-hidden="true">ک</span>
-              <div><strong>نسخهٔ پایهٔ تحریریه</strong><span>انتساب نویسنده و بازبین پس از تأیید نسخهٔ canonical منتشر می‌شود.</span></div>
-              <div className="editorial-dates"><span>آخرین بررسی {page.reviewedAt}</span><span>{toPersianDigits(page.readingMinutes)} دقیقه مطالعه</span></div>
-            </div>
-          </header>
+      <ReadingHero
+        tone={tone}
+        crumbs={breadcrumbs.map((item, index) => ({
+          name: item.name,
+          href: index === breadcrumbs.length - 1 ? undefined : new URL(item.item).pathname,
+        }))}
+        chips={[page.category, page.degree, page.field]}
+        title={page.title}
+        deck={page.description}
+        meta={[
+          <span key="reviewed"><Glyph name="shield" />آخرین بررسی <b>{page.reviewedAt}</b></span>,
+          <span key="minutes"><Glyph name="pace" /><b>{toPersianDigits(page.readingMinutes)}</b> دقیقه مطالعه</span>,
+          <span key="sources"><Glyph name="list" /><b>{toPersianDigits(page.sources.length)}</b> منبع</span>,
+        ]}
+        art={lead ? <SubjectGlyph slug={lead.slug} /> : <Glyph name={basePath === "/guides" ? "compass" : "book"} />}
+      />
 
+      <div className="rd-wrap rd-layout">
+        <article className="rd-main">
           {showOfficialDisclaimer && (
             <aside className="official-disclaimer editorial-disclaimer">
               <strong>اعتبار اطلاعات ۱۴۰۶</strong>
@@ -85,7 +99,7 @@ export function EditorialPageView({
 
           <div className="answer-first">
             <strong>پاسخ سریع</strong>
-            <p>{page.quickAnswer ?? page.sections[0]?.paragraphs?.[0] ?? page.description}</p>
+            <p>{quickAnswer(page)}</p>
           </div>
 
           <div className="editorial-body">
@@ -103,29 +117,38 @@ export function EditorialPageView({
           </div>
 
           {relatedSubjects.length > 0 && (
-            <section className="syllabus-panel" aria-labelledby="guide-subjects-title">
-              <div className="section-heading syllabus-heading">
-                <div>
-                  <span className="eyebrow">از جدول آزمون تا برنامهٔ مطالعه</span>
-                  <h2 id="guide-subjects-title">صفحهٔ اختصاصی درس‌های این مسیر</h2>
-                  <p>وضعیت ۱۴۰۶، سرفصل مرجع، پیش‌نیازها و ترتیب شروع هر درس را جداگانه ببین.</p>
-                </div>
+            <section className="rd-block" aria-labelledby="guide-subjects-title">
+              <div className="rd-block-head">
+                <span className="eyebrow">از جدول آزمون تا برنامهٔ مطالعه</span>
+                <h2 id="guide-subjects-title">صفحهٔ اختصاصی درس‌های این مسیر</h2>
+                <p>وضعیت ۱۴۰۶، سرفصل مرجع، پیش‌نیازها و ترتیب شروع هر درس را جداگانه ببین.</p>
               </div>
               <div className="subject-grid">
                 {relatedSubjects.map((subject) => (
                   <Link className="subject-card" href={`/subjects/${subject.slug}`} key={subject.slug}>
-                    <div className="subject-monogram">{subject.accent}</div>
+                    <div className="subject-monogram"><SubjectGlyph slug={subject.slug} className="rd-mono-glyph" /></div>
                     <div>
                       <span className="subject-status">{subject.status1406}</span>
                       <h3>{subject.title}</h3>
                       <p>{subject.description}</p>
-                      <span className="subject-card-link">سرفصل و مسیر یادگیری ←</span>
                     </div>
                   </Link>
                 ))}
               </div>
             </section>
           )}
+
+          <section className="rd-author" aria-label="تهیه و بازبینی">
+            <span className="rd-author-mark" aria-hidden="true">ک</span>
+            <div>
+              <strong>تهیه‌شده در تحریریهٔ کنکورصفریک</strong>
+              <p>
+                انتساب نویسنده و بازبین این نسخه بعد از تأیید نهایی کنار همین متن می‌آید. هر عدد و تاریخ این صفحه از منبع
+                رسمی آمده و در {page.reviewedAt} بازبینی شده است؛ روش کار ما را در{" "}
+                <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.
+              </p>
+            </div>
+          </section>
 
           <section className="sources-box" aria-labelledby="sources-title">
             <div><span>منابع و اعتبارسنجی</span><h2 id="sources-title">این مطلب بر چه اساسی نوشته شده؟</h2></div>
@@ -135,21 +158,26 @@ export function EditorialPageView({
 
           <RelatedContentGrid
             items={related}
-            title="قدم بعدی"
+            title="ادامهٔ همین مسیر"
             description="این پیوندها بخشی از مسیر همین راهنما هستند؛ از هر کدام می‌توانی مطالعه را ادامه بدهی."
+          />
+
+          <NextSteps
+            lead="خواندن کافی نیست؛ از همین‌جا مطالعه را شروع کن."
+            steps={readingNextSteps(lead ? { slug: lead.slug, shortTitle: lead.shortTitle } : undefined)}
           />
         </article>
 
-        <aside className="editorial-aside" aria-label="راهنمای صفحه">
-          <div className="surface-card toc-card">
+        <aside className="rd-aside" aria-label="راهنمای صفحه">
+          <div className="rd-toc">
             <strong>در این صفحه</strong>
             <nav aria-label="فهرست مطالب">{page.sections.map((section, index) => <a key={section.title} href={`#section-${index + 1}`}>{section.title}</a>)}</nav>
           </div>
-          <div className="surface-card telegram-card">
-            <span className="telegram-icon" aria-hidden="true">↗</span>
+          <div className="rd-side-cta">
             <strong>آپدیت‌های کنکور را از دست نده</strong>
-            <p>خبرهای اصلی و تحلیل‌ها در کانال رسمی kunkur01 منتشر می‌شوند.</p>
-            <a className="button button-primary" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
+            <p>خبرهای اصلی و تحلیل‌ها در کانال رسمی کنکورصفریک منتشر می‌شوند.</p>
+            <a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
+            <Link href="/free-videos">ویدیوی رایگان هر درس</Link>
           </div>
         </aside>
       </div>
