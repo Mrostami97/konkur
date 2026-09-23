@@ -54,6 +54,30 @@ export class MediaController {
       throw new NotFoundException("media not found");
     }
 
+    // Student photos follow their own rule, checked before the signed-in
+    // pass-through below. A photo belongs to a real person who agreed to be
+    // shown on the results wall; if their result is unpublished -- never
+    // consented, or consent withdrawn -- the photo must not be reachable by
+    // anyone who happens to hold the checksum, signed in or not. Only an
+    // admin managing the wall can still see it. A 404 rather than a 403, so
+    // the response does not confirm the photo exists.
+    const achievementUses = await this.prisma.studentAchievement.findMany({
+      where: { photoArtifactId: artifact.id },
+      select: { isPublished: true },
+    });
+    // Keyed by where the upload stored it as well as by current use: a photo
+    // that was replaced, or whose row was deleted, is still a person's face
+    // and must not fall through to the signed-in pass-through below.
+    const isAchievementPhoto = /\/achievement\.(jpg|png|webp)$/.test(artifact.storageKey);
+    if (achievementUses.length > 0 || isAchievementPhoto) {
+      const isPublic = achievementUses.some((use) => use.isPublished);
+      const isAdmin = req.user?.roles.includes("ADMIN") ?? false;
+      if (!isPublic && !isAdmin) throw new NotFoundException("media not found");
+      const url = await this.storage.presignedGetUrl(artifact.storageKey);
+      res.redirect(302, url);
+      return;
+    }
+
     if (!req.user) {
       // Anonymous callers may only resolve a checksum that is already
       // reachable through a genuinely public, unauthenticated API response:

@@ -90,11 +90,48 @@ export class LearningService {
 
   // --- Public catalog -----------------------------------------------------
 
+  /**
+   * The public course catalogue. An explicit select for the same reason as
+   * the syllabus below: this returned the whole row, which by now included
+   * `spotPlayerCourseId`. It also carries what a catalogue card needs --
+   * who teaches the course, how much of it there is, and whether it has
+   * video -- so the homepage does not have to fetch each course separately.
+   */
   async listPublishedCourses() {
-    return this.prisma.course.findMany({
+    const courses = await this.prisma.course.findMany({
       where: { isPublished: true },
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        description: true,
+        isPublished: true,
+        accessMode: true,
+        subjectId: true,
+        degreeTargets: true,
+        fieldTargets: true,
+        createdAt: true,
+        updatedAt: true,
+        spotPlayerCourseId: true,
+        subject: { select: { code: true, title: true } },
+        instructors: {
+          where: { contributorProfile: { isPublished: true } },
+          orderBy: { sortOrder: "asc" },
+          select: { contributorProfile: { select: { slug: true, displayName: true, avatarUrl: true } } },
+        },
+        modules: { select: { _count: { select: { lessons: true } } } },
+      },
     });
+
+    return courses.map(({ spotPlayerCourseId, instructors, modules, ...course }) => ({
+      ...course,
+      instructors: instructors.map((row) => row.contributorProfile),
+      moduleCount: modules.length,
+      lessonCount: modules.reduce((sum, row) => sum + row._count.lessons, 0),
+      // Whether there is video, not where it lives: the id stays private.
+      hasVideo: spotPlayerCourseId !== null,
+    }));
   }
 
   /**

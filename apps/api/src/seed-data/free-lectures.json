@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "free-lectures.v2",
+  "checkedAt": "2026-09-23T00:00:00.000Z",
+  "note": "Owner-selected free university lectures. Each link was opened and its title, instructor and session count read off the live page on the date above. Link-only: Sharif OCW's footer forbids republication without the university's permission, so nothing here is embedded, mirrored or hosted.",
+  "publishers": [
+    {
+      "id": "sharif-ocw",
+      "kind": "UNIVERSITY_OPEN_COURSEWARE",
+      "publisher": "دانشگاه صنعتی شریف",
+      "sourceTier": "ACADEMIC",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayEmbed": false,
+      "mayQuote": false,
+      "mayReproduce": false,
+      "mayAdapt": false,
+      "mayTranslate": false,
+      "mayHost": false,
+      "commercialUseAllowed": false,
+      "attributionText": "ویدیوها متعلق به دانشگاه صنعتی شریف است؛ این پیوند شما را به صفحهٔ اصلی درس در درس‌افزار شریف می‌برد.",
+      "metadata": {
+        "rightsNotice": "کلیه حقوق محتویات و فیلمهای این وبگاه متعلق به دانشگاه صنعتی شریف است و هرگونه باز انتشار آن بدون مجوز این دانشگاه ممنوع است."
+      }
+    },
+    {
+      "id": "aparat-rohban",
+      "kind": "INSTRUCTOR_VIDEO_CHANNEL",
+      "publisher": "محمدحسین رهبان",
+      "sourceTier": "ACADEMIC",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayEmbed": false,
+      "mayQuote": false,
+      "mayReproduce": false,
+      "mayAdapt": false,
+      "mayTranslate": false,
+      "mayHost": false,
+      "commercialUseAllowed": false,
+      "attributionText": "ویدیوها متعلق به مدرس است و در کانال آپارات خود ایشان منتشر شده‌اند.",
+      "metadata": {}
+    },
+    {
+      "id": "aparat-sharif-programming",
+      "kind": "UNIVERSITY_VIDEO_CHANNEL",
+      "publisher": "کانال Sharif_Fundamentals_Of_Programmi در آپارات",
+      "sourceTier": "ACADEMIC",
+      "rightsBasis": "LINK_ONLY",
+      "mayLink": true,
+      "mayEmbed": false,
+      "mayQuote": false,
+      "mayReproduce": false,
+      "mayAdapt": false,
+      "mayTranslate": false,
+      "mayHost": false,
+      "commercialUseAllowed": false,
+      "attributionText": "ویدیوها در کانال آپارات درس مبانی برنامه‌سازی شریف منتشر شده‌اند.",
+      "metadata": {}
+    }
+  ],
+  "resources": [
+    {
+      "externalId": "free-lecture-sharif-ocw-323",
+      "slug": "free-lecture-digital-logic-sharif",
+      "title": "ویدیوهای رایگان مدار منطقی — دکتر شاهین حسابی",
+      "summary": "۲۷ جلسهٔ ضبط‌شدهٔ درس مدار منطقی دانشگاه شریف؛ از مبناهای عددی و کدگذاری تا مدارهای ترکیبی و ترتیبی.",
+      "instructor": "شاهین حسابی",
+      "institution": "دانشگاه صنعتی شریف",
+      "sessions": 27,
+      "externalUrl": "https://ocw.sharif.ir/course/id/323",
+      "subjectCodes": [
+        "digital-logic"
+      ],
+      "taxonomyFields": [
+        "computer-engineering"
+      ],
+      "publisher": "sharif-ocw"
+    },
+    {
+      "externalId": "free-lecture-sharif-ocw-95",
+      "slug": "free-lecture-data-structures-sharif",
+      "title": "ویدیوهای رایگان ساختمان داده‌ها — دکتر محمدعلی آبام",
+      "summary": "۲۱ جلسهٔ ضبط‌شدهٔ درس ساختمان داده‌های دانشگاه شریف؛ از تحلیل زمان اجرا و رشد توابع تا ساختارهای داده.",
+      "instructor": "محمدعلی آبام",
+      "institution": "دانشگاه صنعتی شریف",
+      "sessions": 21,
+      "externalUrl": "https://ocw.sharif.ir/course/id/95",
+      "subjectCodes": [
+        "data-structures",
+        "data-structures-algorithms"
+      ],
+      "taxonomyFields": [
+        "computer-engineering",
+        "information-technology",
+        "computer-science"
+      ],
+      "publisher": "sharif-ocw"
+    },
+    {
+      "externalId": "free-lecture-sharif-ocw-93",
+      "slug": "free-lecture-computer-architecture-sharif",
+      "title": "ویدیوهای رایگان معماری کامپیوتر — دکتر مازیار گودرزی",
+      "summary": "۲۹ جلسهٔ ضبط‌شدهٔ درس معماری کامپیوتر دانشگاه شریف.",
+      "instructor": "مازیار گودرزی",
+      "institution": "دانشگاه صنعتی شریف",
+      "sessions": 29,
+      "externalUrl": "https://ocw.sharif.ir/course/id/93",
+      "subjectCodes": [
+        "computer-architecture"
+      ],
+      "taxonomyFields": [
+        "computer-engineering"
+      ],
+      "publisher": "sharif-ocw"
+    },
+    {
+      "externalId": "free-lecture-sharif-ocw-458",
+      "slug": "free-lecture-statistics-sharif",
+      "title": "ویدیوهای رایگان آمار و احتمال مهندسی — دکتر آرش امینی",
+      "summary": "۳۱ جلسهٔ ضبط‌شدهٔ درس آمار و احتمال مهندسی دانشگاه شریف.",
+      "instructor": "آرش امینی",
+      "institution": "دانشگاه صنعتی شریف",
+      "sessions": 31,
+      "externalUrl": "https://ocw.sharif.ir/course/id/458",
+      "subjectCodes": [
+        "statistics"
+      ],
+      "taxonomyFields": [
+        "computer-engineering",
+        "information-technology"
+      ],
+      "publisher": "sharif-ocw"
+    },
+    {
+      "externalId": "free-lecture-sharif-ocw-318",
+      "slug": "free-lecture-discrete-math-sharif",
+      "title": "ویدیوهای رایگان ساختمان‌های گسسته — دکتر حمید ضرابی‌زاده",
+      "summary": "جلسه‌های ضبط‌شدهٔ درس ساختمان‌های گسسته دانشگاه شریف؛ ویدیوهای کلاس حل تمرین هم در صفحهٔ جداگانه‌ای از همان درس‌افزار هست.",
+      "instructor": "حمید ضرابی‌زاده",
+      "institution": "دانشگاه صنعتی شریف",
+      "sessions": null,
+      "externalUrl": "https://ocw.sharif.ir/course/id/318",
+      "companionUrl": "https://ocw.sharif.ir/course/id/320",
+      "subjectCodes": [
+        "discrete-math"
+      ],
+      "taxonomyFields": [
+        "computer-engineering",
+        "information-technology",
+        "computer-science"
+      ],
+      "publisher": "sharif-ocw"
+    },
+    {
+      "externalId": "free-lecture-aparat-rohban-ai-1399",
+      "slug": "free-lecture-artificial-intelligence-rohban",
+      "title": "ویدیوهای رایگان هوش مصنوعی — دکتر محمدحسین رهبان",
+      "summary": "۲۹ جلسهٔ درس هوش مصنوعی (پاییز ۱۳۹۹) در کانال آپارات دکتر رهبان.",
+      "instructor": "محمدحسین رهبان",
+      "institution": "دانشگاه صنعتی شریف",
+      "sessions": 29,
+      "externalUrl": "https://www.aparat.com/playlist/966909",
+      "subjectCodes": [
+        "artificial-intelligence"
+      ],
+      "taxonomyFields": [
+        "computer-engineering",
+        "information-technology"
+      ],
+      "publisher": "aparat-rohban"
+    },
+    {
+      "externalId": "free-lecture-aparat-sharif-programming",
+      "slug": "free-lecture-programming-fundamentals-sharif",
+      "title": "ویدیوهای رایگان مبانی برنامه‌سازی — دانشگاه شریف",
+      "summary": "جلسه‌های کلاس درس و کلاس حل تمرین مبانی برنامه‌سازی شریف در آپارات (حدود ۲۵ جلسهٔ درس و ۱۲ جلسهٔ حل تمرین).",
+      "instructor": null,
+      "institution": "دانشگاه صنعتی شریف",
+      "sessions": 37,
+      "externalUrl": "https://www.aparat.com/Sharif_Fundamentals_Of_Programmi/videos",
+      "subjectCodes": [
+        "programming-fundamentals"
+      ],
+      "taxonomyFields": [
+        "computer-engineering",
+        "information-technology"
+      ],
+      "publisher": "aparat-sharif-programming"
+    }
+  ]
+}

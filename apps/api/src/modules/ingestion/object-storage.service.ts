@@ -53,6 +53,12 @@ export class ObjectStorageService implements OnModuleInit {
       .catch(() => false);
   }
 
+  /** Permanently removes an object. Used where a person asks for their data
+   * to be erased (a student photo), not for routine replacement. */
+  async removeObject(key: string): Promise<void> {
+    await this.client.removeObject(this.bucket, key);
+  }
+
   /** Short-lived signed URL (doc §9: "Signed URL کوتاه‌عمر"); the app never
    * proxies media bytes itself, it just redirects here. */
   async presignedGetUrl(key: string, expirySeconds = 300): Promise<string> {

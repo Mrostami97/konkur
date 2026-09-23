@@ -6,6 +6,7 @@ import {
 } from "./seed-admin";
 import { seedStaticEditorial } from "./seed-static-editorial";
 import { seedStaticResources } from "./seed-static-resources";
+import { seedFreeLectures } from "./seed-free-lectures";
 
 const prisma = new PrismaClient();
 
@@ -214,6 +215,7 @@ export async function seed(credentials?: SeedAdminCredentials) {
   await seedCourseAndProduct(admin.id);
   await seedStaticEditorial(prisma);
   await seedStaticResources(prisma);
+  await seedFreeLectures(prisma);
 }
 
 if (require.main === module) {

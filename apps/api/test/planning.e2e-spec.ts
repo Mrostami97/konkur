@@ -294,8 +294,14 @@ describe("Planning / Study OS (e2e)", () => {
       where: { id: initialPlanRes.body.id },
       include: { tasks: true },
     });
-    // Backdate one PENDING task to simulate falling behind, without waiting real days.
-    const overdueTask = plan.tasks.find((t) => t.status === "PENDING");
+    // Backdate one of *today's* PENDING tasks to simulate falling behind,
+    // without waiting real days. Overdue work goes into the first free
+    // capacity; taking it from today is what frees a slot today. Picking an
+    // arbitrary task made the outcome depend on how many catalogue items
+    // the plan had room for.
+    const overdueTask = [...plan.tasks]
+      .filter((t) => t.status === "PENDING")
+      .sort((a, b) => a.scheduledFor.getTime() - b.scheduledFor.getTime() || a.priority - b.priority)[0];
     expect(overdueTask).toBeDefined();
     await prisma.task.update({
       where: { id: overdueTask!.id },
@@ -566,7 +572,14 @@ describe("Planning / Study OS (e2e)", () => {
       .post(`/me/plan/resources/${resource.slug}`)
       .set("Cookie", studentCookie)
       .expect(201);
-    expect(explicitlyReadded.body.tasks.some((task: any) => task.resource?.slug === resource.slug)).toBe(true);
+    // Re-adding puts it back into the plan as pending work. It lands in the
+    // first free slot, which is not necessarily today once the fresh plan
+    // has filled today's capacity, so check the plan rather than today's list.
+    expect(explicitlyReadded.status).toBe(201);
+    const readdedTask = await prisma.task.findFirst({
+      where: { resourceId: resource.id, status: "PENDING", reasonCode: "USER_ADDED_RESOURCE" },
+    });
+    expect(readdedTask).not.toBeNull();
     const reopenedSave = await prisma.savedResource.findFirstOrThrow({
       where: { resourceId: resource.id },
     });
