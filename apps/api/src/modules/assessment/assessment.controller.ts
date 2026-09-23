@@ -28,6 +28,11 @@ export class ExamsPublicController {
 export class AssessmentStudentController {
   constructor(private readonly assessment: AssessmentService) {}
 
+  @Get("me/attempts")
+  myAttempts(@Req() req: RequestWithUser) {
+    return this.assessment.listMyAttempts(req.user!.id);
+  }
+
   @Post("exams/:examId/start")
   start(@Param("examId") examId: string, @Req() req: RequestWithUser) {
     return this.assessment.startAttempt(examId, req.user!.id);
@@ -51,6 +56,11 @@ export class AssessmentStudentController {
   @Post("attempts/:id/submit")
   submit(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.assessment.submitAttempt(id, req.user!.id);
+  }
+
+  @Get("attempts/:id/standing")
+  standing(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.assessment.getStanding(id, req.user!.id);
   }
 
   @Get("attempts/:id/report")

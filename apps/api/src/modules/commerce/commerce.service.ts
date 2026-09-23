@@ -649,7 +649,13 @@ export class CommerceService {
             },
             resourceGrants: {
               where: { resource: { reviewStatus: "PUBLISHED" } },
-              include: { resource: { select: { id: true, slug: true, title: true } } },
+              // Enough to list a handout in the student's library; the file
+              // itself is only ever served by the access-checked content route.
+              include: {
+                resource: {
+                  select: { id: true, slug: true, title: true, summary: true, kind: true, hostingMode: true, subjectCodes: true, publishedAt: true },
+                },
+              },
             },
             questionBankGrants: true,
           },
@@ -673,14 +679,26 @@ export class CommerceService {
   async listMyLibrary(userId: string) {
     const active = (await this.listMyEntitlements(userId)).filter((item) => item.status === "ACTIVE");
     const courses = new Map<string, unknown>();
-    const resources = new Map<string, unknown>();
+    const resources = new Map<string, { id: string } & Record<string, unknown>>();
+    const acquiredAt = new Map<string, Date>();
     const questionBankSubjects = new Set<string>();
     for (const entitlement of active) {
       for (const grant of entitlement.product.courseGrants) courses.set(grant.course.id, grant.course);
-      for (const grant of entitlement.product.resourceGrants) resources.set(grant.resource.id, grant.resource);
+      for (const grant of entitlement.product.resourceGrants) {
+        resources.set(grant.resource.id, grant.resource);
+        const earlier = acquiredAt.get(grant.resource.id);
+        if (!earlier || entitlement.startAt < earlier) acquiredAt.set(grant.resource.id, entitlement.startAt);
+      }
       for (const grant of entitlement.product.questionBankGrants) questionBankSubjects.add(grant.subjectCode);
     }
-    return { courses: [...courses.values()], resources: [...resources.values()], questionBankSubjects: [...questionBankSubjects] };
+    return {
+      courses: [...courses.values()],
+      // Newest acquisition first, so what the student just bought is on top.
+      resources: [...resources.values()]
+        .map((resource) => ({ ...resource, acquiredAt: acquiredAt.get(resource.id) ?? null }))
+        .sort((left, right) => (right.acquiredAt?.getTime() ?? 0) - (left.acquiredAt?.getTime() ?? 0)),
+      questionBankSubjects: [...questionBankSubjects],
+    };
   }
 
   async addCourseGrant(productId: string, courseId: string) {

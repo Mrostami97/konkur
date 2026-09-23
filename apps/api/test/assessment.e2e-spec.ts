@@ -38,6 +38,26 @@ describe("Assessment engine (e2e)", () => {
     return res.headers["set-cookie"][0] as string;
   }
 
+  /** A signed-in student who has filled in the name and education that
+   * starting an exam requires. */
+  async function examReadyStudent(): Promise<string> {
+    const cookie = await login(randomPhone());
+    await request(app.getHttpServer())
+      .patch("/me/profile")
+      .set("Cookie", cookie)
+      .send({
+        firstName: "دانشجو",
+        lastName: "آزمایشی",
+        educationStatus: "BACHELOR_STUDENT",
+        universityName: "دانشگاه آزمایشی",
+        fieldOfStudy: "مهندسی کامپیوتر",
+        targetDegree: "MASTER",
+        targetField: "computer-engineering",
+      })
+      .expect(200);
+    return cookie;
+  }
+
   async function authorAndPublishQuestion(externalId: string, correctOption: number): Promise<string> {
     const jobRes = await request(app.getHttpServer())
       .post("/admin/questions")
@@ -106,7 +126,7 @@ describe("Assessment engine (e2e)", () => {
   });
 
   it("denies exam authoring to a plain student", async () => {
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     await request(app.getHttpServer())
       .post("/admin/exams")
       .set("Cookie", studentCookie)
@@ -135,7 +155,7 @@ describe("Assessment engine (e2e)", () => {
       .expect(201);
     await request(app.getHttpServer()).post(`/admin/exams/${examId}/publish`).set("Cookie", adminCookie).expect(201);
 
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
 
     const startRes = await request(app.getHttpServer())
       .post(`/exams/${examId}/start`)
@@ -202,8 +222,8 @@ describe("Assessment engine (e2e)", () => {
       .set("Cookie", adminCookie)
       .expect(201);
 
-    const studentA = await login(randomPhone());
-    const studentB = await login(randomPhone());
+    const studentA = await examReadyStudent();
+    const studentB = await examReadyStudent();
 
     const startRes = await request(app.getHttpServer())
       .post(`/exams/${examRes.body.id}/start`)
@@ -245,7 +265,7 @@ describe("Assessment engine (e2e)", () => {
       .set("Cookie", adminCookie)
       .expect(201);
 
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     const startRes = await request(app.getHttpServer())
       .post(`/exams/${examRes.body.id}/start`)
       .set("Cookie", studentCookie)
@@ -288,7 +308,7 @@ describe("Assessment engine (e2e)", () => {
       .set("Cookie", adminCookie)
       .expect(201);
 
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     const startRes = await request(app.getHttpServer())
       .post(`/exams/${examRes.body.id}/start`)
       .set("Cookie", studentCookie)
@@ -335,7 +355,7 @@ describe("Assessment engine (e2e)", () => {
       .set("Cookie", adminCookie)
       .expect(201);
 
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     const startRes = await request(app.getHttpServer())
       .post(`/exams/${examRes.body.id}/start`)
       .set("Cookie", studentCookie)
@@ -375,7 +395,7 @@ describe("Assessment engine (e2e)", () => {
       .expect(201);
 
     for (const selected of [2, 2, 1]) {
-      const studentCookie = await login(randomPhone());
+      const studentCookie = await examReadyStudent();
       const startRes = await request(app.getHttpServer())
         .post(`/exams/${examRes.body.id}/start`)
         .set("Cookie", studentCookie)

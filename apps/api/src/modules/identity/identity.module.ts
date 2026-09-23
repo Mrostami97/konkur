@@ -21,6 +21,6 @@ import { OptionalSessionAuthGuard } from "./guards/optional-session-auth.guard";
     ProfileService,
     { provide: OTP_PROVIDER, useClass: ConsoleOtpProvider },
   ],
-  exports: [IdentityService, SessionAuthGuard, OptionalSessionAuthGuard, RolesGuard],
+  exports: [IdentityService, SessionAuthGuard, OptionalSessionAuthGuard, RolesGuard, ProfileService],
 })
 export class IdentityModule {}

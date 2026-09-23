@@ -39,6 +39,26 @@ describe("Planning / Study OS (e2e)", () => {
     return res.headers["set-cookie"][0] as string;
   }
 
+  /** A signed-in student who has filled in the name and education that
+   * starting an exam requires. */
+  async function examReadyStudent(): Promise<string> {
+    const cookie = await login(randomPhone());
+    await request(app.getHttpServer())
+      .patch("/me/profile")
+      .set("Cookie", cookie)
+      .send({
+        firstName: "دانشجو",
+        lastName: "آزمایشی",
+        educationStatus: "BACHELOR_STUDENT",
+        universityName: "دانشگاه آزمایشی",
+        fieldOfStudy: "مهندسی کامپیوتر",
+        targetDegree: "MASTER",
+        targetField: "computer-engineering",
+      })
+      .expect(200);
+    return cookie;
+  }
+
   async function authorAndPublishQuestion(externalId: string, correctOption: number): Promise<string> {
     const jobRes = await request(app.getHttpServer())
       .post("/admin/questions")
@@ -136,7 +156,7 @@ describe("Planning / Study OS (e2e)", () => {
   });
 
   it("requires a goal before replanning", async () => {
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     await request(app.getHttpServer())
       .post("/me/plan/replan")
       .set("Cookie", studentCookie)
@@ -202,7 +222,7 @@ describe("Planning / Study OS (e2e)", () => {
   });
 
   it("builds a plan from weak-topic mastery, surfaces today's tasks, and completes one", async () => {
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     const questionId = await authorAndPublishQuestion(`planning-q-${Date.now()}`, 1); // correct=1
     await answerWrongAndSubmit(studentCookie, questionId); // student answers 4 -> wrong
 
@@ -275,7 +295,7 @@ describe("Planning / Study OS (e2e)", () => {
   });
 
   it("reschedules overdue tasks to today on a FALLING_BEHIND replan, recording history", async () => {
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     const questionId = await authorAndPublishQuestion(`planning-q2-${Date.now()}`, 1);
     await answerWrongAndSubmit(studentCookie, questionId);
 
@@ -325,8 +345,8 @@ describe("Planning / Study OS (e2e)", () => {
   });
 
   it("logs a manual study session and prevents completing another student's task", async () => {
-    const studentA = await login(randomPhone());
-    const studentB = await login(randomPhone());
+    const studentA = await examReadyStudent();
+    const studentB = await examReadyStudent();
 
     await request(app.getHttpServer())
       .post("/me/study-sessions")
@@ -356,7 +376,7 @@ describe("Planning / Study OS (e2e)", () => {
 
   it("builds an honest cold-start path from published lessons and preserves its goal snapshot", async () => {
     const stamp = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     const prerequisite = await prisma.subject.create({
       data: {
         code: `phase16-prerequisite-${stamp}`,
@@ -511,7 +531,7 @@ describe("Planning / Study OS (e2e)", () => {
 
   it("saves a published resource and turns it into a user-selected plan action", async () => {
     const stamp = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
-    const studentCookie = await login(randomPhone());
+    const studentCookie = await examReadyStudent();
     const resource = await prisma.resource.create({
       data: {
         slug: `phase16-resource-${stamp}`,

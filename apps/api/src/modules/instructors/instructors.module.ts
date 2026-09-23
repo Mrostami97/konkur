@@ -14,6 +14,8 @@ import {
   ConsultationsStudentController,
 } from "./consultations.controller";
 import { InstructorsService } from "./instructors.service";
+import { CoachStudentsController, StudentCoachPlansController } from "./coach-plans.controller";
+import { CoachPlansService } from "./coach-plans.service";
 import { ConsultationsService } from "./consultations.service";
 
 @Module({
@@ -26,8 +28,10 @@ import { ConsultationsService } from "./consultations.service";
     ConsultationsStudentController,
     ConsultationsInstructorController,
     ConsultationsAdminController,
+    CoachStudentsController,
+    StudentCoachPlansController,
   ],
-  providers: [InstructorsService, ConsultationsService],
+  providers: [InstructorsService, ConsultationsService, CoachPlansService],
   exports: [InstructorsService, ConsultationsService],
 })
 export class InstructorsModule {}

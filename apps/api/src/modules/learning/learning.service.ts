@@ -214,6 +214,100 @@ export class LearningService {
     await db.enrollment.updateMany({ where: { userId, courseId, revokedAt: null }, data: { revokedAt: new Date() } });
   }
 
+  /**
+   * Paid courses worth suggesting to this student, best first, each with the
+   * reasons it was picked -- so the dashboard can say why, not just what.
+   *
+   * Evidence outranks preference: a course covering topics the student got
+   * wrong in graded exams (mastery below 60% on at least one answer) scores
+   * highest, then one on a subject they are weak in, then one matching the
+   * exam and field they are aiming for. Courses the student can already open
+   * are never suggested. Popularity only breaks ties; nothing is invented
+   * when there is no signal -- the list is simply shorter.
+   */
+  async recommendCourses(userId: string, limit = 3) {
+    const [profile, mastery, courses] = await Promise.all([
+      this.prisma.profile.findUnique({ where: { userId }, select: { targetDegree: true, targetField: true } }),
+      this.prisma.masteryState.findMany({
+        where: { userId, masteryScore: { lt: 0.6 }, evidenceCount: { gte: 1 } },
+        select: { topicCode: true, subjectCode: true, masteryScore: true },
+      }),
+      this.prisma.course.findMany({
+        where: { isPublished: true, accessMode: AccessMode.ENTITLEMENT },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          description: true,
+          degreeTargets: true,
+          fieldTargets: true,
+          subject: { select: { code: true, title: true } },
+          modules: { select: { lessons: { select: { topics: { select: { topic: { select: { code: true, title: true } } } } } } } },
+          _count: { select: { enrollments: true } },
+          products: {
+            where: { isActive: true },
+            select: { slug: true, prices: { where: { isActive: true }, select: { amountRial: true } } },
+          },
+          productGrants: {
+            where: { product: { isActive: true } },
+            select: { product: { select: { slug: true, prices: { where: { isActive: true }, select: { amountRial: true } } } } },
+          },
+        },
+      }),
+    ]);
+
+    const weakTopics = new Map(mastery.map((state) => [state.topicCode, state.masteryScore]));
+    const weakSubjects = new Set(mastery.map((state) => state.subjectCode));
+    const scored = [];
+    for (const course of courses) {
+      if (await this.access.hasActiveCourseAccess(userId, course.id)) continue;
+      const reasons: string[] = [];
+      let score = 0;
+      let basis: "WEAK_TOPICS" | "WEAK_SUBJECT" | "TARGET" | "POPULAR" = "POPULAR";
+
+      const topics = new Map(
+        course.modules.flatMap((module) =>
+          module.lessons.flatMap((lesson) => lesson.topics.map(({ topic }) => [topic.code, topic.title] as const)),
+        ),
+      );
+      const hits = [...topics].filter(([code]) => weakTopics.has(code));
+      if (hits.length > 0) {
+        score += 30 * Math.min(3, hits.length);
+        basis = "WEAK_TOPICS";
+        reasons.push(`${hits.slice(0, 2).map(([, title]) => `«${title}»`).join(" و ")} را درس می‌دهد؛ مبحثی که در آزمون‌هایت کم‌نمره بوده`);
+      }
+      if (course.subject && weakSubjects.has(course.subject.code)) {
+        score += 20;
+        if (basis === "POPULAR") basis = "WEAK_SUBJECT";
+        if (hits.length === 0) reasons.push(`دورهٔ «${course.subject.title}»، درسی که در آن نتیجه‌ات پایین بوده`);
+      }
+      const fieldMatch = profile?.targetField ? course.fieldTargets.includes(profile.targetField) : false;
+      const degreeMatch = profile?.targetDegree ? course.degreeTargets.includes(profile.targetDegree) : false;
+      if (fieldMatch || degreeMatch) {
+        score += (fieldMatch ? 10 : 0) + (degreeMatch ? 5 : 0);
+        if (basis === "POPULAR") basis = "TARGET";
+        reasons.push("متناسب با کنکور و رشته‌ای که هدف گرفته‌ای");
+      }
+      score += Math.min(course._count.enrollments, 20) * 0.25;
+
+      const prices = [
+        ...course.products.flatMap((product) => product.prices.map((price) => ({ ...price, productSlug: product.slug }))),
+        ...course.productGrants.flatMap(({ product }) => product.prices.map((price) => ({ ...price, productSlug: product.slug }))),
+      ].sort((left, right) => left.amountRial - right.amountRial);
+      if (prices.length === 0) continue; // nothing to buy yet
+
+      scored.push({
+        course: { slug: course.slug, title: course.title, description: course.description },
+        price: { amountRial: prices[0].amountRial, productSlug: prices[0].productSlug },
+        reasons,
+        basis,
+        score,
+        students: course._count.enrollments,
+      });
+    }
+    return scored.sort((left, right) => right.score - left.score).slice(0, limit);
+  }
+
   async listMyEnrollments(userId: string) {
     return this.prisma.enrollment.findMany({
       where: { userId, revokedAt: null, course: { isPublished: true } },

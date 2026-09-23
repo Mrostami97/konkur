@@ -45,6 +45,7 @@ model User {
   contributorProfile   ContributorProfile?
   consultationBookings ConsultationBooking[] @relation("ConsultationStudent")
   spotPlayerLicenses   SpotPlayerLicense[]
+  coachPlans           CoachPlan[]           @relation("CoachPlanStudent")
 
   @@map("users")
 }
@@ -52,16 +53,39 @@ model User {
 // doc §6.1 groups this under "هویت و پروفایل" (identity & profile) alongside
 // users/roles/consents -- not a separate module boundary.
 model Profile {
-  id           String   @id @default(uuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  displayName  String?
-  targetDegree Degree?
-  targetField  String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String           @id @default(uuid())
+  userId          String           @unique
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName     String?
+  /// Name and education are the student's own answers, required before an
+  /// exam attempt (see ProfileService.assertExamReady). Never public.
+  firstName       String?
+  lastName        String?
+  educationStatus EducationStatus?
+  universityName  String?
+  fieldOfStudy    String?
+  /// Solar years, e.g. 1400.
+  entryYear       Int?
+  graduationYear  Int?
+  /// Grade average on the 0-20 scale; optional.
+  gpa             Float?
+  targetDegree    Degree?
+  targetField     String?
+  targetExamYear  Int?
+  /// When the required fields were first all filled in.
+  completedAt     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@map("profiles")
+}
+
+enum EducationStatus {
+  BACHELOR_STUDENT
+  BACHELOR_GRADUATE
+  MASTER_STUDENT
+  MASTER_GRADUATE
+  OTHER
 }
 
 enum Degree {
@@ -271,6 +295,7 @@ model ContributorProfile {
   taughtCourses         CourseInstructor[]
   consultationOfferings ConsultationOffering[]
   consultationBookings  ConsultationBooking[]  @relation("ConsultationInstructor")
+  coachPlans            CoachPlan[]            @relation("CoachPlanCoach")
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
@@ -1661,4 +1686,67 @@ model StudentAchievement {
   @@index([isPublished, examYear])
   @@index([photoArtifactId])
   @@map("student_achievements")
+}
+
+enum CoachPlanStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CoachTaskKind {
+  STUDY
+  TEST
+  REVIEW
+  VIDEO
+  EXAM
+  OTHER
+}
+
+/// A study plan a consultant writes for one student they advise. Only an
+/// instructor with a (non-cancelled) consultation booking from the student
+/// may create one; see CoachPlansService.assertCoachOf.
+model CoachPlan {
+  id             String             @id @default(uuid())
+  studentUserId  String
+  student        User               @relation("CoachPlanStudent", fields: [studentUserId], references: [id], onDelete: Cascade)
+  coachProfileId String
+  coach          ContributorProfile @relation("CoachPlanCoach", fields: [coachProfileId], references: [id], onDelete: Restrict)
+  title          String
+  startsOn       DateTime           @db.Date
+  endsOn         DateTime           @db.Date
+  note           String?
+  status         CoachPlanStatus    @default(DRAFT)
+  publishedAt    DateTime?
+  items          CoachPlanItem[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([studentUserId, status])
+  @@index([coachProfileId])
+  @@map("coach_plans")
+}
+
+model CoachPlanItem {
+  id            String        @id @default(uuid())
+  planId        String
+  plan          CoachPlan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  day           DateTime      @db.Date
+  kind          CoachTaskKind @default(STUDY)
+  title         String
+  /// Editorial subject slug, for the subject's icon and colour.
+  subjectSlug   String?
+  targetMinutes Int?
+  /// e.g. the number of test questions to solve.
+  targetCount   Int?
+  /// A page on this site: a lesson, resource, exam or topic.
+  href          String?
+  note          String?
+  order         Int           @default(0)
+  completedAt   DateTime?
+  actualMinutes Int?
+  studentNote   String?
+
+  @@index([planId, day])
+  @@map("coach_plan_items")
 }

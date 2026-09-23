@@ -38,6 +38,12 @@ export class LearningStudentController {
     return this.learning.listMyEnrollments(req.user!.id);
   }
 
+  @Get("me/recommendations/courses")
+  @UseGuards(SessionAuthGuard)
+  recommendations(@Req() req: RequestWithUser) {
+    return this.learning.recommendCourses(req.user!.id);
+  }
+
   @Get("me/learning-progress")
   @UseGuards(SessionAuthGuard)
   learningProgress(@Req() req: RequestWithUser) {

@@ -2,6 +2,7 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { AttemptStatus, ExamMode } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
+import { ProfileService } from "../identity/profile/profile.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 
@@ -26,11 +27,69 @@ function stripAnswerKey<
   return { ...item, question: rest };
 }
 
+/** Below this many participants a rank says more about who happened to take
+ * the exam than about the student, so it is withheld. */
+export const MIN_PARTICIPANTS_FOR_RANK = 5;
+
+/**
+ * The konkur percentage: every wrong answer cancels a third of a right one.
+ * The stored percentCorrect ignores wrong answers; ranking on it would reward
+ * guessing, which the real exam punishes.
+ */
+export function konkurPercent(score: { correctCount: number; wrongCount: number; unansweredCount: number }) {
+  const total = score.correctCount + score.wrongCount + score.unansweredCount;
+  return total > 0 ? ((3 * score.correctCount - score.wrongCount) / (3 * total)) * 100 : 0;
+}
+
+interface Entrant {
+  attemptId: string;
+  userId: string;
+  percent: number;
+}
+
+/**
+ * Where one score sits among an exam's participants. Each participant counts
+ * once, with their first submitted attempt; a retake is placed against the
+ * others without counting twice.
+ */
+export function standingOf(population: Entrant[], userId: string, attemptId: string, percent: number) {
+  const participants = population.length;
+  const others = population.filter((entry) => entry.userId !== userId);
+  const official = population.find((entry) => entry.userId === userId)?.attemptId === attemptId;
+  const round1 = (value: number) => Math.round(value * 10) / 10;
+  const percents = population.map((entry) => entry.percent);
+  const mean = participants ? percents.reduce((sum, value) => sum + value, 0) / participants : 0;
+  const sd = participants ? Math.sqrt(percents.reduce((sum, value) => sum + (value - mean) ** 2, 0) / participants) : 0;
+  const ranked = participants >= MIN_PARTICIPANTS_FOR_RANK;
+  const distribution = Array.from({ length: 10 }, (_, bucket) => ({
+    from: bucket * 10,
+    to: bucket * 10 + 10,
+    count: percents.filter((value) => Math.min(9, Math.max(0, Math.floor(Math.max(0, value) / 10))) === bucket).length,
+  }));
+  return {
+    participants,
+    minimumForRank: MIN_PARTICIPANTS_FOR_RANK,
+    isOfficial: official,
+    konkurPercent: round1(percent),
+    rank: ranked ? 1 + others.filter((entry) => entry.percent > percent).length : null,
+    percentile: ranked && others.length > 0
+      ? Math.round((others.filter((entry) => entry.percent < percent).length / others.length) * 100)
+      : null,
+    // A konkur-style standard score within this exam: 5000 at the mean, 1000
+    // per standard deviation. Only meaningful with enough participants.
+    taraz: ranked && sd > 0 ? Math.round(5000 + (1000 * (percent - mean)) / sd) : null,
+    average: participants ? round1(mean) : null,
+    best: participants ? round1(Math.max(...percents)) : null,
+    distribution: ranked ? distribution : [],
+  };
+}
+
 @Injectable()
 export class AssessmentService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly profiles: ProfileService,
   ) {}
 
   // --- Exam builder (admin) -------------------------------------------------
@@ -114,6 +173,89 @@ export class AssessmentService {
 
   // --- Attempts -------------------------------------------------------------
 
+  /**
+   * The student's own attempts, newest first, for their panel: which exam,
+   * where it stands, and the score once submitted. Answers and questions are
+   * not included -- the report endpoint serves those, with its own checks.
+   */
+  /** First submitted attempt of each participant, per exam. */
+  private async populations(examIds: string[]) {
+    const rows = await this.prisma.attempt.findMany({
+      where: { examId: { in: examIds }, status: AttemptStatus.SUBMITTED, score: { isNot: null } },
+      orderBy: [{ submittedAt: "asc" }, { id: "asc" }],
+      select: {
+        id: true,
+        examId: true,
+        userId: true,
+        score: { select: { correctCount: true, wrongCount: true, unansweredCount: true } },
+      },
+    });
+    const byExam = new Map<string, Map<string, Entrant>>();
+    for (const row of rows) {
+      const exam = byExam.get(row.examId) ?? new Map<string, Entrant>();
+      if (!exam.has(row.userId) && row.score) {
+        exam.set(row.userId, { attemptId: row.id, userId: row.userId, percent: konkurPercent(row.score) });
+      }
+      byExam.set(row.examId, exam);
+    }
+    return new Map([...byExam].map(([examId, entrants]) => [examId, [...entrants.values()]]));
+  }
+
+  /** The student's rank, percentile and standard score in one attempt's
+   * exam. Only aggregates are returned -- never another student's result. */
+  async getStanding(attemptId: string, userId: string) {
+    const attempt = await this.prisma.attempt.findUnique({
+      where: { id: attemptId },
+      select: {
+        userId: true,
+        examId: true,
+        status: true,
+        score: { select: { correctCount: true, wrongCount: true, unansweredCount: true } },
+      },
+    });
+    if (!attempt || attempt.userId !== userId) throw new NotFoundException("attempt not found");
+    if (attempt.status !== AttemptStatus.SUBMITTED || !attempt.score) {
+      throw new ForbiddenException("the attempt has not been graded yet");
+    }
+    const population = (await this.populations([attempt.examId])).get(attempt.examId) ?? [];
+    return standingOf(population, userId, attemptId, konkurPercent(attempt.score));
+  }
+
+  async listMyAttempts(userId: string) {
+    const attempts = await this.prisma.attempt.findMany({
+      where: { userId },
+      orderBy: { startedAt: "desc" },
+      take: 100,
+      select: {
+        id: true,
+        status: true,
+        startedAt: true,
+        deadlineAt: true,
+        submittedAt: true,
+        exam: { select: { id: true, slug: true, title: true, durationMinutes: true } },
+        score: {
+          select: { correctCount: true, wrongCount: true, unansweredCount: true, rawScore: true, percentCorrect: true },
+        },
+      },
+    });
+    const graded = attempts.filter((attempt) => attempt.score);
+    const populations = graded.length ? await this.populations([...new Set(graded.map((attempt) => attempt.exam.id))]) : new Map();
+    return attempts.map((attempt) => {
+      if (!attempt.score) return { ...attempt, standing: null };
+      const standing = standingOf(populations.get(attempt.exam.id) ?? [], userId, attempt.id, konkurPercent(attempt.score));
+      return {
+        ...attempt,
+        standing: {
+          konkurPercent: standing.konkurPercent,
+          rank: standing.rank,
+          participants: standing.participants,
+          percentile: standing.percentile,
+          isOfficial: standing.isOfficial,
+        },
+      };
+    });
+  }
+
   async startAttempt(examId: string, userId: string) {
     const exam = await this.prisma.exam.findUnique({ where: { id: examId }, include: { forms: true } });
     if (!exam || !exam.isPublished) throw new NotFoundException("exam not found");
@@ -122,6 +264,10 @@ export class AssessmentService {
       where: { examId, userId, status: AttemptStatus.IN_PROGRESS },
     });
     if (inProgress) return this.getAttempt(inProgress.id, userId); // resume, don't double-start
+
+    // Only a new attempt needs the profile: one already under way (started
+    // before the rule existed) is always resumable.
+    await this.profiles.assertExamReady(userId);
 
     let formId: string;
     if (exam.mode === ExamMode.STATIC) {
