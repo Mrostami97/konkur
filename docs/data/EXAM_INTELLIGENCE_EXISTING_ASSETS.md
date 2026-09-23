@@ -142,6 +142,10 @@ The SQLite source table contains provenance from multiple sources, including pub
 
 One recorded workbook source contains an explicit reuse note prohibiting non-free use.
 
+**Ownership of that source (owner-confirmed 2026-09-23):** the `Konkur_Answer uploaded workbooks` source (`sources.id = 4`, **379 result rows**) comes from the owner's own `t.me/Konkur_answer` channel. The reuse note is the owner's own notice on the owner's own data and does **not** restrict the owner or kunkur01. Treat these rows as owner-rights data. Keep the note verbatim for provenance, but do not apply it as a restriction on kunkur01.
+
+The remaining **1,045 rows** come from `CSHub` (website and Telegram, 734 rows) and `KonkurComputer` (311 rows). Those are competitor sites and remain competitor-derived observations under the rules below.
+
 Therefore future integration must distinguish:
 
 - data the owner has rights to publish/use commercially,
