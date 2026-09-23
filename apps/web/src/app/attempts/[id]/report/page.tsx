@@ -6,6 +6,7 @@ import { apiFetch } from "../../../../lib/api";
 import { toPersianDigits } from "../../../../lib/format";
 import { ContentBlocks } from "../../../../components/ContentBlocks";
 import { Badge, DataState } from "../../../../components/ds";
+import { StandingPanel } from "./StandingPanel";
 import "./report.css";
 
 interface Block { type: string; [key: string]: unknown }
@@ -96,6 +97,8 @@ export default function ReportPage({ params }: { params: { id: string } }) {
                 </p>
               </div>
 
+              {report.status === "SUBMITTED" && <StandingPanel attemptId={params.id} />}
+
               <div className="ds-stack">
                 {report.items.map((item, index) => {
                   const answered = item.selectedOption !== null;
@@ -142,7 +145,8 @@ export default function ReportPage({ params }: { params: { id: string } }) {
               </div>
 
               <div className="ds-row">
-                <Link className="ds-btn ds-btn-secondary" href="/exams">بازگشت به آزمون‌ها</Link>
+                <Link className="ds-btn ds-btn-secondary" href="/account/exams">آزمون‌ها و رتبه‌های من</Link>
+                <Link className="ds-btn ds-btn-ghost" href="/exams">آزمون‌های دیگر</Link>
               </div>
             </div>
           )}

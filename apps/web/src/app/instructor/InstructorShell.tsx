@@ -9,6 +9,7 @@ import { PanelIcon, type IconName } from "../../components/PanelIcons";
 const LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/instructor", label: "دوره‌ها و درآمد", icon: "money" },
   { href: "/instructor/consultations", label: "جلسه‌های مشاوره", icon: "consult" },
+  { href: "/instructor/students", label: "دانشجوها و برنامه‌ها", icon: "students" },
 ];
 
 /**

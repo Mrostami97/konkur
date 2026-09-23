@@ -1,15 +1,9 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { AccountTabs } from "./AccountTabs";
 
 /**
- * Frame for every account screen: a dark greeting band with the tab row on
- * its bottom edge, then the page body.
- *
- * The band's copy is passed in rather than fixed here, because the greeting is
- * the student's own -- their name, their target, their remaining sessions --
- * and that is what makes the area feel like theirs rather than a settings page.
+ * The heading block of an account page. The frame around it -- sidebar, top
+ * bar, onboarding -- is the StudentShell in this folder's layout; this is
+ * only the page's own title, its status chips and its main action.
  */
 export function AccountShell({
   title,
@@ -25,19 +19,16 @@ export function AccountShell({
   children: ReactNode;
 }) {
   return (
-    <>
-      <div className="acc-band">
-        <div className="acc-band-inner">
-          <div>
-            <h1 className="acc-hello">{title}</h1>
-            {subtitle && <p className="acc-sub">{subtitle}</p>}
-            {chips && <div className="acc-chips">{chips}</div>}
-          </div>
-          {action}
+    <div className="st-page">
+      <header className="st-page-head">
+        <div>
+          <h1>{title}</h1>
+          {subtitle && <p>{subtitle}</p>}
+          {chips && <div className="st-chips">{chips}</div>}
         </div>
-        <AccountTabs />
-      </div>
-      <main className="acc-body">{children}</main>
-    </>
+        {action}
+      </header>
+      {children}
+    </div>
   );
 }

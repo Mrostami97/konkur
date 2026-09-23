@@ -1,743 +1,357 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { apiFetch, ApiError } from "../../lib/api";
-import { toPersianDigits } from "../../lib/format";
-import { ProgressBar } from "../../components/ui";
+import { useEffect, useState, type ReactNode } from "react";
+import { Glyph, type GlyphName } from "../../components/SubjectIcon";
+import { apiFetch } from "../../lib/api";
+import { isoDay, type CoachItem, type CoachPlan } from "../../lib/coach";
+import { EXAM_DATES, daysUntil } from "../../lib/exam-dates";
+import { formatRial, toPersianDigits } from "../../lib/format";
+import { ProgressRing } from "./charts";
+import { CoachTask } from "./CoachTask";
 import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  DsEmptyState,
-  Field,
-  FieldRow,
-  Input,
-  Kpi,
-  KpiGrid,
-  Select,
-  SkeletonRows,
-} from "../../components/ds";
-import { PanelIcon } from "../../components/PanelIcons";
-import { AccountShell } from "./AccountShell";
+  faDate,
+  minutesLabel,
+  RESOURCE_KIND_LABEL,
+  type CourseRecommendation,
+  type LearningProgress,
+  type Library,
+  type MyAttempt,
+  type TodayPlan,
+} from "./data";
+import { fieldLabel } from "./profile-options";
+import { useStudent } from "./student-context";
 
-interface Me {
-  user: { id: string; phone: string; roles: string[] };
-}
+type Loaded<T> = { state: "loading" } | { state: "error" } | { state: "ready"; data: T };
 
-interface Profile {
-  displayName: string | null;
-  targetDegree: string | null;
-  targetField: string | null;
-}
-
-interface Enrollment {
-  id: string;
-  course: { slug: string; title: string };
-}
-
-interface Entitlement {
-  id: string;
-  product: { title: string };
-  grantedVia: string;
-  startAt: string;
-}
-
-interface Mastery {
-  topicCode: string;
-  subjectCode: string;
-  masteryScore: number;
-  confidence: string;
-  evidenceCount?: number;
-  basis?: string;
-}
-
-interface LearningProgressCourse {
-  course?: { slug?: string; title?: string };
-  courseSlug?: string;
-  courseTitle?: string;
-  slug?: string;
-  title?: string;
-  completedLessons?: number;
-  completedCount?: number;
-  viewedLessons?: number;
-  totalLessons?: number;
-  lessonCount?: number;
-  progressPercent?: number;
-  percent?: number;
-  resumeLesson?: { id: string; title?: string } | null;
-  nextLesson?: { id: string; title?: string } | null;
-}
-
-interface StudySession {
-  id: string;
-  subjectCode: string;
-  topicCode?: string | null;
-  minutes: number;
-  loggedAt: string;
-  source?: "UNCLASSIFIED_LEGACY" | "MANUAL" | "TASK_ACTUAL";
-}
-
-interface PlanHistoryItem {
-  id: string;
-  status: string;
-  version?: number;
-  createdAt: string;
-  goalDegree?: string | null;
-  goalField?: string | null;
-  goalWeeklyHours?: number | null;
-  goalSelfReportedLevel?: string | null;
-  goalSnapshot?: {
-    degree?: string;
-    field?: string;
-    weeklyHours?: number;
-    selfReportedLevel?: string;
-  } | null;
-}
-
-interface PlanRevision {
-  id: string;
-  reasonCode: string;
-  summary: string;
-  createdAt: string;
-}
-
-interface HistoryCollection<T> {
-  items: T[];
-  nextCursor: string | null;
-}
-
-function recordFrom(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" ? value as Record<string, unknown> : null;
-}
-
-function cursorFrom(value: unknown) {
-  return typeof value === "string" && value.length > 0 ? value : null;
-}
-
-function historyCollection<T>(value: unknown, kind: "sessions" | "plans"): HistoryCollection<T> {
-  const response = recordFrom(value);
-  if (!response) return { items: [], nextCursor: null };
-
-  const legacyKey = kind === "sessions" ? "studySessions" : "planHistory";
-  const collectionValue = response[kind] ?? response[legacyKey];
-  const collection = recordFrom(collectionValue);
-  const items = Array.isArray(collectionValue)
-    ? collectionValue as T[]
-    : Array.isArray(collection?.items)
-      ? collection.items as T[]
-      : Array.isArray(response.items)
-        ? response.items as T[]
-        : [];
-
-  const pagination = recordFrom(response.pagination);
-  const pagedCollection = recordFrom(pagination?.[kind]);
-  const singular = kind === "sessions" ? "session" : "plan";
-  const nextCursor = cursorFrom(
-    pagedCollection?.nextCursor
-      ?? collection?.nextCursor
-      ?? response[`${kind}NextCursor`]
-      ?? response[`${singular}NextCursor`]
-      ?? response[`next${singular[0].toUpperCase()}${singular.slice(1)}Cursor`]
-      ?? response.nextCursor,
-  );
-
-  return { items, nextCursor };
-}
-
-function appendUniqueById<T extends { id: string }>(current: T[], incoming: T[]) {
-  const ids = new Set(current.map((item) => item.id));
-  return [...current, ...incoming.filter((item) => !ids.has(item.id))];
-}
-
-function arrayFrom(value: unknown, keys: string[]) {
-  if (Array.isArray(value)) return value;
-  if (!value || typeof value !== "object") return [];
-  const record = value as Record<string, unknown>;
-  for (const key of keys) if (Array.isArray(record[key])) return record[key] as unknown[];
-  return [];
-}
-
-function courseSlug(item: LearningProgressCourse) {
-  return item.course?.slug ?? item.courseSlug ?? item.slug ?? "";
-}
-
-function courseTitle(item: LearningProgressCourse) {
-  return item.course?.title ?? item.courseTitle ?? item.title ?? courseSlug(item);
-}
-
-function completedLessons(item: LearningProgressCourse) {
-  return Math.max(0, item.completedLessons ?? item.completedCount ?? 0);
-}
-
-function totalLessons(item: LearningProgressCourse) {
-  return Math.max(0, item.totalLessons ?? item.lessonCount ?? 0);
-}
-
-function progressPercent(item: LearningProgressCourse) {
-  const explicit = item.progressPercent ?? item.percent;
-  if (Number.isFinite(explicit)) return Math.min(100, Math.max(0, Number(explicit)));
-  const total = totalLessons(item);
-  return total > 0 ? Math.round((completedLessons(item) / total) * 100) : 0;
-}
-
-function dateLabel(value: string) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? toPersianDigits(value) : date.toLocaleDateString("fa-IR");
-}
-
-function levelLabel(value?: string | null) {
-  return ({ BEGINNER: "شروع از پایه", INTERMEDIATE: "متوسط", ADVANCED: "پیشرفته" } as Record<string, string>)[value ?? ""] ?? "ثبت نشده";
-}
-
-function degreeLabel(value?: string | null) {
-  return ({ MASTER: "ارشد", PHD: "دکتری" } as Record<string, string>)[value ?? ""] ?? value ?? "مقطع نامشخص";
-}
-
-export default function AccountPage() {
-  const router = useRouter();
-  const [me, setMe] = useState<Me | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [entitlements, setEntitlements] = useState<Entitlement[]>([]);
-  const [mastery, setMastery] = useState<Mastery[]>([]);
-  const [learningProgress, setLearningProgress] = useState<LearningProgressCourse[]>([]);
-  const [studySessions, setStudySessions] = useState<StudySession[]>([]);
-  const [planHistory, setPlanHistory] = useState<PlanHistoryItem[]>([]);
-  const [sessionNextCursor, setSessionNextCursor] = useState<string | null>(null);
-  const [planNextCursor, setPlanNextCursor] = useState<string | null>(null);
-  const [historyBusy, setHistoryBusy] = useState<"sessions" | "plans" | null>(null);
-  const [historyError, setHistoryError] = useState<{ sessions: string | null; plans: string | null }>({ sessions: null, plans: null });
-  const [revisions, setRevisions] = useState<PlanRevision[]>([]);
-  const [loading, setLoading] = useState(true);
-  // An instructor is an account linked to a contributor profile, which only
-  // the API knows -- it is not a role on the session.
-  const [isInstructor, setIsInstructor] = useState(false);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
-
+function useLoad<T>(path: string): [Loaded<T>, (data: T) => void] {
+  const [value, setValue] = useState<Loaded<T>>({ state: "loading" });
   useEffect(() => {
-    (async () => {
-      try {
-        const [meRes, profileRes, enrollmentsRes, entitlementsRes, masteryRes, revisionsRes, learningRes, historyRes, instructorRes] = await Promise.all([
-          apiFetch<Me>("/auth/me"),
-          apiFetch<Profile>("/me/profile"),
-          apiFetch<Enrollment[]>("/me/enrollments"),
-          apiFetch<Entitlement[]>("/me/entitlements"),
-          apiFetch<Mastery[]>("/me/mastery").catch(() => []),
-          apiFetch<PlanRevision[]>("/me/plan/revisions").catch(() => []),
-          apiFetch<unknown>("/me/learning-progress").catch(() => ({ courses: [] })),
-          apiFetch<unknown>("/me/study-history?limit=10").catch(() => ({ sessions: [], plans: [] })),
-          // 403 here just means "not an instructor", which is the common case.
-          apiFetch<unknown>("/me/instructor").then(() => true).catch(() => false),
-        ]);
-        setMe(meRes);
-        setIsInstructor(instructorRes === true);
-        setProfile(profileRes);
-        setEnrollments(enrollmentsRes);
-        setEntitlements(entitlementsRes);
-        setMastery(Array.isArray(masteryRes) ? masteryRes : []);
-        setRevisions(Array.isArray(revisionsRes) ? revisionsRes : []);
-        setLearningProgress(arrayFrom(learningRes, ["courses", "items"]) as LearningProgressCourse[]);
-        const sessionPage = historyCollection<StudySession>(historyRes, "sessions");
-        const planPage = historyCollection<PlanHistoryItem>(historyRes, "plans");
-        setStudySessions(sessionPage.items);
-        setPlanHistory(planPage.items);
-        setSessionNextCursor(sessionPage.nextCursor);
-        setPlanNextCursor(planPage.nextCursor);
-      } catch (err) {
-        if (err instanceof ApiError && err.status === 401) {
-          router.push("/login");
-          return;
-        }
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [router]);
+    let cancelled = false;
+    apiFetch<T>(path)
+      .then((data) => !cancelled && setValue({ state: "ready", data }))
+      .catch(() => !cancelled && setValue({ state: "error" }));
+    return () => {
+      cancelled = true;
+    };
+  }, [path]);
+  return [value, (data: T) => setValue({ state: "ready", data })];
+}
 
-  const learningTotals = useMemo(() => learningProgress.reduce((result, item) => ({
-    completed: result.completed + completedLessons(item),
-    viewed: result.viewed + Math.max(0, item.viewedLessons ?? 0),
-  }), { completed: 0, viewed: 0 }), [learningProgress]);
+function greeting(now: Date = new Date()) {
+  const hour = Number(now.toLocaleString("en-US", { hour: "numeric", hour12: false, timeZone: "Asia/Tehran" }));
+  if (hour < 5) return "شب بخیر";
+  if (hour < 12) return "صبح بخیر";
+  if (hour < 17) return "ظهر بخیر";
+  if (hour < 20) return "عصر بخیر";
+  return "شب بخیر";
+}
 
-  async function saveProfile(e: FormEvent) {
-    e.preventDefault();
-    if (!profile) return;
-    setSaveState("saving");
-    const updated = await apiFetch<Profile>("/me/profile", {
-      method: "PATCH",
-      body: {
-        displayName: profile.displayName || undefined,
-        targetDegree: profile.targetDegree || undefined,
-        targetField: profile.targetField || undefined,
-      },
+function Panel({ title, icon, action, children }: { title: string; icon: GlyphName; action?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="st-card">
+      <header className="st-card-head">
+        <h2>
+          <span className="st-card-icon"><Glyph name={icon} /></span>
+          {title}
+        </h2>
+        {action}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+function Loading() {
+  return (
+    <div aria-busy="true">
+      <div className="st-skel st-skel-line" />
+      <div className="st-skel st-skel-line" />
+    </div>
+  );
+}
+
+function Failed() {
+  return <p className="st-card-note">این بخش الان بارگذاری نشد؛ صفحه را دوباره باز کن.</p>;
+}
+
+function Empty({ icon, title, text, action }: { icon: GlyphName; title: string; text: string; action?: ReactNode }) {
+  return (
+    <div className="st-empty">
+      <span className="st-empty-icon"><Glyph name={icon} /></span>
+      <strong>{title}</strong>
+      <p>{text}</p>
+      {action}
+    </div>
+  );
+}
+
+/**
+ * The student's home: what to do today, where they stand, what they own, and
+ * what would help next. Five blocks, in that order -- the numbers and charts
+ * live on their own pages, so this one stays readable at a glance.
+ */
+export default function DashboardPage() {
+  const { profile } = useStudent();
+  const [coach, setCoach] = useLoad<{ today: string; plans: CoachPlan[] }>("/me/coach-plans");
+  const [today] = useLoad<TodayPlan>("/me/plan/today");
+  const [attempts] = useLoad<MyAttempt[]>("/me/attempts");
+  const [progress] = useLoad<LearningProgress>("/me/learning-progress");
+  const [library] = useLoad<Library>("/me/library");
+  const [recommended] = useLoad<CourseRecommendation[]>("/me/recommendations/courses");
+
+  const examDate = profile.targetDegree === "PHD" ? EXAM_DATES.phd1406 : EXAM_DATES.master1406;
+  const days = daysUntil(examDate.iso);
+  const firstName = profile.firstName ?? profile.displayName ?? "";
+
+  const currentPlan = coach.state === "ready" ? coach.data.plans.find((plan) => plan.isCurrent) : undefined;
+  const coachToday =
+    coach.state === "ready" && currentPlan
+      ? currentPlan.items.filter((item) => isoDay(item.day) === coach.data.today)
+      : [];
+  const courses = progress.state === "ready" ? progress.data.courses : [];
+  const resume = courses.find((course) => course.resumeLesson);
+  const latest = attempts.state === "ready" ? attempts.data.find((attempt) => attempt.score) : undefined;
+
+  function replaceCoachItem(updated: CoachItem) {
+    if (coach.state !== "ready") return;
+    setCoach({
+      ...coach.data,
+      plans: coach.data.plans.map((plan) => {
+        const items = plan.items.map((item) => (item.id === updated.id ? updated : item));
+        const done = items.filter((item) => item.completedAt).length;
+        return { ...plan, items, progress: { total: items.length, done, percent: items.length ? Math.round((done / items.length) * 100) : 0 } };
+      }),
     });
-    setProfile(updated);
-    setSaveState("saved");
   }
-
-  async function logout() {
-    await apiFetch("/auth/logout", { method: "POST" });
-    router.push("/");
-  }
-
-  async function loadMoreHistory(kind: "sessions" | "plans") {
-    const cursor = kind === "sessions" ? sessionNextCursor : planNextCursor;
-    if (!cursor || historyBusy) return;
-
-    setHistoryBusy(kind);
-    setHistoryError((current) => ({ ...current, [kind]: null }));
-    const params = new URLSearchParams({ limit: "10", section: kind });
-    params.set(kind === "sessions" ? "sessionsCursor" : "plansCursor", cursor);
-
-    try {
-      const response = await apiFetch<unknown>(`/me/study-history?${params.toString()}`);
-      if (kind === "sessions") {
-        const page = historyCollection<StudySession>(response, kind);
-        setStudySessions((current) => appendUniqueById(current, page.items));
-        setSessionNextCursor(page.nextCursor === cursor ? null : page.nextCursor);
-      } else {
-        const page = historyCollection<PlanHistoryItem>(response, kind);
-        setPlanHistory((current) => appendUniqueById(current, page.items));
-        setPlanNextCursor(page.nextCursor === cursor ? null : page.nextCursor);
-      }
-    } catch {
-      setHistoryError((current) => ({
-        ...current,
-        [kind]: "بارگذاری موارد قدیمی‌تر انجام نشد. دوباره تلاش کن.",
-      }));
-    } finally {
-      setHistoryBusy(null);
-    }
-  }
-
-  if (loading) {
-    return (
-      <AccountShell title="حساب من">
-        <SkeletonRows rows={4} height="6rem" />
-      </AccountShell>
-    );
-  }
-  if (!me) return null;
-
-  const greetingName = profile?.displayName?.trim() || "خوش آمدی";
-  const staff = me.user.roles.some((role) => ["ADMIN", "AUTHOR", "REVIEWER", "FINANCE", "MENTOR"].includes(role));
-  const studyMinutes = studySessions.reduce((sum, session) => sum + (session.minutes ?? 0), 0);
-  // The most useful thing on a student dashboard is where to pick up, so the
-  // first course with a resume point is lifted out of the progress list.
-  const resumeCourse = learningProgress.find((item) => (item.resumeLesson ?? item.nextLesson)?.id);
-  // A brand-new account has nothing in any section. Rendering six identical
-  // "nothing here yet" cards is a wall that tells the student they have
-  // failed at something; one card that says what to do next is the same
-  // information and a better first minute.
-  const isNewAccount =
-    enrollments.length === 0 &&
-    entitlements.length === 0 &&
-    mastery.length === 0 &&
-    studySessions.length === 0 &&
-    learningProgress.length === 0 &&
-    planHistory.length === 0 &&
-    revisions.length === 0;
-  const resumeLesson = resumeCourse ? (resumeCourse.resumeLesson ?? resumeCourse.nextLesson) : null;
 
   return (
-    <AccountShell
-      title={greetingName}
-      subtitle="پیشرفت مطالعه، دسترسی‌ها و شواهد سنجش‌ات، بدون آمیختن با هم."
-      chips={
-        <>
-          <span className="acc-chip">{me.user.phone}</span>
-          {profile?.targetDegree && <span className="acc-chip">هدف: {degreeLabel(profile.targetDegree)}</span>}
-          {profile?.targetField && <span className="acc-chip">{profile.targetField}</span>}
-          {staff && <span className="acc-chip">{me.user.roles.join("، ")}</span>}
-        </>
-      }
-      action={
-        <div className="ds-row" style={{ gap: "var(--sp-2)" }}>
-          {staff && (
-            <Link className="ds-btn ds-btn-secondary ds-btn-sm" href="/admin">
-              پنل مدیریت
-            </Link>
-          )}
-          {isInstructor && (
-            <Link className="ds-btn ds-btn-secondary ds-btn-sm" href="/instructor">
-              پنل مدرس
-            </Link>
-          )}
-          <Button size="sm" onClick={logout}>
-            خروج از حساب
-          </Button>
-        </div>
-      }
-    >
-      <div className="ds-stack-lg">
-        <KpiGrid>
-          <Kpi
-            label="دوره‌های من"
-            value={toPersianDigits(enrollments.length)}
-            hint="دوره‌های ثبت‌نام‌شده"
-            icon={<PanelIcon name="course" />}
-            tone="info"
-          />
-          <Kpi
-            label="درس‌های تکمیل‌شده"
-            value={toPersianDigits(learningTotals.completed)}
-            hint="فعالیت مطالعه، نه نمره"
-            icon={<PanelIcon name="check" />}
-          />
-          <Kpi
-            label="زمان مطالعهٔ ثبت‌شده"
-            value={`${toPersianDigits(Math.round(studyMinutes / 60))} ساعت`}
-            hint={`${toPersianDigits(studySessions.length)} جلسهٔ ثبت‌شده`}
-            icon={<PanelIcon name="clock" />}
-            tone="warm"
-          />
-          <Kpi
-            label="موضوعات ارزیابی‌شده"
-            value={toPersianDigits(mastery.length)}
-            hint="دارای شواهد پاسخ"
-            icon={<PanelIcon name="chart" />}
-            tone="success"
-          />
-        </KpiGrid>
-
-        {resumeLesson?.id && (
-          <div className="acc-resume">
-            <div>
-              <strong>ادامهٔ {courseTitle(resumeCourse!)}</strong>
-              <p>
-                درس بعدی: {resumeLesson.title ?? "درس"}
-                {totalLessons(resumeCourse!) > 0 &&
-                  ` · ${toPersianDigits(completedLessons(resumeCourse!))} از ${toPersianDigits(totalLessons(resumeCourse!))} درس تکمیل شده`}
-              </p>
-            </div>
-            <Link className="ds-btn ds-btn-primary" href={`/lessons/${resumeLesson.id}`}>
-              ادامه بده
-            </Link>
-          </div>
-        )}
-
-        {isNewAccount ? (
-          <Card>
-            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-              از کجا شروع کنیم؟
-            </h2>
-            <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)", marginBottom: "var(--sp-5)" }}>
-              حساب شما تازه است و هنوز فعالیتی ثبت نشده. هر کدام از این سه مسیر را که شروع کنید، پیشرفت و
-              شواهد سنجش‌تان از همان لحظه همین‌جا جمع می‌شود.
-            </p>
-            <div className="pg-grid pg-grid-wide">
-              <Link className="pg-card" href="/courses">
-                <h3>یک دوره را شروع کن</h3>
-                <p>از ابتدای یک درس شروع کن؛ نقطهٔ ادامه‌ات همیشه بالای همین صفحه می‌آید.</p>
-              </Link>
-              <Link className="pg-card" href="/questions">
-                <h3>در بانک سؤال تمرین کن</h3>
-                <p>نمونه‌سؤال‌های عمومی برای همه باز است و برای دیدن کل بانک هر درس، دسترسی لازم می‌شود.</p>
-              </Link>
-              <Link className="pg-card" href="/consultations">
-                <h3>مشاوره رزرو کن</h3>
-                <p>یک جلسه برای تعیین مسیر، یا بستهٔ سالیانه‌ای که تا روز کنکور همراهت باشد.</p>
-              </Link>
-            </div>
-          </Card>
-        ) : (
-        <div className="pg-grid pg-grid-wide">
-          <Card>
-            <span className="ds-eyebrow">فعالیت، نه نمره</span>
-            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)", marginTop: "var(--sp-2)" }}>
-              پیشرفت مطالعه
-            </h2>
-            <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>
-              این بخش فقط بازدید و تکمیل درس‌ها را گزارش می‌کند و دربارهٔ میزان یادگیری علمی ادعایی ندارد.
-            </p>
-            {learningProgress.length === 0 ? (
-              <DsEmptyState
-                title="هنوز فعالیت درسی ثبت نشده"
-                description="با شروع یک درس، نقطهٔ ادامه و تکمیل‌های واقعی اینجا نمایش داده می‌شوند."
-                action={
-                  <Link className="ds-btn ds-btn-secondary" href="/courses">
-                    مشاهدهٔ دوره‌ها
-                  </Link>
-                }
-              />
-            ) : (
-              <ul className="quick-links">
-                {learningProgress.map((item, index) => {
-                  const total = totalLessons(item);
-                  const completed = completedLessons(item);
-                  const resume = item.resumeLesson ?? item.nextLesson;
-                  return (
-                    <li key={`${courseSlug(item)}-${index}`}>
-                      <strong>{courseTitle(item)}</strong>
-                      <p className="muted-copy">
-                        {total > 0
-                          ? `${toPersianDigits(completed)} از ${toPersianDigits(total)} درس تکمیل شده`
-                          : `${toPersianDigits(item.viewedLessons ?? 0)} درس مشاهده شده`}
-                      </p>
-                      {total > 0 && <ProgressBar value={progressPercent(item)} label="پیشرفت تکمیل درس" />}
-                      {resume?.id ? (
-                        <Link href={`/lessons/${resume.id}`}>ادامهٔ مطالعهٔ {resume.title ?? "درس"} ←</Link>
-                      ) : (
-                        courseSlug(item) && <Link href={`/courses/${courseSlug(item)}`}>مشاهدهٔ دوره ←</Link>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </Card>
-
-          <Card>
-            <span className="ds-eyebrow">سنجش مبتنی بر شواهد</span>
-            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)", marginTop: "var(--sp-2)" }}>
-              تسلط علمی
-            </h2>
-            <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>
-              تسلط فقط از پاسخ‌های ارزیابی‌شده محاسبه می‌شود؛ تکمیل درس یا ساعت مطالعه به‌تنهایی شاهد تسلط
-              نیست.
-            </p>
-            {mastery.length === 0 ? (
-              <DsEmptyState
-                title="هنوز شاهد ارزیابی وجود ندارد"
-                description="پس از پاسخ به سؤال‌های ارزیابی‌شده، امتیاز و میزان اطمینان اینجا ثبت می‌شوند."
-                action={
-                  <Link className="ds-btn ds-btn-secondary" href="/exams">
-                    رفتن به آزمون‌ها
-                  </Link>
-                }
-              />
-            ) : (
-              <ul className="quick-links">
-                {mastery.map((item) => (
-                  <li key={`${item.subjectCode}-${item.topicCode}`}>
-                    <strong>
-                      {item.subjectCode} / {item.topicCode}
-                    </strong>
-                    <p className="muted-copy">
-                      امتیاز مبتنی بر پاسخ‌ها: {toPersianDigits((item.masteryScore * 100).toFixed(0))}٪ · اطمینان:{" "}
-                      {item.confidence}
-                      {typeof item.evidenceCount === "number"
-                        ? ` · ${toPersianDigits(item.evidenceCount)} شاهد`
-                        : ""}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-
-          <Card>
-            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-              دوره‌های من
-            </h2>
-            {enrollments.length === 0 ? (
-              <DsEmptyState
-                title="دوره‌ای در حساب نیست"
-                description="دوره‌های ثبت‌شده اینجا نمایش داده می‌شوند."
-                action={
-                  <Link className="ds-btn ds-btn-secondary" href="/courses">
-                    مشاهدهٔ دوره‌ها
-                  </Link>
-                }
-              />
-            ) : (
-              <ul className="quick-links">
-                {enrollments.map((item) => (
-                  <li key={item.id}>
-                    <Link href={`/courses/${item.course.slug}`}>{item.course.title}</Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-
-          <Card>
-            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-              دسترسی‌های من
-            </h2>
-            {entitlements.length === 0 ? (
-              <DsEmptyState
-                title="دسترسی فعالی نیست"
-                description="دسترسی‌های خریداری یا اعطاشده اینجا قرار می‌گیرند."
-              />
-            ) : (
-              <ul className="quick-links">
-                {entitlements.map((item) => (
-                  <li key={item.id}>
-                    <strong>{item.product.title}</strong>
-                    <p className="muted-copy">نحوهٔ دسترسی: {item.grantedVia}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-
-          <Card>
-            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-              جلسه‌های مطالعه
-            </h2>
-            {studySessions.length === 0 ? (
-              <DsEmptyState
-                title="هنوز جلسه‌ای ثبت نشده"
-                description="زمان واقعی‌ای که هنگام تکمیل وارد می‌کنی و ثبت‌های دستی، بدون وابستگی به سال آزمون در سابقه می‌مانند."
-              />
-            ) : (
-              <>
-                <ul className="quick-links">
-                  {studySessions.map((session) => (
-                    <li key={session.id}>
-                      <strong>
-                        {session.subjectCode}
-                        {session.topicCode ? ` / ${session.topicCode}` : ""}
-                      </strong>
-                      <p className="muted-copy">
-                        {toPersianDigits(session.minutes)} دقیقه · {dateLabel(session.loggedAt)} ·{" "}
-                        {session.source === "TASK_ACTUAL"
-                          ? "زمان واقعی ثبت‌شده برای کار"
-                          : session.source === "MANUAL"
-                            ? "ثبت دستی"
-                            : "نوع ثبت در نسخهٔ قدیمی مشخص نیست"}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-                {sessionNextCursor && (
-                  <Button onClick={() => void loadMoreHistory("sessions")} loading={historyBusy === "sessions"} disabled={historyBusy !== null}>
-                    نمایش جلسه‌های قدیمی‌تر
-                  </Button>
-                )}
-                {historyError.sessions && <Alert tone="danger">{historyError.sessions}</Alert>}
-              </>
-            )}
-          </Card>
-
-          <Card>
-            <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-              نسخه‌های برنامه
-            </h2>
-            {planHistory.length === 0 ? (
-              <DsEmptyState
-                title="هنوز برنامه‌ای در تاریخچه نیست"
-                description="نسخه‌های قبلی برنامه با مشخصات هدف همان زمان نگهداری می‌شوند."
-              />
-            ) : (
-              <>
-                <ul className="quick-links">
-                  {planHistory.map((plan) => {
-                    const snapshot = plan.goalSnapshot;
-                    const degree = snapshot?.degree ?? plan.goalDegree;
-                    const field = snapshot?.field ?? plan.goalField;
-                    const weeklyHours = snapshot?.weeklyHours ?? plan.goalWeeklyHours;
-                    const level = snapshot?.selfReportedLevel ?? plan.goalSelfReportedLevel;
-                    return (
-                      <li key={plan.id}>
-                        <strong>
-                          برنامهٔ {degreeLabel(degree)}
-                          {plan.version ? ` · نسخهٔ ${toPersianDigits(plan.version)}` : ""}
-                        </strong>
-                        <p className="muted-copy">
-                          {field ?? "رشته ثبت نشده"}
-                          {typeof weeklyHours === "number" ? ` · ${toPersianDigits(weeklyHours)} ساعت در هفته` : ""} ·{" "}
-                          {levelLabel(level)} · {dateLabel(plan.createdAt)}
-                        </p>
-                      </li>
-                    );
-                  })}
-                </ul>
-                {planNextCursor && (
-                  <Button onClick={() => void loadMoreHistory("plans")} loading={historyBusy === "plans"} disabled={historyBusy !== null}>
-                    نمایش نسخه‌های قدیمی‌تر
-                  </Button>
-                )}
-                {historyError.plans && <Alert tone="danger">{historyError.plans}</Alert>}
-              </>
-            )}
-          </Card>
-        </div>
-        )}
-
-        {!isNewAccount && (
-        <Card>
-          <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-            تاریخچهٔ تغییر برنامه
-          </h2>
-          {revisions.length === 0 ? (
-            <DsEmptyState
-              title="هنوز تغییری ثبت نشده"
-              description="دلیل ساخت و بازبرنامه‌ریزی‌های آینده اینجا ثبت می‌شود."
-            />
-          ) : (
-            <ul className="quick-links">
-              {revisions.map((revision) => (
-                <li key={revision.id}>
-                  <strong>{revision.summary}</strong>
-                  <p className="muted-copy">
-                    {revision.reasonCode} · {dateLabel(revision.createdAt)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-        )}
-
-        {/* Settings, not dashboard: a form is what you come here to change,
-            not what you come here to see, so it sits after the state. */}
-        <Card>
-          <h2 className="ds-title" style={{ fontSize: "var(--text-lg)" }}>
-            پروفایل
-          </h2>
-          <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)", marginBottom: "var(--sp-5)" }}>
-            نام نمایشی و هدف کنکور شما. برنامهٔ مطالعه و پیشنهادها بر همین پایه ساخته می‌شوند.
+    <div className="st-page">
+      <section className="st-hero st-hero-slim">
+        <div className="st-hero-text">
+          <p className="st-hero-kicker">{greeting()}{firstName ? `، ${firstName}` : ""}</p>
+          <h1>امروز یک قدم به کنکور نزدیک‌تر شو</h1>
+          <p className="st-hero-sub">
+            <span className="st-hero-pill" suppressHydrationWarning>
+              <b>{toPersianDigits(days)}</b> روز تا {examDate.label}
+            </span>
+            <span className="st-hero-pill">{fieldLabel(profile.targetField)}</span>
           </p>
-          {profile && (
-            <form className="ds-stack" onSubmit={saveProfile}>
-              <FieldRow>
-                <Field label="نام نمایشی">
-                  {(props) => (
-                    <Input
-                      {...props}
-                      value={profile.displayName ?? ""}
-                      onChange={(e) => setProfile({ ...profile, displayName: e.target.value })}
-                    />
-                  )}
-                </Field>
-                <Field label="مقطع هدف">
-                  {(props) => (
-                    <Select
-                      {...props}
-                      value={profile.targetDegree ?? ""}
-                      onChange={(e) => setProfile({ ...profile, targetDegree: e.target.value })}
-                    >
-                      <option value="">—</option>
-                      <option value="MASTER">ارشد</option>
-                      <option value="PHD">دکتری</option>
-                    </Select>
-                  )}
-                </Field>
-              </FieldRow>
-              <Field label="رشتهٔ هدف">
-                {(props) => (
-                  <Input
-                    {...props}
-                    value={profile.targetField ?? ""}
-                    onChange={(e) => setProfile({ ...profile, targetField: e.target.value })}
-                  />
-                )}
-              </Field>
-              <div className="ds-row">
-                <Button type="submit" variant="primary" loading={saveState === "saving"}>
-                  ذخیره تغییرات
-                </Button>
-                {saveState === "saved" && <Badge tone="success">ذخیره شد</Badge>}
-              </div>
-            </form>
+        </div>
+        <div className="st-hero-actions">
+          {resume?.resumeLesson ? (
+            <Link href={`/lessons/${resume.resumeLesson.id}`} className="st-btn st-btn-light st-btn-lg">
+              <Glyph name="play" />
+              ادامهٔ درس
+            </Link>
+          ) : (
+            <Link href="/courses" className="st-btn st-btn-light st-btn-lg">
+              <Glyph name="play" />
+              دوره‌ها
+            </Link>
           )}
-        </Card>
+          <Link href={currentPlan ? "/account/plan" : "/today"} className="st-btn st-btn-glass">
+            <Glyph name="calendar" />
+            برنامهٔ هفته
+          </Link>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------ today */}
+      <section className="st-card st-today">
+        <header className="st-card-head">
+          <h2>
+            <span className="st-card-icon"><Glyph name="calendar" /></span>
+            کارهای امروز
+          </h2>
+          {currentPlan ? (
+            <span className="st-today-coach">
+              برنامهٔ {currentPlan.coach?.displayName ?? "مشاور"} ·{" "}
+              {toPersianDigits(currentPlan.progress.done)} از {toPersianDigits(currentPlan.progress.total)} کار هفته
+            </span>
+          ) : (
+            <Link href="/today" className="st-link">برنامهٔ امروز ←</Link>
+          )}
+        </header>
+        {coach.state === "loading" || (!currentPlan && today.state === "loading") ? (
+          <Loading />
+        ) : currentPlan ? (
+          coachToday.length > 0 ? (
+            <>
+              <ul className="st-ctasks">
+                {coachToday.map((item) => <CoachTask key={item.id} item={item} onChange={replaceCoachItem} />)}
+              </ul>
+              <Link href="/account/plan" className="st-link st-more-link">کل برنامهٔ هفته ←</Link>
+            </>
+          ) : (
+            <Empty
+              icon="calendar"
+              title="امروز در برنامهٔ مشاورت کاری نیست"
+              text="اگر از روزهای قبل عقب مانده‌ای، از برنامهٔ هفته جبرانش کن."
+              action={<Link href="/account/plan" className="st-btn st-btn-soft st-btn-sm">برنامهٔ هفته</Link>}
+            />
+          )
+        ) : today.state === "ready" && today.data.tasks.length > 0 ? (
+          <ul className="st-tasks">
+            {today.data.tasks.map((task) => (
+              <li key={task.id}>
+                <span className="st-task-dot" aria-hidden />
+                <div>
+                  {task.href ? <Link href={task.href}>{task.title}</Link> : <span>{task.title}</span>}
+                  <small>{minutesLabel(task.estimatedMinutes)} · {task.reason}</small>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Empty
+            icon="calendar"
+            title="هنوز برنامه‌ای برای امروز نداری"
+            text="برنامهٔ خودکار را از روی هدف و آزمون‌هایت بساز، یا با مشاوره، برنامهٔ هفتگی شخصی بگیر."
+            action={
+              <div className="st-row">
+                <Link href="/today" className="st-btn st-btn-primary st-btn-sm">ساخت برنامه</Link>
+                <Link href="/consultations" className="st-btn st-btn-soft st-btn-sm">مشاوره با مدرس</Link>
+              </div>
+            }
+          />
+        )}
+      </section>
+
+      <div className="st-dash">
+        <div className="st-dash-main">
+          {/* ------------------------------------------------ exam standing */}
+          <Panel title="آخرین آزمون" icon="trophy" action={<Link href="/account/exams" className="st-link">همهٔ آزمون‌ها ←</Link>}>
+            {attempts.state === "loading" ? (
+              <Loading />
+            ) : attempts.state === "error" ? (
+              <Failed />
+            ) : !latest || !latest.standing ? (
+              <Empty
+                icon="target"
+                title="هنوز آزمونی نداده‌ای"
+                text="در آزمون‌های آزمایشی شرکت کن تا رتبه، تراز و درصدت را بین همهٔ شرکت‌کننده‌ها ببینی."
+                action={<Link href="/exams" className="st-btn st-btn-primary st-btn-sm">آزمون‌ها</Link>}
+              />
+            ) : (
+              <div className="st-standing">
+                <div className="st-standing-rank">
+                  {latest.standing.rank !== null ? (
+                    <>
+                      <small>رتبهٔ تو</small>
+                      <b>{toPersianDigits(latest.standing.rank)}</b>
+                      <small>از {toPersianDigits(latest.standing.participants)} نفر</small>
+                    </>
+                  ) : (
+                    <>
+                      <small>شرکت‌کننده‌ها</small>
+                      <b>{toPersianDigits(latest.standing.participants)}</b>
+                      <small>رتبه از ۵ نفر به بالا</small>
+                    </>
+                  )}
+                </div>
+                <div className="st-standing-info">
+                  <strong>{latest.exam.title}</strong>
+                  <small>{faDate(latest.submittedAt)}</small>
+                  <div className="st-standing-stats">
+                    <span>درصد: <b>{toPersianDigits(Math.round(latest.standing.konkurPercent))}٪</b></span>
+                    {latest.standing.percentile !== null && (
+                      <span>بهتر از <b>{toPersianDigits(latest.standing.percentile)}٪</b> شرکت‌کننده‌ها</span>
+                    )}
+                  </div>
+                  <Link href={`/attempts/${latest.id}/report`} className="st-btn st-btn-soft st-btn-sm">کارنامه و تحلیل</Link>
+                </div>
+              </div>
+            )}
+          </Panel>
+
+          {/* ------------------------------------------- continue learning */}
+          <Panel title="ادامهٔ یادگیری" icon="play" action={<Link href="/account/courses" className="st-link">دوره‌های من ←</Link>}>
+            {progress.state === "loading" ? (
+              <Loading />
+            ) : progress.state === "error" ? (
+              <Failed />
+            ) : courses.length === 0 ? (
+              <Empty
+                icon="book"
+                title="هنوز درسی را شروع نکرده‌ای"
+                text="با یک دورهٔ کامل یا ویدیوی رایگان همان درس شروع کن."
+                action={
+                  <div className="st-row">
+                    <Link href="/courses" className="st-btn st-btn-primary st-btn-sm">دوره‌ها</Link>
+                    <Link href="/free-videos" className="st-btn st-btn-soft st-btn-sm">ویدیوی رایگان</Link>
+                  </div>
+                }
+              />
+            ) : (
+              <ul className="st-courses">
+                {courses.slice(0, 3).map((course) => (
+                  <li key={course.course.slug} className="st-course-row">
+                    <ProgressRing percent={course.progressPercent} size={52} stroke={6} />
+                    <div className="st-course-info">
+                      <Link href={`/courses/${course.course.slug}`}><strong>{course.course.title}</strong></Link>
+                      <small>
+                        {toPersianDigits(course.completedLessons)} از {toPersianDigits(course.totalLessons)} درس
+                        {course.resumeLesson ? ` · بعدی: ${course.resumeLesson.title}` : ""}
+                      </small>
+                    </div>
+                    {course.resumeLesson && (
+                      <Link href={`/lessons/${course.resumeLesson.id}`} className="st-btn st-btn-soft st-btn-sm">ادامه</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+        </div>
+
+        <div className="st-dash-side">
+          {/* ----------------------------------------------------- library */}
+          <Panel title="جزوه‌های من" icon="book" action={<Link href="/account/library" className="st-link">همه ←</Link>}>
+            {library.state === "loading" ? (
+              <Loading />
+            ) : library.state === "error" ? (
+              <Failed />
+            ) : library.data.resources.length === 0 ? (
+              <p className="st-card-note">جزوه‌ها و منابعی که بخری، بعد از تأیید پرداخت همین‌جا می‌آیند.</p>
+            ) : (
+              <ul className="st-docs-mini">
+                {library.data.resources.slice(0, 3).map((resource) => (
+                  <li key={resource.id}>
+                    <Link href={`/resources/${resource.slug}`}>
+                      <span className="st-doc-icon st-doc-icon-sm"><Glyph name="book" /></span>
+                      <span>
+                        <strong>{resource.title}</strong>
+                        <small>{RESOURCE_KIND_LABEL[resource.kind] ?? "منبع"}</small>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+
+          {/* --------------------------------------------- recommendations */}
+          {recommended.state === "ready" && recommended.data.length > 0 && (
+            <Panel title="پیشنهاد برای تو" icon="spark">
+              <ul className="st-recs">
+                {recommended.data.slice(0, 2).map((item) => (
+                  <li key={item.course.slug}>
+                    <Link href={`/courses/${item.course.slug}`} className="st-rec">
+                      <strong>{item.course.title}</strong>
+                      {item.reasons[0] && <small className="st-rec-reason">{item.reasons[0]}</small>}
+                      <span className="st-rec-foot">
+                        <b>{formatRial(item.price.amountRial)}</b>
+                        <span>مشاهدهٔ دوره ←</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          )}
+        </div>
       </div>
-    </AccountShell>
+    </div>
   );
 }

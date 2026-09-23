@@ -18,9 +18,24 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    /** A machine-readable reason the API attached, e.g. PROFILE_INCOMPLETE. */
+    public code?: string,
+    /** The rest of the error body, for callers that need its details. */
+    public details?: Record<string, unknown>,
   ) {
     super(message);
   }
+}
+
+function errorFrom(status: number, statusText: string, body: unknown) {
+  const record = body && typeof body === "object" ? (body as Record<string, unknown>) : undefined;
+  const message = record?.message ?? statusText;
+  return new ApiError(
+    status,
+    Array.isArray(message) ? message.join(", ") : String(message),
+    typeof record?.code === "string" ? record.code : undefined,
+    record,
+  );
 }
 
 async function parseBody(res: Response) {
@@ -53,10 +68,7 @@ export async function apiFetch<T>(
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
   const body = await parseBody(res);
-  if (!res.ok) {
-    const message = (body && body.message) || res.statusText;
-    throw new ApiError(res.status, Array.isArray(message) ? message.join(", ") : message);
-  }
+  if (!res.ok) throw errorFrom(res.status, res.statusText, body);
   return body as T;
 }
 
@@ -70,9 +82,6 @@ export async function apiUpload<T>(path: string, file: File): Promise<T> {
     body: formData,
   });
   const body = await parseBody(res);
-  if (!res.ok) {
-    const message = (body && body.message) || res.statusText;
-    throw new ApiError(res.status, Array.isArray(message) ? message.join(", ") : message);
-  }
+  if (!res.ok) throw errorFrom(res.status, res.statusText, body);
   return body as T;
 }

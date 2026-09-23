@@ -181,9 +181,9 @@ export default function MyConsultationsPage() {
       subtitle="سهمیهٔ جلسه‌هایتان و وضعیت هر جلسه. زمان را شما پیشنهاد می‌دهید و مدرس تأیید می‌کند."
       chips={
         <>
-          <span className="acc-chip">{formatPersianNumber(remaining)} جلسهٔ باقی‌مانده</span>
-          {upcoming > 0 && <span className="acc-chip">{formatPersianNumber(upcoming)} جلسهٔ زمان‌دار</span>}
-          {awaiting > 0 && <span className="acc-chip">{formatPersianNumber(awaiting)} در انتظار تأیید</span>}
+          <span className="st-chip">{formatPersianNumber(remaining)} جلسهٔ باقی‌مانده</span>
+          {upcoming > 0 && <span className="st-chip">{formatPersianNumber(upcoming)} جلسهٔ زمان‌دار</span>}
+          {awaiting > 0 && <span className="st-chip">{formatPersianNumber(awaiting)} در انتظار تأیید</span>}
         </>
       }
       action={

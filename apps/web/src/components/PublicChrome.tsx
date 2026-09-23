@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 /** Routes that render their own full-height panel shell. */
-const PANEL_ROOTS = ["/admin", "/instructor"];
+const PANEL_ROOTS = ["/admin", "/instructor", "/account"];
 
 /**
  * Hides the marketing header, footer and mobile tab bar on the panels. A panel
