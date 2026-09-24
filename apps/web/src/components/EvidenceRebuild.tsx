@@ -65,7 +65,7 @@ function Scorecard({ rebuild }: { rebuild: ScorecardRebuild }) {
                 {toPersianDigits(row.rank)}
               </b>
               <span className="rb-code-meta">
-                در سهمیه
+                {rebuild.quota ? `در سهمیهٔ ${rebuild.quota}` : "در سهمیه"}
                 {row.rankNoQuota && <> · بدون سهمیه {toPersianDigits(row.rankNoQuota)}</>}
               </span>
               {row.score !== undefined && <span className="rb-code-meta">نمرهٔ کل {toPersianDigits(row.score)}</span>}
