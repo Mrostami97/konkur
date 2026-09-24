@@ -25,6 +25,8 @@ export interface AnswerSheetRebuild {
   source: string;
   section: string;
   rows: { q: number; answer: number | "سفید"; key: number | "حذف"; keyNote?: string }[];
+  /** Shown under the sheet when the rows differ from the original image, with who said so. */
+  note?: string;
 }
 
 export interface QuestionPanel {
@@ -306,12 +308,15 @@ export const evidenceRebuilds: Record<string, EvidenceRebuild[]> = {
       kind: "answers",
       source: "/evidence/1405-theory-answers-b.jpg",
       section: "نظریه زبان‌ها و ماشین‌ها",
+      // The owner confirmed on 2026-09-24 that these answers are the same as
+      // theory-1405-a; the original image numbers the options differently.
+      note: "به تأیید مدرس، پاسخ‌ها همان پاسخ‌های آقای کاظمی است؛ شمارهٔ گزینه‌ها در تصویر اصلی فرق دارد.",
       rows: [
-        { q: 46, answer: 4, key: 4 },
-        { q: 47, answer: 2, key: 2 },
-        { q: 48, answer: 4, key: 4 },
-        { q: 49, answer: 3, key: 3 },
-        { q: 50, answer: 1, key: 1 },
+        { q: 46, answer: 2, key: 2 },
+        { q: 47, answer: 4, key: 4 },
+        { q: 48, answer: 2, key: 2 },
+        { q: 49, answer: 1, key: 1 },
+        { q: 50, answer: 3, key: 3 },
       ],
     },
   ],

@@ -133,6 +133,7 @@ function AnswerSheet({ rebuild }: { rebuild: AnswerSheetRebuild }) {
         <span><i className="is-picked" />پاسخ داوطلب</span>
         <span><i className="is-key" />کلید</span>
       </figcaption>
+      {rebuild.note && <p className="rb-note">{rebuild.note}</p>}
     </figure>
   );
 }

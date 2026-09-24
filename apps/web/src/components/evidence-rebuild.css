@@ -65,6 +65,7 @@
 .rb-legend { display: flex; gap: 1rem; margin-top: .6rem; color: var(--muted); font-size: .62rem; }
 .rb-legend span { display: inline-flex; align-items: center; gap: .3rem; }
 .rb-legend i { width: 14px; height: 14px; }
+.rb-note { margin: .5rem 0 0; padding: .4rem .6rem; border-radius: 10px; color: #6d5440; background: #fdf1e7; font-size: .64rem; line-height: 1.9; }
 
 /* question comparison */
 .rb-questions { display: grid; gap: .5rem; }
