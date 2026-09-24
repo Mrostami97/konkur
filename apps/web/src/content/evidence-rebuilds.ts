@@ -397,34 +397,4 @@ export const evidenceRebuilds: Record<string, EvidenceRebuild[]> = {
       ],
     },
   ],
-
-  "karnameh-3609": [
-    {
-      kind: "scorecard",
-      source: "/evidence/karnameh-theory-100.jpg",
-      exam: "ارشد مهندسی کامپیوتر · منتشرشده در بهمن ۱۴۰۲",
-      subjects: [
-        { name: "زبان عمومی و تخصصی", percent: 47.78 },
-        { name: "ریاضیات", percent: "سفید" },
-        { name: "نظریه زبان‌ها", percent: 100 },
-        { name: "مدار منطقی", percent: 61.11 },
-        { name: "معماری کامپیوتر", percent: 47.22 },
-        { name: "ساختمان داده و الگوریتم", percent: 59.52 },
-        { name: "سیستم عامل", percent: 40.74 },
-        { name: "شبکه‌های کامپیوتری", percent: "سفید" },
-        { name: "هوش مصنوعی", percent: 21.21 },
-        { name: "کامپایلر", percent: 51.85 },
-        { name: "پایگاه داده", percent: 66.67 },
-      ],
-      codes: [
-        { code: 1, score: 6627, rank: 58, rankNoQuota: 67 },
-        { code: 2, score: 7271, rank: 29, rankNoQuota: 35 },
-        { code: 3, score: 6782, rank: 48, rankNoQuota: 56 },
-        { code: 4, score: 6386, rank: 60, rankNoQuota: 70 },
-        { code: 5, score: 6772, rank: 42, rankNoQuota: 51 },
-        { code: 6, score: 6948, rank: 46, rankNoQuota: 54 },
-        { code: 7, score: 7406, rank: 27, rankNoQuota: 32 },
-      ],
-    },
-  ],
 };
