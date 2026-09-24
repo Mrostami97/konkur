@@ -2,6 +2,7 @@ import katex from "katex";
 import { Fragment } from "react";
 import type { AnswerSheetRebuild, EvidenceRebuild, MessageRebuild, QuestionsRebuild, ScorecardRebuild, ScoreValue } from "../content/evidence-rebuilds";
 import { toPersianDigits } from "../lib/format";
+import "./evidence-rebuild.css";
 
 const fa = (value: number) => value.toLocaleString("fa-IR", { maximumFractionDigits: 2, useGrouping: false });
 

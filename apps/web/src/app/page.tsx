@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { publicArticlePath, type PublicArticleRecord } from "../components/PublicContent";
-import { FreeVideoCard, lectureSubject, type FreeVideo } from "../components/FreeVideoCard";
+import { FreeVideoCard, type FreeVideo } from "../components/FreeVideoCard";
 import { StructuredData } from "../components/StructuredData";
 import { Glyph, SubjectGlyph, SUBJECT_TONE } from "../components/SubjectIcon";
 import { subjects } from "../content/editorial";
-import { evidenceStats, questionDesignEvidence, studentResults } from "../content/evidence";
+import { EvidenceRebuildView } from "../components/EvidenceRebuild";
+import { alignmentEvidence, evidenceStats, ownerResults, questionDesignEvidence, studentResults } from "../content/evidence";
+import { evidenceRebuilds, type QuestionsRebuild } from "../content/evidence-rebuilds";
 import { API_URL, apiGetPublic } from "../lib/api";
 import { daysUntil, EXAM_DATES } from "../lib/exam-dates";
 import { formatPersianNumber, formatRial, toPersianDigits } from "../lib/format";
@@ -136,6 +139,26 @@ function coursePrice(course: Course, products: Product[]) {
   return price ? price.amountRial : null;
 }
 
+/** Named students whose scorecard leads with a rank, best rank first. */
+const rankedStudents = studentResults
+  .filter((row) => row.student && row.hero && row.category === "کارنامه")
+  .sort((a, b) => Number(a.hero!.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))) - Number(b.hero!.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))));
+
+/** Every named result, for the running ticker under the hero. */
+const tickerItems = studentResults.filter((row) => row.student && row.hero);
+
+const designQuestions = evidenceRebuilds["question-design-1401"]?.[0] as QuestionsRebuild | undefined;
+const answerSheet = evidenceRebuilds["data-1405-a"]?.[0];
+
+const JOURNEYS = [
+  { href: "/free-videos", glyph: "play", title: "ویدیوی رایگان", text: "هر درس را رایگان شروع کن", tone: "teal" },
+  { href: "/questions", glyph: "list", title: "بانک سؤال", text: "تست‌های کنکور با پاسخ تشریحی", tone: "blue" },
+  { href: "/exams", glyph: "target", title: "آزمون", text: "خودت را با زمان واقعی بسنج", tone: "violet" },
+  { href: "/today", glyph: "calendar", title: "برنامهٔ امروز", text: "امروز دقیقاً چه بخوانم؟", tone: "amber" },
+  { href: "/rank-estimate", glyph: "curve", title: "تخمین رتبه", text: "با درصدهایت، بازهٔ رتبه", tone: "rose" },
+  { href: "/choices", glyph: "building", title: "انتخاب رشته", text: "رتبه‌ات کجا قبول می‌شود", tone: "teal" },
+] as const;
+
 // --- page ------------------------------------------------------------------------
 
 export default async function HomePage() {
@@ -152,7 +175,6 @@ export default async function HomePage() {
   const results = achievements ?? [];
   const featured = results.filter((row) => row.isFeatured).slice(0, 3);
   const wall = results.filter((row) => !featured.includes(row));
-  const heroFaces = (featured.length ? featured : results).slice(0, 5);
   const catalogue = courses ?? [];
   const productList = products ?? [];
   const freeVideos = (videos ?? []).filter((video): video is FreeVideo & { externalUrl: string } => Boolean(video.externalUrl));
@@ -160,6 +182,7 @@ export default async function HomePage() {
   const latestArticles = (published ?? []).slice(0, 3);
 
   const masterDays = daysUntil(EXAM_DATES.master1406.iso);
+  const phdDays = daysUntil(EXAM_DATES.phd1406.iso);
 
   // Extends the site-wide WebSite entity from the layout (same @id) with the
   // search box, rather than declaring a second, competing site entity.
@@ -183,127 +206,199 @@ export default async function HomePage() {
       <StructuredData data={structured} />
 
       {/* ---------------------------------------------------------------- hero */}
-      <section className="h-hero">
-        <div className="h-hero-glow" aria-hidden="true" />
-        <div className="h-wrap h-hero-grid">
-          <div className="h-hero-copy">
-            <p className="h-kicker h-kicker-light">
-              <span className="h-dot" /> ارشد و دکتری مهندسی کامپیوتر، IT و علوم کامپیوتر
+      <section className="hx-hero">
+        <div className="hx-hero-bg" aria-hidden="true" />
+        <div className="h-wrap hx-hero-grid">
+          <div className="hx-hero-copy">
+            <p className="hx-kicker">
+              <span className="hx-live" /> {toPersianDigits(masterDays)} روز تا {EXAM_DATES.master1406.label}
             </p>
             <h1>
-              {summary && summary.total > 0 ? (
-                <>
-                  رتبه‌های برتر کنکور کامپیوتر،
-                  <br />
-                  <span className="h-grad">از همین کلاس‌ها</span>
-                </>
-              ) : (
-                <>
-                  کنکور ارشد کامپیوتر ۱۴۰۶ را
-                  <br />
-                  <span className="h-grad">با برنامه شروع کن</span>
-                </>
-              )}
+              کنکور کامپیوتر را با کلاسی بخوان که <em>نتیجه‌اش سند دارد</em>
             </h1>
-            <p className="h-lede">
-              کلاس‌های کامل هر درس، ویدیوی رایگان برای شروع، راهنمای رسمی ۱۴۰۶ و ابزار تخمین رتبه و انتخاب
-              رشته — همه در یک جا.
+            <p className="hx-lede">
+              کلاس‌های ارشد و دکتری مهندسی کامپیوتر، IT و علوم کامپیوتر با محمد رستمی، ارشد نرم‌افزار شریف. از ۱۲ تست
+              ساختمان داده و الگوریتم کنکور ۱۴۰۵، نُه‌تا پیش‌تر سر کلاس کار شده بود.
             </p>
 
-            <form className="h-search" action="/search" method="get" role="search">
-              <Glyph name="compass" className="h-search-ico" />
+            <div className="hx-cta">
+              <Link href="/free-videos" className="hx-btn hx-btn-primary">
+                <Glyph name="play" /> شروع رایگان
+              </Link>
+              <Link href="/evidence" className="hx-btn hx-btn-ghost">
+                <Glyph name="shield" /> نتایج، با سند
+              </Link>
+            </div>
+
+            <form className="hx-search" action="/search" method="get" role="search">
+              <Glyph name="compass" />
               <input
                 name="q"
                 type="search"
-                placeholder="امروز می‌خواهی چه چیزی یاد بگیری؟ مثلاً «درخت AVL»"
+                placeholder="چه چیزی می‌خواهی یاد بگیری؟ مثلاً «درخت AVL»"
                 aria-label="جست‌وجو در درس‌ها، راهنماها و مقاله‌ها"
               />
               <button type="submit">جست‌وجو</button>
             </form>
-
-            <div className="h-chips" aria-label="درس‌های پرجست‌وجو">
-              {subjects.slice(4, 11).map((subject) => (
-                <Link key={subject.slug} href={`/subjects/${subject.slug}`} className="h-chip">
+            <div className="hx-chips" aria-label="درس‌های پرجست‌وجو">
+              {subjects.slice(4, 10).map((subject) => (
+                <Link key={subject.slug} href={`/subjects/${subject.slug}`}>
                   {subject.shortTitle}
                 </Link>
               ))}
             </div>
-
-            {summary && summary.total > 0 ? (
-              <dl className="h-hero-stats">
-                {summary.bestRank !== null && (
-                  <div>
-                    <dt>بهترین رتبه</dt>
-                    <dd>{toPersianDigits(summary.bestRank)}</dd>
-                  </div>
-                )}
-                {summary.under100 > 0 && (
-                  <div>
-                    <dt>رتبهٔ زیر ۱۰۰</dt>
-                    <dd>{toPersianDigits(summary.under100)}</dd>
-                  </div>
-                )}
-                <div>
-                  <dt>قبولی ثبت‌شده</dt>
-                  <dd>{toPersianDigits(summary.total)}</dd>
-                </div>
-              </dl>
-            ) : (
-              <div className="h-hero-cta">
-                <Link href="/courses" className="h-btn h-btn-light">
-                  دوره‌ها
-                </Link>
-                <Link href="#free-videos" className="h-btn h-btn-ghost">
-                  ویدیوهای رایگان
-                </Link>
-              </div>
-            )}
           </div>
 
-          <div className="h-hero-art" aria-hidden={heroFaces.length === 0}>
-            {heroFaces.length > 0 ? (
-              <div className="h-fan">
-                {heroFaces.map((row, index) => (
-                  <figure className={`h-fan-card h-fan-${index}`} key={row.id}>
-                    {row.photoPath ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={mediaUrl(row.photoPath)} alt={row.displayName} loading="lazy" />
-                    ) : (
-                      <span className="h-avatar-fallback">{initials(row.displayName)}</span>
-                    )}
-                    <figcaption>
-                      <b>رتبهٔ {toPersianDigits(row.rank)}</b>
-                      <span>{row.displayName}</span>
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            ) : (
-              <div className="h-hero-panel">
-                <div className="h-countdown-mini">
-                  <span>تا {EXAM_DATES.master1406.label}</span>
-                  <b>{toPersianDigits(masterDays)}</b>
-                  <small>روز</small>
-                </div>
-                <div className="h-hero-panel-list">
-                  {freeVideos.slice(0, 4).map((video) => {
-                    const subject = lectureSubject(video);
-                    return (
-                      <div key={video.slug}>
-                        <span className={`h-tone-dot h-t-${SUBJECT_TONE[subject?.slug ?? ""] ?? "teal"}`}>
-                          <Glyph name="play" />
-                        </span>
-                        <span>{subject?.title ?? video.title}</span>
-                        <small>رایگان</small>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+          <div className="hx-stage" aria-label="چند نتیجهٔ شاگردها">
+            {rankedStudents.slice(0, 4).map((row, index) => (
+              <Link href={`/evidence#${row.id}`} className={`hx-card hx-card-${index}`} key={row.id}>
+                <span className="hx-card-top">
+                  <span>{row.subject.split(" · ")[0]}</span>
+                  <span>کنکور {row.year}</span>
+                </span>
+                <b>
+                  <small>رتبهٔ</small>
+                  {row.hero!.value}
+                </b>
+                <span className="hx-card-label">{row.hero!.label}</span>
+                <span className="hx-card-name">
+                  <i aria-hidden="true">{row.student!.replace(/^(آقای|خانم)\s+/, "").charAt(0)}</i>
+                  {row.student}
+                </span>
+              </Link>
+            ))}
+            <div className="hx-float hx-float-a">
+              <b>۹ از ۱۲</b>
+              <span>تست ۱۴۰۵، قبلاً سر کلاس</span>
+            </div>
+            <div className="hx-float hx-float-b">
+              <b>۱۰۰٪</b>
+              <span>نظریه، دو شاگرد کلاس ۱۴۰۵</span>
+            </div>
           </div>
         </div>
 
+        <div className="hx-ticker" aria-label="نتایج شاگردها">
+          <div className="hx-ticker-track">
+            {[0, 1].map((copy) => (
+              <ul key={copy} aria-hidden={copy === 1 ? true : undefined}>
+                {tickerItems.map((row) => (
+                  <li key={row.id}>
+                    <Glyph name="trophy" />
+                    <b>{row.hero!.value}</b> {row.hero!.label}
+                    <span>{row.student} · {row.year}</span>
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------------- journeys */}
+      <section className="hx-journeys" aria-label="از کجا شروع کنم">
+        <div className="h-wrap hx-journey-grid">
+          {JOURNEYS.map((item) => (
+            <Link href={item.href} className={`hx-journey hx-j-${item.tone}`} key={item.href}>
+              <span className="hx-journey-ico"><Glyph name={item.glyph} /></span>
+              <b>{item.title}</b>
+              <span>{item.text}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* -------------------------------------------------------------- proof */}
+      <section className="h-sec hx-proof" id="proof">
+        <div className="h-wrap">
+          <header className="h-head h-head-row">
+            <div>
+              <p className="h-kicker">امضای این کلاس</p>
+              <h2>کلاس با سؤال واقعی کنکور سنجیده می‌شود</h2>
+              <p>عددها ادعا نیستند؛ هر کدام کنار سندش در صفحهٔ مستندات هست.</p>
+            </div>
+            <Link href="/evidence" className="h-link">
+              همهٔ مستندات <span aria-hidden="true">←</span>
+            </Link>
+          </header>
+
+          <div className="hx-proof-stats">
+            {evidenceStats.map((stat) => (
+              <div className={`hx-proof-stat hx-ps-${stat.tone}`} key={stat.label}>
+                <b>{stat.value}</b>
+                <span>{stat.label}</span>
+                <small>{stat.detail}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="hx-proof-grid">
+            {designQuestions && (
+              <article className="hx-proof-card hx-proof-q">
+                <span className="hx-proof-tag"><Glyph name="spark" /> طراحی سؤال · ۱۴۰۱</span>
+                <h3>{questionDesignEvidence.title}</h3>
+                <EvidenceRebuildView rebuild={{ ...designQuestions, panels: designQuestions.panels.slice(0, 2) }} />
+                <Link href={`/evidence#${questionDesignEvidence.id}`} className="h-link">سؤال ۶۹ و سند اصلی ←</Link>
+              </article>
+            )}
+            {answerSheet && (
+              <article className="hx-proof-card hx-proof-sheet">
+                <span className="hx-proof-tag"><Glyph name="target" /> پاسخ‌برگ یک شاگرد · ۱۴۰۵</span>
+                <h3>ساختمان داده و الگوریتم: ۱۰ درست از ۱۱ سؤال معتبر</h3>
+                <EvidenceRebuildView rebuild={answerSheet} />
+                <Link href="/evidence#data-1405-a" className="h-link">پاسخ‌برگ‌های دیگر ←</Link>
+              </article>
+            )}
+          </div>
+
+          {alignmentEvidence.topics && (
+            <div className="hx-topics">
+              <span>مبحث‌هایی از ۱۴۰۵ که سر کلاس بود:</span>
+              {alignmentEvidence.topics.map((topic) => <em key={topic}>{topic}</em>)}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------------- students */}
+      <section className="h-sec hx-students" id="students">
+        <div className="h-wrap">
+          <header className="h-head h-head-row">
+            <div>
+              <p className="h-kicker">نتایج شاگردان</p>
+              <h2>رتبه‌هایی که از همین کلاس‌ها بیرون آمد</h2>
+              <p>با اسم خودشان و کارنامه‌ای که بازسازی‌اش را در صفحهٔ مستندات می‌بینی.</p>
+            </div>
+            <Link href="/evidence" className="h-link">
+              همهٔ کارنامه‌ها <span aria-hidden="true">←</span>
+            </Link>
+          </header>
+          <div className="hx-student-grid">
+            {rankedStudents.map((row) => (
+              <Link href={`/evidence#${row.id}`} className="hx-student" key={row.id}>
+                <span className="hx-student-head">
+                  <span className="hx-student-rank">
+                    <small>رتبهٔ</small>
+                    {row.hero!.value}
+                  </span>
+                  <span className="hx-student-who">
+                    <b>{row.student}</b>
+                    <small>{row.role ?? row.subject}</small>
+                  </span>
+                </span>
+                <span className="hx-student-title">{row.metric}</span>
+                {row.facts && (
+                  <span className="hx-student-facts">
+                    {row.facts.slice(0, 3).map((fact) => (
+                      <span key={fact.label}><b>{fact.value}</b>{fact.label}</span>
+                    ))}
+                  </span>
+                )}
+                <span className="hx-student-foot">کنکور {row.year} · دیدن کارنامه ←</span>
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ------------------------------------------------------- results wall */}
@@ -312,8 +407,8 @@ export default async function HomePage() {
           <div className="h-wrap">
             <header className="h-head h-head-row">
               <div>
-                <p className="h-kicker">نتایج شاگردان</p>
-                <h2>رتبه‌هایی که از همین کلاس‌ها بیرون آمد</h2>
+                <p className="h-kicker">قبولی‌های ثبت‌شده</p>
+                <h2>همهٔ رتبه‌ها و دانشگاه‌ها</h2>
                 <p>هر کارت یک شاگرد واقعی است، با رتبه، سال و دانشگاهی که قبول شد — و رضایت خودش برای دیده‌شدن.</p>
               </div>
               <Link href="/results" className="h-link">
@@ -410,46 +505,40 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* -------------------------------------------------- teaching record */}
-      <section className="h-sec h-record">
-        <div className="h-wrap">
-          <header className="h-head h-head-row">
-            <div>
-              <p className="h-kicker">کارنامهٔ تدریس</p>
-              <h2>کلاس با سؤال واقعی کنکور سنجیده می‌شود</h2>
-              <p>نمونه‌های ثبت‌شده از نتیجهٔ شاگردان و تطبیق مطالب کلاس با کنکور؛ هر عدد به پست اصلی‌اش لینک دارد.</p>
+      {/* ------------------------------------------------------------ teacher */}
+      <section className="h-sec hx-teacher">
+        <div className="h-wrap hx-teacher-grid">
+          <div className="hx-teacher-photo">
+            <Image src="/brand/mohammad-rostami.png" alt="محمد رستمی" width={320} height={320} />
+            <span className="hx-teacher-badge">
+              <b>رتبهٔ ۳۲</b>
+              دکتری ۱۴۰۱، خودم
+            </span>
+          </div>
+          <div className="hx-teacher-copy">
+            <p className="h-kicker">مدرس</p>
+            <h2>محمد رستمی؛ آنچه درس می‌دهم را سر جلسه امتحان کرده‌ام</h2>
+            <p>
+              کارشناس ارشد نرم‌افزار، گرایش الگوریتم و محاسبات، از دانشگاه صنعتی شریف و چند ترم دستیار آموزشی همان‌جا.
+              در کلاس اول ایده را باز می‌کنم که چرا یک روش جواب می‌دهد، بعد سراغ تست می‌رویم.
+            </p>
+            <ul className="hx-teacher-facts">
+              {ownerResults.map((row) => (
+                <li key={row.id}>
+                  <b>{row.metric}</b>
+                  <span>{row.subject} · {row.year}</span>
+                </li>
+              ))}
+              <li>
+                <b>سؤال ۶۱</b>
+                <span>کنکور ۱۴۰۱، کنار سؤال تألیفی من</span>
+              </li>
+            </ul>
+            <div className="hx-cta">
+              <Link href="/about" className="hx-btn hx-btn-dark">دربارهٔ من</Link>
+              <Link href="/consultations" className="hx-btn hx-btn-outline">مشاوره با من</Link>
             </div>
-            <Link href="/evidence" className="h-link">
-              همهٔ مستندات <span aria-hidden="true">←</span>
-            </Link>
-          </header>
-
-          <div className="h-record-grid">
-            {evidenceStats.map((stat) => (
-              <div className={`h-record-stat h-record-${stat.tone}`} key={stat.label}>
-                <b>{stat.value}</b>
-                <span>{stat.label}</span>
-                <small>{stat.detail}</small>
-              </div>
-            ))}
           </div>
-
-          <div className="h-record-docs">
-            {[questionDesignEvidence, ...studentResults.filter((row) => row.featured && row.category === "کارنامه")].map((doc) => (
-              <a className="h-record-doc" href={doc.telegramUrl} target="_blank" rel="noopener noreferrer" key={doc.id}>
-                <span className="h-record-doc-ico">
-                  <Glyph name={doc.category === "طراحی سؤال" ? "spark" : "trophy"} />
-                </span>
-                <span>
-                  <small>{doc.student ? `${doc.student} · ` : ""}{doc.category} · {doc.subject}{doc.year !== "—" ? ` · ${doc.year}` : ""}</small>
-                  <strong>{doc.metric}</strong>
-                  <em>{doc.description}</em>
-                </span>
-                <span className="h-record-doc-go" aria-hidden="true">↗</span>
-              </a>
-            ))}
-          </div>
-          <p className="h-record-note">این‌ها نمونه‌های منتشرشده‌اند، نه تضمین نتیجه یا پیش‌بینی سؤال آینده.</p>
         </div>
       </section>
 
@@ -614,7 +703,32 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
+      {/* --------------------------------------------------------- final cta */}
+      <section className="hx-final">
+        <div className="h-wrap hx-final-grid">
+          <div>
+            <p className="hx-kicker">وقت، مهم‌ترین منبع توست</p>
+            <h2>از امروز شروع کن، نه از فردا</h2>
+            <p>یک جلسهٔ رایگان ببین، یک آزمون بزن، یا برنامهٔ امروزت را بگیر.</p>
+            <div className="hx-cta">
+              <Link href="/free-videos" className="hx-btn hx-btn-primary">شروع رایگان</Link>
+              <Link href="/today" className="hx-btn hx-btn-ghost">برنامهٔ امروز</Link>
+            </div>
+          </div>
+          <div className="hx-countdowns">
+            <div>
+              <b>{toPersianDigits(masterDays)}</b>
+              <span>روز تا {EXAM_DATES.master1406.label}</span>
+              <small>{EXAM_DATES.master1406.dateLabel}</small>
+            </div>
+            <div>
+              <b>{toPersianDigits(phdDays)}</b>
+              <span>روز تا {EXAM_DATES.phd1406.label}</span>
+              <small>{EXAM_DATES.phd1406.dateLabel}</small>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
