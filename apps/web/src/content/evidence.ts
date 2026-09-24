@@ -188,7 +188,7 @@ export const studentResults: EvidenceDocument[] = [
     images: [{ src: "/evidence/it-1403-karnameh.png", alt: "کارنامهٔ ارشد فناوری اطلاعات ۱۴۰۳ با رتبهٔ ۸ در سهمیه؛ شمارهٔ داوطلبی خط خورده", width: 1011, height: 458 }],
   },
   {
-    // Supplied by the owner as a screenshot on 2026-09-24; no archive post yet.
+    // Supplied by the owner as a screenshot on 2026-09-24, with its archive post.
     id: "ai-1401",
     hero: { value: "۸", label: "رتبهٔ هوش مصنوعی در سهمیه" }, facts: [{ value: "۱۱", label: "رتبهٔ نرم‌افزار" }, { value: "۹", label: "رتبهٔ هوش مصنوعی بدون سهمیه" }], role: "شاگرد کلاس ساختمان داده، کلاس نظریه و مشاوره",
     student: "رضا مدرس",
@@ -199,6 +199,8 @@ export const studentResults: EvidenceDocument[] = [
     metric: "رتبهٔ ۸ هوش مصنوعی و ۱۱ نرم‌افزار در ارشد مهندسی کامپیوتر",
     description:
       "شاگرد هر دو کلاس ساختمان داده و طراحی الگوریتم و نظریه زبان‌ها بود و مشاوره هم با من داشت. در کارنامهٔ ارشد مهندسی کامپیوتر ۱۴۰۱، رتبه‌اش در سهمیه در کد ضریب ۱، هوش مصنوعی، ۸ است و در کد ضریب ۲، نرم‌افزار، ۱۱؛ بدون سهمیه ۹ و ۱۲. در کدهای ۳ و ۴ هم ۸ و ۱۱ آورد. درصد باکس ساختمان داده، الگوریتم و هوش مصنوعی ۳۸٫۳۳ و باکس مدار منطقی و معماری ۶۵ بود.",
+    telegramUrl: "https://t.me/Konkur_answer/3739",
+    featured: true,
     images: [{ src: "/evidence/1401-ai-rank-8.png", alt: "نمره‌ها و رتبه‌های کارنامهٔ ارشد مهندسی کامپیوتر ۱۴۰۱ با رتبهٔ ۸ در سهمیه در کد ضریب ۱، هوش مصنوعی، و ۱۱ در کد ۲، نرم‌افزار", width: 410, height: 540 }],
   },
   {
