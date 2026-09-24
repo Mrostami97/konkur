@@ -1,5 +1,7 @@
-import Image from "next/image";
 import type { EvidenceDocument } from "../content/evidence";
+import { evidenceRebuilds } from "../content/evidence-rebuilds";
+import { toPersianDigits } from "../lib/format";
+import { EvidenceRebuildView } from "./EvidenceRebuild";
 import { Glyph, type GlyphName } from "./SubjectIcon";
 
 type Kind = "rank" | "percent" | "match" | "design";
@@ -30,7 +32,7 @@ function initialOf(name: string) {
  */
 export function EvidenceScorecard({ item }: { item: EvidenceDocument }) {
   const kind = kindOf(item);
-  const proofIsTheStory = kind === "match" || kind === "design";
+  const rebuilds = evidenceRebuilds[item.id] ?? [];
   // The metric is the post's own claim; repeat it only when the hero and title do not already say it.
   // When the metric already extends the title, it becomes the heading itself.
   const heading = item.metric.includes(item.title) ? item.metric : item.title;
@@ -88,18 +90,6 @@ export function EvidenceScorecard({ item }: { item: EvidenceDocument }) {
           </dl>
         )}
 
-        {item.bars && (
-          <div className="sc-bars" aria-label="درصد درس‌ها در کارنامه">
-            {item.bars.map((bar) => (
-              <div className="sc-bar" key={bar.label}>
-                <span>{bar.label}</span>
-                <i aria-hidden="true"><em style={{ inlineSize: `${Math.max(bar.percent, 2)}%` }} /></i>
-                <b>{bar.percent.toLocaleString("fa-IR", { maximumFractionDigits: 2 })}٪</b>
-              </div>
-            ))}
-          </div>
-        )}
-
         <p>{item.description}</p>
 
         {item.topics && (
@@ -108,25 +98,17 @@ export function EvidenceScorecard({ item }: { item: EvidenceDocument }) {
           </div>
         )}
 
+        {rebuilds.map((rebuild) => <EvidenceRebuildView rebuild={rebuild} key={`${rebuild.kind}-${rebuild.source}`} />)}
+
         {item.images && item.images.length > 0 && (
-          <div className={proofIsTheStory ? "sc-proof sc-proof-large" : "sc-proof"}>
-            <span className="sc-proof-label">
-              <Glyph name="shield" />
-              {proofIsTheStory ? "تصویر اصلی" : "سند اصلی، بدون ویرایش"}
-            </span>
-            <div className="sc-proof-images">
-              {item.images.map((image) => (
-                <a href={image.src} target="_blank" rel="noopener" key={image.src} title="نمایش در اندازهٔ کامل">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    width={image.width}
-                    height={image.height}
-                    sizes={proofIsTheStory ? "(max-width: 720px) 100vw, 520px" : "(max-width: 720px) 50vw, 180px"}
-                  />
-                </a>
-              ))}
-            </div>
+          <div className="sc-originals">
+            <Glyph name="shield" />
+            <span>{rebuilds.length > 0 ? "بازسازی دقیق از روی سند؛ تصویر اصلی:" : "تصویر اصلی:"}</span>
+            {item.images.map((image, index) => (
+              <a href={image.src} target="_blank" rel="noopener" key={image.src} title={image.alt}>
+                {item.images!.length > 1 ? `تصویر ${toPersianDigits(index + 1)}` : "دیدن"} ↗
+              </a>
+            ))}
           </div>
         )}
 

@@ -21,8 +21,6 @@ export interface EvidenceDocument {
   hero?: EvidenceFact;
   /** Up to three supporting numbers from the same post. */
   facts?: EvidenceFact[];
-  /** Subject percentages exactly as the scorecard prints them. */
-  bars?: { label: string; percent: number }[];
   /** How the student worked with me, as the owner described it. */
   role?: string;
 }
@@ -143,7 +141,7 @@ export const matchedQuestions: EvidenceDocument[] = [
 export const studentResults: EvidenceDocument[] = [
   {
     id: "phd-1403",
-    hero: { value: "۱۷", label: "رتبهٔ نرم‌افزار در دکتری" }, facts: [{ value: "۲۶", label: "رتبهٔ هوش مصنوعی" }, { value: "۱۶ از ۱۹", label: "تست درست ساختمان داده و الگوریتم" }], role: "شاگرد کلاس ساختمان داده و الگوریتم · امروز دکتری هوش مصنوعی شریف",
+    hero: { value: "۱۷", label: "رتبهٔ نرم‌افزار در دکتری" }, facts: [{ value: "۲۶", label: "رتبهٔ هوش مصنوعی" }, { value: "۱۱", label: "رتبه در کد ترکیب ۳" }, { value: "۱۶ از ۱۹", label: "تست درست ساختمان داده و الگوریتم" }], role: "شاگرد کلاس ساختمان داده و الگوریتم · امروز دکتری هوش مصنوعی شریف",
     student: "آرش ذوالفقاری",
     year: "۱۴۰۳",
     category: "کارنامه",
@@ -192,14 +190,7 @@ export const studentResults: EvidenceDocument[] = [
   {
     // Supplied by the owner as a screenshot on 2026-09-24; no archive post yet.
     id: "ai-1401",
-    hero: { value: "۸", label: "رتبهٔ هوش مصنوعی در سهمیه" }, facts: [{ value: "۱۱", label: "رتبهٔ نرم‌افزار" }, { value: "۹", label: "رتبهٔ هوش مصنوعی بدون سهمیه" }], bars: [
-      { label: "زبان عمومی و تخصصی", percent: 60 },
-      { label: "ریاضیات", percent: 10 },
-      { label: "نظریه زبان‌ها و سیگنال", percent: 33.33 },
-      { label: "ساختمان داده، الگوریتم و هوش مصنوعی", percent: 38.33 },
-      { label: "مدار منطقی و معماری", percent: 65 },
-      { label: "سیستم عامل، شبکه و پایگاه داده", percent: 47.37 },
-    ], role: "شاگرد کلاس ساختمان داده، کلاس نظریه و مشاوره",
+    hero: { value: "۸", label: "رتبهٔ هوش مصنوعی در سهمیه" }, facts: [{ value: "۱۱", label: "رتبهٔ نرم‌افزار" }, { value: "۹", label: "رتبهٔ هوش مصنوعی بدون سهمیه" }], role: "شاگرد کلاس ساختمان داده، کلاس نظریه و مشاوره",
     student: "رضا مدرس",
     year: "۱۴۰۱",
     category: "کارنامه",
