@@ -148,7 +148,6 @@ const evidenceClaims = [
   { claim: "نُه‌تا در کلاس کار شده بود", source: "https://t.me/Konkur_answer/4986" },
   { claim: "۱۰ پاسخ درست از ۱۱ سؤال معتبر", source: "https://t.me/Konkur_answer/4978" },
   { claim: "۹ تست صحیح", source: "https://t.me/Konkur_answer/4979" },
-  { claim: "۱۰۰٪ نظریه و رتبهٔ ۲۷ در سهمیه", source: "https://t.me/Konkur_answer/3609" },
   { claim: "جاروب صفحه", source: "https://t.me/Konkur_answer/4544" },
   { claim: "رتبهٔ ۱۷ نرم‌افزار و ۲۶ هوش مصنوعی در دکتری", source: "https://t.me/Konkur_answer/3910" },
   { claim: "رتبهٔ ۳۸ ارشد فناوری اطلاعات", source: "https://t.me/Konkur_answer/4981" },

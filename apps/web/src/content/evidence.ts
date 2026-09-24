@@ -286,18 +286,6 @@ export const studentResults: EvidenceDocument[] = [
       { src: "/evidence/1403-theory-khoshnam-message.jpg", alt: "پیام شاگرد دربارهٔ دیدن کلاس حل تمرین نظریه در دو هفتهٔ آخر", width: 800, height: 701 },
     ],
   },
-  {
-    id: "karnameh-3609",
-    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها" }, facts: [{ value: "۲۷", label: "بهترین رتبه در سهمیه" }],
-    year: "—",
-    category: "کارنامه",
-    subject: "کارنامهٔ ارشد مهندسی کامپیوتر",
-    title: "نظریهٔ صددرصد در کارنامه",
-    metric: "۱۰۰٪ نظریه و رتبهٔ ۲۷ در سهمیه",
-    description: "کارنامه‌ای که بهمن ۱۴۰۲ در آرشیو منتشر شد. رتبهٔ ۲۷ مربوط به یکی از کدهای ضریب است؛ در کدهای دیگر رتبه بین ۲۹ و ۶۰ است.",
-    telegramUrl: "https://t.me/Konkur_answer/3609",
-    images: [{ src: "/evidence/karnameh-theory-100.jpg", alt: "بخش نمره‌ها و رتبه‌های کارنامه با ۱۰۰٪ نظریه زبان‌ها", width: 360, height: 800 }],
-  },
 ];
 
 export const studentVideo: EvidenceVideo = {
