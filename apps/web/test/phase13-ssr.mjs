@@ -161,7 +161,7 @@ assert.equal(h1Count(evidence.body), 1, "the evidence hub must render exactly on
 assert.match(evidence.body, /برای معرفی\s+کلاس‌هایم استفاده می‌کنم/, "the evidence hub must disclose its first-party commercial interest");
 assert.match(evidence.body, /هیچ نهاد مستقلی تأییدشان نکرده/, "the evidence hub must disclose the lack of independent verification");
 // The owner asked for student names to be shown as the original posts give them.
-for (const name of ["آرش ذوالفقاری", "حسین قبیله", "آقای کاظمی", "مبین شریفی‌راد", "شیوا خوش‌نام"]) {
+for (const name of ["آرش ذوالفقاری", "حسین قبیله", "آقای کاظمی", "مبین شریفی‌راد", "شیوا خوش‌نام", "رضا مدرس"]) {
   assert.match(evidence.body, new RegExp(escapedRegExp(name)), `the evidence hub must credit ${name}`);
 }
 for (const image of ["/evidence/1401-authored-question.jpg", "/evidence/1405-data-answers-a.jpg", "/evidence/phd-student-sources.mp4"]) {

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { PageHeader, SectionHeader, StatCard } from "../../components/ui";
 import { StructuredData } from "../../components/StructuredData";
-import { EvidenceFigures } from "../../components/EvidenceFigures";
+import { EvidenceScorecard } from "../../components/EvidenceScorecard";
+import { Glyph } from "../../components/SubjectIcon";
 import { alignmentEvidence, archiveLinks, evidenceStats, matchedQuestions, questionDesignEvidence, studentResults, studentVideo, type EvidenceDocument } from "../../content/evidence";
+import { toEnglishDigits, toPersianDigits } from "../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../lib/seo";
+import "./evidence.css";
 
 export const metadata: Metadata = pageMetadata({
   title: "نتیجهٔ شاگردها و تطبیق کلاس با کنکور، با سند",
@@ -17,7 +19,38 @@ export const metadata: Metadata = pageMetadata({
 const thesisUrl =
   "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";
 
-const allDocuments = [questionDesignEvidence, alignmentEvidence, ...matchedQuestions, ...studentResults, ...archiveLinks];
+// Within a year, results a student earned come before what the class did.
+const CATEGORY_ORDER: EvidenceDocument["category"][] = ["کارنامه", "نتایج دانشجویان", "طراحی سؤال", "تطبیق سؤال", "آموزش"];
+
+const yearNumber = (year: string) => Number(toEnglishDigits(year)) || 0;
+
+const timeline = [questionDesignEvidence, alignmentEvidence, ...studentResults, ...matchedQuestions]
+  .reduce<{ year: string; items: EvidenceDocument[] }[]>((groups, item) => {
+    const group = groups.find((row) => row.year === item.year);
+    if (group) group.items.push(item);
+    else groups.push({ year: item.year, items: [item] });
+    return groups;
+  }, [])
+  // Newest konkur first; posts with no known year close the timeline.
+  .sort((a, b) => yearNumber(b.year) - yearNumber(a.year))
+  .map((group) => ({
+    ...group,
+    items: [...group.items].sort((a, b) => CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category)),
+  }));
+
+const videoYear = "۱۴۰۳";
+
+function summaryOf(items: EvidenceDocument[]) {
+  const results = items.filter((item) => item.student || item.category === "کارنامه").length;
+  const classwork = items.length - results;
+  return [
+    results > 0 ? `${toPersianDigits(results)} نتیجهٔ شاگرد` : null,
+    classwork > 0 ? `${toPersianDigits(classwork)} سند از کلاس` : null,
+  ].filter(Boolean).join(" · ");
+}
+
+const headline = studentResults.filter((item) => item.student && item.hero && item.category === "کارنامه");
+const orderedDocuments = [...timeline.flatMap((group) => group.items), ...archiveLinks];
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -31,136 +64,123 @@ const jsonLd = {
     "@type": "ItemList",
     name: "مستندات کلاس‌های محمد رستمی",
     description: "ادعاهای خوداظهاری از آرشیو مدرس، هرکدام با لینک پست اصلی؛ مستقلاً راستی‌آزمایی نشده‌اند.",
-    numberOfItems: allDocuments.length,
-    itemListElement: allDocuments.map((item, index) => ({
+    numberOfItems: orderedDocuments.length,
+    itemListElement: orderedDocuments.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: item.title,
-      url: item.telegramUrl,
+      url: item.telegramUrl ?? absoluteUrl(`/evidence#${item.id}`),
     })),
   },
 };
 
-function ResultCard({ item }: { item: EvidenceDocument }) {
-  return (
-    <article className="surface-card evidence-card">
-      <div className="article-card-top">
-        <span className="article-meta">{item.subject}</span>
-        {item.year !== "—" && <span>کنکور {item.year}</span>}
-      </div>
-      <strong className="evidence-metric">{item.metric}</strong>
-      {item.student && <span className="evidence-student">{item.student}</span>}
-      <h3>{item.title}</h3>
-      <EvidenceFigures images={item.images} />
-      <p>{item.description}</p>
-      <div className="evidence-links evidence-source">
-        {item.telegramUrl && (
-          <a className="text-link" href={item.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
-        )}
-        {item.related && (
-          <a className="text-link" href={item.related.url} target="_blank" rel="noopener noreferrer">{item.related.label} ↗</a>
-        )}
-      </div>
-    </article>
-  );
-}
-
 export default function EvidencePage() {
   return (
-    <main className="page-container trust-page about-page">
+    <main className="page-container ev-page">
       <StructuredData data={jsonLd} />
-      <PageHeader
-        eyebrow="سند، نه ادعا"
-        title="هر عددی که از کلاس‌هایم می‌گویم، اینجا کنار سندش است"
-        description="نتیجهٔ شاگردها، سؤال‌هایی از کنکور که پیش‌تر در کلاس کار شده بود، و سؤالی که تألیف کرده بودم و در کنکور ۱۴۰۱ آمد. هر مورد به پست اصلی‌اش لینک دارد؛ خودت ببین و قضاوت کن."
-      />
 
-      <section aria-label="خلاصهٔ مستندات" className="evidence-stats">
+      <section className="ev-hero" aria-labelledby="evidence-title">
+        <div className="ev-hero-copy">
+          <span className="ev-eyebrow"><Glyph name="shield" />سند، نه ادعا</span>
+          <h1 id="evidence-title">هر عددی که از کلاس‌هایم می‌گویم، اینجا کنار سندش است</h1>
+          <p>
+            نتیجهٔ شاگردها، سؤال‌هایی از کنکور که پیش‌تر در کلاس کار شده بود، و سؤالی که تألیف کرده بودم و در کنکور ۱۴۰۱
+            آمد؛ از تازه‌ترین سال به قدیمی‌تر. هر کارت، سند اصلی‌اش را همراه دارد. خودت ببین و قضاوت کن.
+          </p>
+        </div>
+        {headline.length > 0 && (
+          <ul className="ev-wall" aria-label="چند نتیجهٔ شاگردها">
+            {headline.map((item) => (
+              <li key={item.id}>
+                <a href={`#${item.id}`}>
+                  <b>{item.hero!.value}</b>
+                  <span>{item.hero!.label}</span>
+                  <small>{item.student} · {item.year}</small>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="ev-stats" aria-label="خلاصهٔ مستندات">
         {evidenceStats.map((stat) => (
-          <StatCard key={stat.label} label={stat.label} value={stat.value} detail={stat.detail} tone={stat.tone} />
+          <div className={`ev-stat ev-stat-${stat.tone}`} key={stat.label}>
+            <b>{stat.value}</b>
+            <span>{stat.label}</span>
+            <small>{stat.detail}</small>
+          </div>
         ))}
       </section>
 
-      <aside className="official-disclaimer evidence-honesty" aria-label="پیش از خواندن">
-        <strong>پیش از اینکه به این عددها تکیه کنی</strong>
-        <p>
-          همهٔ این موارد از آرشیو خودم در تلگرام آمده‌اند و هیچ نهاد مستقلی تأییدشان نکرده؛ من هم از آن‌ها برای معرفی
-          کلاس‌هایم استفاده می‌کنم، پس حق داری با تردید نگاهشان کنی. هر مورد یک نمونه است، از یک درس و یک سال، و قول
-          نمی‌دهد نتیجهٔ تو هم همین شود. سند اصلی کنار هر کارت هست.
-        </p>
+      <aside className="ev-honesty" aria-label="پیش از خواندن">
+        <Glyph name="flag" />
+        <div>
+          <strong>پیش از اینکه به این عددها تکیه کنی</strong>
+          <p>
+            همهٔ این موارد از آرشیو خودم در تلگرام آمده‌اند و هیچ نهاد مستقلی تأییدشان نکرده؛ من هم از آن‌ها برای معرفی
+            کلاس‌هایم استفاده می‌کنم، پس حق داری با تردید نگاهشان کنی. هر مورد یک نمونه است، از یک درس و یک سال، و قول
+            نمی‌دهد نتیجهٔ تو هم همین شود. سند اصلی کنار هر کارت هست.
+          </p>
+        </div>
       </aside>
 
-      <div className="trust-layout about-grid evidence-feature">
-        <section className="surface-card about-card about-card-dark">
-          <span className="eyebrow eyebrow-dark">طراحی سؤال · {questionDesignEvidence.subject}</span>
-          <h2>{questionDesignEvidence.title}</h2>
-          <p>{questionDesignEvidence.description}</p>
-          <EvidenceFigures images={questionDesignEvidence.images} />
-          <a className="button button-light" href={questionDesignEvidence.telegramUrl} target="_blank" rel="noopener noreferrer">
-            دیدن پست اصلی ↗
+      <nav className="ev-years" aria-label="پرش به سال">
+        {timeline.map((group) => (
+          <a href={`#year-${group.year === "—" ? "undated" : toEnglishDigits(group.year)}`} key={group.year}>
+            <b>{group.year === "—" ? "بدون سال" : group.year}</b>
+            <span>{toPersianDigits(group.items.length)} سند</span>
           </a>
-        </section>
+        ))}
+      </nav>
 
-        <section className="surface-card about-card">
-          <span className="eyebrow">تطبیق کلاس با کنکور {alignmentEvidence.year}</span>
-          <h2>{alignmentEvidence.title}</h2>
-          <p>{alignmentEvidence.description}</p>
-          {alignmentEvidence.topics && (
-            <div className="subject-tags" aria-label="مبحث‌هایی که هم در کلاس بود و هم در کنکور">
-              {alignmentEvidence.topics.map((topic) => <span key={topic}>{topic}</span>)}
-            </div>
-          )}
-          <div className="evidence-links">
-            <a className="text-link" href={alignmentEvidence.telegramUrl} target="_blank" rel="noopener noreferrer">فایل تطبیق ↗</a>
-            {alignmentEvidence.related && (
-              <a className="text-link" href={alignmentEvidence.related.url} target="_blank" rel="noopener noreferrer">{alignmentEvidence.related.label} ↗</a>
-            )}
-          </div>
-        </section>
+      <div className="ev-timeline">
+        {timeline.map((group) => {
+          const anchor = group.year === "—" ? "undated" : toEnglishDigits(group.year);
+          return (
+            <section className="ev-year" id={`year-${anchor}`} aria-labelledby={`year-${anchor}-title`} key={group.year}>
+              <header className="ev-year-head">
+                <span className="ev-year-num" aria-hidden="true">{group.year === "—" ? "؟" : group.year}</span>
+                <div>
+                  <h2 id={`year-${anchor}-title`}>{group.year === "—" ? "بدون سال مشخص" : `کنکور ${group.year}`}</h2>
+                  <p>{summaryOf(group.items)}</p>
+                </div>
+              </header>
+
+              <div className="ev-grid">
+                {group.items.map((item) => <EvidenceScorecard item={item} key={item.id} />)}
+              </div>
+
+              {group.year === videoYear && (
+                <section className="ev-video" aria-labelledby="student-video">
+                  <div>
+                    <span className="ev-eyebrow"><Glyph name="play" />ویدئو · {studentVideo.duration}</span>
+                    <h3 id="student-video">{studentVideo.title}</h3>
+                    <p>{studentVideo.description}</p>
+                    <a href={studentVideo.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
+                  </div>
+                  <video controls preload="metadata" playsInline src={studentVideo.src}>
+                    مرورگرت پخش ویدئو را پشتیبانی نمی‌کند؛ <a href={studentVideo.src}>فایل ویدئو را دانلود کن</a>.
+                  </video>
+                </section>
+              )}
+            </section>
+          );
+        })}
       </div>
 
-      <section aria-labelledby="matched-questions">
-        <SectionHeader
-          title="سخت‌ترین سؤال‌ها، قبلاً سر کلاس"
-          description="چند سؤال کنکور که پیش از آزمون، خودش یا عینش در کلاس حل شده بود."
-        />
-        <div className="content-grid-wide" id="matched-questions">
-          {matchedQuestions.map((item) => <ResultCard item={item} key={item.id} />)}
+      <section className="ev-archive" aria-labelledby="archive-links">
+        <div className="section-heading">
+          <div>
+            <h2 id="archive-links">بیشتر در آرشیو</h2>
+            <p>فایل کامل تطبیق، سال‌های قبل، کلیدهای بعد از کنکور و یک جلسه از کلاس.</p>
+          </div>
         </div>
-      </section>
-
-      <section aria-labelledby="student-results">
-        <SectionHeader
-          title="نتیجهٔ شاگردها"
-          description="درصد و تعداد پاسخ درست شاگردها، همان‌طور که در آرشیو ثبت شده."
-        />
-        <div className="content-grid-wide evidence-results" id="student-results">
-          {studentResults.map((item) => <ResultCard item={item} key={item.id} />)}
-        </div>
-      </section>
-
-      <section className="surface-card evidence-video" aria-labelledby="student-video">
-        <div>
-          <span className="eyebrow">ویدئو · {studentVideo.duration}</span>
-          <h2 id="student-video">{studentVideo.title}</h2>
-          <p>{studentVideo.description}</p>
-          <a className="text-link" href={studentVideo.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
-        </div>
-        <video controls preload="metadata" playsInline src={studentVideo.src}>
-          مرورگرت پخش ویدئو را پشتیبانی نمی‌کند؛ <a href={studentVideo.src}>فایل ویدئو را دانلود کن</a>.
-        </video>
-      </section>
-
-      <section aria-labelledby="archive-links">
-        <SectionHeader
-          title="بیشتر در آرشیو"
-          description="فایل کامل تطبیق، سال‌های قبل، کلیدهای بعد از کنکور و یک جلسه از کلاس."
-        />
-        <div className="resource-grid" id="archive-links">
+        <div className="resource-grid">
           {archiveLinks.map((item) => (
             <a className="resource-card" href={item.telegramUrl} target="_blank" rel="noopener noreferrer" key={item.id}>
               <span aria-hidden="true">↗</span>
-              <h2>{item.title}</h2>
+              <h3>{item.title}</h3>
               <p>{item.description}</p>
               <strong>{item.metric}{item.year !== "—" ? ` · ${item.year}` : ""}</strong>
             </a>
