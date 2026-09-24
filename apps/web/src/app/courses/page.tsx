@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { apiGetPublic } from "../../lib/api";
+import { ComingSoon } from "../../components/ComingSoon";
 import { EmptyState } from "../../components/ui";
 import { pageMetadata } from "../../lib/seo";
 import {
@@ -40,7 +41,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "دوره‌های کنکور ارشد و دکتری کامپیوتر",
     description: "دوره‌های منتشرشدهٔ کنکورصفریک با مسیر یادگیری و دسترسی روشن برای داوطلبان کنکور کامپیوتر.",
     path: "/courses",
-    noIndex: result.unavailable,
+    // A catalog with nothing in it yet is a "coming soon" page, not one to rank.
+    noIndex: result.unavailable || result.courses?.length === 0,
   });
 }
 
@@ -67,9 +69,15 @@ export default async function CoursesPage() {
             description="اتصال به سرویس محتوا برقرار نشد؛ بعداً دوباره امتحان کن."
           />
         ) : catalog.length === 0 ? (
-          <EmptyState
-            title="هنوز دوره‌ای منتشر نشده است"
-            description="به‌محض انتشار دورهٔ جدید، اینجا نمایش داده می‌شود."
+          <ComingSoon
+            icon="play"
+            title="دوره‌های کامل به‌زودی منتشر می‌شوند"
+            text="کلاس‌های درس‌به‌درس کنکورصفریک، از مفهوم تا تست کنکور، در حال آماده‌سازی برای سایت‌اند. تا آن موقع، نقشهٔ درس‌ها و راهنمای ۱۴۰۶ در دسترس است."
+            alternatives={[
+              { href: "/subjects", label: "نقشهٔ درس‌ها" },
+              { href: "/guides/start-from-zero", label: "شروع از صفر" },
+              { href: "/evidence", label: "مستندات تدریس" },
+            ]}
           />
         ) : (
           <div className="pg-grid pg-grid-wide">

@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
+import { MobileNav } from "../components/MobileNav";
 import { PublicChrome } from "../components/PublicChrome";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
-import { Glyph } from "../components/SubjectIcon";
 import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 import { StructuredData } from "../components/StructuredData";
 import { subjects } from "../content/editorial";
@@ -71,13 +70,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <PublicChrome>
         <SiteFooter subjects={FOOTER_SUBJECTS} />
-        <nav className="mobile-nav" aria-label="ناوبری موبایل">
-          <Link href="/"><Glyph name="building" /><small>خانه</small></Link>
-          <Link href="/courses"><Glyph name="play" /><small>دوره‌ها</small></Link>
-          <Link className="mobile-nav-main" href="/results"><Glyph name="trophy" /><small>نتایج</small></Link>
-          <Link href="/free-videos"><Glyph name="spark" /><small>رایگان</small></Link>
-          <Link href="/account"><Glyph name="compass" /><small>حساب من</small></Link>
-        </nav>
+        <MobileNav />
         </PublicChrome>
         <ServiceWorkerRegistration />
       </body>

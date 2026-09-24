@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ComingSoon } from "../../components/ComingSoon";
 import { apiGetPublic } from "../../lib/api";
 import { pageMetadata } from "../../lib/seo";
 
@@ -58,7 +59,16 @@ export default async function InstructorsPage() {
         {instructors === null ? (
           <p className="pg-eyebrow">فهرست مدرسان در دسترس نیست. کمی بعد دوباره امتحان کنید.</p>
         ) : instructors.length === 0 ? (
-          <p className="pg-eyebrow">هنوز مدرسی با دورهٔ منتشرشده ثبت نشده است.</p>
+          <ComingSoon
+            icon="building"
+            title="صفحهٔ مدرسان به‌زودی"
+            text="هر مدرس با انتشار اولین دوره‌اش صفحهٔ خودش را می‌گیرد: سوابق، دوره‌ها و مشاوره‌ها. تا آن موقع، سوابق تدریس و نتایج کلاس‌ها را در مستندات ببین."
+            alternatives={[
+              { href: "/about", label: "دربارهٔ محمد رستمی" },
+              { href: "/evidence", label: "مستندات تدریس" },
+              { href: "/subjects", label: "نقشهٔ درس‌ها" },
+            ]}
+          />
         ) : (
           <div className="pg-grid pg-grid-wide">
             {instructors.map((instructor) => (

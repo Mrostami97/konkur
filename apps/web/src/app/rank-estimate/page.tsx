@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
+import { useAvailability } from "../../lib/availability";
 import { toEnglishDigits, toPersianDigits } from "../../lib/format";
 import { EmptyState, PageHeader, StatCard } from "../../components/ui";
 import { AdmissionsJourney } from "../../components/AdmissionsJourney";
@@ -37,6 +38,8 @@ function formatRank(value: number): string {
 }
 
 export default function RankEstimatePage() {
+  // Estimates compare against published report cards; with none yet, say so.
+  const noEvidence = useAvailability()?.reportCards === 0;
   const router = useRouter();
   const [degree, setDegree] = useState<"master" | "phd">("master");
   const [field, setField] = useState("computer-engineering");
@@ -87,6 +90,12 @@ export default function RankEstimatePage() {
   return (
     <main className="page-container">
       <PageHeader eyebrow="تحلیل عملکرد" title="تخمین رتبه" description="با داده‌های عملکردی و کارنامه‌های مشابه، جایگاه احتمالی‌ات را بهتر درک کن." />
+      {noEvidence && (
+        <p className="soon-banner" role="status">
+          <span className="soon-pill">به‌زودی</span>
+          کارنامه‌های مرجع این تخمین هنوز منتشر نشده‌اند؛ تا آن موقع تخمین ممکن است ساخته نشود یا بازهٔ خیلی پهنی بدهد.
+        </p>
+      )}
       <div className="surface-card surface-card-muted analysis-note">
       <p>
         این تخمین بر اساس مقایسه با کارنامه‌های ثبت‌شدهٔ مشابه محاسبه می‌شود؛ یک عدد قطعی نیست.

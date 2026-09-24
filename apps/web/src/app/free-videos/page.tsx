@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ComingSoon } from "../../components/ComingSoon";
 import { FreeVideoCard, type FreeVideo } from "../../components/FreeVideoCard";
 import { StructuredData } from "../../components/StructuredData";
 import { SubjectGlyph, SUBJECT_TONE } from "../../components/SubjectIcon";
@@ -117,12 +118,23 @@ export default async function FreeVideosPage() {
       </section>
 
       <div className="h-wrap lp-body">
-        {groups.length === 0 ? (
+        {videos === null ? (
           <div className="lp-empty">
             <h2>فهرست ویدیوها الان در دسترس نیست</h2>
             <p>چند دقیقهٔ دیگر دوباره سر بزن، یا تا آن موقع از صفحهٔ درس‌ها شروع کن.</p>
             <Link href="/subjects" className="h-btn h-btn-primary">دیدن درس‌ها</Link>
           </div>
+        ) : groups.length === 0 ? (
+          <ComingSoon
+            icon="spark"
+            title="فهرست ویدیوهای رایگان به‌زودی"
+            text="بهترین کلاس‌های ضبط‌شدهٔ رایگان دانشگاهی برای هر درس کنکور، با لینک به منبع اصلی، در حال بازبینی است. تا آن موقع، صفحهٔ هر درس سرفصل و مسیر مطالعه‌اش را دارد."
+            alternatives={[
+              { href: "/subjects", label: "نقشهٔ درس‌ها" },
+              { href: "/guides/choose-study-resources", label: "انتخاب منبع مطالعه" },
+              { href: "/guides/start-from-zero", label: "شروع از صفر" },
+            ]}
+          />
         ) : (
           <>
             <nav className="lp-jump" aria-label="پرش به درس">

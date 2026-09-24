@@ -1,5 +1,5 @@
 import { reportCardSitemapEntries, sitemapResponse } from "../../../lib/public-sitemaps";
 
-export function GET() {
-  return sitemapResponse(reportCardSitemapEntries());
+export async function GET() {
+  return sitemapResponse(await reportCardSitemapEntries());
 }

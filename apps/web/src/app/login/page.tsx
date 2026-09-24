@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { apiFetch } from "../../lib/api";
+import { useAvailability } from "../../lib/availability";
+import { TELEGRAM_URL } from "../../lib/site-nav";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,6 +15,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // Only a definite "no" closes the code form; until the flags arrive, or if
+  // they cannot be read, the form stays usable.
+  const otpClosed = useAvailability()?.otpLogin === false;
 
   async function requestCode(e: FormEvent) {
     e.preventDefault();
@@ -73,7 +78,7 @@ export default function LoginPage() {
         <p>یکی از روش‌های ورود را انتخاب کن.</p>
         <div className="method-switch">
           <button className={method === "otp" ? "active" : ""} type="button" onClick={() => { setMethod("otp"); setStep("phone"); }}>
-          ورود با کد یک‌بارمصرف
+          ورود با کد یک‌بارمصرف{otpClosed && <span className="soon-pill">به‌زودی</span>}
           </button>
           <button className={method === "password" ? "active" : ""} type="button" onClick={() => setMethod("password")}>
           ورود با رمز عبور
@@ -104,6 +109,18 @@ export default function LoginPage() {
             ورود
           </button>
         </form>
+      ) : otpClosed ? (
+        <div className="login-soon">
+          <span className="soon-pill">به‌زودی</span>
+          <strong>ورود و ثبت‌نام با پیامک به‌زودی فعال می‌شود</strong>
+          <p>
+            سرویس پیامک سایت هنوز راه‌اندازی نشده، پس کد ورود به گوشی کسی نمی‌رسد. زمان راه‌اندازی در کانال
+            تلگرام اعلام می‌شود؛ ورود با رمز عبور فقط برای کادر آموزشی است.
+          </p>
+          <a className="button button-primary form-submit" href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
+            کانال تلگرام @konkurcom
+          </a>
+        </div>
       ) : step === "phone" ? (
         <form onSubmit={requestCode}>
           <div className="form-group"><label htmlFor="otp-phone">شماره موبایل</label>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../lib/api";
+import { MIN_QUESTIONS_FOR_BANK, useAvailability } from "../../lib/availability";
 import { toPersianDigits } from "../../lib/format";
 import { Badge, Button, DataState, Input, Pagination, Select } from "../../components/ds";
 
@@ -26,6 +27,10 @@ interface Question {
 const PAGE_SIZE = 20;
 
 export default function QuestionBankPage() {
+  const availability = useAvailability();
+  // A handful of questions is a bank still being filled; say so rather than
+  // let a near-empty list read as the whole product.
+  const filling = availability !== null && availability.questions < MIN_QUESTIONS_FOR_BANK;
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [subjectCode, setSubjectCode] = useState("");
   const [examYear, setExamYear] = useState("");
@@ -93,6 +98,12 @@ export default function QuestionBankPage() {
       </div>
 
       <section className="pg-shell pg-sec">
+        {filling && (
+          <p className="soon-banner" role="status">
+            <span className="soon-pill">به‌زودی</span>
+            بانک سؤال در حال تکمیل است؛ تست‌های کنکور سال‌های قبل درس‌به‌درس و مبحث‌به‌مبحث به‌زودی اضافه می‌شوند.
+          </p>
+        )}
         <form onSubmit={apply} className="ds-row" style={{ marginBottom: "var(--sp-6)" }}>
           <div style={{ minWidth: "12rem" }}>
             <Select value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} aria-label="درس">

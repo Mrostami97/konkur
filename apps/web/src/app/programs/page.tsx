@@ -4,6 +4,7 @@ import { AddChoiceButton } from "../../components/AddChoiceButton";
 import { AdmissionsJourney } from "../../components/AdmissionsJourney";
 import { PublicBreadcrumbs, PublicServiceError, degreeLabel, formatPublicDate } from "../../components/PublicContent";
 import { StructuredData } from "../../components/StructuredData";
+import { ComingSoon } from "../../components/ComingSoon";
 import { EmptyState, PageHeader, SectionHeader, StatCard } from "../../components/ui";
 import { apiGetPublic } from "../../lib/api";
 import { formatPersianNumber, toPersianDigits } from "../../lib/format";
@@ -304,7 +305,18 @@ export default async function ProgramsPage({ searchParams }: { searchParams: Sea
         title="رشته‌محل‌های قابل بررسی"
         description="هر کارت به صفحهٔ جزئیات، ظرفیت‌های منبع‌دار و صفحهٔ دانشگاه متصل است."
       />
-      {result.programs.length === 0 ? (
+      {result.allPrograms.length === 0 ? (
+        <ComingSoon
+          icon="building"
+          title="ظرفیت و رشته‌محل‌ها به‌زودی"
+          text="هر رشته‌محل فقط با منبع رسمی سنجش و تاریخ بررسی اینجا می‌آید. فهرست ۱۴۰۶ بعد از انتشار دفترچهٔ انتخاب‌رشته و بازبینی منبع منتشر می‌شود."
+          alternatives={[
+            { href: "/admissions", label: "مسیر انتخاب‌رشته" },
+            { href: "/guides/registration-calendar-1406", label: "تقویم رسمی ۱۴۰۶" },
+            { href: "/guides/official-notices-and-corrections", label: "اطلاعیه‌ها" },
+          ]}
+        />
+      ) : result.programs.length === 0 ? (
         <EmptyState
           title="رشته‌محل منبع‌داری با این فیلترها پیدا نشد"
           description="فیلترها را پاک کنید یا پس از ثبت و بررسی منبع رسمی دوباره به این صفحه سر بزنید."

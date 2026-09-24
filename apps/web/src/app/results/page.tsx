@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ComingSoon } from "../../components/ComingSoon";
 import { Glyph } from "../../components/SubjectIcon";
 import { subjects } from "../../content/editorial";
 import { API_URL, apiGetPublic } from "../../lib/api";
@@ -120,18 +121,24 @@ export default async function ResultsPage({ searchParams }: { searchParams: Sear
       </section>
 
       <div className="h-wrap lp-body">
-        {all.length === 0 ? (
+        {rows === null ? (
           <div className="lp-empty">
-            <h2>{rows === null ? "فهرست نتایج الان در دسترس نیست" : "نتایج به‌زودی اینجا منتشر می‌شود"}</h2>
-            <p>
-              {rows === null
-                ? "چند دقیقهٔ دیگر دوباره سر بزن."
-                : "نتیجهٔ هر شاگرد فقط بعد از رضایت خودش اینجا می‌آید. تا آن موقع، نتیجه‌های منتشرشده را در کانال تلگرام ببین."}
-            </p>
+            <h2>فهرست نتایج الان در دسترس نیست</h2>
+            <p>چند دقیقهٔ دیگر دوباره سر بزن.</p>
             <a className="h-btn h-btn-primary" href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
               کانال تلگرام ‎@konkurcom
             </a>
           </div>
+        ) : all.length === 0 ? (
+          <ComingSoon
+            icon="trophy"
+            title="نتایج شاگردان به‌زودی اینجا منتشر می‌شود"
+            text="نتیجهٔ هر شاگرد فقط بعد از رضایت خودش در سایت می‌آید. تا آن موقع، نتیجه‌ها با لینک پست اصلی در مستندات تدریس و کانال تلگرام منتشر شده‌اند."
+            alternatives={[
+              { href: "/evidence", label: "مستندات تدریس و نتایج" },
+              { href: "/about", label: "دربارهٔ محمد رستمی" },
+            ]}
+          />
         ) : (
           <>
             {(summary?.years.length ?? 0) > 1 && (

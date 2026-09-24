@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdmissionsJourney } from "../../components/AdmissionsJourney";
 import { PublicBreadcrumbs, PublicServiceError, degreeLabel } from "../../components/PublicContent";
 import { StructuredData } from "../../components/StructuredData";
+import { ComingSoon } from "../../components/ComingSoon";
 import { EmptyState, PageHeader, StatCard } from "../../components/ui";
 import { apiGetPublic } from "../../lib/api";
 import { formatPersianNumber, toEnglishDigits, toPersianDigits } from "../../lib/format";
@@ -134,7 +135,8 @@ export async function generateMetadata({ searchParams }: { searchParams: ReportC
     title: page > 1 ? `بانک کارنامه‌های عمومی؛ صفحهٔ ${toPersianDigits(page)}` : "بانک کارنامه‌های عمومی کنکور کامپیوتر",
     description: "نمونه‌های ناشناس و رضایت‌دار کارنامه‌های کنکور کامپیوتر، همراه با حجم نمونه و محدودیت‌های مقایسه.",
     path: "/report-cards",
-    noIndex: hasQuery || result.reportUnavailable,
+    // An empty bank is a "coming soon" page, not one to rank.
+    noIndex: hasQuery || result.reportUnavailable || result.reportData?.total === 0,
   });
 }
 
@@ -317,7 +319,18 @@ export default async function ReportCardsPage({ searchParams }: { searchParams: 
         {data.cohort.limitations.length > 0 && <ul className="check-list">{data.cohort.limitations.map((item) => <li key={item}>{item}</li>)}</ul>}
       </section>
 
-      {data.items.length === 0 ? (
+      {data.items.length === 0 && !hasFilters && !result.reportUnavailable ? (
+        <ComingSoon
+          icon="trophy"
+          title="بانک کارنامه‌ها به‌زودی"
+          text="کارنامه‌های قبولی با درصد، تراز و رتبه، فقط با رضایت صاحب کارنامه و بدون اطلاعات شناسایی، در حال آماده‌سازی است. تا آن موقع، بودجه‌بندی سال‌های قبل و مستندات نتایج را ببین."
+          alternatives={[
+            { href: "/guides/historical-budget-computer-engineering", label: "بودجه‌بندی سال‌های قبل" },
+            { href: "/evidence", label: "مستندات تدریس و نتایج" },
+            { href: "/admissions", label: "مسیر انتخاب‌رشته" },
+          ]}
+        />
+      ) : data.items.length === 0 ? (
         <EmptyState
           title={hasFilters ? "کارنامه‌ای با این فیلترها پیدا نشد" : "هنوز کارنامهٔ عمومی ثبت نشده است"}
           description="کارنامه فقط پس از ثبت رضایت انتشار وارد این مجموعه می‌شود."

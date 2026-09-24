@@ -2,6 +2,7 @@ import { articles, editorialDateIso, guides, subjects } from "../content/editori
 import { phase11DateIso, phase11SubjectContent, type Phase11SubjectSlug } from "../content/phase11";
 import { phase12EditorialPages } from "../content/phase12";
 import { apiGetPublic } from "./api";
+import type { Availability } from "./availability";
 import { absoluteUrl } from "./seo";
 
 type SitemapEntry = {
@@ -195,8 +196,40 @@ export async function resultsSitemapEntries(): Promise<SitemapEntry[]> {
   }
 }
 
-export function reportCardSitemapEntries() {
-  return [{ loc: absoluteUrl("/report-cards") }];
+/**
+ * Listing pages that render a "coming soon" state -- and noindex -- while
+ * their feature has nothing published, keyed by the availability count that
+ * decides it. Like the results page, each is listed only while it has content,
+ * and an unreachable API leaves them out (the pages are noindex then too).
+ */
+const LISTING_COUNTS: Record<string, keyof Availability> = {
+  "/courses": "courses",
+  "/exams": "exams",
+  "/instructors": "instructors",
+  "/consultations": "consultations",
+  "/report-cards": "reportCards",
+};
+
+async function loadAvailability(): Promise<Availability | null> {
+  try {
+    return await apiGetPublic<Availability>("/site/availability");
+  } catch {
+    return null;
+  }
+}
+
+/** The given paths, minus listing pages that currently have nothing on them. */
+export async function withoutEmptyListings(paths: readonly string[]): Promise<string[]> {
+  const availability = await loadAvailability();
+  return paths.filter((path) => {
+    const key = LISTING_COUNTS[path];
+    return !key || Boolean(availability && availability[key]);
+  });
+}
+
+export async function reportCardSitemapEntries(): Promise<SitemapEntry[]> {
+  const paths = await withoutEmptyListings(["/report-cards"]);
+  return paths.map((path) => ({ loc: absoluteUrl(path) }));
 }
 
 export async function admissionsSitemapEntries(): Promise<SitemapCollection> {

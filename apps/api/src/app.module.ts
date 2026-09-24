@@ -19,6 +19,7 @@ import { AdmissionsModule } from "./modules/admissions/admissions.module";
 import { CrmModule } from "./modules/crm/crm.module";
 import { InstructorsModule } from "./modules/instructors/instructors.module";
 import { AchievementsModule } from "./modules/achievements/achievements.module";
+import { SiteModule } from "./modules/site/site.module";
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AchievementsModule } from "./modules/achievements/achievements.module";
     CrmModule,
     InstructorsModule,
     AchievementsModule,
+    SiteModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
