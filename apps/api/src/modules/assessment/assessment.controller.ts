@@ -127,6 +127,11 @@ export class AssessmentAdminController {
     return this.assessment.publishExam(id, req.user!.id);
   }
 
+  @Post(":id/unpublish")
+  unpublish(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.assessment.unpublishExam(id, req.user!.id);
+  }
+
   @Get(":id/psychometrics")
   psychometrics(@Param("id") id: string) {
     return this.assessment.getPsychometrics(id);

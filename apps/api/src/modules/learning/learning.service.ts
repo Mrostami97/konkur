@@ -3,7 +3,7 @@ import { AccessMode, EnrollmentSource, Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { AccessService } from "../access/access.service";
-import { LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/content-blocks";
+import { assertLessonBlocks } from "./course-authoring.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto } from "./dto/create-lesson.dto";
@@ -74,8 +74,15 @@ export class LearningService {
   async addLesson(courseModuleId: string, dto: CreateLessonDto) {
     const mod = await this.prisma.courseModule.findUnique({ where: { id: courseModuleId } });
     if (!mod) throw new NotFoundException("course module not found");
-    assertValidContentBlocks(dto.contentBlocks, LESSON_BLOCK_TYPES);
-    const { topicIds = [], ...lessonInput } = dto;
+    // A new lesson has no images yet: they are uploaded to it afterwards.
+    assertLessonBlocks(dto.contentBlocks, []);
+    const { topicIds = [], ...rest } = dto;
+    const last = await this.prisma.lesson.findFirst({
+      where: { courseModuleId },
+      orderBy: { order: "desc" },
+      select: { order: true },
+    });
+    const lessonInput = { ...rest, order: rest.order ?? (last?.order ?? 0) + 1 };
     return this.prisma.lesson.create({
       data: {
         courseModuleId,

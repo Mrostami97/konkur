@@ -153,6 +153,16 @@ export class AssessmentService {
     return exam;
   }
 
+  /** Stops new attempts; attempts already under way can still be finished
+   * and every report stays readable. */
+  async unpublishExam(examId: string, actorId: string) {
+    const existing = await this.prisma.exam.findUnique({ where: { id: examId }, select: { isPractice: true } });
+    if (!existing || existing.isPractice) throw new NotFoundException("exam not found");
+    const exam = await this.prisma.exam.update({ where: { id: examId }, data: { isPublished: false } });
+    await this.audit.log({ actorUserId: actorId, action: "exam.unpublished", targetType: "Exam", targetId: examId });
+    return exam;
+  }
+
   listAllExams() {
     // Students' own practice exams are theirs, not catalog drafts.
     return this.prisma.exam.findMany({

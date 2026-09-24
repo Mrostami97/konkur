@@ -1,5 +1,5 @@
 import { Controller, ForbiddenException, Get, NotFoundException, Param, Req, Res, UseGuards } from "@nestjs/common";
-import { ReviewStatus, VersionedEntityType } from "@prisma/client";
+import { AccessMode, ReviewStatus, VersionedEntityType } from "@prisma/client";
 import type { Response } from "express";
 import { PrismaService } from "../../prisma/prisma.service";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
@@ -87,7 +87,7 @@ export class MediaController {
       // orphaned or admin-only ingestion artifacts, etc.) requires a session,
       // since there is no per-artifact entitlement model yet to check more
       // precisely than "is this caller identified at all".
-      const [publicQuestion, publicArticle] = await Promise.all([
+      const [publicQuestion, publicArticle, publicLesson] = await Promise.all([
         this.prisma.question.findFirst({
           where: { assets: { array_contains: [{ checksum: fullChecksum }] } },
           select: { id: true },
@@ -99,8 +99,18 @@ export class MediaController {
           },
           select: { id: true },
         }),
+        // A lesson anyone may open: a free preview, or any lesson of a
+        // public course -- both only while the course is published.
+        this.prisma.lesson.findFirst({
+          where: {
+            assets: { array_contains: [{ checksum: fullChecksum }] },
+            courseModule: { course: { isPublished: true } },
+            OR: [{ isPreview: true }, { courseModule: { course: { accessMode: AccessMode.PUBLIC } } }],
+          },
+          select: { id: true },
+        }),
       ]);
-      if (!publicQuestion && !publicArticle) {
+      if (!publicQuestion && !publicArticle && !publicLesson) {
         throw new ForbiddenException("media requires an authenticated session");
       }
     }

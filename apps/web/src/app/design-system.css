@@ -1453,3 +1453,27 @@ a.ds-kpi:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .users-role-list span { display: flex; flex-direction: column; }
 .users-role-list b { color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-medium); }
 .users-role-list small { color: var(--muted); font-size: var(--text-xs); }
+
+/* admin: course / lesson editor */
+.le-summary { display: inline-flex; align-items: baseline; gap: var(--sp-3); }
+.le-summary small { color: var(--muted); font-size: var(--text-xs); }
+.le-module-tools { flex-wrap: wrap; }
+.le-module-tools .ds-input { max-width: 22rem; }
+.le-lessons { display: flex; flex-direction: column; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; counter-reset: lesson; }
+.le-lessons > li { padding: var(--sp-3); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); counter-increment: lesson; }
+.le-lesson-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); flex-wrap: wrap; }
+.le-lesson-title { display: inline-flex; align-items: center; gap: var(--sp-2); color: var(--ink); font-weight: var(--weight-medium); }
+.le-lesson-title::before { content: counter(lesson, persian) "."; color: var(--muted); font-weight: var(--weight-regular); }
+.le-editor { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px dashed var(--line-strong); }
+.le-new { padding: var(--sp-4); border: 1px dashed var(--line-strong); border-radius: var(--radius-md); background: var(--surface-sunken); }
+.le-new-title { margin: 0; color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-bold); }
+.le-module-form { max-width: 32rem; }
+.le-block { display: flex; flex-direction: column; gap: var(--sp-2); padding: var(--sp-3); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.le-block-head { display: flex; align-items: center; gap: var(--sp-2); }
+.le-block-head .ds-select { width: auto; min-width: 12rem; }
+.le-block-n { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; flex: none; border-radius: 50%; background: var(--sky); color: var(--teal-dark); font-size: var(--text-xs); font-weight: var(--weight-bold); }
+.le-block-tools { display: flex; gap: var(--sp-1); margin-inline-start: auto; }
+.le-image { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: var(--sp-3); align-items: start; }
+@media (max-width: 640px) { .le-image { grid-template-columns: minmax(0, 1fr); } }
+.le-image img { width: 100%; max-height: 12rem; object-fit: contain; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.le-image-side { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-2); }

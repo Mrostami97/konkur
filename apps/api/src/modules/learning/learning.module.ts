@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { AuditModule } from "../audit/audit.module";
 import { IdentityModule } from "../identity/identity.module";
 import { AccessModule } from "../access/access.module";
+import { IngestionModule } from "../ingestion/ingestion.module";
 import {
   CoursesPublicController,
   LearningAdminController,
@@ -9,13 +10,15 @@ import {
 } from "./learning.controller";
 import { LearningService } from "./learning.service";
 import { SpotPlayerService } from "./spotplayer.service";
+import { CourseAuthoringService } from "./course-authoring.service";
 import { HttpSpotPlayerClient, SPOTPLAYER_CLIENT } from "./spotplayer.client";
 
 @Module({
-  imports: [AuditModule, IdentityModule, AccessModule],
+  imports: [AuditModule, IdentityModule, AccessModule, IngestionModule],
   controllers: [CoursesPublicController, LearningStudentController, LearningAdminController],
   providers: [
     LearningService,
+    CourseAuthoringService,
     SpotPlayerService,
     // Only the real client is registered. There is deliberately no stub that
     // invents a licence key: it would hand a paying student a key that opens

@@ -496,6 +496,9 @@ model Lesson {
   title          String
   order          Int
   contentBlocks  Json
+  /// Media the blocks refer to by media_key: [{ media_key, checksum,
+  /// filename, mime_type }], the same shape questions and articles use.
+  assets         Json             @default("[]")
   isPreview      Boolean          @default(false)
   topics         LessonTopic[]
   progress       LessonProgress[]

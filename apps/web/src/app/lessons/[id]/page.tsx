@@ -11,6 +11,7 @@ interface Lesson {
   id: string;
   title: string;
   contentBlocks: { type: string; [key: string]: unknown }[];
+  assets?: { media_key: string; checksum: string }[];
   completedAt?: string | null;
   progress?: { completedAt?: string | null } | null;
   courseModule?: {
@@ -88,7 +89,7 @@ export default function LessonPage({ params }: { params: { id: string } }) {
         action={course?.slug ? <Link className="button button-secondary" href={`/courses/${course.slug}`}>بازگشت به سرفصل دوره</Link> : <Link className="button button-secondary" href="/courses">دوره‌ها</Link>}
       />
       <article className="editorial-body">
-        <ContentBlocks blocks={lesson.contentBlocks} />
+        <ContentBlocks blocks={lesson.contentBlocks} assets={lesson.assets ?? []} />
       </article>
       <section className="surface-card">
         <span className="eyebrow">ثبت فعالیت مطالعه</span>

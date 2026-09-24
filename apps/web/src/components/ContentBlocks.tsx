@@ -11,6 +11,12 @@ function mediaUrl(assets: Asset[], mediaKey: string): string | null {
   return `${API_URL}/media/${asset.checksum.replace("sha256:", "")}`;
 }
 
+/** The Aparat video hash from a page or embed link; null for anything else. */
+function aparatHash(url: string): string | null {
+  const match = url.match(/^https:\/\/(?:www\.)?aparat\.com\/(?:v|video\/video\/embed\/videohash)\/([A-Za-z0-9]+)/);
+  return match ? match[1] : null;
+}
+
 function renderLatex(source: string): string {
   try {
     return katex.renderToString(source, { throwOnError: false, output: "html" });
@@ -51,11 +57,30 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
         <img key={index} src={url} alt={String(block.alt ?? block.caption ?? mediaKey)} style={{ maxWidth: "100%" }} />
       );
     }
-    case "video":
+    case "video": {
+      const url = String(block.url ?? "");
+      const aparat = aparatHash(url);
+      if (aparat) {
+        return (
+          <div key={index} className="cb-video">
+            <iframe
+              src={`https://www.aparat.com/video/video/embed/videohash/${aparat}/vt/frame`}
+              title={String(block.title ?? "ویدیوی درس")}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+        );
+      }
+      // Only https files: the API refuses anything else, and an old row that
+      // somehow holds another scheme is not rendered at all.
+      if (!url.startsWith("https://")) return null;
       return (
         // eslint-disable-next-line jsx-a11y/media-has-caption
-        <video key={index} controls style={{ width: "100%" }} src={String(block.url ?? "")} />
+        <video key={index} controls preload="metadata" style={{ width: "100%", borderRadius: 12 }} src={url} />
       );
+    }
     case "table": {
       const rows = Array.isArray(block.rows) ? (block.rows as string[][]) : [];
       const headers = Array.isArray(block.headers) ? (block.headers as string[]) : [];
