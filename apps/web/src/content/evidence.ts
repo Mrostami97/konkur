@@ -17,6 +17,19 @@ export interface EvidenceDocument {
   related?: { label: string; url: string };
   /** Copies of the post's images, served from /public/evidence. */
   images?: EvidenceImage[];
+  /** The one number the scorecard leads with. Every value below must already appear in the post. */
+  hero?: EvidenceFact;
+  /** Up to three supporting numbers from the same post. */
+  facts?: EvidenceFact[];
+  /** Subject percentages exactly as the scorecard prints them. */
+  bars?: { label: string; percent: number }[];
+  /** How the student worked with me, as the owner described it. */
+  role?: string;
+}
+
+export interface EvidenceFact {
+  value: string;
+  label: string;
 }
 
 export interface EvidenceImage {
@@ -55,6 +68,7 @@ export const evidenceStats: EvidenceStat[] = [
 
 export const questionDesignEvidence: EvidenceDocument = {
   id: "question-design-1401",
+  hero: { value: "سؤال ۶۱", label: "کنکور ۱۴۰۱، کنار سؤال تألیفی من" }, facts: [{ value: "سؤال ۶۹", label: "کنار سؤالی که پیش‌تر در کانال بود" }],
   year: "۱۴۰۱",
   category: "طراحی سؤال",
   subject: "ساختمان داده و الگوریتم",
@@ -69,6 +83,7 @@ export const questionDesignEvidence: EvidenceDocument = {
 
 export const alignmentEvidence: EvidenceDocument = {
   id: "alignment-1405",
+  hero: { value: "۹ از ۱۲", label: "تست ساختمان داده و الگوریتم که در کلاس کار شده بود" }, facts: [{ value: "۱۰ تا ۱۱", label: "تست درست شاگردها، به گزارش خودشان" }],
   year: "۱۴۰۵",
   category: "تطبیق سؤال",
   subject: "ساختمان داده و طراحی الگوریتم",
@@ -86,6 +101,7 @@ export const alignmentEvidence: EvidenceDocument = {
 export const matchedQuestions: EvidenceDocument[] = [
   {
     id: "phd-1405-plane-sweep",
+    hero: { value: "سؤال ۷", label: "دکتری ۱۴۰۵، همان سؤال حل تمرین" },
     year: "۱۴۰۵",
     category: "تطبیق سؤال",
     subject: "دکتری · ساختمان داده و الگوریتم",
@@ -100,6 +116,7 @@ export const matchedQuestions: EvidenceDocument[] = [
   },
   {
     id: "master-1405-hash",
+    hero: { value: "عین کلاس", label: "سخت‌ترین سؤال ارشد ۱۴۰۵" },
     year: "۱۴۰۵",
     category: "تطبیق سؤال",
     subject: "ارشد مهندسی · ساختمان داده",
@@ -111,6 +128,7 @@ export const matchedQuestions: EvidenceDocument[] = [
   },
   {
     id: "master-1403-theory",
+    hero: { value: "۲ از ۴", label: "تست جدید نظریه، مطابق جزوه" }, facts: [{ value: "۱", label: "تست حذف‌شده" }],
     year: "۱۴۰۳",
     category: "تطبیق سؤال",
     subject: "ارشد مهندسی · نظریه زبان‌ها",
@@ -125,6 +143,7 @@ export const matchedQuestions: EvidenceDocument[] = [
 export const studentResults: EvidenceDocument[] = [
   {
     id: "phd-1403",
+    hero: { value: "۱۷", label: "رتبهٔ نرم‌افزار در دکتری" }, facts: [{ value: "۲۶", label: "رتبهٔ هوش مصنوعی" }, { value: "۱۶ از ۱۹", label: "تست درست ساختمان داده و الگوریتم" }], role: "شاگرد کلاس ساختمان داده و الگوریتم · امروز دکتری هوش مصنوعی شریف",
     student: "آرش ذوالفقاری",
     year: "۱۴۰۳",
     category: "کارنامه",
@@ -143,6 +162,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "it-1405",
+    hero: { value: "۳۸", label: "رتبهٔ ارشد فناوری اطلاعات" }, facts: [{ value: "کد ۱", label: "کد ضریب" }, { value: "۱۰ سال", label: "دوری از درس پیش از شروع" }], role: "شاگرد مشاوره",
     student: "حسین قبیله",
     year: "۱۴۰۵",
     category: "کارنامه",
@@ -156,6 +176,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "it-1403",
+    hero: { value: "۸", label: "رتبهٔ ارشد آی‌تی" }, facts: [{ value: "۱۶", label: "بهترین رتبه در مهندسی کامپیوتر" }, { value: "۵۸٫۳۳٪", label: "ساختمان داده و الگوریتم" }], role: "شاگرد کلاس ساختمان داده و طراحی الگوریتم",
     student: "مبین شریفی‌راد",
     year: "۱۴۰۳",
     category: "کارنامه",
@@ -171,6 +192,14 @@ export const studentResults: EvidenceDocument[] = [
   {
     // Supplied by the owner as a screenshot on 2026-09-24; no archive post yet.
     id: "ai-1401",
+    hero: { value: "۸", label: "رتبهٔ هوش مصنوعی در سهمیه" }, facts: [{ value: "۱۱", label: "رتبهٔ نرم‌افزار" }, { value: "۹", label: "رتبهٔ هوش مصنوعی بدون سهمیه" }], bars: [
+      { label: "زبان عمومی و تخصصی", percent: 60 },
+      { label: "ریاضیات", percent: 10 },
+      { label: "نظریه زبان‌ها و سیگنال", percent: 33.33 },
+      { label: "ساختمان داده، الگوریتم و هوش مصنوعی", percent: 38.33 },
+      { label: "مدار منطقی و معماری", percent: 65 },
+      { label: "سیستم عامل، شبکه و پایگاه داده", percent: 47.37 },
+    ], role: "شاگرد کلاس ساختمان داده، کلاس نظریه و مشاوره",
     student: "رضا مدرس",
     year: "۱۴۰۱",
     category: "کارنامه",
@@ -183,6 +212,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "theory-1405-a",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۵ از ۵", label: "پاسخ یکی با کلید" }], role: "شاگرد کلاس نظریه",
     student: "آقای کاظمی",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -195,6 +225,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "theory-1405-b",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۵ از ۵", label: "پاسخ یکی با کلید" }], role: "شاگرد کلاس نظریه",
     student: "آقای احمدی",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -207,6 +238,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "data-1405-a",
+    hero: { value: "۱۰ از ۱۱", label: "ساختمان داده و طراحی الگوریتم" }, facts: [{ value: "۱", label: "سؤال حذف‌شده" }],
     student: "سامان",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -220,6 +252,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "data-1405-b",
+    hero: { value: "۹", label: "تست درست ساختمان داده و الگوریتم" }, facts: [{ value: "۰", label: "پاسخ غلط" }, { value: "۲", label: "سؤال سفید" }], role: "شاگرد کلاس",
     student: "آقای کاظمی",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -232,6 +265,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "theory-1403",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۴ از ۴", label: "تست نظریه" }, { value: "۴۴٫۴۴٪", label: "باکس سیگنال و نظریه" }],
     student: "آقای کریمی",
     year: "۱۴۰۳",
     category: "نتایج دانشجویان",
@@ -244,6 +278,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "theory-1403-khoshnam",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۴۴٫۴۴٪", label: "باکس سیگنال و نظریه" }, { value: "۱ تا ۲ هفته", label: "حل تمرین پیش از کنکور" }], role: "شاگرد کلاس نظریه",
     student: "شیوا خوش‌نام",
     year: "۱۴۰۳",
     category: "نتایج دانشجویان",
@@ -260,6 +295,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "karnameh-3609",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها" }, facts: [{ value: "۲۷", label: "بهترین رتبه در سهمیه" }],
     year: "—",
     category: "کارنامه",
     subject: "کارنامهٔ ارشد مهندسی کامپیوتر",
