@@ -153,6 +153,7 @@ const evidenceClaims = [
   { claim: "رتبهٔ ۱۷ نرم‌افزار و ۲۶ هوش مصنوعی در دکتری", source: "https://t.me/Konkur_answer/3910" },
   { claim: "رتبهٔ ۳۸ ارشد فناوری اطلاعات", source: "https://t.me/Konkur_answer/4981" },
   { claim: "رتبهٔ ۸ آی‌تی و ۱۶ مهندسی کامپیوتر", source: "https://t.me/Konkur_answer/3997" },
+  { claim: "رتبهٔ ۸ هوش مصنوعی و ۱۱ نرم‌افزار", source: "https://t.me/Konkur_answer/3739" },
 ];
 const evidence = await read("/evidence");
 assert.equal(evidence.response.status, 200, "the existing evidence hub must remain public");

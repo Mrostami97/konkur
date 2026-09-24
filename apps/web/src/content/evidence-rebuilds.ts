@@ -18,6 +18,8 @@ export interface ScorecardRebuild {
   codes?: { code: number; label?: string; score?: number; rank: number; rankNoQuota?: number }[];
   /** Label for the codes table; PhD scorecards call them کد ترکیب. */
   codeWord?: "کد ضریب" | "کد ترکیب";
+  /** The candidate's quota, e.g. آزاد; the "در سهمیه" rank is within it. */
+  quota?: string;
 }
 
 export interface AnswerSheetRebuild {
@@ -184,6 +186,7 @@ export const evidenceRebuilds: Record<string, EvidenceRebuild[]> = {
       kind: "scorecard",
       source: "/evidence/phd-1403-karnameh.jpg",
       exam: "دکتری ۱۴۰۳ · مهندسی کامپیوتر (۲۳۵۴) · سهمیهٔ آزاد",
+      quota: "آزاد",
       attendees: 2990,
       codeWord: "کد ترکیب",
       subjects: [
@@ -270,7 +273,8 @@ export const evidenceRebuilds: Record<string, EvidenceRebuild[]> = {
     {
       kind: "scorecard",
       source: "/evidence/1401-ai-rank-8.png",
-      exam: "ارشد ۱۴۰۱ · مهندسی کامپیوتر",
+      exam: "ارشد ۱۴۰۱ · مهندسی کامپیوتر · سهمیهٔ آزاد",
+      quota: "آزاد",
       subjects: [
         { name: "زبان عمومی و تخصصی", percent: 60 },
         { name: "ریاضیات: ریاضی عمومی، معادلات، آمار و احتمال، گسسته", percent: 10 },
