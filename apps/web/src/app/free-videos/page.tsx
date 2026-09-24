@@ -131,8 +131,8 @@ export default async function FreeVideosPage() {
             text="بهترین کلاس‌های ضبط‌شدهٔ رایگان دانشگاهی برای هر درس کنکور، با لینک به منبع اصلی، در حال بازبینی است. تا آن موقع، صفحهٔ هر درس سرفصل و مسیر مطالعه‌اش را دارد."
             alternatives={[
               { href: "/subjects", label: "نقشهٔ درس‌ها" },
-              { href: "/guides/choose-study-resources", label: "انتخاب منبع مطالعه" },
-              { href: "/guides/start-from-zero", label: "شروع از صفر" },
+              { href: "/articles/how-to-choose-study-resources", label: "انتخاب منبع مطالعه" },
+              { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
             ]}
           />
         ) : (

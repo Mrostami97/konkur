@@ -4,6 +4,7 @@ import { formatPublicDate, type PublicArticleRecord } from "../../components/Pub
 import { guides as legacyGuides } from "../../content/editorial";
 import { phase12EditorialPages } from "../../content/phase12";
 import { apiGetPublic } from "../../lib/api";
+import { isMergedGuide, withoutMergedGuides } from "../../lib/merged-pages";
 import { pageMetadata } from "../../lib/seo";
 
 export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
@@ -23,9 +24,9 @@ export default async function GuidesPage() {
   } catch {
     apiUnavailable = true;
   }
-  const apiGuides = published.filter((item) => item.contentType === "GUIDE");
+  const apiGuides = published.filter((item) => item.contentType === "GUIDE" && !isMergedGuide(item.slug));
   const publishedSlugs = new Set(published.map((guide) => guide.slug));
-  const staticOnly = [...legacyGuides, ...phase12EditorialPages].filter((guide) => !publishedSlugs.has(guide.slug));
+  const staticOnly = withoutMergedGuides([...legacyGuides, ...phase12EditorialPages]).filter((guide) => !publishedSlugs.has(guide.slug));
 
   return (
     <main className="pg">

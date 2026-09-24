@@ -201,7 +201,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Re
             </tbody>
           </table>
         </div>
-        <Link className="text-link" href="/guides/choose-study-resources">راهنمای کامل انتخاب منبع ←</Link>
+        <Link className="text-link" href="/articles/how-to-choose-study-resources">راهنمای کامل انتخاب منبع ←</Link>
       </section>
       <section className="surface-card resource-process"><div><span className="eyebrow">شفافیت منبع</span><h2>از کانال تا کتابخانهٔ ساختاریافته</h2><p>هر رکورد با درس، مبحث، مقطع، نوع، تاریخ بررسی و وضعیت حقوق استفاده ثبت می‌شود؛ پیش‌نویس و منبع بدون مجوز در این فهرست دیده نمی‌شود.</p></div><Link className="button button-secondary" href="/articles/telegram-learning-archive">راهنمای استفاده</Link></section>
     </main>

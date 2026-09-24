@@ -75,7 +75,7 @@ export default async function CoursesPage() {
             text="کلاس‌های درس‌به‌درس کنکورصفریک، از مفهوم تا تست کنکور، در حال آماده‌سازی برای سایت‌اند. تا آن موقع، نقشهٔ درس‌ها و راهنمای ۱۴۰۶ در دسترس است."
             alternatives={[
               { href: "/subjects", label: "نقشهٔ درس‌ها" },
-              { href: "/guides/start-from-zero", label: "شروع از صفر" },
+              { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
               { href: "/evidence", label: "مستندات تدریس" },
             ]}
           />

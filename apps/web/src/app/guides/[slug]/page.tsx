@@ -14,6 +14,7 @@ import {
   phase12EditorialPages,
 } from "../../../content/phase12";
 import { apiGetPublic } from "../../../lib/api";
+import { canonicalHref, isMergedGuide, withoutMergedGuides } from "../../../lib/merged-pages";
 import { pageMetadata } from "../../../lib/seo";
 
 interface TaxonomyEntry {
@@ -23,7 +24,7 @@ interface TaxonomyEntry {
 }
 
 export function generateStaticParams() {
-  return [...guides, ...phase12EditorialPages].map(({ slug }) => ({ slug }));
+  return withoutMergedGuides([...guides, ...phase12EditorialPages]).map(({ slug }) => ({ slug }));
 }
 
 async function loadGuide(slug: string) {
@@ -69,6 +70,8 @@ async function relatedTaxonomy(article: PublicArticleRecord): Promise<RelatedPub
 }
 
 export default async function GuidePage({ params }: { params: { slug: string } }) {
+  // next.config.mjs answers these first; this keeps the merge if that layer is bypassed.
+  if (isMergedGuide(params.slug)) permanentRedirect(canonicalHref(`/guides/${params.slug}`));
   const result = await loadGuide(params.slug);
   const phase12 = findPhase12Page(params.slug);
   if (result.article) {
@@ -86,7 +89,7 @@ export default async function GuidePage({ params }: { params: { slug: string } }
       page={staticGuide}
       basePath="/guides"
       related={phase12?.internalLinks.map((item) => ({
-        href: item.href,
+        href: canonicalHref(item.href),
         title: item.title,
         label: item.label,
         summary: item.description,

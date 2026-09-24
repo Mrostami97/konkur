@@ -1,5 +1,6 @@
 import { articles, guides, subjects } from "../../content/editorial";
 import { phase12EditorialPages } from "../../content/phase12";
+import { withoutMergedGuides } from "../../lib/merged-pages";
 import { apiGetPublic } from "../../lib/api";
 import { absoluteUrl } from "../../lib/seo";
 
@@ -73,7 +74,7 @@ export async function GET() {
     "اطلاعات زمان‌حساس با نویسنده، بازبین، تاریخ آخرین بررسی و منابع نمایش داده می‌شود. برای تاریخ و مواد آزمون، آخرین دفترچه و اصلاحیه سازمان سنجش ملاک نهایی است.",
     "",
     "## راهنماهای ۱۴۰۶",
-    ...[...guides, ...phase12EditorialPages].filter((item) => !publishedSlugs.has(item.slug)).map((item) => `- [${item.title}](${absoluteUrl(`/guides/${item.slug}`)}): ${item.description}`),
+    ...withoutMergedGuides([...guides, ...phase12EditorialPages]).filter((item) => !publishedSlugs.has(item.slug)).map((item) => `- [${item.title}](${absoluteUrl(`/guides/${item.slug}`)}): ${item.description}`),
     ...canonicalGuides.map((item) => `- [${item.title}](${absoluteUrl(`/guides/${item.slug}`)}): ${item.summary}`),
     "",
     "## درس‌ها",

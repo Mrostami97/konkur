@@ -15,6 +15,7 @@ import {
 } from "../../../components/PublicContent";
 import { StructuredData } from "../../../components/StructuredData";
 import { apiGetPublic } from "../../../lib/api";
+import { canonicalHref } from "../../../lib/merged-pages";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
 
 async function loadResource(slug: string) {
@@ -121,7 +122,7 @@ export default async function ResourcePage({ params }: { params: { slug: string 
               <div className="section-heading"><div><span className="eyebrow">قدم بعد</span><h2 id="resource-next-step-title">این منبع را در یک مسیر ببین</h2><p>هاب درس، پیش‌نیاز و ترتیب یادگیری را نشان می‌دهد؛ راهنما کمک می‌کند منبع را متناسب با برنامه انتخاب کنی.</p></div></div>
               <div className="cluster">
                 {resource.subjectCodes.map((code) => <Link className="button button-secondary" href={`/subjects/${code}`} key={code}>هاب درس {findSubjectTitle(code)} ←</Link>)}
-                {relatedGuides.map((slug) => <Link className="button button-secondary" href={`/guides/${slug}`} key={slug}>راهنمای برنامه‌ریزی منبع ←</Link>)}
+                {relatedGuides.map((slug) => <Link className="button button-secondary" href={canonicalHref(`/guides/${slug}`)} key={slug}>راهنمای برنامه‌ریزی منبع ←</Link>)}
               </div>
             </section>
           )}

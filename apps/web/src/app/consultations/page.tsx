@@ -80,7 +80,7 @@ export default async function ConsultationsPage() {
             title="رزرو آنلاین مشاوره به‌زودی"
             text="مشاورهٔ تک‌جلسه‌ای و بستهٔ سالیانه تا کنکور به‌زودی از همین صفحه قابل خرید و رزرو است. زمان راه‌اندازی در کانال تلگرام اعلام می‌شود."
             alternatives={[
-              { href: "/guides/start-from-zero", label: "شروع از صفر" },
+              { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
               { href: "/guides/twelve-month-study-plan", label: "برنامهٔ دوازده‌ماهه" },
               { href: "/guides/working-candidate-study-plan", label: "برنامهٔ داوطلب شاغل" },
             ]}
