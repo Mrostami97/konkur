@@ -1,6 +1,8 @@
 import { IsString, Matches, MinLength } from "class-validator";
+import { NormalizePhone } from "../phone";
 
 export class PasswordLoginDto {
+  @NormalizePhone()
   @Matches(/^\+?[0-9]{8,15}$/, { message: "phone must be a valid phone number" })
   phone!: string;
 

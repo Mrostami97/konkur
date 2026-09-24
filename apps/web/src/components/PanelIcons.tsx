@@ -26,7 +26,8 @@ export type IconName =
   | "students"
   | "clock"
   | "check"
-  | "trophy";
+  | "trophy"
+  | "sms";
 
 const PATHS: Record<IconName, JSX.Element> = {
   article: <path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6" />,
@@ -40,6 +41,7 @@ const PATHS: Record<IconName, JSX.Element> = {
   import: <path d="M12 3v11M8 10.5l4 4 4-4M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17" />,
   commerce: <path d="M3 5h2.2l2 11h10.4l2-8H6M9.5 20.5h.01M17 20.5h.01" />,
   instructor: <path d="M12 3 3 7.5l9 4.5 9-4.5zM7 10.5V16c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-5.5M21 7.5V13" />,
+  sms: <path d="M4 5h16v11H9l-5 4zM8 9.5h8M8 12.5h5" />,
   consult: <path d="M20 12a8 8 0 1 1-3.2-6.4M4 20.5 5.5 16M9 11h.01M12.5 11h.01M16 11h.01" />,
   crm: <path d="M4 20a6 6 0 0 1 12 0M10 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M18 4.5l1.3 2.7 2.7.4-2 2 .5 2.9-2.5-1.4-2.5 1.4.5-2.9-2-2 2.7-.4z" />,
   chart: <path d="M4 20V4M4 20h16M8 17v-5M12.5 17V8M17 17v-7" />,

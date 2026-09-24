@@ -307,6 +307,18 @@ describe("Instructors + paid consultations (e2e)", () => {
         .send({ scheduledAt: inDays(7), meetingUrl: "https://example.org/room/1" })
         .expect(201);
       expect(confirmed.body.status).toBe("CONFIRMED");
+      // The student's phone is not echoed back in the booking...
+      expect(confirmed.body.student).toBeUndefined();
+      // ...but the student is texted the date and time.
+      const text = await prisma.smsMessage.findFirstOrThrow({
+        where: { kind: "CONSULTATION_CONFIRMED", phone: queue.body[0].student.phone },
+        orderBy: { createdAt: "desc" },
+      });
+      expect(text.tokens).toHaveLength(2);
+      // Queued when the student asked: the instructor was told a request came in.
+      expect(
+        await prisma.smsMessage.count({ where: { kind: "CONSULTATION_REQUESTED", createdAt: { gte: new Date(Date.now() - 600_000) } } }),
+      ).toBeGreaterThan(0);
 
       const completed = await request(app.getHttpServer())
         .post(`/me/instructor/consultations/${bookingId}/complete`)

@@ -868,3 +868,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .track-snapshot { padding: 1rem; }
   .track-snapshot-grid { grid-template-columns: 1fr; }
 }
+
+/* login: code step */
+.login-link { padding: 0; border: 0; background: none; color: var(--teal-dark); font: inherit; font-weight: 800; cursor: pointer; }
+.login-link:hover:not(:disabled) { text-decoration: underline; }
+.login-link:disabled { opacity: .5; cursor: default; }
+.login-error { margin: 0 0 .5rem; padding: .7rem .9rem; border-radius: 11px; color: #9f1d1d; background: #fdecec; font-size: .82rem; line-height: 1.8; }
+.form-group input.login-code { font-size: 1.5rem; letter-spacing: .6em; text-align: center; font-variant-numeric: tabular-nums; }
+.login-resend { margin-top: .9rem; color: var(--muted); font-size: .8rem; text-align: center; }
+/* On a phone the form is the point of the page: it comes before the pitch. */
+@media (max-width: 760px) {
+  .login-shell { padding-top: 1.5rem; }
+  .login-card { order: -1; }
+  .login-pitch h1 { font-size: 1.6rem; }
+}

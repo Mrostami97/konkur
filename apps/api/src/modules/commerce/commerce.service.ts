@@ -4,6 +4,7 @@ import { EntitlementGrantSource, OrderStatus, PaymentStatus, ProductKind } from 
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { LearningService } from "../learning/learning.service";
+import { adminAlertPhones, NotificationsService } from "../notifications/notifications.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { CreatePriceDto } from "./dto/create-price.dto";
 import { BankAccountDto } from "./dto/bank-account.dto";
@@ -19,6 +20,7 @@ export class CommerceService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly learning: LearningService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   // --- Admin catalog management ---------------------------------------------
@@ -315,6 +317,16 @@ export class CommerceService {
       include: { bankAccount: true },
     });
 
+    // Operators learn there is a transfer to look for without watching the
+    // queue; the order's reference code is what they search the statement for.
+    await this.notifications.enqueue(
+      adminAlertPhones().map((phone) => ({
+        kind: "PAYMENT_RECEIPT_SUBMITTED" as const,
+        phone,
+        tokens: [updated.referenceCode ?? orderId.slice(0, 8)],
+      })),
+    );
+
     await this.audit.log({
       actorUserId: userId,
       action: "payment.receipt_submitted",
@@ -357,7 +369,7 @@ export class CommerceService {
     const result = await this.prisma.$transaction(async (tx) => {
       const payment = await tx.payment.findUnique({
         where: { id: paymentId },
-        include: { order: { include: { items: true } } },
+        include: { order: { include: { items: true, user: { select: { phone: true } } } } },
       });
       if (!payment) throw new NotFoundException("payment not found");
       if (payment.status === PaymentStatus.SUCCEEDED) {
@@ -419,6 +431,18 @@ export class CommerceService {
         },
       });
 
+      await this.notifications.enqueue(
+        [
+          {
+            kind: "PAYMENT_CONFIRMED",
+            phone: payment.order.user.phone,
+            userId: payment.order.userId,
+            tokens: [payment.referenceCode ?? payment.orderId.slice(0, 8)],
+          },
+        ],
+        tx,
+      );
+
       return { orderId: payment.orderId, userId: payment.order.userId, productId, entitlementId: entitlement.id };
     });
 
@@ -439,20 +463,38 @@ export class CommerceService {
   /** The transfer was not on the statement, or did not match. The buyer can
    * correct their claim and submit again. */
   async rejectPayment(adminId: string, paymentId: string, reason: string) {
-    const payment = await this.prisma.payment.findUnique({ where: { id: paymentId } });
+    const payment = await this.prisma.payment.findUnique({
+      where: { id: paymentId },
+      include: { order: { select: { userId: true, user: { select: { phone: true } } } } },
+    });
     if (!payment) throw new NotFoundException("payment not found");
     if (payment.status === PaymentStatus.SUCCEEDED) {
       throw new BadRequestException("a confirmed payment cannot be rejected; revoke the entitlement instead");
     }
 
-    const updated = await this.prisma.payment.update({
-      where: { id: paymentId },
-      data: {
-        status: PaymentStatus.REJECTED,
-        reviewedAt: new Date(),
-        reviewedByUserId: adminId,
-        rejectionReason: reason,
-      },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const row = await tx.payment.update({
+        where: { id: paymentId },
+        data: {
+          status: PaymentStatus.REJECTED,
+          reviewedAt: new Date(),
+          reviewedByUserId: adminId,
+          rejectionReason: reason,
+        },
+      });
+      // The reason stays on the order page; the text only says to look.
+      await this.notifications.enqueue(
+        [
+          {
+            kind: "PAYMENT_REJECTED",
+            phone: payment.order.user.phone,
+            userId: payment.order.userId,
+            tokens: [payment.referenceCode ?? payment.orderId.slice(0, 8)],
+          },
+        ],
+        tx,
+      );
+      return row;
     });
 
     await this.audit.log({

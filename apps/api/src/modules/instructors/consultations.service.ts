@@ -4,6 +4,8 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { AccessService } from "../access/access.service";
 import { AuditService } from "../audit/audit.service";
 import { CreateOfferingDto, UpdateOfferingDto } from "./dto/consultation-offering.dto";
+import { NotificationsService } from "../notifications/notifications.service";
+import { smsDate, smsTime } from "../notifications/sms-format";
 import { ConfirmBookingDto, RequestBookingDto } from "./dto/consultation-booking.dto";
 
 /**
@@ -53,6 +55,7 @@ export class ConsultationsService {
     private readonly prisma: PrismaService,
     private readonly access: AccessService,
     private readonly audit: AuditService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   // --- admin: what is on sale -------------------------------------------------
@@ -346,7 +349,7 @@ export class ConsultationsService {
         });
         if (used >= offering.sessionQuota) continue;
 
-        return tx.consultationBooking.create({
+        const created = await tx.consultationBooking.create({
           data: {
             offeringId: offering.id,
             entitlementId: entitlement.id,
@@ -358,6 +361,24 @@ export class ConsultationsService {
           },
           select: BOOKING_SELECT,
         });
+        // The instructor has no calendar to watch; the text is how they
+        // learn a student is waiting for a time.
+        const [instructor, student] = await Promise.all([
+          tx.contributorProfile.findUnique({
+            where: { id: offering.instructorProfileId },
+            select: { userId: true, user: { select: { phone: true } } },
+          }),
+          tx.profile.findUnique({ where: { userId }, select: { displayName: true, firstName: true, lastName: true } }),
+        ]);
+        if (instructor?.user) {
+          const name =
+            [student?.firstName, student?.lastName].filter(Boolean).join(" ") || student?.displayName || "یک دانشجو";
+          await this.notifications.enqueue(
+            [{ kind: "CONSULTATION_REQUESTED", phone: instructor.user.phone, userId: instructor.userId, tokens: [name] }],
+            tx,
+          );
+        }
+        return created;
       }
       throw new BadRequestException("no sessions left on this consultation");
     });
@@ -391,14 +412,33 @@ export class ConsultationsService {
       throw new BadRequestException("this session is already cancelled");
     }
 
-    const updated = await this.prisma.consultationBooking.update({
-      where: { id: bookingId },
-      data: {
-        status: ConsultationBookingStatus.CANCELLED,
-        cancelledAt: new Date(),
-        cancelReason: reason,
-      },
-      select: BOOKING_SELECT,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const row = await tx.consultationBooking.update({
+        where: { id: bookingId },
+        data: {
+          status: ConsultationBookingStatus.CANCELLED,
+          cancelledAt: new Date(),
+          cancelReason: reason,
+        },
+        select: BOOKING_SELECT,
+      });
+      // Whoever did not cancel is the one who needs to hear about it.
+      const otherUserId = booking.viewerRole === "STUDENT" ? booking.instructorProfile.userId : booking.studentUserId;
+      const other = otherUserId ? await tx.user.findUnique({ where: { id: otherUserId }, select: { phone: true } }) : null;
+      if (other) {
+        await this.notifications.enqueue(
+          [
+            {
+              kind: "CONSULTATION_CANCELLED",
+              phone: other.phone,
+              userId: otherUserId,
+              tokens: [row.scheduledAt ? smsDate(row.scheduledAt) : "-"],
+            },
+          ],
+          tx,
+        );
+      }
+      return row;
     });
 
     await this.audit.log({
@@ -449,15 +489,32 @@ export class ConsultationsService {
     const scheduledAt = new Date(dto.scheduledAt);
     if (Number.isNaN(scheduledAt.getTime())) throw new BadRequestException("scheduledAt must be a valid date");
 
-    const updated = await this.prisma.consultationBooking.update({
-      where: { id: bookingId },
-      data: {
-        status: ConsultationBookingStatus.CONFIRMED,
-        scheduledAt,
-        meetingUrl: dto.meetingUrl,
-        instructorNote: dto.instructorNote,
-      },
-      select: BOOKING_SELECT,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const row = await tx.consultationBooking.update({
+        where: { id: bookingId },
+        data: {
+          status: ConsultationBookingStatus.CONFIRMED,
+          scheduledAt,
+          meetingUrl: dto.meetingUrl,
+          instructorNote: dto.instructorNote,
+        },
+        select: { ...BOOKING_SELECT, studentUserId: true, student: { select: { phone: true } } },
+      });
+      await this.notifications.enqueue(
+        [
+          {
+            kind: "CONSULTATION_CONFIRMED",
+            phone: row.student.phone,
+            userId: row.studentUserId,
+            tokens: [smsDate(scheduledAt), smsTime(scheduledAt)],
+          },
+        ],
+        tx,
+      );
+      const { student, studentUserId, ...booking } = row;
+      void student;
+      void studentUserId;
+      return booking;
     });
 
     await this.audit.log({
