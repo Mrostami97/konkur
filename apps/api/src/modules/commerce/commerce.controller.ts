@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
-import { PaymentStatus, Role } from "@prisma/client";
+import { OrderStatus, PaymentStatus, Role } from "@prisma/client";
+import { IsIn, IsOptional } from "class-validator";
+import { PageQueryDto } from "../../common/pagination";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
@@ -11,6 +13,18 @@ import { GrantEntitlementDto, RevokeEntitlementDto } from "./dto/grant-entitleme
 import { GrantCourseDto, GrantQuestionBankDto, GrantResourceDto } from "./dto/grant-product-item.dto";
 import { RejectPaymentDto, SubmitReceiptDto } from "./dto/submit-receipt.dto";
 import { BankAccountDto } from "./dto/bank-account.dto";
+
+class ListOrdersQuery extends PageQueryDto {
+  @IsOptional()
+  @IsIn(Object.values(OrderStatus))
+  status?: OrderStatus;
+}
+
+class ListPaymentsQuery extends PageQueryDto {
+  @IsOptional()
+  @IsIn(Object.values(PaymentStatus))
+  status?: PaymentStatus;
+}
 
 @Controller("products")
 export class ProductsPublicController {
@@ -126,18 +140,24 @@ export class CommerceAdminController {
     return this.commerce.revokeEntitlement(req.user!.id, id, dto.reason);
   }
 
+  @Get("orders/summary")
+  @Roles(Role.ADMIN, Role.FINANCE)
+  ordersSummary() {
+    return this.commerce.ordersSummary();
+  }
+
   @Get("orders")
   @Roles(Role.ADMIN, Role.FINANCE)
-  listOrders() {
-    return this.commerce.listAllOrders();
+  listOrders(@Query() query: ListOrdersQuery) {
+    return this.commerce.listAllOrders(query);
   }
 
   // --- card transfers --------------------------------------------------------
 
   @Get("payments")
   @Roles(Role.ADMIN, Role.FINANCE)
-  listPayments(@Query("status") status?: PaymentStatus) {
-    return this.commerce.listPaymentsForReview(status);
+  listPayments(@Query() query: ListPaymentsQuery) {
+    return this.commerce.listPaymentsForReview(query);
   }
 
   /** The only path in the card flow that grants access. */

@@ -1,6 +1,8 @@
 import { Body, Controller, Get, NotFoundException, Param, Post, Query, Res, UseGuards } from "@nestjs/common";
 import type { Response } from "express";
 import { LeadStage, Role } from "@prisma/client";
+import { IsIn, IsOptional } from "class-validator";
+import { PageQueryDto } from "../../common/pagination";
 import { SessionAuthGuard } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
@@ -24,6 +26,12 @@ export class DeepLinkController {
   }
 }
 
+class ListLeadsQuery extends PageQueryDto {
+  @IsOptional()
+  @IsIn(Object.values(LeadStage))
+  stage?: LeadStage;
+}
+
 @Controller("admin/crm")
 @UseGuards(SessionAuthGuard, RolesGuard)
 @Roles(Role.ADMIN, Role.MENTOR)
@@ -31,8 +39,8 @@ export class CrmAdminController {
   constructor(private readonly crm: CrmService) {}
 
   @Get("leads")
-  listLeads(@Query("stage") stage?: LeadStage) {
-    return this.crm.listLeads(stage);
+  listLeads(@Query() query: ListLeadsQuery) {
+    return this.crm.listLeads(query);
   }
 
   @Get("leads/:id")

@@ -19,9 +19,9 @@ import {
   TableWrap,
   Textarea,
 } from "../../../components/ds";
+import { UserPicker, type PickedUser } from "../../../components/UserPicker";
 
 interface Course { id: string; title: string }
-interface AdminUser { id: string; phone: string }
 
 interface Product {
   id: string;
@@ -36,7 +36,16 @@ interface Order {
   id: string;
   status: string;
   totalAmountRial: number;
-  user: { phone: string };
+  createdAt: string;
+  user: { id: string; phone: string };
+  items: { product: { title: string } | null }[];
+}
+
+interface OrderPage {
+  items: Order[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 type ProductKind = "COURSE" | "RESOURCE" | "BUNDLE" | "QUESTION_BANK";
@@ -53,8 +62,7 @@ const ORDER_STATUS: Record<string, { label: string; tone: "neutral" | "success" 
   PENDING: { label: "در انتظار پرداخت", tone: "warning" },
   PAID: { label: "پرداخت‌شده", tone: "success" },
   FAILED: { label: "ناموفق", tone: "danger" },
-  CANCELLED: { label: "لغوشده", tone: "neutral" },
-  REFUNDED: { label: "بازگردانده‌شده", tone: "neutral" },
+  CANCELED: { label: "لغوشده", tone: "neutral" },
 };
 
 const PAGE_SIZE = 20;
@@ -63,11 +71,13 @@ const activePrice = (product: Product) => product.prices.find((price) => price.i
 export default function CommerceAdminPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderPage | null>(null);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
+  const [orderPage, setOrderPage] = useState(1);
+  const [orderStatus, setOrderStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [orderPage, setOrderPage] = useState(1);
 
   const [slug, setSlug] = useState("");
   const [title, setTitle] = useState("");
@@ -83,28 +93,26 @@ export default function CommerceAdminPage() {
   const [pricing, setPricing] = useState(false);
   const [priceError, setPriceError] = useState<string | null>(null);
 
-  const [grantUserId, setGrantUserId] = useState("");
+  const [grantUser, setGrantUser] = useState<PickedUser | null>(null);
+  const grantUserId = grantUser?.id ?? "";
   const [grantProductId, setGrantProductId] = useState("");
   const [grantVia, setGrantVia] = useState<"GIFT" | "TRIAL" | "MANUAL">("GIFT");
   const [grantReason, setGrantReason] = useState("");
   const [granting, setGranting] = useState(false);
   const [grantError, setGrantError] = useState<string | null>(null);
   const [grantConfirm, setGrantConfirm] = useState(false);
+  const [grantDone, setGrantDone] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [nextCourses, nextProducts, userResponse, nextOrders] = await Promise.all([
+      const [nextCourses, nextProducts] = await Promise.all([
         apiFetch<Course[]>("/admin/courses"),
         apiFetch<Product[]>("/admin/products"),
-        apiFetch<{ users: AdminUser[] }>("/admin/users"),
-        apiFetch<Order[]>("/admin/orders"),
       ]);
       setCourses(nextCourses);
       setProducts(nextProducts);
-      setUsers(userResponse.users);
-      setOrders(nextOrders);
     } catch (err) {
       setError(err instanceof Error ? err.message : "خواندن داده‌های فروش ممکن نشد.");
     } finally {
@@ -115,6 +123,21 @@ export default function CommerceAdminPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const loadOrders = useCallback(() => {
+    setOrdersLoading(true);
+    setOrdersError(null);
+    const query = new URLSearchParams({ page: String(orderPage), pageSize: String(PAGE_SIZE) });
+    if (orderStatus) query.set("status", orderStatus);
+    apiFetch<OrderPage>(`/admin/orders?${query}`)
+      .then(setOrders)
+      .catch(() => setOrdersError("خواندن سفارش‌ها ممکن نشد."))
+      .finally(() => setOrdersLoading(false));
+  }, [orderPage, orderStatus]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
 
   async function createProduct(event: FormEvent) {
     event.preventDefault();
@@ -171,6 +194,7 @@ export default function CommerceAdminPage() {
         method: "POST",
         body: { userId: grantUserId, productId: grantProductId, grantedVia: grantVia, reason: grantReason },
       });
+      setGrantDone(`دسترسی «${products.find((product) => product.id === grantProductId)?.title ?? ""}» برای ${grantUser?.phone ?? ""} فعال شد.`);
       setGrantReason("");
       setGrantConfirm(false);
       await load();
@@ -182,8 +206,8 @@ export default function CommerceAdminPage() {
     }
   }
 
-  const visibleOrders = orders.slice((orderPage - 1) * PAGE_SIZE, orderPage * PAGE_SIZE);
-  const grantedUser = users.find((user) => user.id === grantUserId);
+  const visibleOrders = orders?.items ?? [];
+  const grantedUser = grantUser;
   const grantedProduct = products.find((product) => product.id === grantProductId);
 
   return (
@@ -321,17 +345,19 @@ export default function CommerceAdminPage() {
           </p>
           <form
             className="ds-form"
-            onSubmit={(event) => { event.preventDefault(); setGrantConfirm(true); }}
+            onSubmit={(event) => {
+              event.preventDefault();
+              setGrantDone(null);
+              if (!grantUser) {
+                setGrantError("کاربر را جست‌وجو و انتخاب کنید.");
+                return;
+              }
+              setGrantError(null);
+              setGrantConfirm(true);
+            }}
           >
             <FieldRow>
-              <Field label="کاربر" required>
-                {(props) => (
-                  <Select {...props} value={grantUserId} onChange={(event) => setGrantUserId(event.target.value)} required>
-                    <option value="">کاربر را انتخاب کنید</option>
-                    {users.map((user) => <option key={user.id} value={user.id}>{user.phone}</option>)}
-                  </Select>
-                )}
-              </Field>
+              <UserPicker value={grantUser} onChange={setGrantUser} />
               <Field label="محصول" required>
                 {(props) => (
                   <Select {...props} value={grantProductId} onChange={(event) => setGrantProductId(event.target.value)} required>
@@ -356,6 +382,7 @@ export default function CommerceAdminPage() {
               </Field>
             </FieldRow>
             {grantError && <Alert tone="danger">{grantError}</Alert>}
+            {grantDone && <Alert tone="success">{grantDone}</Alert>}
             <div><Button type="submit" variant="primary">اعطای دسترسی</Button></div>
           </form>
         </Card>
@@ -364,32 +391,43 @@ export default function CommerceAdminPage() {
           <div className="ds-card-head">
             <div>
               <h2 className="ds-card-title">سفارش‌ها</h2>
-              <p>سرویس همهٔ سفارش‌ها را یکجا برمی‌گرداند؛ صفحه‌بندی فعلاً سمت مرورگر است.</p>
+              <p>جدیدترین سفارش‌ها اول؛ پرداخت‌های کارت‌به‌کارت را در صفحهٔ «پرداخت‌ها» تأیید کنید.</p>
             </div>
+            <Select
+              aria-label="وضعیت سفارش"
+              value={orderStatus}
+              onChange={(event) => { setOrderStatus(event.target.value); setOrderPage(1); }}
+              style={{ width: "auto", minWidth: "11rem" }}
+            >
+              <option value="">همهٔ وضعیت‌ها</option>
+              {Object.entries(ORDER_STATUS).map(([value, meta]) => <option key={value} value={value}>{meta.label}</option>)}
+            </Select>
           </div>
           <div className={`ds-card-body ${visibleOrders.length && !loading && !error ? "ds-card-body-flush" : ""}`}>
             <DataState
-              loading={loading}
-              error={error}
-              isEmpty={orders.length === 0}
-              onRetry={load}
+              loading={ordersLoading && !orders}
+              error={ordersError}
+              isEmpty={visibleOrders.length === 0}
+              onRetry={loadOrders}
               emptyTitle="هنوز سفارشی ثبت نشده"
               emptyDescription="سفارش‌ها پس از اولین خرید اینجا دیده می‌شوند."
             >
               <TableWrap
                 pagination={
-                  orders.length > PAGE_SIZE ? (
-                    <Pagination page={orderPage} pageSize={PAGE_SIZE} total={orders.length} onPageChange={setOrderPage} />
+                  orders && orders.total > PAGE_SIZE ? (
+                    <Pagination page={orders.page} pageSize={orders.pageSize} total={orders.total} onPageChange={setOrderPage} />
                   ) : undefined
                 }
               >
-                <thead><tr><th>کاربر</th><th>وضعیت</th><th>مبلغ</th></tr></thead>
+                <thead><tr><th>تاریخ</th><th>کاربر</th><th>محصول</th><th>وضعیت</th><th>مبلغ</th></tr></thead>
                 <tbody>
                   {visibleOrders.map((order) => {
                     const status = ORDER_STATUS[order.status];
                     return (
                       <tr key={order.id}>
-                        <td className="ds-code">{order.user.phone}</td>
+                        <td>{new Date(order.createdAt).toLocaleDateString("fa-IR")}</td>
+                        <td className="ds-code" dir="ltr">{order.user.phone}</td>
+                        <td>{order.items.map((item) => item.product?.title).filter(Boolean).join("، ") || "—"}</td>
                         <td>{status ? <Badge tone={status.tone}>{status.label}</Badge> : <Badge>{order.status}</Badge>}</td>
                         <td className="ds-table-numeric">{order.totalAmountRial.toLocaleString("fa-IR")} ریال</td>
                       </tr>

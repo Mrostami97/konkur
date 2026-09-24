@@ -78,19 +78,16 @@ const TILES: Tile[] = [
     icon: "money",
     tone: "success",
     roles: ["ADMIN", "FINANCE"],
-    load: () => apiFetch<unknown>("/admin/orders").then(countOf),
+    load: () => apiFetch<unknown>("/admin/orders?pageSize=1").then(countOf),
   },
 ];
 
-interface Order {
-  status: string;
-  totalAmountRial: number;
-  createdAt: string;
-}
-
-function monthKey(iso: string) {
-  const date = new Date(iso);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+interface OrdersSummary {
+  totalOrders: number;
+  paidOrders: number;
+  unpaidOrders: number;
+  revenueRial: number;
+  monthly: { month: string; revenueRial: number }[];
 }
 
 export default function AdminHomePage() {
@@ -99,7 +96,7 @@ export default function AdminHomePage() {
   const canSeeRevenue = ["ADMIN", "FINANCE"].some((role) => roles.includes(role));
 
   const [counts, setCounts] = useState<Record<string, number | "error">>({});
-  const [orders, setOrders] = useState<Order[] | null>(null);
+  const [summary, setSummary] = useState<OrdersSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [fatal, setFatal] = useState<string | null>(null);
 
@@ -120,7 +117,7 @@ export default function AdminHomePage() {
       // Only finance and admin may read orders; for everyone else the
       // revenue panel is simply not part of the page.
       if (canSeeRevenue) {
-        setOrders(await apiFetch<Order[]>("/admin/orders").catch(() => null));
+        setSummary(await apiFetch<OrdersSummary>("/admin/orders/summary").catch(() => null));
       }
     } catch {
       setFatal("خواندن آمار پنل ممکن نشد.");
@@ -136,20 +133,8 @@ export default function AdminHomePage() {
     void load();
   }, [load]);
 
-  const paid = (orders ?? []).filter((order) => order.status === "PAID");
-  const revenueRial = paid.reduce((sum, order) => sum + order.totalAmountRial, 0);
-
-  const monthly = (() => {
-    const buckets = new Map<string, number>();
-    for (const order of paid) {
-      const key = monthKey(order.createdAt);
-      buckets.set(key, (buckets.get(key) ?? 0) + order.totalAmountRial);
-    }
-    return [...buckets.entries()]
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .slice(-12)
-      .map(([label, value]) => ({ label: label.slice(2), value }));
-  })();
+  // Solar Hijri months from the API ("1405-07"), shown as "۰۵/۰۷".
+  const monthly = (summary?.monthly ?? []).map((row) => ({ label: row.month.slice(2).replace("-", "/"), value: row.revenueRial }));
 
   return (
     <>
@@ -172,15 +157,15 @@ export default function AdminHomePage() {
               <>
                 <Kpi
                   label="درآمد پرداخت‌شده"
-                  value={formatRial(revenueRial)}
-                  hint={`از ${formatPersianNumber(paid.length)} سفارش پرداخت‌شده`}
+                  value={summary ? formatRial(summary.revenueRial) : "—"}
+                  hint={summary ? `از ${formatPersianNumber(summary.paidOrders)} سفارش پرداخت‌شده` : "خواندن درآمد ممکن نشد"}
                   icon={<PanelIcon name="money" />}
                   tone="success"
                   small
                 />
                 <Kpi
                   label="سفارش‌های پرداخت‌نشده"
-                  value={formatPersianNumber((orders ?? []).length - paid.length)}
+                  value={summary ? formatPersianNumber(summary.unpaidOrders) : "—"}
                   hint="در انتظار، ناموفق یا لغوشده"
                   icon={<PanelIcon name="clock" />}
                   tone="warm"
@@ -212,7 +197,7 @@ export default function AdminHomePage() {
                     درآمد ماهانه
                   </h2>
                   <p className="ds-subtitle" style={{ marginTop: "var(--sp-1)" }}>
-                    مجموع سفارش‌های پرداخت‌شده در هر ماه میلادی، دوازده ماه اخیر.
+                    مجموع سفارش‌های پرداخت‌شده در هر ماه شمسی، دوازده ماه اخیر.
                   </p>
                 </div>
                 <Link className="ds-btn ds-btn-ghost ds-btn-sm" href="/admin/commerce">
@@ -223,7 +208,7 @@ export default function AdminHomePage() {
                 <BarChart
                   points={monthly}
                   formatValue={formatRial}
-                  emptyLabel={orders === null ? "خواندن سفارش‌ها ممکن نشد" : "هنوز سفارش پرداخت‌شده‌ای ثبت نشده"}
+                  emptyLabel={summary === null ? "خواندن سفارش‌ها ممکن نشد" : "هنوز سفارش پرداخت‌شده‌ای ثبت نشده"}
                 />
               </div>
             </Card>
