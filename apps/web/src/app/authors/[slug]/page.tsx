@@ -17,7 +17,7 @@ import { StructuredData } from "../../../components/StructuredData";
 import { EmptyState } from "../../../components/ui";
 import { apiGetPublic } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
-import { absoluteUrl, pageMetadata } from "../../../lib/seo";
+import { OWNER_PERSON_ID, OWNER_PROFILE_SLUG, absoluteUrl, pageMetadata } from "../../../lib/seo";
 
 interface ContributorArticle {
   slug: string;
@@ -130,6 +130,8 @@ export default async function AuthorPage({ params }: { params: { slug: string } 
     url: absoluteUrl(path),
     mainEntityOfPage: absoluteUrl(path),
   };
+  // The owner's full description lives on /about; share its @id so every page names one person.
+  if (contributor.slug === OWNER_PROFILE_SLUG) personSchema["@id"] = OWNER_PERSON_ID;
   if (contributor.roleTitle && contributor.kind === "PERSON") personSchema.jobTitle = contributor.roleTitle;
   if (contributor.shortBio) personSchema.description = contributor.shortBio;
   if (contributor.avatarUrl) personSchema.image = contributor.avatarUrl;

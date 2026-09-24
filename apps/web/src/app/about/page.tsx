@@ -6,7 +6,7 @@ import { StructuredData } from "../../components/StructuredData";
 import { EvidenceFigures } from "../../components/EvidenceFigures";
 import { evidenceStats, ownerResults } from "../../content/evidence";
 import { EXAM_DATES } from "../../lib/exam-dates";
-import { absoluteUrl, pageMetadata, SITE_NAME } from "../../lib/seo";
+import { absoluteUrl, OWNER_PERSON_ID, pageMetadata, SITE_NAME } from "../../lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "محمد رستمی، مدرس کنکور ارشد کامپیوتر از دانشگاه شریف",
@@ -29,7 +29,7 @@ const personJsonLd = {
   inLanguage: "fa-IR",
   mainEntity: {
     "@type": "Person",
-    "@id": absoluteUrl("/about#mohammad-rostami"),
+    "@id": OWNER_PERSON_ID,
     name: "محمد رستمی",
     jobTitle: "مدرس کنکور ارشد و دکتری کامپیوتر",
     description: roleTitle,

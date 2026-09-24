@@ -8,6 +8,20 @@ export const PRIVATE_PAGE_METADATA: Metadata = { robots: { index: false, follow:
 export function absoluteUrl(path = "/") {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+// The owner is described once, on /about. Articles he writes point at the same
+// @id so search and answer engines see one person, not two.
+export const OWNER_PROFILE_SLUG = "mohammad-rostami";
+export const OWNER_PERSON_ID = absoluteUrl("/about#mohammad-rostami");
+
+export function personReference(profile: { slug: string; displayName: string }) {
+  return {
+    "@type": "Person",
+    ...(profile.slug === OWNER_PROFILE_SLUG ? { "@id": OWNER_PERSON_ID } : {}),
+    name: profile.displayName,
+    url: absoluteUrl(`/authors/${profile.slug}`),
+  };
+}
 export function pageMetadata({
   title,
   description,
