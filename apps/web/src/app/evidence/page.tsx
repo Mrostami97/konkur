@@ -204,10 +204,10 @@ export default function EvidencePage() {
         <div>
           <span className="eyebrow eyebrow-dark">قدم بعدی</span>
           <h2>به‌جای عددها، خود کلاس را امتحان کن</h2>
-          <p>چند جلسه از دوره رایگان روی سایت است. اگر هم نمی‌دانی از کجا شروع کنی، یک جلسهٔ مشاوره بگذار.</p>
+          <p>ویدیوی چند جلسه از کلاس‌هایم رایگان در کانال تلگرام هست. اگر هم نمی‌دانی از کجا شروع کنی، یک جلسهٔ مشاوره بگذار.</p>
         </div>
         <div className="evidence-cta-actions">
-          <Link className="button button-light" href="/courses">جلسه‌های رایگان</Link>
+          <a className="button button-light" href="https://t.me/Konkur_answer/3726" target="_blank" rel="noopener noreferrer">ویدیوهای رایگان کلاس</a>
           <Link className="button evidence-cta-secondary" href="/consultations">مشاوره با من</Link>
         </div>
       </section>

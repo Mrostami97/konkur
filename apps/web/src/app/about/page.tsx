@@ -99,7 +99,8 @@ export default function AboutPage() {
             <span>نظریه زبان‌ها و ماشین‌ها</span>
           </div>
           <div className="about-actions">
-            <Link className="button button-primary" href="/courses">جلسه‌های رایگان را ببین</Link>
+            {/* Free class videos live in the archive channel until the courses are published on the site. */}
+            <a className="button button-primary" href="https://t.me/Konkur_answer/3726" target="_blank" rel="noopener noreferrer">ویدیوهای رایگان کلاس را ببین</a>
             <Link className="button button-secondary" href="/consultations">مشاوره با من</Link>
           </div>
         </div>
@@ -166,7 +167,7 @@ export default function AboutPage() {
               <span>۰۱</span>
               <div>
                 <strong><Link href="/courses">دوره‌ها</Link></strong>
-                <small>سرفصل کامل {EXAM_DATES.master1406.label}، از مباحث پایه تا حل تست. چند جلسه‌اش رایگان روی سایت است؛ ببین با روش من کنار می‌آیی یا نه.</small>
+                <small>سرفصل کامل {EXAM_DATES.master1406.label}، از مباحث پایه تا حل تست. دوره‌ها به‌زودی روی همین سایت منتشر می‌شوند؛ تا آن موقع ویدیوی چند جلسه از کلاس‌هایم رایگان در کانال تلگرام هست تا ببینی با روش من کنار می‌آیی یا نه.</small>
               </div>
             </li>
             <li>
