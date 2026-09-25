@@ -1,14 +1,28 @@
-import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { createHash } from "crypto";
 import { AccessMode, EnrollmentSource, Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { AccessService } from "../access/access.service";
+import { ObjectStorageService } from "../ingestion/object-storage.service";
 import { LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/content-blocks";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
-import { CreateLessonDto } from "./dto/create-lesson.dto";
+import { CreateLessonDto, LessonAssetDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 
 type Tx = PrismaService | Prisma.TransactionClient;
+
+const MAX_LESSON_IMAGE_BYTES = 5 * 1024 * 1024;
+
+/** The declared type is the browser's guess from the file name; the leading
+ * bytes are what the file actually is. Both must agree before it is stored
+ * and later served to students as an image. */
+function sniffImageType(buffer: Buffer): "image/png" | "image/jpeg" | "image/webp" | null {
+  if (buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return "image/png";
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return "image/jpeg";
+  if (buffer.length >= 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP") return "image/webp";
+  return null;
+}
 
 @Injectable()
 export class LearningService {
@@ -16,6 +30,7 @@ export class LearningService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly access: AccessService,
+    private readonly storage: ObjectStorageService,
   ) {}
 
   // --- Admin/author authoring -------------------------------------------------
@@ -75,6 +90,7 @@ export class LearningService {
     const mod = await this.prisma.courseModule.findUnique({ where: { id: courseModuleId } });
     if (!mod) throw new NotFoundException("course module not found");
     assertValidContentBlocks(dto.contentBlocks, LESSON_BLOCK_TYPES);
+    const assets = await this.assertLessonAssets(dto.contentBlocks, dto.assets ?? []);
     const { topicIds = [], ...lessonInput } = dto;
     return this.prisma.lesson.create({
       data: {
@@ -82,10 +98,114 @@ export class LearningService {
         title: lessonInput.title,
         order: lessonInput.order,
         contentBlocks: dto.contentBlocks as Prisma.InputJsonValue,
+        assets: assets as unknown as Prisma.InputJsonValue,
         isPreview: lessonInput.isPreview ?? false,
         topics: topicIds.length > 0 ? { create: topicIds.map((topicId) => ({ topicId })) } : undefined,
       },
     });
+  }
+
+  /** The whole lesson for the editor, whatever its course's state. */
+  async getLessonForEditing(lessonId: string) {
+    const lesson = await this.prisma.lesson.findUnique({ where: { id: lessonId } });
+    if (!lesson) throw new NotFoundException("lesson not found");
+    return lesson;
+  }
+
+  async updateLesson(actorId: string, lessonId: string, dto: UpdateLessonDto) {
+    const existing = await this.prisma.lesson.findUnique({ where: { id: lessonId } });
+    if (!existing) throw new NotFoundException("lesson not found");
+    const blocks = dto.contentBlocks ?? (existing.contentBlocks as unknown[]);
+    if (dto.contentBlocks) assertValidContentBlocks(dto.contentBlocks, LESSON_BLOCK_TYPES);
+    const assets = await this.assertLessonAssets(
+      blocks,
+      dto.assets ?? ((existing.assets ?? []) as unknown as LessonAssetDto[]),
+    );
+    const lesson = await this.prisma.lesson.update({
+      where: { id: lessonId },
+      data: {
+        title: dto.title,
+        isPreview: dto.isPreview,
+        contentBlocks: dto.contentBlocks ? (dto.contentBlocks as Prisma.InputJsonValue) : undefined,
+        assets: assets as unknown as Prisma.InputJsonValue,
+      },
+    });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "lesson.updated",
+      targetType: "Lesson",
+      targetId: lessonId,
+      metadata: { fields: Object.keys(dto) },
+    });
+    return lesson;
+  }
+
+  /**
+   * Stores an image for a lesson and returns what an image block needs to
+   * reference it. The upload is not tied to a lesson: the author adds images
+   * while writing, before the lesson exists, and saving the lesson is what
+   * attaches them.
+   */
+  async uploadLessonImage(actorId: string, file: Express.Multer.File | undefined) {
+    if (!file) throw new BadRequestException("no file uploaded");
+    if (file.size > MAX_LESSON_IMAGE_BYTES) throw new BadRequestException("image must be 5 MB or smaller");
+    const sniffed = sniffImageType(file.buffer);
+    if (!sniffed || sniffed !== file.mimetype) {
+      throw new BadRequestException("image must be a PNG, JPEG or WebP file");
+    }
+
+    const digest = createHash("sha256").update(file.buffer).digest("hex");
+    const checksum = `sha256:${digest}`;
+    const extension = sniffed === "image/png" ? "png" : sniffed === "image/webp" ? "webp" : "jpg";
+    const key = `${digest}/lesson-image.${extension}`;
+    if (!(await this.storage.objectExists(key))) {
+      await this.storage.putObject(key, file.buffer, sniffed);
+    }
+    const artifact = await this.prisma.sourceArtifact.upsert({
+      where: { checksum },
+      update: {},
+      create: { checksum, filename: `lesson-image.${extension}`, mimeType: sniffed, size: file.size, storageKey: key },
+    });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "lesson.image_uploaded",
+      targetType: "SourceArtifact",
+      targetId: artifact.id,
+    });
+    return { media_key: `img-${digest.slice(0, 12)}`, checksum, url: `/media/${digest}` };
+  }
+
+  /**
+   * Every image block must name an image the lesson carries, and every image
+   * it carries must have been uploaded as an image -- otherwise the student
+   * sees a broken figure, or a checksum points at something that is not a
+   * picture at all. Images no block uses are dropped.
+   */
+  private async assertLessonAssets(blocks: unknown[], assets: LessonAssetDto[]): Promise<LessonAssetDto[]> {
+    const byKey = new Map<string, LessonAssetDto>();
+    for (const asset of assets) {
+      if (byKey.has(asset.media_key)) throw new BadRequestException(`duplicate media_key "${asset.media_key}"`);
+      byKey.set(asset.media_key, { media_key: asset.media_key, checksum: asset.checksum });
+    }
+    const used = new Set<string>();
+    blocks.forEach((block, index) => {
+      const { type, media_key: mediaKey } = block as { type?: string; media_key?: unknown };
+      if (type !== "image") return;
+      if (typeof mediaKey !== "string" || !byKey.has(mediaKey)) {
+        throw new BadRequestException(`content_blocks[${index}] references an image the lesson does not carry`);
+      }
+      used.add(mediaKey);
+    });
+    const kept = [...byKey.values()].filter((asset) => used.has(asset.media_key));
+    if (kept.length === 0) return kept;
+    const artifacts = await this.prisma.sourceArtifact.findMany({
+      where: { checksum: { in: kept.map((asset) => asset.checksum) } },
+      select: { checksum: true, mimeType: true },
+    });
+    const images = new Set(artifacts.filter((a) => a.mimeType.startsWith("image/")).map((a) => a.checksum));
+    const missing = kept.find((asset) => !images.has(asset.checksum));
+    if (missing) throw new BadRequestException(`image "${missing.media_key}" was not uploaded`);
+    return kept;
   }
 
   // --- Public catalog -----------------------------------------------------

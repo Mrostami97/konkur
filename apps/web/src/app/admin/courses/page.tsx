@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { apiFetch } from "../../../lib/api";
+import { API_URL, apiFetch, apiUpload } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import {
   AdminPageHeader,
@@ -34,64 +34,193 @@ interface ModuleWithLessons {
   lessons: { id: string; title: string }[];
 }
 
-/** Only the block types that can be authored from text alone. image, video
- * and chart carry an asset reference, and the panel has no media upload, so
- * offering them here would produce blocks that render as "media not found". */
+/** Block types the editor authors. An image is uploaded from here; a video
+ * block (a URL) is kept as it is when a lesson is edited. */
 const BLOCK_TYPES = [
   { value: "text", label: "پاراگراف" },
   { value: "heading", label: "عنوان" },
   { value: "quote", label: "نقل‌قول" },
   { value: "latex", label: "فرمول (LaTeX)" },
+  { value: "image", label: "تصویر" },
 ] as const;
 
 type BlockType = (typeof BLOCK_TYPES)[number]["value"];
-interface DraftBlock { id: number; type: BlockType; value: string }
+interface LessonImage { media_key: string; checksum: string; url: string }
+interface DraftBlock {
+  id: number;
+  type: BlockType | "kept";
+  /** Text, formula, or for an image its description (alt text and caption). */
+  value: string;
+  image?: LessonImage;
+  /** A block this editor does not author, carried through unchanged. */
+  kept?: { type: string; [key: string]: unknown };
+}
+interface LessonRow {
+  id: string;
+  title: string;
+  isPreview: boolean;
+  contentBlocks: { type: string; [key: string]: unknown }[];
+  assets: { media_key: string; checksum: string }[];
+}
 
 let blockId = 0;
-const newBlock = (): DraftBlock => ({ id: (blockId += 1), type: "text", value: "" });
+const newBlock = (type: BlockType = "text"): DraftBlock => ({ id: (blockId += 1), type, value: "" });
+
+function isFilled(block: DraftBlock) {
+  if (block.type === "kept") return true;
+  if (block.type === "image") return Boolean(block.image);
+  return block.value.trim().length > 0;
+}
 
 function toContentBlock(block: DraftBlock) {
+  if (block.type === "kept") return block.kept!;
   if (block.type === "heading") return { type: "heading", level: 2, text: block.value };
   if (block.type === "quote") return { type: "quote", text: block.value };
   if (block.type === "latex") return { type: "latex", latex: block.value };
+  if (block.type === "image") {
+    const text = block.value.trim();
+    return { type: "image", media_key: block.image!.media_key, alt: text, ...(text ? { caption: text } : {}) };
+  }
   return { type: "text", text: block.value };
 }
 
-function LessonForm({ moduleId, onAdded }: { moduleId: string; onAdded: () => void }) {
-  const [title, setTitle] = useState("");
-  const [blocks, setBlocks] = useState<DraftBlock[]>([newBlock()]);
+/** Turns a saved lesson back into editable rows. */
+function fromLesson(lesson: LessonRow): DraftBlock[] {
+  const checksumOf = new Map(lesson.assets.map((asset) => [asset.media_key, asset.checksum]));
+  return lesson.contentBlocks.map((block) => {
+    const id = (blockId += 1);
+    const text = (key: string) => String(block[key] ?? "");
+    if (block.type === "text" || block.type === "heading" || block.type === "quote") return { id, type: block.type, value: text("text") };
+    if (block.type === "latex") return { id, type: "latex", value: text("latex") };
+    const checksum = block.type === "image" ? checksumOf.get(text("media_key")) : undefined;
+    if (checksum) {
+      return {
+        id,
+        type: "image",
+        value: text("alt") || text("caption"),
+        image: { media_key: text("media_key"), checksum, url: `/media/${checksum.replace("sha256:", "")}` },
+      };
+    }
+    return { id, type: "kept", value: "", kept: block };
+  });
+}
+
+function ImagePicker({ block, onUploaded }: { block: DraftBlock; onUploaded: (image: LessonImage) => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    const filled = blocks.filter((block) => block.value.trim().length > 0);
-    if (filled.length === 0) {
-      setError("درس باید دست‌کم یک بلوک با محتوا داشته باشد.");
-      return;
-    }
+  async function upload(file: File | undefined) {
+    if (!file) return;
     setBusy(true);
     setError(null);
     try {
-      await apiFetch(`/admin/modules/${moduleId}/lessons`, {
-        method: "POST",
-        body: { title, order: 1, contentBlocks: filled.map(toContentBlock) },
-      });
-      setTitle("");
-      setBlocks([newBlock()]);
-      onAdded();
+      onUploaded(await apiUpload<LessonImage>("/admin/lesson-images", file));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "افزودن درس ناموفق بود.");
+      setError(err instanceof Error ? err.message : "آپلود تصویر ناموفق بود.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
+    <div className="ds-stack-sm">
+      {block.image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="ds-image-preview" src={`${API_URL}${block.image.url}`} alt="" />
+      )}
+      <label className={`ds-btn ds-btn-secondary ds-btn-sm ds-file${busy ? " is-busy" : ""}`}>
+        <input
+          type="file"
+          className="sr-only"
+          accept="image/png,image/jpeg,image/webp"
+          disabled={busy}
+          onChange={(event) => void upload(event.target.files?.[0])}
+        />
+        {busy ? "در حال آپلود…" : block.image ? "تعویض تصویر" : "انتخاب فایل تصویر"}
+      </label>
+      {error && <Alert tone="danger">{error}</Alert>}
+    </div>
+  );
+}
+
+function LessonForm({
+  moduleId,
+  lessonId,
+  onDone,
+}: {
+  moduleId: string;
+  /** Present when editing a saved lesson. */
+  lessonId?: string;
+  onDone: () => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [isPreview, setIsPreview] = useState(false);
+  const [blocks, setBlocks] = useState<DraftBlock[]>(lessonId ? [] : [newBlock()]);
+  const [loading, setLoading] = useState(Boolean(lessonId));
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!lessonId) return;
+    apiFetch<LessonRow>(`/admin/lessons/${lessonId}`)
+      .then((lesson) => {
+        setTitle(lesson.title);
+        setIsPreview(lesson.isPreview);
+        setBlocks(fromLesson(lesson));
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "خواندن درس ممکن نشد."))
+      .finally(() => setLoading(false));
+  }, [lessonId]);
+
+  const update = (id: number, patch: Partial<DraftBlock>) =>
+    setBlocks((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    const filled = blocks.filter(isFilled);
+    if (filled.length === 0) {
+      setError("درس باید دست‌کم یک بلوک با محتوا داشته باشد.");
+      return;
+    }
+    if (blocks.some((block) => block.type === "image" && !block.image)) {
+      setError("برای هر بلوک تصویر، فایلی آپلود کنید یا آن بلوک را حذف کنید.");
+      return;
+    }
+    const assets = filled.flatMap((block) =>
+      block.type === "image" && block.image ? [{ media_key: block.image.media_key, checksum: block.image.checksum }] : [],
+    );
+    const unique = [...new Map(assets.map((asset) => [asset.media_key, asset])).values()];
+    setBusy(true);
+    setError(null);
+    try {
+      const body = { title, isPreview, contentBlocks: filled.map(toContentBlock), assets: unique };
+      if (lessonId) {
+        await apiFetch(`/admin/lessons/${lessonId}`, { method: "PATCH", body });
+      } else {
+        await apiFetch(`/admin/modules/${moduleId}/lessons`, { method: "POST", body: { ...body, order: 1 } });
+        setTitle("");
+        setIsPreview(false);
+        setBlocks([newBlock()]);
+      }
+      onDone();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : lessonId ? "ذخیرهٔ درس ناموفق بود." : "افزودن درس ناموفق بود.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (loading) return <p className="ds-hint">در حال خواندن درس…</p>;
+
+  return (
     <form onSubmit={submit} className="ds-form">
       <Field label="عنوان درس" required>
         {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} required />}
       </Field>
+      <label className="ds-check">
+        <input type="checkbox" checked={isPreview} onChange={(event) => setIsPreview(event.target.checked)} />
+        درس نمونه (بدون خرید و بدون ورود دیده می‌شود)
+      </label>
 
       <div>
         <span className="ds-label">محتوای درس</span>
@@ -99,26 +228,40 @@ function LessonForm({ moduleId, onAdded }: { moduleId: string; onAdded: () => vo
           {blocks.map((block, index) => (
             <div className="ds-block-row" key={block.id}>
               <div style={{ width: "10rem" }}>
-                <Select
-                  value={block.type}
-                  aria-label={`نوع بلوک ${toPersianDigits(index + 1)}`}
-                  onChange={(event) =>
-                    setBlocks(blocks.map((item) => (item.id === block.id ? { ...item, type: event.target.value as BlockType } : item)))
-                  }
-                >
-                  {BLOCK_TYPES.map((type) => (
-                    <option key={type.value} value={type.value}>{type.label}</option>
-                  ))}
-                </Select>
+                {block.type === "kept" ? (
+                  <Badge>{block.kept?.type === "video" ? "ویدیو" : "بلوک دیگر"}</Badge>
+                ) : (
+                  <Select
+                    value={block.type}
+                    aria-label={`نوع بلوک ${toPersianDigits(index + 1)}`}
+                    onChange={(event) => update(block.id, { type: event.target.value as BlockType })}
+                  >
+                    {BLOCK_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </Select>
+                )}
               </div>
               <div className="ds-grow">
-                <Textarea
-                  value={block.value}
-                  aria-label={`متن بلوک ${toPersianDigits(index + 1)}`}
-                  onChange={(event) =>
-                    setBlocks(blocks.map((item) => (item.id === block.id ? { ...item, value: event.target.value } : item)))
-                  }
-                />
+                {block.type === "kept" ? (
+                  <p className="ds-hint" dir="ltr" style={{ margin: 0 }}>{String(block.kept?.url ?? block.kept?.type ?? "")}</p>
+                ) : block.type === "image" ? (
+                  <div className="ds-stack-sm">
+                    <ImagePicker block={block} onUploaded={(image) => update(block.id, { image })} />
+                    <Input
+                      value={block.value}
+                      placeholder="توضیح تصویر: چه چیزی نشان می‌دهد؟"
+                      aria-label={`توضیح تصویر ${toPersianDigits(index + 1)}`}
+                      onChange={(event) => update(block.id, { value: event.target.value })}
+                    />
+                  </div>
+                ) : (
+                  <Textarea
+                    value={block.value}
+                    aria-label={`متن بلوک ${toPersianDigits(index + 1)}`}
+                    onChange={(event) => update(block.id, { value: event.target.value })}
+                  />
+                )}
               </div>
               <Button
                 size="sm"
@@ -133,17 +276,18 @@ function LessonForm({ moduleId, onAdded }: { moduleId: string; onAdded: () => vo
             </div>
           ))}
         </div>
-        <p className="ds-hint">
-          تصویر، ویدئو و نمودار از این فرم ساخته نمی‌شوند چون به فایل رسانه نیاز دارند و پنل هنوز
-          آپلود رسانه ندارد؛ این بلوک‌ها فقط از مسیر ورود دادهٔ zip وارد می‌شوند.
-        </p>
-        <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock()])}>
-          افزودن بلوک
-        </Button>
+        <p className="ds-hint">تصویر PNG، JPEG یا WebP تا ۵ مگابایت. توضیح تصویر برای کسی که تصویر را نمی‌بیند خوانده می‌شود.</p>
+        <div className="ds-row">
+          <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock()])}>افزودن بلوک متن</Button>
+          <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock("image")])}>افزودن تصویر</Button>
+        </div>
       </div>
 
       {error && <Alert tone="danger">{error}</Alert>}
-      <div><Button type="submit" variant="primary" loading={busy}>افزودن درس</Button></div>
+      <div className="ds-row">
+        <Button type="submit" variant="primary" loading={busy}>{lessonId ? "ذخیرهٔ درس" : "افزودن درس"}</Button>
+        {lessonId && <Button type="button" variant="ghost" onClick={onDone}>انصراف</Button>}
+      </div>
     </form>
   );
 }
@@ -181,6 +325,7 @@ function ModuleForm({ courseId, nextOrder, onAdded }: { courseId: string; nextOr
 
 function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => void }) {
   const modules = course.modules ?? [];
+  const [editing, setEditing] = useState<string | null>(null);
   return (
     <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
       {modules.map((module) => (
@@ -191,10 +336,31 @@ function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => 
           <div className="ds-details-body">
             {module.lessons.length > 0 && (
               <ul className="ds-plain-list">
-                {module.lessons.map((lesson) => <li key={lesson.id}>{lesson.title}</li>)}
+                {module.lessons.map((lesson) => (
+                  <li key={lesson.id}>
+                    <div className="ds-row-between">
+                      <span>{lesson.title}</span>
+                      <Button size="sm" variant="ghost" onClick={() => setEditing(editing === lesson.id ? null : lesson.id)}>
+                        {editing === lesson.id ? "بستن" : "ویرایش"}
+                      </Button>
+                    </div>
+                    {editing === lesson.id && (
+                      <div className="ds-panel" style={{ marginTop: "var(--sp-3)" }}>
+                        <LessonForm
+                          moduleId={module.id}
+                          lessonId={lesson.id}
+                          onDone={() => {
+                            setEditing(null);
+                            onChanged();
+                          }}
+                        />
+                      </div>
+                    )}
+                  </li>
+                ))}
               </ul>
             )}
-            <LessonForm moduleId={module.id} onAdded={onChanged} />
+            <LessonForm moduleId={module.id} onDone={onChanged} />
           </div>
         </details>
       ))}
@@ -309,7 +475,7 @@ export default function CoursesAdminPage() {
     <>
       <AdminPageHeader
         title="دوره‌ها"
-        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. ویرایش و حذف پس از ساخت هنوز از پنل ممکن نیست."
+        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. درس‌ها پس از ساخت ویرایش می‌شوند؛ حذف هنوز از پنل ممکن نیست."
       />
 
       <div className="ds-stack-lg">

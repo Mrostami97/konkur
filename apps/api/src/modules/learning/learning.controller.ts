@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { memoryStorage } from "multer";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -7,7 +9,7 @@ import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-au
 import { LearningService } from "./learning.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
-import { CreateLessonDto } from "./dto/create-lesson.dto";
+import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { SpotPlayerService } from "./spotplayer.service";
 
 @Controller("courses")
@@ -113,6 +115,22 @@ export class LearningAdminController {
   @Post("modules/:id/lessons")
   addLesson(@Param("id") id: string, @Body() dto: CreateLessonDto) {
     return this.learning.addLesson(id, dto);
+  }
+
+  @Get("lessons/:id")
+  getLesson(@Param("id") id: string) {
+    return this.learning.getLessonForEditing(id);
+  }
+
+  @Patch("lessons/:id")
+  updateLesson(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: UpdateLessonDto) {
+    return this.learning.updateLesson(req.user!.id, id, dto);
+  }
+
+  @Post("lesson-images")
+  @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
+  uploadLessonImage(@Req() req: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
+    return this.learning.uploadLessonImage(req.user!.id, file);
   }
 
 }

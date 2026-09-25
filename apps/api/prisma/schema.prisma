@@ -494,6 +494,8 @@ model Lesson {
   title          String
   order          Int
   contentBlocks  Json
+  /// [{ media_key, checksum }] for the image blocks in contentBlocks.
+  assets         Json             @default("[]")
   isPreview      Boolean          @default(false)
   topics         LessonTopic[]
   progress       LessonProgress[]
