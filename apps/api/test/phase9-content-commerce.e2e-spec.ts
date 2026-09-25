@@ -803,6 +803,92 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     expect(publicArticle.body.reviewerProfile).toMatchObject({ slug: reviewerProfile.body.slug });
   });
 
+  it("lets an approved import replace an article's open draft and records what it closed", async () => {
+    const slug = "phase9-import-over-draft-" + suffix;
+    const created = await request(app.getHttpServer())
+      .post("/admin/articles")
+      .set("Cookie", adminCookie)
+      .send({
+        slug,
+        title: "Seeded draft that is never submitted",
+        summary: "An open draft that the editorial panel cannot close by itself.",
+        quickAnswer: "The approved import should supersede this draft.",
+        contentBlocks: [{ type: "text", text: "Old draft text." }],
+        taxonomyMajor: ["computer-engineering"],
+        taxonomyTags: ["phase9"],
+        taxonomyDegrees: ["MASTER"],
+        taxonomyFields: ["computer-engineering"],
+        seoTitle: "Draft superseded by an approved import",
+        seoDescription: "A regression fixture: an approved import must close an open draft instead of failing on it.",
+        sourceLinks: [{ sourceId, relation: "SUPPORTS", order: 0 }],
+      })
+      .expect(201);
+    const draftArticle = await prisma.article.findUniqueOrThrow({ where: { id: created.body.id } });
+    const openDraft = await prisma.contentVersion.findFirstOrThrow({
+      where: { entityType: "ARTICLE", entityId: draftArticle.id, reviewStatus: "DRAFT" },
+    });
+
+    const payload = {
+      schema_version: "article.v2",
+      external_id: draftArticle.externalId,
+      content_type: "article",
+      title: "Better imported text",
+      slug,
+      summary: "The approved import replaces the open draft.",
+      quick_answer: "The import publishes and the old draft is closed.",
+      content_blocks: [{ type: "text", text: "New imported text." }],
+      taxonomy: {
+        major: ["computer-engineering"],
+        tags: ["phase9"],
+        degrees: ["master"],
+        fields: ["computer-engineering"],
+        subject_codes: [],
+        topic_codes: [],
+      },
+      seo: {
+        title: "Imported text replacing an open draft",
+        description: "A regression fixture: an approved import must close an open draft instead of failing on it.",
+      },
+      validity: { time_sensitive: false },
+      sources: [{ source_external_id: sourceExternalId, relation: "SUPPORTS", order: 0 }],
+      provenance: { producer_type: "human", source_artifact: "phase9-import-over-draft-test" },
+      review_status: "draft",
+    };
+    const job = await request(app.getHttpServer())
+      .post("/admin/import")
+      .set("Cookie", adminCookie)
+      .attach("file", buildImportZip(payload), "phase9-import-over-draft.zip")
+      .expect(201);
+    const items = await request(app.getHttpServer())
+      .get("/admin/import/" + job.body.id + "/items")
+      .set("Cookie", adminCookie)
+      .expect(200);
+    expect(items.body[0].dedupeStatus).toBe("CONFLICT");
+    await request(app.getHttpServer())
+      .post("/admin/import/items/review")
+      .set("Cookie", adminCookie)
+      .send({ itemIds: [items.body[0].id], decision: "APPROVE" })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post("/admin/import/" + job.body.id + "/publish")
+      .set("Cookie", adminCookie)
+      .expect(201);
+
+    const closed = await prisma.contentVersion.findUniqueOrThrow({ where: { id: openDraft.id } });
+    expect(closed.reviewStatus).toBe("REJECTED");
+    expect(closed.reviewNote).toContain(items.body[0].id);
+    const published = await prisma.article.findUniqueOrThrow({ where: { id: draftArticle.id } });
+    expect(published.reviewStatus).toBe("PUBLISHED");
+    expect(published.title).toBe("Better imported text");
+    expect(published.version).toBeGreaterThan(openDraft.version);
+    const audit = await prisma.auditLog.findFirstOrThrow({
+      where: { action: "import.published", targetType: "ARTICLE", targetId: draftArticle.id },
+      orderBy: { createdAt: "desc" },
+    });
+    expect((audit.metadata as { supersededVersions?: number[] }).supersededVersions).toEqual([openDraft.version]);
+    await request(app.getHttpServer()).get("/articles/" + slug).expect(200);
+  });
+
   it("records an honest article self-review even without an attribution profile", async () => {
     const slug = "phase9-self-reviewed-" + suffix;
     const article = await request(app.getHttpServer())
