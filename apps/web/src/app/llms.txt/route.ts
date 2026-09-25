@@ -52,7 +52,8 @@ export async function GET() {
   }
   const hasFreeVideos = resourceResult.items.some((item) => item.kind === "VIDEO" && Boolean(item.externalUrl));
   const publishedSlugs = new Set(articleResult.items.map((item) => item.slug));
-  const canonicalGuides = [...articleResult.items.filter((item) => item.contentType === "GUIDE")];
+  // A published guide can share a slug with a merged one; its URL redirects too.
+  const canonicalGuides = withoutMergedGuides(articleResult.items.filter((item) => item.contentType === "GUIDE"));
   const canonicalArticles = [...articleResult.items.filter((item) => item.contentType !== "GUIDE")];
   const canonicalSubjects = uniqueBySlug([
     ...subjectResult.items,
