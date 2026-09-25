@@ -4,6 +4,7 @@ import { apiGetPublic } from "../../lib/api";
 import { ComingSoon } from "../../components/ComingSoon";
 import { EmptyState } from "../../components/ui";
 import { pageMetadata } from "../../lib/seo";
+import "./course.css";
 import {
   buildCourseCatalog,
   type CatalogCourse,
@@ -56,9 +57,9 @@ export default async function CoursesPage() {
     <main className="pg">
       <div className="pg-hero-wrap">
         <div className="pg-shell pg-hero">
-          <p className="pg-eyebrow">یادگیری هدفمند</p>
-          <h1>دوره‌ها</h1>
-          <p className="pg-lede">مسیرهای آموزشی ارشد و دکتری کامپیوتر را بر اساس هدف و زمانت انتخاب کن.</p>
+          <p className="pg-eyebrow">دوره‌ها</p>
+          <h1>دوره‌های کامل، از پایه تا تست کنکور</h1>
+          <p className="pg-lede">هر دوره درس‌به‌درس جلو می‌رود؛ با خرید هر دوره، بانک سؤال همان درس هم باز می‌شود.</p>
         </div>
       </div>
 
@@ -80,19 +81,23 @@ export default async function CoursesPage() {
             ]}
           />
         ) : (
-          <div className="pg-grid pg-grid-wide">
+          <ul className="cc-list">
             {catalog.map((item) => (
-              <article className="pg-card" key={item.course.slug}>
-                <span className="pg-badge">{item.accessLabel}</span>
-                <b>{item.course.title}</b>
-                <small>{item.course.description}</small>
-                <span className="pg-card-action pg-card-row">
-                  <strong className="pg-price">{item.priceLabel}</strong>
-                  <Link className="button button-secondary" href={item.href}>{item.ctaLabel}</Link>
-                </span>
-              </article>
+              <li key={item.course.slug}>
+                <article className="cc-row">
+                  <div className="cc-body">
+                    <span className="cc-kind">{item.accessLabel}</span>
+                    <h2><Link href={item.href}>{item.course.title}</Link></h2>
+                    <p>{item.course.description}</p>
+                  </div>
+                  <div className="cc-side">
+                    <strong className="cc-price">{item.priceLabel}</strong>
+                    <Link className="ds-btn ds-btn-secondary ds-btn-sm" href={item.href}>{item.ctaLabel.replace(/\s*←$/, "")}</Link>
+                  </div>
+                </article>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </section>
     </main>

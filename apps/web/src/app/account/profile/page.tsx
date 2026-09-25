@@ -158,7 +158,7 @@ export default function ProfilePage() {
         <span className="st-avatar st-avatar-xl">{initials(profile)}</span>
         <div className="st-profile-id">
           <h2>{studentName(profile)}</h2>
-          <p dir="ltr" className="st-profile-phone">{me.user.phone}</p>
+          <p dir="ltr" className="st-profile-phone">{toPersianDigits(me.user.phone)}</p>
           <div className="st-chips">
             <span className="st-chip">{educationLabel(profile.educationStatus)}</span>
             {profile.universityName && <span className="st-chip">{profile.universityName}</span>}

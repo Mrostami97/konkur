@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#243B53",
+  themeColor: "#0c1b2e",
 };
 
 // The header lists every subject; the footer only the ones most candidates
@@ -59,6 +59,10 @@ const FOOTER_SUBJECTS = FOOTER_SUBJECT_SLUGS.flatMap((slug) => NAV_SUBJECTS.filt
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fa" dir="rtl">
+      <head>
+        {/* The one font file every page needs before first paint. */}
+        <link rel="preload" href="/fonts/Vazirmatn-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
+      </head>
       <body>
         <StructuredData data={[
           { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom"] },

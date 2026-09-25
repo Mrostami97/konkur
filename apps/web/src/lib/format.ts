@@ -25,3 +25,14 @@ export function formatRial(amountRial: number): string {
 export function formatSharePercent(basisPoints: number): string {
   return `${formatPersianNumber(basisPoints / 100, { maximumFractionDigits: 2 })}٪`;
 }
+
+/**
+ * The konkur percentage: a wrong answer costs a third of a right one. Same
+ * formula as konkurPercent() in the API's assessment service, which ranks on
+ * it -- the stored percentCorrect ignores wrong answers and would flatter a
+ * candidate who guessed.
+ */
+export function konkurPercent(score: { correctCount: number; wrongCount: number; unansweredCount: number }): number {
+  const total = score.correctCount + score.wrongCount + score.unansweredCount;
+  return total > 0 ? ((3 * score.correctCount - score.wrongCount) / (3 * total)) * 100 : 0;
+}

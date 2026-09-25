@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { apiGetPublic } from "../../../lib/api";
+import { toPersianDigits } from "../../../lib/format";
 import { BuyButton } from "../../../components/BuyButton";
 import { VideoLicensePanel } from "../../../components/VideoLicensePanel";
 import { CourseProgressPanel } from "../../../components/CourseProgressPanel";
 import { StructuredData } from "../../../components/StructuredData";
-import { EmptyState, PageHeader } from "../../../components/ui";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
 import { findDirectCourseProduct, formatRial, type CatalogProduct } from "../catalog";
+import "../course.css";
 
 interface Lesson {
   id: string;
@@ -71,6 +72,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return pageMetadata({ title: result.course.title, description: result.course.description, path: `/courses/${result.course.slug}` });
 }
 
+const ACCESS_LABEL = { PUBLIC: "دورهٔ رایگان", ACCOUNT: "ویژهٔ اعضا", ENTITLEMENT: "دورهٔ تخصصی" } as const;
+
 export default async function CoursePage({ params }: { params: { slug: string } }) {
   const courseResult = await loadCourse(params.slug);
   if (!courseResult.course) {
@@ -84,7 +87,9 @@ export default async function CoursePage({ params }: { params: { slug: string } 
     : { product: null, unavailable: false };
   const product = productResult.product;
   const path = `/courses/${course.slug}`;
-  const firstLessonId = course.modules.flatMap((module) => module.lessons)[0]?.id;
+  const lessons = course.modules.flatMap((module) => module.lessons);
+  const firstLessonId = lessons[0]?.id;
+  const previewCount = lessons.filter((lesson) => lesson.isPreview).length;
   const purchasableProduct = accessMode === "ENTITLEMENT" ? product : null;
   const schemas: Record<string, unknown>[] = [
     {
@@ -108,66 +113,107 @@ export default async function CoursePage({ params }: { params: { slug: string } 
     },
   ];
 
+  let lessonNumber = 0;
+
   return (
-    <main className="page-container">
+    <main className="cr">
       <StructuredData data={schemas} />
-      <PageHeader
-        eyebrow={accessMode === "PUBLIC" ? "دورهٔ رایگان" : accessMode === "ACCOUNT" ? "ویژهٔ اعضا" : "دورهٔ تخصصی"}
-        title={course.title}
-        description={course.description}
-        action={<Link className="button button-secondary" href="/courses">همهٔ دوره‌ها ←</Link>}
-      />
 
-      <section className="content-grid">
-        <CourseProgressPanel courseSlug={course.slug} firstLessonId={firstLessonId} />
-        <VideoLicensePanel courseId={course.id} />
-        <div className="surface-card">
-          <span className="eyebrow">دسترسی دوره</span>
-          <h2>{accessMode === "PUBLIC" ? "شروع رایگان" : accessMode === "ACCOUNT" ? "شروع با حساب کاربری" : purchasableProduct ? "تهیهٔ دوره" : "وضعیت دسترسی"}</h2>
-          {purchasableProduct?.prices?.[0] && <p><strong>{formatRial(purchasableProduct.prices[0].amountRial)}</strong></p>}
-          {accessMode === "ENTITLEMENT" ? (
-            productResult.unavailable
-              ? <p className="muted-copy">اطلاعات خرید موقتاً در دسترس نیست؛ لطفاً کمی بعد دوباره تلاش کنید.</p>
-              : purchasableProduct
-                ? <BuyButton productId={purchasableProduct.id} />
-                : <p className="muted-copy">در حال حاضر فروش مستقیم فعالی برای این دوره منتشر نشده است.</p>
-          ) : firstLessonId ? (
-            <Link className="button button-primary" href={`/lessons/${firstLessonId}`}>
-              {accessMode === "ACCOUNT" ? "ورود و شروع دوره ←" : "شروع از درس اول ←"}
-            </Link>
-          ) : (
-            <p className="muted-copy">هنوز درسی برای این دوره منتشر نشده است.</p>
-          )}
+      <header className="cr-top">
+        <div className="cr-wrap">
+          <nav className="cr-crumbs" aria-label="مسیر صفحه">
+            <Link href="/courses">دوره‌ها</Link>
+            <span aria-hidden="true">/</span>
+            <span>{course.title}</span>
+          </nav>
+          <p className="cr-kicker">{ACCESS_LABEL[accessMode]}</p>
+          <h1>{course.title}</h1>
+          <p className="cr-lede">{course.description}</p>
+          <p className="cr-facts">
+            <span>{toPersianDigits(course.modules.length)} فصل</span>
+            <span>{toPersianDigits(lessons.length)} درس</span>
+            {previewCount > 0 && <span>{toPersianDigits(previewCount)} درس نمونهٔ آزاد</span>}
+          </p>
         </div>
-      </section>
+      </header>
 
-      <section>
-        <div className="section-heading"><div><h2>سرفصل‌های دوره</h2><p>درس‌ها به ترتیب فصل نمایش داده شده‌اند؛ آخرین مشاهده در حساب ثبت می‌شود.</p></div></div>
-        {course.modules.length === 0 ? (
-          <EmptyState title="سرفصلی منتشر نشده است" description="بعد از انتشار درس‌ها، مسیر مطالعه در همین صفحه در دسترس خواهد بود." />
-        ) : (
-          <div className="content-grid-wide">
-            {course.modules.map((module) => (
-              <article className="surface-card" key={module.id}>
-                <span className="eyebrow">فصل {module.order.toLocaleString("fa-IR")}</span>
-                <h3>{module.title}</h3>
-                {module.lessons.length === 0 ? <p className="muted-copy">درسی در این فصل منتشر نشده است.</p> : (
-                  <ul className="quick-links">
-                    {module.lessons.map((lesson) => (
-                      <li key={lesson.id}>
-                        <Link href={`/lessons/${lesson.id}`}>
-                          <span>{lesson.title}</span>
-                          {lesson.isPreview && <small>نمونهٔ آزاد</small>}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+      <div className="cr-wrap cr-layout">
+        {/* ----------------------------------------------------- curriculum */}
+        <section className="cr-main" aria-labelledby="cr-outline-title">
+          <h2 id="cr-outline-title">سرفصل‌ها</h2>
+          {course.modules.length === 0 ? (
+            <p className="cr-empty">سرفصل‌ها بعد از انتشار درس‌ها همین‌جا می‌آیند.</p>
+          ) : (
+            <ol className="cr-outline">
+              {course.modules.map((module, moduleIndex) => (
+                <li className="cr-module" key={module.id}>
+                  <div className="cr-module-head">
+                    <span className="cr-module-n" aria-hidden="true">{toPersianDigits(moduleIndex + 1)}</span>
+                    <div>
+                      <h3>{module.title}</h3>
+                      <small>{toPersianDigits(module.lessons.length)} درس</small>
+                    </div>
+                  </div>
+                  {module.lessons.length === 0 ? (
+                    <p className="cr-empty">درسی در این فصل منتشر نشده است.</p>
+                  ) : (
+                    <ul className="cr-lessons">
+                      {module.lessons.map((lesson) => {
+                        lessonNumber += 1;
+                        return (
+                          <li key={lesson.id}>
+                            <Link href={`/lessons/${lesson.id}`} className="cr-lesson">
+                              <span className="cr-lesson-n tnum" aria-hidden="true">{toPersianDigits(lessonNumber)}</span>
+                              <span className="cr-lesson-title">{lesson.title}</span>
+                              {lesson.isPreview && <span className="cr-free">نمونهٔ آزاد</span>}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+
+        {/* -------------------------------------------------------- access */}
+        <aside className="cr-aside" aria-label="دسترسی و پیشرفت">
+          <div className="cr-buy">
+            {accessMode === "ENTITLEMENT" ? (
+              <>
+                {purchasableProduct?.prices?.[0] && (
+                  <p className="cr-price tnum">{formatRial(purchasableProduct.prices[0].amountRial)}</p>
                 )}
-              </article>
-            ))}
+                {productResult.unavailable ? (
+                  <p className="cr-note">اطلاعات خرید موقتاً در دسترس نیست؛ کمی بعد دوباره سر بزن.</p>
+                ) : purchasableProduct ? (
+                  <BuyButton productId={purchasableProduct.id} />
+                ) : (
+                  <p className="cr-note">فروش این دوره هنوز باز نشده است.</p>
+                )}
+                <ul className="cr-includes">
+                  <li>همهٔ درس‌های دوره، به ترتیب فصل</li>
+                  <li>بانک سؤال همین درس، بدون هزینهٔ اضافه</li>
+                  <li>ثبت پیشرفت و ادامه از آخرین درس</li>
+                </ul>
+              </>
+            ) : firstLessonId ? (
+              <>
+                <p className="cr-price">{accessMode === "PUBLIC" ? "رایگان" : "با حساب کاربری"}</p>
+                <Link className="ds-btn ds-btn-primary cr-cta" href={`/lessons/${firstLessonId}`}>
+                  {accessMode === "ACCOUNT" ? "ورود و شروع دوره" : "شروع از درس اول"}
+                </Link>
+              </>
+            ) : (
+              <p className="cr-note">هنوز درسی برای این دوره منتشر نشده است.</p>
+            )}
           </div>
-        )}
-      </section>
+          <CourseProgressPanel courseSlug={course.slug} firstLessonId={firstLessonId} />
+          <VideoLicensePanel courseId={course.id} />
+        </aside>
+      </div>
     </main>
   );
 }

@@ -217,7 +217,7 @@ export function Onboarding() {
           </form>
         </div>
         <p className="ob-foot">
-          وارد شده با {me.user.phone}
+          وارد شده با <bdi dir="ltr">{toPersianDigits(me.user.phone)}</bdi>
           <span aria-hidden> · </span>
           <button type="button" onClick={() => void logout()}>خروج</button>
         </p>
