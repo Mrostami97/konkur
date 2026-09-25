@@ -47,10 +47,12 @@ const ITEM_STATUS: Record<string, { label: string; tone: "neutral" | "success" |
   SKIPPED: { label: "رد شد", tone: "neutral" },
 };
 
+// The API reports NEW, MATCH (identical to the latest version) or CONFLICT
+// (an existing item whose text differs, i.e. this import is its next version).
 const DEDUPE: Record<string, string> = {
   NEW: "تازه",
-  DUPLICATE: "تکراری",
-  UPDATE: "به‌روزرسانی",
+  MATCH: "بدون تغییر",
+  CONFLICT: "نسخهٔ جدیدِ محتوای موجود",
 };
 
 /** Rolling a published entity back needs its id and a version. The id is
