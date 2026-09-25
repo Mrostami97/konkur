@@ -31,7 +31,11 @@ export function comingSoonPaths(availability: Availability | null): Set<string> 
   if (!availability.resources) soon.add("/resources");
   if (!availability.instructors) soon.add("/instructors");
   if (!availability.consultations) soon.add("/consultations");
-  if (availability.questions < MIN_QUESTIONS_FOR_BANK) soon.add("/questions");
+  if (availability.questions < MIN_QUESTIONS_FOR_BANK) {
+    soon.add("/questions");
+    // The test builder draws from the same bank.
+    soon.add("/practice");
+  }
   if (!availability.exams) soon.add("/exams");
   if (!availability.results) soon.add("/results");
   if (!availability.reportCards) {

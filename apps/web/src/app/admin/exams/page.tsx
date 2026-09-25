@@ -187,7 +187,7 @@ export default function ExamsAdminPage() {
   const [createError, setCreateError] = useState<string | null>(null);
 
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [publishTarget, setPublishTarget] = useState<Exam | null>(null);
+  const [publishTarget, setPublishTarget] = useState<{ exam: Exam; publish: boolean } | null>(null);
   const [publishing, setPublishing] = useState(false);
 
   const load = useCallback(async () => {
@@ -237,7 +237,7 @@ export default function ExamsAdminPage() {
     if (!publishTarget) return;
     setPublishing(true);
     try {
-      await apiFetch(`/admin/exams/${publishTarget.id}/publish`, { method: "POST" });
+      await apiFetch(`/admin/exams/${publishTarget.exam.id}/${publishTarget.publish ? "publish" : "unpublish"}`, { method: "POST" });
       setPublishTarget(null);
       await load();
     } catch (err) {
@@ -334,8 +334,10 @@ export default function ExamsAdminPage() {
                         </div>
                       </div>
                       <div className="ds-row">
-                        {!exam.isPublished && (
-                          <Button size="sm" variant="primary" onClick={() => setPublishTarget(exam)}>انتشار</Button>
+                        {exam.isPublished ? (
+                          <Button size="sm" variant="ghost" onClick={() => setPublishTarget({ exam, publish: false })}>لغو انتشار</Button>
+                        ) : (
+                          <Button size="sm" variant="primary" onClick={() => setPublishTarget({ exam, publish: true })}>انتشار</Button>
                         )}
                         <Button size="sm" onClick={() => setExpanded(expanded === exam.id ? null : exam.id)}>
                           {expanded === exam.id ? "بستن" : "مدیریت"}
@@ -359,9 +361,13 @@ export default function ExamsAdminPage() {
 
       <ConfirmDialog
         open={publishTarget !== null}
-        title={`انتشار «${publishTarget?.title ?? ""}»؟`}
-        description="پس از انتشار، آزمون برای کاربران قابل شروع می‌شود و این کار از پنل برگشت‌پذیر نیست."
-        confirmLabel="منتشر کن"
+        title={publishTarget?.publish ? `انتشار «${publishTarget.exam.title}»؟` : `لغو انتشار «${publishTarget?.exam.title ?? ""}»؟`}
+        description={
+          publishTarget?.publish
+            ? "پس از انتشار، آزمون در فهرست آزمون‌ها می‌آید و کاربران می‌توانند شروعش کنند."
+            : "آزمون از فهرست خارج می‌شود و شروع تازه ممکن نیست؛ کسانی که وسط آزمون‌اند می‌توانند تمامش کنند و کارنامه‌ها می‌مانند."
+        }
+        confirmLabel={publishTarget?.publish ? "منتشر کن" : "لغو انتشار"}
         busy={publishing}
         onConfirm={publish}
         onCancel={() => setPublishTarget(null)}

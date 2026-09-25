@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { createHash, randomBytes, randomInt } from "crypto";
 import { AuditService } from "../audit/audit.service";
@@ -9,6 +9,21 @@ import { verifyPassword } from "./password-hasher";
 const OTP_TTL_MINUTES = Number(process.env.OTP_TTL_MINUTES ?? 5);
 const OTP_MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS ?? 5);
 const SESSION_TTL_HOURS = Number(process.env.SESSION_TTL_HOURS ?? 720);
+
+/**
+ * Per-number limits on sending a login code. The per-IP throttle alone does
+ * not stop someone rotating addresses from texting one victim over and over
+ * (each message also costs money), so the number itself is limited too.
+ * Read on each call so tests can set them; off by default under Jest, whose
+ * suites sign the same seeded admin in from many files within a minute.
+ */
+function otpLimits() {
+  const test = process.env.NODE_ENV === "test";
+  return {
+    cooldownSeconds: Number(process.env.OTP_RESEND_COOLDOWN_SECONDS ?? (test ? 0 : 60)),
+    maxPerHour: Number(process.env.OTP_MAX_PER_HOUR ?? (test ? 0 : 6)),
+  };
+}
 
 function hash(value: string): string {
   return createHash("sha256").update(value).digest("hex");
@@ -37,7 +52,40 @@ export class IdentityService {
     @Inject(OTP_PROVIDER) private readonly otpProvider: OtpProvider,
   ) {}
 
-  async requestOtp(phone: string, attribution?: { source?: string; campaignCode?: string }): Promise<void> {
+  async requestOtp(
+    phone: string,
+    attribution?: { source?: string; campaignCode?: string },
+  ): Promise<{ resendAfterSeconds: number }> {
+    const { cooldownSeconds, maxPerHour } = otpLimits();
+    if (cooldownSeconds > 0 || maxPerHour > 0) {
+      const hourAgo = new Date(Date.now() - 3_600_000);
+      const recent = await this.prisma.otpCode.findMany({
+        where: { phone, createdAt: { gt: hourAgo } },
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true },
+      });
+      const waited = recent[0] ? (Date.now() - recent[0].createdAt.getTime()) / 1000 : Infinity;
+      if (cooldownSeconds > 0 && waited < cooldownSeconds) {
+        const retryAfterSeconds = Math.ceil(cooldownSeconds - waited);
+        throw new HttpException(
+          { statusCode: 429, message: "wait before requesting another code", code: "OTP_COOLDOWN", retryAfterSeconds },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+      if (maxPerHour > 0 && recent.length >= maxPerHour) {
+        const oldest = recent[recent.length - 1].createdAt.getTime();
+        throw new HttpException(
+          {
+            statusCode: 429,
+            message: "too many codes requested for this number",
+            code: "OTP_HOURLY_LIMIT",
+            retryAfterSeconds: Math.ceil((oldest + 3_600_000 - Date.now()) / 1000),
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+    }
+
     let user = await this.prisma.user.findUnique({ where: { phone } });
     let isNewUser = false;
     if (!user) {
@@ -69,7 +117,7 @@ export class IdentityService {
     }
 
     const code = generateOtpCode();
-    await this.prisma.otpCode.create({
+    const otp = await this.prisma.otpCode.create({
       data: {
         userId: user.id,
         phone,
@@ -78,7 +126,14 @@ export class IdentityService {
       },
     });
 
-    await this.otpProvider.send(phone, code);
+    try {
+      await this.otpProvider.send(phone, code);
+    } catch (err) {
+      // A code that never reached the phone must not start the cooldown.
+      await this.prisma.otpCode.delete({ where: { id: otp.id } }).catch(() => undefined);
+      throw err;
+    }
+    return { resendAfterSeconds: cooldownSeconds };
   }
 
   async verifyOtp(phone: string, code: string, ctx: AuthContext): Promise<{ token: string; user: SessionUser }> {

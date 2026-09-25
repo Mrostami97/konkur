@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { AttemptStatus, ExamMode } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
+import { AccessService } from "../access/access.service";
 import { AuditService } from "../audit/audit.service";
 import { ProfileService } from "../identity/profile/profile.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
@@ -90,6 +91,7 @@ export class AssessmentService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly profiles: ProfileService,
+    private readonly access: AccessService,
   ) {}
 
   // --- Exam builder (admin) -------------------------------------------------
@@ -139,6 +141,8 @@ export class AssessmentService {
   }
 
   async publishExam(examId: string, actorId: string) {
+    const existing = await this.prisma.exam.findUnique({ where: { id: examId }, select: { isPractice: true } });
+    if (!existing || existing.isPractice) throw new NotFoundException("exam not found");
     const exam = await this.prisma.exam.update({ where: { id: examId }, data: { isPublished: true } });
     await this.audit.log({
       actorUserId: actorId,
@@ -149,8 +153,20 @@ export class AssessmentService {
     return exam;
   }
 
+  /** Stops new attempts; attempts already under way can still be finished
+   * and every report stays readable. */
+  async unpublishExam(examId: string, actorId: string) {
+    const existing = await this.prisma.exam.findUnique({ where: { id: examId }, select: { isPractice: true } });
+    if (!existing || existing.isPractice) throw new NotFoundException("exam not found");
+    const exam = await this.prisma.exam.update({ where: { id: examId }, data: { isPublished: false } });
+    await this.audit.log({ actorUserId: actorId, action: "exam.unpublished", targetType: "Exam", targetId: examId });
+    return exam;
+  }
+
   listAllExams() {
+    // Students' own practice exams are theirs, not catalog drafts.
     return this.prisma.exam.findMany({
+      where: { isPractice: false },
       include: { forms: { include: { _count: { select: { items: true } } } } },
       orderBy: { createdAt: "desc" },
     });
@@ -210,10 +226,13 @@ export class AssessmentService {
         userId: true,
         examId: true,
         status: true,
+        exam: { select: { isPractice: true } },
         score: { select: { correctCount: true, wrongCount: true, unansweredCount: true } },
       },
     });
     if (!attempt || attempt.userId !== userId) throw new NotFoundException("attempt not found");
+    // A practice exam has exactly one participant; a "rank" there is noise.
+    if (attempt.exam.isPractice) throw new NotFoundException("a practice exam has no standing");
     if (attempt.status !== AttemptStatus.SUBMITTED || !attempt.score) {
       throw new ForbiddenException("the attempt has not been graded yet");
     }
@@ -232,16 +251,17 @@ export class AssessmentService {
         startedAt: true,
         deadlineAt: true,
         submittedAt: true,
-        exam: { select: { id: true, slug: true, title: true, durationMinutes: true } },
+        exam: { select: { id: true, slug: true, title: true, durationMinutes: true, isPractice: true } },
         score: {
           select: { correctCount: true, wrongCount: true, unansweredCount: true, rawScore: true, percentCorrect: true },
         },
       },
     });
-    const graded = attempts.filter((attempt) => attempt.score);
+    // A practice exam has one participant by construction: no standing.
+    const graded = attempts.filter((attempt) => attempt.score && !attempt.exam.isPractice);
     const populations = graded.length ? await this.populations([...new Set(graded.map((attempt) => attempt.exam.id))]) : new Map();
     return attempts.map((attempt) => {
-      if (!attempt.score) return { ...attempt, standing: null };
+      if (!attempt.score || attempt.exam.isPractice) return { ...attempt, standing: null };
       const standing = standingOf(populations.get(attempt.exam.id) ?? [], userId, attempt.id, konkurPercent(attempt.score));
       return {
         ...attempt,
@@ -258,7 +278,10 @@ export class AssessmentService {
 
   async startAttempt(examId: string, userId: string) {
     const exam = await this.prisma.exam.findUnique({ where: { id: examId }, include: { forms: true } });
-    if (!exam || !exam.isPublished) throw new NotFoundException("exam not found");
+    // A practice exam is never published; only the student who built it may
+    // sit it. Anyone else gets the same answer as for a missing exam.
+    const startable = exam && (exam.isPractice ? exam.ownerUserId === userId : exam.isPublished);
+    if (!exam || !startable) throw new NotFoundException("exam not found");
 
     const inProgress = await this.prisma.attempt.findFirst({
       where: { examId, userId, status: AttemptStatus.IN_PROGRESS },
@@ -273,13 +296,15 @@ export class AssessmentService {
     if (exam.mode === ExamMode.STATIC) {
       const form = exam.forms[0];
       if (!form) throw new BadRequestException("exam has no form configured yet");
+      if (exam.isPractice) await this.assertPracticeStillOpen(form.id, userId);
       formId = form.id;
     } else {
       if (!exam.subjectCode || !exam.questionCount) {
         throw new BadRequestException("DYNAMIC exam is missing subjectCode/questionCount");
       }
       const candidates = await this.prisma.question.findMany({
-        where: { subjectCode: exam.subjectCode },
+        // A retired question has left the bank: it must not reach a new form.
+        where: { subjectCode: exam.subjectCode, retiredAt: null },
         select: { id: true },
       });
       if (candidates.length < exam.questionCount) {
@@ -302,6 +327,25 @@ export class AssessmentService {
       },
     });
     return this.getAttempt(attempt.id, userId);
+  }
+
+  /**
+   * A practice form was drawn from what the student could see when they built
+   * it. A retake after their bank access has ended would hand the paid
+   * questions -- and, once submitted, their answer keys -- back to them, so
+   * it is refused and they are pointed at building a new one.
+   */
+  private async assertPracticeStillOpen(formId: string, userId: string) {
+    const gated = await this.prisma.examItem.findMany({
+      where: { examFormId: formId, question: { isSample: false } },
+      select: { question: { select: { subjectCode: true } } },
+    });
+    const subjects = [...new Set(gated.map((item) => item.question.subjectCode))];
+    if (!subjects.length) return;
+    const accessible = await this.access.accessibleQuestionBankSubjects(userId, subjects);
+    if (subjects.some((code) => !accessible.has(code))) {
+      throw new ForbiddenException("question bank access for this practice exam has ended");
+    }
   }
 
   /** Resume: current state, remaining time, saved answers, no answer key. */
@@ -361,6 +405,13 @@ export class AssessmentService {
       await this.finalizeAttempt(attemptId, AttemptStatus.EXPIRED);
       throw new ForbiddenException("attempt has expired");
     }
+    // Only a question on this attempt's form can be answered: anything else
+    // would be graded as nothing yet still sit in the attempt's answers.
+    const onForm = await this.prisma.examItem.findFirst({
+      where: { examFormId: attempt.examFormId, questionId },
+      select: { id: true },
+    });
+    if (!onForm) throw new NotFoundException("question is not on this attempt");
 
     return this.prisma.answer.upsert({
       where: { attemptId_questionId: { attemptId, questionId } },
@@ -458,6 +509,8 @@ export class AssessmentService {
     const answerByQuestion = new Map(attempt.answers.map((a) => [a.questionId, a.selectedOption]));
     return {
       examTitle: attempt.exam.title,
+      examId: attempt.exam.id,
+      isPractice: attempt.exam.isPractice,
       status: attempt.status,
       score: attempt.score,
       items: attempt.examForm.items.map((item) => ({

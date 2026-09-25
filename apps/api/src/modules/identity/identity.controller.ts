@@ -36,8 +36,12 @@ export class IdentityController {
   @HttpCode(200)
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   async requestOtp(@Body() dto: RequestOtpDto) {
-    await this.identity.requestOtp(dto.phone, { source: dto.source, campaignCode: dto.campaignCode });
-    return { sent: true };
+    const { resendAfterSeconds } = await this.identity.requestOtp(dto.phone, {
+      source: dto.source,
+      campaignCode: dto.campaignCode,
+    });
+    // The normalized number, so the form can show what the code went to.
+    return { sent: true, phone: dto.phone, resendAfterSeconds };
   }
 
   @Post("otp/verify")

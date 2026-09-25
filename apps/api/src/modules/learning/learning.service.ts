@@ -7,6 +7,7 @@ import { AccessService } from "../access/access.service";
 import { ObjectStorageService } from "../ingestion/object-storage.service";
 import { LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/content-blocks";
 import { CreateCourseDto } from "./dto/create-course.dto";
+import { assertVideoBlocks } from "./course-authoring.service";
 import { CreateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, LessonAssetDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 
@@ -90,8 +91,14 @@ export class LearningService {
     const mod = await this.prisma.courseModule.findUnique({ where: { id: courseModuleId } });
     if (!mod) throw new NotFoundException("course module not found");
     assertValidContentBlocks(dto.contentBlocks, LESSON_BLOCK_TYPES);
+    assertVideoBlocks(dto.contentBlocks);
     const assets = await this.assertLessonAssets(dto.contentBlocks, dto.assets ?? []);
-    const { topicIds = [], ...lessonInput } = dto;
+    const { topicIds = [], ...rest } = dto;
+    // Omitted order: after the module's last lesson.
+    const last = rest.order === undefined
+      ? await this.prisma.lesson.findFirst({ where: { courseModuleId }, orderBy: { order: "desc" }, select: { order: true } })
+      : null;
+    const lessonInput = { ...rest, order: rest.order ?? (last?.order ?? 0) + 1 };
     return this.prisma.lesson.create({
       data: {
         courseModuleId,
@@ -116,7 +123,10 @@ export class LearningService {
     const existing = await this.prisma.lesson.findUnique({ where: { id: lessonId } });
     if (!existing) throw new NotFoundException("lesson not found");
     const blocks = dto.contentBlocks ?? (existing.contentBlocks as unknown[]);
-    if (dto.contentBlocks) assertValidContentBlocks(dto.contentBlocks, LESSON_BLOCK_TYPES);
+    if (dto.contentBlocks) {
+      assertValidContentBlocks(dto.contentBlocks, LESSON_BLOCK_TYPES);
+      assertVideoBlocks(dto.contentBlocks);
+    }
     const assets = await this.assertLessonAssets(
       blocks,
       dto.assets ?? ((existing.assets ?? []) as unknown as LessonAssetDto[]),

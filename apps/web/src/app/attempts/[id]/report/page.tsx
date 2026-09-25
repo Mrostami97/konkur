@@ -10,6 +10,7 @@ import { StandingPanel } from "./StandingPanel";
 import "./report.css";
 
 interface Block { type: string; [key: string]: unknown }
+
 interface Option { number: number; blocks: Block[] }
 
 interface ReportItem {
@@ -26,6 +27,8 @@ interface ReportItem {
 
 interface Report {
   examTitle: string;
+  examId: string;
+  isPractice: boolean;
   status: string;
   score: {
     correctCount: number;
@@ -109,7 +112,11 @@ export default function ReportPage({ params }: { params: { id: string } }) {
           </div>
           <nav className="rp-top-actions" aria-label="بعد از آزمون">
             <Link className="ds-btn ds-btn-secondary" href="/account/exams">آزمون‌ها و رتبه‌های من</Link>
-            <Link className="ds-btn ds-btn-ghost" href="/exams">آزمون‌های دیگر</Link>
+            {report?.isPractice ? (
+              <Link className="ds-btn ds-btn-ghost" href="/practice">آزمون تمرینی تازه</Link>
+            ) : (
+              <Link className="ds-btn ds-btn-ghost" href="/exams">آزمون‌های دیگر</Link>
+            )}
           </nav>
         </div>
       </header>
@@ -140,7 +147,7 @@ export default function ReportPage({ params }: { params: { id: string } }) {
                 </div>
               </section>
 
-              {report.status === "SUBMITTED" && <StandingPanel attemptId={params.id} />}
+              {report.status === "SUBMITTED" && !report.isPractice && <StandingPanel attemptId={params.id} />}
 
               {/* ----------------------------------------------------- review */}
               <section className="rp-review" aria-labelledby="rp-review-title">

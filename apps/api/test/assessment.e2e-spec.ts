@@ -377,6 +377,57 @@ describe("Assessment engine (e2e)", () => {
     expect(submitRes.body.correctCount + submitRes.body.wrongCount).toBe(3);
   });
 
+  it("never draws a retired question into a DYNAMIC form", async () => {
+    const retired = [questionIds[3], questionIds[4]];
+    await prisma.question.updateMany({
+      where: { id: { in: retired } },
+      data: { retiredAt: new Date(), retiredReason: "test" },
+    });
+    try {
+      const publishDynamic = async (questionCount: number): Promise<string> => {
+        const examRes = await request(app.getHttpServer())
+          .post("/admin/exams")
+          .set("Cookie", adminCookie)
+          .send({
+            slug: `dynamic-retired-${questionCount}-${Date.now()}`,
+            title: "Dynamic Retired Exam",
+            description: "...",
+            mode: "DYNAMIC",
+            durationMinutes: 30,
+            subjectCode,
+            questionCount,
+          })
+          .expect(201);
+        await request(app.getHttpServer())
+          .post(`/admin/exams/${examRes.body.id}/publish`)
+          .set("Cookie", adminCookie)
+          .expect(201);
+        return examRes.body.id;
+      };
+
+      // 5 questions in the subject, 2 retired: exactly 3 remain drawable.
+      const fitsId = await publishDynamic(3);
+      const startRes = await request(app.getHttpServer())
+        .post(`/exams/${fitsId}/start`)
+        .set("Cookie", await examReadyStudent())
+        .expect(201);
+      const drawn: string[] = startRes.body.items.map((i: any) => i.questionId);
+      expect(drawn).toHaveLength(3);
+      expect(drawn.some((id) => retired.includes(id))).toBe(false);
+
+      const tooManyId = await publishDynamic(4);
+      await request(app.getHttpServer())
+        .post(`/exams/${tooManyId}/start`)
+        .set("Cookie", await examReadyStudent())
+        .expect(400);
+    } finally {
+      await prisma.question.updateMany({
+        where: { id: { in: retired } },
+        data: { retiredAt: null, retiredReason: null },
+      });
+    }
+  });
+
   it("reports basic psychometrics across submitted attempts", async () => {
     const slug = `psychometrics-exam-${Date.now()}`;
     const examRes = await request(app.getHttpServer())

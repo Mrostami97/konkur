@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { AccessMode, ReviewStatus } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
-import { ConsoleOtpProvider, OTP_PROVIDER, OtpProvider } from "../identity/otp-provider";
+import { SMS_GATEWAY, SmsGateway } from "../notifications/sms-gateway";
 
 /** The same filter the public admissions and report pages apply to sources. */
 const ACTIVE_OFFICIAL_SOURCE = {
@@ -24,7 +24,7 @@ const ACTIVE_OFFICIAL_SOURCE = {
 export class SiteService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(OTP_PROVIDER) private readonly otp: OtpProvider,
+    @Inject(SMS_GATEWAY) private readonly gateway: SmsGateway,
   ) {}
 
   async availability() {
@@ -71,7 +71,7 @@ export class SiteService {
     // Codes are only logged, not sent, until an SMS gateway is connected. That
     // still works for a developer reading the log, but in production nobody
     // can read it, so there a code request would only strand the visitor.
-    const smsLogin = !(this.otp instanceof ConsoleOtpProvider);
+    const smsLogin = this.gateway.delivers && Boolean(process.env.SMS_OTP_TEMPLATE?.trim());
     return {
       smsLogin,
       otpLogin: smsLogin || process.env.NODE_ENV !== "production",

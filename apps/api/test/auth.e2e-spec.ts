@@ -114,7 +114,57 @@ describe("Auth + RBAC (e2e)", () => {
       .set("Cookie", cookie)
       .expect(200);
     expect(Array.isArray(res.body.users)).toBe(true);
-    expect(res.body.users.some((u: any) => u.phone === SEED_ADMIN_PHONE)).toBe(true);
+    expect(res.body.total).toBeGreaterThanOrEqual(1);
+    // Newest first, paged: the seeded admin is found by searching for them.
+    const found = await request(app.getHttpServer())
+      .get(`/admin/users?q=${encodeURIComponent("0" + SEED_ADMIN_PHONE.slice(3))}`)
+      .set("Cookie", cookie)
+      .expect(200);
+    expect(found.body.users.some((u: any) => u.phone === SEED_ADMIN_PHONE)).toBe(true);
+    const admins = await request(app.getHttpServer()).get("/admin/users?role=ADMIN&pageSize=100").set("Cookie", cookie).expect(200);
+    expect(admins.body.users.every((u: any) => u.roles.includes("ADMIN"))).toBe(true);
+    await request(app.getHttpServer()).get("/admin/users?pageSize=500").set("Cookie", cookie).expect(400);
+  });
+
+  it("lets an admin grant and revoke roles, audited, but never strand the panel without an admin", async () => {
+    const admin = await loginAs(SEED_ADMIN_PHONE);
+    const target = await loginAs(randomPhone());
+    const targetId = (await request(app.getHttpServer()).get("/auth/me").set("Cookie", target.cookie).expect(200)).body.user.id;
+
+    const granted = await request(app.getHttpServer())
+      .post(`/admin/users/${targetId}/roles`)
+      .set("Cookie", admin.cookie)
+      .send({ role: "AUTHOR" })
+      .expect(201);
+    expect(granted.body.roles).toEqual(expect.arrayContaining(["STUDENT", "AUTHOR"]));
+    // The new role takes effect on the next request.
+    await request(app.getHttpServer()).get("/admin/exams").set("Cookie", target.cookie).expect(200);
+
+    const detail = await request(app.getHttpServer()).get(`/admin/users/${targetId}`).set("Cookie", admin.cookie).expect(200);
+    expect(detail.body.passwordHash).toBeUndefined();
+    expect(detail.body.roles).toContain("AUTHOR");
+
+    await request(app.getHttpServer())
+      .delete(`/admin/users/${targetId}/roles/AUTHOR`)
+      .set("Cookie", admin.cookie)
+      .expect(200);
+    await request(app.getHttpServer()).get("/admin/exams").set("Cookie", target.cookie).expect(403);
+    await request(app.getHttpServer()).delete(`/admin/users/${targetId}/roles/AUTHOR`).set("Cookie", admin.cookie).expect(404);
+    await request(app.getHttpServer()).delete(`/admin/users/${targetId}/roles/WIZARD`).set("Cookie", admin.cookie).expect(400);
+    await request(app.getHttpServer()).post(`/admin/users/${targetId}/roles`).set("Cookie", admin.cookie).send({ role: "WIZARD" }).expect(400);
+
+    // A non-admin cannot hand out roles, including to themselves.
+    await request(app.getHttpServer())
+      .post(`/admin/users/${targetId}/roles`)
+      .set("Cookie", target.cookie)
+      .send({ role: "ADMIN" })
+      .expect(403);
+
+    const adminId = (await request(app.getHttpServer()).get("/auth/me").set("Cookie", admin.cookie).expect(200)).body.user.id;
+    await request(app.getHttpServer()).delete(`/admin/users/${adminId}/roles/ADMIN`).set("Cookie", admin.cookie).expect(400);
+
+    const audit = await prisma.auditLog.findMany({ where: { targetId: targetId, action: { in: ["user.role_granted", "user.role_revoked"] } } });
+    expect(audit.map((row) => row.action).sort()).toEqual(["user.role_granted", "user.role_revoked"]);
   });
 
   it("logs the seeded administrator in with the password method", async () => {

@@ -857,3 +857,6 @@ a.st-ctask-title:hover { color: var(--st-blue); }
   .st-ring-value,
   .ob-progress span { transition: none; }
 }
+
+.st-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.st-badge-inline { margin-inline-start: 0.5rem; vertical-align: middle; }

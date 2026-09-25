@@ -5,12 +5,16 @@ import { Test } from "@nestjs/testing";
 import request from "supertest";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
-import { ConsoleOtpProvider, OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
+import { ConsoleSmsGateway, SMS_GATEWAY, SmsGateway } from "../src/modules/notifications/sms-gateway";
 import { SiteService } from "../src/modules/site/site.service";
 
 /** Stands in for a connected SMS gateway. */
-class GatewayOtpProvider implements OtpProvider {
-  async send(): Promise<void> {}
+class DeliveringGateway implements SmsGateway {
+  readonly name = "fake";
+  readonly delivers = true;
+  async send() {
+    return {};
+  }
 }
 
 const KEYS = [
@@ -33,10 +37,14 @@ describe("Site availability (e2e)", () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
+  const savedTemplate = process.env.SMS_OTP_TEMPLATE;
+
   beforeAll(async () => {
+    // A connected gateway needs an approved login-code template to be usable.
+    process.env.SMS_OTP_TEMPLATE = "login-code";
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
-      .overrideProvider(OTP_PROVIDER)
-      .useValue(new GatewayOtpProvider())
+      .overrideProvider(SMS_GATEWAY)
+      .useValue(new DeliveringGateway())
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
@@ -44,6 +52,8 @@ describe("Site availability (e2e)", () => {
   });
 
   afterAll(async () => {
+    if (savedTemplate === undefined) delete process.env.SMS_OTP_TEMPLATE;
+    else process.env.SMS_OTP_TEMPLATE = savedTemplate;
     await app.close();
   });
 
@@ -79,7 +89,7 @@ describe("Site availability (e2e)", () => {
   });
 
   it("closes code login in production while codes are only logged", async () => {
-    const site = new SiteService(prisma, new ConsoleOtpProvider());
+    const site = new SiteService(prisma, new ConsoleSmsGateway());
     const env = process.env.NODE_ENV;
     try {
       process.env.NODE_ENV = "production";

@@ -182,7 +182,8 @@ describe("Card-to-card payment (e2e)", () => {
       .get("/admin/payments?status=AWAITING_REVIEW")
       .set("Cookie", adminCookie)
       .expect(200);
-    expect(queue.body.some((row: { id: string }) => row.id === payment.id)).toBe(true);
+    expect(queue.body.items.some((row: { id: string }) => row.id === payment.id)).toBe(true);
+    expect(queue.body.total).toBeGreaterThanOrEqual(1);
 
     let order = await prisma.order.findUniqueOrThrow({ where: { id: orderId } });
     expect(order.status).toBe("PENDING");
@@ -191,6 +192,16 @@ describe("Card-to-card payment (e2e)", () => {
       .post(`/admin/payments/${payment.id}/confirm`)
       .set("Cookie", adminCookie)
       .expect(201);
+
+    // The dashboard's revenue comes from the summary, not a page of orders.
+    const summary = await request(app.getHttpServer()).get("/admin/orders/summary").set("Cookie", adminCookie).expect(200);
+    expect(summary.body.paidOrders).toBeGreaterThanOrEqual(1);
+    expect(summary.body.revenueRial).toBeGreaterThanOrEqual(2_500_000);
+    expect(summary.body.monthly.at(-1).month).toMatch(/^14\d{2}-\d{2}$/);
+    const paged = await request(app.getHttpServer()).get("/admin/orders?status=PAID&pageSize=2").set("Cookie", adminCookie).expect(200);
+    expect(paged.body.items.length).toBeLessThanOrEqual(2);
+    expect(paged.body.items.every((row: { status: string }) => row.status === "PAID")).toBe(true);
+    await request(app.getHttpServer()).get("/admin/orders/summary").set("Cookie", buyerCookie).expect(403);
 
     order = await prisma.order.findUniqueOrThrow({ where: { id: orderId } });
     expect(order.status).toBe("PAID");

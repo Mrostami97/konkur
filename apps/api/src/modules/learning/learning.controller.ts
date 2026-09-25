@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
 import { Role } from "@prisma/client";
@@ -11,6 +11,8 @@ import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { SpotPlayerService } from "./spotplayer.service";
+import { CourseAuthoringService } from "./course-authoring.service";
+import { MoveDto, RenameModuleDto } from "./dto/module-ops.dto";
 
 @Controller("courses")
 export class CoursesPublicController {
@@ -85,7 +87,10 @@ export class LearningStudentController {
 @UseGuards(SessionAuthGuard, RolesGuard)
 @Roles(Role.AUTHOR, Role.ADMIN)
 export class LearningAdminController {
-  constructor(private readonly learning: LearningService) {}
+  constructor(
+    private readonly learning: LearningService,
+    private readonly authoring: CourseAuthoringService,
+  ) {}
 
   @Get("courses")
   listAll() {
@@ -125,6 +130,40 @@ export class LearningAdminController {
   @Patch("lessons/:id")
   updateLesson(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: UpdateLessonDto) {
     return this.learning.updateLesson(req.user!.id, id, dto);
+  }
+
+  /** Takes the course out of the catalogue and out of reach -- enrolled
+   * students included -- until it is published again. */
+  @Post("courses/:id/unpublish")
+  unpublish(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.authoring.setPublished(req.user!.id, id, false);
+  }
+
+  @Patch("modules/:id")
+  renameModule(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: RenameModuleDto) {
+    return this.authoring.renameModule(req.user!.id, id, dto.title);
+  }
+
+  @Delete("modules/:id")
+  deleteModule(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.authoring.deleteModule(req.user!.id, id);
+  }
+
+  @Post("modules/:id/move")
+  @HttpCode(200)
+  moveModule(@Param("id") id: string, @Body() dto: MoveDto) {
+    return this.authoring.moveModule(id, dto.direction);
+  }
+
+  @Delete("lessons/:id")
+  deleteLesson(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.authoring.deleteLesson(req.user!.id, id);
+  }
+
+  @Post("lessons/:id/move")
+  @HttpCode(200)
+  moveLesson(@Param("id") id: string, @Body() dto: MoveDto) {
+    return this.authoring.moveLesson(id, dto.direction);
   }
 
   @Post("lesson-images")

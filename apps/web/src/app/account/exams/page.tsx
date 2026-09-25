@@ -40,10 +40,16 @@ export default function MyExamsPage() {
       title="آزمون‌ها و کارنامه"
       subtitle="همهٔ آزمون‌هایی که داده‌ای، درصد هرکدام و روند پیشرفتت."
       action={
-        <Link href="/exams" className="st-btn st-btn-primary">
-          <Glyph name="target" />
-          آزمون جدید
-        </Link>
+        <div className="st-actions">
+          <Link href="/practice" className="st-btn st-btn-soft">
+            <Glyph name="spark" />
+            آزمون‌ساز
+          </Link>
+          <Link href="/exams" className="st-btn st-btn-primary">
+            <Glyph name="target" />
+            آزمون جدید
+          </Link>
+        </div>
       }
     >
       {failed ? (
@@ -60,8 +66,11 @@ export default function MyExamsPage() {
           <div className="st-empty st-empty-lg">
             <span className="st-empty-icon"><Glyph name="target" /></span>
             <strong>هنوز آزمونی نداده‌ای</strong>
-            <p>آزمون‌های زمان‌دار را از فهرست آزمون‌ها شروع کن؛ کارنامهٔ هر آزمون به نام خودت اینجا نگه داشته می‌شود.</p>
-            <Link href="/exams" className="st-btn st-btn-primary">دیدن آزمون‌ها</Link>
+            <p>آزمون‌های زمان‌دار را از فهرست آزمون‌ها شروع کن یا با آزمون‌ساز از درس و مبحث دلخواهت آزمون بساز؛ کارنامهٔ هر آزمون به نام خودت اینجا نگه داشته می‌شود.</p>
+            <div className="st-actions">
+              <Link href="/exams" className="st-btn st-btn-primary">دیدن آزمون‌ها</Link>
+              <Link href="/practice" className="st-btn st-btn-soft">ساختن آزمون تمرینی</Link>
+            </div>
           </div>
         </div>
       ) : (
@@ -116,7 +125,10 @@ export default function MyExamsPage() {
                 return (
                   <li key={attempt.id}>
                     <div className="st-exam-main">
-                      <strong>{attempt.exam.title}</strong>
+                      <strong>
+                        {attempt.exam.title}
+                        {attempt.exam.isPractice && <span className="st-badge st-badge-neutral st-badge-inline">تمرینی</span>}
+                      </strong>
                       <small>
                         {faDate(attempt.startedAt, { dateStyle: "medium", timeStyle: "short" })} ·{" "}
                         {toPersianDigits(attempt.exam.durationMinutes)} دقیقه

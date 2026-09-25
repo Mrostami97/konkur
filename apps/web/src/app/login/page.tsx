@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { apiFetch } from "../../lib/api";
+import { FormEvent, useEffect, useState } from "react";
+import { apiFetch, ApiError } from "../../lib/api";
+import { toPersianDigits } from "../../lib/format";
 import { useAvailability } from "../../lib/availability";
 import { TELEGRAM_URL } from "../../lib/site-nav";
 import "./login.css";
 
 /**
  * Persian and Arabic-Indic digits to ASCII, spaces and dashes removed. The
- * account key is the number exactly as typed otherwise -- 09... and +989...
- * are different accounts on the API -- so no country-code rewriting here.
+ * API then brings 09..., 989... and +989... to one form, so each spelling
+ * of a number reaches the same account.
  */
 function cleanPhone(value: string) {
   return value
@@ -27,8 +28,25 @@ function cleanCode(value: string) {
 /** The API's validation messages are English; say the same thing in Persian. */
 function friendly(err: unknown, fallback: string) {
   const message = err instanceof Error ? err.message : "";
+  if (err instanceof ApiError && err.code === "OTP_COOLDOWN") {
+    return `کد قبلی تازه فرستاده شده؛ ${toPersianDigits(Number(err.details?.retryAfterSeconds ?? 60))} ثانیهٔ دیگر می‌توانی کد تازه بگیری.`;
+  }
+  if (err instanceof ApiError && err.code === "OTP_HOURLY_LIMIT") return "برای این شماره کد زیادی درخواست شده؛ کمی بعد دوباره امتحان کن.";
+  if (err instanceof ApiError && err.status === 429) return "تلاش‌ها زیاد بود؛ یک دقیقه صبر کن و دوباره امتحان کن.";
   if (/phone must be a valid phone number/i.test(message)) return "شمارهٔ موبایل را درست وارد کن؛ مثلاً ۰۹۱۲۳۴۵۶۷۸۹.";
+  if (/code expired/i.test(message)) return "مهلت این کد تمام شده؛ کد تازه بگیر.";
+  if (/too many attempts/i.test(message)) return "این کد چند بار اشتباه وارد شد؛ کد تازه بگیر.";
+  if (/invalid phone or code/i.test(message)) return "کد واردشده درست نیست.";
+  if (/invalid phone or password/i.test(message)) return "شماره یا رمز عبور درست نیست.";
   return message || fallback;
+}
+
+/** Where to land after signing in: a same-site path from `?next=`, never an
+ * absolute or protocol-relative URL (that would make login an open redirect). */
+function nextPath(): string {
+  if (typeof window === "undefined") return "/account";
+  const next = new URLSearchParams(window.location.search).get("next");
+  return next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : "/account";
 }
 
 export default function LoginPage() {
@@ -40,16 +58,24 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resendIn, setResendIn] = useState(0);
+
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const timer = window.setTimeout(() => setResendIn((value) => value - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [resendIn]);
   // Only a definite "no" closes the code form; until the flags arrive, or if
   // they cannot be read, the form stays usable.
   const otpClosed = useAvailability()?.otpLogin === false;
 
-  async function requestCode(e: FormEvent) {
-    e.preventDefault();
+  async function requestCode(e?: FormEvent) {
+    e?.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      await apiFetch("/auth/otp/request", { method: "POST", body: { phone: cleanPhone(phone) } });
+      const res = await apiFetch<{ resendAfterSeconds?: number }>("/auth/otp/request", { method: "POST", body: { phone: cleanPhone(phone) } });
+      setResendIn(res?.resendAfterSeconds || 60);
       setStep("code");
     } catch (err) {
       setError(friendly(err, "ارسال کد انجام نشد."));
@@ -64,7 +90,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await apiFetch("/auth/otp/verify", { method: "POST", body: { phone: cleanPhone(phone), code } });
-      router.push("/account");
+      router.push(nextPath());
     } catch (err) {
       setError(friendly(err, "کد درست نیست یا منقضی شده است."));
     } finally {
@@ -78,7 +104,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await apiFetch("/auth/password/login", { method: "POST", body: { phone: cleanPhone(phone), password } });
-      router.push("/account");
+      router.push(nextPath());
     } catch (err) {
       setError(friendly(err, "ورود با رمز عبور انجام نشد."));
     } finally {
@@ -161,6 +187,13 @@ export default function LoginPage() {
                 />
               </label>
               <button className="lg-submit" type="submit" disabled={loading || code.length < 6}>{loading ? "در حال بررسی…" : "ورود"}</button>
+              <p className="lg-hint">
+                {resendIn > 0 ? (
+                  <>ارسال دوبارهٔ کد تا {toPersianDigits(resendIn)} ثانیهٔ دیگر</>
+                ) : (
+                  <button type="button" className="lg-link" onClick={() => void requestCode()} disabled={loading}>کد نرسید؟ ارسال دوباره</button>
+                )}
+              </p>
             </form>
           )}
 

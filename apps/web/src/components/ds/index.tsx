@@ -2,6 +2,7 @@
 
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { useEffect, useId, useRef } from "react";
+import { toPersianDigits } from "../../lib/format";
 
 /* Primitives for product and admin screens. Styling lives in
  * app/design-system.css; these components exist so a screen never has to
@@ -262,14 +263,14 @@ export function Pagination({
   return (
     <div className="ds-pagination">
       <span>
-        {first}–{last} از {total}
+        {toPersianDigits(first)}–{toPersianDigits(last)} از {toPersianDigits(total)}
       </span>
       <div className="ds-row">
         <Button size="sm" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
           قبلی
         </Button>
         <span>
-          صفحهٔ {page} از {lastPage}
+          صفحهٔ {toPersianDigits(page)} از {toPersianDigits(lastPage)}
         </span>
         <Button size="sm" disabled={page >= lastPage} onClick={() => onPageChange(page + 1)}>
           بعدی

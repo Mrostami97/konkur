@@ -28,9 +28,11 @@ export class CreateLessonDto {
   @MinLength(1)
   title!: string;
 
+  /** Omitted: after the module's last lesson. */
+  @IsOptional()
   @IsInt()
   @Min(0)
-  order!: number;
+  order?: number;
 
   @IsArray()
   @ArrayMinSize(1)

@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Interval } from "@nestjs/schedule";
 import { CaseStatus, LeadStage, OrderStatus } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
+import { pageArgs } from "../../common/pagination";
 import { CreateCaseDto } from "./dto/create-case.dto";
 import { AddInteractionDto } from "./dto/add-interaction.dto";
 import { CreateCampaignDto } from "./dto/create-campaign.dto";
@@ -91,12 +92,20 @@ export class CrmService {
     return lead.stage;
   }
 
-  async listLeads(stage?: LeadStage) {
-    return this.prisma.lead.findMany({
-      where: stage ? { stage } : undefined,
-      include: { user: { select: { phone: true } } },
-      orderBy: { updatedAt: "desc" },
-    });
+  async listLeads(query: { stage?: LeadStage; page?: number; pageSize?: number }) {
+    const { page, pageSize, skip, take } = pageArgs(query, 25);
+    const where = query.stage ? { stage: query.stage } : {};
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.lead.findMany({
+        where,
+        include: { user: { select: { phone: true } } },
+        orderBy: { updatedAt: "desc" },
+        skip,
+        take,
+      }),
+      this.prisma.lead.count({ where }),
+    ]);
+    return { items, total, page, pageSize };
   }
 
   async getLead(id: string) {

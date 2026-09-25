@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -7,6 +7,8 @@ import { AssessmentService } from "./assessment.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { SaveAnswerDto } from "./dto/save-answer.dto";
+import { BuildPracticeDto, PreviewPracticeDto } from "./dto/build-practice.dto";
+import { PracticeService } from "./practice.service";
 
 @Controller("exams")
 export class ExamsPublicController {
@@ -69,6 +71,36 @@ export class AssessmentStudentController {
   }
 }
 
+/** The student test builder: practice exams drawn from the bank for one
+ * student. See PracticeService for what a student may draw. */
+@Controller("me/practice")
+@UseGuards(SessionAuthGuard)
+export class PracticeController {
+  constructor(private readonly practice: PracticeService) {}
+
+  @Get("options")
+  options(@Req() req: RequestWithUser) {
+    return this.practice.options(req.user!.id);
+  }
+
+  @Get()
+  list(@Req() req: RequestWithUser) {
+    return this.practice.list(req.user!.id);
+  }
+
+  /** A POST because the topic list is an array; it reads, never writes. */
+  @Post("preview")
+  @HttpCode(200)
+  preview(@Req() req: RequestWithUser, @Body() dto: PreviewPracticeDto) {
+    return this.practice.preview(req.user!.id, dto);
+  }
+
+  @Post()
+  build(@Req() req: RequestWithUser, @Body() dto: BuildPracticeDto) {
+    return this.practice.build(req.user!.id, dto);
+  }
+}
+
 @Controller("admin/exams")
 @UseGuards(SessionAuthGuard, RolesGuard)
 @Roles(Role.AUTHOR, Role.ADMIN)
@@ -93,6 +125,11 @@ export class AssessmentAdminController {
   @Post(":id/publish")
   publish(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.assessment.publishExam(id, req.user!.id);
+  }
+
+  @Post(":id/unpublish")
+  unpublish(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.assessment.unpublishExam(id, req.user!.id);
   }
 
   @Get(":id/psychometrics")

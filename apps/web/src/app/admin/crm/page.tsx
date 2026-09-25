@@ -15,6 +15,7 @@ import {
   FieldRow,
   Input,
   Select,
+  Pagination,
   TableWrap,
 } from "../../../components/ds";
 
@@ -50,6 +51,8 @@ const STAGES: { value: string; label: string; tone: "neutral" | "info" | "succes
 ];
 const stageOf = (value: string) => STAGES.find((stage) => stage.value === value);
 
+const LEAD_PAGE_SIZE = 25;
+
 export default function CrmDashboardPage() {
   const [report, setReport] = useState<Report | null>(null);
   const [reportLoading, setReportLoading] = useState(true);
@@ -59,6 +62,8 @@ export default function CrmDashboardPage() {
   const [leadsLoading, setLeadsLoading] = useState(true);
   const [leadsError, setLeadsError] = useState<string | null>(null);
   const [stageFilter, setStageFilter] = useState("");
+  const [leadPage, setLeadPage] = useState(1);
+  const [leadTotal, setLeadTotal] = useState(0);
 
   const [campaignCode, setCampaignCode] = useState("");
   const [campaignTitle, setCampaignTitle] = useState("");
@@ -83,14 +88,17 @@ export default function CrmDashboardPage() {
     setLeadsLoading(true);
     setLeadsError(null);
     try {
-      const params = stageFilter ? `?stage=${stageFilter}` : "";
-      setLeads(await apiFetch<Lead[]>(`/admin/crm/leads${params}`));
+      const query = new URLSearchParams({ page: String(leadPage), pageSize: String(LEAD_PAGE_SIZE) });
+      if (stageFilter) query.set("stage", stageFilter);
+      const res = await apiFetch<{ items: Lead[]; total: number }>(`/admin/crm/leads?${query}`);
+      setLeads(res.items);
+      setLeadTotal(res.total);
     } catch (err) {
       setLeadsError(err instanceof Error ? err.message : "خواندن سرنخ‌ها ممکن نشد.");
     } finally {
       setLeadsLoading(false);
     }
-  }, [stageFilter]);
+  }, [stageFilter, leadPage]);
 
   useEffect(() => { void loadReport(); }, [loadReport]);
   useEffect(() => { void loadLeads(); }, [loadLeads]);
@@ -205,7 +213,7 @@ export default function CrmDashboardPage() {
               <p>سرویس حداکثر ۵۰ سرنخ برمی‌گرداند؛ برای دیدن بیشتر باید صفحه‌بندی سمت سرور اضافه شود.</p>
             </div>
             <div style={{ minWidth: "12rem" }}>
-              <Select value={stageFilter} onChange={(event) => setStageFilter(event.target.value)} aria-label="فیلتر مرحله">
+              <Select value={stageFilter} onChange={(event) => { setStageFilter(event.target.value); setLeadPage(1); }} aria-label="فیلتر مرحله">
                 <option value="">همهٔ مرحله‌ها</option>
                 {STAGES.map((stage) => (
                   <option key={stage.value} value={stage.value}>{stage.label}</option>
@@ -222,7 +230,13 @@ export default function CrmDashboardPage() {
               emptyTitle="سرنخی در این مرحله نیست"
               emptyDescription="با تغییر فیلتر مرحله، سرنخ‌های دیگر را ببینید."
             >
-              <TableWrap>
+              <TableWrap
+                pagination={
+                  leadTotal > LEAD_PAGE_SIZE ? (
+                    <Pagination page={leadPage} pageSize={LEAD_PAGE_SIZE} total={leadTotal} onPageChange={setLeadPage} />
+                  ) : undefined
+                }
+              >
                 <thead><tr><th>شماره</th><th>مرحله</th><th>منبع</th><th /></tr></thead>
                 <tbody>
                   {leads.map((lead) => {

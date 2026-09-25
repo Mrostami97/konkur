@@ -24,9 +24,18 @@ interface Course {
   title: string;
   description?: string;
   spotPlayerCourseId?: string | null;
+  accessMode?: AccessMode;
   isPublished: boolean;
   modules?: ModuleWithLessons[];
 }
+
+type AccessMode = "PUBLIC" | "ACCOUNT" | "ENTITLEMENT";
+
+const ACCESS: { value: AccessMode; label: string; note: string }[] = [
+  { value: "ENTITLEMENT", label: "پولی", note: "فقط خریداران؛ درس‌های پیش‌نمایش برای همه باز است." },
+  { value: "ACCOUNT", label: "رایگان با ورود", note: "هر کاربری که وارد شده باشد." },
+  { value: "PUBLIC", label: "رایگان برای همه", note: "بدون ورود؛ مناسب تدریس رایگان فصل‌ها." },
+];
 
 interface ModuleWithLessons {
   id: string;
@@ -326,23 +335,58 @@ function ModuleForm({ courseId, nextOrder, onAdded }: { courseId: string; nextOr
 function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => void }) {
   const modules = course.modules ?? [];
   const [editing, setEditing] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [removing, setRemoving] = useState<{ kind: "lessons" | "modules"; id: string; title: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function act(action: () => Promise<unknown>) {
+    setError(null);
+    try {
+      await action();
+      onChanged();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "";
+      setError(
+        message.includes("already studied")
+          ? "دانشجوها این درس را دیده‌اند؛ به‌جای حذف، ویرایشش کنید."
+          : message.includes("lessons first")
+            ? "اول درس‌های این سرفصل را حذف کنید؛ فقط سرفصل خالی حذف می‌شود."
+            : "این کار انجام نشد.",
+      );
+    }
+  }
+
+  const move = (kind: "lessons" | "modules", id: string, direction: "up" | "down") =>
+    act(() => apiFetch(`/admin/${kind}/${id}/move`, { method: "POST", body: { direction } }));
+
   return (
     <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
-      {modules.map((module) => (
+      {error && <Alert tone="danger">{error}</Alert>}
+      {modules.map((module, moduleIndex) => (
         <details className="ds-details" key={module.id}>
           <summary>
             {module.title} — {toPersianDigits(module.lessons.length)} درس
           </summary>
           <div className="ds-details-body">
+            <div className="ds-row" style={{ marginBottom: "var(--sp-3)" }}>
+              <Button size="sm" variant="ghost" disabled={moduleIndex === 0} onClick={() => void move("modules", module.id, "up")}>سرفصل بالاتر</Button>
+              <Button size="sm" variant="ghost" disabled={moduleIndex === modules.length - 1} onClick={() => void move("modules", module.id, "down")}>سرفصل پایین‌تر</Button>
+              <Button size="sm" variant="ghost" disabled={module.lessons.length > 0} onClick={() => setRemoving({ kind: "modules", id: module.id, title: module.title })}>حذف سرفصل</Button>
+            </div>
             {module.lessons.length > 0 && (
               <ul className="ds-plain-list">
-                {module.lessons.map((lesson) => (
+                {module.lessons.map((lesson, lessonIndex) => (
                   <li key={lesson.id}>
                     <div className="ds-row-between">
                       <span>{lesson.title}</span>
-                      <Button size="sm" variant="ghost" onClick={() => setEditing(editing === lesson.id ? null : lesson.id)}>
-                        {editing === lesson.id ? "بستن" : "ویرایش"}
-                      </Button>
+                      <span className="ds-row">
+                        <Button size="sm" variant="ghost" aria-label="درس بالاتر" disabled={lessonIndex === 0} onClick={() => void move("lessons", lesson.id, "up")}>↑</Button>
+                        <Button size="sm" variant="ghost" aria-label="درس پایین‌تر" disabled={lessonIndex === module.lessons.length - 1} onClick={() => void move("lessons", lesson.id, "down")}>↓</Button>
+                        <Button size="sm" variant="ghost" onClick={() => setEditing(editing === lesson.id ? null : lesson.id)}>
+                          {editing === lesson.id ? "بستن" : "ویرایش"}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setRemoving({ kind: "lessons", id: lesson.id, title: lesson.title })}>حذف</Button>
+                      </span>
                     </div>
                     {editing === lesson.id && (
                       <div className="ds-panel" style={{ marginTop: "var(--sp-3)" }}>
@@ -365,6 +409,25 @@ function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => 
         </details>
       ))}
       <ModuleForm courseId={course.id} nextOrder={modules.length + 1} onAdded={onChanged} />
+
+      <ConfirmDialog
+        open={removing !== null}
+        title={`حذف «${removing?.title ?? ""}»؟`}
+        description={removing?.kind === "lessons"
+          ? "درسی که دانشجویی دیده باشد حذف نمی‌شود. این کار برگشت‌پذیر نیست."
+          : "فقط سرفصل خالی حذف می‌شود. این کار برگشت‌پذیر نیست."}
+        confirmLabel="حذف کن"
+        busy={busy}
+        onConfirm={() => {
+          if (!removing) return;
+          setBusy(true);
+          void act(() => apiFetch(`/admin/${removing.kind}/${removing.id}`, { method: "DELETE" })).finally(() => {
+            setBusy(false);
+            setRemoving(null);
+          });
+        }}
+        onCancel={() => setRemoving(null)}
+      />
     </div>
   );
 }
@@ -378,11 +441,12 @@ export default function CoursesAdminPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [spotPlayerCourseId, setSpotPlayerCourseId] = useState("");
+  const [accessMode, setAccessMode] = useState<AccessMode>("ENTITLEMENT");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [publishTarget, setPublishTarget] = useState<Course | null>(null);
+  const [publishTarget, setPublishTarget] = useState<{ course: Course; publish: boolean } | null>(null);
   const [videoTarget, setVideoTarget] = useState<Course | null>(null);
   const [videoId, setVideoId] = useState("");
   const [videoBusy, setVideoBusy] = useState(false);
@@ -416,6 +480,7 @@ export default function CoursesAdminPage() {
           slug,
           title,
           description,
+          accessMode,
           ...(spotPlayerCourseId.trim() ? { spotPlayerCourseId: spotPlayerCourseId.trim() } : {}),
         },
       });
@@ -444,6 +509,7 @@ export default function CoursesAdminPage() {
           slug: course.slug,
           title: course.title,
           description: course.description ?? "",
+          accessMode: course.accessMode,
           ...(videoId.trim() ? { spotPlayerCourseId: videoId.trim() } : {}),
         },
       });
@@ -460,11 +526,11 @@ export default function CoursesAdminPage() {
     if (!publishTarget) return;
     setPublishing(true);
     try {
-      await apiFetch(`/admin/courses/${publishTarget.id}/publish`, { method: "POST" });
+      await apiFetch(`/admin/courses/${publishTarget.course.id}/${publishTarget.publish ? "publish" : "unpublish"}`, { method: "POST" });
       setPublishTarget(null);
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "انتشار دوره ناموفق بود.");
+      setError(err instanceof Error ? err.message : "تغییر وضعیت انتشار ناموفق بود.");
       setPublishTarget(null);
     } finally {
       setPublishing(false);
@@ -475,7 +541,7 @@ export default function CoursesAdminPage() {
     <>
       <AdminPageHeader
         title="دوره‌ها"
-        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. درس‌ها پس از ساخت ویرایش می‌شوند؛ حذف هنوز از پنل ممکن نیست."
+        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. درس و سرفصل را می‌شود ویرایش، جابه‌جا و (تا وقتی دانشجویی ندیده) حذف کرد."
       />
 
       <div className="ds-stack-lg">
@@ -492,6 +558,13 @@ export default function CoursesAdminPage() {
             </FieldRow>
             <Field label="توضیح" hint="در فهرست عمومی دوره‌ها دیده می‌شود" required>
               {(props) => <Textarea {...props} value={description} onChange={(event) => setDescription(event.target.value)} required />}
+            </Field>
+            <Field label="دسترسی" hint={ACCESS.find((item) => item.value === accessMode)?.note}>
+              {(props) => (
+                <Select {...props} value={accessMode} onChange={(event) => setAccessMode(event.target.value as AccessMode)}>
+                  {ACCESS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                </Select>
+              )}
             </Field>
             <Field
               label="شناسهٔ دوره در اسپات‌پلیر"
@@ -514,9 +587,12 @@ export default function CoursesAdminPage() {
         <Card padded={false}>
           <div className="ds-card-head"><h2 className="ds-card-title">همهٔ دوره‌ها</h2></div>
           <div className="ds-card-body">
+            {/* A reload after an edit keeps the list mounted: swapping it for a
+                skeleton would close the lesson being edited. */}
+            {error && courses.length > 0 && <Alert tone="danger">{error}</Alert>}
             <DataState
-              loading={loading}
-              error={error}
+              loading={loading && courses.length === 0}
+              error={courses.length === 0 ? error : null}
               isEmpty={courses.length === 0}
               onRetry={load}
               emptyTitle="هنوز دوره‌ای ساخته نشده"
@@ -532,6 +608,9 @@ export default function CoursesAdminPage() {
                           <Badge tone={course.isPublished ? "success" : "neutral"}>
                             {course.isPublished ? "منتشرشده" : "پیش‌نویس"}
                           </Badge>
+                          {course.accessMode && course.accessMode !== "ENTITLEMENT" && (
+                            <Badge tone="info">{ACCESS.find((item) => item.value === course.accessMode)?.label}</Badge>
+                          )}
                           <span className="ds-hint" style={{ margin: 0 }}>
                             {toPersianDigits(course.modules?.length ?? 0)} سرفصل
                           </span>
@@ -543,8 +622,10 @@ export default function CoursesAdminPage() {
                         </div>
                       </div>
                       <div className="ds-row">
-                        {!course.isPublished && (
-                          <Button size="sm" variant="primary" onClick={() => setPublishTarget(course)}>انتشار</Button>
+                        {course.isPublished ? (
+                          <Button size="sm" variant="ghost" onClick={() => setPublishTarget({ course, publish: false })}>لغو انتشار</Button>
+                        ) : (
+                          <Button size="sm" variant="primary" onClick={() => setPublishTarget({ course, publish: true })}>انتشار</Button>
                         )}
                         <Button
                           size="sm"
@@ -596,9 +677,13 @@ export default function CoursesAdminPage() {
 
       <ConfirmDialog
         open={publishTarget !== null}
-        title={`انتشار «${publishTarget?.title ?? ""}»؟`}
-        description="پس از انتشار، دوره در فهرست عمومی دیده می‌شود و لغو انتشار از پنل ممکن نیست."
-        confirmLabel="منتشر کن"
+        title={publishTarget?.publish ? `انتشار «${publishTarget.course.title}»؟` : `لغو انتشار «${publishTarget?.course.title ?? ""}»؟`}
+        description={
+          publishTarget?.publish
+            ? "پس از انتشار، دوره در فهرست عمومی دیده می‌شود و فروشش ممکن می‌شود. هر زمان می‌توانید انتشار را لغو کنید."
+            : "دوره از فهرست عمومی و فروش خارج می‌شود و تا انتشار دوباره، دانشجویان ثبت‌نام‌شده هم به درس‌ها دسترسی ندارند."
+        }
+        confirmLabel={publishTarget?.publish ? "منتشر کن" : "لغو انتشار"}
         busy={publishing}
         onConfirm={publish}
         onCancel={() => setPublishTarget(null)}

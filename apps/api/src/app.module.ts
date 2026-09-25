@@ -19,6 +19,7 @@ import { AdmissionsModule } from "./modules/admissions/admissions.module";
 import { CrmModule } from "./modules/crm/crm.module";
 import { InstructorsModule } from "./modules/instructors/instructors.module";
 import { AchievementsModule } from "./modules/achievements/achievements.module";
+import { NotificationsModule } from "./modules/notifications/notifications.module";
 import { SiteModule } from "./modules/site/site.module";
 
 @Module({
@@ -37,6 +38,7 @@ import { SiteModule } from "./modules/site/site.module";
     PrismaModule,
     HealthModule,
     AuditModule,
+    NotificationsModule,
     IdentityModule,
     ContentModule,
     LearningModule,

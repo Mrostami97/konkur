@@ -9,7 +9,7 @@ const TABS: { href: string; label: string; glyph: GlyphName; main?: boolean }[] 
   { href: "/", label: "خانه", glyph: "building" },
   { href: "/courses", label: "دوره‌ها", glyph: "play" },
   { href: "/results", label: "نتایج", glyph: "trophy", main: true },
-  { href: "/free-videos", label: "رایگان", glyph: "spark" },
+  { href: "/practice", label: "تمرین", glyph: "target" },
   { href: "/account", label: "حساب من", glyph: "compass" },
 ];
 

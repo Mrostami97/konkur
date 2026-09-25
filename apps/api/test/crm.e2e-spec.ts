@@ -159,7 +159,7 @@ describe("CRM + growth loop (e2e)", () => {
       .get("/admin/crm/leads?stage=QUALIFIED")
       .set("Cookie", adminCookie)
       .expect(200);
-    expect(listRes.body.some((l: any) => l.id === lead!.id)).toBe(true);
+    expect(listRes.body.items.some((l: any) => l.id === lead!.id)).toBe(true);
   }, 20000);
 
   it("produces a real business report from existing data", async () => {

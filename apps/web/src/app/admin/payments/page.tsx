@@ -16,6 +16,7 @@ import {
   Input,
   Kpi,
   KpiGrid,
+  Pagination,
   Select,
   TableWrap,
   Textarea,
@@ -23,6 +24,8 @@ import {
 import { PanelIcon } from "../../../components/PanelIcons";
 
 type PaymentStatus = "PENDING" | "AWAITING_REVIEW" | "SUCCEEDED" | "REJECTED" | "FAILED";
+
+const PAGE_SIZE = 25;
 
 interface Payment {
   id: string;
@@ -42,6 +45,13 @@ interface Payment {
     user: { id: string; phone: string; profile: { displayName: string | null } | null };
     items: { id: string; product: { id: string; title: string; kind: string } }[];
   };
+}
+
+interface PaymentPage {
+  items: Payment[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 interface BankAccount {
@@ -76,6 +86,9 @@ function groupCard(cardNumber: string) {
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [paymentTotal, setPaymentTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [awaiting, setAwaiting] = useState<{ count: number; amountRial: number; partial: boolean }>({ count: 0, amountRial: 0, partial: false });
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [status, setStatus] = useState<PaymentStatus>("AWAITING_REVIEW");
   const [loading, setLoading] = useState(true);
@@ -93,18 +106,26 @@ export default function AdminPaymentsPage() {
     setLoading(true);
     setError(null);
     try {
-      const [paymentList, accountList] = await Promise.all([
-        apiFetch<Payment[]>(`/admin/payments?status=${status}`),
+      // The KPIs always describe the review queue, whichever tab is open.
+      const [paymentList, queue, accountList] = await Promise.all([
+        apiFetch<PaymentPage>(`/admin/payments?status=${status}&page=${page}&pageSize=${PAGE_SIZE}`),
+        apiFetch<PaymentPage>("/admin/payments?status=AWAITING_REVIEW&pageSize=100"),
         apiFetch<BankAccount[]>("/admin/bank-accounts"),
       ]);
-      setPayments(paymentList);
+      setPayments(paymentList.items);
+      setPaymentTotal(paymentList.total);
+      setAwaiting({
+        count: queue.total,
+        amountRial: queue.items.reduce((sum, row) => sum + row.amountRial, 0),
+        partial: queue.total > queue.items.length,
+      });
       setAccounts(accountList);
     } catch (err) {
       setError(err instanceof Error ? err.message : "خواندن پرداخت‌ها ممکن نشد.");
     } finally {
       setLoading(false);
     }
-  }, [status]);
+  }, [status, page]);
 
   useEffect(() => {
     void load();
@@ -150,8 +171,6 @@ export default function AdminPaymentsPage() {
     }
   }
 
-  const awaiting = payments.filter((row) => row.status === "AWAITING_REVIEW");
-  const awaitingTotal = awaiting.reduce((sum, row) => sum + row.amountRial, 0);
   const activeAccount = accounts.find((account) => account.isActive);
 
   return (
@@ -174,15 +193,15 @@ export default function AdminPaymentsPage() {
         <KpiGrid>
           <Kpi
             label="در انتظار بررسی"
-            value={formatPersianNumber(awaiting.length)}
+            value={formatPersianNumber(awaiting.count)}
             hint="رسیدهایی که هنوز بررسی نشده‌اند"
             icon={<PanelIcon name="clock" />}
             tone="warm"
           />
           <Kpi
             label="مبلغ در انتظار تأیید"
-            value={formatRial(awaitingTotal)}
-            hint="جمع رسیدهای بررسی‌نشده"
+            value={formatRial(awaiting.amountRial)}
+            hint={awaiting.partial ? "جمع صد رسید قدیمی‌تر صف" : "جمع رسیدهای بررسی‌نشده"}
             icon={<PanelIcon name="money" />}
             tone="info"
             small
@@ -202,7 +221,7 @@ export default function AdminPaymentsPage() {
             <div style={{ width: "18rem" }}>
               <Field label="نمایش">
                 {(props) => (
-                  <Select {...props} value={status} onChange={(event) => setStatus(event.target.value as PaymentStatus)}>
+                  <Select {...props} value={status} onChange={(event) => { setStatus(event.target.value as PaymentStatus); setPage(1); }}>
                     <option value="AWAITING_REVIEW">در انتظار بررسی</option>
                     <option value="PENDING">در انتظار واریز خریدار</option>
                     <option value="SUCCEEDED">تأییدشده</option>
@@ -223,7 +242,13 @@ export default function AdminPaymentsPage() {
               emptyDescription="رسیدهایی که خریداران ثبت کنند اینجا برای بررسی می‌آیند."
               skeletonRows={4}
             >
-              <TableWrap>
+              <TableWrap
+                pagination={
+                  paymentTotal > PAGE_SIZE ? (
+                    <Pagination page={page} pageSize={PAGE_SIZE} total={paymentTotal} onPageChange={setPage} />
+                  ) : undefined
+                }
+              >
                 <thead>
                   <tr>
                     <th>خریدار</th>

@@ -1,9 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { randomBytes } from "crypto";
-import { EntitlementGrantSource, OrderStatus, PaymentStatus, ProductKind } from "@prisma/client";
+import { EntitlementGrantSource, OrderStatus, PaymentStatus, Prisma, ProductKind } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
+import { pageArgs } from "../../common/pagination";
 import { AuditService } from "../audit/audit.service";
 import { LearningService } from "../learning/learning.service";
+import { adminAlertPhones, NotificationsService } from "../notifications/notifications.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { CreatePriceDto } from "./dto/create-price.dto";
 import { BankAccountDto } from "./dto/bank-account.dto";
@@ -19,6 +21,7 @@ export class CommerceService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly learning: LearningService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   // --- Admin catalog management ---------------------------------------------
@@ -315,6 +318,16 @@ export class CommerceService {
       include: { bankAccount: true },
     });
 
+    // Operators learn there is a transfer to look for without watching the
+    // queue; the order's reference code is what they search the statement for.
+    await this.notifications.enqueue(
+      adminAlertPhones().map((phone) => ({
+        kind: "PAYMENT_RECEIPT_SUBMITTED" as const,
+        phone,
+        tokens: [updated.referenceCode ?? orderId.slice(0, 8)],
+      })),
+    );
+
     await this.audit.log({
       actorUserId: userId,
       action: "payment.receipt_submitted",
@@ -326,23 +339,35 @@ export class CommerceService {
   }
 
   /** The review queue: card transfers a buyer says they have made. */
-  async listPaymentsForReview(status?: PaymentStatus) {
-    return this.prisma.payment.findMany({
-      where: {
-        provider: CARD_TRANSFER_PROVIDER,
-        status: status ?? PaymentStatus.AWAITING_REVIEW,
-      },
-      orderBy: { receiptSubmittedAt: "asc" },
-      include: {
-        bankAccount: true,
-        order: {
-          include: {
-            user: { select: { id: true, phone: true, profile: { select: { displayName: true } } } },
-            items: { include: { product: { select: { id: true, title: true, kind: true } } } },
+  async listPaymentsForReview(query: { status?: PaymentStatus; page?: number; pageSize?: number }) {
+    const { page, pageSize, skip, take } = pageArgs(query, 25);
+    const status = query.status ?? PaymentStatus.AWAITING_REVIEW;
+    const where = { provider: CARD_TRANSFER_PROVIDER, status };
+    // The review queue reads oldest first (first come, first checked); a
+    // history tab reads newest first.
+    const orderBy: Prisma.PaymentOrderByWithRelationInput[] =
+      status === PaymentStatus.AWAITING_REVIEW
+        ? [{ receiptSubmittedAt: "asc" }]
+        : [{ reviewedAt: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }];
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.payment.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: {
+          bankAccount: true,
+          order: {
+            include: {
+              user: { select: { id: true, phone: true, profile: { select: { displayName: true } } } },
+              items: { include: { product: { select: { id: true, title: true, kind: true } } } },
+            },
           },
         },
-      },
-    });
+      }),
+      this.prisma.payment.count({ where }),
+    ]);
+    return { items, total, page, pageSize };
   }
 
   /**
@@ -357,7 +382,7 @@ export class CommerceService {
     const result = await this.prisma.$transaction(async (tx) => {
       const payment = await tx.payment.findUnique({
         where: { id: paymentId },
-        include: { order: { include: { items: true } } },
+        include: { order: { include: { items: true, user: { select: { phone: true } } } } },
       });
       if (!payment) throw new NotFoundException("payment not found");
       if (payment.status === PaymentStatus.SUCCEEDED) {
@@ -419,6 +444,18 @@ export class CommerceService {
         },
       });
 
+      await this.notifications.enqueue(
+        [
+          {
+            kind: "PAYMENT_CONFIRMED",
+            phone: payment.order.user.phone,
+            userId: payment.order.userId,
+            tokens: [payment.referenceCode ?? payment.orderId.slice(0, 8)],
+          },
+        ],
+        tx,
+      );
+
       return { orderId: payment.orderId, userId: payment.order.userId, productId, entitlementId: entitlement.id };
     });
 
@@ -439,20 +476,38 @@ export class CommerceService {
   /** The transfer was not on the statement, or did not match. The buyer can
    * correct their claim and submit again. */
   async rejectPayment(adminId: string, paymentId: string, reason: string) {
-    const payment = await this.prisma.payment.findUnique({ where: { id: paymentId } });
+    const payment = await this.prisma.payment.findUnique({
+      where: { id: paymentId },
+      include: { order: { select: { userId: true, user: { select: { phone: true } } } } },
+    });
     if (!payment) throw new NotFoundException("payment not found");
     if (payment.status === PaymentStatus.SUCCEEDED) {
       throw new BadRequestException("a confirmed payment cannot be rejected; revoke the entitlement instead");
     }
 
-    const updated = await this.prisma.payment.update({
-      where: { id: paymentId },
-      data: {
-        status: PaymentStatus.REJECTED,
-        reviewedAt: new Date(),
-        reviewedByUserId: adminId,
-        rejectionReason: reason,
-      },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const row = await tx.payment.update({
+        where: { id: paymentId },
+        data: {
+          status: PaymentStatus.REJECTED,
+          reviewedAt: new Date(),
+          reviewedByUserId: adminId,
+          rejectionReason: reason,
+        },
+      });
+      // The reason stays on the order page; the text only says to look.
+      await this.notifications.enqueue(
+        [
+          {
+            kind: "PAYMENT_REJECTED",
+            phone: payment.order.user.phone,
+            userId: payment.order.userId,
+            tokens: [payment.referenceCode ?? payment.orderId.slice(0, 8)],
+          },
+        ],
+        tx,
+      );
+      return row;
     });
 
     await this.audit.log({
@@ -604,11 +659,62 @@ export class CommerceService {
     });
   }
 
-  async listAllOrders() {
-    return this.prisma.order.findMany({
-      include: { items: true, payments: true, user: { select: { id: true, phone: true } } },
-      orderBy: { createdAt: "desc" },
-    });
+  /**
+   * Revenue for the admin dashboard, computed here rather than from the order
+   * list, which is paged. Months are Solar Hijri in Tehran time -- the
+   * calendar the owner books by.
+   */
+  async ordersSummary() {
+    const since = new Date();
+    since.setMonth(since.getMonth() - 13);
+    const [byStatus, revenue, recentPaid] = await this.prisma.$transaction([
+      this.prisma.order.groupBy({ by: ["status"], orderBy: { status: "asc" }, _count: { _all: true } }),
+      this.prisma.order.aggregate({ where: { status: OrderStatus.PAID }, _sum: { totalAmountRial: true } }),
+      this.prisma.order.findMany({
+        where: { status: OrderStatus.PAID, createdAt: { gte: since } },
+        select: { createdAt: true, totalAmountRial: true },
+      }),
+    ]);
+    const month = new Intl.DateTimeFormat("en-US-u-ca-persian", { timeZone: "Asia/Tehran", year: "numeric", month: "2-digit" });
+    const buckets = new Map<string, number>();
+    for (const order of recentPaid) {
+      const parts = month.formatToParts(order.createdAt);
+      const key = `${parts.find((part) => part.type === "year")?.value}-${parts.find((part) => part.type === "month")?.value}`;
+      buckets.set(key, (buckets.get(key) ?? 0) + order.totalAmountRial);
+    }
+    const counts = Object.fromEntries(byStatus.map((row) => [row.status, (row._count as { _all: number })._all]));
+    const totalOrders = Object.values(counts).reduce((sum, value) => sum + value, 0);
+    return {
+      totalOrders,
+      paidOrders: counts[OrderStatus.PAID] ?? 0,
+      unpaidOrders: totalOrders - (counts[OrderStatus.PAID] ?? 0),
+      byStatus: counts,
+      revenueRial: revenue._sum.totalAmountRial ?? 0,
+      monthly: [...buckets.entries()]
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .slice(-12)
+        .map(([key, revenueRial]) => ({ month: key, revenueRial })),
+    };
+  }
+
+  async listAllOrders(query: { status?: OrderStatus; page?: number; pageSize?: number }) {
+    const { page, pageSize, skip, take } = pageArgs(query, 25);
+    const where = query.status ? { status: query.status } : {};
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.order.findMany({
+        where,
+        include: {
+          items: { include: { product: { select: { id: true, title: true, kind: true } } } },
+          payments: true,
+          user: { select: { id: true, phone: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take,
+      }),
+      this.prisma.order.count({ where }),
+    ]);
+    return { items, total, page, pageSize };
   }
 
   async listMyOrders(userId: string) {
