@@ -271,7 +271,12 @@ output live outside this repository, in
 - Known quirks: in the owner workbooks, `rank_national` holds the in-quota rank
   (checked against a published 1401 card). 547 CSHub rows carry no rank.
   About 400 merged groups differ by a one-unit rank typo or a missing code.
-- 1405: neither bank has 1405 yet. `collect_report_cards.py tg1405` fetches the
-  148 posts listed in `scorecard_candidates_1405_v43.csv`, which needs
-  Telegram to be reachable. The report-card numbers are in the post images,
-  so an extraction step is still needed after fetching.
+- 1405: neither bank has 1405 yet. On 2026-09-25 the 148 CSHub Telegram posts
+  listed in `scorecard_candidates_1405_v43.csv` were fetched: 271 images, of
+  which 220 are unique. The report cards were read from the images by hand into
+  `out/tg1405_cards.jsonl`, giving 162 cards: 1277 (78 free-quota, 11 at 5%),
+  1276 (43 free, 10 at 5%) and 1209 (14 free, 6 other). No names or candidate
+  numbers were recorded. `validate_1405.py` checks every percentage against the
+  1405 box sizes (language 25, maths 19 or 20, theory and signals 10,
+  algorithms 19, architecture 19, OS/networks/DB 18), and all of them fit.
+  With 1405 included, the merged table has 2,329 unique 1277 cards.
