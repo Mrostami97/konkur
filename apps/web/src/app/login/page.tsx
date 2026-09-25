@@ -177,7 +177,7 @@ export default function LoginPage() {
           <li><b>دوره‌ها و جزوه‌ها</b><span>هر چه تهیه کرده‌ای، در پنل خودت</span></li>
         </ul>
         <p className="lg-side-foot">
-          هنوز مطمئن نیستی؟ <Link href="/guides/start-from-zero">راهنمای شروع از صفر</Link> را بخوان.
+          هنوز مطمئن نیستی؟ <Link href="/articles/study-plan-from-zero">راهنمای شروع از صفر</Link> را بخوان.
         </p>
       </aside>
     </main>

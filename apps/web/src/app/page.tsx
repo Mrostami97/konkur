@@ -5,6 +5,7 @@ import { StructuredData } from "../components/StructuredData";
 import { evidenceStats, studentResults } from "../content/evidence";
 import { findPhase12EditorialPage } from "../content/phase12";
 import { apiGetPublic } from "../lib/api";
+import { canonicalHref } from "../lib/merged-pages";
 import { toPersianDigits } from "../lib/format";
 import { absoluteUrl, pageMetadata, SITE_NAME } from "../lib/seo";
 import "./home.css";
@@ -47,7 +48,7 @@ const STEPS = [
 ] as const;
 
 const QUICK_LINKS = [
-  { href: "/guides/start-from-zero", label: "شروع از صفر" },
+  { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
   { href: "/free-videos", label: "ویدیوی رایگان هر درس" },
   { href: "/rank-estimate", label: "تخمین رتبه" },
 ] as const;
@@ -88,7 +89,7 @@ export default async function HomePage() {
   }));
   const fromGuides: Reading[] = ESSENTIAL_GUIDES.flatMap((slug) => {
     const page = findPhase12EditorialPage(slug);
-    return page ? [{ href: `/guides/${slug}`, kind: page.category, title: page.title, summary: page.description }] : [];
+    return page ? [{ href: canonicalHref(`/guides/${slug}`), kind: page.category, title: page.title, summary: page.description }] : [];
   });
   const seen = new Set<string>();
   const reading = [...fromPublished, ...fromGuides].filter((row) => !seen.has(row.href) && seen.add(row.href)).slice(0, 3);
@@ -158,7 +159,7 @@ export default async function HomePage() {
             ))}
           </ol>
           <div className="hc-center">
-            <Link href="/guides/start-from-zero" className="hc-btn">از صفر شروع کن</Link>
+            <Link href="/articles/study-plan-from-zero" className="hc-btn">از صفر شروع کن</Link>
           </div>
         </div>
       </section>
