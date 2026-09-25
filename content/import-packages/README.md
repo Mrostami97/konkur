@@ -20,3 +20,8 @@ an operator uploads its zip at `/admin/import`, reviews it and publishes it
 Before publishing `registration-calendar-1406`, check its dates again against
 the official announcement (t.me/msrt_iri/43538); they were last checked on
 2026-09-08.
+
+Some lessons link to each other. Publish `regular-languages-dfa-nfa`,
+`pumping-lemma`, `context-free-grammars-pda` and
+`turing-machines-decidability` together, or in that order, so no public page
+links to an unpublished one.
