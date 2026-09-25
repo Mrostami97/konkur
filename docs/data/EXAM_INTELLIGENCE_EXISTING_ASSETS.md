@@ -248,3 +248,30 @@ Instead:
 6. keep model training datasets versioned and reproducible.
 
 The desired outcome is maximum information value with minimum unnecessary data loss, while keeping public output compliant and auditable.
+
+## Result-bank collection (2026-09-25)
+
+The owner approved using the report-card data for public aggregates and asked
+for the public result banks to be collected in full. The collector and its
+output live outside this repository, in
+`D:\competitor-crawler-data\report_cards\` (`collect_report_cards.py`,
+`validate.py`, `merge.py`; raw responses in `raw/`, tables in `out/`).
+
+- CSHub (`cshub.ir/konkur-computer-results/`, one server-rendered table):
+  2,131 rows, 1400–1404.
+- KonkurComputer (`com_ajax` `kcreports` `loadReports` JSON endpoint, 16 pages
+  of 100): 1,570 rows, 1400–1404.
+- Neither bank publishes names or candidate numbers; the collector keeps
+  none, and it drops link and modal columns.
+- Merged with the owner's 378 workbook rows by year + GPA + six percentages:
+  **2,241 unique computer-engineering master's cards**. 263 of the owner's 378
+  workbook rows also appear in the banks. 1,440 are free-quota cards with an
+  in-quota rank.
+- Tiering: owner rows tier A; bank rows tier B (publish aggregates only).
+- Known quirks: in the owner workbooks, `rank_national` holds the in-quota rank
+  (checked against a published 1401 card). 547 CSHub rows carry no rank.
+  About 400 merged groups differ by a one-unit rank typo or a missing code.
+- 1405: neither bank has 1405 yet. `collect_report_cards.py tg1405` fetches the
+  148 posts listed in `scorecard_candidates_1405_v43.csv`, which needs
+  Telegram to be reachable. The report-card numbers are in the post images,
+  so an extraction step is still needed after fetching.
