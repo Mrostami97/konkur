@@ -18,6 +18,6 @@
 
 | پست | موضوع | در کدام مقاله |
 |---|---|---|
-| https://t.me/Konkur_answer/3739 | کارنامهٔ ارشد مهندسی کامپیوتر ۱۴۰۱، رتبهٔ ۸ هوش مصنوعی | read-exam-report-card |
+| https://t.me/Konkur_answer/3739 | کارنامهٔ ارشد مهندسی کامپیوتر ۱۴۰۱، رتبهٔ ۸ شبکه و معماری و ۱۱ هوش مصنوعی | read-exam-report-card |
 | https://t.me/Konkur_answer/3997 | کارنامهٔ ارشد ۱۴۰۳ فناوری اطلاعات، رتبهٔ ۸ | read-exam-report-card |
 | https://t.me/Konkur_answer/4751 | فهرست تست‌های داده‌ساختار و الگوریتم ۱۴۰۵ که در حل تست کلاس بود (از جمله رابطهٔ بازگشتی) | recurrences-master-theorem |

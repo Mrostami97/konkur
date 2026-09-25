@@ -154,7 +154,7 @@ const evidenceClaims = [
   "رتبهٔ ۱۷ نرم‌افزار و ۲۶ هوش مصنوعی در دکتری",
   "رتبهٔ ۳۸ ارشد فناوری اطلاعات",
   "رتبهٔ ۸ آی‌تی و ۱۶ مهندسی کامپیوتر",
-  "رتبهٔ ۸ هوش مصنوعی و ۱۱ نرم‌افزار",
+  "رتبهٔ ۸ شبکه و معماری، ۱۱ هوش مصنوعی و نرم‌افزار",
 ];
 const evidence = await read("/evidence");
 assert.equal(evidence.response.status, 200, "the existing evidence hub must remain public");

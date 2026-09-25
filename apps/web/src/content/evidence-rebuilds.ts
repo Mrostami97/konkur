@@ -284,10 +284,12 @@ export const evidenceRebuilds: Record<string, EvidenceRebuild[]> = {
         { name: "سیستم عامل، شبکه، پایگاه داده", percent: 47.37 },
       ],
       codes: [
-        { code: 1, label: "هوش مصنوعی", score: 8076, rank: 8, rankNoQuota: 9 },
-        { code: 2, label: "نرم‌افزار", score: 7703, rank: 11, rankNoQuota: 12 },
-        { code: 3, score: 8016, rank: 8, rankNoQuota: 9 },
-        { code: 4, score: 7764, rank: 11, rankNoQuota: 12 },
+        // 1400-1404 set 1277 codes: 1 network/security, 2 AI, 3 architecture,
+        // 4 software (owner-confirmed 2026-09-26; matches the result banks).
+        { code: 1, label: "شبکه و امنیت", score: 8076, rank: 8, rankNoQuota: 9 },
+        { code: 2, label: "هوش مصنوعی", score: 7703, rank: 11, rankNoQuota: 12 },
+        { code: 3, label: "معماری", score: 8016, rank: 8, rankNoQuota: 9 },
+        { code: 4, label: "نرم‌افزار", score: 7764, rank: 11, rankNoQuota: 12 },
       ],
     },
   ],
