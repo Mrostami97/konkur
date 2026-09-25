@@ -4,7 +4,7 @@ import Link from "next/link";
 import { StructuredData } from "../../components/StructuredData";
 import { EvidenceScorecard } from "../../components/EvidenceScorecard";
 import { Glyph } from "../../components/SubjectIcon";
-import { alignmentEvidence, archiveLinks, evidenceStats, matchedQuestions, questionDesignEvidence, studentResults, studentVideo, type EvidenceDocument } from "../../content/evidence";
+import { alignmentEvidence, evidenceStats, matchedQuestions, questionDesignEvidence, studentResults, studentVideo, type EvidenceDocument } from "../../content/evidence";
 import { toEnglishDigits, toPersianDigits } from "../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../lib/seo";
 import "./evidence.css";
@@ -12,15 +12,16 @@ import "./evidence.css";
 export const metadata: Metadata = pageMetadata({
   title: "نتیجهٔ شاگردها و تطبیق کلاس با کنکور، با سند",
   description:
-    "سؤالی که محمد رستمی تألیف کرد و در کنکور ۱۴۰۱ آمد، ۹ تست از ۱۲ تست ساختمان داده و الگوریتم ۱۴۰۵ که در کلاس کار شده بود و نتیجهٔ شاگردها؛ هرکدام با لینک پست اصلی.",
+    "سؤالی که محمد رستمی تألیف کرد و در کنکور ۱۴۰۱ آمد، ۹ تست از ۱۲ تست ساختمان داده و الگوریتم ۱۴۰۵ که در کلاس کار شده بود و نتیجهٔ شاگردها؛ هرکدام با تصویر سند اصلی.",
   path: "/evidence",
 });
 
 const thesisUrl =
   "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";
 
-// Within a year, results a student earned come before what the class did.
-const CATEGORY_ORDER: EvidenceDocument["category"][] = ["کارنامه", "نتایج دانشجویان", "طراحی سؤال", "تطبیق سؤال", "آموزش"];
+// Within a year: a subject percent first, then the full scorecards, then what
+// the class did -- so each kind of card sits together instead of alternating.
+const CATEGORY_ORDER: EvidenceDocument["category"][] = ["نتایج دانشجویان", "کارنامه", "طراحی سؤال", "تطبیق سؤال", "آموزش"];
 
 const yearNumber = (year: string) => Number(toEnglishDigits(year)) || 0;
 
@@ -50,7 +51,7 @@ function summaryOf(items: EvidenceDocument[]) {
 }
 
 const headline = studentResults.filter((item) => item.student && item.hero && item.category === "کارنامه");
-const orderedDocuments = [...timeline.flatMap((group) => group.items), ...archiveLinks];
+const orderedDocuments = timeline.flatMap((group) => group.items);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -63,13 +64,13 @@ const jsonLd = {
   mainEntity: {
     "@type": "ItemList",
     name: "مستندات کلاس‌های محمد رستمی",
-    description: "ادعاهای خوداظهاری از آرشیو مدرس، هرکدام با لینک پست اصلی؛ مستقلاً راستی‌آزمایی نشده‌اند.",
+    description: "ادعاهای خوداظهاری از آرشیو مدرس، هرکدام با تصویر سند اصلی؛ مستقلاً راستی‌آزمایی نشده‌اند.",
     numberOfItems: orderedDocuments.length,
     itemListElement: orderedDocuments.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: item.title,
-      url: item.telegramUrl ?? absoluteUrl(`/evidence#${item.id}`),
+      url: absoluteUrl(`/evidence#${item.id}`),
     })),
   },
 };
@@ -157,7 +158,6 @@ export default function EvidencePage() {
                     <span className="ev-eyebrow"><Glyph name="play" />ویدئو · {studentVideo.duration}</span>
                     <h3 id="student-video">{studentVideo.title}</h3>
                     <p>{studentVideo.description}</p>
-                    <a href={studentVideo.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
                   </div>
                   <video controls preload="metadata" playsInline src={studentVideo.src}>
                     مرورگرت پخش ویدئو را پشتیبانی نمی‌کند؛ <a href={studentVideo.src}>فایل ویدئو را دانلود کن</a>.
@@ -168,25 +168,6 @@ export default function EvidencePage() {
           );
         })}
       </div>
-
-      <section className="ev-archive" aria-labelledby="archive-links">
-        <div className="section-heading">
-          <div>
-            <h2 id="archive-links">بیشتر در آرشیو</h2>
-            <p>فایل کامل تطبیق، سال‌های قبل، کلیدهای بعد از کنکور و یک جلسه از کلاس.</p>
-          </div>
-        </div>
-        <div className="resource-grid">
-          {archiveLinks.map((item) => (
-            <a className="resource-card" href={item.telegramUrl} target="_blank" rel="noopener noreferrer" key={item.id}>
-              <span aria-hidden="true">↗</span>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-              <strong>{item.metric}{item.year !== "—" ? ` · ${item.year}` : ""}</strong>
-            </a>
-          ))}
-        </div>
-      </section>
 
       <section className="surface-card evidence-author">
         <Image src="/brand/mohammad-rostami.png" alt="محمد رستمی" width={72} height={72} style={{ objectFit: "cover" }} />
@@ -204,10 +185,10 @@ export default function EvidencePage() {
         <div>
           <span className="eyebrow eyebrow-dark">قدم بعدی</span>
           <h2>به‌جای عددها، خود کلاس را امتحان کن</h2>
-          <p>ویدیوی چند جلسه از کلاس‌هایم رایگان در کانال تلگرام هست. اگر هم نمی‌دانی از کجا شروع کنی، یک جلسهٔ مشاوره بگذار.</p>
+          <p>ویدیوهای رایگان هر درس را ببین، یا اگر نمی‌دانی از کجا شروع کنی، یک جلسهٔ مشاوره بگذار.</p>
         </div>
         <div className="evidence-cta-actions">
-          <a className="button button-light" href="https://t.me/Konkur_answer/3726" target="_blank" rel="noopener noreferrer">ویدیوهای رایگان کلاس</a>
+          <Link className="button button-light" href="/free-videos">ویدیوهای رایگان</Link>
           <Link className="button evidence-cta-secondary" href="/consultations">مشاوره با من</Link>
         </div>
       </section>

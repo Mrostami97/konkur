@@ -112,16 +112,6 @@ export function EvidenceScorecard({ item }: { item: EvidenceDocument }) {
           </div>
         )}
 
-        {(item.telegramUrl || item.related) && (
-          <footer className="sc-links">
-            {item.telegramUrl && (
-              <a href={item.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
-            )}
-            {item.related && (
-              <a href={item.related.url} target="_blank" rel="noopener noreferrer">{item.related.label} ↗</a>
-            )}
-          </footer>
-        )}
       </div>
     </article>
   );

@@ -6,14 +6,15 @@ export interface EvidenceDocument {
   title: string;
   metric: string;
   description: string;
-  /** The original post; left out only while the owner has not supplied it. */
+  /** The original archive post. Provenance only: the site shows its own copy
+   * of the images and does not link to Telegram. */
   telegramUrl?: string;
   featured?: boolean;
   /** Topics the linked post covers, shown as chips. */
   topics?: string[];
   /** The student's name as the original post gives it. */
   student?: string;
-  /** A second post that backs part of the claim. */
+  /** A second post that backs part of the claim; provenance only, like telegramUrl. */
   related?: { label: string; url: string };
   /** Copies of the post's images, served from /public/evidence. */
   images?: EvidenceImage[];
@@ -320,13 +321,4 @@ export const ownerResults: EvidenceDocument[] = [
     telegramUrl: "https://t.me/Konkur_answer/4817",
     images: [{ src: "/evidence/owner-phd-answers.jpg", alt: "پاسخ‌نامهٔ دکتری ۱۴۰۱ محمد رستمی کنار کلید", width: 747, height: 800 }],
   },
-];
-
-/** Useful posts that are not a single result. */
-export const archiveLinks: EvidenceDocument[] = [
-  { id: "alignment-file-1405", year: "۱۴۰۵", category: "تطبیق سؤال", subject: "ساختمان داده و الگوریتم", title: "فایل تطبیق ۱۴۰۵", metric: "PDF", description: "همهٔ تست‌های ۱۴۰۵ کنار مطلب مشابهشان در کلاس.", telegramUrl: "https://t.me/Konkur_answer/4767" },
-  { id: "alignment-index", year: "۱۴۰۰–۱۴۰۳", category: "تطبیق سؤال", subject: "ساختمان داده، الگوریتم و نظریه", title: "تطبیق سال‌های قبل", metric: "فهرست", description: "لینک تطبیق سؤال‌ها با کلاس برای هر سال از ۱۴۰۰ تا ۱۴۰۳.", telegramUrl: "https://t.me/Konkur_answer/3568" },
-  { id: "answer-keys-1403", year: "۱۴۰۳", category: "آموزش", subject: "چند درس", title: "کلید و حل تشریحی", metric: "حل تشریحی", description: "کلید و حل تشریحی ساختمان داده، الگوریتم، نظریه، پایگاه داده و سیستم عامل، بعد از کنکور.", telegramUrl: "https://t.me/Konkur_answer/3710" },
-  { id: "free-videos-index", year: "—", category: "آموزش", subject: "نظریه، ساختمان داده و الگوریتم", title: "فهرست ویدیوهای رایگان", metric: "۱۴ ویدئو", description: "جلسه‌های رایگان نظریه، ساختمان داده و الگوریتم و حل سؤال‌های سخت.", telegramUrl: "https://t.me/Konkur_answer/3726" },
-  { id: "amortized-video", year: "—", category: "آموزش", subject: "ساختمان داده", title: "تحلیل استهلاکی", metric: "ویدئو", description: "ویدئوی کامل این مبحث از کلاس.", telegramUrl: "https://t.me/Konkur_answer/4049" },
 ];

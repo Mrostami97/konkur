@@ -286,8 +286,6 @@
 .sc-originals svg { width: 14px; height: 14px; color: var(--teal-dark); }
 .sc-originals a { color: var(--teal-dark); font-weight: 800; }
 
-.sc-links { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: auto; padding-top: .3rem; font-size: .72rem; font-weight: 800; }
-.sc-links a { color: var(--teal-dark); }
 
 /* ---------------------------------------------------------------- video */
 .ev-video {
@@ -307,8 +305,6 @@
 .ev-video video { width: 100%; max-height: 420px; border-radius: var(--radius-lg); background: var(--ink-900); }
 
 /* ---------------------------------------------------------------- archive */
-.ev-archive { margin-top: 3rem; }
-.ev-archive .resource-card h3 { margin: 1rem 0 .35rem; color: var(--navy); font-size: 1rem; }
 
 /* ---------------------------------------------------------------- responsive */
 @media (max-width: 960px) {

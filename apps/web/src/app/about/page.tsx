@@ -99,8 +99,7 @@ export default function AboutPage() {
             <span>نظریه زبان‌ها و ماشین‌ها</span>
           </div>
           <div className="about-actions">
-            {/* Free class videos live in the archive channel until the courses are published on the site. */}
-            <a className="button button-primary" href="https://t.me/Konkur_answer/3726" target="_blank" rel="noopener noreferrer">ویدیوهای رایگان کلاس را ببین</a>
+            <Link className="button button-primary" href="/free-videos">ویدیوهای رایگان را ببین</Link>
             <Link className="button button-secondary" href="/consultations">مشاوره با من</Link>
           </div>
         </div>
@@ -130,7 +129,6 @@ export default function AboutPage() {
               <strong>{item.metric}</strong>
               <p>{item.description}</p>
               <EvidenceFigures images={item.images} />
-              <a className="text-link" href={item.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
             </article>
           ))}
         </div>
@@ -202,7 +200,7 @@ export default function AboutPage() {
           <span className="eyebrow">سند، نه ادعا</span>
           <h2>نتایج دانشجوها و سؤال‌هایی که درست پیش‌بینی شد</h2>
           <p>
-            از جمله سؤالی که خودم تألیف کرده بودم و در کنکور ۱۴۰۱ آمد. همه با لینک پست اصلی در آرشیو، تا خودت
+            از جمله سؤالی که خودم تألیف کرده بودم و در کنکور ۱۴۰۱ آمد. همه با تصویر سند اصلی، تا خودت
             ببینی و قضاوت کنی.
           </p>
         </div>
