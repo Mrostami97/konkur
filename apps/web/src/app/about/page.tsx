@@ -6,7 +6,7 @@ import { StructuredData } from "../../components/StructuredData";
 import { EvidenceFigures } from "../../components/EvidenceFigures";
 import { evidenceStats, ownerResults } from "../../content/evidence";
 import { EXAM_DATES } from "../../lib/exam-dates";
-import { absoluteUrl, pageMetadata, SITE_NAME } from "../../lib/seo";
+import { absoluteUrl, OWNER_PERSON_ID, pageMetadata, SITE_NAME } from "../../lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "محمد رستمی، مدرس کنکور ارشد کامپیوتر از دانشگاه شریف",
@@ -29,7 +29,7 @@ const personJsonLd = {
   inLanguage: "fa-IR",
   mainEntity: {
     "@type": "Person",
-    "@id": absoluteUrl("/about#mohammad-rostami"),
+    "@id": OWNER_PERSON_ID,
     name: "محمد رستمی",
     jobTitle: "مدرس کنکور ارشد و دکتری کامپیوتر",
     description: roleTitle,
@@ -99,7 +99,7 @@ export default function AboutPage() {
             <span>نظریه زبان‌ها و ماشین‌ها</span>
           </div>
           <div className="about-actions">
-            <Link className="button button-primary" href="/courses">جلسه‌های رایگان را ببین</Link>
+            <Link className="button button-primary" href="/free-videos">ویدیوهای رایگان را ببین</Link>
             <Link className="button button-secondary" href="/consultations">مشاوره با من</Link>
           </div>
         </div>
@@ -129,7 +129,6 @@ export default function AboutPage() {
               <strong>{item.metric}</strong>
               <p>{item.description}</p>
               <EvidenceFigures images={item.images} />
-              <a className="text-link" href={item.telegramUrl} target="_blank" rel="noopener noreferrer">پست اصلی در تلگرام ↗</a>
             </article>
           ))}
         </div>
@@ -166,7 +165,7 @@ export default function AboutPage() {
               <span>۰۱</span>
               <div>
                 <strong><Link href="/courses">دوره‌ها</Link></strong>
-                <small>سرفصل کامل {EXAM_DATES.master1406.label}، از مباحث پایه تا حل تست. چند جلسه‌اش رایگان روی سایت است؛ ببین با روش من کنار می‌آیی یا نه.</small>
+                <small>سرفصل کامل {EXAM_DATES.master1406.label}، از مباحث پایه تا حل تست. دوره‌ها به‌زودی روی همین سایت منتشر می‌شوند؛ تا آن موقع ویدیوی چند جلسه از کلاس‌هایم رایگان در کانال تلگرام هست تا ببینی با روش من کنار می‌آیی یا نه.</small>
               </div>
             </li>
             <li>
@@ -201,7 +200,7 @@ export default function AboutPage() {
           <span className="eyebrow">سند، نه ادعا</span>
           <h2>نتایج دانشجوها و سؤال‌هایی که درست پیش‌بینی شد</h2>
           <p>
-            از جمله سؤالی که خودم تألیف کرده بودم و در کنکور ۱۴۰۱ آمد. همه با لینک پست اصلی در آرشیو، تا خودت
+            از جمله سؤالی که خودم تألیف کرده بودم و در کنکور ۱۴۰۱ آمد. همه با تصویر سند اصلی، تا خودت
             ببینی و قضاوت کنی.
           </p>
         </div>

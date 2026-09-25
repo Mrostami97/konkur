@@ -20,6 +20,7 @@ import { CrmModule } from "./modules/crm/crm.module";
 import { InstructorsModule } from "./modules/instructors/instructors.module";
 import { AchievementsModule } from "./modules/achievements/achievements.module";
 import { NotificationsModule } from "./modules/notifications/notifications.module";
+import { SiteModule } from "./modules/site/site.module";
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { NotificationsModule } from "./modules/notifications/notifications.modul
     CrmModule,
     InstructorsModule,
     AchievementsModule,
+    SiteModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

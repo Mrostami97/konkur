@@ -1,0 +1,23 @@
+{
+  "$comment": "Duplicate public pages merged into one canonical page. Each 'from' answers with a permanent 301 redirect (next.config.mjs), leaves every sitemap and discovery list, and internal links point straight at 'to'. Changing public URLs needs the owner's explicit approval (CLAUDE.md).",
+  "redirects": [
+    {
+      "from": "/guides/start-from-zero",
+      "to": "/articles/study-plan-from-zero",
+      "approvedAt": "2026-09-24",
+      "reason": "Same topic as the article: where to start with a weak base"
+    },
+    {
+      "from": "/guides/choose-study-resources",
+      "to": "/articles/how-to-choose-study-resources",
+      "approvedAt": "2026-09-24",
+      "reason": "Same topic as the article: choosing study sources"
+    },
+    {
+      "from": "/guides/switch-to-computer-science",
+      "to": "/articles/change-major-to-computer",
+      "approvedAt": "2026-09-24",
+      "reason": "Same topic as the article: switching into a computer master's"
+    }
+  ]
+}

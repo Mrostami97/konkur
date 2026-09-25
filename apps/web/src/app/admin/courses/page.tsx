@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { apiFetch } from "../../../lib/api";
+import { API_URL, apiFetch, apiUpload } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import {
   AdminPageHeader,
@@ -17,7 +17,6 @@ import {
   Select,
   Textarea,
 } from "../../../components/ds";
-import { BlockList, blockProblem, LessonEditor, newBlock, toContentBlock, type DraftBlock } from "./LessonEditor";
 
 interface Course {
   id: string;
@@ -30,75 +29,274 @@ interface Course {
   modules?: ModuleWithLessons[];
 }
 
-interface ModuleWithLessons {
-  id: string;
-  title: string;
-  lessons: { id: string; title: string; isPreview: boolean }[];
-}
-
 type AccessMode = "PUBLIC" | "ACCOUNT" | "ENTITLEMENT";
 
 const ACCESS: { value: AccessMode; label: string; note: string }[] = [
-  { value: "ENTITLEMENT", label: "پولی", note: "فقط خریداران (جلسه‌های پیش‌نمایش برای همه باز است)" },
-  { value: "ACCOUNT", label: "رایگان با ورود", note: "هر کاربر واردشده" },
-  { value: "PUBLIC", label: "رایگان برای همه", note: "بدون ورود؛ مناسب تدریس رایگان فصل‌ها" },
+  { value: "ENTITLEMENT", label: "پولی", note: "فقط خریداران؛ درس‌های پیش‌نمایش برای همه باز است." },
+  { value: "ACCOUNT", label: "رایگان با ورود", note: "هر کاربری که وارد شده باشد." },
+  { value: "PUBLIC", label: "رایگان برای همه", note: "بدون ورود؛ مناسب تدریس رایگان فصل‌ها." },
 ];
-const accessLabel = (mode?: AccessMode) => ACCESS.find((item) => item.value === (mode ?? "ENTITLEMENT"))?.label ?? "پولی";
 
-function NewLessonForm({ moduleId, onAdded }: { moduleId: string; onAdded: (lessonId: string) => void }) {
-  const [title, setTitle] = useState("");
-  const [isPreview, setIsPreview] = useState(false);
-  const [blocks, setBlocks] = useState<DraftBlock[]>([newBlock()]);
+interface ModuleWithLessons {
+  id: string;
+  title: string;
+  lessons: { id: string; title: string }[];
+}
+
+/** Block types the editor authors. An image is uploaded from here; a video
+ * block (a URL) is kept as it is when a lesson is edited. */
+const BLOCK_TYPES = [
+  { value: "text", label: "پاراگراف" },
+  { value: "heading", label: "عنوان" },
+  { value: "quote", label: "نقل‌قول" },
+  { value: "latex", label: "فرمول (LaTeX)" },
+  { value: "image", label: "تصویر" },
+] as const;
+
+type BlockType = (typeof BLOCK_TYPES)[number]["value"];
+interface LessonImage { media_key: string; checksum: string; url: string }
+interface DraftBlock {
+  id: number;
+  type: BlockType | "kept";
+  /** Text, formula, or for an image its description (alt text and caption). */
+  value: string;
+  image?: LessonImage;
+  /** A block this editor does not author, carried through unchanged. */
+  kept?: { type: string; [key: string]: unknown };
+}
+interface LessonRow {
+  id: string;
+  title: string;
+  isPreview: boolean;
+  contentBlocks: { type: string; [key: string]: unknown }[];
+  assets: { media_key: string; checksum: string }[];
+}
+
+let blockId = 0;
+const newBlock = (type: BlockType = "text"): DraftBlock => ({ id: (blockId += 1), type, value: "" });
+
+function isFilled(block: DraftBlock) {
+  if (block.type === "kept") return true;
+  if (block.type === "image") return Boolean(block.image);
+  return block.value.trim().length > 0;
+}
+
+function toContentBlock(block: DraftBlock) {
+  if (block.type === "kept") return block.kept!;
+  if (block.type === "heading") return { type: "heading", level: 2, text: block.value };
+  if (block.type === "quote") return { type: "quote", text: block.value };
+  if (block.type === "latex") return { type: "latex", latex: block.value };
+  if (block.type === "image") {
+    const text = block.value.trim();
+    return { type: "image", media_key: block.image!.media_key, alt: text, ...(text ? { caption: text } : {}) };
+  }
+  return { type: "text", text: block.value };
+}
+
+/** Turns a saved lesson back into editable rows. */
+function fromLesson(lesson: LessonRow): DraftBlock[] {
+  const checksumOf = new Map(lesson.assets.map((asset) => [asset.media_key, asset.checksum]));
+  return lesson.contentBlocks.map((block) => {
+    const id = (blockId += 1);
+    const text = (key: string) => String(block[key] ?? "");
+    if (block.type === "text" || block.type === "heading" || block.type === "quote") return { id, type: block.type, value: text("text") };
+    if (block.type === "latex") return { id, type: "latex", value: text("latex") };
+    const checksum = block.type === "image" ? checksumOf.get(text("media_key")) : undefined;
+    if (checksum) {
+      return {
+        id,
+        type: "image",
+        value: text("alt") || text("caption"),
+        image: { media_key: text("media_key"), checksum, url: `/media/${checksum.replace("sha256:", "")}` },
+      };
+    }
+    return { id, type: "kept", value: "", kept: block };
+  });
+}
+
+function ImagePicker({ block, onUploaded }: { block: DraftBlock; onUploaded: (image: LessonImage) => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    const filled = blocks.filter((block) => block.value.trim().length > 0);
-    if (filled.length === 0) {
-      setError("درس باید دست‌کم یک بلوک با محتوا داشته باشد.");
-      return;
-    }
-    const problems = filled.map(blockProblem).filter(Boolean);
-    if (problems.length) {
-      setError(String(problems[0]));
-      return;
-    }
+  async function upload(file: File | undefined) {
+    if (!file) return;
     setBusy(true);
     setError(null);
     try {
-      const lesson = await apiFetch<{ id: string }>(`/admin/modules/${moduleId}/lessons`, {
-        method: "POST",
-        body: { title, isPreview, contentBlocks: filled.map(toContentBlock) },
-      });
-      setTitle("");
-      setIsPreview(false);
-      setBlocks([newBlock()]);
-      onAdded(lesson.id);
+      onUploaded(await apiUpload<LessonImage>("/admin/lesson-images", file));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "افزودن درس ناموفق بود.");
+      setError(err instanceof Error ? err.message : "آپلود تصویر ناموفق بود.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={submit} className="ds-form le-new">
-      <h4 className="le-new-title">درس تازه در این سرفصل</h4>
+    <div className="ds-stack-sm">
+      {block.image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="ds-image-preview" src={`${API_URL}${block.image.url}`} alt="" />
+      )}
+      <label className={`ds-btn ds-btn-secondary ds-btn-sm ds-file${busy ? " is-busy" : ""}`}>
+        <input
+          type="file"
+          className="sr-only"
+          accept="image/png,image/jpeg,image/webp"
+          disabled={busy}
+          onChange={(event) => void upload(event.target.files?.[0])}
+        />
+        {busy ? "در حال آپلود…" : block.image ? "تعویض تصویر" : "انتخاب فایل تصویر"}
+      </label>
+      {error && <Alert tone="danger">{error}</Alert>}
+    </div>
+  );
+}
+
+function LessonForm({
+  moduleId,
+  lessonId,
+  onDone,
+}: {
+  moduleId: string;
+  /** Present when editing a saved lesson. */
+  lessonId?: string;
+  onDone: () => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [isPreview, setIsPreview] = useState(false);
+  const [blocks, setBlocks] = useState<DraftBlock[]>(lessonId ? [] : [newBlock()]);
+  const [loading, setLoading] = useState(Boolean(lessonId));
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!lessonId) return;
+    apiFetch<LessonRow>(`/admin/lessons/${lessonId}`)
+      .then((lesson) => {
+        setTitle(lesson.title);
+        setIsPreview(lesson.isPreview);
+        setBlocks(fromLesson(lesson));
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "خواندن درس ممکن نشد."))
+      .finally(() => setLoading(false));
+  }, [lessonId]);
+
+  const update = (id: number, patch: Partial<DraftBlock>) =>
+    setBlocks((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    const filled = blocks.filter(isFilled);
+    if (filled.length === 0) {
+      setError("درس باید دست‌کم یک بلوک با محتوا داشته باشد.");
+      return;
+    }
+    if (blocks.some((block) => block.type === "image" && !block.image)) {
+      setError("برای هر بلوک تصویر، فایلی آپلود کنید یا آن بلوک را حذف کنید.");
+      return;
+    }
+    const assets = filled.flatMap((block) =>
+      block.type === "image" && block.image ? [{ media_key: block.image.media_key, checksum: block.image.checksum }] : [],
+    );
+    const unique = [...new Map(assets.map((asset) => [asset.media_key, asset])).values()];
+    setBusy(true);
+    setError(null);
+    try {
+      const body = { title, isPreview, contentBlocks: filled.map(toContentBlock), assets: unique };
+      if (lessonId) {
+        await apiFetch(`/admin/lessons/${lessonId}`, { method: "PATCH", body });
+      } else {
+        await apiFetch(`/admin/modules/${moduleId}/lessons`, { method: "POST", body: { ...body, order: 1 } });
+        setTitle("");
+        setIsPreview(false);
+        setBlocks([newBlock()]);
+      }
+      onDone();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : lessonId ? "ذخیرهٔ درس ناموفق بود." : "افزودن درس ناموفق بود.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (loading) return <p className="ds-hint">در حال خواندن درس…</p>;
+
+  return (
+    <form onSubmit={submit} className="ds-form">
       <Field label="عنوان درس" required>
         {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} required />}
       </Field>
-      <label className="ds-checkbox-row">
+      <label className="ds-check">
         <input type="checkbox" checked={isPreview} onChange={(event) => setIsPreview(event.target.checked)} />
-        جلسهٔ رایگان (پیش‌نمایش برای همه)
+        درس نمونه (بدون خرید و بدون ورود دیده می‌شود)
       </label>
+
       <div>
         <span className="ds-label">محتوای درس</span>
-        <BlockList blocks={blocks} setBlocks={setBlocks} assets={[]} />
-        <p className="ds-hint">تصویرها پس از ساخت درس، از «ویرایش» اضافه می‌شوند.</p>
+        <div className="ds-stack-sm">
+          {blocks.map((block, index) => (
+            <div className="ds-block-row" key={block.id}>
+              <div style={{ width: "10rem" }}>
+                {block.type === "kept" ? (
+                  <Badge>{block.kept?.type === "video" ? "ویدیو" : "بلوک دیگر"}</Badge>
+                ) : (
+                  <Select
+                    value={block.type}
+                    aria-label={`نوع بلوک ${toPersianDigits(index + 1)}`}
+                    onChange={(event) => update(block.id, { type: event.target.value as BlockType })}
+                  >
+                    {BLOCK_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </Select>
+                )}
+              </div>
+              <div className="ds-grow">
+                {block.type === "kept" ? (
+                  <p className="ds-hint" dir="ltr" style={{ margin: 0 }}>{String(block.kept?.url ?? block.kept?.type ?? "")}</p>
+                ) : block.type === "image" ? (
+                  <div className="ds-stack-sm">
+                    <ImagePicker block={block} onUploaded={(image) => update(block.id, { image })} />
+                    <Input
+                      value={block.value}
+                      placeholder="توضیح تصویر: چه چیزی نشان می‌دهد؟"
+                      aria-label={`توضیح تصویر ${toPersianDigits(index + 1)}`}
+                      onChange={(event) => update(block.id, { value: event.target.value })}
+                    />
+                  </div>
+                ) : (
+                  <Textarea
+                    value={block.value}
+                    aria-label={`متن بلوک ${toPersianDigits(index + 1)}`}
+                    onChange={(event) => update(block.id, { value: event.target.value })}
+                  />
+                )}
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                type="button"
+                aria-label="حذف بلوک"
+                disabled={blocks.length === 1}
+                onClick={() => setBlocks(blocks.filter((item) => item.id !== block.id))}
+              >
+                حذف
+              </Button>
+            </div>
+          ))}
+        </div>
+        <p className="ds-hint">تصویر PNG، JPEG یا WebP تا ۵ مگابایت. توضیح تصویر برای کسی که تصویر را نمی‌بیند خوانده می‌شود.</p>
+        <div className="ds-row">
+          <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock()])}>افزودن بلوک متن</Button>
+          <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock("image")])}>افزودن تصویر</Button>
+        </div>
       </div>
+
       {error && <Alert tone="danger">{error}</Alert>}
-      <div><Button type="submit" variant="primary" loading={busy}>افزودن درس</Button></div>
+      <div className="ds-row">
+        <Button type="submit" variant="primary" loading={busy}>{lessonId ? "ذخیرهٔ درس" : "افزودن درس"}</Button>
+        {lessonId && <Button type="button" variant="ghost" onClick={onDone}>انصراف</Button>}
+      </div>
     </form>
   );
 }
@@ -124,9 +322,9 @@ function ModuleForm({ courseId, nextOrder, onAdded }: { courseId: string; nextOr
   }
 
   return (
-    <form onSubmit={submit} className="ds-form le-module-form">
-      <Field label="سرفصل تازه" required>
-        {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} placeholder="مثلاً فصل ۳: درخت‌ها" required />}
+    <form onSubmit={submit} className="ds-form">
+      <Field label="عنوان سرفصل تازه" required>
+        {(props) => <Input {...props} value={title} onChange={(event) => setTitle(event.target.value)} required />}
       </Field>
       {error && <Alert tone="danger">{error}</Alert>}
       <div><Button type="submit" loading={busy}>افزودن سرفصل</Button></div>
@@ -134,18 +332,11 @@ function ModuleForm({ courseId, nextOrder, onAdded }: { courseId: string; nextOr
   );
 }
 
-function explainDelete(err: unknown) {
-  if (err instanceof Error && err.message.includes("already studied")) return "دانشجوها این درس را دیده‌اند؛ به‌جای حذف، ویرایشش کنید.";
-  if (err instanceof Error && err.message.includes("lessons first")) return "اول درس‌های این سرفصل را حذف یا جابه‌جا کنید.";
-  return "حذف ممکن نشد.";
-}
-
 function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => void }) {
   const modules = course.modules ?? [];
   const [editing, setEditing] = useState<string | null>(null);
-  const [renaming, setRenaming] = useState<{ id: string; title: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<{ kind: "lesson" | "module"; id: string; title: string } | null>(null);
+  const [removing, setRemoving] = useState<{ kind: "lessons" | "modules"; id: string; title: string } | null>(null);
   const [busy, setBusy] = useState(false);
 
   async function act(action: () => Promise<unknown>) {
@@ -154,91 +345,88 @@ function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => 
       await action();
       onChanged();
     } catch (err) {
-      setError(explainDelete(err));
+      const message = err instanceof Error ? err.message : "";
+      setError(
+        message.includes("already studied")
+          ? "دانشجوها این درس را دیده‌اند؛ به‌جای حذف، ویرایشش کنید."
+          : message.includes("lessons first")
+            ? "اول درس‌های این سرفصل را حذف کنید؛ فقط سرفصل خالی حذف می‌شود."
+            : "این کار انجام نشد.",
+      );
     }
   }
 
-  async function doDelete() {
-    if (!confirmDelete) return;
-    setBusy(true);
-    await act(() => apiFetch(`/admin/${confirmDelete.kind === "lesson" ? "lessons" : "modules"}/${confirmDelete.id}`, { method: "DELETE" }));
-    if (editing === confirmDelete.id) setEditing(null);
-    setBusy(false);
-    setConfirmDelete(null);
-  }
+  const move = (kind: "lessons" | "modules", id: string, direction: "up" | "down") =>
+    act(() => apiFetch(`/admin/${kind}/${id}/move`, { method: "POST", body: { direction } }));
 
   return (
     <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
       {error && <Alert tone="danger">{error}</Alert>}
-      {modules.length === 0 && <p className="ds-hint">این دوره هنوز سرفصلی ندارد؛ از فرم پایین اولین سرفصل را بسازید.</p>}
       {modules.map((module, moduleIndex) => (
-        <details className="ds-details" key={module.id} open={modules.length === 1 || module.lessons.some((lesson) => lesson.id === editing)}>
+        <details className="ds-details" key={module.id}>
           <summary>
-            <span className="le-summary">
-              <span>{toPersianDigits(moduleIndex + 1)}. {module.title}</span>
-              <small>{toPersianDigits(module.lessons.length)} درس</small>
-            </span>
+            {module.title} — {toPersianDigits(module.lessons.length)} درس
           </summary>
-          <div className="ds-details-body ds-stack">
-            <div className="ds-row le-module-tools">
-              {renaming?.id === module.id ? (
-                <>
-                  <Input aria-label="عنوان سرفصل" value={renaming.title} onChange={(event) => setRenaming({ id: module.id, title: event.target.value })} />
-                  <Button size="sm" variant="primary" onClick={() => void act(async () => {
-                    await apiFetch(`/admin/modules/${module.id}`, { method: "PATCH", body: { title: renaming.title } });
-                    setRenaming(null);
-                  })}>ذخیره</Button>
-                  <Button size="sm" variant="ghost" onClick={() => setRenaming(null)}>انصراف</Button>
-                </>
-              ) : (
-                <>
-                  <Button size="sm" onClick={() => setRenaming({ id: module.id, title: module.title })}>تغییر نام</Button>
-                  <Button size="sm" variant="ghost" disabled={moduleIndex === 0} onClick={() => void act(() => apiFetch(`/admin/modules/${module.id}/move`, { method: "POST", body: { direction: "up" } }))}>سرفصل بالاتر</Button>
-                  <Button size="sm" variant="ghost" disabled={moduleIndex === modules.length - 1} onClick={() => void act(() => apiFetch(`/admin/modules/${module.id}/move`, { method: "POST", body: { direction: "down" } }))}>سرفصل پایین‌تر</Button>
-                  <Button size="sm" variant="ghost" disabled={module.lessons.length > 0} title={module.lessons.length ? "فقط سرفصل خالی حذف می‌شود" : undefined} onClick={() => setConfirmDelete({ kind: "module", id: module.id, title: module.title })}>حذف سرفصل</Button>
-                </>
-              )}
+          <div className="ds-details-body">
+            <div className="ds-row" style={{ marginBottom: "var(--sp-3)" }}>
+              <Button size="sm" variant="ghost" disabled={moduleIndex === 0} onClick={() => void move("modules", module.id, "up")}>سرفصل بالاتر</Button>
+              <Button size="sm" variant="ghost" disabled={moduleIndex === modules.length - 1} onClick={() => void move("modules", module.id, "down")}>سرفصل پایین‌تر</Button>
+              <Button size="sm" variant="ghost" disabled={module.lessons.length > 0} onClick={() => setRemoving({ kind: "modules", id: module.id, title: module.title })}>حذف سرفصل</Button>
             </div>
-
             {module.lessons.length > 0 && (
-              <ol className="le-lessons">
+              <ul className="ds-plain-list">
                 {module.lessons.map((lesson, lessonIndex) => (
                   <li key={lesson.id}>
-                    <div className="le-lesson-row">
-                      <span className="le-lesson-title">
-                        {lesson.title}
-                        {lesson.isPreview && <Badge tone="success">رایگان</Badge>}
-                      </span>
+                    <div className="ds-row-between">
+                      <span>{lesson.title}</span>
                       <span className="ds-row">
-                        <Button size="sm" variant="ghost" aria-label="درس بالاتر" disabled={lessonIndex === 0} onClick={() => void act(() => apiFetch(`/admin/lessons/${lesson.id}/move`, { method: "POST", body: { direction: "up" } }))}>↑</Button>
-                        <Button size="sm" variant="ghost" aria-label="درس پایین‌تر" disabled={lessonIndex === module.lessons.length - 1} onClick={() => void act(() => apiFetch(`/admin/lessons/${lesson.id}/move`, { method: "POST", body: { direction: "down" } }))}>↓</Button>
-                        <Button size="sm" onClick={() => setEditing(editing === lesson.id ? null : lesson.id)}>{editing === lesson.id ? "بستن" : "ویرایش"}</Button>
-                        <Button size="sm" variant="ghost" onClick={() => setConfirmDelete({ kind: "lesson", id: lesson.id, title: lesson.title })}>حذف</Button>
+                        <Button size="sm" variant="ghost" aria-label="درس بالاتر" disabled={lessonIndex === 0} onClick={() => void move("lessons", lesson.id, "up")}>↑</Button>
+                        <Button size="sm" variant="ghost" aria-label="درس پایین‌تر" disabled={lessonIndex === module.lessons.length - 1} onClick={() => void move("lessons", lesson.id, "down")}>↓</Button>
+                        <Button size="sm" variant="ghost" onClick={() => setEditing(editing === lesson.id ? null : lesson.id)}>
+                          {editing === lesson.id ? "بستن" : "ویرایش"}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setRemoving({ kind: "lessons", id: lesson.id, title: lesson.title })}>حذف</Button>
                       </span>
                     </div>
                     {editing === lesson.id && (
-                      <LessonEditor lessonId={lesson.id} onSaved={onChanged} onClose={() => setEditing(null)} />
+                      <div className="ds-panel" style={{ marginTop: "var(--sp-3)" }}>
+                        <LessonForm
+                          moduleId={module.id}
+                          lessonId={lesson.id}
+                          onDone={() => {
+                            setEditing(null);
+                            onChanged();
+                          }}
+                        />
+                      </div>
                     )}
                   </li>
                 ))}
-              </ol>
+              </ul>
             )}
-            <NewLessonForm moduleId={module.id} onAdded={(lessonId) => { setEditing(lessonId); onChanged(); }} />
+            <LessonForm moduleId={module.id} onDone={onChanged} />
           </div>
         </details>
       ))}
       <ModuleForm courseId={course.id} nextOrder={modules.length + 1} onAdded={onChanged} />
 
       <ConfirmDialog
-        open={confirmDelete !== null}
-        title={`حذف «${confirmDelete?.title ?? ""}»؟`}
-        description={confirmDelete?.kind === "lesson"
+        open={removing !== null}
+        title={`حذف «${removing?.title ?? ""}»؟`}
+        description={removing?.kind === "lessons"
           ? "درسی که دانشجویی دیده باشد حذف نمی‌شود. این کار برگشت‌پذیر نیست."
           : "فقط سرفصل خالی حذف می‌شود. این کار برگشت‌پذیر نیست."}
         confirmLabel="حذف کن"
         busy={busy}
-        onConfirm={() => void doDelete()}
-        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (!removing) return;
+          setBusy(true);
+          void act(() => apiFetch(`/admin/${removing.kind}/${removing.id}`, { method: "DELETE" })).finally(() => {
+            setBusy(false);
+            setRemoving(null);
+          });
+        }}
+        onCancel={() => setRemoving(null)}
       />
     </div>
   );
@@ -259,10 +447,10 @@ export default function CoursesAdminPage() {
 
   const [expanded, setExpanded] = useState<string | null>(null);
   const [publishTarget, setPublishTarget] = useState<{ course: Course; publish: boolean } | null>(null);
-  const [detailsTarget, setDetailsTarget] = useState<Course | null>(null);
-  const [details, setDetails] = useState({ title: "", description: "", accessMode: "ENTITLEMENT" as AccessMode, spotPlayerCourseId: "" });
-  const [detailsBusy, setDetailsBusy] = useState(false);
-  const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [videoTarget, setVideoTarget] = useState<Course | null>(null);
+  const [videoId, setVideoId] = useState("");
+  const [videoBusy, setVideoBusy] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
 
   const load = useCallback(async () => {
@@ -307,34 +495,34 @@ export default function CoursesAdminPage() {
     }
   }
 
-  /** The course update endpoint takes the whole course, so the slug is sent
-   * back unchanged -- it is the public URL and is not edited here. */
-  async function saveDetails() {
-    const course = detailsTarget;
+  /** The course update endpoint takes the whole course, so the fields that
+   * are not being edited here are sent back unchanged. */
+  async function saveVideoId() {
+    const course = videoTarget;
     if (!course) return;
-    setDetailsBusy(true);
-    setDetailsError(null);
+    setVideoBusy(true);
+    setVideoError(null);
     try {
       await apiFetch(`/admin/courses/${course.id}`, {
         method: "PATCH",
         body: {
           slug: course.slug,
-          title: details.title,
-          description: details.description,
-          accessMode: details.accessMode,
-          ...(details.spotPlayerCourseId.trim() ? { spotPlayerCourseId: details.spotPlayerCourseId.trim() } : {}),
+          title: course.title,
+          description: course.description ?? "",
+          accessMode: course.accessMode,
+          ...(videoId.trim() ? { spotPlayerCourseId: videoId.trim() } : {}),
         },
       });
-      setDetailsTarget(null);
+      setVideoTarget(null);
       await load();
     } catch (err) {
-      setDetailsError(err instanceof Error ? err.message : "ذخیرهٔ مشخصات ممکن نشد.");
+      setVideoError(err instanceof Error ? err.message : "ذخیرهٔ شناسهٔ ویدیو ممکن نشد.");
     } finally {
-      setDetailsBusy(false);
+      setVideoBusy(false);
     }
   }
 
-  async function togglePublish() {
+  async function publish() {
     if (!publishTarget) return;
     setPublishing(true);
     try {
@@ -353,7 +541,7 @@ export default function CoursesAdminPage() {
     <>
       <AdminPageHeader
         title="دوره‌ها"
-        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود؛ درس‌ها متن، فرمول، تصویر و ویدیوی آپارات می‌گیرند و هر درس می‌تواند جلسهٔ رایگان باشد."
+        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. درس و سرفصل را می‌شود ویرایش، جابه‌جا و (تا وقتی دانشجویی ندیده) حذف کرد."
       />
 
       <div className="ds-stack-lg">
@@ -396,12 +584,12 @@ export default function CoursesAdminPage() {
           </form>
         </Card>
 
-        {error && courses.length > 0 && <Alert tone="danger">{error}</Alert>}
         <Card padded={false}>
           <div className="ds-card-head"><h2 className="ds-card-title">همهٔ دوره‌ها</h2></div>
           <div className="ds-card-body">
-            {/* A reload after an edit keeps the list mounted: swapping it for
-                a skeleton would close the lesson being edited. */}
+            {/* A reload after an edit keeps the list mounted: swapping it for a
+                skeleton would close the lesson being edited. */}
+            {error && courses.length > 0 && <Alert tone="danger">{error}</Alert>}
             <DataState
               loading={loading && courses.length === 0}
               error={courses.length === 0 ? error : null}
@@ -420,10 +608,11 @@ export default function CoursesAdminPage() {
                           <Badge tone={course.isPublished ? "success" : "neutral"}>
                             {course.isPublished ? "منتشرشده" : "پیش‌نویس"}
                           </Badge>
-                          <Badge tone={course.accessMode === "ENTITLEMENT" || !course.accessMode ? "neutral" : "info"}>{accessLabel(course.accessMode)}</Badge>
+                          {course.accessMode && course.accessMode !== "ENTITLEMENT" && (
+                            <Badge tone="info">{ACCESS.find((item) => item.value === course.accessMode)?.label}</Badge>
+                          )}
                           <span className="ds-hint" style={{ margin: 0 }}>
-                            {toPersianDigits(course.modules?.length ?? 0)} سرفصل ·{" "}
-                            {toPersianDigits((course.modules ?? []).reduce((sum, module) => sum + module.lessons.length, 0))} درس
+                            {toPersianDigits(course.modules?.length ?? 0)} سرفصل
                           </span>
                           {course.spotPlayerCourseId ? (
                             <Badge tone="info">ویدیو در اسپات‌پلیر</Badge>
@@ -438,21 +627,15 @@ export default function CoursesAdminPage() {
                         ) : (
                           <Button size="sm" variant="primary" onClick={() => setPublishTarget({ course, publish: true })}>انتشار</Button>
                         )}
-                        <a className="ds-btn ds-btn-ghost ds-btn-sm" href={`/courses/${course.slug}`} target="_blank" rel="noreferrer">صفحهٔ دوره</a>
                         <Button
                           size="sm"
                           onClick={() => {
-                            setDetails({
-                              title: course.title,
-                              description: course.description ?? "",
-                              accessMode: course.accessMode ?? "ENTITLEMENT",
-                              spotPlayerCourseId: course.spotPlayerCourseId ?? "",
-                            });
-                            setDetailsError(null);
-                            setDetailsTarget(course);
+                            setVideoId(course.spotPlayerCourseId ?? "");
+                            setVideoError(null);
+                            setVideoTarget(course);
                           }}
                         >
-                          مشخصات و ویدیو
+                          تنظیم ویدیو
                         </Button>
                         <Button size="sm" onClick={() => setExpanded(expanded === course.id ? null : course.id)}>
                           {expanded === course.id ? "بستن" : "سرفصل‌ها و درس‌ها"}
@@ -469,38 +652,27 @@ export default function CoursesAdminPage() {
       </div>
 
       <ConfirmDialog
-        open={detailsTarget !== null}
-        title={`مشخصات «${detailsTarget?.title ?? ""}»`}
-        description="نشانی صفحهٔ دوره (slug) تغییر نمی‌کند تا پیوندها و رتبهٔ جست‌وجو از دست نرود."
+        open={videoTarget !== null}
+        title={`ویدیوی «${videoTarget?.title ?? ""}»`}
+        description="شناسهٔ دوره را از پنل اسپات‌پلیر بردارید و اینجا بگذارید. خالی گذاشتن یعنی این دوره ویدیو ندارد و بخش ویدیو روی صفحهٔ دوره نشان داده نمی‌شود."
         confirmLabel="ذخیره"
-        busy={detailsBusy}
-        onConfirm={() => void saveDetails()}
+        busy={videoBusy}
+        onConfirm={() => void saveVideoId()}
         onCancel={() => {
-          setDetailsTarget(null);
-          setDetailsError(null);
+          setVideoTarget(null);
+          setVideoError(null);
         }}
       >
-        <div className="ds-stack-sm">
-          <Field label="عنوان دوره" required>
-            {(props) => <Input {...props} value={details.title} onChange={(event) => setDetails({ ...details, title: event.target.value })} />}
-          </Field>
-          <Field label="توضیح" required>
-            {(props) => <Textarea {...props} value={details.description} onChange={(event) => setDetails({ ...details, description: event.target.value })} />}
-          </Field>
-          <Field label="دسترسی" hint={ACCESS.find((item) => item.value === details.accessMode)?.note}>
-            {(props) => (
-              <Select {...props} value={details.accessMode} onChange={(event) => setDetails({ ...details, accessMode: event.target.value as AccessMode })}>
-                {ACCESS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-              </Select>
-            )}
-          </Field>
-          <Field label="شناسهٔ دوره در اسپات‌پلیر" hint="خالی یعنی این دوره ویدیوی اسپات‌پلیر ندارد.">
-            {(props) => (
-              <Input {...props} dir="ltr" value={details.spotPlayerCourseId} onChange={(event) => setDetails({ ...details, spotPlayerCourseId: event.target.value })} />
-            )}
-          </Field>
-          {detailsError && <Alert tone="danger">{detailsError}</Alert>}
-        </div>
+        <Field label="شناسهٔ دوره در اسپات‌پلیر">
+          {(props) => (
+            <Input {...props} dir="ltr" value={videoId} onChange={(event) => setVideoId(event.target.value)} />
+          )}
+        </Field>
+        {videoError && (
+          <div style={{ marginTop: "var(--sp-3)" }}>
+            <Alert tone="danger">{videoError}</Alert>
+          </div>
+        )}
       </ConfirmDialog>
 
       <ConfirmDialog
@@ -508,12 +680,12 @@ export default function CoursesAdminPage() {
         title={publishTarget?.publish ? `انتشار «${publishTarget.course.title}»؟` : `لغو انتشار «${publishTarget?.course.title ?? ""}»؟`}
         description={
           publishTarget?.publish
-            ? "پس از انتشار، دوره در فهرست عمومی دیده می‌شود و فروش آن ممکن می‌شود. هر زمان می‌توانید انتشار را لغو کنید."
+            ? "پس از انتشار، دوره در فهرست عمومی دیده می‌شود و فروشش ممکن می‌شود. هر زمان می‌توانید انتشار را لغو کنید."
             : "دوره از فهرست عمومی و فروش خارج می‌شود و تا انتشار دوباره، دانشجویان ثبت‌نام‌شده هم به درس‌ها دسترسی ندارند."
         }
         confirmLabel={publishTarget?.publish ? "منتشر کن" : "لغو انتشار"}
         busy={publishing}
-        onConfirm={togglePublish}
+        onConfirm={publish}
         onCancel={() => setPublishTarget(null)}
       />
     </>

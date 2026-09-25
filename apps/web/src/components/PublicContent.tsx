@@ -8,7 +8,8 @@ import { ReadingHero } from "./reading/ReadingHero";
 import { ReadingProgress } from "./reading/ReadingProgress";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
 import { findSubject } from "../content/editorial";
-import { absoluteUrl } from "../lib/seo";
+import { faqPageSchema } from "../lib/faq-schema";
+import { absoluteUrl, personReference } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
 
 export type PublicContentBlock = { type: string; [key: string]: unknown };
@@ -322,20 +323,8 @@ export function PublicArticleView({
   };
   if (article.publishedAt) articleSchema.datePublished = article.publishedAt;
   if (article.reviewedAt ?? article.updatedAt) articleSchema.dateModified = article.reviewedAt ?? article.updatedAt;
-  if (article.authorProfile) {
-    articleSchema.author = {
-      "@type": "Person",
-      name: article.authorProfile.displayName,
-      url: absoluteUrl(`/authors/${article.authorProfile.slug}`),
-    };
-  }
-  if (article.reviewerProfile) {
-    webPageSchema.reviewedBy = {
-      "@type": "Person",
-      name: article.reviewerProfile.displayName,
-      url: absoluteUrl(`/authors/${article.reviewerProfile.slug}`),
-    };
-  }
+  if (article.authorProfile) articleSchema.author = personReference(article.authorProfile);
+  if (article.reviewerProfile) webPageSchema.reviewedBy = personReference(article.reviewerProfile);
   if (article.sources.length > 0) {
     articleSchema.citation = article.sources.map((link) => link.source.deepUrl ?? link.source.canonicalUrl);
   }
@@ -357,13 +346,15 @@ export function PublicArticleView({
     })),
   };
 
+  const faqSchema = faqPageSchema(Array.isArray(article.contentBlocks) ? article.contentBlocks : [], absoluteUrl(path));
+
   const leadSubject = article.subjectCodes.map((code) => findSubject(code)).find(Boolean);
   const tone = leadSubject ? SUBJECT_TONE[leadSubject.slug] ?? "blue" : article.contentType === "GUIDE" ? "teal" : "blue";
 
   return (
     <main className="rd-page">
       <ReadingProgress />
-      <StructuredData data={[articleSchema, webPageSchema, breadcrumbSchema]} />
+      <StructuredData data={faqSchema ? [articleSchema, webPageSchema, breadcrumbSchema, faqSchema] : [articleSchema, webPageSchema, breadcrumbSchema]} />
       <ReadingHero
         tone={tone}
         crumbs={breadcrumbItems}

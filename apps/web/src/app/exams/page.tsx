@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import { apiGetPublic } from "../../lib/api";
 import { StartExamButton } from "../../components/StartExamButton";
+import { ComingSoon } from "../../components/ComingSoon";
 import { EmptyState } from "../../components/ui";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
-
-export const metadata: Metadata = pageMetadata({
-  title: "آزمون‌های آمادگی کنکور کامپیوتر",
-  description: "فهرست آزمون‌های منتشرشده برای سنجش آمادگی ارشد و دکتری کامپیوتر در کنکورصفریک.",
-  path: "/exams",
-});
 
 interface Exam {
   id: string;
@@ -19,13 +14,27 @@ interface Exam {
   durationMinutes: number;
 }
 
-export default async function ExamsPage() {
-  let exams: Exam[] | null = null;
+async function loadExams() {
   try {
-    exams = await apiGetPublic<Exam[]>("/exams");
+    return await apiGetPublic<Exam[]>("/exams");
   } catch {
-    exams = null;
+    return null;
   }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const exams = await loadExams();
+  return pageMetadata({
+    title: "آزمون‌های آمادگی کنکور کامپیوتر",
+    description: "فهرست آزمون‌های منتشرشده برای سنجش آمادگی ارشد و دکتری کامپیوتر در کنکورصفریک.",
+    path: "/exams",
+    // Until an exam is published this is a "coming soon" page, not one to rank.
+    noIndex: exams === null || exams.length === 0,
+  });
+}
+
+export default async function ExamsPage() {
+  const exams = await loadExams();
 
   return (
     <main className="pg">
@@ -44,9 +53,15 @@ export default async function ExamsPage() {
             description="اتصال به سرویس آزمون برقرار نشد؛ بعداً دوباره امتحان کن."
           />
         ) : exams.length === 0 ? (
-          <EmptyState
-            title="هنوز آزمونی منتشر نشده است"
-            description="آزمون‌های جدید بعد از انتشار در این بخش قرار می‌گیرند."
+          <ComingSoon
+            icon="target"
+            title="آزمون‌های آزمایشی به‌زودی"
+            text="آزمون‌های زمان‌دار با کارنامه، درصد به روش کنکور و رتبه بین شرکت‌کننده‌ها در حال آماده‌سازی است. بعد از انتشار، از همین صفحه و از پنل خودت شرکت می‌کنی."
+            alternatives={[
+              { href: "/guides/booklets-and-answer-keys", label: "دفترچه و کلید سال‌های قبل" },
+              { href: "/guides/exam-time-management", label: "مدیریت زمان سر جلسه" },
+              { href: "/subjects", label: "نقشهٔ درس‌ها" },
+            ]}
           />
         ) : (
           <div className="pg-grid pg-grid-wide">

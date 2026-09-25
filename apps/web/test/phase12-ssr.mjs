@@ -4,7 +4,14 @@ import { readFile } from "node:fs/promises";
 const baseUrl = (process.env.WEB_TEST_BASE_URL ?? "http://127.0.0.1:3012").replace(/\/$/, "");
 const canonicalOrigin = (process.env.WEB_TEST_CANONICAL_ORIGIN ?? "https://kunkur01.ir").replace(/\/$/, "");
 const corpus = JSON.parse(await readFile(new URL("../src/content/phase12-corpus.json", import.meta.url), "utf8"));
-const pages = [...corpus.planningPages, ...corpus.officialPages];
+const allPages = [...corpus.planningPages, ...corpus.officialPages];
+// Owner-approved merges (src/content/merged-pages.json): these guides now 301 to
+// their article twin and leave every discovery surface.
+const merged = JSON.parse(await readFile(new URL("../src/content/merged-pages.json", import.meta.url), "utf8")).redirects;
+const mergedTarget = new Map(merged.map((entry) => [entry.from, entry.to]));
+const canonicalHref = (href) => mergedTarget.get(href) ?? href;
+const pages = allPages.filter((page) => !mergedTarget.has(`/guides/${page.slug}`));
+const mergedPages = allPages.filter((page) => mergedTarget.has(`/guides/${page.slug}`));
 
 async function read(path) {
   const response = await fetch(`${baseUrl}${path}`);
@@ -24,7 +31,14 @@ function escapedRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-assert.equal(pages.length, 22);
+assert.equal(allPages.length, 22);
+assert.equal(mergedPages.length, merged.length, "every merged guide must be a Phase 12 guide");
+for (const page of mergedPages) {
+  const route = `/guides/${page.slug}`;
+  const response = await fetch(`${baseUrl}${route}`, { redirect: "manual" });
+  assert.equal(response.status, 301, `${route} must permanently redirect to its merged page`);
+  assert.equal(new URL(response.headers.get("location"), baseUrl).pathname, mergedTarget.get(route), `${route} must redirect to ${mergedTarget.get(route)}`);
+}
 for (const page of pages) {
   const route = `/guides/${page.slug}`;
   const result = await read(route);
@@ -39,7 +53,8 @@ for (const page of pages) {
     assert.match(result.body, /ملاک نهایی/, `${route} must carry the official-source warning`);
   }
   for (const item of page.internalLinks) {
-    assert.match(result.body, new RegExp(`href="${escapedRegExp(item.href)}"`), `${route} must link to ${item.href}`);
+    const href = canonicalHref(item.href);
+    assert.match(result.body, new RegExp(`href="${escapedRegExp(href)}"`), `${route} must link to ${href}`);
   }
 }
 
@@ -47,6 +62,9 @@ const guideIndex = await read("/guides");
 assert.equal(guideIndex.response.status, 200);
 for (const page of pages) {
   assert.match(guideIndex.body, new RegExp(`href="/guides/${escapedRegExp(page.slug)}"`));
+}
+for (const page of mergedPages) {
+  assert.doesNotMatch(guideIndex.body, new RegExp(`href="/guides/${escapedRegExp(page.slug)}"`), `the guide index must not list merged guide ${page.slug}`);
 }
 
 const guideSitemap = await read("/sitemaps/guides.xml");
@@ -58,6 +76,9 @@ for (const page of pages) {
   const canonical = `${canonicalOrigin}/guides/${page.slug}`;
   assert.equal(locations.filter((location) => location === canonical).length, 1, `${canonical} must occur once`);
 }
+for (const page of mergedPages) {
+  assert.ok(!locations.includes(`${canonicalOrigin}/guides/${page.slug}`), `the guide sitemap must omit merged guide ${page.slug}`);
+}
 
 const search = await read("/search?q=دفترچه+خطا");
 assert.equal(search.response.status, 200);
@@ -66,5 +87,6 @@ assert.match(search.body, /href="\/guides\/error-log"/, "fallback search must di
 const llms = await read("/llms.txt");
 assert.equal(llms.response.status, 200);
 for (const page of pages) assert.match(llms.body, new RegExp(`/guides/${escapedRegExp(page.slug)}`));
+for (const page of mergedPages) assert.doesNotMatch(llms.body, new RegExp(`/guides/${escapedRegExp(page.slug)}[)\\s]`), `llms.txt must omit merged guide ${page.slug}`);
 
-console.log("Phase 12 SSR smoke tests passed: 22 canonical guides, discovery surfaces and warnings were verified.");
+console.log(`Phase 12 SSR smoke tests passed: ${pages.length} canonical guides, ${mergedPages.length} merged redirects, discovery surfaces and warnings were verified.`);

@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
+import { MobileNav } from "../components/MobileNav";
 import { PublicChrome } from "../components/PublicChrome";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
-import { Glyph } from "../components/SubjectIcon";
 import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 import { StructuredData } from "../components/StructuredData";
 import { subjects } from "../content/editorial";
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#243B53",
+  themeColor: "#0c1b2e",
 };
 
 // The header lists every subject; the footer only the ones most candidates
@@ -60,6 +59,10 @@ const FOOTER_SUBJECTS = FOOTER_SUBJECT_SLUGS.flatMap((slug) => NAV_SUBJECTS.filt
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fa" dir="rtl">
+      <head>
+        {/* The one font file every page needs before first paint. */}
+        <link rel="preload" href="/fonts/Vazirmatn-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
+      </head>
       <body>
         <StructuredData data={[
           { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom"] },
@@ -71,13 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <PublicChrome>
         <SiteFooter subjects={FOOTER_SUBJECTS} />
-        <nav className="mobile-nav" aria-label="ناوبری موبایل">
-          <Link href="/"><Glyph name="building" /><small>خانه</small></Link>
-          <Link href="/courses"><Glyph name="play" /><small>دوره‌ها</small></Link>
-          <Link className="mobile-nav-main" href="/results"><Glyph name="trophy" /><small>نتایج</small></Link>
-          <Link href="/practice"><Glyph name="target" /><small>تمرین</small></Link>
-          <Link href="/account"><Glyph name="compass" /><small>حساب من</small></Link>
-        </nav>
+        <MobileNav />
         </PublicChrome>
         <ServiceWorkerRegistration />
       </body>

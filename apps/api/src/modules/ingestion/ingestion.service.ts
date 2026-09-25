@@ -332,12 +332,13 @@ export class IngestionService {
     return this.prisma.$transaction(async (tx) => {
       const publishedAt = new Date();
       const review = recordedReview ?? { reviewedByUserId: actorId, reviewedAt: publishedAt };
-      const { entityId, version, entityType } = await this.publishBySchema(
+      const { entityId, version, entityType, supersededVersions } = await this.publishBySchema(
         tx,
         schemaVersion,
         payload,
         review.reviewedByUserId,
         review.reviewedAt,
+        importItemId,
       );
 
       await tx.contentVersion.create({
@@ -380,6 +381,7 @@ export class IngestionService {
             publisherUserId: actorId,
             reviewedByUserId: review.reviewedByUserId,
             reviewedAt: review.reviewedAt.toISOString(),
+            ...(supersededVersions?.length ? { supersededVersions } : {}),
           },
         },
         tx,
@@ -395,7 +397,8 @@ export class IngestionService {
     payload: ContractItem,
     reviewerId: string,
     reviewedAt: Date,
-  ): Promise<{ entityId: string; version: number; entityType: VersionedEntityType }> {
+    importItemId?: string,
+  ): Promise<{ entityId: string; version: number; entityType: VersionedEntityType; supersededVersions?: number[] }> {
     if (schemaVersion === "article.v1") {
       const p = payload as ArticleV1;
       const existing = await tx.article.findUnique({ where: { externalId: p.external_id } });
@@ -425,19 +428,38 @@ export class IngestionService {
 
     if (schemaVersion === "article.v2") {
       const p = payload as ArticleV2;
+      let supersededVersions: number[] | undefined;
       let existing = await tx.article.findUnique({ where: { externalId: p.external_id } });
       if (existing) {
         await this.lockArticle(tx, existing.id);
         existing = await tx.article.findUnique({ where: { id: existing.id } });
-        const pending = await tx.contentVersion.findFirst({
+        const pending = await tx.contentVersion.findMany({
           where: {
             entityType: VersionedEntityType.ARTICLE,
             entityId: existing!.id,
             schemaVersion: "article.v2",
             reviewStatus: { in: ["DRAFT", "IN_REVIEW"] },
           },
+          select: { id: true, version: true },
         });
-        if (pending) throw new ForbiddenException("this article already has a pending revision");
+        if (pending.length) {
+          // Direct authoring must not overwrite someone's open revision. An
+          // import item, though, was already reviewed and approved as the new
+          // text, so it closes the open revision instead of being blocked by
+          // it -- otherwise a seeded draft that cannot be submitted (and so
+          // cannot be rejected) would block the import forever.
+          if (!importItemId) throw new ForbiddenException("this article already has a pending revision");
+          await tx.contentVersion.updateMany({
+            where: { id: { in: pending.map((row) => row.id) } },
+            data: {
+              reviewStatus: "REJECTED",
+              reviewedByUserId: reviewerId,
+              reviewedAt,
+              reviewNote: `superseded by approved import item ${importItemId}`,
+            },
+          });
+          supersededVersions = pending.map((row) => row.version);
+        }
       }
       const latest = existing
         ? await tx.contentVersion.findFirst({
@@ -499,7 +521,7 @@ export class IngestionService {
             data: { ...data, sources: { deleteMany: {}, create: sourceRows } },
           })
         : await tx.article.create({ data: { ...data, sources: { create: sourceRows } } });
-      return { entityId: article.id, version, entityType: VersionedEntityType.ARTICLE };
+      return { entityId: article.id, version, entityType: VersionedEntityType.ARTICLE, supersededVersions };
     }
 
     if (schemaVersion === "report-card.v1") {

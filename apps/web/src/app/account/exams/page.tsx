@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Glyph } from "../../../components/SubjectIcon";
 import { apiFetch } from "../../../lib/api";
-import { toPersianDigits } from "../../../lib/format";
+import { konkurPercent, toPersianDigits } from "../../../lib/format";
 import { AccountShell } from "../AccountShell";
 import { ProgressRing, ScoreTrend } from "../charts";
 import { ATTEMPT_STATUS, faDate, type Mastery, type MyAttempt } from "../data";
@@ -29,7 +29,8 @@ export default function MyExamsPage() {
   const bestRank = ranked.length ? Math.min(...ranked.map((attempt) => attempt.standing!.rank!)) : null;
 
   const scored = (attempts ?? []).filter((attempt) => attempt.score);
-  const percents = scored.map((attempt) => attempt.score!.percentCorrect);
+  // Konkur percent throughout, so these figures match each row and the report.
+  const percents = scored.map((attempt) => konkurPercent(attempt.score!));
   const average = percents.length ? Math.round(percents.reduce((sum, value) => sum + value, 0) / percents.length) : null;
   const best = percents.length ? Math.round(Math.max(...percents)) : null;
   const inProgress = (attempts ?? []).filter((attempt) => attempt.status === "IN_PROGRESS");
@@ -76,9 +77,9 @@ export default function MyExamsPage() {
         <>
           <div className="st-exam-summary">
             <div className="st-card st-exam-ring">
-              <ProgressRing percent={average ?? 0} size={120} stroke={11} tone="teal" label="میانگین" />
+              <ProgressRing percent={Math.max(0, average ?? 0)} size={120} stroke={11} tone="teal" label="میانگین" />
               <div>
-                <strong>میانگین درصد پاسخ درست</strong>
+                <strong>میانگین درصد به روش کنکور</strong>
                 <p>
                   {average !== null
                     ? `در ${toPersianDigits(scored.length)} آزمون تصحیح‌شده.`
@@ -105,7 +106,7 @@ export default function MyExamsPage() {
               </header>
               <div className="st-trend-wrap st-trend-lg">
                 <ScoreTrend
-                  points={[...scored].reverse().map((attempt) => ({ value: attempt.score!.percentCorrect, label: attempt.exam.title }))}
+                  points={[...scored].reverse().map((attempt) => ({ value: konkurPercent(attempt.score!), label: attempt.exam.title }))}
                 />
               </div>
             </section>

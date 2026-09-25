@@ -141,18 +141,20 @@ for (const { route } of phase13Routes) {
   assert.doesNotMatch(llms.body, new RegExp(escapedRegExp(`${canonicalOrigin}${route}`)), `llms.txt must omit ${route}`);
 }
 
-// Each claim was checked against its Telegram post on 2026-09-23 and must keep
-// both its wording and the post it came from.
+// Each claim was checked against its archive post on 2026-09-23 and must keep
+// its wording. The posts stay in content/evidence.ts as provenance; the page
+// shows its own copy of each image and, at the owner's request (2026-09-25),
+// does not link to Telegram.
 const evidenceClaims = [
-  { claim: "سؤالی که تألیف کرده بودم، در کنکور ۱۴۰۱ آمد", source: "https://t.me/Konkur_answer/3060" },
-  { claim: "نُه‌تا در کلاس کار شده بود", source: "https://t.me/Konkur_answer/4986" },
-  { claim: "۱۰ پاسخ درست از ۱۱ سؤال معتبر", source: "https://t.me/Konkur_answer/4978" },
-  { claim: "۹ تست صحیح", source: "https://t.me/Konkur_answer/4979" },
-  { claim: "۱۰۰٪ نظریه و رتبهٔ ۲۷ در سهمیه", source: "https://t.me/Konkur_answer/3609" },
-  { claim: "جاروب صفحه", source: "https://t.me/Konkur_answer/4544" },
-  { claim: "رتبهٔ ۱۷ نرم‌افزار و ۲۶ هوش مصنوعی در دکتری", source: "https://t.me/Konkur_answer/3910" },
-  { claim: "رتبهٔ ۳۸ ارشد فناوری اطلاعات", source: "https://t.me/Konkur_answer/4981" },
-  { claim: "رتبهٔ ۸ آی‌تی و ۱۶ مهندسی کامپیوتر", source: "https://t.me/Konkur_answer/3997" },
+  "سؤالی که تألیف کرده بودم، در کنکور ۱۴۰۱ آمد",
+  "نُه‌تا در کلاس کار شده بود",
+  "۱۰ پاسخ درست از ۱۱ سؤال معتبر",
+  "۹ تست صحیح",
+  "جاروب صفحه",
+  "رتبهٔ ۱۷ نرم‌افزار و ۲۶ هوش مصنوعی در دکتری",
+  "رتبهٔ ۳۸ ارشد فناوری اطلاعات",
+  "رتبهٔ ۸ آی‌تی و ۱۶ مهندسی کامپیوتر",
+  "رتبهٔ ۸ هوش مصنوعی و ۱۱ نرم‌افزار",
 ];
 const evidence = await read("/evidence");
 assert.equal(evidence.response.status, 200, "the existing evidence hub must remain public");
@@ -161,7 +163,7 @@ assert.equal(h1Count(evidence.body), 1, "the evidence hub must render exactly on
 assert.match(evidence.body, /برای معرفی\s+کلاس‌هایم استفاده می‌کنم/, "the evidence hub must disclose its first-party commercial interest");
 assert.match(evidence.body, /هیچ نهاد مستقلی تأییدشان نکرده/, "the evidence hub must disclose the lack of independent verification");
 // The owner asked for student names to be shown as the original posts give them.
-for (const name of ["آرش ذوالفقاری", "حسین قبیله", "آقای کاظمی", "مبین شریفی‌راد", "شیوا خوش‌نام"]) {
+for (const name of ["آرش ذوالفقاری", "حسین قبیله", "آقای کاظمی", "مبین شریفی‌راد", "شیوا خوش‌نام", "رضا مدرس"]) {
   assert.match(evidence.body, new RegExp(escapedRegExp(name)), `the evidence hub must credit ${name}`);
 }
 for (const image of ["/evidence/1401-authored-question.jpg", "/evidence/1405-data-answers-a.jpg", "/evidence/phd-student-sources.mp4"]) {
@@ -174,10 +176,18 @@ assert.ok(evidenceHrefs.includes(exactThesisUrl), "the evidence hub must use the
 for (const { route } of caseStudyRoutes) {
   assert.ok(!evidenceHrefs.includes(route), `the evidence hub must not link to unpublished case study ${route}`);
 }
-for (const { claim, source } of evidenceClaims) {
+for (const claim of evidenceClaims) {
   assert.match(evidence.body, new RegExp(escapedRegExp(claim)), `the evidence hub must retain claim “${claim}”`);
-  assert.ok(evidenceHrefs.includes(source), `the evidence hub must retain source ${source}`);
 }
+assert.ok(
+  !evidenceHrefs.some((href) => href.includes("t.me/Konkur_answer")),
+  "the evidence hub must not link to archive posts",
+);
+// A subject percent comes before the full scorecards within a year.
+assert.ok(
+  evidence.body.indexOf('id="theory-1405-a"') < evidence.body.indexOf('id="it-1405"'),
+  "within a year, subject-percent results must come before scorecards",
+);
 
 const trustRoutes = [
   "/about",

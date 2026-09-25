@@ -101,7 +101,7 @@ export const GUIDES_MENU: NavMenu = {
     {
       title: "برنامه‌ریزی",
       links: [
-        { href: "/guides/start-from-zero", label: "شروع از صفر" },
+        { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
         { href: "/guides/twelve-month-study-plan", label: "برنامهٔ دوازده‌ماهه" },
         { href: "/guides/six-month-study-plan", label: "برنامهٔ شش‌ماهه" },
         { href: "/guides/three-month-study-plan", label: "برنامهٔ سه‌ماهه" },

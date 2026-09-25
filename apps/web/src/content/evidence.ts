@@ -6,17 +6,29 @@ export interface EvidenceDocument {
   title: string;
   metric: string;
   description: string;
-  /** The original post; left out only while the owner has not supplied it. */
+  /** The original archive post. Provenance only: the site shows its own copy
+   * of the images and does not link to Telegram. */
   telegramUrl?: string;
   featured?: boolean;
   /** Topics the linked post covers, shown as chips. */
   topics?: string[];
   /** The student's name as the original post gives it. */
   student?: string;
-  /** A second post that backs part of the claim. */
+  /** A second post that backs part of the claim; provenance only, like telegramUrl. */
   related?: { label: string; url: string };
   /** Copies of the post's images, served from /public/evidence. */
   images?: EvidenceImage[];
+  /** The one number the scorecard leads with. Every value below must already appear in the post. */
+  hero?: EvidenceFact;
+  /** Up to three supporting numbers from the same post. */
+  facts?: EvidenceFact[];
+  /** How the student worked with me, as the owner described it. */
+  role?: string;
+}
+
+export interface EvidenceFact {
+  value: string;
+  label: string;
 }
 
 export interface EvidenceImage {
@@ -55,6 +67,7 @@ export const evidenceStats: EvidenceStat[] = [
 
 export const questionDesignEvidence: EvidenceDocument = {
   id: "question-design-1401",
+  hero: { value: "سؤال ۶۱", label: "کنکور ۱۴۰۱، کنار سؤال تألیفی من" }, facts: [{ value: "سؤال ۶۹", label: "کنار سؤالی که پیش‌تر در کانال بود" }],
   year: "۱۴۰۱",
   category: "طراحی سؤال",
   subject: "ساختمان داده و الگوریتم",
@@ -69,6 +82,7 @@ export const questionDesignEvidence: EvidenceDocument = {
 
 export const alignmentEvidence: EvidenceDocument = {
   id: "alignment-1405",
+  hero: { value: "۹ از ۱۲", label: "تست ساختمان داده و الگوریتم که در کلاس کار شده بود" }, facts: [{ value: "۱۰ تا ۱۱", label: "تست درست شاگردها، به گزارش خودشان" }],
   year: "۱۴۰۵",
   category: "تطبیق سؤال",
   subject: "ساختمان داده و طراحی الگوریتم",
@@ -86,6 +100,7 @@ export const alignmentEvidence: EvidenceDocument = {
 export const matchedQuestions: EvidenceDocument[] = [
   {
     id: "phd-1405-plane-sweep",
+    hero: { value: "سؤال ۷", label: "دکتری ۱۴۰۵، همان سؤال حل تمرین" },
     year: "۱۴۰۵",
     category: "تطبیق سؤال",
     subject: "دکتری · ساختمان داده و الگوریتم",
@@ -100,6 +115,7 @@ export const matchedQuestions: EvidenceDocument[] = [
   },
   {
     id: "master-1405-hash",
+    hero: { value: "عین کلاس", label: "سخت‌ترین سؤال ارشد ۱۴۰۵" },
     year: "۱۴۰۵",
     category: "تطبیق سؤال",
     subject: "ارشد مهندسی · ساختمان داده",
@@ -111,6 +127,7 @@ export const matchedQuestions: EvidenceDocument[] = [
   },
   {
     id: "master-1403-theory",
+    hero: { value: "۲ از ۴", label: "تست جدید نظریه، مطابق جزوه" }, facts: [{ value: "۱", label: "تست حذف‌شده" }],
     year: "۱۴۰۳",
     category: "تطبیق سؤال",
     subject: "ارشد مهندسی · نظریه زبان‌ها",
@@ -125,6 +142,7 @@ export const matchedQuestions: EvidenceDocument[] = [
 export const studentResults: EvidenceDocument[] = [
   {
     id: "phd-1403",
+    hero: { value: "۱۷", label: "رتبهٔ نرم‌افزار در دکتری" }, facts: [{ value: "۲۶", label: "رتبهٔ هوش مصنوعی" }, { value: "۱۱", label: "رتبه در کد ترکیب ۳" }, { value: "۱۶ از ۱۹", label: "تست درست ساختمان داده و الگوریتم" }], role: "شاگرد کلاس ساختمان داده و الگوریتم · امروز دکتری هوش مصنوعی شریف",
     student: "آرش ذوالفقاری",
     year: "۱۴۰۳",
     category: "کارنامه",
@@ -143,6 +161,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "it-1405",
+    hero: { value: "۳۸", label: "رتبهٔ ارشد فناوری اطلاعات" }, facts: [{ value: "کد ۱", label: "کد ضریب" }, { value: "۱۰ سال", label: "دوری از درس پیش از شروع" }], role: "شاگرد مشاوره",
     student: "حسین قبیله",
     year: "۱۴۰۵",
     category: "کارنامه",
@@ -156,6 +175,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "it-1403",
+    hero: { value: "۸", label: "رتبهٔ ارشد آی‌تی" }, facts: [{ value: "۱۶", label: "بهترین رتبه در مهندسی کامپیوتر" }, { value: "۵۸٫۳۳٪", label: "ساختمان داده و الگوریتم" }], role: "شاگرد کلاس ساختمان داده و طراحی الگوریتم",
     student: "مبین شریفی‌راد",
     year: "۱۴۰۳",
     category: "کارنامه",
@@ -169,7 +189,24 @@ export const studentResults: EvidenceDocument[] = [
     images: [{ src: "/evidence/it-1403-karnameh.png", alt: "کارنامهٔ ارشد فناوری اطلاعات ۱۴۰۳ با رتبهٔ ۸ در سهمیه؛ شمارهٔ داوطلبی خط خورده", width: 1011, height: 458 }],
   },
   {
+    // Supplied by the owner as a screenshot on 2026-09-24, with its archive post.
+    id: "ai-1401",
+    hero: { value: "۸", label: "رتبهٔ هوش مصنوعی، سهمیهٔ آزاد" }, facts: [{ value: "۱۱", label: "رتبهٔ نرم‌افزار" }, { value: "آزاد", label: "سهمیه" }], role: "شاگرد کلاس ساختمان داده، کلاس نظریه و مشاوره",
+    student: "رضا مدرس",
+    year: "۱۴۰۱",
+    category: "کارنامه",
+    subject: "ارشد مهندسی کامپیوتر · شاگرد کلاس و مشاوره",
+    title: "رتبهٔ ۸ هوش مصنوعی و ۱۱ نرم‌افزار",
+    metric: "رتبهٔ ۸ هوش مصنوعی و ۱۱ نرم‌افزار در ارشد مهندسی کامپیوتر",
+    description:
+      "شاگرد هر دو کلاس ساختمان داده و طراحی الگوریتم و نظریه زبان‌ها بود و مشاوره هم با من داشت. در ارشد مهندسی کامپیوتر ۱۴۰۱ با سهمیهٔ آزاد، در کد ضریب ۱، هوش مصنوعی، رتبهٔ ۸ و در کد ضریب ۲، نرم‌افزار، رتبهٔ ۱۱ آورد؛ در کدهای ۳ و ۴ هم ۸ و ۱۱. درصد باکس ساختمان داده، الگوریتم و هوش مصنوعی ۳۸٫۳۳ و باکس مدار منطقی و معماری ۶۵ بود.",
+    telegramUrl: "https://t.me/Konkur_answer/3739",
+    featured: true,
+    images: [{ src: "/evidence/1401-ai-rank-8.png", alt: "نمره‌ها و رتبه‌های کارنامهٔ ارشد مهندسی کامپیوتر ۱۴۰۱ با رتبهٔ ۸ در سهمیهٔ آزاد در کد ضریب ۱، هوش مصنوعی، و ۱۱ در کد ۲، نرم‌افزار", width: 410, height: 540 }],
+  },
+  {
     id: "theory-1405-a",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۵ از ۵", label: "پاسخ یکی با کلید" }], role: "شاگرد کلاس نظریه",
     student: "آقای کاظمی",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -182,6 +219,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "theory-1405-b",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۵ از ۵", label: "پاسخ یکی با کلید" }], role: "شاگرد کلاس نظریه",
     student: "آقای احمدی",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -194,6 +232,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "data-1405-a",
+    hero: { value: "۱۰ از ۱۱", label: "ساختمان داده و طراحی الگوریتم" }, facts: [{ value: "۱", label: "سؤال حذف‌شده" }],
     student: "سامان",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -207,6 +246,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "data-1405-b",
+    hero: { value: "۹", label: "تست درست ساختمان داده و الگوریتم" }, facts: [{ value: "۰", label: "پاسخ غلط" }, { value: "۲", label: "سؤال سفید" }], role: "شاگرد کلاس",
     student: "آقای کاظمی",
     year: "۱۴۰۵",
     category: "نتایج دانشجویان",
@@ -219,6 +259,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "theory-1403",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۴ از ۴", label: "تست نظریه" }, { value: "۴۴٫۴۴٪", label: "باکس سیگنال و نظریه" }],
     student: "آقای کریمی",
     year: "۱۴۰۳",
     category: "نتایج دانشجویان",
@@ -231,6 +272,7 @@ export const studentResults: EvidenceDocument[] = [
   },
   {
     id: "theory-1403-khoshnam",
+    hero: { value: "۱۰۰٪", label: "نظریه زبان‌ها و ماشین‌ها" }, facts: [{ value: "۴۴٫۴۴٪", label: "باکس سیگنال و نظریه" }, { value: "۱ تا ۲ هفته", label: "حل تمرین پیش از کنکور" }], role: "شاگرد کلاس نظریه",
     student: "شیوا خوش‌نام",
     year: "۱۴۰۳",
     category: "نتایج دانشجویان",
@@ -244,17 +286,6 @@ export const studentResults: EvidenceDocument[] = [
       { src: "/evidence/1403-theory-khoshnam-score.jpg", alt: "درصد ۴۴٫۴۴ در باکس نظریه و سیگنال در کارنامه", width: 800, height: 101 },
       { src: "/evidence/1403-theory-khoshnam-message.jpg", alt: "پیام شاگرد دربارهٔ دیدن کلاس حل تمرین نظریه در دو هفتهٔ آخر", width: 800, height: 701 },
     ],
-  },
-  {
-    id: "karnameh-3609",
-    year: "—",
-    category: "کارنامه",
-    subject: "کارنامهٔ ارشد مهندسی کامپیوتر",
-    title: "نظریهٔ صددرصد در کارنامه",
-    metric: "۱۰۰٪ نظریه و رتبهٔ ۲۷ در سهمیه",
-    description: "کارنامه‌ای که بهمن ۱۴۰۲ در آرشیو منتشر شد. رتبهٔ ۲۷ مربوط به یکی از کدهای ضریب است؛ در کدهای دیگر رتبه بین ۲۹ و ۶۰ است.",
-    telegramUrl: "https://t.me/Konkur_answer/3609",
-    images: [{ src: "/evidence/karnameh-theory-100.jpg", alt: "بخش نمره‌ها و رتبه‌های کارنامه با ۱۰۰٪ نظریه زبان‌ها", width: 360, height: 800 }],
   },
 ];
 
@@ -290,13 +321,4 @@ export const ownerResults: EvidenceDocument[] = [
     telegramUrl: "https://t.me/Konkur_answer/4817",
     images: [{ src: "/evidence/owner-phd-answers.jpg", alt: "پاسخ‌نامهٔ دکتری ۱۴۰۱ محمد رستمی کنار کلید", width: 747, height: 800 }],
   },
-];
-
-/** Useful posts that are not a single result. */
-export const archiveLinks: EvidenceDocument[] = [
-  { id: "alignment-file-1405", year: "۱۴۰۵", category: "تطبیق سؤال", subject: "ساختمان داده و الگوریتم", title: "فایل تطبیق ۱۴۰۵", metric: "PDF", description: "همهٔ تست‌های ۱۴۰۵ کنار مطلب مشابهشان در کلاس.", telegramUrl: "https://t.me/Konkur_answer/4767" },
-  { id: "alignment-index", year: "۱۴۰۰–۱۴۰۳", category: "تطبیق سؤال", subject: "ساختمان داده، الگوریتم و نظریه", title: "تطبیق سال‌های قبل", metric: "فهرست", description: "لینک تطبیق سؤال‌ها با کلاس برای هر سال از ۱۴۰۰ تا ۱۴۰۳.", telegramUrl: "https://t.me/Konkur_answer/3568" },
-  { id: "answer-keys-1403", year: "۱۴۰۳", category: "آموزش", subject: "چند درس", title: "کلید و حل تشریحی", metric: "حل تشریحی", description: "کلید و حل تشریحی ساختمان داده، الگوریتم، نظریه، پایگاه داده و سیستم عامل، بعد از کنکور.", telegramUrl: "https://t.me/Konkur_answer/3710" },
-  { id: "free-videos-index", year: "—", category: "آموزش", subject: "نظریه، ساختمان داده و الگوریتم", title: "فهرست ویدیوهای رایگان", metric: "۱۴ ویدئو", description: "جلسه‌های رایگان نظریه، ساختمان داده و الگوریتم و حل سؤال‌های سخت.", telegramUrl: "https://t.me/Konkur_answer/3726" },
-  { id: "amortized-video", year: "—", category: "آموزش", subject: "ساختمان داده", title: "تحلیل استهلاکی", metric: "ویدئو", description: "ویدئوی کامل این مبحث از کلاس.", telegramUrl: "https://t.me/Konkur_answer/4049" },
 ];

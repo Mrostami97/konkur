@@ -1,7 +1,9 @@
 import { articles, editorialDateIso, guides, subjects } from "../content/editorial";
 import { phase11DateIso, phase11SubjectContent, type Phase11SubjectSlug } from "../content/phase11";
 import { phase12EditorialPages } from "../content/phase12";
+import { isMergedGuide, withoutMergedGuides } from "./merged-pages";
 import { apiGetPublic } from "./api";
+import type { Availability } from "./availability";
 import { absoluteUrl } from "./seo";
 
 type SitemapEntry = {
@@ -93,12 +95,12 @@ export async function guideSitemapEntries(): Promise<SitemapCollection> {
   const publishedTypes = new Map(published.map((article) => [article.slug, article.contentType]));
   return { complete: loaded !== null, entries: uniqueEntries([
     { loc: absoluteUrl("/guides") },
-    ...[...guides, ...phase12EditorialPages].filter((guide) => !publishedTypes.has(guide.slug) || publishedTypes.get(guide.slug) === "GUIDE").map((guide) => ({
+    ...withoutMergedGuides([...guides, ...phase12EditorialPages]).filter((guide) => !publishedTypes.has(guide.slug) || publishedTypes.get(guide.slug) === "GUIDE").map((guide) => ({
       loc: absoluteUrl(`/guides/${guide.slug}`),
       lastmod: asIso(editorialDateIso(guide.reviewedAt)),
     })),
     ...published
-      .filter((article) => article.contentType === "GUIDE")
+      .filter((article) => article.contentType === "GUIDE" && !isMergedGuide(article.slug))
       .map((article) => ({
         loc: absoluteUrl(`/guides/${article.slug}`),
         lastmod: asIso(article.reviewedAt ?? article.updatedAt ?? article.publishedAt),
@@ -195,8 +197,40 @@ export async function resultsSitemapEntries(): Promise<SitemapEntry[]> {
   }
 }
 
-export function reportCardSitemapEntries() {
-  return [{ loc: absoluteUrl("/report-cards") }];
+/**
+ * Listing pages that render a "coming soon" state -- and noindex -- while
+ * their feature has nothing published, keyed by the availability count that
+ * decides it. Like the results page, each is listed only while it has content,
+ * and an unreachable API leaves them out (the pages are noindex then too).
+ */
+const LISTING_COUNTS: Record<string, keyof Availability> = {
+  "/courses": "courses",
+  "/exams": "exams",
+  "/instructors": "instructors",
+  "/consultations": "consultations",
+  "/report-cards": "reportCards",
+};
+
+async function loadAvailability(): Promise<Availability | null> {
+  try {
+    return await apiGetPublic<Availability>("/site/availability");
+  } catch {
+    return null;
+  }
+}
+
+/** The given paths, minus listing pages that currently have nothing on them. */
+export async function withoutEmptyListings(paths: readonly string[]): Promise<string[]> {
+  const availability = await loadAvailability();
+  return paths.filter((path) => {
+    const key = LISTING_COUNTS[path];
+    return !key || Boolean(availability && availability[key]);
+  });
+}
+
+export async function reportCardSitemapEntries(): Promise<SitemapEntry[]> {
+  const paths = await withoutEmptyListings(["/report-cards"]);
+  return paths.map((path) => ({ loc: absoluteUrl(path) }));
 }
 
 export async function admissionsSitemapEntries(): Promise<SitemapCollection> {

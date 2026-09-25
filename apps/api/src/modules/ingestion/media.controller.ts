@@ -83,11 +83,12 @@ export class MediaController {
       // reachable through a genuinely public, unauthenticated API response:
       // a Question's stem/option imagery (questions have no draft state --
       // see question-bank.service.ts PUBLIC_QUESTION_SELECT) or a PUBLISHED
-      // Article's imagery. Everything else (in-review/draft article assets,
+      // Article's imagery, or a lesson that anyone may open (a preview
+      // lesson, or any lesson of a public course). Everything else (in-review/draft article assets,
       // orphaned or admin-only ingestion artifacts, etc.) requires a session,
       // since there is no per-artifact entitlement model yet to check more
       // precisely than "is this caller identified at all".
-      const [publicQuestion, publicArticle, publicLesson] = await Promise.all([
+      const [publicQuestion, publicArticle, openLesson] = await Promise.all([
         this.prisma.question.findFirst({
           where: { assets: { array_contains: [{ checksum: fullChecksum }] } },
           select: { id: true },
@@ -99,8 +100,6 @@ export class MediaController {
           },
           select: { id: true },
         }),
-        // A lesson anyone may open: a free preview, or any lesson of a
-        // public course -- both only while the course is published.
         this.prisma.lesson.findFirst({
           where: {
             assets: { array_contains: [{ checksum: fullChecksum }] },
@@ -110,7 +109,7 @@ export class MediaController {
           select: { id: true },
         }),
       ]);
-      if (!publicQuestion && !publicArticle && !publicLesson) {
+      if (!publicQuestion && !publicArticle && !openLesson) {
         throw new ForbiddenException("media requires an authenticated session");
       }
     }

@@ -9,10 +9,10 @@ import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-au
 import { LearningService } from "./learning.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
-import { CreateLessonDto } from "./dto/create-lesson.dto";
+import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { SpotPlayerService } from "./spotplayer.service";
-import { CourseAuthoringService, MAX_LESSON_IMAGE_BYTES } from "./course-authoring.service";
-import { MoveDto, RenameModuleDto, UpdateLessonDto } from "./dto/update-lesson.dto";
+import { CourseAuthoringService } from "./course-authoring.service";
+import { MoveDto, RenameModuleDto } from "./dto/module-ops.dto";
 
 @Controller("courses")
 export class CoursesPublicController {
@@ -112,6 +112,26 @@ export class LearningAdminController {
     return this.learning.publishCourse(id, req.user!.id);
   }
 
+  @Post("courses/:id/modules")
+  addModule(@Param("id") id: string, @Body() dto: CreateModuleDto) {
+    return this.learning.addModule(id, dto);
+  }
+
+  @Post("modules/:id/lessons")
+  addLesson(@Param("id") id: string, @Body() dto: CreateLessonDto) {
+    return this.learning.addLesson(id, dto);
+  }
+
+  @Get("lessons/:id")
+  getLesson(@Param("id") id: string) {
+    return this.learning.getLessonForEditing(id);
+  }
+
+  @Patch("lessons/:id")
+  updateLesson(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: UpdateLessonDto) {
+    return this.learning.updateLesson(req.user!.id, id, dto);
+  }
+
   /** Takes the course out of the catalogue and out of reach -- enrolled
    * students included -- until it is published again. */
   @Post("courses/:id/unpublish")
@@ -135,16 +155,6 @@ export class LearningAdminController {
     return this.authoring.moveModule(id, dto.direction);
   }
 
-  @Get("lessons/:id")
-  getLesson(@Param("id") id: string) {
-    return this.authoring.getLesson(id);
-  }
-
-  @Patch("lessons/:id")
-  updateLesson(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: UpdateLessonDto) {
-    return this.authoring.updateLesson(req.user!.id, id, dto);
-  }
-
   @Delete("lessons/:id")
   deleteLesson(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.authoring.deleteLesson(req.user!.id, id);
@@ -156,24 +166,10 @@ export class LearningAdminController {
     return this.authoring.moveLesson(id, dto.direction);
   }
 
-  @Post("lessons/:id/images")
-  @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: MAX_LESSON_IMAGE_BYTES } }))
-  uploadLessonImage(
-    @Param("id") id: string,
-    @Req() req: RequestWithUser,
-    @UploadedFile() file: Express.Multer.File | undefined,
-  ) {
-    return this.authoring.uploadLessonImage(req.user!.id, id, file);
-  }
-
-  @Post("courses/:id/modules")
-  addModule(@Param("id") id: string, @Body() dto: CreateModuleDto) {
-    return this.learning.addModule(id, dto);
-  }
-
-  @Post("modules/:id/lessons")
-  addLesson(@Param("id") id: string, @Body() dto: CreateLessonDto) {
-    return this.learning.addLesson(id, dto);
+  @Post("lesson-images")
+  @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
+  uploadLessonImage(@Req() req: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
+    return this.learning.uploadLessonImage(req.user!.id, file);
   }
 
 }

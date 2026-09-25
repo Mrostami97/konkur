@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { apiFetch } from "../lib/api";
+import { useComingSoon } from "../lib/availability";
 import { EXAM_DATES, daysUntil } from "../lib/exam-dates";
 import { toPersianDigits } from "../lib/format";
 import { GUIDES_MENU as GUIDES, LEARN_MENU as LEARN, PRACTICE_MENU as PRACTICE, SUBJECT_FAMILIES, TELEGRAM_URL, TOOLS_MENU as TOOLS, type NavMenu } from "../lib/site-nav";
@@ -34,6 +35,7 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openedByHover = useRef(false);
   const navRef = useRef<HTMLElement | null>(null);
+  const soon = useComingSoon();
 
   useEffect(() => {
     apiFetch<{ user: { phone: string } }>("/auth/me")
@@ -135,7 +137,7 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
                       <span className="hd-item-icon"><Glyph name={link.glyph} /></span>
                     )}
                     <span>
-                      <strong>{link.label}</strong>
+                      <strong>{link.label}{soon.has(link.href) && <span className="soon-pill">به‌زودی</span>}</strong>
                       {link.hint && <small>{link.hint}</small>}
                     </span>
                   </Link>
@@ -188,8 +190,8 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
             <b>{toPersianDigits(phd)}</b> روز تا دکتری
           </p>
           <nav className="hd-strip-links" aria-label="پیوندهای سریع">
-            <Link href="/results">نتایج شاگردان</Link>
-            <Link href="/free-videos">ویدیوی رایگان</Link>
+            <Link href="/results">نتایج شاگردان{soon.has("/results") && <span className="soon-pill">به‌زودی</span>}</Link>
+            <Link href="/free-videos">ویدیوی رایگان{soon.has("/free-videos") && <span className="soon-pill">به‌زودی</span>}</Link>
             <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">کانال تلگرام @konkurcom</a>
           </nav>
         </div>
@@ -265,6 +267,7 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
           >
             <Glyph name="trophy" className="hd-star-icon" />
             نتایج شاگردان
+            {soon.has("/results") && <span className="soon-pill">به‌زودی</span>}
           </Link>
 
           <div className="hd-menu" onMouseEnter={() => hoverOpen(GUIDES.id)}>

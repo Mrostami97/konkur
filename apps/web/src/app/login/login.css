@@ -1,0 +1,63 @@
+/* Sign in.
+ *
+ * The form is the page: one card on paper, a phone field sized for thumbs,
+ * and a short ink column beside it that says what an account is for. No
+ * floating hero copy, no emoji -- people come here to get in.
+ */
+
+.lg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 26rem); min-height: calc(100vh - 7rem); background: var(--paper); }
+
+.lg-form-side { display: grid; place-items: center; padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2.5rem); }
+.lg-card { width: min(26rem, 100%); padding: clamp(1.5rem, 4vw, 2.25rem); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--elev-2); }
+.lg-card h1 { margin: 0; color: var(--ink); font-size: var(--text-2xl); font-weight: var(--weight-heavy); }
+.lg-sub { margin: 0.4rem 0 1.5rem; color: var(--muted); font-size: var(--text-sm); line-height: 1.9; }
+
+.lg-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.2rem; margin-bottom: 1.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-sunken); }
+.lg-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; min-height: 2.5rem; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--ink-500); font: inherit; font-size: var(--text-sm); font-weight: var(--weight-semibold); cursor: pointer; }
+.lg-tabs button[aria-selected="true"] { color: var(--ink); background: var(--surface); box-shadow: var(--elev-1); }
+.lg-tabs .soon-pill { margin: 0; }
+
+.lg-form { display: grid; gap: 1rem; }
+.lg-field { display: grid; gap: 0.35rem; }
+.lg-field span { color: var(--ink-700); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.lg-field input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  background: var(--surface);
+  font: inherit;
+  font-size: var(--text-md);
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+.lg-field input::placeholder { color: var(--ink-300); }
+.lg-field input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(11, 122, 106, 0.16); }
+.lg-code { font-size: var(--text-xl) !important; font-weight: var(--weight-bold); letter-spacing: 0.5em !important; text-align: center !important; }
+
+.lg-submit { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 3rem; border: 0; border-radius: var(--radius-md); color: #fff; background: var(--accent); font: inherit; font-size: var(--text-base); font-weight: var(--weight-bold); text-decoration: none; cursor: pointer; transition: background-color var(--motion-fast) var(--ease); }
+.lg-submit:hover:not(:disabled) { color: #fff; background: var(--accent-hover); }
+.lg-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.lg-sent { margin: 0; color: var(--ink-700); font-size: var(--text-sm); line-height: 1.9; }
+.lg-link { padding: 0; border: 0; background: none; color: var(--accent); font: inherit; font-weight: var(--weight-semibold); cursor: pointer; }
+.lg-hint { margin: 0; color: var(--muted); font-size: var(--text-xs); }
+.lg-error { margin: 1rem 0 0; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); color: var(--danger); background: var(--danger-soft); font-size: var(--text-sm); }
+.lg-card .login-soon { margin: 0; }
+
+.lg-side { display: flex; flex-direction: column; justify-content: center; gap: 1rem; padding: clamp(2rem, 5vw, 3.5rem); color: var(--on-ink); background: var(--surface-ink); }
+.lg-side-kicker { margin: 0; color: var(--accent-on-ink); font-size: var(--text-sm); font-weight: var(--weight-bold); }
+.lg-side h2 { margin: 0; font-size: var(--text-xl); font-weight: var(--weight-heavy); line-height: 1.5; }
+.lg-side ul { display: grid; gap: 0; margin: 0.5rem 0 0; padding: 0; border-top: 1px solid var(--line-ink); list-style: none; }
+.lg-side li { display: grid; gap: 0.1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line-ink); }
+.lg-side li b { font-size: var(--text-base); }
+.lg-side li span { color: var(--on-ink-muted); font-size: var(--text-sm); }
+.lg-side-foot { margin: 0.5rem 0 0; color: var(--on-ink-muted); font-size: var(--text-sm); line-height: 1.9; }
+.lg-side-foot a { color: var(--accent-on-ink); }
+
+@media (max-width: 860px) {
+  .lg { grid-template-columns: minmax(0, 1fr); }
+  .lg-side { display: none; }
+}

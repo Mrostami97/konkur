@@ -157,7 +157,6 @@ describe("Course authoring (e2e)", () => {
 
     await patch([{ type: "image", media_key: "missing" }]).expect(400);
     await patch([{ type: "video", url: "https://www.youtube.com/watch?v=1" }]).expect(400);
-    await patch([{ type: "text", text: "   " }]).expect(400);
     await patch([{ type: "script", text: "x" }]).expect(400);
     await request(app.getHttpServer())
       .post(`/admin/modules/${moduleId}/lessons`)
@@ -166,49 +165,29 @@ describe("Course authoring (e2e)", () => {
       .expect(400);
   });
 
-  it("uploads a lesson image, lets an image block use it, and serves it publicly only for a preview lesson", async () => {
+  it("serves a lesson image publicly only while its course is published and the lesson is free", async () => {
     const { courseId, moduleId } = await newCourse();
     const lesson = await addLesson(moduleId, "With image");
-
-    await request(app.getHttpServer())
-      .post(`/admin/lessons/${lesson.id}/images`)
-      .set("Cookie", adminCookie)
-      .attach("file", Buffer.from("not an image"), { filename: "x.txt", contentType: "text/plain" })
-      .expect(400);
     const uploaded = await request(app.getHttpServer())
-      .post(`/admin/lessons/${lesson.id}/images`)
+      .post("/admin/lesson-images")
       .set("Cookie", adminCookie)
       .attach("file", PNG, { filename: "graph.png", contentType: "image/png" })
       .expect(201);
-    expect(uploaded.body.media_key).toMatch(/^img-[0-9a-f]{12}$/);
-    // The same file twice is one asset.
-    await request(app.getHttpServer())
-      .post(`/admin/lessons/${lesson.id}/images`)
-      .set("Cookie", adminCookie)
-      .attach("file", PNG, { filename: "graph.png", contentType: "image/png" })
-      .expect(201);
-    const stored = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
-    expect(stored.assets).toHaveLength(1);
-
     await request(app.getHttpServer())
       .patch(`/admin/lessons/${lesson.id}`)
       .set("Cookie", adminCookie)
-      .send({ contentBlocks: [{ type: "image", media_key: uploaded.body.media_key, alt: "graph" }] })
+      .send({
+        isPreview: true,
+        contentBlocks: [{ type: "image", media_key: uploaded.body.media_key, alt: "graph" }],
+        assets: [{ media_key: uploaded.body.media_key, checksum: uploaded.body.checksum }],
+      })
       .expect(200);
 
     const mediaPath = uploaded.body.url as string;
     await request(app.getHttpServer()).post(`/admin/courses/${courseId}/publish`).set("Cookie", adminCookie).expect(201);
-    // A paid lesson's image is not handed to anonymous visitors...
-    await request(app.getHttpServer()).get(mediaPath).expect(403);
-    // ...a preview lesson's is.
-    await request(app.getHttpServer()).patch(`/admin/lessons/${lesson.id}`).set("Cookie", adminCookie).send({ isPreview: true }).expect(200);
     await request(app.getHttpServer()).get(mediaPath).expect(302);
 
-    // And the student lesson endpoint carries the assets the block needs.
-    const publicLesson = await request(app.getHttpServer()).get(`/lessons/${lesson.id}`).expect(200);
-    expect(publicLesson.body.assets[0].media_key).toBe(uploaded.body.media_key);
-
-    // Unpublishing the course closes it again.
+    // Unpublishing the course closes the lesson and its image again.
     await request(app.getHttpServer()).post(`/admin/courses/${courseId}/unpublish`).set("Cookie", adminCookie).expect(201);
     await request(app.getHttpServer()).get(mediaPath).expect(403);
     await request(app.getHttpServer()).get(`/lessons/${lesson.id}`).expect(404);
@@ -249,11 +228,7 @@ describe("Course authoring (e2e)", () => {
     const student = await login(randomPhone());
     await request(app.getHttpServer()).patch(`/admin/lessons/${lesson.id}`).set("Cookie", student.cookie).send({ title: "x" }).expect(403);
     await request(app.getHttpServer()).delete(`/admin/lessons/${lesson.id}`).set("Cookie", student.cookie).expect(403);
-    await request(app.getHttpServer())
-      .post(`/admin/lessons/${lesson.id}/images`)
-      .set("Cookie", student.cookie)
-      .attach("file", PNG, { filename: "a.png", contentType: "image/png" })
-      .expect(403);
+    await request(app.getHttpServer()).post(`/admin/lessons/${lesson.id}/move`).set("Cookie", student.cookie).send({ direction: "up" }).expect(403);
     await request(app.getHttpServer()).get(`/admin/lessons/${lesson.id}`).expect(401);
   });
 

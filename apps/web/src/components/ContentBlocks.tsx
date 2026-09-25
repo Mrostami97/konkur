@@ -36,7 +36,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
       return <p key={index}>{String(block.text ?? "")}</p>;
     case "quote":
       return (
-        <blockquote key={index} style={{ borderInlineStart: "3px solid #D7E2EA", paddingInlineStart: "1rem" }}>
+        <blockquote key={index} className="cb-quote">
           {String(block.text ?? "")}
           {typeof block.cite === "string" && <footer>— {block.cite}</footer>}
         </blockquote>
@@ -46,15 +46,21 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
       const mediaKey = String(block.media_key ?? "");
       const url = mediaUrl(assets, mediaKey);
       if (!url) {
+        // A student sees a plain note; the missing key stays in a tooltip
+        // for whoever authored the content.
         return (
-          <div key={index} style={{ background: "#F4F8FB", padding: "0.5rem", fontSize: "0.85rem" }}>
-            [رسانه یافت نشد: {mediaKey}]
-          </div>
+          <p key={index} className="cb-missing" title={mediaKey}>
+            تصویر این بخش بارگذاری نشد.
+          </p>
         );
       }
+      const caption = typeof block.caption === "string" ? block.caption : null;
       return (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={index} src={url} alt={String(block.alt ?? block.caption ?? mediaKey)} style={{ maxWidth: "100%" }} />
+        <figure key={index} className="cb-figure">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={url} alt={String(block.alt ?? block.caption ?? "")} loading="lazy" />
+          {caption && <figcaption>{caption}</figcaption>}
+        </figure>
       );
     }
     case "video": {
@@ -62,7 +68,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
       const aparat = aparatHash(url);
       if (aparat) {
         return (
-          <div key={index} className="cb-video">
+          <div key={index} className="cb-embed">
             <iframe
               src={`https://www.aparat.com/video/video/embed/videohash/${aparat}/vt/frame`}
               title={String(block.title ?? "ویدیوی درس")}
@@ -78,19 +84,22 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
       if (!url.startsWith("https://")) return null;
       return (
         // eslint-disable-next-line jsx-a11y/media-has-caption
-        <video key={index} controls preload="metadata" style={{ width: "100%", borderRadius: 12 }} src={url} />
+        <video key={index} controls preload="metadata" className="cb-video" src={url} />
       );
     }
     case "table": {
       const rows = Array.isArray(block.rows) ? (block.rows as string[][]) : [];
       const headers = Array.isArray(block.headers) ? (block.headers as string[]) : [];
+      // Wide tables scroll sideways on a phone instead of squeezing every
+      // column to a few characters.
       return (
-        <table key={index} style={{ borderCollapse: "collapse", width: "100%" }}>
+        <div key={index} className="cb-table">
+        <table data-wide={headers.length >= 4 || undefined}>
           {headers.length > 0 && (
             <thead>
               <tr>
                 {headers.map((h, i) => (
-                  <th key={i} style={{ border: "1px solid #D7E2EA", padding: "0.4rem" }}>
+                  <th key={i}>
                     {h}
                   </th>
                 ))}
@@ -101,7 +110,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
             {rows.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {row.map((cell, cellIndex) => (
-                  <td key={cellIndex} style={{ border: "1px solid #D7E2EA", padding: "0.4rem" }}>
+                  <td key={cellIndex}>
                     {cell}
                   </td>
                 ))}
@@ -109,13 +118,15 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
             ))}
           </tbody>
         </table>
+        </div>
       );
     }
     case "latex":
       return (
         <div
           key={index}
-          style={{ direction: "ltr", textAlign: "center", margin: "0.5rem 0" }}
+          className="cb-math"
+          dir="ltr"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: renderLatex(String(block.latex ?? "")) }}
         />
@@ -149,5 +160,5 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
 }
 
 export function ContentBlocks({ blocks, assets = [] }: { blocks: Block[]; assets?: Asset[] }) {
-  return <div>{blocks.map((block, index) => renderBlock(block, index, assets))}</div>;
+  return <div className="cb">{blocks.map((block, index) => renderBlock(block, index, assets))}</div>;
 }

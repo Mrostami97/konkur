@@ -12,9 +12,12 @@ const PANEL_ROOTS = ["/admin", "/instructor", "/account"];
  * person two competing navigations and a "back to site" link they did not ask
  * for on every screen.
  */
+/** A running exam (not its report): nothing on screen but the paper and the clock. */
+const EXAM_SITTING = /^\/attempts\/[^/]+\/?$/;
+
 export function PublicChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? "";
   const inPanel = PANEL_ROOTS.some((root) => pathname === root || pathname.startsWith(`${root}/`));
-  if (inPanel) return null;
+  if (inPanel || EXAM_SITTING.test(pathname)) return null;
   return <>{children}</>;
 }

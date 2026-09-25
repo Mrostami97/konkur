@@ -1,4 +1,4 @@
-import { resultsSitemapEntries, sitemapResponse } from "../../../lib/public-sitemaps";
+import { resultsSitemapEntries, sitemapResponse, withoutEmptyListings } from "../../../lib/public-sitemaps";
 import { absoluteUrl } from "../../../lib/seo";
 
 const publicPages = [
@@ -17,6 +17,6 @@ const publicPages = [
 ] as const;
 
 export async function GET() {
-  const results = await resultsSitemapEntries();
-  return sitemapResponse([...publicPages.map((path) => ({ loc: absoluteUrl(path) })), ...results]);
+  const [pages, results] = await Promise.all([withoutEmptyListings(publicPages), resultsSitemapEntries()]);
+  return sitemapResponse([...pages.map((path) => ({ loc: absoluteUrl(path) })), ...results]);
 }

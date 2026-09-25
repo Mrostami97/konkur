@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GUIDES_MENU, LEARN_MENU, PRACTICE_MENU, TELEGRAM_URL, TOOLS_MENU } from "../lib/site-nav";
+import { SoonMark } from "./SoonMark";
 import { Glyph, SubjectGlyph } from "./SubjectIcon";
 
 interface FooterSubject {
@@ -61,10 +62,10 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
 
         <nav className="ft-col" aria-label="یادگیری">
           <strong>یادگیری</strong>
-          {learn.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
-          <Link href="/results">نتایج شاگردان</Link>
+          {learn.map((link) => <Link key={link.href} href={link.href}>{link.label}<SoonMark href={link.href} /></Link>)}
+          <Link href="/results">نتایج شاگردان<SoonMark href="/results" /></Link>
           <strong className="ft-sub">تمرین و آزمون</strong>
-          {practice.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
+          {practice.map((link) => <Link key={link.href} href={link.href}>{link.label}<SoonMark href={link.href} /></Link>)}
         </nav>
 
         <nav className="ft-col" aria-label="درس‌ها">
@@ -82,7 +83,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
           <strong>راهنمای ۱۴۰۶</strong>
           {guides.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
           <strong className="ft-sub">ابزارها</strong>
-          {tools.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
+          {tools.map((link) => <Link key={link.href} href={link.href}>{link.label}<SoonMark href={link.href} /></Link>)}
         </nav>
 
         <nav className="ft-col" aria-label="اعتماد و شفافیت">

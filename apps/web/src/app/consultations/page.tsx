@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ComingSoon } from "../../components/ComingSoon";
 import { apiGetPublic } from "../../lib/api";
 import { pageMetadata } from "../../lib/seo";
 import { formatPersianNumber, formatRial } from "../../lib/format";
@@ -74,7 +75,16 @@ export default async function ConsultationsPage() {
         {offerings === null ? (
           <p className="pg-eyebrow">فهرست مشاوره‌ها در دسترس نیست. کمی بعد دوباره امتحان کنید.</p>
         ) : offerings.length === 0 ? (
-          <p className="pg-eyebrow">در حال حاضر مشاورهٔ فعالی برای رزرو وجود ندارد.</p>
+          <ComingSoon
+            icon="chat"
+            title="رزرو آنلاین مشاوره به‌زودی"
+            text="مشاورهٔ تک‌جلسه‌ای و بستهٔ سالیانه تا کنکور به‌زودی از همین صفحه قابل خرید و رزرو است. زمان راه‌اندازی در کانال تلگرام اعلام می‌شود."
+            alternatives={[
+              { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
+              { href: "/guides/twelve-month-study-plan", label: "برنامهٔ دوازده‌ماهه" },
+              { href: "/guides/working-candidate-study-plan", label: "برنامهٔ داوطلب شاغل" },
+            ]}
+          />
         ) : (
           <div className="pg-grid pg-grid-wide">
             {offerings.map((offering) => (
