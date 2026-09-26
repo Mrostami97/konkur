@@ -1,0 +1,2 @@
+pymupdf>=1.24
+openai>=1.60  # only needed for the `api` command

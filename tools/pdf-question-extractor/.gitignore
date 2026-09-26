@@ -1,0 +1,5 @@
+# PDFs, page images and extraction results never go into the public repo.
+work/
+*.pdf
+__pycache__/
+.venv/
