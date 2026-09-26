@@ -1,5 +1,6 @@
 import katex from "katex";
 import Link from "next/link";
+import { Fragment } from "react";
 import { API_URL } from "../lib/api";
 
 type Block = { type: string; [key: string]: unknown };
@@ -19,6 +20,51 @@ function renderLatex(source: string): string {
   }
 }
 
+// Authored text marks bullets with "• " and steps with "۱." / "1." at the start
+// of a line. HTML would collapse those lines into one paragraph, so each line
+// becomes its own paragraph and runs of two or more marked lines become a real
+// list. A single marked line (an answer option, say) stays a plain paragraph.
+const BULLET = /^[•▪◦]\s*/;
+const NUMBERED = /^([0-9۰-۹]+)[.)]\s*/;
+const toAsciiDigits = (value: string) => value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+
+function renderText(text: string, key: number) {
+  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  if (lines.length <= 1) return <p key={key}>{text}</p>;
+  const kindOf = (line: string) => (BULLET.test(line) ? "ul" : NUMBERED.test(line) ? "ol" : "p");
+  const groups: { kind: "ul" | "ol" | "p"; lines: string[] }[] = [];
+  for (const line of lines) {
+    const kind = kindOf(line);
+    const last = groups[groups.length - 1];
+    if (last && last.kind === kind && kind !== "p") last.lines.push(line);
+    else groups.push({ kind, lines: [line] });
+  }
+  return (
+    <Fragment key={key}>
+      {groups.map((group, groupIndex) => {
+        if (group.kind === "p" || group.lines.length < 2) {
+          return group.lines.map((line, lineIndex) => <p key={`${groupIndex}-${lineIndex}`}>{line}</p>);
+        }
+        const marker = group.kind === "ul" ? BULLET : NUMBERED;
+        const items = group.lines.map((line) => line.replace(marker, ""));
+        if (group.kind === "ul") {
+          return (
+            <ul key={groupIndex} className="cb-list">
+              {items.map((item, i) => <li key={i}>{item}</li>)}
+            </ul>
+          );
+        }
+        const start = Number(toAsciiDigits(group.lines[0].match(NUMBERED)?.[1] ?? "1"));
+        return (
+          <ol key={groupIndex} className="cb-list" start={start}>
+            {items.map((item, i) => <li key={i}>{item}</li>)}
+          </ol>
+        );
+      })}
+    </Fragment>
+  );
+}
+
 function renderBlock(block: Block, index: number, assets: Asset[]) {
   switch (block.type) {
     case "heading": {
@@ -27,7 +73,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
       return <Tag key={index}>{String(block.text ?? "")}</Tag>;
     }
     case "text":
-      return <p key={index}>{String(block.text ?? "")}</p>;
+      return renderText(String(block.text ?? ""), index);
     case "quote":
       return (
         <blockquote key={index} className="cb-quote">

@@ -1267,6 +1267,10 @@ a.ds-kpi:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .cb > :first-child { margin-top: 0; }
 .cb > :last-child { margin-bottom: 0; }
 .cb p { margin: 0 0 0.75rem; }
+.cb-list { margin: 0 0 0.75rem; padding-inline-start: 1.5rem; }
+.cb-list li { margin: 0.35rem 0; padding-inline-start: 0.25rem; line-height: 1.9; }
+.cb-list li::marker { color: var(--muted); }
+ol.cb-list { list-style: persian; }
 .cb h2, .cb h3, .cb h4 { margin: 1.25rem 0 0.5rem; color: var(--ink); line-height: 1.5; }
 .cb-quote { margin: 1rem 0; padding: 0.25rem 1rem; border-inline-start: 3px solid var(--line-strong); color: var(--ink-700); }
 .cb-quote footer { margin-top: 0.35rem; color: var(--muted); font-size: var(--text-sm); }
