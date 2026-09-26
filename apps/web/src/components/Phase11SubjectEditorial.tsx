@@ -88,18 +88,24 @@ export function Phase11SubjectEditorial({
             </a>
           )}
         </div>
-        <div className="syllabus-grid">
+        {/* A roadmap rather than an accordion: every chapter and its topics are
+            visible at once, in order, along one line from the first to the last. */}
+        <ol className="sy-map">
           {syllabus.map((section, index) => (
-            <details className="syllabus-card" open={index === 0} key={section.title}>
-              <summary>
-                <span>{toPersianDigits(String(index + 1).padStart(2, "0"))}</span>
-                <strong>{section.title}</strong>
-                <i aria-hidden="true">+</i>
-              </summary>
-              <ul>{section.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul>
-            </details>
+            <li className="sy-stop" key={section.title}>
+              <span className="sy-node" aria-hidden="true">{toPersianDigits(index + 1)}</span>
+              <div className="sy-card">
+                <header>
+                  <h3>{section.title}</h3>
+                  <span>{toPersianDigits(section.topics.length)} مبحث</span>
+                </header>
+                <ul className="sy-topics">
+                  {section.topics.map((topic) => <li key={topic}>{topic}</li>)}
+                </ul>
+              </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section id="study-path" className="rd-study" aria-labelledby="phase11-study-path-title">

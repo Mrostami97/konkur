@@ -619,19 +619,8 @@ kbd { display: inline-block; min-width: 1.5em; padding: 0 0.35em; border: 1px so
 .syllabus-heading { align-items: center; margin: 0 0 1.1rem; }
 .syllabus-heading h2 { margin: .5rem 0 .25rem; color: var(--navy); font-size: 1.5rem; }
 .syllabus-heading p { max-width: 650px; }
-.syllabus-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
-.syllabus-card { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--paper); overflow: hidden; }
-.syllabus-card[open] { border-color: var(--accent-line); box-shadow: 0 10px 25px rgba(16,185,166,.07); }
-.syllabus-card summary { display: flex; align-items: center; gap: .7rem; padding: .95rem 1rem; color: var(--navy); cursor: pointer; list-style: none; font-size: .82rem; font-weight: 900; }
-.syllabus-card summary::-webkit-details-marker { display: none; }
-.syllabus-card summary > span { display: grid; width: 26px; height: 26px; place-items: center; border-radius: 8px; color: var(--teal-dark); background: var(--sky); font-size: .62rem; direction: ltr; }
-.syllabus-card summary i { margin-right: auto; color: var(--teal-dark); font-style: normal; font-size: 1.1rem; transition: transform 160ms ease; }
-.syllabus-card[open] summary i { transform: rotate(45deg); }
-.syllabus-card ul { padding: 0 2.5rem 1rem 1rem; margin: 0; }
-.syllabus-card li { padding: .25rem 0; color: var(--muted); font-size: .73rem; line-height: 1.75; }
 
 @media (max-width: 860px) {
-  .syllabus-grid { grid-template-columns: 1fr; }
   .track-snapshot { grid-template-columns: 1fr; }
 }
 
