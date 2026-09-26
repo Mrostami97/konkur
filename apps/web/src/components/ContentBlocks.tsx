@@ -2,6 +2,7 @@ import katex from "katex";
 import Link from "next/link";
 import { Fragment } from "react";
 import { API_URL } from "../lib/api";
+import { splitMath } from "../lib/math-text";
 
 type Block = { type: string; [key: string]: unknown };
 type Asset = { media_key: string; checksum: string };
@@ -12,12 +13,33 @@ function mediaUrl(assets: Asset[], mediaKey: string): string | null {
   return `${API_URL}/media/${asset.checksum.replace("sha256:", "")}`;
 }
 
-function renderLatex(source: string): string {
+function renderLatex(source: string, displayMode = false): string {
   try {
-    return katex.renderToString(source, { throwOnError: false, output: "html" });
+    return katex.renderToString(source, { throwOnError: false, output: "html", displayMode });
   } catch {
     return source;
   }
+}
+
+/** Text with inline ($...$) and display ($$...$$) formulas typeset in place. */
+function RichText({ text }: { text: string }) {
+  return (
+    <>
+      {splitMath(text).map((segment, index) =>
+        segment.kind === "text" ? (
+          segment.value
+        ) : (
+          <span
+            key={index}
+            className={segment.display ? "cb-dmath" : "cb-imath"}
+            dir="ltr"
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: renderLatex(segment.value, segment.display) }}
+          />
+        ),
+      )}
+    </>
+  );
 }
 
 // Authored text marks bullets with "• " and steps with "۱." / "1." at the start
@@ -30,7 +52,7 @@ const toAsciiDigits = (value: string) => value.replace(/[۰-۹]/g, (d) => String
 
 function renderText(text: string, key: number) {
   const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  if (lines.length <= 1) return <p key={key}>{text}</p>;
+  if (lines.length <= 1) return <p key={key}><RichText text={text} /></p>;
   const kindOf = (line: string) => (BULLET.test(line) ? "ul" : NUMBERED.test(line) ? "ol" : "p");
   const groups: { kind: "ul" | "ol" | "p"; lines: string[] }[] = [];
   for (const line of lines) {
@@ -43,21 +65,21 @@ function renderText(text: string, key: number) {
     <Fragment key={key}>
       {groups.map((group, groupIndex) => {
         if (group.kind === "p" || group.lines.length < 2) {
-          return group.lines.map((line, lineIndex) => <p key={`${groupIndex}-${lineIndex}`}>{line}</p>);
+          return group.lines.map((line, lineIndex) => <p key={`${groupIndex}-${lineIndex}`}><RichText text={line} /></p>);
         }
         const marker = group.kind === "ul" ? BULLET : NUMBERED;
         const items = group.lines.map((line) => line.replace(marker, ""));
         if (group.kind === "ul") {
           return (
             <ul key={groupIndex} className="cb-list">
-              {items.map((item, i) => <li key={i}>{item}</li>)}
+              {items.map((item, i) => <li key={i}><RichText text={item} /></li>)}
             </ul>
           );
         }
         const start = Number(toAsciiDigits(group.lines[0].match(NUMBERED)?.[1] ?? "1"));
         return (
           <ol key={groupIndex} className="cb-list" start={start}>
-            {items.map((item, i) => <li key={i}>{item}</li>)}
+            {items.map((item, i) => <li key={i}><RichText text={item} /></li>)}
           </ol>
         );
       })}
@@ -77,7 +99,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
     case "quote":
       return (
         <blockquote key={index} className="cb-quote">
-          {String(block.text ?? "")}
+          <RichText text={String(block.text ?? "")} />
           {typeof block.cite === "string" && <footer>— {block.cite}</footer>}
         </blockquote>
       );

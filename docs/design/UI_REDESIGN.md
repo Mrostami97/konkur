@@ -79,7 +79,7 @@ Typography
 - Vazirmatn variable (OFL, self-hosted `public/fonts/Vazirmatn-Variable.woff2`) — real weights 400–900, no fake bold. Google Fonts is avoided because it is unreliable from Iran.
 - Scale (px): 12 · 13 · 14 · 15 (base UI) · 17 (reading) · 20 · 24 · 30 · 38 · 48. Persian needs more leading than Latin: body 1.85, UI 1.6, headings 1.25–1.4.
 - Weights: 400 text, 500 UI labels, 700 headings, 800 display figures.
-- Numbers: Persian digits in UI; `tabular-nums` where figures align (timers, scores, tables).
+- Numbers: Persian digits in UI, converted where a number is rendered (a font-level digit swap broke Vazirmatn in Chromium and was dropped); `tabular-nums` where figures align (timers, scores, tables).
 - Latin/code: `ui-monospace, "Cascadia Mono", Consolas` inside `dir="ltr"` islands; KaTeX for maths.
 
 Colour (one accent, semantic states, warm-neutral paper)

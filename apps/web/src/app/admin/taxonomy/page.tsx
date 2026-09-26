@@ -7,6 +7,7 @@ import {
   Alert,
   Button,
   Card,
+  ConfirmDialog,
   DataState,
   Field,
   FieldRow,
@@ -16,11 +17,13 @@ import {
 } from "../../../components/ds";
 
 interface Subject {
+  id: string;
   code: string;
   title: string;
 }
 
 interface Topic {
+  id: string;
   code: string;
   title: string;
   subject: Subject;
@@ -63,6 +66,27 @@ export default function TaxonomyAdminPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const [pendingDelete, setPendingDelete] = useState<{ label: string; path: string; note: string } | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function confirmDelete() {
+    const target = pendingDelete;
+    if (!target) return;
+    setDeleteBusy(true);
+    setDeleteError(null);
+    try {
+      await apiFetch(target.path, { method: "DELETE" });
+      setPendingDelete(null);
+      await load();
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "حذف ممکن نشد.");
+      setPendingDelete(null);
+    } finally {
+      setDeleteBusy(false);
+    }
+  }
 
   async function createSubject(event: FormEvent) {
     event.preventDefault();
@@ -142,15 +166,32 @@ export default function TaxonomyAdminPage() {
               emptyTitle="هنوز درسی ثبت نشده"
               emptyDescription="با فرم بالا اولین درس را اضافه کنید."
             >
+              {deleteError && <div style={{ padding: "var(--sp-4)" }}><Alert tone="danger">{deleteError}</Alert></div>}
               <TableWrap>
                 <thead>
-                  <tr><th>عنوان</th><th>کد</th></tr>
+                  <tr><th>عنوان</th><th>کد</th><th /></tr>
                 </thead>
                 <tbody>
                   {subjects.map((subject) => (
                     <tr key={subject.code}>
                       <td>{subject.title}</td>
                       <td className="ds-code">{subject.code}</td>
+                      <td>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setDeleteError(null);
+                            setPendingDelete({
+                              label: subject.title,
+                              path: `/admin/subjects/${subject.id}`,
+                              note: "درس از طبقه‌بندی برداشته می‌شود. اگر مبحثی داشته باشد، اول باید مبحث‌هایش را حذف کنید. سؤال‌ها و مقاله‌ها کد درس خودشان را نگه می‌دارند.",
+                            });
+                          }}
+                        >
+                          حذف
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -216,7 +257,7 @@ export default function TaxonomyAdminPage() {
             >
               <TableWrap>
                 <thead>
-                  <tr><th>عنوان</th><th>کد</th><th>درس</th></tr>
+                  <tr><th>عنوان</th><th>کد</th><th>درس</th><th /></tr>
                 </thead>
                 <tbody>
                   {topics.map((topic) => (
@@ -224,6 +265,22 @@ export default function TaxonomyAdminPage() {
                       <td>{topic.title}</td>
                       <td className="ds-code">{topic.code}</td>
                       <td>{topic.subject.title}</td>
+                      <td>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setDeleteError(null);
+                            setPendingDelete({
+                              label: topic.title,
+                              path: `/admin/topics/${topic.id}`,
+                              note: "مبحث از طبقه‌بندی برداشته می‌شود. اگر به درسی از دوره‌ها وصل باشد، حذف انجام نمی‌شود.",
+                            });
+                          }}
+                        >
+                          حذف
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -232,6 +289,16 @@ export default function TaxonomyAdminPage() {
           </div>
         </Card>
       </div>
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title={`حذف «${pendingDelete?.label ?? ""}»؟`}
+        description={pendingDelete?.note}
+        confirmLabel="حذف"
+        tone="danger"
+        busy={deleteBusy}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
+      />
     </>
   );
 }

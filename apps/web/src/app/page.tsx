@@ -3,11 +3,13 @@ import Link from "next/link";
 import { contentTypeLabel, publicArticlePath, type PublicArticleRecord } from "../components/PublicContent";
 import { StructuredData } from "../components/StructuredData";
 import { evidenceStats, studentResults } from "../content/evidence";
-import { findPhase12EditorialPage } from "../content/phase12";
+import { guides, subjects } from "../content/editorial";
+import { findPhase12EditorialPage, phase12EditorialPages } from "../content/phase12";
 import { apiGetPublic } from "../lib/api";
-import { canonicalHref } from "../lib/merged-pages";
+import { canonicalHref, withoutMergedGuides } from "../lib/merged-pages";
 import { toPersianDigits } from "../lib/format";
 import { absoluteUrl, pageMetadata, SITE_NAME } from "../lib/seo";
+import { HeroSearch, type HeroEntry } from "./HeroSearch";
 import "./home.css";
 
 export const metadata: Metadata = pageMetadata({
@@ -47,11 +49,17 @@ const STEPS = [
   },
 ] as const;
 
-const QUICK_LINKS = [
-  { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
-  { href: "/free-videos", label: "ویدیوی رایگان هر درس" },
-  { href: "/rank-estimate", label: "تخمین رتبه" },
-] as const;
+/** Tools and entry points every visitor should know about. */
+const TOOLS: HeroEntry[] = [
+  { title: "شروع کنکور کامپیوتر از صفر", href: "/articles/study-plan-from-zero", kind: "شروع" },
+  { title: "بانک سؤال کنکور با پاسخ تشریحی", href: "/questions", kind: "ابزار" },
+  { title: "ویدیوی رایگان هر درس", href: "/free-videos", kind: "ویدیو" },
+  { title: "تخمین رتبه با درصدهایت", href: "/rank-estimate", kind: "ابزار" },
+  { title: "نتیجهٔ شاگردها، کنار سندش", href: "/evidence", kind: "نتایج" },
+];
+
+/** What the search box suggests trying while it is empty. */
+const SEARCH_EXAMPLES = ["درخت AVL", "ضرایب ۱۴۰۶", "الگوریتم دایکسترا", "برنامهٔ شش‌ماهه", "نظریه زبان‌ها", "تخمین رتبه"];
 
 /** Official 1406 guides shown until enough published articles exist; a
  * published article always comes first. */
@@ -94,6 +102,24 @@ export default async function HomePage() {
   const seen = new Set<string>();
   const reading = [...fromPublished, ...fromGuides].filter((row) => !seen.has(row.href) && seen.add(row.href)).slice(0, 3);
 
+  // The search box answers from these pages as the student types; the rail
+  // under it shows the tools and lessons, drifting past slowly.
+  const guideEntries: HeroEntry[] = withoutMergedGuides([...phase12EditorialPages, ...guides]).map((page) => ({
+    title: page.title,
+    href: `/guides/${page.slug}`,
+    kind: "راهنما",
+  }));
+  const articleEntries: HeroEntry[] = fromPublished.map((row) => ({ title: row.title, href: row.href, kind: row.kind }));
+  const subjectEntries: HeroEntry[] = subjects.map((subject) => ({ title: subject.title, href: `/subjects/${subject.slug}`, kind: "درس" }));
+  const unique = (list: HeroEntry[]) => {
+    const hrefs = new Set<string>();
+    return list.filter((entry) => !hrefs.has(entry.href) && hrefs.add(entry.href));
+  };
+  const searchEntries = unique([...TOOLS, ...articleEntries, ...guideEntries, ...subjectEntries]);
+  const rails = [
+    unique([...TOOLS, ...subjectEntries]),
+  ];
+
   // Extends the site-wide WebSite entity from the layout (same @id) with the
   // search box, rather than declaring a second, competing site entity.
   const structured = [
@@ -126,18 +152,7 @@ export default async function HomePage() {
           </h1>
           <p className="hc-lede">راهنمای رسمی ۱۴۰۶، ویدیوی رایگان هر درس، تست و آزمون، و تخمین رتبه؛ همه در یک جا.</p>
 
-          <form className="hc-search" action="/search" method="get" role="search">
-            <label htmlFor="hc-q" className="sr-only">جست‌وجو در درس‌ها، راهنماها و مقاله‌ها</label>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
-            <input id="hc-q" name="q" type="search" placeholder="چه می‌خواهی یاد بگیری؟ مثلاً «درخت AVL»" />
-            <button type="submit">جست‌وجو</button>
-          </form>
-
-          <p className="hc-quick">
-            {QUICK_LINKS.map((link) => (
-              <Link key={link.href} href={link.href}>{link.label}</Link>
-            ))}
-          </p>
+          <HeroSearch entries={searchEntries} examples={SEARCH_EXAMPLES} rows={rails} />
         </div>
       </section>
 

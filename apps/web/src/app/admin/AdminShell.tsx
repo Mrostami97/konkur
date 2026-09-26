@@ -50,6 +50,12 @@ const NAV_GROUPS: { title: string; links: NavLink[] }[] = [
       { href: "/admin/admissions", label: "دانشگاه‌ها و گرایش‌ها", icon: "university", roles: ["ADMIN"] },
     ],
   },
+  {
+    title: "سامانه",
+    links: [
+      { href: "/admin/users", label: "کاربران و نقش‌ها", icon: "students", roles: ["ADMIN"] },
+    ],
+  },
 ];
 
 const ALL_LINKS = NAV_GROUPS.flatMap((group) => group.links);

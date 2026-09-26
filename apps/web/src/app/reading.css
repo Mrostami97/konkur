@@ -177,7 +177,7 @@
   line-height: 1.6;
 }
 .rd-page .editorial-body h2::before {
-  content: counter(rd-section);
+  content: counter(rd-section, persian);
   display: grid;
   place-items: center;
   flex: none;
@@ -301,7 +301,7 @@
 .rd-page .subject-journey ol { counter-reset: rd-step; display: grid; gap: 0.9rem; margin: 0; padding: 0; list-style: none; }
 .rd-page .subject-journey ol li { counter-increment: rd-step; position: relative; padding-inline-start: 2.9rem; color: var(--ink-800); font-size: 0.92rem; line-height: 1.95; }
 .rd-page .subject-journey ol li::before {
-  content: counter(rd-step);
+  content: counter(rd-step, persian);
   position: absolute;
   inset-inline-start: 0;
   top: 0.1rem;
@@ -330,7 +330,7 @@
 .rd-page .sources-box h2 { margin: 0.2rem 0 0; font-size: 1.05rem; }
 .rd-page .sources-box ol { counter-reset: rd-src; display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
 .rd-page .sources-box li { counter-increment: rd-src; position: relative; padding-inline-start: 2.2rem; }
-.rd-page .sources-box li::before { content: counter(rd-src); position: absolute; inset-inline-start: 0; top: 0.1rem; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 8px; background: #fff; border: 1px solid var(--rd-line); color: var(--rd-muted); font-size: 0.75rem; font-weight: 800; }
+.rd-page .sources-box li::before { content: counter(rd-src, persian); position: absolute; inset-inline-start: 0; top: 0.1rem; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 8px; background: #fff; border: 1px solid var(--rd-line); color: var(--rd-muted); font-size: 0.75rem; font-weight: 800; }
 .rd-page .sources-box a { display: flex; flex-direction: column; gap: 0.15rem; color: var(--rd-ink); text-decoration: none; }
 .rd-page .sources-box a strong { font-size: 0.9rem; }
 .rd-page .sources-box a:hover strong { color: var(--rd-accent); }
@@ -418,7 +418,7 @@
 .rd-toc strong { display: block; margin-bottom: 0.6rem; font-size: 0.85rem; }
 .rd-toc nav { counter-reset: rd-toc; display: flex; flex-direction: column; gap: 0.15rem; }
 .rd-toc a { counter-increment: rd-toc; display: flex; gap: 0.55rem; padding: 0.45rem 0.55rem; border-radius: 10px; color: var(--rd-muted); font-size: 0.82rem; line-height: 1.7; text-decoration: none; }
-.rd-toc a::before { content: counter(rd-toc); flex: none; min-width: 1.2rem; color: var(--rd-accent); font-weight: 900; }
+.rd-toc a::before { content: counter(rd-toc, persian); flex: none; min-width: 1.2rem; color: var(--rd-accent); font-weight: 900; }
 .rd-toc a:hover { background: var(--rd-soft); color: var(--rd-ink); }
 
 .rd-side-cta { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.2rem; border-radius: var(--radius-lg); background: var(--surface-ink); color: #fff; }

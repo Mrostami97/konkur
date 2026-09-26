@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { ContentBlocks } from "../../../components/ContentBlocks";
 import { apiFetch } from "../../../lib/api";
+import { toEnglishDigits, toPersianDigits } from "../../../lib/format";
+import { hasMath } from "../../../lib/math-text";
+import { TARGET_FIELDS } from "../../account/profile-options";
 import {
   AdminPageHeader,
   Alert,
@@ -21,6 +25,44 @@ import {
 } from "../../../components/ds";
 
 const PAGE_SIZE = 20;
+
+export interface SubjectOption { code: string; title: string }
+interface TopicOption { code: string; title: string; subject?: { code: string } | null }
+
+/** Persian names for the codes a question stores, so the table and the form
+ * never show an operator a raw slug when a name exists. */
+interface Catalog {
+  subjects: SubjectOption[];
+  subjectTitle: (code: string) => string;
+  fieldLabel: (code: string) => string;
+  topics: TopicOption[];
+  topicTitle: (code: string) => string;
+}
+
+function useCatalog(subjects: SubjectOption[]): Catalog {
+  const [topics, setTopics] = useState<TopicOption[]>([]);
+  useEffect(() => {
+    apiFetch<TopicOption[]>("/topics").then(setTopics).catch(() => setTopics([]));
+  }, []);
+  return useMemo(() => {
+    const subjectNames = new Map(subjects.map((subject) => [subject.code, subject.title]));
+    const topicNames = new Map(topics.map((topic) => [topic.code, topic.title]));
+    const fieldNames = new Map<string, string>(TARGET_FIELDS.map((field) => [field.value, field.label]));
+    return {
+      subjects,
+      subjectTitle: (code) => subjectNames.get(code) ?? code,
+      fieldLabel: (code) => fieldNames.get(code) ?? code,
+      topics,
+      topicTitle: (code) => topicNames.get(code) ?? code,
+    };
+  }, [subjects, topics]);
+}
+
+/** One text block per paragraph; formulas stay inline as $...$ or $$...$$. */
+function textToBlocks(text: string) {
+  const paragraphs = text.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
+  return (paragraphs.length > 0 ? paragraphs : [text.trim()]).map((part) => ({ type: "text", text: part }));
+}
 
 /** The admin listing is the one read path that returns the whole row — body,
  * answer key, and retirement state — because an operator has to see exactly
@@ -72,19 +114,21 @@ const BLANK_FORM: FormValues = {
 
 /**
  * Flattens a block array back to the plain text this form edits, or returns
- * null when it cannot. Null is the important case: a question imported from a
- * zip may hold images, LaTeX or tables, and round-tripping those through a
- * textarea would silently destroy them. The caller refuses to open such a
- * question for inline editing rather than quietly dropping content.
+ * null when it cannot. A LaTeX block becomes a $$...$$ line, which renders the
+ * same. Null is the important case: a question imported from a zip may hold
+ * images or tables, and round-tripping those through a textarea would
+ * silently destroy them. The caller refuses to open such a question for inline
+ * editing rather than quietly dropping content.
  */
 function blocksToText(blocks: unknown): string | null {
   if (!Array.isArray(blocks)) return null;
   const parts: string[] = [];
   for (const block of blocks) {
     if (!block || typeof block !== "object") return null;
-    const candidate = block as { type?: unknown; text?: unknown };
-    if (candidate.type !== "text" || typeof candidate.text !== "string") return null;
-    parts.push(candidate.text);
+    const candidate = block as { type?: unknown; text?: unknown; latex?: unknown };
+    if (candidate.type === "text" && typeof candidate.text === "string") parts.push(candidate.text);
+    else if (candidate.type === "latex" && typeof candidate.latex === "string") parts.push(`$$${candidate.latex}$$`);
+    else return null;
   }
   return parts.join("\n\n");
 }
@@ -121,7 +165,7 @@ function toFormValues(row: AdminQuestion): FormValues | null {
   };
 }
 
-function QuestionList({ onEdit }: { onEdit: (row: AdminQuestion) => void }) {
+function QuestionList({ onEdit, catalog }: { onEdit: (row: AdminQuestion) => void; catalog: Catalog }) {
   const [rows, setRows] = useState<AdminQuestion[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -208,7 +252,7 @@ function QuestionList({ onEdit }: { onEdit: (row: AdminQuestion) => void }) {
         body: { reason: trimmed },
       });
       return result.examUses > 0
-        ? `«${row.externalId}» بازنشسته شد. این سؤال در ${result.examUses} آزمون به‌کار رفته و برای گزارش تلاش‌های گذشته دست‌نخورده می‌ماند.`
+        ? `«${row.externalId}» بازنشسته شد. این سؤال در ${toPersianDigits(result.examUses)} آزمون به‌کار رفته و برای گزارش تلاش‌های گذشته دست‌نخورده می‌ماند.`
         : `«${row.externalId}» بازنشسته شد و دیگر در بانک دیده نمی‌شود.`;
     });
     if (!ok) return;
@@ -232,19 +276,19 @@ function QuestionList({ onEdit }: { onEdit: (row: AdminQuestion) => void }) {
           >
             <div className="ds-grow" style={{ minWidth: "12rem" }}>
               <Input
-                placeholder="جست‌وجو در شناسه، کد درس، گرایش یا مبحث"
+                placeholder="جست‌وجو در شناسه، درس، گرایش یا مبحث"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 aria-label="جست‌وجو"
               />
             </div>
-            <div style={{ width: "12rem" }}>
-              <Input
-                placeholder="کد درس"
-                value={subjectCode}
-                onChange={(event) => setSubjectCode(event.target.value)}
-                aria-label="کد درس"
-              />
+            <div style={{ width: "14rem" }}>
+              <Select value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} aria-label="درس">
+                <option value="">همهٔ درس‌ها</option>
+                {catalog.subjects.map((subject) => (
+                  <option key={subject.code} value={subject.code}>{subject.title}</option>
+                ))}
+              </Select>
             </div>
             <Button type="submit" variant="primary">
               اعمال
@@ -318,13 +362,13 @@ function QuestionList({ onEdit }: { onEdit: (row: AdminQuestion) => void }) {
                           {row.externalId}
                         </Link>
                         <div style={{ color: "var(--muted)", fontSize: "var(--text-sm)" }}>
-                          نسخهٔ {row.version}
+                          نسخهٔ {toPersianDigits(row.version)}
                         </div>
                       </td>
-                      <td>{row.subjectCode}</td>
-                      <td>{row.examMajor}</td>
-                      <td className="ds-table-numeric">{row.examYear}</td>
-                      <td style={{ color: "var(--muted)" }}>{row.topicCodes.join("، ") || "—"}</td>
+                      <td>{catalog.subjectTitle(row.subjectCode)}</td>
+                      <td>{catalog.fieldLabel(row.examMajor)}</td>
+                      <td className="ds-table-numeric">{toPersianDigits(row.examYear)}</td>
+                      <td style={{ color: "var(--muted)" }}>{row.topicCodes.map(catalog.topicTitle).join("، ") || "—"}</td>
                       <td>
                         {retired ? (
                           <>
@@ -437,14 +481,24 @@ function QuestionList({ onEdit }: { onEdit: (row: AdminQuestion) => void }) {
   );
 }
 
+/** How to write a formula, with the syntax kept left-to-right so it reads as typed. */
+const MATH_HINT = (
+  <>
+    فرمول را بین دو <bdi dir="ltr" className="ds-code">$</bdi> بنویس، مثلاً <bdi dir="ltr" className="ds-code">{"$O(n \\log n)$"}</bdi>؛
+    برای فرمولی در خط جدا <bdi dir="ltr" className="ds-code">{"$$ … $$"}</bdi>.
+  </>
+);
+
 function QuestionForm({
   initial,
   editingId,
   onCancelEdit,
+  catalog,
 }: {
   initial: FormValues;
   editingId: string | null;
   onCancelEdit: () => void;
+  catalog: Catalog;
 }) {
   const isEdit = editingId !== null;
   const [values, setValues] = useState(initial);
@@ -466,16 +520,16 @@ function QuestionForm({
         method: "POST",
         body: {
           external_id: values.externalId,
-          exam: { degree: values.degree, major: values.major, year: Number(values.year) },
+          exam: { degree: values.degree, major: values.major, year: Number(toEnglishDigits(values.year)) },
           subject_code: values.subjectCode,
-          topic_codes: values.topicCodes.split(",").map((code) => code.trim()).filter(Boolean),
-          stem_blocks: [{ type: "text", text: values.stem }],
+          topic_codes: values.topicCodes.split(/[,،]/).map((code) => code.trim()).filter(Boolean),
+          stem_blocks: textToBlocks(values.stem),
           options: values.options.map((text, index) => ({
             number: index + 1,
-            blocks: [{ type: "text", text }],
+            blocks: textToBlocks(text),
           })),
           correct_option: values.correctOption,
-          solution_blocks: [{ type: "text", text: values.solution }],
+          solution_blocks: textToBlocks(values.solution),
         },
       });
       setResult(
@@ -559,9 +613,16 @@ function QuestionForm({
         </FieldRow>
 
         <FieldRow>
-          <Field label="گرایش" required>
+          <Field label="رشته" required>
             {(props) => (
-              <Input {...props} value={values.major} onChange={(event) => patch({ major: event.target.value })} required />
+              <Select {...props} value={values.major} onChange={(event) => patch({ major: event.target.value })} required>
+                {TARGET_FIELDS.map((field) => (
+                  <option key={field.value} value={field.value}>{field.label}</option>
+                ))}
+                {!TARGET_FIELDS.some((field) => field.value === values.major) && (
+                  <option value={values.major}>{values.major} (کد ثبت‌شده)</option>
+                )}
+              </Select>
             )}
           </Field>
           <Field label="سال کنکور" required>
@@ -578,29 +639,54 @@ function QuestionForm({
         </FieldRow>
 
         <FieldRow>
-          <Field label="کد درس" hint="مثلاً data-structures" required>
+          <Field label="درس" required>
             {(props) => (
-              <Input
+              <Select
                 {...props}
                 value={values.subjectCode}
                 onChange={(event) => patch({ subjectCode: event.target.value })}
                 required
-              />
+              >
+                <option value="" disabled>انتخاب درس</option>
+                {catalog.subjects.map((subject) => (
+                  <option key={subject.code} value={subject.code}>{subject.title}</option>
+                ))}
+                {values.subjectCode && !catalog.subjects.some((subject) => subject.code === values.subjectCode) && (
+                  <option value={values.subjectCode}>{values.subjectCode} (کد ثبت‌شده)</option>
+                )}
+              </Select>
             )}
           </Field>
-          <Field label="کد مبحث‌ها" hint="چند مبحث را با کاما جدا کنید" required>
+          <Field
+            label="کد مبحث‌ها"
+            hint={
+              catalog.topics.length > 0
+                ? "از فهرست پیشنهادی انتخاب کن یا کد تازه بنویس؛ چند مبحث را با کاما جدا کن"
+                : "کد لاتین هر مبحث، مثلاً sorting؛ چند مبحث را با کاما جدا کن"
+            }
+            required
+          >
             {(props) => (
-              <Input
-                {...props}
-                value={values.topicCodes}
-                onChange={(event) => patch({ topicCodes: event.target.value })}
-                required
-              />
+              <>
+                <Input
+                  {...props}
+                  dir="ltr"
+                  list="question-topic-codes"
+                  value={values.topicCodes}
+                  onChange={(event) => patch({ topicCodes: event.target.value })}
+                  required
+                />
+                <datalist id="question-topic-codes">
+                  {catalog.topics.map((topic) => (
+                    <option key={topic.code} value={topic.code}>{topic.title}</option>
+                  ))}
+                </datalist>
+              </>
             )}
           </Field>
         </FieldRow>
 
-        <Field label="متن سؤال" required>
+        <Field label="متن سؤال" hint={MATH_HINT} required>
           {(props) => (
             <Textarea {...props} value={values.stem} onChange={(event) => patch({ stem: event.target.value })} required />
           )}
@@ -618,11 +704,11 @@ function QuestionForm({
                   name="correct"
                   checked={values.correctOption === index + 1}
                   onChange={() => patch({ correctOption: index + 1 })}
-                  aria-label={`گزینهٔ ${index + 1} پاسخ صحیح است`}
+                  aria-label={`گزینهٔ ${toPersianDigits(index + 1)} پاسخ صحیح است`}
                 />
                 <span className="ds-grow">
                   <Input
-                    placeholder={`گزینهٔ ${index + 1}`}
+                    placeholder={`گزینهٔ ${toPersianDigits(index + 1)}`}
                     value={option}
                     onChange={(event) =>
                       patch({
@@ -639,7 +725,7 @@ function QuestionForm({
           </div>
         </fieldset>
 
-        <Field label="راه‌حل" hint="برای دارندگان دسترسی بانک سؤال نمایش داده می‌شود" required>
+        <Field label="راه‌حل" hint={<>برای دارندگان دسترسی بانک سؤال و در کارنامهٔ آزمون نمایش داده می‌شود. {MATH_HINT}</>} required>
           {(props) => (
             <Textarea
               {...props}
@@ -649,6 +735,8 @@ function QuestionForm({
             />
           )}
         </Field>
+
+        <QuestionPreview values={values} />
 
         {error && <Alert tone="danger">{error}</Alert>}
         {result && <Alert tone="success">{result}</Alert>}
@@ -663,7 +751,44 @@ function QuestionForm({
   );
 }
 
-export default function AdminQuestionsPage() {
+/** The question as a student will see it, formulas typeset, answer marked. */
+function QuestionPreview({ values }: { values: FormValues }) {
+  const empty = !values.stem.trim() && values.options.every((option) => !option.trim()) && !values.solution.trim();
+  const anyMath = [values.stem, values.solution, ...values.options].some(hasMath);
+  return (
+    <section className="ds-preview" aria-labelledby="question-preview-title">
+      <div className="ds-row-between">
+        <h3 id="question-preview-title" className="ds-label" style={{ margin: 0 }}>پیش‌نمایش برای دانشجو</h3>
+        {anyMath && <Badge tone="info">فرمول دارد</Badge>}
+      </div>
+      {empty ? (
+        <p className="ds-hint" style={{ margin: 0 }}>با نوشتن متن سؤال، گزینه‌ها و راه‌حل، همین‌جا همان چیزی را می‌بینی که دانشجو می‌بیند.</p>
+      ) : (
+        <>
+          <ContentBlocks blocks={textToBlocks(values.stem)} />
+          <ol className="ds-preview-options">
+            {values.options.map((option, index) => (
+              <li key={index} data-correct={values.correctOption === index + 1 || undefined}>
+                <span className="ds-preview-n">{toPersianDigits(index + 1)}</span>
+                <ContentBlocks blocks={textToBlocks(option)} />
+                {values.correctOption === index + 1 && <Badge tone="success">پاسخ درست</Badge>}
+              </li>
+            ))}
+          </ol>
+          {values.solution.trim() && (
+            <div className="ds-preview-solution">
+              <strong>راه‌حل</strong>
+              <ContentBlocks blocks={textToBlocks(values.solution)} />
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
+export function QuestionsAdmin({ subjects }: { subjects: SubjectOption[] }) {
+  const catalog = useCatalog(subjects);
   const [editing, setEditing] = useState<{ id: string; values: FormValues } | null>(null);
 
   const formInitial = useMemo(() => editing?.values ?? BLANK_FORM, [editing]);
@@ -676,6 +801,7 @@ export default function AdminQuestionsPage() {
       />
       <div className="ds-stack-lg">
         <QuestionList
+          catalog={catalog}
           onEdit={(row) => {
             const values = toFormValues(row);
             if (!values) return;
@@ -691,6 +817,7 @@ export default function AdminQuestionsPage() {
             initial={formInitial}
             editingId={editing?.id ?? null}
             onCancelEdit={() => setEditing(null)}
+            catalog={catalog}
           />
         </div>
       </div>

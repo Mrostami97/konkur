@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "katex/dist/katex.min.css";
 import { MobileNav } from "../components/MobileNav";
 import { PublicChrome } from "../components/PublicChrome";
+import { ActivityToasts } from "../components/ActivityToasts";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <PublicChrome>
         <SiteFooter subjects={FOOTER_SUBJECTS} />
         <MobileNav />
+        <ActivityToasts />
         </PublicChrome>
         <ServiceWorkerRegistration />
       </body>

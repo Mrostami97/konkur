@@ -7,6 +7,7 @@ import {
   Alert,
   Button,
   Card,
+  ConfirmDialog,
   DataState,
   Field,
   FieldRow,
@@ -88,6 +89,27 @@ export default function AdmissionsAdminPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const [pendingDelete, setPendingDelete] = useState<{ label: string; path: string; note: string } | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function confirmDelete() {
+    const target = pendingDelete;
+    if (!target) return;
+    setDeleteBusy(true);
+    setDeleteError(null);
+    try {
+      await apiFetch(target.path, { method: "DELETE" });
+      setPendingDelete(null);
+      await load();
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "حذف ممکن نشد.");
+      setPendingDelete(null);
+    } finally {
+      setDeleteBusy(false);
+    }
+  }
 
   async function createUniversity(event: FormEvent) {
     event.preventDefault();
@@ -209,14 +231,31 @@ export default function AdmissionsAdminPage() {
               emptyTitle="هنوز دانشگاهی ثبت نشده"
               emptyDescription="با فرم بالا اولین دانشگاه را اضافه کنید."
             >
+              {deleteError && <div style={{ padding: "var(--sp-4)" }}><Alert tone="danger">{deleteError}</Alert></div>}
               <TableWrap>
-                <thead><tr><th>نام</th><th>کد</th><th>شهر</th></tr></thead>
+                <thead><tr><th>نام</th><th>کد</th><th>شهر</th><th /></tr></thead>
                 <tbody>
                   {universities.map((university) => (
                     <tr key={university.id}>
                       <td>{university.title}</td>
                       <td className="ds-code">{university.code}</td>
                       <td>{university.city}</td>
+                      <td>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setDeleteError(null);
+                            setPendingDelete({
+                              label: university.title,
+                              path: `/admin/universities/${university.id}`,
+                              note: "دانشگاه پاک می‌شود. اگر رشته‌محلی داشته باشد، اول باید رشته‌محل‌هایش را حذف کنید.",
+                            });
+                          }}
+                        >
+                          حذف
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -270,6 +309,48 @@ export default function AdmissionsAdminPage() {
           </form>
         </Card>
 
+        <Card padded={false}>
+          <div className="ds-card-head"><h2 className="ds-card-title">رشته‌محل‌ها</h2></div>
+          <div className={`ds-card-body ${programs.length && !loading && !error ? "ds-card-body-flush" : ""}`}>
+            <DataState
+              loading={loading}
+              error={error}
+              isEmpty={programs.length === 0}
+              onRetry={load}
+              emptyTitle="هنوز رشته‌محلی ثبت نشده"
+              emptyDescription="با فرم بالا اولین رشته‌محل را اضافه کنید."
+            >
+              <TableWrap>
+                <thead><tr><th>عنوان</th><th>کد</th><th /></tr></thead>
+                <tbody>
+                  {programs.map((program) => (
+                    <tr key={program.id}>
+                      <td>{program.title}</td>
+                      <td className="ds-code">{program.code}</td>
+                      <td>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setDeleteError(null);
+                            setPendingDelete({
+                              label: program.title,
+                              path: `/admin/programs/${program.id}`,
+                              note: "رشته‌محل و ظرفیت‌هایش پاک می‌شوند. اگر در فهرست انتخاب دانشجویی باشد، حذف انجام نمی‌شود.",
+                            });
+                          }}
+                        >
+                          حذف
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </TableWrap>
+            </DataState>
+          </div>
+        </Card>
+
         <Card>
           <h2 className="ds-card-title">ظرفیت</h2>
           <form onSubmit={addCapacity} className="ds-form">
@@ -287,8 +368,15 @@ export default function AdmissionsAdminPage() {
               <Field label="سال آزمون" required>
                 {(props) => <Input {...props} value={examYear} onChange={(event) => setExamYear(event.target.value)} inputMode="numeric" required />}
               </Field>
-              <Field label="سهمیه" hint="مثلاً region-1" required>
-                {(props) => <Input {...props} value={quota} onChange={(event) => setQuota(event.target.value)} required />}
+              <Field label="سهمیه" required>
+                {(props) => (
+                  <Select {...props} value={quota} onChange={(event) => setQuota(event.target.value)} required>
+                    <option value="region-1">منطقهٔ ۱</option>
+                    <option value="region-2">منطقهٔ ۲</option>
+                    <option value="region-3">منطقهٔ ۳</option>
+                    {!["region-1", "region-2", "region-3"].includes(quota) && <option value={quota}>{quota}</option>}
+                  </Select>
+                )}
               </Field>
               <Field label="ظرفیت" required>
                 {(props) => <Input {...props} value={capacity} onChange={(event) => setCapacity(event.target.value)} inputMode="numeric" required />}
@@ -300,6 +388,16 @@ export default function AdmissionsAdminPage() {
           </form>
         </Card>
       </div>
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title={`حذف «${pendingDelete?.label ?? ""}»؟`}
+        description={pendingDelete?.note}
+        confirmLabel="حذف"
+        tone="danger"
+        busy={deleteBusy}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
+      />
     </>
   );
 }

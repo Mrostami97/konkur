@@ -112,36 +112,140 @@
 .hc-eyebrow { margin: 0; color: var(--accent); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
 .hc-center { display: flex; justify-content: center; margin-top: 2.5rem; }
 
-/* Hero: centered, light, one line of copy and the search box. */
-.hc-hero { padding-block: clamp(4rem, 10vw, 7rem) clamp(3.5rem, 8vw, 5.5rem); border-bottom: 1px solid var(--line); background: var(--surface); }
-.hc-hero-inner { display: flex; flex-direction: column; align-items: center; text-align: center; }
+/* Hero: centred, light, one line of copy and the search box. A faint dot
+   grid, fading out towards the edges, gives the white a little depth. */
+.hc-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(4rem, 10vw, 6.5rem) clamp(3rem, 7vw, 4.5rem);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.hc-hero::before {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, #000 10%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, #000 10%, transparent 75%);
+  opacity: 0.55;
+  content: "";
+  pointer-events: none;
+}
+.hc-hero-inner { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .hc-hero h1 { margin: 1rem 0 0; color: var(--ink); font-size: clamp(2.25rem, 5.5vw, 3.75rem); font-weight: var(--weight-heavy); line-height: 1.3; }
 .hc-lede { max-width: 40rem; margin: 1.1rem 0 0; color: var(--muted); font-size: var(--text-read); line-height: 1.95; }
 
-.hc-search {
+/* Search: answers as you type from the site's own pages. */
+.hs { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 2.25rem; }
+.hs-box {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  width: min(36rem, 100%);
-  margin-top: 2.25rem;
-  padding: 0.35rem;
-  padding-inline-start: 1rem;
+  width: min(40rem, 100%);
+  padding: 0.4rem;
+  padding-inline-start: 1.1rem;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
   background: var(--surface);
   box-shadow: var(--elev-2);
   transition: border-color var(--motion-fast) var(--ease), box-shadow var(--motion-fast) var(--ease);
 }
-.hc-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(11, 122, 106, 0.16); }
-.hc-search svg { flex: none; width: 1.15rem; height: 1.15rem; fill: none; stroke: var(--ink-400); stroke-width: 1.8; stroke-linecap: round; }
-.hc-search input { flex: 1; min-width: 0; min-height: 2.75rem; border: 0; outline: 0; color: var(--ink); background: transparent; font: inherit; font-size: var(--text-md); }
-.hc-search input::placeholder { color: var(--ink-400); }
-.hc-search button { flex: none; min-height: 2.75rem; padding: 0 1.4rem; border: 0; border-radius: var(--radius-pill); color: #fff; background: var(--ink-900); font: inherit; font-size: var(--text-sm); font-weight: var(--weight-bold); cursor: pointer; transition: background-color var(--motion-fast) var(--ease); }
-.hc-search button:hover { background: var(--accent); }
+.hs-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(11, 122, 106, 0.14), var(--elev-2); }
+.hs-box svg { flex: none; width: 1.2rem; height: 1.2rem; fill: none; stroke: var(--ink-400); stroke-width: 1.8; stroke-linecap: round; }
+.hs-field { position: relative; flex: 1; min-width: 0; }
+.hs-field input { width: 100%; min-height: 3rem; border: 0; outline: 0; color: var(--ink); background: transparent; font: inherit; font-size: var(--text-md); }
+.hs-field input::-webkit-search-cancel-button { display: none; }
+.hs-example {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  overflow: hidden;
+  transform: translateY(-50%);
+  color: var(--ink-400);
+  font-size: var(--text-md);
+  text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hs-example b { display: inline-block; color: var(--ink-700); font-weight: var(--weight-medium); animation: hs-in 0.45s var(--ease) both; }
+@keyframes hs-in {
+  from { opacity: 0; transform: translateY(35%); }
+  to { opacity: 1; transform: none; }
+}
+.hs-box button {
+  flex: none;
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: #fff;
+  background: var(--ink-900);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease);
+}
+.hs-box button:hover { background: var(--accent); }
 
-.hc-quick { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.5rem; margin: 1.25rem 0 0; font-size: var(--text-sm); }
-.hc-quick a { color: var(--ink-700); font-weight: var(--weight-medium); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 6px; }
-.hc-quick a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+.hs-list {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+  list-style: none;
+  text-align: start;
+}
+.hs-list li { display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); cursor: pointer; }
+.hs-list li[data-active] { background: var(--accent-soft); }
+.hs-kind { flex: none; padding: 0.1rem 0.55rem; border-radius: var(--radius-pill); color: var(--ink-700); background: var(--surface-sunken); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.hs-title { overflow: hidden; color: var(--ink); font-size: var(--text-sm); text-overflow: ellipsis; white-space: nowrap; }
+.hs-all { margin-top: 0.25rem; border-top: 1px solid var(--line-soft); color: var(--accent); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+
+/* The pages worth knowing, drifting past under the search box. A second row
+   would run the other way; hovering or tabbing into them stops the motion. */
+.hs-rails {
+  display: grid;
+  gap: 0.6rem;
+  width: min(72rem, calc(100vw - 2rem));
+  margin-top: 2.25rem;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+.hs-rail { overflow: hidden; }
+.hs-track { display: flex; gap: 0.6rem; width: max-content; padding-block: 0.15rem; animation: hs-rail 80s linear infinite; }
+.hs-rail-reverse .hs-track { animation-direction: reverse; animation-duration: 95s; }
+.hs-rails:hover .hs-track,
+.hs-rails:focus-within .hs-track { animation-play-state: paused; }
+@keyframes hs-rail {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+.hs-chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink-700);
+  background: var(--surface);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  transition: border-color var(--motion-fast) var(--ease), color var(--motion-fast) var(--ease);
+}
+.hs-chip:hover { border-color: var(--accent); color: var(--accent-hover); }
+.hs-chip-kind { color: var(--accent); font-size: var(--text-xs); font-weight: var(--weight-bold); }
 
 /* Sections: centered heading, generous air. */
 .hc-sec { padding-block: clamp(3.5rem, 8vw, 6rem); }
@@ -186,10 +290,16 @@
 }
 
 @media (max-width: 560px) {
-  .hc-search { border-radius: var(--radius-lg); }
-  .hc-search button { padding: 0 1rem; border-radius: var(--radius-md); }
+  .hs-box { border-radius: var(--radius-lg); }
+  .hs-box button { padding: 0 1rem; border-radius: var(--radius-md); }
+  .hs-example { font-size: var(--text-sm); }
+  .hs-rails { margin-top: 1.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .h *, .h *::before { transition: none !important; }
+  /* Still rows the visitor can scroll sideways instead of motion. */
+  .hs-track { animation: none; }
+  .hs-rail { overflow-x: auto; }
+  .hs-example b { animation: none; }
 }

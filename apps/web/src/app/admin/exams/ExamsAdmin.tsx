@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import {
@@ -25,7 +25,35 @@ interface Exam {
   title: string;
   mode: "STATIC" | "DYNAMIC";
   isPublished: boolean;
+  subjectCode?: string | null;
   forms: { _count: { items: number } }[];
+  _count?: { attempts: number };
+}
+
+interface SubjectOption { code: string; title: string }
+
+interface ExamDetail {
+  _count: { attempts: number };
+  forms: {
+    items: {
+      id: string;
+      order: number;
+      question: { id: string; externalId: string; subjectCode: string; examYear: number; stemBlocks: unknown; retiredAt: string | null };
+    }[];
+  }[];
+}
+
+/** The first line of a question's text, so an item is recognisable in a list. */
+function stemPreview(blocks: unknown): string {
+  if (!Array.isArray(blocks)) return "";
+  for (const block of blocks) {
+    const candidate = block as { type?: unknown; text?: unknown };
+    if (candidate.type === "text" && typeof candidate.text === "string") {
+      const text = candidate.text.replace(/\s+/g, " ").trim();
+      return text.length > 90 ? `${text.slice(0, 90)}…` : text;
+    }
+  }
+  return "";
 }
 
 interface QuestionRow {
@@ -44,10 +72,22 @@ interface Psychometrics {
 /**
  * Before this existed the only way to add a question was to paste its raw
  * UUID, and nothing in the panel listed those ids — so the exam builder was
- * effectively unusable. This searches the public question endpoint, which
- * already supports subject and free-text filters.
+ * effectively unusable. This searches the admin question list, which
+ * already supports subject and free-text filters; retired questions are left out.
  */
-function QuestionPicker({ examId, onAdded }: { examId: string; onAdded: () => void }) {
+function QuestionPicker({
+  examId,
+  nextOrder,
+  subjects,
+  subjectTitle,
+  onAdded,
+}: {
+  examId: string;
+  nextOrder: number;
+  subjects: SubjectOption[];
+  subjectTitle: (code: string) => string;
+  onAdded: () => void;
+}) {
   const [subjectCode, setSubjectCode] = useState("");
   const [query, setQuery] = useState("");
   const [rows, setRows] = useState<QuestionRow[]>([]);
@@ -63,7 +103,7 @@ function QuestionPicker({ examId, onAdded }: { examId: string; onAdded: () => vo
       const params = new URLSearchParams({ pageSize: "10" });
       if (subjectCode) params.set("subjectCode", subjectCode);
       if (query) params.set("q", query);
-      const data = await apiFetch<{ items: QuestionRow[] }>(`/questions?${params}`);
+      const data = await apiFetch<{ items: QuestionRow[] }>(`/admin/questions?${params}`);
       setRows(data.items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "جست‌وجوی سؤال ممکن نشد.");
@@ -76,7 +116,7 @@ function QuestionPicker({ examId, onAdded }: { examId: string; onAdded: () => vo
     setAddingId(questionId);
     setError(null);
     try {
-      await apiFetch(`/admin/exams/${examId}/items`, { method: "POST", body: { questionId, order: 0 } });
+      await apiFetch(`/admin/exams/${examId}/items`, { method: "POST", body: { questionId, order: nextOrder } });
       onAdded();
     } catch (err) {
       setError(err instanceof Error ? err.message : "افزودن سؤال ناموفق بود.");
@@ -88,11 +128,14 @@ function QuestionPicker({ examId, onAdded }: { examId: string; onAdded: () => vo
   return (
     <div className="ds-stack">
       <form onSubmit={search} className="ds-row">
-        <div style={{ width: "10rem" }}>
-          <Input placeholder="کد درس" value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} aria-label="کد درس" />
+        <div style={{ width: "13rem" }}>
+          <Select value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} aria-label="درس">
+            <option value="">همهٔ درس‌ها</option>
+            {subjects.map((subject) => <option key={subject.code} value={subject.code}>{subject.title}</option>)}
+          </Select>
         </div>
         <div className="ds-grow" style={{ minWidth: "10rem" }}>
-          <Input placeholder="جست‌وجو در کد درس، گرایش یا مبحث" value={query} onChange={(event) => setQuery(event.target.value)} aria-label="جست‌وجو" />
+          <Input placeholder="جست‌وجو در شناسه، گرایش یا کد مبحث" value={query} onChange={(event) => setQuery(event.target.value)} aria-label="جست‌وجو" />
         </div>
         <Button type="submit" loading={searching}>جست‌وجو</Button>
       </form>
@@ -106,7 +149,7 @@ function QuestionPicker({ examId, onAdded }: { examId: string; onAdded: () => vo
             {rows.map((row) => (
               <tr key={row.id}>
                 <td className="ds-code">{row.externalId}</td>
-                <td>{row.subjectCode}</td>
+                <td>{subjectTitle(row.subjectCode)}</td>
                 <td className="ds-table-numeric">{toPersianDigits(row.examYear)}</td>
                 <td>
                   <Button size="sm" variant="primary" loading={addingId === row.id} onClick={() => add(row.id)}>
@@ -117,6 +160,109 @@ function QuestionPicker({ examId, onAdded }: { examId: string; onAdded: () => vo
             ))}
           </tbody>
         </TableWrap>
+      )}
+    </div>
+  );
+}
+
+/** The exam's questions in order, with removal while nobody has sat it. */
+function ExamItems({
+  exam,
+  subjects,
+  subjectTitle,
+  onChanged,
+}: {
+  exam: Exam;
+  subjects: SubjectOption[];
+  subjectTitle: (code: string) => string;
+  onChanged: () => void;
+}) {
+  const [detail, setDetail] = useState<ExamDetail | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [removing, setRemoving] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      setDetail(await apiFetch<ExamDetail>(`/admin/exams/${exam.id}`));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "خواندن سؤال‌های آزمون ممکن نشد.");
+    }
+  }, [exam.id]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  async function remove(itemId: string) {
+    setRemoving(itemId);
+    setError(null);
+    try {
+      await apiFetch(`/admin/exams/${exam.id}/items/${itemId}`, { method: "DELETE" });
+      await load();
+      onChanged();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "برداشتن سؤال ممکن نشد.");
+    } finally {
+      setRemoving(null);
+    }
+  }
+
+  const items = detail?.forms[0]?.items ?? [];
+  const locked = (detail?._count.attempts ?? 0) > 0;
+
+  return (
+    <div className="ds-stack">
+      {error && <Alert tone="danger">{error}</Alert>}
+      {exam.mode === "STATIC" && (
+        <>
+          <h3 className="ds-label" style={{ margin: 0 }}>سؤال‌های این آزمون</h3>
+          {locked && (
+            <Alert tone="info">
+              این آزمون {toPersianDigits(detail!._count.attempts)} شرکت‌کننده داشته؛ سؤال‌هایش ثابت می‌مانند تا کارنامه‌های قبلی معتبر بمانند.
+            </Alert>
+          )}
+          {detail === null ? (
+            <p className="ds-hint">در حال خواندن…</p>
+          ) : items.length === 0 ? (
+            <p className="ds-hint">هنوز سؤالی اضافه نشده. از جست‌وجوی زیر سؤال بیاورید.</p>
+          ) : (
+            <TableWrap>
+              <thead><tr><th>#</th><th>سؤال</th><th>درس</th><th /></tr></thead>
+              <tbody>
+                {items.map((item, index) => (
+                  <tr key={item.id}>
+                    <td className="ds-table-numeric">{toPersianDigits(index + 1)}</td>
+                    <td>
+                      <div>{stemPreview(item.question.stemBlocks) || item.question.externalId}</div>
+                      <div className="ds-code" style={{ color: "var(--muted)", fontSize: "var(--text-xs)" }}>
+                        {item.question.externalId}
+                        {item.question.retiredAt && " · بازنشسته"}
+                      </div>
+                    </td>
+                    <td>{subjectTitle(item.question.subjectCode)}</td>
+                    <td>
+                      <Button size="sm" variant="ghost" disabled={locked} loading={removing === item.id} onClick={() => void remove(item.id)}>
+                        برداشتن
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </TableWrap>
+          )}
+          {!locked && (
+            <QuestionPicker
+              examId={exam.id}
+              nextOrder={items.length + 1}
+              subjects={subjects}
+              subjectTitle={subjectTitle}
+              onAdded={() => {
+                void load();
+                onChanged();
+              }}
+            />
+          )}
+        </>
       )}
     </div>
   );
@@ -171,7 +317,14 @@ function PsychometricsPanel({ examId }: { examId: string }) {
   );
 }
 
-export default function ExamsAdminPage() {
+export function ExamsAdmin({ subjects }: { subjects: SubjectOption[] }) {
+  const subjectTitle = useMemo(() => {
+    const names = new Map(subjects.map((subject) => [subject.code, subject.title]));
+    return (code: string) => names.get(code) ?? code;
+  }, [subjects]);
+  const [examAction, setExamAction] = useState<{ exam: Exam; kind: "unpublish" | "delete" } | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -233,6 +386,27 @@ export default function ExamsAdminPage() {
     }
   }
 
+  async function runExamAction() {
+    const action = examAction;
+    if (!action) return;
+    setActionBusy(true);
+    setActionError(null);
+    try {
+      if (action.kind === "unpublish") {
+        await apiFetch(`/admin/exams/${action.exam.id}/unpublish`, { method: "POST" });
+      } else {
+        await apiFetch(`/admin/exams/${action.exam.id}`, { method: "DELETE" });
+      }
+      setExamAction(null);
+      await load();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "انجام این کار ممکن نشد.");
+      setExamAction(null);
+    } finally {
+      setActionBusy(false);
+    }
+  }
+
   async function publish() {
     if (!publishTarget) return;
     setPublishing(true);
@@ -290,8 +464,13 @@ export default function ExamsAdminPage() {
 
             {mode === "DYNAMIC" && (
               <FieldRow>
-                <Field label="کد درس" hint="بانک همین درس مبنای انتخاب سؤال است" required>
-                  {(props) => <Input {...props} value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} required />}
+                <Field label="درس" hint="بانک همین درس مبنای انتخاب سؤال است" required>
+                  {(props) => (
+                    <Select {...props} value={subjectCode} onChange={(event) => setSubjectCode(event.target.value)} required>
+                      <option value="" disabled>انتخاب درس</option>
+                      {subjects.map((subject) => <option key={subject.code} value={subject.code}>{subject.title}</option>)}
+                    </Select>
+                  )}
                 </Field>
                 <Field label="تعداد سؤال" hint="اگر بانک به این تعداد سؤال منتشرشده نداشته باشد، شروع آزمون خطا می‌دهد" required>
                   {(props) => (
@@ -318,6 +497,7 @@ export default function ExamsAdminPage() {
               emptyDescription="با فرم بالا اولین آزمون را بسازید."
             >
               <div className="ds-stack">
+                {actionError && <Alert tone="danger">{actionError}</Alert>}
                 {exams.map((exam) => (
                   <div className="ds-panel" key={exam.id}>
                     <div className="ds-row-between">
@@ -329,7 +509,10 @@ export default function ExamsAdminPage() {
                           </Badge>
                           <Badge tone="info">{exam.mode === "STATIC" ? "ثابت" : "پویا"}</Badge>
                           <span className="ds-hint" style={{ margin: 0 }}>
-                            {toPersianDigits(exam.forms?.[0]?._count?.items ?? 0)} سؤال
+                            {exam.mode === "STATIC"
+                              ? `${toPersianDigits(exam.forms?.[0]?._count?.items ?? 0)} سؤال`
+                              : `از بانک ${subjectTitle(exam.subjectCode ?? "")}`}
+                            {` · ${toPersianDigits(exam._count?.attempts ?? 0)} شرکت`}
                           </span>
                         </div>
                       </div>
@@ -340,12 +523,21 @@ export default function ExamsAdminPage() {
                         <Button size="sm" onClick={() => setExpanded(expanded === exam.id ? null : exam.id)}>
                           {expanded === exam.id ? "بستن" : "مدیریت"}
                         </Button>
+                        {exam.isPublished ? (
+                          <Button size="sm" variant="ghost" onClick={() => { setActionError(null); setExamAction({ exam, kind: "unpublish" }); }}>
+                            لغو انتشار
+                          </Button>
+                        ) : (
+                          <Button size="sm" variant="ghost" onClick={() => { setActionError(null); setExamAction({ exam, kind: "delete" }); }}>
+                            حذف
+                          </Button>
+                        )}
                       </div>
                     </div>
 
                     {expanded === exam.id && (
                       <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
-                        {exam.mode === "STATIC" && <QuestionPicker examId={exam.id} onAdded={load} />}
+                        <ExamItems exam={exam} subjects={subjects} subjectTitle={subjectTitle} onChanged={load} />
                         <PsychometricsPanel examId={exam.id} />
                       </div>
                     )}
@@ -360,11 +552,26 @@ export default function ExamsAdminPage() {
       <ConfirmDialog
         open={publishTarget !== null}
         title={`انتشار «${publishTarget?.title ?? ""}»؟`}
-        description="پس از انتشار، آزمون برای کاربران قابل شروع می‌شود و این کار از پنل برگشت‌پذیر نیست."
+        description="پس از انتشار، آزمون برای کاربران قابل شروع می‌شود. هر وقت لازم شد می‌توانید انتشارش را لغو کنید."
         confirmLabel="منتشر کن"
         busy={publishing}
         onConfirm={publish}
         onCancel={() => setPublishTarget(null)}
+      />
+
+      <ConfirmDialog
+        open={examAction !== null}
+        title={examAction?.kind === "unpublish" ? `لغو انتشار «${examAction.exam.title}»؟` : `حذف «${examAction?.exam.title ?? ""}»؟`}
+        description={
+          examAction?.kind === "unpublish"
+            ? "آزمون از فهرست عمومی برداشته می‌شود و کسی نمی‌تواند شروعش کند. کارنامه‌های قبلی سر جایشان می‌مانند."
+            : "آزمون و فهرست سؤال‌هایش پاک می‌شود (خود سؤال‌ها در بانک می‌مانند). اگر کسی در آن شرکت کرده باشد، حذف انجام نمی‌شود."
+        }
+        confirmLabel={examAction?.kind === "unpublish" ? "لغو انتشار" : "حذف آزمون"}
+        tone="danger"
+        busy={actionBusy}
+        onConfirm={() => void runExamAction()}
+        onCancel={() => setExamAction(null)}
       />
     </>
   );

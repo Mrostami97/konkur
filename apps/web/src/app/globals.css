@@ -185,6 +185,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Numbered lists count in Persian digits, like the rest of the text; a list
+   inside a left-to-right block keeps 1, 2, 3. */
+ol { list-style-type: persian; }
+[dir="ltr"] ol { list-style-type: decimal; }
+
 h1, h2, h3, h4 { font-weight: var(--weight-bold); text-wrap: balance; }
 p { text-wrap: pretty; }
 ::selection { background: var(--accent-line); color: var(--ink-900); }

@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
+import { subjectName } from "../../../content/subject-names";
 import {
   AdminPageHeader,
   Alert,
@@ -21,13 +22,17 @@ import {
 } from "../../../components/ds";
 
 interface Course { id: string; title: string }
-interface AdminUser { id: string; phone: string }
+interface AdminUser { id: string; phone: string; name?: string | null }
+
+/** How a person reads in a picker: name first when there is one. */
+const userLabel = (user: AdminUser) => (user.name ? `${user.name} · ${toPersianDigits(user.phone)}` : toPersianDigits(user.phone));
 
 interface Product {
   id: string;
   slug: string;
   title: string;
   kind: ProductKind;
+  isActive: boolean;
   prices: { amountRial: number; isActive: boolean }[];
   questionBankGrants?: { subjectCode: string }[];
 }
@@ -90,6 +95,30 @@ export default function CommerceAdminPage() {
   const [granting, setGranting] = useState(false);
   const [grantError, setGrantError] = useState<string | null>(null);
   const [grantConfirm, setGrantConfirm] = useState(false);
+
+  const [productAction, setProductAction] = useState<{ product: Product; kind: "activate" | "deactivate" | "delete" } | null>(null);
+  const [productBusy, setProductBusy] = useState(false);
+  const [productError, setProductError] = useState<string | null>(null);
+
+  async function runProductAction() {
+    const action = productAction;
+    if (!action) return;
+    setProductBusy(true);
+    setProductError(null);
+    try {
+      await apiFetch(
+        action.kind === "delete" ? `/admin/products/${action.product.id}` : `/admin/products/${action.product.id}/${action.kind}`,
+        { method: action.kind === "delete" ? "DELETE" : "POST" },
+      );
+      setProductAction(null);
+      await load();
+    } catch (err) {
+      setProductError(err instanceof Error ? err.message : "انجام این کار ممکن نشد.");
+      setProductAction(null);
+    } finally {
+      setProductBusy(false);
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -291,8 +320,9 @@ export default function CommerceAdminPage() {
               emptyTitle="هنوز محصولی ساخته نشده"
               emptyDescription="با فرم بالا اولین محصول را بسازید."
             >
+              {productError && <div style={{ padding: "var(--sp-4)" }}><Alert tone="danger">{productError}</Alert></div>}
               <TableWrap>
-                <thead><tr><th>عنوان</th><th>نوع</th><th>بانک همراه</th><th>قیمت فعال</th></tr></thead>
+                <thead><tr><th>عنوان</th><th>نوع</th><th>بانک همراه</th><th>قیمت فعال</th><th>وضعیت</th><th>عملیات</th></tr></thead>
                 <tbody>
                   {products.map((product) => {
                     const price = activePrice(product);
@@ -301,9 +331,24 @@ export default function CommerceAdminPage() {
                       <tr key={product.id}>
                         <td>{product.title}</td>
                         <td><Badge tone="info">{kindLabel(product.kind)}</Badge></td>
-                        <td className="ds-code">{banks.length ? banks.map((grant) => grant.subjectCode).join("، ") : "—"}</td>
+                        <td>{banks.length ? banks.map((grant) => subjectName(grant.subjectCode)).join("، ") : "—"}</td>
                         <td className="ds-table-numeric">
                           {price ? `${price.amountRial.toLocaleString("fa-IR")} ریال` : <span className="ds-hint" style={{ margin: 0 }}>بدون قیمت فعال</span>}
+                        </td>
+                        <td>{product.isActive ? <Badge tone="success">فعال</Badge> : <Badge>غیرفعال</Badge>}</td>
+                        <td>
+                          <div className="ds-table-actions">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => { setProductError(null); setProductAction({ product, kind: product.isActive ? "deactivate" : "activate" }); }}
+                            >
+                              {product.isActive ? "غیرفعال کردن" : "فعال کردن"}
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => { setProductError(null); setProductAction({ product, kind: "delete" }); }}>
+                              حذف
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -328,7 +373,7 @@ export default function CommerceAdminPage() {
                 {(props) => (
                   <Select {...props} value={grantUserId} onChange={(event) => setGrantUserId(event.target.value)} required>
                     <option value="">کاربر را انتخاب کنید</option>
-                    {users.map((user) => <option key={user.id} value={user.id}>{user.phone}</option>)}
+                    {users.map((user) => <option key={user.id} value={user.id}>{userLabel(user)}</option>)}
                   </Select>
                 )}
               </Field>
@@ -389,7 +434,7 @@ export default function CommerceAdminPage() {
                     const status = ORDER_STATUS[order.status];
                     return (
                       <tr key={order.id}>
-                        <td className="ds-code">{order.user.phone}</td>
+                        <td dir="ltr" style={{ textAlign: "right" }}>{toPersianDigits(order.user.phone)}</td>
                         <td>{status ? <Badge tone={status.tone}>{status.label}</Badge> : <Badge>{order.status}</Badge>}</td>
                         <td className="ds-table-numeric">{order.totalAmountRial.toLocaleString("fa-IR")} ریال</td>
                       </tr>
@@ -403,9 +448,32 @@ export default function CommerceAdminPage() {
       </div>
 
       <ConfirmDialog
+        open={productAction !== null}
+        title={
+          productAction?.kind === "delete"
+            ? `حذف «${productAction.product.title}»؟`
+            : productAction?.kind === "deactivate"
+              ? `غیرفعال کردن «${productAction.product.title}»؟`
+              : `فعال کردن «${productAction?.product.title ?? ""}»؟`
+        }
+        description={
+          productAction?.kind === "delete"
+            ? "محصول و قیمت‌هایش پاک می‌شوند. اگر سفارش یا دسترسی ثبت‌شده داشته باشد، حذف انجام نمی‌شود؛ آن را غیرفعال کنید."
+            : productAction?.kind === "deactivate"
+              ? "محصول از فروشگاه برداشته می‌شود و دیگر خریدنی نیست. دسترسی کسانی که خریده‌اند سر جایش می‌ماند."
+              : "محصول دوباره در فروشگاه دیده و خریدنی می‌شود."
+        }
+        confirmLabel={productAction?.kind === "delete" ? "حذف محصول" : productAction?.kind === "deactivate" ? "غیرفعال کن" : "فعال کن"}
+        tone={productAction?.kind === "activate" ? "primary" : "danger"}
+        busy={productBusy}
+        onConfirm={() => void runProductAction()}
+        onCancel={() => setProductAction(null)}
+      />
+
+      <ConfirmDialog
         open={grantConfirm}
         title="اعطای دسترسی بدون پرداخت؟"
-        description={`«${grantedProduct?.title ?? ""}» برای ${grantedUser?.phone ?? ""} بلافاصله فعال می‌شود.`}
+        description={`«${grantedProduct?.title ?? ""}» برای ${grantedUser ? userLabel(grantedUser) : ""} بلافاصله فعال می‌شود.`}
         confirmLabel="اعطا کن"
         busy={granting}
         onConfirm={grantEntitlement}

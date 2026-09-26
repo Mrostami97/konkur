@@ -88,9 +88,15 @@ interface Order {
   createdAt: string;
 }
 
+// Revenue is grouped by Jalali month, the calendar the owner books in.
+const jalaliParts = new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", { year: "numeric", month: "2-digit", timeZone: "Asia/Tehran" });
+const jalaliLabel = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { month: "short", year: "2-digit", timeZone: "Asia/Tehran" });
+
+/** A sortable Jalali year-month key, e.g. 1405-07. */
 function monthKey(iso: string) {
-  const date = new Date(iso);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  const parts = jalaliParts.formatToParts(new Date(iso));
+  const part = (type: string) => parts.find((item) => item.type === type)?.value ?? "";
+  return `${part("year")}-${part("month")}`;
 }
 
 export default function AdminHomePage() {
@@ -140,15 +146,17 @@ export default function AdminHomePage() {
   const revenueRial = paid.reduce((sum, order) => sum + order.totalAmountRial, 0);
 
   const monthly = (() => {
-    const buckets = new Map<string, number>();
+    const buckets = new Map<string, { label: string; value: number }>();
     for (const order of paid) {
       const key = monthKey(order.createdAt);
-      buckets.set(key, (buckets.get(key) ?? 0) + order.totalAmountRial);
+      const bucket = buckets.get(key) ?? { label: jalaliLabel.format(new Date(order.createdAt)), value: 0 };
+      bucket.value += order.totalAmountRial;
+      buckets.set(key, bucket);
     }
     return [...buckets.entries()]
       .sort((a, b) => a[0].localeCompare(b[0]))
       .slice(-12)
-      .map(([label, value]) => ({ label: label.slice(2), value }));
+      .map(([, bucket]) => bucket);
   })();
 
   return (
@@ -212,7 +220,7 @@ export default function AdminHomePage() {
                     درآمد ماهانه
                   </h2>
                   <p className="ds-subtitle" style={{ marginTop: "var(--sp-1)" }}>
-                    مجموع سفارش‌های پرداخت‌شده در هر ماه میلادی، دوازده ماه اخیر.
+                    مجموع سفارش‌های پرداخت‌شده در هر ماه شمسی، دوازده ماه اخیر.
                   </p>
                 </div>
                 <Link className="ds-btn ds-btn-ghost ds-btn-sm" href="/admin/commerce">

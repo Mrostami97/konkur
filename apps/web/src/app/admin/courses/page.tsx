@@ -31,7 +31,7 @@ interface Course {
 interface ModuleWithLessons {
   id: string;
   title: string;
-  lessons: { id: string; title: string }[];
+  lessons: { id: string; title: string; isPreview?: boolean }[];
 }
 
 /** Block types the editor authors. An image is uploaded from here; a video
@@ -146,11 +146,14 @@ function ImagePicker({ block, onUploaded }: { block: DraftBlock; onUploaded: (im
 function LessonForm({
   moduleId,
   lessonId,
+  nextOrder = 1,
   onDone,
 }: {
   moduleId: string;
   /** Present when editing a saved lesson. */
   lessonId?: string;
+  /** Where a new lesson goes: after the module's last lesson. */
+  nextOrder?: number;
   onDone: () => void;
 }) {
   const [title, setTitle] = useState("");
@@ -197,7 +200,7 @@ function LessonForm({
       if (lessonId) {
         await apiFetch(`/admin/lessons/${lessonId}`, { method: "PATCH", body });
       } else {
-        await apiFetch(`/admin/modules/${moduleId}/lessons`, { method: "POST", body: { ...body, order: 1 } });
+        await apiFetch(`/admin/modules/${moduleId}/lessons`, { method: "POST", body: { ...body, order: nextOrder } });
         setTitle("");
         setIsPreview(false);
         setBlocks([newBlock()]);
@@ -323,26 +326,122 @@ function ModuleForm({ courseId, nextOrder, onAdded }: { courseId: string; nextOr
   );
 }
 
+/** A destructive or state-changing step waiting for the operator's yes. */
+type Pending = { title: string; description: string; confirmLabel: string; run: () => Promise<unknown> } | null;
+
 function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => void }) {
   const modules = course.modules ?? [];
   const [editing, setEditing] = useState<string | null>(null);
+  const [renaming, setRenaming] = useState<{ id: string; title: string } | null>(null);
+  const [pending, setPending] = useState<Pending>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function act(run: () => Promise<unknown>) {
+    setBusy(true);
+    setError(null);
+    try {
+      await run();
+      setPending(null);
+      setRenaming(null);
+      onChanged();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "انجام این کار ممکن نشد.");
+      setPending(null);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /** Moves one lesson up or down by rewriting the module's whole order. */
+  function move(module: ModuleWithLessons, index: number, delta: -1 | 1) {
+    const ids = module.lessons.map((lesson) => lesson.id);
+    const target = index + delta;
+    if (target < 0 || target >= ids.length) return;
+    [ids[index], ids[target]] = [ids[target], ids[index]];
+    void act(() => apiFetch(`/admin/modules/${module.id}/lesson-order`, { method: "PUT", body: { lessonIds: ids } }));
+  }
+
   return (
     <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
+      {error && <Alert tone="danger">{error}</Alert>}
       {modules.map((module) => (
         <details className="ds-details" key={module.id}>
           <summary>
             {module.title} — {toPersianDigits(module.lessons.length)} درس
           </summary>
           <div className="ds-details-body">
+            <div className="ds-row" style={{ marginBottom: "var(--sp-3)" }}>
+              {renaming?.id === module.id ? (
+                <form
+                  className="ds-row ds-grow"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    const title = renaming.title.trim();
+                    if (title) void act(() => apiFetch(`/admin/modules/${module.id}`, { method: "PATCH", body: { title } }));
+                  }}
+                >
+                  <div className="ds-grow">
+                    <Input
+                      value={renaming.title}
+                      aria-label="نام تازهٔ سرفصل"
+                      onChange={(event) => setRenaming({ id: module.id, title: event.target.value })}
+                    />
+                  </div>
+                  <Button size="sm" type="submit" variant="primary" loading={busy}>ذخیره</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setRenaming(null)}>انصراف</Button>
+                </form>
+              ) : (
+                <>
+                  <Button size="sm" onClick={() => setRenaming({ id: module.id, title: module.title })}>تغییر نام سرفصل</Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() =>
+                      setPending({
+                        title: `حذف سرفصل «${module.title}»؟`,
+                        description: `سرفصل و ${toPersianDigits(module.lessons.length)} درسش پاک می‌شوند. اگر دانشجویی درس‌هایش را خوانده باشد، حذف انجام نمی‌شود.`,
+                        confirmLabel: "حذف سرفصل",
+                        run: () => apiFetch(`/admin/modules/${module.id}`, { method: "DELETE" }),
+                      })
+                    }
+                  >
+                    حذف سرفصل
+                  </Button>
+                </>
+              )}
+            </div>
             {module.lessons.length > 0 && (
               <ul className="ds-plain-list">
-                {module.lessons.map((lesson) => (
+                {module.lessons.map((lesson, index) => (
                   <li key={lesson.id}>
                     <div className="ds-row-between">
-                      <span>{lesson.title}</span>
-                      <Button size="sm" variant="ghost" onClick={() => setEditing(editing === lesson.id ? null : lesson.id)}>
-                        {editing === lesson.id ? "بستن" : "ویرایش"}
-                      </Button>
+                      <span>
+                        <span className="ds-lesson-n">{toPersianDigits(index + 1)}</span>
+                        {lesson.title}
+                        {lesson.isPreview && <Badge tone="info">نمونه</Badge>}
+                      </span>
+                      <div className="ds-table-actions">
+                        <Button size="sm" variant="ghost" aria-label={`بالا بردن ${lesson.title}`} disabled={busy || index === 0} onClick={() => move(module, index, -1)}>↑</Button>
+                        <Button size="sm" variant="ghost" aria-label={`پایین بردن ${lesson.title}`} disabled={busy || index === module.lessons.length - 1} onClick={() => move(module, index, 1)}>↓</Button>
+                        <Button size="sm" variant="ghost" onClick={() => setEditing(editing === lesson.id ? null : lesson.id)}>
+                          {editing === lesson.id ? "بستن" : "ویرایش"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() =>
+                            setPending({
+                              title: `حذف درس «${lesson.title}»؟`,
+                              description: "درس و تصویرهایش از دوره برداشته می‌شوند. اگر دانشجویی این درس را خوانده باشد، حذف انجام نمی‌شود.",
+                              confirmLabel: "حذف درس",
+                              run: () => apiFetch(`/admin/lessons/${lesson.id}`, { method: "DELETE" }),
+                            })
+                          }
+                        >
+                          حذف
+                        </Button>
+                      </div>
                     </div>
                     {editing === lesson.id && (
                       <div className="ds-panel" style={{ marginTop: "var(--sp-3)" }}>
@@ -360,11 +459,22 @@ function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => 
                 ))}
               </ul>
             )}
-            <LessonForm moduleId={module.id} onDone={onChanged} />
+            <LessonForm moduleId={module.id} nextOrder={module.lessons.length + 1} onDone={onChanged} />
           </div>
         </details>
       ))}
       <ModuleForm courseId={course.id} nextOrder={modules.length + 1} onAdded={onChanged} />
+
+      <ConfirmDialog
+        open={pending !== null}
+        title={pending?.title ?? ""}
+        description={pending?.description}
+        confirmLabel={pending?.confirmLabel}
+        tone="danger"
+        busy={busy}
+        onConfirm={() => pending && void act(pending.run)}
+        onCancel={() => setPending(null)}
+      />
     </div>
   );
 }
@@ -388,6 +498,9 @@ export default function CoursesAdminPage() {
   const [videoBusy, setVideoBusy] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
+  const [courseAction, setCourseAction] = useState<{ course: Course; kind: "unpublish" | "delete" } | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -456,6 +569,27 @@ export default function CoursesAdminPage() {
     }
   }
 
+  async function runCourseAction() {
+    const action = courseAction;
+    if (!action) return;
+    setActionBusy(true);
+    setActionError(null);
+    try {
+      if (action.kind === "unpublish") {
+        await apiFetch(`/admin/courses/${action.course.id}/unpublish`, { method: "POST" });
+      } else {
+        await apiFetch(`/admin/courses/${action.course.id}`, { method: "DELETE" });
+      }
+      setCourseAction(null);
+      await load();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "انجام این کار ممکن نشد.");
+      setCourseAction(null);
+    } finally {
+      setActionBusy(false);
+    }
+  }
+
   async function publish() {
     if (!publishTarget) return;
     setPublishing(true);
@@ -475,7 +609,7 @@ export default function CoursesAdminPage() {
     <>
       <AdminPageHeader
         title="دوره‌ها"
-        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. درس‌ها پس از ساخت ویرایش می‌شوند؛ حذف هنوز از پنل ممکن نیست."
+        description="دوره از سرفصل‌ها و هر سرفصل از درس‌ها ساخته می‌شود. درس‌ها ویرایش، جابه‌جا و حذف می‌شوند؛ دوره‌ای که دانشجو دارد به‌جای حذف، از انتشار خارج می‌شود."
       />
 
       <div className="ds-stack-lg">
@@ -523,6 +657,7 @@ export default function CoursesAdminPage() {
               emptyDescription="با فرم بالا اولین دوره را بسازید."
             >
               <div className="ds-stack">
+                {actionError && <Alert tone="danger">{actionError}</Alert>}
                 {courses.map((course) => (
                   <div className="ds-panel" key={course.id}>
                     <div className="ds-row-between">
@@ -559,6 +694,15 @@ export default function CoursesAdminPage() {
                         <Button size="sm" onClick={() => setExpanded(expanded === course.id ? null : course.id)}>
                           {expanded === course.id ? "بستن" : "سرفصل‌ها و درس‌ها"}
                         </Button>
+                        {course.isPublished ? (
+                          <Button size="sm" variant="ghost" onClick={() => { setActionError(null); setCourseAction({ course, kind: "unpublish" }); }}>
+                            لغو انتشار
+                          </Button>
+                        ) : (
+                          <Button size="sm" variant="ghost" onClick={() => { setActionError(null); setCourseAction({ course, kind: "delete" }); }}>
+                            حذف
+                          </Button>
+                        )}
                       </div>
                     </div>
                     {expanded === course.id && <CourseEditor course={course} onChanged={load} />}
@@ -597,11 +741,30 @@ export default function CoursesAdminPage() {
       <ConfirmDialog
         open={publishTarget !== null}
         title={`انتشار «${publishTarget?.title ?? ""}»؟`}
-        description="پس از انتشار، دوره در فهرست عمومی دیده می‌شود و لغو انتشار از پنل ممکن نیست."
+        description="پس از انتشار، دوره در فهرست عمومی دیده می‌شود. هر وقت لازم شد می‌توانید انتشارش را لغو کنید."
         confirmLabel="منتشر کن"
         busy={publishing}
         onConfirm={publish}
         onCancel={() => setPublishTarget(null)}
+      />
+
+      <ConfirmDialog
+        open={courseAction !== null}
+        title={
+          courseAction?.kind === "unpublish"
+            ? `لغو انتشار «${courseAction.course.title}»؟`
+            : `حذف «${courseAction?.course.title ?? ""}»؟`
+        }
+        description={
+          courseAction?.kind === "unpublish"
+            ? "دوره از فهرست عمومی برداشته می‌شود و درس‌هایش تا انتشار دوباره برای هیچ‌کس، حتی خریداران، باز نمی‌شود. چیزی حذف نمی‌شود."
+            : "دوره با همهٔ سرفصل‌ها و درس‌هایش پاک می‌شود. اگر ثبت‌نام، سابقهٔ مطالعه یا محصول فروش داشته باشد، حذف انجام نمی‌شود."
+        }
+        confirmLabel={courseAction?.kind === "unpublish" ? "لغو انتشار" : "حذف دوره"}
+        tone="danger"
+        busy={actionBusy}
+        onConfirm={() => void runCourseAction()}
+        onCancel={() => setCourseAction(null)}
       />
     </>
   );

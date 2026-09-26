@@ -14,10 +14,15 @@ const source = await readFile(new URL("../src/components/ContentBlocks.tsx", imp
 const js = ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX },
 }).outputText;
+// The formula splitter is loaded for real, so its handling of $...$ is covered too.
+const mathSource = await readFile(new URL("../src/lib/math-text.ts", import.meta.url), "utf8");
+const mathModule = { exports: {} };
+new Function("module", "exports", ts.transpileModule(mathSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText)(mathModule, mathModule.exports);
 const stubs = {
   "next/link": { __esModule: true, default: (props) => React.createElement("a", { href: props.href }, props.children) },
-  katex: { __esModule: true, default: { renderToString: (latex) => latex } },
+  katex: { __esModule: true, default: { renderToString: (latex) => `[${latex}]` } },
   "../lib/api": { API_URL: "" },
+  "../lib/math-text": mathModule.exports,
 };
 const mod = { exports: {} };
 new Function("module", "exports", "require", js)(mod, mod.exports, (id) => stubs[id] ?? require(id));
@@ -37,5 +42,16 @@ assert.equal(
 assert.equal(render("۱. یک خط"), '<div class="cb"><p>۱. یک خط</p></div>', "a single numbered line, such as an answer option, stays a paragraph");
 assert.equal(render("خط اول\nخط دوم"), '<div class="cb"><p>خط اول</p><p>خط دوم</p></div>', "plain lines keep their line breaks");
 assert.equal(render("−۱۰ درصد منفی است"), '<div class="cb"><p>−۱۰ درصد منفی است</p></div>');
+assert.equal(
+  render("مرتبهٔ $O(n)$ است"),
+  '<div class="cb"><p>مرتبهٔ <span class="cb-imath" dir="ltr">[O(n)]</span> است</p></div>',
+  "an inline formula is typeset inside its sentence",
+);
+assert.equal(
+  render("• گام $a$\n• گام $b$"),
+  '<div class="cb"><ul class="cb-list"><li>گام <span class="cb-imath" dir="ltr">[a]</span></li><li>گام <span class="cb-imath" dir="ltr">[b]</span></li></ul></div>',
+  "formulas work inside list items too",
+);
+assert.equal(render("قیمت \\$۵"), '<div class="cb"><p>قیمت $۵</p></div>', "an escaped dollar stays a dollar");
 
 console.log("ContentBlocks text rendering: bullets, numbered steps and line breaks verified.");

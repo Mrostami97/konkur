@@ -35,7 +35,7 @@ export default async function ArticlesPage() {
     <main className="pg">
       <div className="pg-hero-wrap">
         <div className="pg-shell pg-hero">
-          <p className="pg-eyebrow">کتابخانهٔ kunkur01</p>
+          <p className="pg-eyebrow">کتابخانهٔ <bdi dir="ltr">kunkur01</bdi></p>
           <h1>مقاله‌های کاربردی، نه محتوای پُرکننده</h1>
           <p className="pg-lede">
             فقط مطالب منتشرشدهٔ تحریریه نمایش داده می‌شوند؛ هر مطلب تاریخ اعتبار، منبع و وضعیت

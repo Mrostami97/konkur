@@ -48,7 +48,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
             <Image src="/brand/konkurcom-logo.png" alt="" width={56} height={56} />
             <span>
               <strong>کنکورصفریک</strong>
-              <small>kunkur01.ir</small>
+              <small dir="ltr">kunkur01.ir</small>
             </span>
           </Link>
           <p>کلاس درس‌به‌درس، ویدیوی رایگان، راهنمای رسمی ۱۴۰۶ و ابزار انتخاب‌رشته برای ارشد و دکتری مهندسی کامپیوتر، IT و علوم کامپیوتر.</p>
@@ -91,7 +91,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
       </div>
 
       <div className="ft-bottom">
-        <span>© ۱۴۰۵ کنکورصفریک · kunkur01</span>
+        <span>© ۱۴۰۵ کنکورصفریک · <bdi dir="ltr">kunkur01</bdi></span>
         <span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند؛ پیش از هر اقدام، اطلاعیهٔ رسمی سنجش را هم ببین.</span>
       </div>
     </footer>
