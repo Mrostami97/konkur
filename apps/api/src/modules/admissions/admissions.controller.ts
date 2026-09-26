@@ -67,6 +67,16 @@ export class AdmissionsAdminController {
   addCapacity(@Param("id") id: string, @Body() dto: CreateCapacityDto) {
     return this.admissions.addCapacity(id, dto);
   }
+
+  @Delete("programs/:id")
+  deleteProgram(@Param("id") id: string) {
+    return this.admissions.deleteProgram(id);
+  }
+
+  @Delete("universities/:id")
+  deleteUniversity(@Param("id") id: string) {
+    return this.admissions.deleteUniversity(id);
+  }
 }
 
 @Controller("me/choices")

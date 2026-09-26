@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { createHash } from "crypto";
 import { AccessMode, EnrollmentSource, Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
@@ -9,6 +9,7 @@ import { LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/conte
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, LessonAssetDto, UpdateLessonDto } from "./dto/create-lesson.dto";
+import { fa } from "../../common/persian-digits";
 
 type Tx = PrismaService | Prisma.TransactionClient;
 
@@ -103,6 +104,85 @@ export class LearningService {
         topics: topicIds.length > 0 ? { create: topicIds.map((topicId) => ({ topicId })) } : undefined,
       },
     });
+  }
+
+  // --- Lifecycle: unpublish, reorder, delete ------------------------------
+  // A delete is refused while anything a student did depends on the row:
+  // enrollments and lesson progress would cascade away with it. The refusal
+  // names the reason in Persian because the admin panel shows it as is.
+
+  async unpublishCourse(actorId: string, courseId: string) {
+    const course = await this.prisma.course.update({ where: { id: courseId }, data: { isPublished: false } }).catch(() => null);
+    if (!course) throw new NotFoundException("course not found");
+    await this.audit.log({ actorUserId: actorId, action: "course.unpublished", targetType: "Course", targetId: courseId });
+    return course;
+  }
+
+  async deleteCourse(actorId: string, courseId: string) {
+    const course = await this.prisma.course.findUnique({
+      where: { id: courseId },
+      select: {
+        id: true,
+        slug: true,
+        _count: { select: { enrollments: true, products: true, productGrants: true, spotPlayerLicenses: true } },
+      },
+    });
+    if (!course) throw new NotFoundException("course not found");
+    const progress = await this.prisma.lessonProgress.count({ where: { lesson: { courseModule: { courseId } } } });
+    const reasons = [
+      course._count.enrollments > 0 && `${fa(course._count.enrollments)} ثبت‌نام`,
+      progress > 0 && `${fa(progress)} سابقهٔ مطالعهٔ درس`,
+      course._count.products + course._count.productGrants > 0 && "محصول فروش",
+      course._count.spotPlayerLicenses > 0 && "لایسنس ویدیو",
+    ].filter(Boolean);
+    if (reasons.length > 0) {
+      throw new ConflictException(`این دوره ${reasons.join("، ")} دارد و حذف آن سابقهٔ دانشجوها را پاک می‌کند؛ به‌جای حذف، انتشارش را لغو کنید.`);
+    }
+    await this.prisma.course.delete({ where: { id: courseId } });
+    await this.audit.log({ actorUserId: actorId, action: "course.deleted", targetType: "Course", targetId: courseId, metadata: { slug: course.slug } });
+    return { deleted: true };
+  }
+
+  async updateModule(moduleId: string, title: string) {
+    const mod = await this.prisma.courseModule.update({ where: { id: moduleId }, data: { title } }).catch(() => null);
+    if (!mod) throw new NotFoundException("course module not found");
+    return mod;
+  }
+
+  async deleteModule(actorId: string, moduleId: string) {
+    const mod = await this.prisma.courseModule.findUnique({ where: { id: moduleId }, select: { id: true, courseId: true } });
+    if (!mod) throw new NotFoundException("course module not found");
+    const progress = await this.prisma.lessonProgress.count({ where: { lesson: { courseModuleId: moduleId } } });
+    if (progress > 0) {
+      throw new ConflictException(`درس‌های این سرفصل ${fa(progress)} سابقهٔ مطالعه دارند؛ حذف سرفصل آن سابقه را پاک می‌کند.`);
+    }
+    await this.prisma.courseModule.delete({ where: { id: moduleId } });
+    await this.audit.log({ actorUserId: actorId, action: "course_module.deleted", targetType: "CourseModule", targetId: moduleId, metadata: { courseId: mod.courseId } });
+    return { deleted: true };
+  }
+
+  async deleteLesson(actorId: string, lessonId: string) {
+    const lesson = await this.prisma.lesson.findUnique({ where: { id: lessonId }, select: { id: true, title: true, _count: { select: { progress: true } } } });
+    if (!lesson) throw new NotFoundException("lesson not found");
+    if (lesson._count.progress > 0) {
+      throw new ConflictException(`این درس ${fa(lesson._count.progress)} سابقهٔ مطالعه دارد؛ حذفش آن سابقه را پاک می‌کند.`);
+    }
+    await this.prisma.lesson.delete({ where: { id: lessonId } });
+    await this.audit.log({ actorUserId: actorId, action: "lesson.deleted", targetType: "Lesson", targetId: lessonId, metadata: { title: lesson.title } });
+    return { deleted: true };
+  }
+
+  /** Sets the order of a module's lessons to the given sequence. */
+  async reorderLessons(moduleId: string, lessonIds: string[]) {
+    const lessons = await this.prisma.lesson.findMany({ where: { courseModuleId: moduleId }, select: { id: true } });
+    const current = new Set(lessons.map((lesson) => lesson.id));
+    if (lessonIds.length !== current.size || lessonIds.some((id) => !current.has(id))) {
+      throw new BadRequestException("lessonIds must list every lesson of the module exactly once");
+    }
+    await this.prisma.$transaction(
+      lessonIds.map((id, index) => this.prisma.lesson.update({ where: { id }, data: { order: index + 1 } })),
+    );
+    return { reordered: lessonIds.length };
   }
 
   /** The whole lesson for the editor, whatever its course's state. */

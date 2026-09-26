@@ -1,10 +1,11 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { AttemptStatus, ExamMode } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { ProfileService } from "../identity/profile/profile.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
+import { fa } from "../../common/persian-digits";
 
 const SCORE_VERSION = "score-rule.v1";
 
@@ -151,9 +152,63 @@ export class AssessmentService {
 
   listAllExams() {
     return this.prisma.exam.findMany({
-      include: { forms: { include: { _count: { select: { items: true } } } } },
+      include: { forms: { include: { _count: { select: { items: true } } } }, _count: { select: { attempts: true } } },
       orderBy: { createdAt: "desc" },
     });
+  }
+
+  /** One exam with its questions in order, for the builder. */
+  async getExamForAdmin(examId: string) {
+    const exam = await this.prisma.exam.findUnique({
+      where: { id: examId },
+      include: {
+        _count: { select: { attempts: true } },
+        forms: {
+          include: {
+            items: {
+              orderBy: { order: "asc" },
+              include: { question: { select: { id: true, externalId: true, subjectCode: true, examYear: true, stemBlocks: true, retiredAt: true } } },
+            },
+          },
+        },
+      },
+    });
+    if (!exam) throw new NotFoundException("exam not found");
+    return exam;
+  }
+
+  async unpublishExam(actorId: string, examId: string) {
+    const exam = await this.prisma.exam.update({ where: { id: examId }, data: { isPublished: false } }).catch(() => null);
+    if (!exam) throw new NotFoundException("exam not found");
+    await this.audit.log({ actorUserId: actorId, action: "exam.unpublished", targetType: "Exam", targetId: examId });
+    return exam;
+  }
+
+  /** Attempts and their reports hang off the exam, so an exam anyone has
+   * taken is never deleted; unpublishing takes it out of the catalogue. */
+  async deleteExam(actorId: string, examId: string) {
+    const exam = await this.prisma.exam.findUnique({ where: { id: examId }, select: { slug: true, _count: { select: { attempts: true } } } });
+    if (!exam) throw new NotFoundException("exam not found");
+    if (exam._count.attempts > 0) {
+      throw new ConflictException(`این آزمون ${fa(exam._count.attempts)} بار شرکت‌کننده داشته و کارنامه‌هایش به آن وابسته‌اند؛ به‌جای حذف، انتشارش را لغو کنید.`);
+    }
+    await this.prisma.exam.delete({ where: { id: examId } });
+    await this.audit.log({ actorUserId: actorId, action: "exam.deleted", targetType: "Exam", targetId: examId, metadata: { slug: exam.slug } });
+    return { deleted: true };
+  }
+
+  /** Changing the questions after someone has sat the exam would make their
+   * report disagree with the exam, so items are frozen once there are attempts. */
+  async removeExamItem(actorId: string, examId: string, itemId: string) {
+    const item = await this.prisma.examItem.findUnique({ where: { id: itemId }, include: { examForm: { select: { examId: true } } } });
+    if (!item || item.examForm.examId !== examId) throw new NotFoundException("exam item not found");
+    const attempts = await this.prisma.attempt.count({ where: { examId } });
+    if (attempts > 0) {
+      throw new ConflictException("این آزمون شرکت‌کننده داشته؛ تغییر سؤال‌هایش کارنامه‌های قبلی را بی‌اعتبار می‌کند.");
+    }
+    await this.prisma.examItem.delete({ where: { id: itemId } });
+    await this.audit.log({ actorUserId: actorId, action: "exam.item_removed", targetType: "Exam", targetId: examId, metadata: { itemId, questionId: item.questionId } });
+    return { deleted: true };
   }
 
   // --- Public catalog -----------------------------------------------------

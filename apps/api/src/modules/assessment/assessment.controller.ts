@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -93,6 +93,27 @@ export class AssessmentAdminController {
   @Post(":id/publish")
   publish(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.assessment.publishExam(id, req.user!.id);
+  }
+
+  @Get(":id")
+  getOne(@Param("id") id: string) {
+    return this.assessment.getExamForAdmin(id);
+  }
+
+  @Post(":id/unpublish")
+  unpublish(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.assessment.unpublishExam(req.user!.id, id);
+  }
+
+  @Delete(":id")
+  @Roles(Role.ADMIN)
+  remove(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.assessment.deleteExam(req.user!.id, id);
+  }
+
+  @Delete(":id/items/:itemId")
+  removeItem(@Param("id") id: string, @Param("itemId") itemId: string, @Req() req: RequestWithUser) {
+    return this.assessment.removeExamItem(req.user!.id, id, itemId);
   }
 
   @Get(":id/psychometrics")

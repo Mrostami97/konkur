@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -46,5 +46,17 @@ export class TaxonomyAdminController {
   @Post("topics")
   createTopic(@Body() dto: CreateTopicDto) {
     return this.taxonomy.createTopic(dto);
+  }
+
+  @Delete("subjects/:id")
+  @Roles(Role.ADMIN)
+  deleteSubject(@Param("id") id: string) {
+    return this.taxonomy.deleteSubject(id);
+  }
+
+  @Delete("topics/:id")
+  @Roles(Role.ADMIN)
+  deleteTopic(@Param("id") id: string) {
+    return this.taxonomy.deleteTopic(id);
   }
 }

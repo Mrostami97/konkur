@@ -1,4 +1,4 @@
-import { IsInt, IsString, Min, MinLength } from "class-validator";
+import { ArrayUnique, IsArray, IsInt, IsString, IsUUID, Min, MinLength } from "class-validator";
 
 export class CreateModuleDto {
   @IsString()
@@ -8,4 +8,17 @@ export class CreateModuleDto {
   @IsInt()
   @Min(0)
   order!: number;
+}
+
+export class UpdateModuleDto {
+  @IsString()
+  @MinLength(1)
+  title!: string;
+}
+
+export class ReorderLessonsDto {
+  @IsArray()
+  @ArrayUnique()
+  @IsUUID(undefined, { each: true })
+  lessonIds!: string[];
 }

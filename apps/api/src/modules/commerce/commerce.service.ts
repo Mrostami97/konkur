@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { randomBytes } from "crypto";
 import { EntitlementGrantSource, OrderStatus, PaymentStatus, ProductKind } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
@@ -22,6 +22,36 @@ export class CommerceService {
   ) {}
 
   // --- Admin catalog management ---------------------------------------------
+
+  /** An inactive product leaves the store and cannot be bought; what people
+   * already bought stays theirs. */
+  async setProductActive(actorId: string, productId: string, isActive: boolean) {
+    const product = await this.prisma.product.update({ where: { id: productId }, data: { isActive } }).catch(() => null);
+    if (!product) throw new NotFoundException("product not found");
+    await this.audit.log({
+      actorUserId: actorId,
+      action: isActive ? "product.activated" : "product.deactivated",
+      targetType: "Product",
+      targetId: productId,
+    });
+    return product;
+  }
+
+  /** Orders and entitlements are financial and access records; a product
+   * anyone has ordered or holds is deactivated, never deleted. */
+  async deleteProduct(actorId: string, productId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      select: { slug: true, _count: { select: { orderItems: true, entitlements: true } } },
+    });
+    if (!product) throw new NotFoundException("product not found");
+    if (product._count.orderItems + product._count.entitlements > 0) {
+      throw new ConflictException("این محصول سفارش یا دسترسی ثبت‌شده دارد و سوابق مالی به آن وابسته‌اند؛ به‌جای حذف، غیرفعالش کنید.");
+    }
+    await this.prisma.product.delete({ where: { id: productId } });
+    await this.audit.log({ actorUserId: actorId, action: "product.deleted", targetType: "Product", targetId: productId, metadata: { slug: product.slug } });
+    return { deleted: true };
+  }
 
   async createProduct(actorId: string, dto: CreateProductDto) {
     const courseIds = [...new Set([...(dto.courseIds ?? []), ...(dto.courseId ? [dto.courseId] : [])])];

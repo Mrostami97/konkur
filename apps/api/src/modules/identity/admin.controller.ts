@@ -1,34 +1,53 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
-import { PrismaService } from "../../prisma/prisma.service";
-import { SessionAuthGuard } from "./guards/session-auth.guard";
+import { SessionAuthGuard, RequestWithUser } from "./guards/session-auth.guard";
 import { RolesGuard } from "./guards/roles.guard";
 import { Roles } from "./guards/roles.decorator";
+import { CreateUserDto, SetPasswordDto, SetRolesDto } from "./dto/user-admin.dto";
+import { UserAdminService } from "./user-admin.service";
 
-/**
- * Exists in Phase 0 solely to prove RBAC works end-to-end (session auth +
- * role check against a real protected route). The full Backoffice module
- * (content/finance/reporting) is a later phase.
- */
+/** Staff and account management. Administrators only. */
 @Controller("admin")
 @UseGuards(SessionAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 export class AdminController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly users: UserAdminService) {}
 
+  /** Without `page` this returns every user, which the entitlement form
+   * relies on; with `page` it is a searchable, paged list. */
   @Get("users")
-  @Roles(Role.ADMIN)
-  async listUsers() {
-    const users = await this.prisma.user.findMany({
-      include: { roles: true },
-      orderBy: { createdAt: "asc" },
+  listUsers(
+    @Query("q") q?: string,
+    @Query("role") role?: string,
+    @Query("page") page?: string,
+    @Query("pageSize") pageSize?: string,
+  ) {
+    if (role && !(role in Role)) throw new BadRequestException("unknown role");
+    return this.users.list({
+      q,
+      role: role as Role | undefined,
+      page: page ? Number(page) : undefined,
+      pageSize: pageSize ? Number(pageSize) : undefined,
     });
-    return {
-      users: users.map((u) => ({
-        id: u.id,
-        phone: u.phone,
-        roles: u.roles.map((r) => r.role),
-        createdAt: u.createdAt,
-      })),
-    };
+  }
+
+  @Post("users")
+  createUser(@Req() req: RequestWithUser, @Body() dto: CreateUserDto) {
+    return this.users.create(req.user!.id, dto);
+  }
+
+  @Put("users/:id/roles")
+  setRoles(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: SetRolesDto) {
+    return this.users.setRoles(req.user!.id, id, dto.roles);
+  }
+
+  @Post("users/:id/password")
+  setPassword(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: SetPasswordDto) {
+    return this.users.setPassword(req.user!.id, id, dto.password);
+  }
+
+  @Post("users/:id/sessions/revoke")
+  revokeSessions(@Req() req: RequestWithUser, @Param("id") id: string) {
+    return this.users.revokeSessions(req.user!.id, id);
   }
 }

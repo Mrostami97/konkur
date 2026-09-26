@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
 import { Role } from "@prisma/client";
@@ -8,7 +8,7 @@ import { Roles } from "../identity/guards/roles.decorator";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
 import { LearningService } from "./learning.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
-import { CreateModuleDto } from "./dto/create-module.dto";
+import { CreateModuleDto, ReorderLessonsDto, UpdateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { SpotPlayerService } from "./spotplayer.service";
 
@@ -117,9 +117,40 @@ export class LearningAdminController {
     return this.learning.addLesson(id, dto);
   }
 
+  @Post("courses/:id/unpublish")
+  unpublish(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.learning.unpublishCourse(req.user!.id, id);
+  }
+
+  @Delete("courses/:id")
+  @Roles(Role.ADMIN)
+  deleteCourse(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.learning.deleteCourse(req.user!.id, id);
+  }
+
+  @Patch("modules/:id")
+  updateModule(@Param("id") id: string, @Body() dto: UpdateModuleDto) {
+    return this.learning.updateModule(id, dto.title);
+  }
+
+  @Delete("modules/:id")
+  deleteModule(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.learning.deleteModule(req.user!.id, id);
+  }
+
+  @Put("modules/:id/lesson-order")
+  reorderLessons(@Param("id") id: string, @Body() dto: ReorderLessonsDto) {
+    return this.learning.reorderLessons(id, dto.lessonIds);
+  }
+
   @Get("lessons/:id")
   getLesson(@Param("id") id: string) {
     return this.learning.getLessonForEditing(id);
+  }
+
+  @Delete("lessons/:id")
+  deleteLesson(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.learning.deleteLesson(req.user!.id, id);
   }
 
   @Patch("lessons/:id")

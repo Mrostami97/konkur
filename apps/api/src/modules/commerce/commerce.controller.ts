@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { PaymentStatus, Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -86,6 +86,24 @@ export class CommerceAdminController {
   @Roles(Role.ADMIN)
   addPrice(@Param("id") id: string, @Body() dto: CreatePriceDto) {
     return this.commerce.addPrice(id, dto);
+  }
+
+  @Post("products/:id/activate")
+  @Roles(Role.ADMIN)
+  activateProduct(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.commerce.setProductActive(req.user!.id, id, true);
+  }
+
+  @Post("products/:id/deactivate")
+  @Roles(Role.ADMIN)
+  deactivateProduct(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.commerce.setProductActive(req.user!.id, id, false);
+  }
+
+  @Delete("products/:id")
+  @Roles(Role.ADMIN)
+  deleteProduct(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.commerce.deleteProduct(req.user!.id, id);
   }
 
   @Post("entitlements/grant")

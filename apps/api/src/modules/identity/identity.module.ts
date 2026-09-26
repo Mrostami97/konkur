@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { AuditModule } from "../audit/audit.module";
 import { IdentityController } from "./identity.controller";
 import { AdminController } from "./admin.controller";
+import { UserAdminService } from "./user-admin.service";
 import { IdentityService } from "./identity.service";
 import { ConsoleOtpProvider, OTP_PROVIDER } from "./otp-provider";
 import { SessionAuthGuard } from "./guards/session-auth.guard";
@@ -19,6 +20,7 @@ import { OptionalSessionAuthGuard } from "./guards/optional-session-auth.guard";
     OptionalSessionAuthGuard,
     RolesGuard,
     ProfileService,
+    UserAdminService,
     { provide: OTP_PROVIDER, useClass: ConsoleOtpProvider },
   ],
   exports: [IdentityService, SessionAuthGuard, OptionalSessionAuthGuard, RolesGuard, ProfileService, OTP_PROVIDER],

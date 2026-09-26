@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { Degree, Prisma, TuitionType } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AnalyticsService } from "../analytics/analytics.service";
 import { CreateUniversityDto } from "./dto/create-university.dto";
 import { CreateProgramDto } from "./dto/create-program.dto";
 import { CreateCapacityDto } from "./dto/create-capacity.dto";
+import { fa } from "../../common/persian-digits";
 
 export interface ProgramFilters {
   degree?: "master" | "phd";
@@ -47,6 +48,28 @@ export class AdmissionsService {
   ) {}
 
   // --- Catalog (admin) -------------------------------------------------
+
+  /** Students' choice lists point at programs, so a program anyone has
+   * chosen stays; its capacities go with it. */
+  async deleteProgram(id: string) {
+    const program = await this.prisma.program.findUnique({ where: { id }, select: { _count: { select: { choiceItems: true } } } });
+    if (!program) throw new NotFoundException("program not found");
+    if (program._count.choiceItems > 0) {
+      throw new ConflictException(`این رشته‌محل در فهرست انتخاب ${fa(program._count.choiceItems)} دانشجو است و حذف نمی‌شود.`);
+    }
+    await this.prisma.program.delete({ where: { id } });
+    return { deleted: true };
+  }
+
+  async deleteUniversity(id: string) {
+    const university = await this.prisma.university.findUnique({ where: { id }, select: { _count: { select: { programs: true } } } });
+    if (!university) throw new NotFoundException("university not found");
+    if (university._count.programs > 0) {
+      throw new ConflictException(`این دانشگاه ${fa(university._count.programs)} رشته‌محل دارد؛ اول رشته‌محل‌هایش را حذف کنید.`);
+    }
+    await this.prisma.university.delete({ where: { id } });
+    return { deleted: true };
+  }
 
   async createUniversity(dto: CreateUniversityDto) {
     await this.requireOfficialSource(dto.sourceId);

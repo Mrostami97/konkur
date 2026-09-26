@@ -1,12 +1,35 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { ReviewStatus } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateSubjectDto } from "./dto/create-subject.dto";
 import { CreateTopicDto } from "./dto/create-topic.dto";
+import { fa } from "../../common/persian-digits";
 
 @Injectable()
 export class TaxonomyService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /** A subject is removed only once its topics are; questions and articles
+   * keep their plain subject codes either way. */
+  async deleteSubject(id: string) {
+    const subject = await this.prisma.subject.findUnique({ where: { id }, select: { _count: { select: { topics: true } } } });
+    if (!subject) throw new NotFoundException("subject not found");
+    if (subject._count.topics > 0) {
+      throw new ConflictException(`این درس ${fa(subject._count.topics)} مبحث دارد؛ اول مبحث‌هایش را حذف کنید.`);
+    }
+    await this.prisma.subject.delete({ where: { id } });
+    return { deleted: true };
+  }
+
+  async deleteTopic(id: string) {
+    const topic = await this.prisma.topic.findUnique({ where: { id }, select: { _count: { select: { lessonLinks: true } } } });
+    if (!topic) throw new NotFoundException("topic not found");
+    if (topic._count.lessonLinks > 0) {
+      throw new ConflictException(`این مبحث به ${fa(topic._count.lessonLinks)} درس از دوره‌ها وصل است؛ اول آن اتصال‌ها را بردارید.`);
+    }
+    await this.prisma.topic.delete({ where: { id } });
+    return { deleted: true };
+  }
 
   createSubject(dto: CreateSubjectDto) {
     const { prerequisiteCodes = [], ...subject } = dto;
