@@ -120,7 +120,9 @@ assert.doesNotMatch(robotsTxt.body, /Disallow: \/rank-calculator/);
 const legacyGuide = await read("/guides/master-computer-engineering-1406");
 assert.equal(legacyGuide.response.status, 200);
 assert.equal(canonicalOf(legacyGuide.body), `${canonicalOrigin}/guides/master-computer-engineering-1406`);
-assert.match(legacyGuide.body, /انتساب نویسنده و بازبین/);
+// The page names who prepared and reviewed it (the owner, when no profile is set).
+assert.match(legacyGuide.body, /تهیه و بازبینی: /);
+assert.match(legacyGuide.body, /محمد رستمی/);
 const guideSchemas = structuredData(legacyGuide.body);
 assert.ok(guideSchemas.some((item) => item["@type"] === "Article"));
 assert.ok(guideSchemas.some((item) => item["@type"] === "BreadcrumbList"));
