@@ -25,3 +25,7 @@ Some lessons link to each other. Publish `regular-languages-dfa-nfa`,
 `pumping-lemma`, `context-free-grammars-pda` and
 `turing-machines-decidability` together, or in that order, so no public page
 links to an unpublished one.
+
+`union-find-linear-sorting` links to `amortized-analysis`, and
+`np-complete-reductions` links to `turing-machines-decidability`; publish each
+after (or with) the lesson it links to.
