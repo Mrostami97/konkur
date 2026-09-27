@@ -668,14 +668,33 @@ export class CommerceService {
   }
 
   async listMyEntitlements(userId: string) {
+    // A course's handouts, listed with the course they come with.
+    const courseWithHandouts = {
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        isPublished: true,
+        materials: {
+          where: { resource: { reviewStatus: "PUBLISHED" as const } },
+          orderBy: { position: "asc" as const },
+          select: {
+            resource: {
+              select: { id: true, slug: true, title: true, summary: true, kind: true, hostingMode: true, subjectCodes: true, publishedAt: true },
+            },
+          },
+        },
+      },
+    };
     const entitlements = await this.prisma.entitlement.findMany({
       where: { userId },
       include: {
         product: {
           include: {
+            course: courseWithHandouts,
             courseGrants: {
               where: { course: { isPublished: true } },
-              include: { course: { select: { id: true, slug: true, title: true } } },
+              include: { course: courseWithHandouts },
             },
             resourceGrants: {
               where: { resource: { reviewStatus: "PUBLISHED" } },
@@ -712,12 +731,27 @@ export class CommerceService {
     const resources = new Map<string, { id: string } & Record<string, unknown>>();
     const acquiredAt = new Map<string, Date>();
     const questionBankSubjects = new Set<string>();
+    const note = (resourceId: string, startAt: Date) => {
+      const earlier = acquiredAt.get(resourceId);
+      if (!earlier || startAt < earlier) acquiredAt.set(resourceId, startAt);
+    };
     for (const entitlement of active) {
-      for (const grant of entitlement.product.courseGrants) courses.set(grant.course.id, grant.course);
+      const granted = entitlement.product.courseGrants.map((grant) => grant.course);
+      const direct = entitlement.product.course;
+      const reachable = direct?.isPublished ? [direct, ...granted] : granted;
+      for (const { materials, id, slug, title } of reachable) {
+        const course = { id, slug, title };
+        courses.set(id, course);
+        for (const { resource } of materials) {
+          // Bought on its own too? Then it is simply the student's; the
+          // course label is only for handouts they have through the course.
+          if (!resources.has(resource.id)) resources.set(resource.id, { ...resource, course: { slug: course.slug, title: course.title } });
+          note(resource.id, entitlement.startAt);
+        }
+      }
       for (const grant of entitlement.product.resourceGrants) {
         resources.set(grant.resource.id, grant.resource);
-        const earlier = acquiredAt.get(grant.resource.id);
-        if (!earlier || entitlement.startAt < earlier) acquiredAt.set(grant.resource.id, entitlement.startAt);
+        note(grant.resource.id, entitlement.startAt);
       }
       for (const grant of entitlement.product.questionBankGrants) questionBankSubjects.add(grant.subjectCode);
     }

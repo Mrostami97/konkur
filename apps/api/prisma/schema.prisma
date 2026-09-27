@@ -415,6 +415,7 @@ model Resource {
   publishedAt       DateTime?
   sources           ResourceSource[]
   productGrants     ProductResourceGrant[]
+  courseMaterials   CourseMaterial[]
   savedBy           SavedResource[]
   planTasks         Task[]
   createdAt         DateTime               @default(now())
@@ -468,10 +469,29 @@ model Course {
   spotPlayerCourseId String?
   spotPlayerLicenses SpotPlayerLicense[]
   achievements       StudentAchievement[]
+  materials          CourseMaterial[]
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
 
   @@map("courses")
+}
+
+/// A handout (or other kept file) that comes with a course: whoever holds
+/// access to the course -- bought directly or through a bundle -- may read
+/// it, with no separate purchase. The resource can still be sold on its own
+/// through a ProductResourceGrant. (Course -> Resource is one of the future
+/// Knowledge Graph edges; this is its first concrete form.)
+model CourseMaterial {
+  courseId   String
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  resourceId String
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  position   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@id([courseId, resourceId])
+  @@index([resourceId])
+  @@map("course_materials")
 }
 
 model CourseModule {

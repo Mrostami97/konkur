@@ -26,6 +26,25 @@ interface Course {
   spotPlayerCourseId?: string | null;
   isPublished: boolean;
   modules?: ModuleWithLessons[];
+  materials?: { resource: Handout }[];
+}
+
+interface Handout {
+  id: string;
+  slug: string;
+  title: string;
+  reviewStatus: string;
+  accessMode: string;
+  hostingMode: string;
+}
+
+/** Only these can come with a course: a published file the site keeps, not free to all. */
+function isAttachable(resource: Handout) {
+  return (
+    resource.reviewStatus === "PUBLISHED" &&
+    (resource.hostingMode === "USER_UPLOAD" || resource.hostingMode === "MIRRORED_WITH_PERMISSION") &&
+    resource.accessMode !== "PUBLIC"
+  );
 }
 
 interface ModuleWithLessons {
@@ -326,6 +345,96 @@ function ModuleForm({ courseId, nextOrder, onAdded }: { courseId: string; nextOr
   );
 }
 
+/**
+ * The handouts that come with a course. Whoever gets the course -- bought
+ * directly or in a bundle -- reads these in their panel with no extra
+ * purchase. The list is saved whole, in the order shown.
+ */
+function CourseMaterials({ course, onChanged }: { course: Course; onChanged: () => void }) {
+  const attached = (course.materials ?? []).map((row) => row.resource);
+  const [candidates, setCandidates] = useState<Handout[] | null>(null);
+  const [choice, setChoice] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiFetch<Handout[]>("/admin/resources")
+      .then((resources) => setCandidates(resources.filter(isAttachable)))
+      .catch(() => setError("فهرست جزوه‌ها بارگذاری نشد."));
+  }, []);
+
+  async function save(ids: string[]) {
+    setBusy(true);
+    setError(null);
+    try {
+      await apiFetch(`/admin/courses/${course.id}/materials`, { method: "PUT", body: { resourceIds: ids } });
+      setChoice("");
+      onChanged();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ذخیرهٔ جزوه‌های دوره ممکن نشد.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const ids = attached.map((resource) => resource.id);
+  const available = (candidates ?? []).filter((resource) => !ids.includes(resource.id));
+
+  function move(index: number, delta: -1 | 1) {
+    const next = [...ids];
+    const target = index + delta;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    void save(next);
+  }
+
+  return (
+    <details className="ds-details" open={attached.length > 0}>
+      <summary>جزوه‌های دوره — {toPersianDigits(attached.length)} جزوه</summary>
+      <div className="ds-details-body ds-stack">
+        <p className="ds-help">
+          خریدار دوره این جزوه‌ها را بدون خرید جداگانه در پنلش می‌خواند؛ هر نسخه با نام و شمارهٔ خودش. جزوه را اول در «منابع آموزشی» با فایل PDF و
+          سطح دسترسی «پولی؛ با دسترسی فعال» یا «رایگان؛ با حساب» منتشر کنید تا این‌جا قابل انتخاب باشد.
+        </p>
+        {error && <Alert tone="danger">{error}</Alert>}
+        {attached.length > 0 && (
+          <ul className="ds-plain-list">
+            {attached.map((resource, index) => (
+              <li key={resource.id}>
+                <div className="ds-row-between">
+                  <span>
+                    <span className="ds-lesson-n">{toPersianDigits(index + 1)}</span>
+                    {resource.title}
+                    {!isAttachable(resource) && <Badge tone="warning">دیگر منتشرشده نیست</Badge>}
+                  </span>
+                  <div className="ds-table-actions">
+                    <Button size="sm" variant="ghost" aria-label={`بالا بردن ${resource.title}`} disabled={busy || index === 0} onClick={() => move(index, -1)}>↑</Button>
+                    <Button size="sm" variant="ghost" aria-label={`پایین بردن ${resource.title}`} disabled={busy || index === attached.length - 1} onClick={() => move(index, 1)}>↓</Button>
+                    <Button size="sm" variant="ghost" disabled={busy} onClick={() => void save(ids.filter((id) => id !== resource.id))}>برداشتن</Button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="ds-row">
+          <div className="ds-grow">
+            <Select aria-label="جزوه برای افزودن" value={choice} disabled={candidates === null || available.length === 0} onChange={(event) => setChoice(event.target.value)}>
+              <option value="">
+                {candidates === null ? "در حال بارگذاری…" : available.length === 0 ? "جزوهٔ منتشرشدهٔ دیگری نیست" : "انتخاب جزوه…"}
+              </option>
+              {available.map((resource) => (
+                <option key={resource.id} value={resource.id}>{resource.title}</option>
+              ))}
+            </Select>
+          </div>
+          <Button variant="primary" disabled={!choice} loading={busy} onClick={() => void save([...ids, choice])}>افزودن به دوره</Button>
+        </div>
+      </div>
+    </details>
+  );
+}
+
 /** A destructive or state-changing step waiting for the operator's yes. */
 type Pending = { title: string; description: string; confirmLabel: string; run: () => Promise<unknown> } | null;
 
@@ -365,6 +474,7 @@ function CourseEditor({ course, onChanged }: { course: Course; onChanged: () => 
   return (
     <div className="ds-stack" style={{ marginTop: "var(--sp-5)" }}>
       {error && <Alert tone="danger">{error}</Alert>}
+      <CourseMaterials course={course} onChanged={onChanged} />
       {modules.map((module) => (
         <details className="ds-details" key={module.id}>
           <summary>

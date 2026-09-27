@@ -2,7 +2,9 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
+  ServiceUnavailableException,
   UnauthorizedException,
 } from "@nestjs/common";
 import {
@@ -14,12 +16,14 @@ import {
   ReviewStatus,
   VersionedEntityType,
 } from "@prisma/client";
+import { createHash } from "crypto";
 import type { Readable } from "stream";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ARTICLE_BLOCK_TYPES, LESSON_BLOCK_TYPES, assertValidContentBlocks } from "../../common/content-blocks";
 import { AuditService } from "../audit/audit.service";
 import { ObjectStorageService } from "../ingestion/object-storage.service";
 import { AccessService } from "../access/access.service";
+import { inspectPdf, SEALED_MIME, sealStream, watermarkPdf } from "./pdf-watermark";
 import {
   CreateContentSourceDto,
   CreateContributorDto,
@@ -491,7 +495,16 @@ export class EditorialService {
   async getPublishedResource(slug: string, userId?: string) {
     const resource = await this.prisma.resource.findUnique({ where: { slug }, include: publicResourceInclude });
     if (!resource || resource.reviewStatus !== ReviewStatus.PUBLISHED) throw new NotFoundException("resource not found");
-    return this.toPublicResource(resource, await this.canAccessResource(userId, resource.id, resource.accessMode));
+    // The published courses this handout comes with: buying one opens it.
+    const courses = await this.prisma.course.findMany({
+      where: { isPublished: true, materials: { some: { resourceId: resource.id } } },
+      orderBy: { createdAt: "asc" },
+      select: { slug: true, title: true },
+    });
+    return {
+      ...this.toPublicResource(resource, await this.canAccessResource(userId, resource.id, resource.accessMode)),
+      courses,
+    };
   }
 
   async getResourceContent(
@@ -499,7 +512,7 @@ export class EditorialService {
     userId?: string,
   ): Promise<
     | { type: "json"; value: { contentBlocks?: unknown; externalUrl?: string } }
-    | { type: "stream"; stream: Readable; mimeType: string; filename: string }
+    | { type: "stream"; stream: Readable; mimeType: string; filename: string; sealed?: boolean }
   > {
     const resource = await this.prisma.resource.findUnique({
       where: { slug },
@@ -521,6 +534,17 @@ export class EditorialService {
       ) {
         throw new NotFoundException("resource content is not available");
       }
+      // Anything that is not free to everyone is a sold or members-only
+      // document: each reader gets their own stamped copy, never the file.
+      if (resource.sourceArtifact.mimeType === "application/pdf" && resource.accessMode !== AccessMode.PUBLIC && userId) {
+        return {
+          type: "stream",
+          stream: sealStream(await this.personalCopy(resource.id, resource.sourceArtifact, userId)),
+          mimeType: SEALED_MIME,
+          filename: resource.sourceArtifact.filename,
+          sealed: true,
+        };
+      }
       return {
         type: "stream",
         stream: await this.storage.getObjectStream(resource.sourceArtifact.storageKey),
@@ -541,6 +565,92 @@ export class EditorialService {
       return { type: "json", value: { externalUrl: resource.externalUrl } };
     }
     return { type: "json", value: { contentBlocks: resource.contentBlocks } };
+  }
+
+  /**
+   * The reader's own watermarked copy of a PDF. Made once per reader, per
+   * file and per name/phone, then kept in object storage, so a change of
+   * name on the profile produces a fresh copy rather than a stale one.
+   */
+  private async personalCopy(resourceId: string, artifact: { checksum: string; storageKey: string }, userId: string): Promise<Readable> {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { phone: true, profile: { select: { firstName: true, lastName: true } } },
+    });
+    const name = [user.profile?.firstName, user.profile?.lastName].filter(Boolean).join(" ") || null;
+    const copyCode = createHash("sha256").update(`${userId}:${resourceId}`).digest("hex").slice(0, 8).toUpperCase();
+    const digest = artifact.checksum.replace("sha256:", "");
+    const identity = createHash("sha256").update(`${name ?? ""}|${user.phone}`).digest("hex").slice(0, 12);
+    const key = `watermarked/v1/${digest}/${userId}-${identity}.pdf`;
+
+    if (!(await this.storage.objectExists(key))) {
+      const chunks: Buffer[] = [];
+      for await (const chunk of await this.storage.getObjectStream(artifact.storageKey)) chunks.push(Buffer.from(chunk));
+      const date = new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Tehran" })
+        .formatToParts(new Date())
+        .filter((part) => part.type !== "literal" && part.type !== "era")
+        .map((part) => part.value)
+        .join("/");
+      let stamped: Uint8Array;
+      try {
+        stamped = await watermarkPdf(Buffer.concat(chunks), { name, phone: user.phone, date, copyCode });
+      } catch (error) {
+        // Never fall back to the unstamped file: a sold copy without its
+        // buyer on it is exactly what this path exists to prevent.
+        new Logger(EditorialService.name).error(`watermark failed for resource ${resourceId}: ${String(error)}`);
+        throw new ServiceUnavailableException("نسخهٔ شخصی این جزوه الان ساخته نشد؛ به پشتیبانی خبر بدهید.");
+      }
+      await this.storage.putObject(key, Buffer.from(stamped), "application/pdf");
+    }
+    await this.audit.log({
+      actorUserId: userId,
+      action: "resource.document_opened",
+      targetType: "Resource",
+      targetId: resourceId,
+      metadata: { copyCode },
+    });
+    return this.storage.getObjectStream(key);
+  }
+
+  /**
+   * Stores a PDF an author uploads for a resource and returns the artifact to
+   * attach. Only a PDF that opens and is not password-protected is accepted,
+   * because every sold copy is stamped by rewriting the file.
+   */
+  async uploadResourceFile(actorId: string, file: Express.Multer.File | undefined) {
+    if (!file) throw new BadRequestException("فایلی فرستاده نشد.");
+    const inspected = await inspectPdf(file.buffer);
+    if ("error" in inspected) {
+      throw new BadRequestException(
+        inspected.error === "encrypted"
+          ? "این PDF رمز دارد؛ نسخهٔ بدون رمز را بارگذاری کنید."
+          : inspected.error === "not-pdf"
+            ? "فقط فایل PDF پذیرفته می‌شود."
+            : "این PDF باز نشد؛ فایل ممکن است خراب باشد.",
+      );
+    }
+    const digest = createHash("sha256").update(file.buffer).digest("hex");
+    const checksum = `sha256:${digest}`;
+    const key = `${digest}/document.pdf`;
+    if (!(await this.storage.objectExists(key))) {
+      await this.storage.putObject(key, file.buffer, "application/pdf");
+    }
+    // Multer reads the multipart filename as Latin-1; Persian names need UTF-8.
+    const original = file.originalname ? Buffer.from(file.originalname, "latin1").toString("utf8") : "document.pdf";
+    const filename = original.replace(/[\\/:*?"<>|]+/g, "-").slice(0, 120);
+    const artifact = await this.prisma.sourceArtifact.upsert({
+      where: { checksum },
+      update: {},
+      create: { checksum, filename, mimeType: "application/pdf", size: file.size, storageKey: key },
+    });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "resource.file_uploaded",
+      targetType: "SourceArtifact",
+      targetId: artifact.id,
+      metadata: { pages: inspected.pages, size: file.size },
+    });
+    return { id: artifact.id, filename: artifact.filename, size: artifact.size, pages: inspected.pages };
   }
 
   async canAccessResource(userId: string | undefined, resourceId: string, accessMode: AccessMode) {

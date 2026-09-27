@@ -6,12 +6,13 @@ import { Glyph } from "../../../components/SubjectIcon";
 import { apiFetch } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { AccountShell } from "../AccountShell";
-import { faDate, RESOURCE_KIND_LABEL, type Library } from "../data";
+import { faDate, READABLE_HOSTING, RESOURCE_KIND_LABEL, type Library } from "../data";
 
 /**
  * Everything the student has bought that is not a course: handouts, booklets
- * and question-bank access. Each handout opens its resource page, which is
- * the only place the file is served, after the access check.
+ * and question-bank access. A handout the site keeps as a file opens in the
+ * panel's reader as the student's own stamped copy; anything else opens its
+ * resource page.
  */
 export default function LibraryPage() {
   const [library, setLibrary] = useState<Library | null>(null);
@@ -49,7 +50,11 @@ export default function LibraryPage() {
           ) : (
             <div className="st-library">
               {library.resources.map((resource) => (
-                <Link key={resource.id} href={`/resources/${resource.slug}`} className="st-doc">
+                <Link
+                  key={resource.id}
+                  href={READABLE_HOSTING.has(resource.hostingMode) ? `/account/library/${resource.slug}` : `/resources/${resource.slug}`}
+                  className="st-doc"
+                >
                   <span className="st-doc-icon">
                     <Glyph name={resource.kind === "VIDEO" ? "play" : "book"} />
                   </span>
@@ -57,9 +62,9 @@ export default function LibraryPage() {
                     <span className="st-badge st-badge-info">{RESOURCE_KIND_LABEL[resource.kind] ?? "منبع"}</span>
                     <strong>{resource.title}</strong>
                     {resource.summary && <small className="st-doc-summary">{resource.summary}</small>}
-                    <small>تهیه‌شده در {faDate(resource.acquiredAt)}</small>
+                    <small>{resource.course ? `همراه دورهٔ ${resource.course.title}` : `تهیه‌شده در ${faDate(resource.acquiredAt)}`}</small>
                   </span>
-                  <span className="st-doc-open">مشاهده ←</span>
+                  <span className="st-doc-open">{READABLE_HOSTING.has(resource.hostingMode) ? "مطالعه ←" : "مشاهده ←"}</span>
                 </Link>
               ))}
             </div>

@@ -1,5 +1,5 @@
 import { AccessMode, Degree } from "@prisma/client";
-import { IsArray, IsEnum, IsOptional, IsString, IsUUID, Matches, MinLength } from "class-validator";
+import { ArrayMaxSize, ArrayUnique, IsArray, IsEnum, IsOptional, IsString, IsUUID, Matches, MinLength } from "class-validator";
 
 export class CreateCourseDto {
   @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/, { message: "slug must be kebab-case" })
@@ -37,4 +37,12 @@ export class CreateCourseDto {
   @IsString()
   @MinLength(1)
   spotPlayerCourseId?: string;
+}
+
+export class SetCourseMaterialsDto {
+  @IsArray()
+  @ArrayUnique()
+  @ArrayMaxSize(50)
+  @IsUUID(undefined, { each: true })
+  resourceIds!: string[];
 }

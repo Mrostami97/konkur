@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { memoryStorage } from "multer";
 import { Role } from "@prisma/client";
 import type { Response } from "express";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
@@ -43,7 +45,10 @@ export class ResourcesPublicController {
     const result = await this.editorial.getResourceContent(slug, request.user?.id);
     if (result.type === "json") return response.json(result.value);
     response.setHeader("Content-Type", result.mimeType);
-    response.setHeader("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(result.filename)}`);
+    // A sold document is read in the panel only: no filename, nothing to save.
+    if (!result.sealed) {
+      response.setHeader("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(result.filename)}`);
+    }
     result.stream.on("error", (error) => response.destroy(error));
     result.stream.pipe(response);
   }
@@ -106,6 +111,14 @@ export class EditorialAdminController {
   @Roles(Role.AUTHOR, Role.REVIEWER, Role.ADMIN)
   resource(@Param("id") id: string) {
     return this.editorial.getResourceAdmin(id);
+  }
+
+  /** A PDF for a resource; the response is the artifact id to attach. */
+  @Post("resource-files")
+  @Roles(Role.AUTHOR, Role.ADMIN)
+  @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: 100 * 1024 * 1024 } }))
+  uploadResourceFile(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
+    return this.editorial.uploadResourceFile(request.user!.id, file);
   }
 
   @Post("resources")

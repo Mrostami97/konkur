@@ -96,7 +96,7 @@ export default async function ResourcePage({ params }: { params: { slug: string 
             </div>
           </header>
 
-          <ResourceAccess initial={{ slug: resource.slug, accessMode: resource.accessMode, hostingMode: resource.hostingMode, canAccess: resource.canAccess, externalUrl: resource.externalUrl }} />
+          <ResourceAccess initial={{ slug: resource.slug, accessMode: resource.accessMode, hostingMode: resource.hostingMode, canAccess: resource.canAccess, externalUrl: resource.externalUrl, courses: resource.courses }} />
           <ResourceStudyActions slug={resource.slug} />
 
           {resource.catalogProfile && (

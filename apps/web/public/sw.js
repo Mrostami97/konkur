@@ -1,4 +1,6 @@
-const CACHE_NAME = "kunkur01-shell-v2";
+// v3: earlier versions also stored API responses (private account data and
+// purchased handouts) on the device; bumping the name deletes those caches.
+const CACHE_NAME = "kunkurcomputer-shell-v3";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -14,15 +16,27 @@ self.addEventListener("activate", (event) => {
 // Network-first with a cache fallback: keeps content fresh online, gives a
 // last-seen version when offline. Not a full offline-first strategy -- most
 // pages here are server-rendered/dynamic and depend on a live session.
+//
+// Only this site's own public pages and assets pass through here. API calls
+// (another origin, or /api/ behind the same one), the student and admin
+// panels, and any response marked private or no-store go straight to the
+// network and are never written to the device.
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+  if (/^\/(api|account|admin)(\/|$)/.test(url.pathname)) return;
   event.respondWith(
-    fetch(event.request)
+    fetch(request)
       .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        const cacheControl = response.headers.get("Cache-Control") || "";
+        if (response.ok && !/no-store|private/i.test(cacheControl)) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => undefined);
+        }
         return response;
       })
-      .catch(() => caches.match(event.request)),
+      .catch(() => caches.match(request).then((cached) => cached || Response.error())),
   );
 });

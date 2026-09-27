@@ -368,16 +368,74 @@ export class LearningService {
             },
           },
         },
+        // Titles only: a handout's file is served by the access-checked
+        // resource content route, never from here.
+        materials: {
+          where: { resource: { reviewStatus: "PUBLISHED" } },
+          orderBy: { position: "asc" },
+          select: { resource: { select: { slug: true, title: true, summary: true, kind: true, hostingMode: true } } },
+        },
       },
     });
     if (!course || !course.isPublished) throw new NotFoundException("course not found");
-    return course;
+    const { materials, ...rest } = course;
+    return { ...rest, materials: materials.map((row) => row.resource) };
+  }
+
+  /**
+   * Replaces the handouts that come with a course, in the order given.
+   * Only published resources whose file the site keeps can be attached,
+   * because course buyers read them in the panel reader.
+   */
+  async setCourseMaterials(actorId: string, courseId: string, resourceIds: string[]) {
+    const course = await this.prisma.course.findUnique({ where: { id: courseId }, select: { id: true } });
+    if (!course) throw new NotFoundException("course not found");
+    const ids = [...new Set(resourceIds)];
+    const resources = await this.prisma.resource.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, reviewStatus: true, hostingMode: true, accessMode: true },
+    });
+    if (resources.length !== ids.length) throw new BadRequestException("یکی از جزوه‌ها پیدا نشد.");
+    const unusable = resources.find(
+      (resource) =>
+        resource.reviewStatus !== "PUBLISHED" ||
+        !["USER_UPLOAD", "MIRRORED_WITH_PERMISSION"].includes(resource.hostingMode) ||
+        resource.accessMode === AccessMode.PUBLIC,
+    );
+    if (unusable) {
+      throw new BadRequestException("فقط جزوهٔ منتشرشده با فایل بارگذاری‌شده و دسترسی غیرعمومی به دوره وصل می‌شود.");
+    }
+    await this.prisma.$transaction([
+      this.prisma.courseMaterial.deleteMany({ where: { courseId } }),
+      this.prisma.courseMaterial.createMany({ data: ids.map((resourceId, position) => ({ courseId, resourceId, position })) }),
+    ]);
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "course.materials_set",
+      targetType: "Course",
+      targetId: courseId,
+      metadata: { resourceIds: ids },
+    });
+    return this.listCourseMaterials(courseId);
+  }
+
+  async listCourseMaterials(courseId: string) {
+    const rows = await this.prisma.courseMaterial.findMany({
+      where: { courseId },
+      orderBy: { position: "asc" },
+      select: { resource: { select: { id: true, slug: true, title: true, reviewStatus: true, accessMode: true, hostingMode: true } } },
+    });
+    return rows.map((row) => row.resource);
   }
 
   async listAllCourses() {
     return this.prisma.course.findMany({
       orderBy: { createdAt: "desc" },
       include: {
+        materials: {
+          orderBy: { position: "asc" },
+          select: { resource: { select: { id: true, slug: true, title: true, reviewStatus: true, accessMode: true, hostingMode: true } } },
+        },
         modules: {
           orderBy: { order: "asc" },
           include: {

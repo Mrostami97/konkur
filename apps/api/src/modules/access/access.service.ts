@@ -69,9 +69,22 @@ export class AccessService {
     return this.hasActiveGrant(userId, { OR: [{ courseId }, { courseGrants: { some: { courseId } } }] }, tx);
   }
 
-  /** Resource access via an explicit ProductResourceGrant. */
+  /** Resource access: sold on its own (ProductResourceGrant), or a handout
+   * of a course the user has access to (CourseMaterial) -- the course bought
+   * directly or through a bundle's ProductCourseGrant. */
   async hasActiveResourceAccess(userId: string, resourceId: string, tx?: AccessTx): Promise<boolean> {
-    return this.hasActiveGrant(userId, { resourceGrants: { some: { resourceId } } }, tx);
+    const withHandout = { materials: { some: { resourceId } } };
+    return this.hasActiveGrant(
+      userId,
+      {
+        OR: [
+          { resourceGrants: { some: { resourceId } } },
+          { course: withHandout },
+          { courseGrants: { some: { course: withHandout } } },
+        ],
+      },
+      tx,
+    );
   }
 
   /**

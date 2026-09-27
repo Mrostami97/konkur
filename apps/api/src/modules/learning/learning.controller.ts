@@ -7,7 +7,7 @@ import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
 import { LearningService } from "./learning.service";
-import { CreateCourseDto } from "./dto/create-course.dto";
+import { CreateCourseDto, SetCourseMaterialsDto } from "./dto/create-course.dto";
 import { CreateModuleDto, ReorderLessonsDto, UpdateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { SpotPlayerService } from "./spotplayer.service";
@@ -115,6 +115,12 @@ export class LearningAdminController {
   @Post("modules/:id/lessons")
   addLesson(@Param("id") id: string, @Body() dto: CreateLessonDto) {
     return this.learning.addLesson(id, dto);
+  }
+
+  /** The handouts that come with a course, replaced as a whole, in order. */
+  @Put("courses/:id/materials")
+  setMaterials(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: SetCourseMaterialsDto) {
+    return this.learning.setCourseMaterials(req.user!.id, id, dto.resourceIds);
   }
 
   @Post("courses/:id/unpublish")

@@ -32,6 +32,8 @@ interface Course {
   description: string;
   accessMode?: "PUBLIC" | "ACCOUNT" | "ENTITLEMENT";
   modules: CourseModule[];
+  /** Handouts that come with the course; read in the student panel. */
+  materials?: { slug: string; title: string; summary: string }[];
 }
 
 async function loadCourse(slug: string) {
@@ -88,6 +90,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const product = productResult.product;
   const path = `/courses/${course.slug}`;
   const lessons = course.modules.flatMap((module) => module.lessons);
+  const materials = course.materials ?? [];
   const firstLessonId = lessons[0]?.id;
   const previewCount = lessons.filter((lesson) => lesson.isPreview).length;
   const purchasableProduct = accessMode === "ENTITLEMENT" ? product : null;
@@ -133,6 +136,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
             <span>{toPersianDigits(course.modules.length)} فصل</span>
             <span>{toPersianDigits(lessons.length)} درس</span>
             {previewCount > 0 && <span>{toPersianDigits(previewCount)} درس نمونهٔ آزاد</span>}
+            {materials.length > 0 && <span>{toPersianDigits(materials.length)} جزوه</span>}
           </p>
         </div>
       </header>
@@ -176,6 +180,28 @@ export default async function CoursePage({ params }: { params: { slug: string } 
               ))}
             </ol>
           )}
+
+          {materials.length > 0 && (
+            <section className="cr-handouts" aria-labelledby="cr-handouts-title">
+              <h2 id="cr-handouts-title">جزوه‌های دوره</h2>
+              <p className="cr-handouts-note">با تهیهٔ دوره، این جزوه‌ها هم در پنلت باز می‌شوند؛ نسخه‌ای به نام خودت، بدون هزینهٔ اضافه.</p>
+              <ul>
+                {materials.map((material) => (
+                  <li key={material.slug}>
+                    <Link href={`/resources/${material.slug}`} className="cr-handout">
+                      <span className="cr-handout-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M9 13h6M9 17h4" /></svg>
+                      </span>
+                      <span className="cr-handout-text">
+                        <strong>{material.title}</strong>
+                        <small>{material.summary}</small>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </section>
 
         {/* -------------------------------------------------------- access */}
@@ -196,6 +222,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                 <ul className="cr-includes">
                   <li>همهٔ درس‌های دوره، به ترتیب فصل</li>
                   <li>بانک سؤال همین درس، بدون هزینهٔ اضافه</li>
+                  {materials.length > 0 && <li>{toPersianDigits(materials.length)} جزوهٔ دوره، برای مطالعه در پنل</li>}
                   <li>ثبت پیشرفت و ادامه از آخرین درس</li>
                 </ul>
               </>

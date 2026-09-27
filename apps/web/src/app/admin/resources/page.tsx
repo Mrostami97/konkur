@@ -2,7 +2,15 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
-import { apiFetch } from "../../../lib/api";
+import { apiFetch, apiUpload } from "../../../lib/api";
+import { toPersianDigits } from "../../../lib/format";
+
+interface UploadedFile {
+  id: string;
+  filename: string;
+  size: number;
+  pages: number;
+}
 
 const RESOURCE_KINDS = [
   "NOTE",
@@ -148,7 +156,7 @@ const HOSTING_LABELS: Record<HostingMode, string> = {
   METADATA_ONLY: "فقط شناسنامه",
   EXTERNAL_LINK: "لینک خارجی",
   OFFICIAL_EMBED: "نمایش رسمی",
-  USER_UPLOAD: "فایل متعلق به kunkur01",
+  USER_UPLOAD: "فایل متعلق به کنکور کامپیوتر",
   MIRRORED_WITH_PERMISSION: "نسخهٔ میزبانی‌شده با مجوز",
 };
 
@@ -206,6 +214,23 @@ function ResourcesAdmin() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
+
+  async function uploadFile(file: File | undefined) {
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const result = await apiUpload<UploadedFile>("/admin/resource-files", file);
+      setUploaded(result);
+      setForm((current) => ({ ...current, sourceArtifactId: result.id }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "بارگذاری فایل انجام نشد.");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -505,18 +530,31 @@ function ResourcesAdmin() {
                 {HOSTING_MODES.map((mode) => <option key={mode} value={mode}>{HOSTING_LABELS[mode]}</option>)}
               </select>
             </label>
-            <label className="field-group">
-              <span>شناسهٔ فایل بارگذاری‌شده</span>
-              <input
-                className="ds-input"
-                dir="ltr"
-                placeholder="UUID"
-                disabled={!PROTECTED_HOSTING_MODES.has(form.hostingMode)}
-                value={form.sourceArtifactId}
-                onChange={(event) => setForm({ ...form, sourceArtifactId: event.target.value })}
-              />
-            </label>
+            <div className="field-group">
+              <span>فایل PDF</span>
+              <label className={`admin-upload${PROTECTED_HOSTING_MODES.has(form.hostingMode) ? "" : " is-disabled"}`}>
+                <input
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  disabled={!PROTECTED_HOSTING_MODES.has(form.hostingMode) || uploading}
+                  onChange={(event) => {
+                    void uploadFile(event.target.files?.[0]);
+                    event.target.value = "";
+                  }}
+                />
+                <span>{uploading ? "در حال بارگذاری…" : form.sourceArtifactId ? "جایگزینی فایل" : "انتخاب فایل PDF"}</span>
+              </label>
+            </div>
           </div>
+          <p className="field-hint">
+            {!PROTECTED_HOSTING_MODES.has(form.hostingMode)
+              ? "برای فایل، روش میزبانی را «فایل متعلق به کنکور کامپیوتر» بگذارید."
+              : uploaded && uploaded.id === form.sourceArtifactId
+                ? `${uploaded.filename} · ${toPersianDigits(uploaded.pages)} صفحه · ${toPersianDigits((uploaded.size / 1024 / 1024).toFixed(1))} مگابایت`
+                : form.sourceArtifactId
+                  ? `فایل فعلی: ${form.sourceArtifactId.slice(0, 8)}…`
+                  : "هر خریدار نسخه‌ای با نام و شمارهٔ خودش روی هر صفحه می‌گیرد؛ فایل اصلی دانلود نمی‌شود."}
+          </p>
 
           <label className="field-group">
             <span>نشانی بیرونی</span>
@@ -603,12 +641,12 @@ function ResourcesAdmin() {
             <li>حداقل یک سند معتبر و فعال متصل باشد.</li>
             <li>منبع خارجی باید نشانی قابل بازکردن داشته باشد.</li>
             <li>نمایش رسمی فقط با مجوز Embed همان سند انجام می‌شود.</li>
-            <li>فایل فقط در دو حالت «متعلق به kunkur01» یا «میزبانی با مجوز» قابل اتصال است.</li>
+            <li>فایل فقط در دو حالت «متعلق به کنکور کامپیوتر» یا «میزبانی با مجوز» قابل اتصال است.</li>
             <li>میزبانی فایل به سند فعال با mayHost و مبنای حقوقی ثبت‌شده نیاز دارد.</li>
             <li>منبع پولی علاوه بر مجوز میزبانی، باید اجازهٔ استفادهٔ تجاری صریح داشته باشد.</li>
             <li>پروفایل منتشرنشده در خروجی عمومی نمایش داده نمی‌شود.</li>
           </ul>
-          <p className="muted-copy">فایل پولی به‌صورت inline ارائه می‌شود؛ این سازوکار DRM یا مانع قطعی ذخیره و تصویرگرفتن نیست.</p>
+          <p className="muted-copy">PDF غیررایگان فقط در پنل دانشجو خوانده می‌شود و هر خریدار نسخه‌ای با نام و شمارهٔ خودش روی هر صفحه می‌گیرد؛ دانلود ندارد، ولی جلوی عکس‌گرفتن از صفحه را هم نمی‌گیرد.</p>
         </aside>
       </div>
 

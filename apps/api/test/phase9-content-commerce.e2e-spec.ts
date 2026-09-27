@@ -6,6 +6,7 @@ import { ArticleContentType, Degree, Prisma, ReviewStatus, Role, VersionedEntity
 import { Test } from "@nestjs/testing";
 import AdmZip from "adm-zip";
 import cookieParser from "cookie-parser";
+import { PDFDocument } from "pdf-lib";
 import request from "supertest";
 import { purchaseProduct } from "./helpers/purchase";
 import { AppModule } from "../src/app.module";
@@ -16,6 +17,13 @@ import { seed, SEED_ADMIN_PHONE } from "../src/seed";
 import { seedStaticEditorial } from "../src/seed-static-editorial";
 import staticEditorialSeed from "../src/seed-data/editorial-drafts.json";
 import phase17LegacyDrafts from "../src/seed-data/phase17-legacy-editorial-drafts.json";
+
+/** A small real PDF: sold PDFs are stamped per reader, so fixtures must open. */
+async function pdfBytes(label: string) {
+  const doc = await PDFDocument.create({ updateMetadata: false });
+  doc.addPage([300, 300]).drawText(label, { x: 20, y: 150, size: 10 });
+  return Buffer.from(await doc.save());
+}
 
 class CapturingOtpProvider implements OtpProvider {
   sent: { phone: string; code: string }[] = [];
@@ -113,11 +121,11 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
         externalId: sourceExternalId,
         kind: "FIRST_PARTY_FILE",
         title: "Owned resource source",
-        publisher: "kunkur01",
-        canonicalUrl: "https://kunkur01.ir/resources",
+        publisher: "kunkurcomputer",
+        canonicalUrl: "https://kunkurcomputer.ir/resources",
         sourceTier: "FIRST_PARTY",
         checkedAt: new Date().toISOString(),
-        rightsHolder: "kunkur01",
+        rightsHolder: "kunkurcomputer",
         rightsBasis: "USER_DECLARATION",
         mayLink: true,
         mayHost: true,
@@ -127,7 +135,7 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       .expect(201);
     sourceId = source.body.id;
 
-    const bytes = Buffer.from("phase-9-protected-note");
+    const bytes = await pdfBytes("phase-9-protected-note");
     artifactChecksum = createHash("sha256").update(bytes).digest("hex");
     const storageKey = artifactChecksum + "/phase9-note.pdf";
     await storage.putObject(storageKey, bytes, "application/pdf");
@@ -514,7 +522,7 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     await request(app.getHttpServer()).get("/lessons/" + paidLessonId).set("Cookie", second.cookie).expect(403);
   });
 
-  it("serves paid notes inline after authorization without exposing storage identifiers", async () => {
+  it("serves paid notes sealed for the panel reader after authorization without exposing storage identifiers", async () => {
     const third = await login(randomPhone());
     await request(app.getHttpServer()).get("/resources/" + paidResourceSlug + "/content").expect(401);
     await request(app.getHttpServer()).get("/resources/" + paidResourceSlug + "/content").set("Cookie", third.cookie).expect(403);
@@ -526,7 +534,9 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     expect(metadata.body).not.toHaveProperty("storageKey");
     expect(metadata.body).not.toHaveProperty("contentBlocks");
     const content = await request(app.getHttpServer()).get("/resources/" + paidResourceSlug + "/content").set("Cookie", third.cookie).expect(200);
-    expect(content.headers["content-disposition"]).toContain("inline");
+    // A paid PDF travels sealed, as a per-reader stamped copy: no filename to save.
+    expect(content.headers["content-type"]).toContain("application/vnd.kunkurcomputer.sealed");
+    expect(content.headers["content-disposition"]).toBeUndefined();
     expect(content.headers["cache-control"]).toContain("no-store");
     await request(app.getHttpServer()).get("/media/" + artifactChecksum).expect(404);
 
@@ -538,7 +548,7 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
   });
 
   it("never exposes an account-gated resource through the raw media route", async () => {
-    const bytes = Buffer.from("phase-9-account-resource-" + suffix);
+    const bytes = await pdfBytes("phase-9-account-resource-" + suffix);
     const checksum = createHash("sha256").update(bytes).digest("hex");
     const storageKey = checksum + "/account-note.pdf";
     await storage.putObject(storageKey, bytes, "application/pdf");

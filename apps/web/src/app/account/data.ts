@@ -108,7 +108,12 @@ export interface LibraryResource {
   subjectCodes: string[];
   publishedAt: string | null;
   acquiredAt: string | null;
+  /** Set when the handout came with a course rather than on its own. */
+  course?: { slug: string; title: string };
 }
+
+/** Handouts that are files kept by the site; they are read in the panel, never downloaded. */
+export const READABLE_HOSTING = new Set(["USER_UPLOAD", "MIRRORED_WITH_PERMISSION"]);
 
 export interface Library {
   courses: { id: string; slug: string; title: string }[];

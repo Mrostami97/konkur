@@ -58,6 +58,19 @@
 .cr-lesson:hover .cr-lesson-title { color: var(--accent-hover); }
 .cr-free { padding: 0.05rem 0.5rem; border: 1px solid var(--accent-line); border-radius: var(--radius-xs); color: var(--accent-hover); background: var(--accent-soft); font-size: var(--text-2xs); font-weight: var(--weight-semibold); white-space: nowrap; }
 
+/* Handouts that come with the course: one card per file. */
+.cr-handouts { margin-top: 2.25rem; }
+.cr-handouts h2 { margin: 0; color: var(--ink); font-size: var(--text-lg); font-weight: var(--weight-heavy); }
+.cr-handouts-note { margin: 0.35rem 0 1rem; color: var(--muted); font-size: var(--text-sm); line-height: 1.8; }
+.cr-handouts ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.cr-handout { display: flex; align-items: flex-start; gap: 0.75rem; height: 100%; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-md); color: var(--ink); background: var(--surface); text-decoration: none; transition: border-color var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease); }
+.cr-handout:hover { border-color: var(--accent-line); color: var(--ink); background: var(--paper); }
+.cr-handout-icon { display: grid; flex: none; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: var(--radius-sm); color: var(--accent); background: var(--accent-soft); }
+.cr-handout-text { display: grid; gap: 0.2rem; min-width: 0; }
+.cr-handout-text strong { font-size: var(--text-base); font-weight: var(--weight-bold); line-height: 1.6; }
+.cr-handout:hover .cr-handout-text strong { color: var(--accent-hover); }
+.cr-handout-text small { display: -webkit-box; overflow: hidden; color: var(--muted); font-size: var(--text-xs); line-height: 1.7; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+
 /* The side column: buy or start, what is included, progress, video. */
 .cr-aside { position: sticky; top: 6.5rem; display: grid; gap: 1rem; }
 .cr-aside .surface-card { padding: 1.1rem 1.25rem; }

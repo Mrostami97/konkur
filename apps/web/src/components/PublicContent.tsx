@@ -81,6 +81,8 @@ export interface PublicResourceRecord {
   publishedAt: string | null;
   canAccess: boolean;
   externalUrl?: string;
+  /** Published courses this handout comes with (detail endpoint only). */
+  courses?: { slug: string; title: string }[];
   catalogProfile?: {
     learningType?: string;
     startLevel?: string;
@@ -122,7 +124,7 @@ export function contentTypeLabel(type: PublicArticleRecord["contentType"]) {
 }
 
 export function accessModeLabel(mode: string) {
-  return ({ PUBLIC: "دسترسی آزاد", ACCOUNT: "ویژهٔ اعضا", ENTITLEMENT: "نیازمند تهیه" } as Record<string, string>)[mode] ?? mode;
+  return ({ PUBLIC: "دسترسی آزاد", ACCOUNT: "ویژهٔ اعضا", ENTITLEMENT: "ویژهٔ خریداران" } as Record<string, string>)[mode] ?? mode;
 }
 
 export function resourceKindLabel(kind: string) {
@@ -412,10 +414,10 @@ export function PublicArticleView({
                   {article.reviewerProfile && <ProfileLine profile={article.reviewerProfile} prefix="بازبین:" />}
                 </strong>
               ) : (
-                <strong>تهیه و بازبینی: تحریریهٔ کنکورصفریک</strong>
+                <strong>تهیه و بازبینی: تحریریهٔ کنکور کامپیوتر</strong>
               )}
               <p>
-                {article.authorProfile || article.reviewerProfile ? "" : "این مطلب را تحریریهٔ کنکورصفریک بر پایهٔ منابع ذکرشده تهیه کرده است. "}
+                {article.authorProfile || article.reviewerProfile ? "" : "این مطلب را تحریریهٔ کنکور کامپیوتر بر پایهٔ منابع ذکرشده تهیه کرده است. "}
                 روش کار ما را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.
               </p>
             </div>
@@ -439,7 +441,7 @@ export function PublicArticleView({
             </div>
           )}
           <div className="rd-side-cta">
-            <strong>کانال رسمی کنکورصفریک</strong>
+            <strong>کانال رسمی کنکور کامپیوتر</strong>
             <p>خبرها، آموزش‌ها و اصلاحیه‌های مطالب را از منبع رسمی دنبال کنید.</p>
             <a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
             <Link href="/free-videos">ویدیوی رایگان هر درس</Link>
