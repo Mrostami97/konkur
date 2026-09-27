@@ -3,6 +3,7 @@ import { Prisma, Role } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { CreateUserDto } from "./dto/user-admin.dto";
+import { roleSetProblem } from "./account-roles";
 import { hashPassword } from "./password-hasher";
 
 const MAX_PAGE_SIZE = 100;
@@ -92,7 +93,9 @@ export class UserAdminService {
     const existing = await this.prisma.user.findFirst({ where: { phone: { in: phoneVariants(dto.phone) } } });
     if (existing) throw new ConflictException("کاربری با این شماره از قبل وجود دارد.");
 
-    const roles = dto.roles.length > 0 ? dto.roles : [Role.STUDENT];
+    const roles = dto.roles.length > 0 ? [...new Set(dto.roles)] : [Role.STUDENT];
+    const problem = roleSetProblem(roles);
+    if (problem) throw new BadRequestException(problem);
     const firstName = dto.firstName?.trim() || null;
     const lastName = dto.lastName?.trim() || null;
     const user = await this.prisma.user.create({
@@ -117,6 +120,15 @@ export class UserAdminService {
     const user = await this.prisma.user.findUnique({ where: { id: userId }, select: USER_SELECT });
     if (!user) throw new NotFoundException("user not found");
     const before = user.roles.map((row) => row.role);
+    roles = [...new Set(roles)];
+    const problem = roleSetProblem(roles);
+    if (problem) throw new BadRequestException(problem);
+    if (roles.includes(Role.STUDENT)) {
+      const instructor = await this.prisma.contributorProfile.findUnique({ where: { userId }, select: { displayName: true } });
+      if (instructor) {
+        throw new BadRequestException(`این حساب به پروفایل مدرس «${instructor.displayName}» وصل است و دانشجو نمی‌شود.`);
+      }
+    }
     const wasAdmin = before.includes(Role.ADMIN);
     const staysAdmin = roles.includes(Role.ADMIN);
 

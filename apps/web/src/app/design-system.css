@@ -807,6 +807,8 @@ a.pg-card:hover { border-color: var(--accent-line); color: var(--ink); }
 }
 
 .admin-sidebar-foot {
+  display: grid;
+  gap: var(--sp-1);
   margin-top: auto;
   padding-top: var(--sp-4);
   border-top: 1px solid rgba(255, 255, 255, 0.08);

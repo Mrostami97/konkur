@@ -87,6 +87,14 @@ export function StudentShell({ children }: { children: ReactNode }) {
     ])
       .then(([session, loaded, instructor]) => {
         if (cancelled) return;
+        // The student panel is for students -- and for the main administrator,
+        // who follows the site as a student too. Other staff and instructors
+        // have panels of their own.
+        const roles = session.user.roles;
+        if (!roles.includes("STUDENT") && !roles.includes("ADMIN")) {
+          router.replace(instructor ? "/instructor" : "/admin");
+          return;
+        }
         setMe(session);
         setProfile(loaded);
         setIsInstructor(instructor);

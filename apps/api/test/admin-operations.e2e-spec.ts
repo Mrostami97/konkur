@@ -97,8 +97,10 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
     it("changes roles but never strips the acting admin or the last admin", async () => {
       const phone = randomMobile();
       const user = await asAdmin("post", "/admin/users").send({ phone, roles: ["STUDENT"] }).expect(201);
-      const updated = await asAdmin("put", `/admin/users/${user.body.id}/roles`).send({ roles: ["STUDENT", "FINANCE"] }).expect(200);
-      expect(updated.body.roles.sort()).toEqual(["FINANCE", "STUDENT"]);
+      // A student is not staff: the two are never combined on one account.
+      await asAdmin("put", `/admin/users/${user.body.id}/roles`).send({ roles: ["STUDENT", "FINANCE"] }).expect(400);
+      const updated = await asAdmin("put", `/admin/users/${user.body.id}/roles`).send({ roles: ["FINANCE"] }).expect(200);
+      expect(updated.body.roles).toEqual(["FINANCE"]);
 
       await asAdmin("put", `/admin/users/${adminId}/roles`).send({ roles: ["STUDENT"] }).expect(400);
     });

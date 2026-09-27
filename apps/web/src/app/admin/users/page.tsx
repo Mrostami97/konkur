@@ -45,24 +45,44 @@ interface AdminUser {
 
 const joined = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", month: "long", day: "numeric" });
 
+/**
+ * Accounts are kept apart (the API enforces the same): the main administrator
+ * holds «مدیر» alone, a student holds «دانشجو» alone, and the staff roles may
+ * be combined with each other. Ticking one kind clears the others.
+ */
+function nextRoles(current: Role[], role: Role, on: boolean): Role[] {
+  if (!on) return current.filter((item) => item !== role);
+  if (role === "ADMIN" || role === "STUDENT") return [role];
+  return [...current.filter((item) => item !== "ADMIN" && item !== "STUDENT"), role];
+}
+
+/** An account left from before roles were kept apart: both a student and staff. */
+function isMixed(roles: Role[]) {
+  return roles.includes("STUDENT") && roles.length > 1;
+}
+
 function RolePicker({ value, onChange }: { value: Role[]; onChange: (roles: Role[]) => void }) {
   return (
-    <div className="us-roles">
-      {ROLES.map((role) => (
-        <label key={role.value} className="us-role" data-on={value.includes(role.value) || undefined}>
-          <input
-            type="checkbox"
-            checked={value.includes(role.value)}
-            onChange={(event) =>
-              onChange(event.target.checked ? [...value, role.value] : value.filter((item) => item !== role.value))
-            }
-          />
-          <span>
-            <strong>{role.label}</strong>
-            <small>{role.hint}</small>
-          </span>
-        </label>
-      ))}
+    <div className="ds-stack">
+      <div className="us-roles">
+        {ROLES.map((role) => (
+          <label key={role.value} className="us-role" data-on={value.includes(role.value) || undefined}>
+            <input
+              type="checkbox"
+              checked={value.includes(role.value)}
+              onChange={(event) => onChange(nextRoles(value, role.value, event.target.checked))}
+            />
+            <span>
+              <strong>{role.label}</strong>
+              <small>{role.hint}</small>
+            </span>
+          </label>
+        ))}
+      </div>
+      <p className="ds-help">
+        حساب مدیر، حساب دانشجو و حساب کارکنان از هم جدا هستند: «مدیر» و «دانشجو» هر کدام تنها می‌آیند و نقش‌های کارمندی با هم جمع می‌شوند.
+        مدرس هم با وصل شدن حسابش به پروفایل مدرس مشخص می‌شود و دانشجو نیست.
+      </p>
     </div>
   );
 }
@@ -266,6 +286,7 @@ export default function AdminUsersPage() {
                               {ROLE_LABEL[item] ?? item}
                             </Badge>
                           ))}
+                          {isMixed(user.roles) && <Badge tone="warning">هم دانشجو، هم کارمند؛ یکی را نگه دارید</Badge>}
                         </div>
                       </td>
                       <td>{user.hasPassword ? <Badge tone="success">دارد</Badge> : <Badge>ندارد</Badge>}</td>

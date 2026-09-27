@@ -28,6 +28,12 @@ export class RolesGuard implements CanActivate {
 
     const req = context.switchToHttp().getRequest<RequestWithUser>();
     const userRoles = req.user?.roles ?? [];
+    // A student is never staff (see account-roles.ts): an account that still
+    // carries STUDENT next to a staff role -- from before roles were kept
+    // apart -- is refused until an administrator settles which it is.
+    if (userRoles.includes(Role.STUDENT) && !required.includes(Role.STUDENT)) {
+      throw new ForbiddenException("student accounts cannot use staff routes");
+    }
     const allowed = required.some((role) => userRoles.includes(role));
     if (!allowed) throw new ForbiddenException("insufficient role");
     return true;

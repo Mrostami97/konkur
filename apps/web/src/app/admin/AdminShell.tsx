@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { apiFetch } from "../../lib/api";
 import { AdminGuard, useStaffRoles } from "../../components/AdminGuard";
 import { PanelIcon, type IconName } from "../../components/PanelIcons";
 
@@ -74,6 +75,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
 function AdminChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? "";
   const roles = useStaffRoles();
+  // The main administrator also studies and may teach: their other panels
+  // are one click away. Other staff have no student panel.
+  const [teaches, setTeaches] = useState(false);
+  useEffect(() => {
+    apiFetch("/me/instructor").then(() => setTeaches(true)).catch(() => setTeaches(false));
+  }, []);
 
   const visibleGroups = NAV_GROUPS.map((group) => ({
     ...group,
@@ -116,15 +123,24 @@ function AdminChrome({ children }: { children: ReactNode }) {
         ))}
 
         <div className="admin-sidebar-foot">
-          <Link className="admin-sidebar-user" href="/account">
-            <span className="admin-sidebar-avatar" aria-hidden="true">
-              ح
-            </span>
-            <div>
-              <strong>حساب من</strong>
-              <small>{roles.join("، ")}</small>
-            </div>
-          </Link>
+          {roles.includes("ADMIN") && (
+            <Link className="admin-sidebar-user" href="/account">
+              <span className="admin-sidebar-avatar" aria-hidden="true">د</span>
+              <div>
+                <strong>پنل دانشجو</strong>
+                <small>درس‌ها، آزمون‌ها و جزوه‌های خودم</small>
+              </div>
+            </Link>
+          )}
+          {teaches && (
+            <Link className="admin-sidebar-user" href="/instructor">
+              <span className="admin-sidebar-avatar" aria-hidden="true">م</span>
+              <div>
+                <strong>پنل مدرس</strong>
+                <small>دوره‌ها، فروش و مشاوره‌های من</small>
+              </div>
+            </Link>
+          )}
         </div>
       </aside>
 

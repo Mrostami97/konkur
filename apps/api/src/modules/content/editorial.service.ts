@@ -14,6 +14,7 @@ import {
   ResourceHostingMode,
   ResourceKind,
   ReviewStatus,
+  Role,
   VersionedEntityType,
 } from "@prisma/client";
 import { createHash } from "crypto";
@@ -168,7 +169,29 @@ export class EditorialService {
     return this.prisma.contributorProfile.findMany({ orderBy: { updatedAt: "desc" } });
   }
 
+  /**
+   * An account linked to an instructor profile is an instructor, not a
+   * student (account-roles.ts): linking takes STUDENT off it. The main
+   * administrator may also teach, so an ADMIN account can be linked.
+   */
+  private async prepareInstructorAccount(actorId: string, userId: string | null | undefined) {
+    if (!userId) return;
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { roles: { select: { role: true } } } });
+    if (!user) throw new BadRequestException("حساب کاربری انتخاب‌شده پیدا نشد.");
+    const roles = user.roles.map((row) => row.role);
+    if (roles.includes(Role.STUDENT)) {
+      await this.prisma.userRole.deleteMany({ where: { userId, role: Role.STUDENT } });
+      await this.audit.log({
+        actorUserId: actorId,
+        action: "user.student_role_removed_for_instructor",
+        targetType: "User",
+        targetId: userId,
+      });
+    }
+  }
+
   async createContributor(actorId: string, dto: CreateContributorDto) {
+    await this.prepareInstructorAccount(actorId, dto.userId);
     const profile = await this.prisma.contributorProfile.create({
       data: {
         ...dto,
@@ -182,6 +205,7 @@ export class EditorialService {
   async updateContributor(id: string, actorId: string, dto: UpdateContributorDto) {
     const existing = await this.prisma.contributorProfile.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException("contributor not found");
+    if (dto.userId && dto.userId !== existing.userId) await this.prepareInstructorAccount(actorId, dto.userId);
     const profile = await this.prisma.contributorProfile.update({
       where: { id },
       data: {
