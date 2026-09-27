@@ -213,3 +213,10 @@ export class RejectEditorialDto {
   @MinLength(1)
   reason!: string;
 }
+
+/** The free sample of a paid handout; null unlinks it. */
+export class SetResourceSampleDto {
+  @IsOptional()
+  @IsUUID()
+  sampleResourceId!: string | null;
+}

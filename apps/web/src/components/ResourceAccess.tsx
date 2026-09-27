@@ -8,7 +8,7 @@ import { BuyButton } from "./BuyButton";
 import { ContentBlocks } from "./ContentBlocks";
 import type { PublicContentBlock, PublicResourceRecord } from "./PublicContent";
 
-type ResourceAccessState = Pick<PublicResourceRecord, "slug" | "accessMode" | "hostingMode" | "canAccess" | "externalUrl" | "courses">;
+type ResourceAccessState = Pick<PublicResourceRecord, "slug" | "accessMode" | "hostingMode" | "canAccess" | "externalUrl" | "courses" | "sample" | "sampleFor">;
 
 /** A product on sale, as the public catalogue lists it. */
 interface CatalogProduct {
@@ -73,6 +73,26 @@ export function ResourceAccess({ initial }: { initial: ResourceAccessState }) {
     </p>
   );
 
+  // A paid handout’s free chapters, read in the panel like any kept file.
+  const sampleLink = !resource.canAccess && resource.sample && (
+    <Link className="button button-secondary" href={`/account/library/${resource.sample.slug}`}>خواندن نمونهٔ رایگان ←</Link>
+  );
+  // On the sample itself: the way back to the whole handout.
+  const fullHandouts = (resource.sampleFor ?? []).length > 0 && (
+    <p className="resource-with-courses">
+      این نمونهٔ رایگانِ{" "}
+      {(resource.sampleFor ?? []).map((paid, index) => (
+        <span key={paid.slug}>
+          {index > 0 && "، "}
+          <Link href={`/resources/${paid.slug}`}>{paid.title}</Link>
+        </span>
+      ))}{" "}
+      است؛ جزوهٔ کامل را از صفحهٔ خودش تهیه کن.
+    </p>
+  );
+  // Signing in comes back here, or straight to the reader for a kept file.
+  const loginHref = `/login?next=${encodeURIComponent(protectedFile ? `/account/library/${resource.slug}` : `/resources/${resource.slug}`)}`;
+
   return (
     <>
       <section className="answer-first" aria-labelledby="resource-access-title" aria-busy={loading}>
@@ -91,26 +111,36 @@ export function ResourceAccess({ initial }: { initial: ResourceAccessState }) {
         ) : resource.canAccess && resource.hostingMode !== "METADATA_ONLY" ? (
           <a className="button button-primary" href={contentHref}>مشاهدهٔ محتوا در سایت ←</a>
         ) : resource.accessMode === "ACCOUNT" ? (
-          <Link className="button button-primary" href="/login">ورود برای مشاهده ←</Link>
+          <Link className="button button-primary" href={loginHref}>ورود برای مشاهده ←</Link>
         ) : resource.accessMode === "ENTITLEMENT" && offer ? (
           <>
             <p>
               قیمت: <b>{formatRial(offer.prices[0].amountRial)}</b>
               {protectedFile && " · بعد از خرید در پنلت، به نام خودت، خوانده می‌شود."}
             </p>
-            <BuyButton productId={offer.id} label="خرید جزوه" />
+            <div className="resource-actions">
+              <BuyButton productId={offer.id} label="خرید جزوه" />
+              {sampleLink}
+            </div>
             {withCourses}
           </>
         ) : resource.accessMode === "ENTITLEMENT" && courses.length > 0 ? (
           <>
             {withCourses}
-            <Link className="button button-primary" href={`/courses/${courses[0].slug}`}>دیدن دوره ←</Link>
+            <div className="resource-actions">
+              <Link className="button button-primary" href={`/courses/${courses[0].slug}`}>دیدن دوره ←</Link>
+              {sampleLink}
+            </div>
           </>
         ) : resource.accessMode === "ENTITLEMENT" ? (
-          <p>فروش این جزوه به‌زودی باز می‌شود.</p>
+          <>
+            <p>فروش این جزوه به‌زودی باز می‌شود.</p>
+            {sampleLink}
+          </>
         ) : (
           <p>این رکورد فعلاً فقط اطلاعات منبع را نمایش می‌دهد.</p>
         )}
+        {!loading && fullHandouts}
       </section>
       {contentBlocks.length > 0 && (
         <section className="editorial-body" id="resource-content" aria-label="محتوای منبع">

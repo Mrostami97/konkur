@@ -24,6 +24,16 @@ function cleanCode(value: string) {
   return cleanPhone(value).replace(/\D/g, "").slice(0, 6);
 }
 
+/**
+ * Where to go after signing in: the ?next= page the visitor came from, but
+ * only a path on this site -- never another host, which would make the
+ * login page a redirect anyone could point elsewhere.
+ */
+function afterLogin() {
+  const next = new URLSearchParams(window.location.search).get("next") ?? "";
+  return /^\/(?![/\\])/.test(next) ? next : "/account";
+}
+
 /** The API's validation messages are English; say the same thing in Persian. */
 function friendly(err: unknown, fallback: string) {
   const message = err instanceof Error ? err.message : "";
@@ -64,7 +74,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await apiFetch("/auth/otp/verify", { method: "POST", body: { phone: cleanPhone(phone), code } });
-      router.push("/account");
+      router.push(afterLogin());
     } catch (err) {
       setError(friendly(err, "کد درست نیست یا منقضی شده است."));
     } finally {
@@ -78,7 +88,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await apiFetch("/auth/password/login", { method: "POST", body: { phone: cleanPhone(phone), password } });
-      router.push("/account");
+      router.push(afterLogin());
     } catch (err) {
       setError(friendly(err, "ورود با رمز عبور انجام نشد."));
     } finally {

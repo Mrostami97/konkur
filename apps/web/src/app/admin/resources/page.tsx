@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
 import { apiFetch, apiUpload } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
+import { SamplePicker } from "./SamplePicker";
 
 interface UploadedFile {
   id: string;
@@ -86,6 +87,8 @@ interface ResourceRecord {
   contentBlocks: unknown;
   externalUrl?: string | null;
   sourceArtifactId?: string | null;
+  /** The free sample of this handout, if one is linked. */
+  sampleResourceId?: string | null;
   taxonomyDegrees: Degree[];
   taxonomyFields: string[];
   subjectCodes: string[];
@@ -208,6 +211,7 @@ function ResourcesAdmin() {
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [form, setForm] = useState<ResourceFormState>(EMPTY_FORM);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [sampleOpenId, setSampleOpenId] = useState<string | null>(null);
   const [sourceToAdd, setSourceToAdd] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -674,6 +678,12 @@ function ResourcesAdmin() {
                   <dt>میزبانی</dt><dd style={{ margin: 0 }}>{HOSTING_LABELS[resource.hostingMode]}</dd>
                   <dt>اسناد</dt><dd style={{ margin: 0 }}>{new Intl.NumberFormat("fa-IR").format(resource.sources.length)}</dd>
                   <dt>آخرین تغییر</dt><dd style={{ margin: 0 }}>{formatDate(resource.updatedAt)}</dd>
+                  {resource.accessMode === "ENTITLEMENT" && (
+                    <>
+                      <dt>نمونهٔ رایگان</dt>
+                      <dd style={{ margin: 0 }}>{resources.find((other) => other.id === resource.sampleResourceId)?.title ?? "ندارد"}</dd>
+                    </>
+                  )}
                 </dl>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                   {(resource.reviewStatus === "DRAFT" || resource.reviewStatus === "REJECTED") && (
@@ -691,7 +701,26 @@ function ResourcesAdmin() {
                   {resource.reviewStatus === "PUBLISHED" && (
                     <button className="ds-btn ds-btn-secondary" disabled={busyId === resource.id} onClick={() => void transition(resource, "revise")}>ساخت نسخهٔ تازه</button>
                   )}
+                  {resource.accessMode === "ENTITLEMENT" && (
+                    <button
+                      className="ds-btn ds-btn-secondary"
+                      aria-expanded={sampleOpenId === resource.id}
+                      onClick={() => setSampleOpenId((open) => (open === resource.id ? null : resource.id))}
+                    >
+                      نمونهٔ رایگان
+                    </button>
+                  )}
                 </div>
+                {sampleOpenId === resource.id && (
+                  <SamplePicker
+                    resourceId={resource.id}
+                    current={resource.sampleResourceId ?? null}
+                    resources={resources}
+                    onSaved={(sampleResourceId) =>
+                      setResources((current) => current.map((other) => (other.id === resource.id ? { ...other, sampleResourceId } : other)))
+                    }
+                  />
+                )}
               </article>
             ))}
           </div>

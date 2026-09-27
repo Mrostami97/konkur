@@ -109,7 +109,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
       .catch((error) => {
         if (cancelled) return;
         if (error instanceof ApiError && error.status === 401) {
-          router.replace("/login");
+          router.replace(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search)}`);
           return;
         }
         setFailed(true);

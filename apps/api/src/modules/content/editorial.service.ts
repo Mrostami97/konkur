@@ -494,6 +494,40 @@ export class EditorialService {
     return items.sort((left, right) => right.updatedAt.getTime() - left.updatedAt.getTime());
   }
 
+  /**
+   * Links a paid handout to its free sample (or unlinks it with null). The
+   * sample is a separate published resource that is free -- to everyone or
+   * to anyone signed in -- and whose file the site keeps, so it opens in the
+   * same reader. Only a link, so it is set directly rather than as a
+   * reviewed revision.
+   */
+  async setResourceSample(actorId: string, resourceId: string, sampleResourceId: string | null) {
+    const resource = await this.prisma.resource.findUnique({ where: { id: resourceId }, select: { id: true } });
+    if (!resource) throw new NotFoundException("resource not found");
+    if (sampleResourceId) {
+      if (sampleResourceId === resourceId) throw new BadRequestException("جزوه نمی‌تواند نمونهٔ خودش باشد.");
+      const sample = await this.prisma.resource.findUnique({
+        where: { id: sampleResourceId },
+        select: { reviewStatus: true, accessMode: true, hostingMode: true, sourceArtifactId: true },
+      });
+      if (!sample) throw new BadRequestException("نمونهٔ انتخاب‌شده پیدا نشد.");
+      if (sample.reviewStatus !== ReviewStatus.PUBLISHED) throw new BadRequestException("نمونه باید منتشر شده باشد.");
+      if (sample.accessMode === AccessMode.ENTITLEMENT) throw new BadRequestException("نمونه باید رایگان باشد؛ سطح دسترسی‌اش را «رایگان؛ با حساب» بگذارید.");
+      if (!sample.sourceArtifactId || !PROTECTED_HOSTING_MODES.includes(sample.hostingMode)) {
+        throw new BadRequestException("نمونه باید فایل PDF بارگذاری‌شده داشته باشد.");
+      }
+    }
+    await this.prisma.resource.update({ where: { id: resourceId }, data: { sampleResourceId } });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: sampleResourceId ? "resource.sample_linked" : "resource.sample_unlinked",
+      targetType: "Resource",
+      targetId: resourceId,
+      metadata: { sampleResourceId },
+    });
+    return { id: resourceId, sampleResourceId };
+  }
+
   async getResourceAdmin(id: string) {
     return this.resourceWithPendingVersion(await this.getResourceCanonical(id));
   }
@@ -525,9 +559,24 @@ export class EditorialService {
       orderBy: { createdAt: "asc" },
       select: { slug: true, title: true },
     });
+    // A free sample of this handout, and the paid handouts this one samples.
+    const [sample, sampleFor] = await Promise.all([
+      resource.sampleResourceId
+        ? this.prisma.resource.findFirst({
+            where: { id: resource.sampleResourceId, reviewStatus: ReviewStatus.PUBLISHED },
+            select: { slug: true, title: true },
+          })
+        : null,
+      this.prisma.resource.findMany({
+        where: { sampleResourceId: resource.id, reviewStatus: ReviewStatus.PUBLISHED },
+        select: { slug: true, title: true },
+      }),
+    ]);
     return {
       ...this.toPublicResource(resource, await this.canAccessResource(userId, resource.id, resource.accessMode)),
       courses,
+      sample,
+      sampleFor,
     };
   }
 

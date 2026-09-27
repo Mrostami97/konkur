@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
 import { Role } from "@prisma/client";
@@ -16,6 +16,7 @@ import {
   UpdateContentSourceDto,
   UpdateContributorDto,
   UpdateResourceDto,
+  SetResourceSampleDto,
 } from "./dto/editorial.dto";
 import { EditorialService } from "./editorial.service";
 
@@ -131,6 +132,13 @@ export class EditorialAdminController {
   @Roles(Role.AUTHOR, Role.ADMIN)
   updateResource(@Param("id") id: string, @Req() request: RequestWithUser, @Body() dto: UpdateResourceDto) {
     return this.editorial.updateResource(id, request.user!.id, dto);
+  }
+
+  /** The free sample of a paid handout (a link, set directly). */
+  @Put("resources/:id/sample")
+  @Roles(Role.AUTHOR, Role.ADMIN)
+  setSample(@Param("id") id: string, @Req() request: RequestWithUser, @Body() dto: SetResourceSampleDto) {
+    return this.editorial.setResourceSample(request.user!.id, id, dto.sampleResourceId ?? null);
   }
 
   @Post("resources/:id/revise")

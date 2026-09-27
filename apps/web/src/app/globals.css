@@ -446,6 +446,7 @@ kbd { display: inline-block; min-width: 1.5em; padding: 0 0.35em; border: 1px so
 .answer-first p { margin: .25rem 0 0; color: var(--ink-800); font-size: .86rem; }
 .answer-first .resource-with-courses { margin-top: .6rem; color: var(--ink-700); }
 .answer-first .resource-with-courses a { color: var(--accent); font-weight: var(--weight-semibold); }
+.answer-first .resource-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .6rem; margin-top: .7rem; }
 .editorial-body { padding: 1rem 1.4rem 2rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: rgba(255,255,255,.9); }
 .editorial-body section { scroll-margin-top: 95px; padding-top: 1.2rem; }
 .editorial-body h2 { margin: .4rem 0 .7rem; color: var(--navy); font-size: 1.35rem; }

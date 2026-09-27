@@ -224,7 +224,7 @@ describe("Sold handouts: upload, watermarked personal copies (e2e)", () => {
     expect(opened.map((entry) => (entry.metadata as { copyCode?: string }).copyCode)).toContain(copyCode);
   });
   /** Uploads a PDF and publishes it as a resource with the given access. */
-  async function publishHandout(label: string, accessMode: "ENTITLEMENT" | "PUBLIC") {
+  async function publishHandout(label: string, accessMode: "ENTITLEMENT" | "ACCOUNT" | "PUBLIC") {
     const uploaded = await request(app.getHttpServer())
       .post("/admin/resource-files")
       .set("Cookie", adminCookie)
@@ -342,5 +342,33 @@ describe("Sold handouts: upload, watermarked personal copies (e2e)", () => {
     const lateBuyer = await login(randomPhone());
     await purchaseProduct(app, { buyerCookie: lateBuyer, adminCookie, productId: courseProduct.body.id });
     await request(app.getHttpServer()).get(contentPath).set("Cookie", lateBuyer).expect(403);
+  });
+
+  it("links a paid handout to a free sample any signed-in student can read", async () => {
+    const paid = await publishHandout("sampled-handout", "ENTITLEMENT");
+    const sample = await publishHandout("sampled-handout-free", "ACCOUNT");
+    const otherPaid = await publishHandout("sampled-handout-other", "ENTITLEMENT");
+
+    // A paid resource is not a sample, nor is the handout itself.
+    await request(app.getHttpServer()).put(`/admin/resources/${paid.id}/sample`).set("Cookie", adminCookie).send({ sampleResourceId: otherPaid.id }).expect(400);
+    await request(app.getHttpServer()).put(`/admin/resources/${paid.id}/sample`).set("Cookie", adminCookie).send({ sampleResourceId: paid.id }).expect(400);
+    await request(app.getHttpServer()).put(`/admin/resources/${paid.id}/sample`).set("Cookie", adminCookie).send({ sampleResourceId: sample.id }).expect(200);
+
+    const paidPage = await request(app.getHttpServer()).get(`/resources/${paid.slug}`).expect(200);
+    expect(paidPage.body.sample).toEqual({ slug: sample.slug, title: "Handout sampled-handout-free" });
+    expect(paidPage.body.canAccess).toBe(false);
+    const samplePage = await request(app.getHttpServer()).get(`/resources/${sample.slug}`).expect(200);
+    expect(samplePage.body.sampleFor).toEqual([{ slug: paid.slug, title: "Handout sampled-handout" }]);
+
+    // Free to any signed-in student, stamped and sealed like a sold copy; the paid one stays closed.
+    await request(app.getHttpServer()).get(`/resources/${sample.slug}/content`).expect(401);
+    const student = await login(randomPhone());
+    const copy = await request(app.getHttpServer()).get(`/resources/${sample.slug}/content`).set("Cookie", student).buffer(true).parse(binary).expect(200);
+    expect(copy.headers["content-type"]).toContain(SEALED_MIME);
+    expect((await PDFDocument.load(unseal(copy.body as Buffer))).getPageCount()).toBe(2);
+    await request(app.getHttpServer()).get(`/resources/${paid.slug}/content`).set("Cookie", student).expect(403);
+
+    await request(app.getHttpServer()).put(`/admin/resources/${paid.id}/sample`).set("Cookie", adminCookie).send({ sampleResourceId: null }).expect(200);
+    expect((await request(app.getHttpServer()).get(`/resources/${paid.slug}`).expect(200)).body.sample).toBeNull();
   });
 });

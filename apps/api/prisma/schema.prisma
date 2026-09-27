@@ -418,6 +418,13 @@ model Resource {
   sources           ResourceSource[]
   productGrants     ProductResourceGrant[]
   courseMaterials   CourseMaterial[]
+  /// A free sample of this (paid) handout -- e.g. its first two chapters --
+  /// that any signed-in student can read in the panel. The sample is its
+  /// own published resource; this is only the pointer the handout page and
+  /// the reader use to connect the two. Not versioned: it is a link, not text.
+  sampleResourceId  String?
+  sample            Resource?              @relation("ResourceSample", fields: [sampleResourceId], references: [id], onDelete: SetNull)
+  sampleFor         Resource[]             @relation("ResourceSample")
   savedBy           SavedResource[]
   planTasks         Task[]
   createdAt         DateTime               @default(now())

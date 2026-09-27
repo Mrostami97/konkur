@@ -84,6 +84,10 @@ export interface PublicResourceRecord {
   externalUrl?: string;
   /** Published courses this handout comes with (detail endpoint only). */
   courses?: { slug: string; title: string }[];
+  /** A paid handout’s free sample, e.g. its first chapters (detail endpoint only). */
+  sample?: { slug: string; title: string } | null;
+  /** On a free sample: the paid handouts it is the sample of (detail endpoint only). */
+  sampleFor?: { slug: string; title: string }[];
   catalogProfile?: {
     learningType?: string;
     startLevel?: string;

@@ -16,6 +16,27 @@ import { studentName, useStudent } from "../../student-context";
  * is fetched by the reader, which receives a copy stamped with this
  * student's name and number.
  */
+/**
+ * On a free sample (e.g. the first chapters): which paid handout it comes
+ * from, and the way to get all of it -- once above the reader and again
+ * after the last page.
+ */
+function SampleCta({ resource, end = false }: { resource: PublicResourceRecord; end?: boolean }) {
+  const paid = resource.sampleFor ?? [];
+  if (paid.length === 0) return null;
+  return (
+    <div className="st-sample-cta" data-end={end || undefined}>
+      <p>
+        {end ? "نمونه تمام شد. " : "این نمونهٔ رایگان است. "}
+        جزوهٔ کامل: <b>{paid[0].title}</b>
+      </p>
+      <Link href={`/resources/${paid[0].slug}`} className="st-btn st-btn-primary">
+        {end ? "تهیهٔ جزوهٔ کامل" : "دیدن جزوهٔ کامل"}
+      </Link>
+    </div>
+  );
+}
+
 export default function LibraryReaderPage({ params }: { params: { slug: string } }) {
   const { me, profile } = useStudent();
   const [resource, setResource] = useState<PublicResourceRecord | null | undefined>(undefined);
@@ -62,7 +83,11 @@ export default function LibraryReaderPage({ params }: { params: { slug: string }
           </div>
         </div>
       ) : (
-        <DocumentReader slug={resource.slug} identity={identity} />
+        <>
+          <SampleCta resource={resource} />
+          <DocumentReader slug={resource.slug} identity={identity} />
+          <SampleCta resource={resource} end />
+        </>
       )}
     </AccountShell>
   );
