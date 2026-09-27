@@ -104,7 +104,7 @@ export default function AboutPage() {
           </div>
         </div>
         <div className="about-logo-lockup">
-          <Image src="/brand/konkurcom-logo.png" alt="نشان کنکور کامپیوتر" width={150} height={150} priority />
+          <Image src="/brand/logo-320.webp" alt="نشان کنکور کامپیوتر" width={150} height={150} priority unoptimized />
           <span dir="ltr">kunkurcomputer.ir</span>
         </div>
       </section>

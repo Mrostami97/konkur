@@ -45,7 +45,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
       <div className="ft-grid">
         <div className="ft-brand">
           <Link href="/" className="ft-logo" aria-label="کنکور کامپیوتر">
-            <Image src="/brand/konkurcom-logo.png" alt="" width={56} height={56} />
+            <Image src="/brand/logo-128.webp" alt="" width={56} height={56} unoptimized />
             <span>
               <strong>کنکور کامپیوتر</strong>
               <small dir="ltr">kunkurcomputer.ir</small>

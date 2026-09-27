@@ -15,6 +15,7 @@ import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { PasswordLoginDto } from "./dto/password-login.dto";
 import { IdentityService } from "./identity.service";
 import { SessionAuthGuard, RequestWithUser } from "./guards/session-auth.guard";
+import { OptionalSessionAuthGuard } from "./guards/optional-session-auth.guard";
 
 const SESSION_COOKIE = "session";
 const SESSION_TTL_HOURS = Number(process.env.SESSION_TTL_HOURS ?? 720);
@@ -96,5 +97,17 @@ export class IdentityController {
   @UseGuards(SessionAuthGuard)
   me(@Req() req: RequestWithUser) {
     return { user: req.user };
+  }
+
+  /**
+   * "Who is this, if anyone?" for pages every visitor opens. Unlike /me it
+   * answers 200 with a null user when signed out: a 401 on every page view
+   * is noise, and the CDN in front replaces error bodies with its own
+   * 86 KB HTML page.
+   */
+  @Get("session")
+  @UseGuards(OptionalSessionAuthGuard)
+  session(@Req() req: RequestWithUser) {
+    return { user: req.user ?? null };
   }
 }

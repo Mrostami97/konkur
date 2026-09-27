@@ -59,6 +59,9 @@ services:
       DATABASE_URL: postgresql://konkur:${POSTGRES_PASSWORD:-konkur}@postgres:5432/konkurcom?schema=public
       PORT: 3001
       FRONTEND_URL: https://${WEB_DOMAIN:-localhost}
+      # Proxies in front of nginx: the CDN. Rate limits key on the visitor
+      # this many X-Forwarded-For entries from the right (0 without a CDN).
+      TRUSTED_PROXY_HOPS: ${TRUSTED_PROXY_HOPS:-1}
       SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-720}
       OTP_TTL_MINUTES: ${OTP_TTL_MINUTES:-5}
       OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS:-5}

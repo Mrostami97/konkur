@@ -1,7 +1,9 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
-import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { ThrottlerModule } from "@nestjs/throttler";
+import { ClientThrottlerGuard } from "./common/client-throttler.guard";
+import { noStoreByDefault } from "./common/no-store.middleware";
 import { PrismaModule } from "./prisma/prisma.module";
 import { HealthModule } from "./health/health.module";
 import { AuditModule } from "./modules/audit/audit.module";
@@ -30,7 +32,9 @@ import { SiteModule } from "./modules/site/site.module";
     // trip the OTP-specific limit and fail tests that have nothing to do
     // with rate limiting itself.
     ThrottlerModule.forRoot({
-      throttlers: [{ name: "default", ttl: 60_000, limit: 60 }],
+      // Per visitor (see ClientThrottlerGuard); a busy admin screen alone
+      // makes a dozen calls, so a minute allows a generous 120.
+      throttlers: [{ name: "default", ttl: 60_000, limit: 120 }],
       skipIf: () => process.env.NODE_ENV === "test",
     }),
     ScheduleModule.forRoot(),
@@ -53,6 +57,10 @@ import { SiteModule } from "./modules/site/site.module";
     AchievementsModule,
     SiteModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [{ provide: APP_GUARD, useClass: ClientThrottlerGuard }],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(noStoreByDefault).forRoutes("*");
+  }
+}

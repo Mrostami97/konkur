@@ -38,7 +38,7 @@ function InstructorChrome({ children }: { children: ReactNode }) {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link className="admin-sidebar-brand" href="/instructor">
-          <Image className="admin-sidebar-logo" src="/brand/konkurcom-logo.png" alt="" width={40} height={40} />
+          <Image className="admin-sidebar-logo" src="/brand/logo-128.webp" alt="" width={40} height={40} unoptimized />
           <span>
             کنکور کامپیوتر
             <small>پنل مدرس</small>

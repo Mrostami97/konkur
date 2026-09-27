@@ -1,3 +1,19 @@
+# Next marks prerendered pages cacheable for a year (s-maxage=31536000). The
+# CDN in front honours that, so after a deploy it would keep serving the old
+# HTML -- whose JavaScript chunks no longer exist, leaving pages that load but
+# do not respond. A minute at the edge keeps pages fast and deploys visible.
+map $upstream_http_cache_control $web_cache_control {
+    "~s-maxage=31536000" "public, max-age=0, s-maxage=60";
+    default $upstream_http_cache_control;
+}
+
+# The API sends JSON uncompressed; Next compresses its own responses, and
+# nginx never compresses a response twice.
+gzip on;
+gzip_proxied any;
+gzip_min_length 1024;
+gzip_types application/json text/plain text/css application/javascript image/svg+xml application/manifest+json;
+
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -49,6 +65,7 @@ server {
 server {
     listen 443 ssl default_server;
     listen [::]:443 ssl default_server;
+    http2 on;
     server_name ${WEB_DOMAIN};
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
@@ -87,6 +104,28 @@ server {
         proxy_set_header X-Forwarded-Prefix /api;
     }
 
+    # Files from public/ come back with max-age=0, so every page view re-asked
+    # for the font and the logo: one more round trip each on a slow link.
+    location ^~ /fonts/ {
+        set $upstream http://web:3000;
+        proxy_pass $upstream;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control "public, max-age=2592000, stale-while-revalidate=604800" always;
+    }
+
+    location ~ ^/(brand|evidence|pdfjs)/|^/(icon-[0-9]+.png|manifest.json)$ {
+        set $upstream http://web:3000;
+        proxy_pass $upstream;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control "public, max-age=86400, stale-while-revalidate=604800" always;
+    }
+
     location / {
         set $upstream http://web:3000;
         proxy_pass $upstream;
@@ -95,6 +134,8 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control $web_cache_control always;
     }
 }
 
@@ -102,6 +143,7 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl;
     server_name www.${WEB_DOMAIN};
+    http2 on;
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
@@ -117,6 +159,7 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl;
     server_name ${API_DOMAIN};
+    http2 on;
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;

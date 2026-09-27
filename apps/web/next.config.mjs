@@ -10,6 +10,12 @@ const nextConfig = {
   // output because creating pnpm trace symlinks requires Developer Mode.
   output: process.env.NEXT_OUTPUT_MODE === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
+  images: {
+    // Resized copies are kept a week rather than Next's default minute: on a
+    // slow link every revalidation is another round trip. Images whose
+    // content can change under the same path are served unoptimized.
+    minimumCacheTTL: 60 * 60 * 24 * 7,
+  },
   async redirects() {
     // 301 rather than Next's default 308: the classic permanent redirect every crawler handles.
     return mergedPages.redirects.map(({ from, to }) => ({ source: from, destination: to, statusCode: 301 }));

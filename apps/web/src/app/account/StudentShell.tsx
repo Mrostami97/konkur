@@ -173,7 +173,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
         />
         <aside className="st-side" data-open={drawer || undefined} aria-label="منوی پنل دانشجو">
           <Link href="/" className="st-brand">
-            <Image src="/brand/konkurcom-logo.png" alt="" width={38} height={38} />
+            <Image src="/brand/logo-128.webp" alt="" width={38} height={38} unoptimized />
             <span>
               <strong>کنکور کامپیوتر</strong>
               <small>پنل دانشجو</small>

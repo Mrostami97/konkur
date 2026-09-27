@@ -39,8 +39,10 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
   const soon = useComingSoon();
 
   useEffect(() => {
-    apiFetch<{ user: { phone: string } }>("/auth/me")
-      .then((res) => setPhone(res.user.phone))
+    // /auth/session answers 200 even when signed out, so a visitor's every
+    // page view is not a 401 (which the CDN swaps for an 86 KB error page).
+    apiFetch<{ user: { phone: string } | null }>("/auth/session")
+      .then((res) => setPhone(res.user?.phone ?? null))
       .catch(() => setPhone(null))
       .finally(() => setChecked(true));
   }, []);
@@ -191,7 +193,7 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
 
       <div className="hd-inner">
         <Link href="/" className="hd-brand" aria-label="کنکور کامپیوتر، صفحهٔ اصلی">
-          <Image src="/brand/konkurcom-logo.png" alt="" width={42} height={42} priority />
+          <Image src="/brand/logo-128.webp" alt="" width={42} height={42} priority unoptimized />
           <span>
             <strong>کنکور کامپیوتر</strong>
             <small>کلاس، نتیجه و مسیر کنکور کامپیوتر</small>
