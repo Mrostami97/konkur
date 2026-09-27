@@ -148,7 +148,7 @@ export function Onboarding() {
       <aside className="ob-side">
         <div className="ob-brand">
           <Image src="/brand/konkurcom-logo.png" alt="" width={44} height={44} />
-          <strong>کنکورصفریک</strong>
+          <strong>کنکور کامپیوتر</strong>
         </div>
         <h2>خوش آمدی! چند سؤال کوتاه و پنلت آماده است.</h2>
         <ol className="ob-steps">

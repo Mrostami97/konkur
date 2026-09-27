@@ -68,7 +68,7 @@ export async function GET() {
     programResult,
   ].every((result) => result.complete);
   const body = [
-    "# kunkur01",
+    "# kunkurcomputer",
     "",
     "> مرجع فارسی کنکور ارشد و دکتری مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر.",
     "",

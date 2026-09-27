@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata({
     title: "مشاورهٔ کنکور ارشد و دکتری کامپیوتر",
     description:
-      "رزرو مشاورهٔ تک‌جلسه‌ای یا بستهٔ سالیانه تا کنکور با مدرسان کنکورصفریک. زمان جلسه را با خود مدرس هماهنگ می‌کنید.",
+      "رزرو مشاورهٔ تک‌جلسه‌ای یا بستهٔ سالیانه تا کنکور با مدرسان کنکور کامپیوتر. زمان جلسه را با خود مدرس هماهنگ می‌کنید.",
     path: "/consultations",
     // An empty or unreachable catalogue is a thin page; keep it out of the
     // index until there is something real on it.
@@ -57,7 +57,7 @@ export default async function ConsultationsPage() {
       <div className="pg-hero-wrap">
         <div className="pg-shell pg-hero">
           <p className="pg-eyebrow">مشاوره</p>
-          <h1>مشاوره با مدرسان کنکورصفریک</h1>
+          <h1>مشاوره با مدرسان کنکور کامپیوتر</h1>
           <p className="pg-lede">
             مشاوره یا تک‌جلسه‌ای است یا بسته‌ای که تا تاریخ کنکور ادامه دارد. بعد از خرید چند زمان پیشنهاد
             می‌دهید و مدرس یکی را تأیید می‌کند؛ اگر زمانِ تعیین‌شده به شما نخورد می‌توانید لغو کنید و جلسه به

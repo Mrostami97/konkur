@@ -60,7 +60,7 @@ export function EditorialPageView({
             datePublished: editorialDateIso(page.publishedAt),
             dateModified: editorialDateIso(page.reviewedAt),
             mainEntityOfPage: absoluteUrl(path),
-            publisher: { "@type": "Organization", name: "kunkur01", url: absoluteUrl("/") },
+            publisher: { "@type": "Organization", name: "کنکور کامپیوتر", url: absoluteUrl("/") },
             about: [page.degree, page.field, "کنکور تحصیلات تکمیلی"],
           },
           {
@@ -141,7 +141,7 @@ export function EditorialPageView({
           <section className="rd-author" aria-label="تهیه و بازبینی">
             <span className="rd-author-mark" aria-hidden="true">ک</span>
             <div>
-              <strong>تهیه‌شده در تحریریهٔ کنکورصفریک</strong>
+              <strong>تهیه‌شده در تحریریهٔ کنکور کامپیوتر</strong>
               <p>
                 انتساب نویسنده و بازبین این نسخه بعد از تأیید نهایی کنار همین متن می‌آید. هر عدد و تاریخ این صفحه از منبع
                 رسمی آمده و در {page.reviewedAt} بازبینی شده است؛ روش کار ما را در{" "}
@@ -175,7 +175,7 @@ export function EditorialPageView({
           </div>
           <div className="rd-side-cta">
             <strong>آپدیت‌های کنکور را از دست نده</strong>
-            <p>خبرهای اصلی و تحلیل‌ها در کانال رسمی کنکورصفریک منتشر می‌شوند.</p>
+            <p>خبرهای اصلی و تحلیل‌ها در کانال رسمی کنکور کامپیوتر منتشر می‌شوند.</p>
             <a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
             <Link href="/free-videos">ویدیوی رایگان هر درس</Link>
           </div>

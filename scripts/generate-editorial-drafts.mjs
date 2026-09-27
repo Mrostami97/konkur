@@ -48,7 +48,7 @@ const phase12ReviewedAt = phase12Corpus.reviewedAt
   .replaceAll("/", "-");
 const phase12Guides = [...phase12Corpus.planningPages, ...phase12Corpus.officialPages].map((page) => ({
   ...page,
-  author: "تحریریه kunkur01",
+  author: "تحریریه کنکور کامپیوتر",
   reviewer: "در انتظار بازبینی انسانی",
   publishedAt: phase12ReviewedAt,
   reviewedAt: phase12ReviewedAt,
@@ -82,7 +82,7 @@ const phase13Pages = [...phase13Corpus.decisionPages, ...phase13Corpus.caseStudi
     },
     ...page.sections,
   ] : page.sections,
-  author: "تحریریه kunkur01",
+  author: "تحریریه کنکور کامپیوتر",
   reviewer: "در انتظار بازبینی انسانی",
   sources: page.sourceIds.map((sourceId) => {
     const item = phase13Corpus.sources[sourceId];
@@ -114,7 +114,7 @@ const phase17Guides = phase17Corpus.pages.map((page) => ({
   // Phase 17 is the first corpus whose versioned article payload guarantees
   // deployable next-step links. Keep older generated drafts byte-stable.
   contentInternalLinks: page.internalLinks,
-  author: "تحریریه kunkur01",
+  author: "تحریریه کنکور کامپیوتر",
   reviewer: "در انتظار بازبینی انسانی",
   sources: page.sourceIds.map((sourceId) => {
     const item = phase17Corpus.sources[sourceId];
@@ -153,8 +153,17 @@ const pages = [
 ];
 
 const toAsciiDigits = (value) => value.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
+// Our own sources were named before the 2026-09-27 rename (kunkur01 ->
+// kunkurcomputer), and import packages refer to them by these ids. Hashing
+// their pre-rename identity keeps every id exactly what it was.
+const idIdentity = (source) =>
+  source.publisher === "kunkurcomputer"
+    ? ["kunkur01", source.title.replace("کنکور کامپیوتر", "kunkur01"), source.url.replace("kunkurcomputer.ir", "kunkur01.ir")]
+    : source.publisher === "کنکور کامپیوتر"
+      ? ["کنکورصفریک", source.title.replace("کنکور کامپیوتر", "کنکورصفریک"), source.url.replace("kunkurcomputer.ir", "kunkur01.ir")]
+      : [source.publisher, source.title, source.url];
 const sourceId = (source) => "editorial-source-" + createHash("sha256")
-  .update([source.publisher, source.title, source.url].join("\n"))
+  .update(idIdentity(source).join("\n"))
   .digest("hex")
   .slice(0, 20);
 const clamp = (value, max) => value.length <= max ? value : value.slice(0, max - 1).trim() + "…";
@@ -227,7 +236,7 @@ const allSources = new Map();
 for (const page of pages) {
   for (const item of page.sources) {
     const externalId = sourceId(item);
-    const isReusableFirstParty = item.publisher === "kunkur01";
+    const isReusableFirstParty = item.publisher === "kunkurcomputer";
     const isFirstPartyMetadata = isReusableFirstParty
       || item.publisher.includes("آرشیو مستندات آموزشی محمد رستمی");
     const isPrimaryOfficial = item.publisher.includes("سنجش")
@@ -295,7 +304,7 @@ const payloads = pages.map((page) => {
     })),
     provenance: {
       producer_type: page.producerType,
-      producer_name: page.producerType === "external_ai" ? "پیش‌نویس دستیار تحریریهٔ kunkur01" : "تحریریه kunkur01",
+      producer_name: page.producerType === "external_ai" ? "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر" : "تحریریه کنکور کامپیوتر",
       source_artifact: page.sourceArtifact,
     },
     review_status: "draft",

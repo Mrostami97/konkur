@@ -127,7 +127,7 @@ async function seedCourseAndProduct(authorId: string) {
     taxonomy: { major: ["computer-engineering"], tags: ["algorithms"] },
     provenance: {
       producer_type: "human",
-      producer_name: "kunkur01 seed",
+      producer_name: "kunkurcomputer seed",
       source_artifact: "apps/api/src/seed.ts",
     },
     review_status: "approved",

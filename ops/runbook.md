@@ -167,7 +167,7 @@ before every hot reload, so a partial or mismatched pair is never activated.
 Production `.env` should include at least:
 
 ```dotenv
-WEB_DOMAIN=kunkur01.ir
+WEB_DOMAIN=kunkurcomputer.ir
 TLS_MODE=auto
 ACME_EMAIL=owner@example.com
 ```
@@ -181,9 +181,9 @@ Verification commands:
 
 ```bash
 docker compose logs --tail 100 certbot nginx
-curl -I https://kunkur01.ir/
-curl -I https://www.kunkur01.ir/     # expected: 308 to the apex host
-curl https://kunkur01.ir/api/healthz
+curl -I https://kunkurcomputer.ir/
+curl -I https://www.kunkurcomputer.ir/     # expected: 308 to the apex host
+curl https://kunkurcomputer.ir/api/healthz
 ```
 
 Do not delete `letsencrypt_data` during a normal redeploy. If a bootstrap

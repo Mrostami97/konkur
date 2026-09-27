@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 
-const site = new URL(process.env.SITE_URL ?? "https://kunkur01.ir");
+const site = new URL(process.env.SITE_URL ?? "https://kunkurcomputer.ir");
 const siteOrigin = site.origin;
 const fetchOrigin = new URL(process.env.SITE_FETCH_URL ?? siteOrigin).origin;
 const key = (await readFile(new URL("../apps/web/public/indexnow-key.txt", import.meta.url), "utf8")).trim();
@@ -26,7 +26,7 @@ function locations(xml) {
 }
 
 async function fetchText(url) {
-  const response = await fetch(url, { headers: { "user-agent": "kunkur01-indexnow/1.0" } });
+  const response = await fetch(url, { headers: { "user-agent": "kunkurcomputer-indexnow/1.0" } });
   if (!response.ok) throw new Error(`Unable to read ${url}: HTTP ${response.status}`);
   return response.text();
 }

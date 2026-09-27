@@ -124,7 +124,7 @@ function LearnBlock({ title, learning }: { title: string; learning: SubjectLearn
   return (
     <section id="learn" className="rd-block" aria-labelledby="learn-title">
       <div className="rd-block-head">
-        <span className="eyebrow">یادگیری در کنکورصفریک</span>
+        <span className="eyebrow">یادگیری در کنکور کامپیوتر</span>
         <h2 id="learn-title">{title} را از همین‌جا یاد بگیر</h2>
         <p>از کلاس رایگان برای ساختن پایه، تا دورهٔ کنکوری و برنامهٔ هفتگی با مشاور.</p>
       </div>
@@ -275,7 +275,7 @@ function CanonicalSubjectPage({ subject, learning }: { subject: PublicSubjectDet
       description: subject.description ?? undefined,
       termCode: subject.code,
       url: absoluteUrl(path),
-      inDefinedTermSet: { "@type": "DefinedTermSet", name: "نقشهٔ دروس کنکورصفریک", url: absoluteUrl("/subjects") },
+      inDefinedTermSet: { "@type": "DefinedTermSet", name: "نقشهٔ دروس کنکور کامپیوتر", url: absoluteUrl("/subjects") },
       ...(phase11 ? { citation: phase11.sources.map((source) => source.url) } : {}),
     },
     {
@@ -382,7 +382,7 @@ function LegacySubjectPage({ slug, apiUnavailable, learning }: { slug: string; a
       name: subject.title,
       description: phase11.quickAnswer,
       url: absoluteUrl(path),
-      inDefinedTermSet: { "@type": "DefinedTermSet", name: "نقشهٔ دروس کنکورصفریک", url: absoluteUrl("/subjects") },
+      inDefinedTermSet: { "@type": "DefinedTermSet", name: "نقشهٔ دروس کنکور کامپیوتر", url: absoluteUrl("/subjects") },
       citation: phase11.sources.map((source) => source.url),
     },
     {

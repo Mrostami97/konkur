@@ -28,8 +28,8 @@ interface SearchResponse {
 }
 
 export const metadata: Metadata = pageMetadata({
-  title: "جست‌وجوی محتوای کنکورصفریک",
-  description: "جست‌وجوی یکپارچه میان درس‌ها، مباحث، راهنماها، مقاله‌ها، منابع و نویسندگان کنکورصفریک.",
+  title: "جست‌وجوی محتوای کنکور کامپیوتر",
+  description: "جست‌وجوی یکپارچه میان درس‌ها، مباحث، راهنماها، مقاله‌ها، منابع و نویسندگان کنکور کامپیوتر.",
   path: "/search",
   noIndex: true,
 });

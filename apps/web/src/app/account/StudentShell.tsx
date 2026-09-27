@@ -175,7 +175,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
           <Link href="/" className="st-brand">
             <Image src="/brand/konkurcom-logo.png" alt="" width={38} height={38} />
             <span>
-              <strong>کنکورصفریک</strong>
+              <strong>کنکور کامپیوتر</strong>
               <small>پنل دانشجو</small>
             </span>
           </Link>

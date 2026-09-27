@@ -7,7 +7,7 @@
       "externalId": "phase14-source-konkurcom-138",
       "kind": "FIRST_PARTY_CHANNEL",
       "title": "پست سرفصل داده‌ساختار و الگوریتم ۱۴۰۶",
-      "publisher": "کنکورصفریک (@konkurcom)",
+      "publisher": "کنکور کامپیوتر (@konkurcom)",
       "canonicalUrl": "https://t.me/konkurcom/138",
       "sourceTier": "FIRST_PARTY",
       "checkedAt": "2026-09-09T00:00:00.000Z",
@@ -231,7 +231,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:data-structures-algorithms-syllabus-1406"
       }
     },
@@ -280,7 +280,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:amortized-analysis-telegram-4014"
       }
     },
@@ -329,7 +329,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:hashing-telegram-4050"
       }
     },
@@ -378,7 +378,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:huffman-telegram-4049"
       }
     },
@@ -427,7 +427,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:minimum-spanning-tree-telegram-4544"
       }
     },
@@ -476,7 +476,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:recurrence-relations-telegram-4976"
       }
     },
@@ -525,7 +525,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:quick-sort-telegram-4978"
       }
     },
@@ -573,7 +573,7 @@
       "reviewStatus": "DRAFT",
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "kunkur01 Phase 14 assisted draft",
+        "producer_name": "kunkurcomputer Phase 14 assisted draft",
         "source_artifact": "apps/web/src/content/phase14-resource-corpus.json:automata-telegram-4979"
       }
     }

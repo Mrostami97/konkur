@@ -18,15 +18,15 @@ const bingSiteVerification = process.env.BING_SITE_VERIFICATION?.trim();
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "کنکورصفریک | مرجع کنکور ارشد و دکتری کامپیوتر", template: "%s | کنکورصفریک" },
+  title: { default: "کنکور کامپیوتر | مرجع کنکور ارشد و دکتری کامپیوتر", template: "%s | کنکور کامپیوتر" },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   keywords: ["کنکور ارشد کامپیوتر", "کنکور دکتری کامپیوتر", "کنکور IT", "علوم کامپیوتر", "منابع کنکور کامپیوتر"],
-  authors: [{ name: "kunkur01" }],
-  creator: "kunkur01",
-  publisher: "kunkur01",
-  openGraph: { type: "website", locale: "fa_IR", siteName: SITE_NAME, title: "کنکورصفریک", description: SITE_DESCRIPTION, url: "/", images: [{ url: "/brand/konkurcom-logo.png", width: 600, height: 600, alt: SITE_NAME }] },
-  twitter: { card: "summary_large_image", title: "کنکورصفریک", description: SITE_DESCRIPTION, images: ["/brand/konkurcom-logo.png"] },
+  authors: [{ name: "کنکور کامپیوتر" }],
+  creator: "کنکور کامپیوتر",
+  publisher: "کنکور کامپیوتر",
+  openGraph: { type: "website", locale: "fa_IR", siteName: SITE_NAME, title: "کنکور کامپیوتر", description: SITE_DESCRIPTION, url: "/", images: [{ url: "/brand/konkurcom-logo.png", width: 600, height: 600, alt: SITE_NAME }] },
+  twitter: { card: "summary_large_image", title: "کنکور کامپیوتر", description: SITE_DESCRIPTION, images: ["/brand/konkurcom-logo.png"] },
   manifest: "/manifest.json",
   ...(googleSiteVerification || bingSiteVerification
     ? {
@@ -66,8 +66,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <StructuredData data={[
-          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom"] },
-          { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکورصفریک", alternateName: "kunkur01", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
+          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکور کامپیوتر", alternateName: "kunkurcomputer", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom"] },
+          { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکور کامپیوتر", alternateName: "kunkurcomputer", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
         ]} />
         <PublicChrome>
           <SiteHeader subjects={NAV_SUBJECTS} />

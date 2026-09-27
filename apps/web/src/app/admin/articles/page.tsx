@@ -374,7 +374,7 @@ function ArticlesAdmin() {
       provenance:
         asRecord(previous?.provenance) ?? {
           producer_type: "human",
-          producer_name: "تحریریه kunkur01",
+          producer_name: "تحریریه کنکور کامپیوتر",
           source_artifact: "admin-editor",
         },
       review_status: "draft",

@@ -35,13 +35,13 @@ assert.deepEqual(pairs, [
   { question: "شاغلم. می‌توانم هم‌زمان بخوانم؟", answer: "می‌توانی." },
 ], "only question-shaped H3 headings with a visible answer become FAQ entries, and bullet marks are dropped");
 
-const schema = faqPageSchema(blocks, "https://kunkur01.ir/articles/x");
+const schema = faqPageSchema(blocks, "https://kunkurcomputer.ir/articles/x");
 assert.equal(schema["@type"], "FAQPage");
-assert.equal(schema["@id"], "https://kunkur01.ir/articles/x#faq");
+assert.equal(schema["@id"], "https://kunkurcomputer.ir/articles/x#faq");
 assert.equal(schema.mainEntity.length, 2);
 assert.equal(schema.mainEntity[0].acceptedAnswer.text, "بله. ریاضیات گسسته را اول بخوان.");
 
-assert.equal(faqPageSchema([h3("فقط یک سؤال؟"), p("یک جواب.")], "https://kunkur01.ir/a"), null, "a single question is not an FAQ page");
-assert.equal(faqPageSchema([h2("یک سؤال؟"), p("H2 is not a FAQ question."), h2("دو؟"), p("x")], "https://kunkur01.ir/a"), null, "only H3 headings count");
+assert.equal(faqPageSchema([h3("فقط یک سؤال؟"), p("یک جواب.")], "https://kunkurcomputer.ir/a"), null, "a single question is not an FAQ page");
+assert.equal(faqPageSchema([h2("یک سؤال؟"), p("H2 is not a FAQ question."), h2("دو؟"), p("x")], "https://kunkurcomputer.ir/a"), null, "only H3 headings count");
 
 console.log("FAQ schema tests passed: question headings, answers, bullets and the two-question minimum were verified.");

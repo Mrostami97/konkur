@@ -1,11 +1,11 @@
-# کنکورصفریک — Knowledge Graph Content Strategy
+# کنکور کامپیوتر — Knowledge Graph Content Strategy
 
 Status: owner-approved strategic direction  
 Date: 2026-09-19
 
 ## Core principle
 
-کنکورصفریک should not compete by publishing “more articles”. It should become a connected, source-backed knowledge system for computer-science entrance exams.
+کنکور کامپیوتر should not compete by publishing “more articles”. It should become a connected, source-backed knowledge system for computer-science entrance exams.
 
 Every substantial content page should answer two questions:
 
@@ -192,7 +192,7 @@ Do not invent “AI SEO” tricks that reduce human usefulness.
 
 ## Editorial quality bar
 
-A kunkur01 page should be publishable only when:
+A kunkurcomputer page should be publishable only when:
 
 - it solves a real user intent,
 - its factual claims are sourced where needed,

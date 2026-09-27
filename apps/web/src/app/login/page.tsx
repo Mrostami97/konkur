@@ -169,7 +169,7 @@ export default function LoginPage() {
       </section>
 
       <aside className="lg-side" aria-label="با حساب کاربری">
-        <p className="lg-side-kicker">کنکورصفریک</p>
+        <p className="lg-side-kicker">کنکور کامپیوتر</p>
         <h2>یک جا برای برنامه، تمرین و نتیجه</h2>
         <ul>
           <li><b>برنامهٔ امروز</b><span>کار هر روز، کوتاه و مشخص</span></li>

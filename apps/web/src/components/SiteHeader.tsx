@@ -190,10 +190,10 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
       </div>
 
       <div className="hd-inner">
-        <Link href="/" className="hd-brand" aria-label="کنکورصفریک، صفحهٔ اصلی">
+        <Link href="/" className="hd-brand" aria-label="کنکور کامپیوتر، صفحهٔ اصلی">
           <Image src="/brand/konkurcom-logo.png" alt="" width={42} height={42} priority />
           <span>
-            <strong>کنکورصفریک</strong>
+            <strong>کنکور کامپیوتر</strong>
             <small>کلاس، نتیجه و مسیر کنکور کامپیوتر</small>
           </span>
         </Link>

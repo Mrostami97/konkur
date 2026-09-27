@@ -1,4 +1,4 @@
-# کنکورصفریک — UI redesign (local review build)
+# کنکور کامپیوتر — UI redesign (local review build)
 
 Status: approved by the owner on 2026-09-25.
 

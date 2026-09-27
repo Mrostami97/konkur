@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
 
 const webDirectory = fileURLToPath(new URL("..", import.meta.url));
-const canonicalOrigin = "https://kunkur01.ir";
+const canonicalOrigin = "https://kunkurcomputer.ir";
 
 function article(slug, contentType) {
   return {

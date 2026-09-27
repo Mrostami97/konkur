@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const baseUrl = (process.env.WEB_TEST_BASE_URL ?? "http://127.0.0.1:3012").replace(/\/$/, "");
-const canonicalOrigin = (process.env.WEB_TEST_CANONICAL_ORIGIN ?? "https://kunkur01.ir").replace(/\/$/, "");
+const canonicalOrigin = (process.env.WEB_TEST_CANONICAL_ORIGIN ?? "https://kunkurcomputer.ir").replace(/\/$/, "");
 const corpusUrl = new URL("../src/content/phase11-corpus.json", import.meta.url);
 const corpus = JSON.parse(await readFile(corpusUrl, "utf8"));
 

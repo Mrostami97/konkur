@@ -5,7 +5,7 @@ import { pageMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "سیاست اصلاح، نسخه‌بندی و گزارش خطا",
-  description: "نحوهٔ گزارش، بررسی و ثبت اصلاحات مطالب زمان‌حساس در kunkur01.",
+  description: "نحوهٔ گزارش، بررسی و ثبت اصلاحات مطالب زمان‌حساس در کنکور کامپیوتر.",
   path: "/corrections",
 });
 
@@ -33,7 +33,7 @@ export default function CorrectionsPage() {
         <section className="surface-card">
           <h2>یک گزارش مفید چه دارد؟</h2>
           <p>نشانی دقیق صفحه، عبارت مورد اعتراض، توضیح کوتاه خطا و ــ اگر ممکن است ــ پیوند سند معتبر را بفرست. اطلاعات شخصی غیرضروری یا مدارک محرمانه را در پیام عمومی منتشر نکن.</p>
-          <p>تنها کانال رسمی کنکورصفریک <strong dir="ltr">@konkurcom</strong> است. برای پیدا کردن راه ارتباطی اعلام‌شده و بررسی اصالت حساب، از همین نشانی استفاده کن.</p>
+          <p>تنها کانال رسمی کنکور کامپیوتر <strong dir="ltr">@konkurcom</strong> است. برای پیدا کردن راه ارتباطی اعلام‌شده و بررسی اصالت حساب، از همین نشانی استفاده کن.</p>
           <a className="button button-primary" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">رفتن به @konkurcom</a>
         </section>
       </div>

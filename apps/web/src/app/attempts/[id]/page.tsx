@@ -285,7 +285,7 @@ export default function AttemptPage({ params }: { params: { id: string } }) {
         <header className="at-bar">
           <div className="at-bar-inner">
             <div className="at-title">
-              <span className="at-brand">کنکورصفریک · آزمون</span>
+              <span className="at-brand">کنکور کامپیوتر · آزمون</span>
               <h1>{attempt.examTitle}</h1>
             </div>
             <div className="at-progress" aria-label={`${toPersianDigits(answered)} از ${toPersianDigits(total)} سؤال پاسخ داده شده`}>

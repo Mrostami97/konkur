@@ -4,7 +4,7 @@ import { EmptyState, PageHeader } from "../components/ui";
 
 export const metadata: Metadata = {
   title: "صفحه پیدا نشد",
-  description: "نشانی درخواستی در کنکورصفریک پیدا نشد.",
+  description: "نشانی درخواستی در کنکور کامپیوتر پیدا نشد.",
   robots: { index: false, follow: true },
 };
 

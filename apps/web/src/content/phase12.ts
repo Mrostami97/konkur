@@ -102,7 +102,7 @@ export function phase12PageToEditorial(page: Phase12Page): EditorialPage {
     category: page.category,
     degree: page.degree,
     field: page.field,
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "در انتظار بازبینی انسانی",
     publishedAt: reviewedAt,
     reviewedAt,

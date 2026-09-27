@@ -84,10 +84,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     noIndex: true,
   });
   return pageMetadata({
-    title: `${result.contributor.displayName}؛ نویسنده و بازبین کنکورصفریک`,
+    title: `${result.contributor.displayName}؛ نویسنده و بازبین کنکور کامپیوتر`,
     description:
       result.contributor.shortBio ??
-      `پروفایل و فهرست مطالب منتشرشدهٔ ${result.contributor.displayName} در کنکورصفریک.`,
+      `پروفایل و فهرست مطالب منتشرشدهٔ ${result.contributor.displayName} در کنکور کامپیوتر.`,
     path: `/authors/${result.contributor.slug}`,
   });
 }

@@ -5,7 +5,7 @@ import { pageMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "سیاست تحریریه و روش تولید محتوا",
-  description: "روش انتخاب موضوع، منبع‌یابی، نگارش، بازبینی و به‌روزرسانی مطالب kunkur01.",
+  description: "روش انتخاب موضوع، منبع‌یابی، نگارش، بازبینی و به‌روزرسانی مطالب کنکور کامپیوتر.",
   path: "/editorial-policy",
 });
 

@@ -32,7 +32,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
     <footer className="ft">
       <div className="ft-cta">
         <div>
-          <p className="ft-cta-kicker">کانال رسمی کنکورصفریک</p>
+          <p className="ft-cta-kicker">کانال رسمی کنکور کامپیوتر</p>
           <h2>نتیجه‌ها، جزوه‌ها و خبرهای کنکور را از خود کانال بگیر</h2>
           <p>هر رتبه‌ای که در سایت می‌بینی اول همان‌جا منتشر شده؛ اطلاعیه‌های سنجش هم با منبع می‌آید.</p>
         </div>
@@ -44,11 +44,11 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
 
       <div className="ft-grid">
         <div className="ft-brand">
-          <Link href="/" className="ft-logo" aria-label="کنکورصفریک">
+          <Link href="/" className="ft-logo" aria-label="کنکور کامپیوتر">
             <Image src="/brand/konkurcom-logo.png" alt="" width={56} height={56} />
             <span>
-              <strong>کنکورصفریک</strong>
-              <small dir="ltr">kunkur01.ir</small>
+              <strong>کنکور کامپیوتر</strong>
+              <small dir="ltr">kunkurcomputer.ir</small>
             </span>
           </Link>
           <p>کلاس درس‌به‌درس، ویدیوی رایگان، راهنمای رسمی ۱۴۰۶ و ابزار انتخاب‌رشته برای ارشد و دکتری مهندسی کامپیوتر، IT و علوم کامپیوتر.</p>
@@ -91,7 +91,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
       </div>
 
       <div className="ft-bottom">
-        <span>© ۱۴۰۵ کنکورصفریک · <bdi dir="ltr">kunkur01</bdi></span>
+        <span>© ۱۴۰۵ کنکور کامپیوتر · <bdi dir="ltr">kunkurcomputer.ir</bdi></span>
         <span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند؛ پیش از هر اقدام، اطلاعیهٔ رسمی سنجش را هم ببین.</span>
       </div>
     </footer>

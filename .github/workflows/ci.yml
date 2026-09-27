@@ -214,9 +214,9 @@ jobs:
           PORT: "3001"
           FRONTEND_URL: http://127.0.0.1:3012
           INTERNAL_API_URL: http://127.0.0.1:3001
-          NEXT_PUBLIC_SITE_URL: https://kunkur01.ir
+          NEXT_PUBLIC_SITE_URL: https://kunkurcomputer.ir
           WEB_TEST_BASE_URL: http://127.0.0.1:3012
-          WEB_TEST_CANONICAL_ORIGIN: https://kunkur01.ir
+          WEB_TEST_CANONICAL_ORIGIN: https://kunkurcomputer.ir
         run: |
           set -euo pipefail
 
@@ -271,7 +271,7 @@ jobs:
             pnpm --filter @konkurcom/web run test:phase11:ssr && \
             pnpm --filter @konkurcom/web run test:phase12:ssr && \
             pnpm --filter @konkurcom/web run test:phase13:ssr && \
-            SITE_URL=https://kunkur01.ir SITE_FETCH_URL=http://127.0.0.1:3012 \
+            SITE_URL=https://kunkurcomputer.ir SITE_FETCH_URL=http://127.0.0.1:3012 \
               pnpm run indexnow:submit -- --dry-run
           SSR_STATUS=$?
           set -e
@@ -324,8 +324,8 @@ jobs:
       - name: Validate nginx TLS gateway bootstrap
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
-          WEB_DOMAIN: kunkur01.ir
-          API_DOMAIN: api.kunkur01.ir
+          WEB_DOMAIN: kunkurcomputer.ir
+          API_DOMAIN: api.kunkurcomputer.ir
           TLS_MODE: selfsigned
         run: |
           set -euo pipefail
@@ -391,7 +391,7 @@ jobs:
           # "ERROR:  is not a git checkout" against an empty path.
           DEPLOY_PATH="${DEPLOY_PATH:-/opt/app}"
           SSH_USER="${SSH_USER:-root}"
-          DEPLOY_WEB_DOMAIN="${DEPLOY_WEB_DOMAIN:-kunkur01.ir}"
+          DEPLOY_WEB_DOMAIN="${DEPLOY_WEB_DOMAIN:-kunkurcomputer.ir}"
           DEPLOY_API_DOMAIN="${DEPLOY_API_DOMAIN:-api.$DEPLOY_WEB_DOMAIN}"
           for domain in "$DEPLOY_WEB_DOMAIN" "$DEPLOY_API_DOMAIN"; do
             if ! printf '%s\n' "$domain" | grep -Eiq '^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$'; then

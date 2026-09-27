@@ -6,7 +6,7 @@ This file records the owner's current execution priority as of 2026-09-19. Exist
 
 ## Current priority: Product Completion first
 
-The owner does not consider kunkur01 launch-ready yet. The current priority is to turn the existing codebase into a polished, usable educational product before final release polish, Knowledge Graph work, or advanced programmatic SEO.
+The owner does not consider kunkurcomputer launch-ready yet. The current priority is to turn the existing codebase into a polished, usable educational product before final release polish, Knowledge Graph work, or advanced programmatic SEO.
 
 ### Build now
 
@@ -38,7 +38,7 @@ Current work should remain compatible with those future phases, but should not b
 
 ## Long-term product direction: strong Knowledge Graph
 
-The owner has chosen a strong Knowledge Graph as the long-term content architecture of کنکورصفریک.
+The owner has chosen a strong Knowledge Graph as the long-term content architecture of کنکور کامپیوتر.
 
 Target semantic chain:
 
@@ -88,9 +88,15 @@ Do not publish or commit raw scorecard/result data to this public repository unl
 
 ## Brand and canonical domain
 
-- Brand: **کنکورصفریک**
-- Latin name: **kunkur01**
-- Canonical domain: **https://kunkur01.ir**
+- Brand: **کنکور کامپیوتر**
+- Latin name: **kunkurcomputer**
+- Canonical domain: **https://kunkurcomputer.ir**
+- Telegram channel: **@konkurcom** («کنکور کامپیوتر»); logo: `apps/web/public/brand/konkurcom-logo.png`
+
+Renamed by the owner on 2026-09-27 from کنکورصفریک / kunkur01 / kunkur01.ir. Stable identifiers that still carry
+the old prefix (e.g. article `external_id` values like `kunkur01-lesson-*`) are IDs, not branding: keep them, or
+re-imports create duplicates. A competitor operates at konkurcomputer.ir (k-**o**-nkur); ours is kunkurcomputer.ir
+(k-**u**-nkur). In internal docs about competitors use the Latin `kunkurcomputer` for us so the two are never confused.
 
 Do not rename the brand or canonical domain.
 

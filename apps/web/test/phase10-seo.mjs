@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
 const baseUrl = (process.env.WEB_TEST_BASE_URL ?? "http://127.0.0.1:3012").replace(/\/$/, "");
-const canonicalOrigin = (process.env.WEB_TEST_CANONICAL_ORIGIN ?? "https://kunkur01.ir").replace(/\/$/, "");
+const canonicalOrigin = (process.env.WEB_TEST_CANONICAL_ORIGIN ?? "https://kunkurcomputer.ir").replace(/\/$/, "");
 
 async function read(path) {
   const response = await fetch(`${baseUrl}${path}`);
@@ -72,7 +72,7 @@ assert.match(robots.body, /Allow: \/programs\//);
 
 const llms = await read("/llms.txt");
 assert.equal(llms.response.status, 200);
-assert.match(llms.body, /# kunkur01/);
+assert.match(llms.body, /# kunkurcomputer/);
 assert.match(llms.body, /سیاست اصلاح/);
 assert.match(llms.body, /دانشگاه‌ها و رشته‌محل‌های دارای منبع رسمی/);
 

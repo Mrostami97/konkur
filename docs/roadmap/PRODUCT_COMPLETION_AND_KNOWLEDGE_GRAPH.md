@@ -1,9 +1,9 @@
-# کنکورصفریک — Product Completion → Content Ecosystem → Knowledge Graph
+# کنکور کامپیوتر — Product Completion → Content Ecosystem → Knowledge Graph
 
 Status: owner-approved direction  
 Date: 2026-09-19  
-Brand: کنکورصفریک / kunkur01  
-Domain: https://kunkur01.ir
+Brand: کنکور کامپیوتر / kunkurcomputer  
+Domain: https://kunkurcomputer.ir
 
 ## 1. Product reality
 

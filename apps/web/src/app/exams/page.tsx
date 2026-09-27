@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const exams = await loadExams();
   return pageMetadata({
     title: "آزمون‌های آمادگی کنکور کامپیوتر",
-    description: "فهرست آزمون‌های منتشرشده برای سنجش آمادگی ارشد و دکتری کامپیوتر در کنکورصفریک.",
+    description: "فهرست آزمون‌های منتشرشده برای سنجش آمادگی ارشد و دکتری کامپیوتر در کنکور کامپیوتر.",
     path: "/exams",
     // Until an exam is published this is a "coming soon" page, not one to rank.
     noIndex: exams === null || exams.length === 0,

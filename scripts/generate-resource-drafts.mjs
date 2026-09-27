@@ -48,7 +48,7 @@ const resources = corpus.resources.map((resource) => {
     reviewStatus: "DRAFT",
     provenance: {
       producer_type: "external_ai",
-      producer_name: "kunkur01 Phase 14 assisted draft",
+      producer_name: "kunkurcomputer Phase 14 assisted draft",
       source_artifact: `apps/web/src/content/phase14-resource-corpus.json:${resource.slug}`
     }
   };

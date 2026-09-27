@@ -35,7 +35,7 @@ export default async function ArticlesPage() {
     <main className="pg">
       <div className="pg-hero-wrap">
         <div className="pg-shell pg-hero">
-          <p className="pg-eyebrow">کتابخانهٔ <bdi dir="ltr">kunkur01</bdi></p>
+          <p className="pg-eyebrow">کتابخانهٔ کنکور کامپیوتر</p>
           <h1>مقاله‌های کاربردی، نه محتوای پُرکننده</h1>
           <p className="pg-lede">
             فقط مطالب منتشرشدهٔ تحریریه نمایش داده می‌شوند؛ هر مطلب تاریخ اعتبار، منبع و وضعیت
@@ -63,7 +63,7 @@ export default async function ArticlesPage() {
               <b>{article.title}</b>
               <small>{article.summary}</small>
               <span className="pg-card-action pg-card-meta">
-                {article.authorProfile?.displayName ?? "تحریریهٔ کنکورصفریک"}
+                {article.authorProfile?.displayName ?? "تحریریهٔ کنکور کامپیوتر"}
                 {article.publishedAt ? ` · ${formatPublicDate(article.publishedAt)}` : ""}
               </span>
             </Link>

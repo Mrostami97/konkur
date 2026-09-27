@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -88,11 +89,9 @@ function AdminChrome({ children }: { children: ReactNode }) {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link className="admin-sidebar-brand" href="/admin">
-          <span className="admin-sidebar-mark" aria-hidden="true">
-            ۰۱
-          </span>
+          <Image className="admin-sidebar-logo" src="/brand/konkurcom-logo.png" alt="" width={40} height={40} />
           <span>
-            کنکورصفریک
+            کنکور کامپیوتر
             <small>پنل مدیریت</small>
           </span>
         </Link>

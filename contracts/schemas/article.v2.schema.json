@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://kunkur01.ir/contracts/article.v2.schema.json",
+  "$id": "https://kunkurcomputer.ir/contracts/article.v2.schema.json",
   "title": "article.v2",
   "type": "object",
   "additionalProperties": false,

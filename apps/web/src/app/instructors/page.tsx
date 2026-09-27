@@ -26,7 +26,7 @@ async function loadInstructors() {
 export async function generateMetadata(): Promise<Metadata> {
   const instructors = await loadInstructors();
   return pageMetadata({
-    title: "مدرسان کنکورصفریک",
+    title: "مدرسان کنکور کامپیوتر",
     description:
       "مدرسان دوره‌های کنکور ارشد و دکتری کامپیوتر: سوابق، دوره‌هایی که تدریس می‌کنند و امکان رزرو مشاوره.",
     path: "/instructors",

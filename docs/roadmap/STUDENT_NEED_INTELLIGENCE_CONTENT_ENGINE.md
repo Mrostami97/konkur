@@ -2,12 +2,12 @@
 
 Status: owner-approved strategic roadmap  
 Date: 2026-09-20  
-Product: کنکورصفریک / kunkur01  
-Canonical domain: https://kunkur01.ir
+Product: کنکور کامپیوتر / kunkurcomputer  
+Canonical domain: https://kunkurcomputer.ir
 
 ## 0. North Star
 
-کنکورصفریک should continuously learn what Computer Engineering / IT / Computer Science Master's and PhD candidates actually need, turn those needs into structured opportunities, create original and better content, connect that content to the Knowledge Graph, courses, lessons, questions, exams, resources, rank/admissions tools, and then measure whether the content solved the need.
+کنکور کامپیوتر should continuously learn what Computer Engineering / IT / Computer Science Master's and PhD candidates actually need, turn those needs into structured opportunities, create original and better content, connect that content to the Knowledge Graph, courses, lessons, questions, exams, resources, rank/admissions tools, and then measure whether the content solved the need.
 
 This is **not** a bulk AI-blog system.
 
@@ -473,7 +473,7 @@ Suggested normalized dimensions:
 - **First-party demand (P)** — strength in own users/search/support.
 - **Search opportunity (S)** — impressions/queries and SERP opportunity.
 - **Competitor gap (G)** — competitor answer is missing, stale, fragmented, weak, or sales-first.
-- **Knowledge gap (K)** — kunkur01 has no strong node/page for it.
+- **Knowledge gap (K)** — kunkurcomputer has no strong node/page for it.
 - **Course fit (C)** — meaningful link to an owned course/lesson.
 - **Question/data fit (Q)** — first-party question/result data can make the answer unique.
 - **Business relevance (B)** — useful downstream action/product fit.
@@ -551,7 +551,7 @@ Useful gap types:
 - WEAK_INTERNAL_LINKING
 - DUPLICATE/CANNIBALIZED_CONTENT
 
-This becomes the evidence for “how can kunkur01 be better?”
+This becomes the evidence for “how can kunkurcomputer be better?”
 
 ---
 
@@ -760,7 +760,7 @@ Competitor content must not be used as a paragraph template.
 ## Factual hierarchy
 
 1. official/primary source
-2. first-party kunkur01 dataset
+2. first-party kunkurcomputer dataset
 3. trusted academic reference
 4. other secondary source
 5. competitor page only as demand/gap evidence
@@ -1201,7 +1201,7 @@ from the need layer unless required for source traceability, and keep any necess
 
 ## Public publishing
 
-Never publish a competitor student's personal question or identity as kunkur01 content without a lawful basis/permission.
+Never publish a competitor student's personal question or identity as kunkurcomputer content without a lawful basis/permission.
 
 Use the *need*, not the person's message.
 
@@ -1417,7 +1417,7 @@ The Student Need Intelligence system is successful when:
 8. Relevant content links to exact course/lesson/question/tool destinations.
 9. Generated drafts never bypass review.
 10. Published content performance feeds the next prioritization cycle.
-11. The percentage of demand-weighted student needs covered by high-quality kunkur01 content rises over time.
+11. The percentage of demand-weighted student needs covered by high-quality kunkurcomputer content rises over time.
 12. First-party user signals progressively outweigh competitor signals as the ecosystem grows.
 
 ---

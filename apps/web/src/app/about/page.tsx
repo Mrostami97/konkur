@@ -85,7 +85,7 @@ export default function AboutPage() {
           style={{ objectFit: "cover" }}
         />
         <div className="about-hero-copy">
-          <div className="about-kicker"><span className="status-dot" /> مدرس و مسئول محتوای کنکورصفریک</div>
+          <div className="about-kicker"><span className="status-dot" /> مدرس و مسئول محتوای کنکور کامپیوتر</div>
           <h2>محمد رستمی</h2>
           <p className="about-lead">
             گرایشم در ارشد نرم‌افزار بود، با زیرگرایش الگوریتم و محاسبات؛ یعنی درس‌هایی مثل طراحی الگوریتم و
@@ -104,8 +104,8 @@ export default function AboutPage() {
           </div>
         </div>
         <div className="about-logo-lockup">
-          <Image src="/brand/konkurcom-logo.png" alt="نشان کنکورصفریک" width={150} height={150} priority />
-          <span dir="ltr">kunkur01</span>
+          <Image src="/brand/konkurcom-logo.png" alt="نشان کنکور کامپیوتر" width={150} height={150} priority />
+          <span dir="ltr">kunkurcomputer.ir</span>
         </div>
       </section>
 

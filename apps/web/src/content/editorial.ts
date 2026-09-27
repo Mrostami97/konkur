@@ -25,7 +25,7 @@ export interface EditorialPage {
   category: string;
   degree: ExamDegree;
   field: string;
-  author: "تحریریه kunkur01" | "محمد رستمی";
+  author: "تحریریه کنکور کامپیوتر" | "محمد رستمی";
   reviewer: string;
   publishedAt: string;
   reviewedAt: string;
@@ -54,8 +54,8 @@ const phd1406: EditorialSource = {
 };
 
 const primaryChannel: EditorialSource = {
-  title: "کانال اصلی kunkur01",
-  publisher: "kunkur01",
+  title: "کانال اصلی کنکور کامپیوتر",
+  publisher: "kunkurcomputer",
   url: "https://t.me/konkurcom",
   checkedAt: "۱۷ شهریور ۱۴۰۵",
 };
@@ -70,7 +70,7 @@ export const guides: EditorialPage[] = [
     degree: "ارشد",
     field: "مهندسی و علم کامپیوتر",
     author: "محمد رستمی",
-    reviewer: "تحریریه kunkur01",
+    reviewer: "تحریریه کنکور کامپیوتر",
     publishedAt: "۱۴۰۵-۰۶-۱۵",
     reviewedAt: "۱۴۰۵-۰۶-۱۷",
     readingMinutes: 13,
@@ -122,7 +122,7 @@ export const guides: EditorialPage[] = [
     degree: "ارشد",
     field: "مهندسی فناوری اطلاعات",
     author: "محمد رستمی",
-    reviewer: "تحریریه kunkur01",
+    reviewer: "تحریریه کنکور کامپیوتر",
     publishedAt: "۱۴۰۵-۰۶-۱۵",
     reviewedAt: "۱۴۰۵-۰۶-۱۷",
     readingMinutes: 11,
@@ -163,7 +163,7 @@ export const guides: EditorialPage[] = [
     category: "راهنمای جامع ۱۴۰۶",
     degree: "ارشد",
     field: "علوم کامپیوتر",
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "محمد رستمی",
     publishedAt: "۱۴۰۵-۰۶-۱۵",
     reviewedAt: "۱۴۰۵-۰۶-۱۷",
@@ -204,7 +204,7 @@ export const articles: EditorialPage[] = [
     degree: "هر دو",
     field: "کامپیوتر و IT",
     author: "محمد رستمی",
-    reviewer: "تحریریه kunkur01",
+    reviewer: "تحریریه کنکور کامپیوتر",
     publishedAt: "۱۴۰۵-۰۶-۱۵",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
     readingMinutes: 7,
@@ -223,7 +223,7 @@ export const articles: EditorialPage[] = [
     category: "برنامه‌ریزی",
     degree: "ارشد",
     field: "کامپیوتر و IT",
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "محمد رستمی",
     publishedAt: "۱۴۰۵-۰۶-۱۴",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
@@ -242,7 +242,7 @@ export const articles: EditorialPage[] = [
     category: "روش مطالعه",
     degree: "هر دو",
     field: "کامپیوتر و IT",
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "محمد رستمی",
     publishedAt: "۱۴۰۵-۰۶-۱۳",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
@@ -262,7 +262,7 @@ export const articles: EditorialPage[] = [
     degree: "ارشد",
     field: "مهندسی کامپیوتر",
     author: "محمد رستمی",
-    reviewer: "تحریریه kunkur01",
+    reviewer: "تحریریه کنکور کامپیوتر",
     publishedAt: "۱۴۰۵-۰۶-۱۲",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
     readingMinutes: 10,
@@ -280,7 +280,7 @@ export const articles: EditorialPage[] = [
     category: "منابع",
     degree: "هر دو",
     field: "کامپیوتر و IT",
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "محمد رستمی",
     publishedAt: "۱۴۰۵-۰۶-۱۱",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
@@ -299,7 +299,7 @@ export const articles: EditorialPage[] = [
     category: "کارنامه و رتبه",
     degree: "ارشد",
     field: "کامپیوتر و IT",
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "محمد رستمی",
     publishedAt: "۱۴۰۵-۰۶-۱۰",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
@@ -307,7 +307,7 @@ export const articles: EditorialPage[] = [
     sections: [
       { title: "کارنامه نسخهٔ آیندهٔ تو نیست", paragraphs: ["کارنامهٔ یک نفر فقط یک مشاهده با سهمیه، سال، مجموعه، شرایط آزمون و انتخاب‌های مشخص است. برای تصمیم‌گیری باید چند نمونهٔ هم‌گروه را کنار هم دید."] },
       { title: "چه ستون‌هایی مهم‌اند؟", bullets: ["سال و مجموعهٔ امتحانی", "سهمیه و کد ضریب", "درصد هر بستهٔ درس", "رتبه در سهمیه", "ترتیب انتخاب‌ها و نتیجهٔ نهایی"] },
-      { title: "حریم خصوصی", paragraphs: ["در بانک کارنامهٔ kunkur01 فقط نمونه‌هایی نمایش داده می‌شوند که رضایت انتشار دارند؛ شناسه‌های داخلی و اطلاعات شناسایی در صفحهٔ عمومی جایی ندارند."] },
+      { title: "حریم خصوصی", paragraphs: ["در بانک کارنامهٔ کنکور کامپیوتر فقط نمونه‌هایی نمایش داده می‌شوند که رضایت انتشار دارند؛ شناسه‌های داخلی و اطلاعات شناسایی در صفحهٔ عمومی جایی ندارند."] },
     ],
     sources: [primaryChannel],
   },
@@ -318,7 +318,7 @@ export const articles: EditorialPage[] = [
     category: "ثبت‌نام و اخبار رسمی",
     degree: "هر دو",
     field: "کامپیوتر، IT و علوم کامپیوتر",
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "محمد رستمی",
     publishedAt: "۱۴۰۵-۰۶-۰۹",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
@@ -326,24 +326,24 @@ export const articles: EditorialPage[] = [
     sections: [
       { title: "ترتیب اعتبار", bullets: ["دفترچهٔ ثبت‌نام سال آزمون", "اصلاحیه‌های بعد از دفترچه", "اطلاعیه‌های رسمی سازمان سنجش", "تحلیل رسانه‌ها و کانال‌ها"] },
       { title: "هر بار چه چیزی را کنترل کنیم؟", bullets: ["کد و نام مجموعه", "مواد و ضرایب", "شرایط مدارک تحصیلی", "تاریخ ثبت‌نام و آزمون", "محدودیت مجموعهٔ اصلی یا شناور"] },
-      { title: "سیاست kunkur01", paragraphs: ["صفحات زمان‌حساس تاریخ آخرین بازبینی و منبع دارند. اگر مدرک رسمی کافی نباشد، ابهام صریح نوشته می‌شود و حدس به‌جای خبر منتشر نمی‌شود."] },
+      { title: "سیاست کنکور کامپیوتر", paragraphs: ["صفحات زمان‌حساس تاریخ آخرین بازبینی و منبع دارند. اگر مدرک رسمی کافی نباشد، ابهام صریح نوشته می‌شود و حدس به‌جای خبر منتشر نمی‌شود."] },
     ],
     sources: [sanjesh1406, phd1406],
   },
   {
     slug: "telegram-learning-archive",
-    title: "چطور از آرشیو رایگان تلگرام kunkur01 استفاده کنیم؟",
+    title: "چطور از آرشیو رایگان تلگرام کنکور کامپیوتر استفاده کنیم؟",
     description: "مسیر پیشنهادی برای تبدیل ویدئوها، PDFها و تحلیل‌های کانال به یک برنامهٔ مطالعهٔ منظم.",
     category: "منابع رایگان",
     degree: "هر دو",
     field: "کامپیوتر و IT",
-    author: "تحریریه kunkur01",
+    author: "تحریریه کنکور کامپیوتر",
     reviewer: "محمد رستمی",
     publishedAt: "۱۴۰۵-۰۶-۰۸",
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
     readingMinutes: 5,
     sections: [
-      { title: "یک کانال، یک مسیر", bullets: ["@konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای kunkur01 است.", "محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."] },
+      { title: "یک کانال، یک مسیر", bullets: ["@konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای کنکور کامپیوتر است.", "محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."] },
       { title: "روش استفاده", bullets: ["قبل از دیدن ویدئو، مبحث و خروجی مورد انتظار را بنویس.", "بعد از هر محتوا حداقل سه تست یا سه پرسش بازیابی حل کن.", "لینک پست اصلی را کنار یادداشت نگه دار تا نسخه و زمینه گم نشود."] },
     ],
     sources: [primaryChannel],

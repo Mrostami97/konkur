@@ -40,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const result = await loadCatalog();
   return pageMetadata({
     title: "دوره‌های کنکور ارشد و دکتری کامپیوتر",
-    description: "دوره‌های منتشرشدهٔ کنکورصفریک با مسیر یادگیری و دسترسی روشن برای داوطلبان کنکور کامپیوتر.",
+    description: "دوره‌های منتشرشدهٔ کنکور کامپیوتر با مسیر یادگیری و دسترسی روشن برای داوطلبان کنکور کامپیوتر.",
     path: "/courses",
     // A catalog with nothing in it yet is a "coming soon" page, not one to rank.
     noIndex: result.unavailable || result.courses?.length === 0,
@@ -73,7 +73,7 @@ export default async function CoursesPage() {
           <ComingSoon
             icon="play"
             title="دوره‌های کامل به‌زودی منتشر می‌شوند"
-            text="کلاس‌های درس‌به‌درس کنکورصفریک، از مفهوم تا تست کنکور، در حال آماده‌سازی برای سایت‌اند. تا آن موقع، نقشهٔ درس‌ها و راهنمای ۱۴۰۶ در دسترس است."
+            text="کلاس‌های درس‌به‌درس کنکور کامپیوتر، از مفهوم تا تست کنکور، در حال آماده‌سازی برای سایت‌اند. تا آن موقع، نقشهٔ درس‌ها و راهنمای ۱۴۰۶ در دسترس است."
             alternatives={[
               { href: "/subjects", label: "نقشهٔ درس‌ها" },
               { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },

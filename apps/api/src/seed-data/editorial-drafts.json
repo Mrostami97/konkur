@@ -22,8 +22,8 @@
     {
       "externalId": "editorial-source-08110ffe99548a591190",
       "kind": "FIRST_PARTY_CHANNEL",
-      "title": "کانال اصلی kunkur01",
-      "publisher": "kunkur01",
+      "title": "کانال اصلی کنکور کامپیوتر",
+      "publisher": "kunkurcomputer",
       "canonicalUrl": "https://t.me/konkurcom",
       "sourceTier": "FIRST_PARTY",
       "checkedAt": "2026-09-08T00:00:00.000Z",
@@ -31,7 +31,7 @@
       "mayLink": true,
       "mayAdapt": true,
       "commercialUseAllowed": true,
-      "attributionText": "kunkur01 — کانال اصلی kunkur01",
+      "attributionText": "kunkurcomputer — کانال اصلی کنکور کامپیوتر",
       "metadata": {
         "importedFrom": "apps/web/src/content/editorial.ts"
       }
@@ -135,7 +135,7 @@
       "externalId": "editorial-source-90acf5084bd313d2b5b0",
       "kind": "WEB_PAGE",
       "title": "آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
-      "publisher": "کنکورصفریک",
+      "publisher": "کنکور کامپیوتر",
       "canonicalUrl": "https://t.me/konkurcom",
       "sourceTier": "SECONDARY",
       "checkedAt": "2026-09-08T00:00:00.000Z",
@@ -143,7 +143,7 @@
       "mayLink": true,
       "mayAdapt": false,
       "commercialUseAllowed": false,
-      "attributionText": "کنکورصفریک — آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
+      "attributionText": "کنکور کامپیوتر — آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
       "metadata": {
         "importedFrom": "apps/web/src/content/phase12-corpus.json"
       }
@@ -485,13 +485,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 1
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:master-computer-engineering-1406"
       },
       "review_status": "draft"
@@ -604,13 +604,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 1
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:master-information-technology-1406"
       },
       "review_status": "draft"
@@ -745,7 +745,7 @@
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:master-computer-science-1406"
       },
       "review_status": "draft"
@@ -860,7 +860,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:start-from-zero"
       },
       "review_status": "draft"
@@ -971,7 +971,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:twelve-month-study-plan"
       },
       "review_status": "draft"
@@ -1084,7 +1084,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:six-month-study-plan"
       },
       "review_status": "draft"
@@ -1186,7 +1186,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:three-month-study-plan"
       },
       "review_status": "draft"
@@ -1292,7 +1292,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:working-candidate-study-plan"
       },
       "review_status": "draft"
@@ -1394,7 +1394,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:switch-to-computer-science"
       },
       "review_status": "draft"
@@ -1493,7 +1493,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:weekly-study-plan"
       },
       "review_status": "draft"
@@ -1602,7 +1602,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:active-review"
       },
       "review_status": "draft"
@@ -1709,7 +1709,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:error-log"
       },
       "review_status": "draft"
@@ -1811,7 +1811,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:final-month-review"
       },
       "review_status": "draft"
@@ -1914,7 +1914,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:exam-time-management"
       },
       "review_status": "draft"
@@ -2017,7 +2017,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:choose-study-resources"
       },
       "review_status": "draft"
@@ -2099,7 +2099,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:master-exam-changes-1406"
       },
       "review_status": "draft"
@@ -2200,7 +2200,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:master-computer-engineering-subjects-1406"
       },
       "review_status": "draft"
@@ -2302,7 +2302,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:master-information-technology-subjects-1406"
       },
       "review_status": "draft"
@@ -2420,7 +2420,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:master-computer-science-subjects-1406"
       },
       "review_status": "draft"
@@ -2521,7 +2521,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:registration-calendar-1406"
       },
       "review_status": "draft"
@@ -2577,7 +2577,7 @@
         {
           "type": "heading",
           "level": 2,
-          "text": "سیاست کنکورصفریک"
+          "text": "سیاست کنکور کامپیوتر"
         },
         {
           "type": "text",
@@ -2626,7 +2626,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:official-notices-and-corrections"
       },
       "review_status": "draft"
@@ -2713,7 +2713,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:historical-budget-computer-engineering"
       },
       "review_status": "draft"
@@ -2803,7 +2803,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:historical-budget-information-technology"
       },
       "review_status": "draft"
@@ -2914,7 +2914,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:historical-budget-computer-science"
       },
       "review_status": "draft"
@@ -3013,7 +3013,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase12-corpus.json:booklets-and-answer-keys"
       },
       "review_status": "draft"
@@ -3131,7 +3131,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:computer-it-cs-comparison"
       },
       "review_status": "draft"
@@ -3240,7 +3240,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:computer-engineering-master-specializations"
       },
       "review_status": "draft"
@@ -3347,7 +3347,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:information-technology-specializations-careers"
       },
       "review_status": "draft"
@@ -3439,7 +3439,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:computer-science-specializations-research"
       },
       "review_status": "draft"
@@ -3544,7 +3544,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:how-to-read-master-scorecard"
       },
       "review_status": "draft"
@@ -3600,7 +3600,7 @@
         {
           "type": "heading",
           "level": 2,
-          "text": "وضعیت فعلی kunkur01"
+          "text": "وضعیت فعلی کنکور کامپیوتر"
         },
         {
           "type": "text",
@@ -3645,7 +3645,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:percent-rank-scenarios"
       },
       "review_status": "draft"
@@ -3762,7 +3762,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:compare-computer-universities"
       },
       "review_status": "draft"
@@ -3863,7 +3863,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:master-field-selection-guide"
       },
       "review_status": "draft"
@@ -4018,7 +4018,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-engineering-1406"
       },
       "review_status": "draft"
@@ -4147,7 +4147,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-information-technology-1406"
       },
       "review_status": "draft"
@@ -4293,7 +4293,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-science-1406"
       },
       "review_status": "draft"
@@ -4442,7 +4442,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-engineering-subjects-1406"
       },
       "review_status": "draft"
@@ -4585,7 +4585,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-information-technology-subjects-1406"
       },
       "review_status": "draft"
@@ -4748,7 +4748,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-science-subjects-1406"
       },
       "review_status": "draft"
@@ -4888,7 +4888,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-architecture-study-guide"
       },
       "review_status": "draft"
@@ -5028,7 +5028,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-software-algorithms-study-guide"
       },
       "review_status": "draft"
@@ -5169,7 +5169,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-artificial-intelligence-study-guide"
       },
       "review_status": "draft"
@@ -5285,7 +5285,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-networks-secure-computing-study-guide"
       },
       "review_status": "draft"
@@ -5430,7 +5430,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-information-technology-study-guide"
       },
       "review_status": "draft"
@@ -5576,7 +5576,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-computer-science-research-path"
       },
       "review_status": "draft"
@@ -5737,7 +5737,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-written-exam-study-plan"
       },
       "review_status": "draft"
@@ -5879,7 +5879,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-english-study-guide"
       },
       "review_status": "draft"
@@ -6017,7 +6017,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-research-cv-guide"
       },
       "review_status": "draft"
@@ -6155,7 +6155,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase17-corpus.json:phd-interview-preparation"
       },
       "review_status": "draft"
@@ -6241,7 +6241,7 @@
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:computer-exam-changes-1406"
       },
       "review_status": "draft"
@@ -6310,13 +6310,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 0
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:study-plan-from-zero"
       },
       "review_status": "draft"
@@ -6386,13 +6386,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 0
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:active-review-system"
       },
       "review_status": "draft"
@@ -6470,13 +6470,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 1
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:change-major-to-computer"
       },
       "review_status": "draft"
@@ -6546,13 +6546,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 0
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:how-to-choose-study-resources"
       },
       "review_status": "draft"
@@ -6591,7 +6591,7 @@
         },
         {
           "type": "text",
-          "text": "در بانک کارنامهٔ kunkur01 فقط نمونه‌هایی نمایش داده می‌شوند که رضایت انتشار دارند؛ شناسه‌های داخلی و اطلاعات شناسایی در صفحهٔ عمومی جایی ندارند."
+          "text": "در بانک کارنامهٔ کنکور کامپیوتر فقط نمونه‌هایی نمایش داده می‌شوند که رضایت انتشار دارند؛ شناسه‌های داخلی و اطلاعات شناسایی در صفحهٔ عمومی جایی ندارند."
         }
       ],
       "taxonomy": {
@@ -6621,13 +6621,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 0
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:read-exam-report-card"
       },
       "review_status": "draft"
@@ -6662,7 +6662,7 @@
         {
           "type": "heading",
           "level": 2,
-          "text": "سیاست kunkur01"
+          "text": "سیاست کنکور کامپیوتر"
         },
         {
           "type": "text",
@@ -6713,7 +6713,7 @@
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:official-exam-updates-checklist"
       },
       "review_status": "draft"
@@ -6722,7 +6722,7 @@
       "schema_version": "article.v2",
       "external_id": "static-editorial-telegram-learning-archive",
       "content_type": "article",
-      "title": "چطور از آرشیو رایگان تلگرام kunkur01 استفاده کنیم؟",
+      "title": "چطور از آرشیو رایگان تلگرام کنکور کامپیوتر استفاده کنیم؟",
       "slug": "telegram-learning-archive",
       "summary": "مسیر پیشنهادی برای تبدیل ویدئوها، PDFها و تحلیل‌های کانال به یک برنامهٔ مطالعهٔ منظم.",
       "quick_answer": "مسیر پیشنهادی برای تبدیل ویدئوها، PDFها و تحلیل‌های کانال به یک برنامهٔ مطالعهٔ منظم.",
@@ -6734,7 +6734,7 @@
         },
         {
           "type": "text",
-          "text": "• @konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای kunkur01 است.\n• محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."
+          "text": "• @konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای کنکور کامپیوتر است.\n• محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."
         },
         {
           "type": "heading",
@@ -6764,7 +6764,7 @@
         "topic_codes": []
       },
       "seo": {
-        "title": "چطور از آرشیو رایگان تلگرام kunkur01 استفاده کنیم؟",
+        "title": "چطور از آرشیو رایگان تلگرام کنکور کامپیوتر استفاده کنیم؟",
         "description": "مسیر پیشنهادی برای تبدیل ویدئوها، PDFها و تحلیل‌های کانال به یک برنامهٔ مطالعهٔ منظم."
       },
       "validity": {
@@ -6774,13 +6774,13 @@
         {
           "source_external_id": "editorial-source-08110ffe99548a591190",
           "relation": "SUPPORTS",
-          "locator": "کانال اصلی kunkur01",
+          "locator": "کانال اصلی کنکور کامپیوتر",
           "order": 0
         }
       ],
       "provenance": {
         "producer_type": "human",
-        "producer_name": "تحریریه kunkur01",
+        "producer_name": "تحریریه کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/editorial.ts:telegram-learning-archive"
       },
       "review_status": "draft"
@@ -6885,7 +6885,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-automata-100-percent"
       },
       "review_status": "draft"
@@ -6990,7 +6990,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-data-structures-10-of-11"
       },
       "review_status": "draft"
@@ -7095,7 +7095,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-data-structures-9-correct"
       },
       "review_status": "draft"
@@ -7200,7 +7200,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-course-alignment-9-of-12"
       },
       "review_status": "draft"
@@ -7303,7 +7303,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-phd-16-of-19"
       },
       "review_status": "draft"
@@ -7408,7 +7408,7 @@
       ],
       "provenance": {
         "producer_type": "external_ai",
-        "producer_name": "پیش‌نویس دستیار تحریریهٔ kunkur01",
+        "producer_name": "پیش‌نویس دستیار تحریریهٔ کنکور کامپیوتر",
         "source_artifact": "apps/web/src/content/phase13-corpus.json:case-study-question-design-1401"
       },
       "review_status": "draft"

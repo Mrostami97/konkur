@@ -246,7 +246,7 @@ function ContentSourcesAdmin() {
               <select className="ds-select" value={form.sourceTier} onChange={(event) => updateField("sourceTier", event.target.value)} required>
                 <option value="PRIMARY">اولیه / رسمی</option>
                 <option value="SECONDARY">ثانویه</option>
-                <option value="OWNED">متعلق به kunkur01</option>
+                <option value="OWNED">متعلق به کنکور کامپیوتر</option>
               </select>
             </label>
             <label className="field-group">
@@ -273,7 +273,7 @@ function ContentSourcesAdmin() {
               <span>مبنای حقوقی استفاده</span>
               <select className="ds-select" value={form.rightsBasis} onChange={(event) => updateField("rightsBasis", event.target.value)}>
                 <option value="LINK_ONLY">فقط پیوند</option>
-                <option value="OWNED">مالکیت kunkur01</option>
+                <option value="OWNED">مالکیت کنکور کامپیوتر</option>
                 <option value="LICENSED">دارای مجوز</option>
                 <option value="PUBLIC_DOMAIN">مالکیت عمومی</option>
                 <option value="FAIR_QUOTATION">نقل‌قول محدود</option>

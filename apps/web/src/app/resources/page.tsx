@@ -14,7 +14,7 @@ import { pageMetadata } from "../../lib/seo";
 export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
   return pageMetadata({
     title: "منابع رایگان کنکور کامپیوتر",
-    description: "دسترسی منظم به تحلیل‌ها، نمونه تدریس، پاسخ‌ها و راهنماهای رایگان کانال رسمی kunkur01.",
+    description: "دسترسی منظم به تحلیل‌ها، نمونه تدریس، پاسخ‌ها و راهنماهای رایگان کانال رسمی کنکور کامپیوتر.",
     path: "/resources",
     noIndex: Object.keys(searchParams).length > 0,
   });
@@ -23,7 +23,7 @@ const collections = [
   { icon: "▶", title: "نمونه تدریس و ویدئو", description: "ویدئوهای آموزشی و حل مسئله از آرشیو رسمی.", href: "https://t.me/konkurcom" },
   { icon: "PDF", title: "جزوه و فایل‌های رایگان", description: "فایل‌هایی که با اجازهٔ صاحب محتوا منتشر شده‌اند.", href: "https://t.me/konkurcom" },
   { icon: "✓", title: "تحلیل سؤال و پاسخ", description: "پاسخ‌ها و نکته‌هایی که به مبحث مرتبط می‌شوند.", href: "https://t.me/konkurcom" },
-  { icon: "↗", title: "خبر و اطلاعیه", description: "آخرین خبرهای آزمون و آپدیت‌های kunkur01.", href: "https://t.me/konkurcom" },
+  { icon: "↗", title: "خبر و اطلاعیه", description: "آخرین خبرهای آزمون و آپدیت‌های کنکور کامپیوتر.", href: "https://t.me/konkurcom" },
 ];
 
 const fieldOptions = [

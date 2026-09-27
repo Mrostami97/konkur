@@ -245,13 +245,13 @@ export default async function ReportCardsPage({ searchParams }: { searchParams: 
     {
       "@context": "https://schema.org",
       "@type": "Dataset",
-      name: "کارنامه‌های عمومی کنکور کامپیوتر کنکورصفریک",
+      name: "کارنامه‌های عمومی کنکور کامپیوتر کنکور کامپیوتر",
       description: "کارنامه‌های ناشناس که رضایت انتشار عمومی آن‌ها در سامانه ثبت شده است.",
       url: absoluteUrl(path),
       inLanguage: "fa-IR",
       isAccessibleForFree: true,
       creator: { "@id": absoluteUrl("/#organization") },
-      includedInDataCatalog: { "@type": "DataCatalog", name: "مستندات کنکورصفریک", url: absoluteUrl(path) },
+      includedInDataCatalog: { "@type": "DataCatalog", name: "مستندات کنکور کامپیوتر", url: absoluteUrl(path) },
       variableMeasured: ["سال آزمون", "مقطع", "رشته", "سهمیه", "درصد درس‌ها", "رتبه", "نتیجهٔ پذیرش"],
     },
     {

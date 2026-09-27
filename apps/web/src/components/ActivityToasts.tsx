@@ -54,7 +54,7 @@ function describe(event: ActivityEvent) {
   const degree = event.degree === "PHD" ? "دکتری" : event.degree === "MASTER" ? "ارشد" : null;
   const field = TARGET_FIELDS.find((option) => option.value === event.field)?.label ?? null;
   const who = degree ? `یک داوطلب ${degree}${field ? ` ${field}` : ""}` : "یک داوطلب تازه";
-  return { line: <>{who} به <b>کنکورصفریک</b> پیوست</>, cta: "تو هم شروع کن", href: "/login" };
+  return { line: <>{who} به <b>کنکور کامپیوتر</b> پیوست</>, cta: "تو هم شروع کن", href: "/login" };
 }
 
 /**
