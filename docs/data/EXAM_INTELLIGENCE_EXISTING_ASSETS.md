@@ -305,7 +305,7 @@ only, with no single card, GPA or percentage row in it
 - Year effect: at a fixed weighted average, code 2's rank in 1404 was worse
   than in every earlier year.
 - Admissions: divide each admitted rank by its pair's five-year median. In
-  every year the median of that ratio falls between 0.88 and 1.13. Admission
+  every year the median of that ratio falls between 0.90 and 1.12. Admission
   ranks therefore move little from year to year taken together, although a
   single pair's yearly sample is small and noisier. That is why the tool
   compares the student's rank against pooled quantiles. Only pairs with at
