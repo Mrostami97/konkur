@@ -41,7 +41,10 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
   useEffect(() => {
     // /auth/session answers 200 even when signed out, so a visitor's every
     // page view is not a 401 (which the CDN swaps for an 86 KB error page).
+    // If the CDN still holds an old answer for it, /auth/me decides instead,
+    // so a signed-in student is never shown as signed out.
     apiFetch<{ user: { phone: string } | null }>("/auth/session")
+      .catch(() => apiFetch<{ user: { phone: string } | null }>("/auth/me"))
       .then((res) => setPhone(res.user?.phone ?? null))
       .catch(() => setPhone(null))
       .finally(() => setChecked(true));

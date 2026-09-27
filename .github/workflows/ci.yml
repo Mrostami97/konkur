@@ -666,6 +666,15 @@ jobs:
           # down, at the cost of a slow deploy.
           $DOCKER compose up -d --no-build || $DOCKER compose up -d --build
 
+          # nginx reads its config from a mounted template that is rendered
+          # only when the container starts, and `up` leaves an unchanged
+          # container running -- so a new template would never load. Render
+          # it again and reload gracefully (no dropped connections); if the
+          # new config does not pass `nginx -t`, the running one stays.
+          $DOCKER compose exec -T nginx sh -ec \
+            '/docker-entrypoint.d/20-envsubst-on-templates.sh >/dev/null && nginx -t && nginx -s reload' \
+            || echo "WARNING: nginx config was not reloaded; the previous one is still serving." >&2
+
           # /healthz reports real connectivity to every dependency the API has
           # (Postgres, MinIO/S3), not just "the process started". Hit both the
           # API and the web app through nginx by IP via --resolve so a deploy
