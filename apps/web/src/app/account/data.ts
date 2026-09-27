@@ -116,8 +116,6 @@ export interface LibraryResource {
 export const READABLE_HOSTING = new Set(["USER_UPLOAD", "MIRRORED_WITH_PERMISSION"]);
 
 export interface Library {
-  /** The annual consultation plan opens everything. */
-  allAccess?: boolean;
   courses: { id: string; slug: string; title: string }[];
   resources: LibraryResource[];
   questionBankSubjects: string[];

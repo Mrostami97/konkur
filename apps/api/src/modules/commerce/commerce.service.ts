@@ -755,27 +755,7 @@ export class CommerceService {
       }
       for (const grant of entitlement.product.questionBankGrants) questionBankSubjects.add(grant.subjectCode);
     }
-    // The annual consultation plan opens the whole site: list every published
-    // course and every sold handout, dated from when the plan began.
-    const allAccess = active.filter((entitlement) => entitlement.product.grantsAllAccess);
-    if (allAccess.length > 0) {
-      const since = allAccess.reduce((earliest, entitlement) => (entitlement.startAt < earliest ? entitlement.startAt : earliest), allAccess[0].startAt);
-      const [allCourses, allResources] = await Promise.all([
-        this.prisma.course.findMany({ where: { isPublished: true }, select: { id: true, slug: true, title: true }, orderBy: { createdAt: "asc" } }),
-        this.prisma.resource.findMany({
-          where: { reviewStatus: "PUBLISHED", accessMode: { not: "PUBLIC" } },
-          select: { id: true, slug: true, title: true, summary: true, kind: true, hostingMode: true, subjectCodes: true, publishedAt: true },
-          orderBy: { publishedAt: "desc" },
-        }),
-      ]);
-      for (const course of allCourses) if (!courses.has(course.id)) courses.set(course.id, course);
-      for (const resource of allResources) {
-        if (!resources.has(resource.id)) resources.set(resource.id, resource);
-        if (!acquiredAt.has(resource.id)) acquiredAt.set(resource.id, since);
-      }
-    }
     return {
-      allAccess: allAccess.length > 0,
       courses: [...courses.values()],
       // Newest acquisition first, so what the student just bought is on top.
       resources: [...resources.values()]

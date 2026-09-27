@@ -683,10 +683,6 @@ model Product {
   courseId             String?
   course               Course?                    @relation(fields: [courseId], references: [id])
   isActive             Boolean                    @default(true)
-  /// The annual consultation plan: an active entitlement to this product
-  /// opens every course, every question-bank subject and every sold handout,
-  /// including ones published later (AccessService).
-  grantsAllAccess      Boolean                    @default(false)
   prices               Price[]
   orderItems           OrderItem[]
   entitlements         Entitlement[]

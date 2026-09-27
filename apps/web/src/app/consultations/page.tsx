@@ -17,7 +17,6 @@ interface Offering {
   validUntil: string | null;
   headline: string;
   description: string;
-  includesAllAccess: boolean;
   instructorProfile: { slug: string; displayName: string; roleTitle: string | null; avatarUrl: string | null };
   productId: string;
   amountRial: number | null;
@@ -39,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata({
     title: "مشاورهٔ کنکور کامپیوتر: طرح سالانه و جلسهٔ تکی",
     description:
-      "طرح سالانهٔ مشاوره با جلسهٔ هفتگی، برنامهٔ هفتگی اختصاصی، بررسی گزارش هفتگی و دسترسی به همهٔ دوره‌ها، بانک سؤال و جزوه‌های کنکور کامپیوتر؛ یا یک جلسهٔ مشاورهٔ تکی.",
+      "طرح سالانهٔ مشاورهٔ کنکور کامپیوتر: جلسهٔ هفتگی، برنامهٔ هفتگی اختصاصی و بررسی گزارش هفتگی تا روز کنکور؛ یا یک جلسهٔ مشاورهٔ تکی.",
     path: "/consultations",
   });
 }
@@ -67,17 +66,17 @@ const WEEK = [
   },
 ];
 
+/** What else the site offers next to the consultation, and on what terms. */
 const SERVICES = [
-  { href: "/courses", title: "همهٔ دوره‌ها", text: "درس‌نامه و ویدیوی درس‌ها، به ترتیب سرفصل." },
-  { href: "/questions", title: "بانک سؤال همهٔ درس‌ها", text: "تست‌های کنکورهای گذشته با پاسخ تشریحی." },
-  { href: "/exams", title: "آزمون‌ها و کارنامه", text: "آزمون‌های سایت با کارنامه، درصد و تحلیل مبحثی." },
-  { href: "/resources", title: "جزوه‌ها", text: "همهٔ جزوه‌ها، در پنلت و به نام خودت." },
-  { href: "/rank-calculator", title: "تخمین رتبه و انتخاب رشته", text: "از درصدهای آزمون‌هایت تا رتبه و رشته‌های محتمل." },
-  { href: "/today", title: "برنامهٔ امروز و ثبت مطالعه", text: "کارهای هر روز و سابقهٔ مطالعه‌ات در یک جا." },
+  { href: "/courses", title: "دوره‌ها", text: "درس‌نامه و ویدیوی درس‌ها، به ترتیب سرفصل.", tag: "خرید جداگانه" },
+  { href: "/questions", title: "بانک سؤال", text: "تست‌های کنکورهای گذشته با پاسخ تشریحی.", tag: "خرید جداگانه" },
+  { href: "/resources", title: "جزوه‌ها", text: "جزوه‌ها، در پنلت و به نام خودت.", tag: "خرید جداگانه" },
+  { href: "/rank-calculator", title: "تخمین رتبه و انتخاب رشته", text: "از درصدهای آزمون‌هایت تا رتبه و رشته‌های محتمل.", tag: "رایگان" },
+  { href: "/today", title: "برنامهٔ امروز و ثبت مطالعه", text: "کارهای هر روز و سابقهٔ مطالعه‌ات در پنلت.", tag: "رایگان" },
 ];
 
 const START = [
-  { title: "ثبت‌نام و پرداخت", text: "طرح را انتخاب می‌کنی و کارت‌به‌کارت پرداخت می‌کنی؛ بعد از تأیید پرداخت، همه‌چیز در پنلت باز می‌شود." },
+  { title: "ثبت‌نام و پرداخت", text: "طرح را انتخاب می‌کنی و کارت‌به‌کارت پرداخت می‌کنی؛ بعد از تأیید پرداخت، مشاوره‌ات در پنلت فعال می‌شود." },
   { title: "پروفایل و سطح فعلی", text: "رشته، سال کنکور و وضعیت تحصیلی‌ات را در پروفایل کامل می‌کنی تا مشاورت از جای درست شروع کند." },
   { title: "اولین جلسه", text: "چند زمان پیشنهاد می‌دهی و مشاورت یکی را تأیید می‌کند. در جلسهٔ اول نقطهٔ شروع و برنامهٔ هفته‌های اول را می‌چینیم." },
   { title: "چرخهٔ هفتگی", text: "از آن به بعد هر هفته: گزارش، جلسه، برنامهٔ تازه و بازخورد؛ تا روز کنکور." },
@@ -97,12 +96,12 @@ const FAQ = [
     a: "بله؛ جلسهٔ هفتگی روی همین گزارش بنا می‌شود. بدون آن، جلسه صرف پرسیدن چیزهایی می‌شود که می‌شد از قبل دانست. نوشتنش چند دقیقه بیشتر طول نمی‌کشد.",
   },
   {
-    q: "«همهٔ خدمات سایت» دقیقاً یعنی چه؟",
-    a: "تا پایان اعتبار طرح، همهٔ دوره‌ها، بانک سؤال همهٔ درس‌ها، همهٔ جزوه‌ها و آزمون‌ها برایت باز است؛ حتی دوره یا جزوه‌ای که بعد از ثبت‌نامت اضافه شود. لازم نیست هیچ‌کدام را جداگانه بخری.",
+    q: "دوره‌ها، جزوه‌ها و بانک سؤال هم در طرح سالانه هست؟",
+    a: "نه. طرح سالانه خودِ مشاوره است: جلسهٔ هفتگی، برنامهٔ هفتگی و بررسی گزارش هفتگی. دوره‌ها، جزوه‌ها و بانک سؤال هر کدام جداگانه تهیه می‌شوند؛ در جلسه با هم می‌سنجیم کدام‌ها واقعاً لازمت است تا چیزی اضافه نخری.",
   },
   {
     q: "فرق طرح سالانه با جلسهٔ تکی چیست؟",
-    a: "جلسهٔ تکی یک گفت‌وگوی مستقل است برای بررسی وضعیت و مسیرت. طرح سالانه همراهی هفته‌به‌هفته است: برنامهٔ هفتگی، بررسی گزارش، بازخورد و همهٔ خدمات سایت.",
+    a: "جلسهٔ تکی یک گفت‌وگوی مستقل است برای بررسی وضعیت و مسیرت. طرح سالانه همراهی هفته‌به‌هفته است: جلسهٔ هفتگی، برنامهٔ هفتگی، بررسی گزارش و بازخورد مکتوب تا روز کنکور.",
   },
   {
     q: "پرداخت چطور است؟",
@@ -119,7 +118,7 @@ export default async function ConsultationsPage() {
   const offerings = await loadOfferings();
   // The catalogue lists oldest first; the newest offering of each kind is the current one.
   const newest = [...(offerings ?? [])].reverse();
-  const annual = newest.find((offering) => offering.kind === "PACKAGE" && offering.includesAllAccess) ?? newest.find((offering) => offering.kind === "PACKAGE");
+  const annual = newest.find((offering) => offering.kind === "PACKAGE");
   const single = newest.find((offering) => offering.kind === "SINGLE_SESSION");
   const consultant = (annual ?? single)?.instructorProfile;
   const annualPrice = annual?.amountRial ?? ANNUAL_PRICE_RIAL;
@@ -156,7 +155,7 @@ export default async function ConsultationsPage() {
             <h1>تا روز کنکور، هر هفته کنارت هستیم</h1>
             <p className="cs-lede">
               مشاوره یعنی کسی که هر هفته وضعیتت را می‌بیند، کمک می‌کند درست تصمیم بگیری و برنامهٔ هفتهٔ بعدت را با تو
-              می‌چیند. در طرح سالانه همهٔ خدمات سایت هم در اختیارت است؛ دوره‌ها، بانک سؤال، آزمون‌ها و جزوه‌ها.
+              می‌چیند؛ از ترتیب درس‌ها و منابع تا حجم تست و زمان آزمون‌ها.
             </p>
             <div className="cs-hero-actions">
               <a className="ds-btn ds-btn-primary" href="#plans">دیدن طرح‌ها و قیمت</a>
@@ -190,11 +189,10 @@ export default async function ConsultationsPage() {
               <li><b>هر هفته یک جلسهٔ فردی</b>{minutes ? ` ${formatPersianNumber(minutes)} دقیقه‌ای` : ""} با مشاورت</li>
               <li><b>برنامهٔ هفتگی اختصاصی</b>، روزبه‌روز در پنلت</li>
               <li><b>بررسی گزارش هفتگی</b> پیش از هر جلسه و بازخورد مکتوب بعد از آن</li>
-              <li><b>همهٔ دوره‌ها</b> و درس‌نامه‌ها</li>
-              <li><b>بانک سؤال همهٔ درس‌ها</b> با پاسخ تشریحی</li>
-              <li><b>همهٔ آزمون‌ها</b> با کارنامه و تحلیل</li>
-              <li><b>همهٔ جزوه‌ها</b>، به نام خودت</li>
+              <li><b>پیگیری آزمون‌ها و ساعت مطالعه‌ات</b> از آنچه در سایت ثبت می‌کنی</li>
+              <li><b>کمک به انتخاب منابع</b>؛ فقط همان‌هایی که واقعاً لازم داری</li>
             </ul>
+            <p className="cs-plan-fine">دوره‌ها، جزوه‌ها و بانک سؤال جزو طرح نیستند و جداگانه تهیه می‌شوند.</p>
             <div className="cs-plan-action">
               {annual ? (
                 <BuyButton productId={annual.productId} label="ثبت‌نام در طرح سالانه" />
@@ -245,14 +243,15 @@ export default async function ConsultationsPage() {
 
       <section className="pg-shell cs-sec" aria-labelledby="services-title">
         <div className="cs-head">
-          <h2 id="services-title">همهٔ خدمات سایت، در طرح سالانه</h2>
-          <p>لازم نیست دوره یا جزوه‌ای را جداگانه بخری؛ هر چه تا روز کنکور اضافه شود هم برایت باز است.</p>
+          <h2 id="services-title">کنار مشاوره، از سایت چه چیزی به کارت می‌آید</h2>
+          <p>مشاوره خودِ مشاوره است. دوره‌ها، جزوه‌ها و بانک سؤال جداگانه تهیه می‌شوند و مشاورت کمک می‌کند فقط همان‌هایی را بگیری که لازم داری.</p>
         </div>
         <div className="cs-services">
           {SERVICES.map((item) => (
             <Link href={item.href} className="cs-service" key={item.href}>
               <strong>{item.title}</strong>
               <span>{item.text}</span>
+              <em className="cs-service-tag" data-free={item.tag === "رایگان" || undefined}>{item.tag}</em>
             </Link>
           ))}
         </div>

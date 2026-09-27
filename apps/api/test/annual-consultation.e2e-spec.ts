@@ -18,7 +18,7 @@ class CapturingOtpProvider implements OtpProvider {
   }
 }
 
-/** The annual consultation plan: every service on the site, and a weekly report the consultant reviews. */
+/** The annual consultation plan: the consultation alone, and a weekly report the consultant reviews. */
 describe("Annual consultation plan (e2e)", () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -60,7 +60,7 @@ describe("Annual consultation plan (e2e)", () => {
     return { cookie, id: user.id };
   }
 
-  it("opens the whole site to a buyer, and a weekly report their consultant can answer", async () => {
+  it("sells the consultation alone, with a weekly report the consultant can answer", async () => {
     // The consultant: an account linked to an instructor profile.
     const consultant = await signUp();
     const profile = await request(app.getHttpServer())
@@ -69,7 +69,7 @@ describe("Annual consultation plan (e2e)", () => {
       .send({ userId: consultant.id, slug: `consultant-${suffix}`, displayName: "Consultant", isPublished: true })
       .expect(201);
 
-    // Something paid on the site the plan should open: a course with no product of its own.
+    // A paid course: the plan does not include it (owner decision); it is bought separately.
     const course = await request(app.getHttpServer())
       .post("/admin/courses")
       .set("Cookie", adminCookie)
@@ -88,22 +88,21 @@ describe("Annual consultation plan (e2e)", () => {
         durationMinutes: 45,
         amountRial: 150_000_000,
         headline: "Annual plan",
-        description: "Weekly sessions and every service on the site.",
-        includesAllAccess: true,
+        description: "Weekly sessions, a weekly plan and weekly report reviews.",
       })
       .expect(201);
     const catalogue = await request(app.getHttpServer()).get(`/consultations?instructor=consultant-${suffix}`).expect(200);
-    expect(catalogue.body[0]).toMatchObject({ includesAllAccess: true, amountRial: 150_000_000 });
+    expect(catalogue.body[0]).toMatchObject({ kind: "PACKAGE", amountRial: 150_000_000 });
+    expect(catalogue.body[0]).not.toHaveProperty("includesAllAccess");
 
     const student = await signUp();
-    const before = await request(app.getHttpServer()).get("/me/library").set("Cookie", student.cookie).expect(200);
-    expect(before.body.allAccess).toBe(false);
-
     await purchaseProduct(app, { buyerCookie: student.cookie, adminCookie, productId: offering.body.productId });
 
+    // Courses, handouts and the bank stay separate purchases.
     const library = await request(app.getHttpServer()).get("/me/library").set("Cookie", student.cookie).expect(200);
-    expect(library.body.allAccess).toBe(true);
-    expect(library.body.courses.map((row: { id: string }) => row.id)).toContain(course.body.id);
+    expect(library.body).not.toHaveProperty("allAccess");
+    expect(library.body.courses.map((row: { id: string }) => row.id)).not.toContain(course.body.id);
+    expect(library.body.questionBankSubjects).toEqual([]);
 
     // The consultant sees the buyer before any session is booked.
     const students = await request(app.getHttpServer()).get("/me/instructor/students").set("Cookie", consultant.cookie).expect(200);

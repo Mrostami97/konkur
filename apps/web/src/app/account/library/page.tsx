@@ -38,11 +38,6 @@ export default function LibraryPage() {
         </div>
       ) : (
         <>
-          {library.allAccess && (
-            <p className="st-alert st-alert-success">
-              طرح سالانهٔ مشاوره‌ات فعال است: همهٔ دوره‌ها، جزوه‌ها و بانک سؤال همهٔ درس‌ها برایت باز است، حتی آن‌هایی که بعداً اضافه می‌شوند.
-            </p>
-          )}
           {library.resources.length === 0 ? (
             <div className="st-card">
               <div className="st-empty st-empty-lg">
