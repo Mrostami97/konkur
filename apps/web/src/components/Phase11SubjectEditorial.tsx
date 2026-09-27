@@ -130,7 +130,7 @@ export function Phase11SubjectEditorial({
             <Link className="button button-secondary" href={content.ctas.internal.href}>{content.ctas.internal.label}</Link>
           </article>
           <article className="surface-card">
-            <span className="eyebrow">دام‌های رایج</span>
+            <span className="eyebrow">اشتباه‌های رایج</span>
             <h2>قبل از تست‌زنی حواست باشد</h2>
             <ul>{content.commonMistakes.map((mistake) => <li key={mistake}>{mistake}</li>)}</ul>
             <Link className="button button-primary" href={content.ctas.resource.href}>{content.ctas.resource.label}</Link>

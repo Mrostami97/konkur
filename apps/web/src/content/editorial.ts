@@ -276,7 +276,7 @@ export const articles: EditorialPage[] = [
   {
     slug: "how-to-choose-study-resources",
     title: "چطور منبع کنکور کامپیوتر انتخاب کنیم؟",
-    description: "چک‌لیست انتخاب کتاب، ویدئو، جزوه و تست بدون افتادن در دام تعدد منابع.",
+    description: "چک‌لیست انتخاب کتاب، ویدئو، جزوه و تست بدون گرفتار شدن در تعدد منابع.",
     category: "منابع",
     degree: "هر دو",
     field: "کامپیوتر و IT",
