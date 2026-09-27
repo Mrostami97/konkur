@@ -33,3 +33,18 @@ after (or with) the lesson it links to.
 `deadlock-bankers-algorithm` links to `cpu-scheduling`, and
 `process-synchronization` links to both; publish the three operating-systems
 lessons together or in that order.
+
+## Many packages in one upload
+
+`/admin/import` accepts a `payload.json` holding an array of items, so several
+packages can go up as one zip:
+
+```
+node bundle.mjs <out.zip> <slug> <slug> ...
+```
+
+It refuses to bundle two items with the same `external_id` or URL, or items
+with different schema versions. On the job page, use the checkbox in the
+table header to select every valid item. Then approve them and press
+«انتشار تأییدشده‌ها»; all of them publish together, so links between them
+never point at an unpublished page.

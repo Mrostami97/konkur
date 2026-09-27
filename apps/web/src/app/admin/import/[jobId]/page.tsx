@@ -276,7 +276,16 @@ export default function ImportJobDetailPage({ params }: { params: { jobId: strin
                   <TableWrap>
                     <thead>
                       <tr>
-                        <th />
+                        <th>
+                          {selectable.length > 0 && (
+                            <input
+                              type="checkbox"
+                              checked={selectable.every((item) => selected.has(item.id))}
+                              onChange={(event) => setSelected(event.target.checked ? new Set(selectable.map((item) => item.id)) : new Set())}
+                              aria-label={`انتخاب همهٔ ${toPersianDigits(selectable.length)} آیتم آمادهٔ بررسی`}
+                            />
+                          )}
+                        </th>
                         <th>شناسهٔ بیرونی</th>
                         <th>وضعیت</th>
                         <th>تشخیص تکرار</th>
