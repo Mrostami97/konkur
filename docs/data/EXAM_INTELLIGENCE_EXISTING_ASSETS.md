@@ -304,10 +304,12 @@ only, with no single card, GPA or percentage row in it
     prediction.
 - Year effect: at a fixed weighted average, code 2's rank in 1404 was worse
   than in every earlier year.
-- Admissions: admitted ranks per university–program stayed within about ±13%
-  of their five-year median from year to year. Pooling them across 1400–1404 is
-  therefore sound, and the tool compares the student's rank against the pooled
-  quantiles. Only pairs with at least 10 cards are included.
+- Admissions: divide each admitted rank by its pair's five-year median. In
+  every year the median of that ratio falls between 0.88 and 1.13. Admission
+  ranks therefore move little from year to year taken together, although a
+  single pair's yearly sample is small and noisier. That is why the tool
+  compares the student's rank against pooled quantiles. Only pairs with at
+  least 10 cards are included.
 - Rebuild: copies of the scripts are in
   `content/import-packages/analysis/rank-model/`. They read the raw data under
   `D:\competitor-crawler-data\report_cards\`, which stays outside the

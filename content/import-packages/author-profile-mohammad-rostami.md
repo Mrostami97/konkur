@@ -30,7 +30,7 @@
 
 **تصویر (avatarUrl)**
 
-https://kunkur01.ir/brand/mohammad-rostami.png
+https://kunkurcomputer.ir/brand/mohammad-rostami.png
 
 **پایان‌نامه (thesisUrl)**
 
