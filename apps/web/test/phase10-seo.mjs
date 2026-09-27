@@ -102,6 +102,21 @@ assert.equal(rankEstimate.response.status, 200);
 assert.match(robotsOf(rankEstimate.body), /noindex/);
 assert.notEqual(canonicalOf(rankEstimate.body), `${canonicalOrigin}/`);
 
+// The public rank calculator is indexable, unlike the per-account estimate.
+const rankCalculatorPath = "/rank-calculator/master-computer-engineering";
+const rankCalculator = await read(rankCalculatorPath);
+assert.equal(rankCalculator.response.status, 200);
+assert.equal(canonicalOf(rankCalculator.body), `${canonicalOrigin}${rankCalculatorPath}`);
+assert.doesNotMatch(robotsOf(rankCalculator.body), /noindex/);
+const rankCalculatorSchemas = structuredData(rankCalculator.body);
+assert.ok(rankCalculatorSchemas.some((item) => item["@type"] === "WebApplication"));
+assert.ok(rankCalculatorSchemas.some((item) => item["@type"] === "FAQPage" && item.mainEntity.length >= 4));
+assert.match(rankCalculator.body, /ضرایب هر کد/);
+const pagesSitemap = await read("/sitemaps/pages.xml");
+assert.match(pagesSitemap.body, new RegExp(`${canonicalOrigin}${rankCalculatorPath}`));
+const robotsTxt = await read("/robots.txt");
+assert.doesNotMatch(robotsTxt.body, /Disallow: \/rank-calculator/);
+
 const legacyGuide = await read("/guides/master-computer-engineering-1406");
 assert.equal(legacyGuide.response.status, 200);
 assert.equal(canonicalOf(legacyGuide.body), `${canonicalOrigin}/guides/master-computer-engineering-1406`);

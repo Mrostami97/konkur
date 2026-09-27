@@ -280,3 +280,38 @@ output live outside this repository, in
   1405 box sizes (language 25, maths 19 or 20, theory and signals 10,
   algorithms 19, architecture 19, OS/networks/DB 18), and all of them fit.
   With 1405 included, the merged table has 2,329 unique 1277 cards.
+
+## Rank model for set 1277 (2026-09-27)
+
+The public calculator at `/rank-calculator/master-computer-engineering` runs on
+`apps/web/src/content/rank-model-1277.json`. That file is tier B: aggregates
+only, with no single card, GPA or percentage row in it
+(`apps/web/test/rank-calculator.mjs` checks this).
+
+- Input: one row per (card, code) from the result banks, the owner's workbook
+  rows and the 1405 image cards, grouped as in `merge.py`. Each code's rank is
+  the median over sources. Cards with no known quota are left out.
+- Model: for each year, quota (free, 5%) and code with at least 40 cards,
+  ln(rank) is a decreasing curve of the code's weighted average plus
+  gamma × (GPA − 17.5). The curve is a local-linear smooth made monotone. Gamma
+  is chosen per year and quota and comes out between 0.5 and 1.0.
+- Bands: the 50% and 80% bands are out-of-fold residual quantiles, taken per
+  predicted-rank band.
+- Accuracy, 5-fold by card:
+  - Within the same year, the median error is 5.5% of the rank (7,533 checks).
+  - Using the previous year's curve on the next year, the median error is 58%.
+    This is why the page shows every year side by side rather than a 1406
+    prediction.
+- Year effect: at a fixed weighted average, code 2's rank in 1404 was worse
+  than in every earlier year.
+- Admissions: admitted ranks per university–program stayed within about ±13%
+  of their five-year median from year to year. Pooling them across 1400–1404 is
+  therefore sound, and the tool compares the student's rank against the pooled
+  quantiles. Only pairs with at least 10 cards are included.
+- Rebuild: copies of the scripts are in
+  `content/import-packages/analysis/rank-model/`. They read the raw data under
+  `D:\competitor-crawler-data\report_cards\`, which stays outside the
+  repository. Run `cards_by_code.py`, then `export.py`, with the crawler venv
+  Python from the `report_cards` folder.
+- 1406 changes the exam to three packages (language 1, maths 2, specialised
+  4). Rebuild the model once 1406 report cards exist.

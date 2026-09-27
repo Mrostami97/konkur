@@ -12,6 +12,7 @@ const publicPages = [
   "/evidence",
   "/exams",
   "/instructors",
+  "/rank-calculator/master-computer-engineering",
   "/source-policy",
 ] as const;
 

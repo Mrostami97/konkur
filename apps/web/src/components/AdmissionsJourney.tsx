@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const steps = [
   { key: "evidence", number: "۱", title: "دیدن کارنامه‌ها", description: "نمونه‌های رضایت‌دار و محدودیت داده را ببین.", href: "/report-cards" },
-  { key: "estimate", number: "۲", title: "تخمین بازه‌ای رتبه", description: "درصدهای خودت را با نمونه‌های مشابه مقایسه کن.", href: "/rank-estimate" },
+  { key: "estimate", number: "۲", title: "تخمین بازه‌ای رتبه", description: "درصدهای خودت را با کارنامه‌های واقعی سال‌های قبل مقایسه کن.", href: "/rank-calculator/master-computer-engineering" },
   { key: "programs", number: "۳", title: "جست‌وجوی دانشگاه", description: "فقط برنامه‌های متصل به منبع رسمی را بررسی کن.", href: "/programs" },
   { key: "choices", number: "۴", title: "چینش انتخاب‌ها", description: "گزینه‌ها را مقایسه و اولویت‌بندی کن.", href: "/choices" },
 ] as const;

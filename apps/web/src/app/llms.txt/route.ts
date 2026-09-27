@@ -105,6 +105,7 @@ export async function GET() {
     `- [مستندات آموزشی و نتایج](${absoluteUrl("/evidence")})`,
     ...(resultsCount > 0 ? [`- [نتایج و رتبه‌های شاگردان](${absoluteUrl("/results")}): نتیجه‌های منتشرشده با رضایت خود شاگرد`] : []),
     ...(hasFreeVideos ? [`- [ویدیوی رایگان دروس](${absoluteUrl("/free-videos")}): پیوند به کلاس‌های ضبط‌شدهٔ رایگان دانشگاهی`] : []),
+    `- [تخمین رتبهٔ ارشد مهندسی کامپیوتر](${absoluteUrl("/rank-calculator/master-computer-engineering")}): رتبهٔ هر کد ضریب از روی درصدها و معدل، بر پایهٔ کارنامه‌های ۱۴۰۰ تا ۱۴۰۵`,
     `- [کارنامه‌های دارای رضایت انتشار](${absoluteUrl("/report-cards")})`,
     `- [جست‌وجوی محتوای سایت](${absoluteUrl("/search")})`,
     `- [RSS](${absoluteUrl("/rss.xml")})`,

@@ -54,7 +54,7 @@ const TOOLS: HeroEntry[] = [
   { title: "شروع کنکور کامپیوتر از صفر", href: "/articles/study-plan-from-zero", kind: "شروع" },
   { title: "بانک سؤال کنکور با پاسخ تشریحی", href: "/questions", kind: "ابزار" },
   { title: "ویدیوی رایگان هر درس", href: "/free-videos", kind: "ویدیو" },
-  { title: "تخمین رتبه با درصدهایت", href: "/rank-estimate", kind: "ابزار" },
+  { title: "تخمین رتبه با درصدهایت", href: "/rank-calculator/master-computer-engineering", kind: "ابزار" },
   { title: "نتیجهٔ شاگردها، کنار سندش", href: "/evidence", kind: "نتایج" },
 ];
 

@@ -106,7 +106,7 @@ export const TOOLS_MENU: NavMenu = {
     {
       title: "رتبه و انتخاب‌رشته",
       links: [
-        { href: "/rank-estimate", label: "تخمین رتبه", hint: "از درصدها به بازهٔ رتبه", glyph: "target" },
+        { href: "/rank-calculator/master-computer-engineering", label: "تخمین رتبه", hint: "از درصدها به رتبهٔ هر کد", glyph: "target" },
         { href: "/report-cards", label: "کارنامه‌های قبولی", hint: "درصد، تراز و رتبهٔ پذیرفته‌شده‌ها", glyph: "trophy" },
         { href: "/admissions", label: "انتخاب‌رشته", hint: "از رتبه تا فهرست نهایی", glyph: "compass" },
         { href: "/choices", label: "فهرست انتخاب‌های من", hint: "بچین، مرتب کن، ذخیره کن", glyph: "list" },

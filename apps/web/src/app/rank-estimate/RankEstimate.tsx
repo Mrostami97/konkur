@@ -120,6 +120,10 @@ export function RankEstimate({ subjects }: { subjects: SubjectOption[] }) {
           <p className="re-kicker">تخمین رتبه</p>
           <h1>با درصدهایت، بازهٔ رتبه‌ات را ببین</h1>
           <p>درصدها با کارنامه‌های ثبت‌شدهٔ مشابه مقایسه می‌شوند؛ خروجی یک بازه است، نه یک عدد قطعی.</p>
+          <p>
+            ارشد مهندسی کامپیوتر می‌خوانی؟{" "}
+            <Link href="/rank-calculator/master-computer-engineering">تخمین رتبهٔ هر چهار کد با کارنامه‌های ۱۴۰۰ تا ۱۴۰۵، بدون ورود ←</Link>
+          </p>
         </div>
       </header>
 
