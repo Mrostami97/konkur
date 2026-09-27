@@ -14,7 +14,7 @@ const tex = (latex) => ({ type: "latex", latex });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-recurrences-master-theorem",
+  external_id: "kunkurcomputer-lesson-recurrences-master-theorem",
   content_type: "article",
   title: "رابطهٔ بازگشتی و قضیهٔ اصلی: از روی شکل رابطه، روش را انتخاب کن",
   slug: "recurrences-master-theorem",

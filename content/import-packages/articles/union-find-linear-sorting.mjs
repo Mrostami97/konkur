@@ -14,7 +14,7 @@ const tex = (latex) => ({ type: "latex", latex });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-union-find-linear-sorting",
+  external_id: "kunkurcomputer-lesson-union-find-linear-sorting",
   content_type: "article",
   title: "یونیون‌فایند و مرتب‌سازی خطی: دو مبحث کوتاه و پرسود با سه تست و سه اشتباه رایج",
   slug: "union-find-linear-sorting",

@@ -10,7 +10,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-cpu-scheduling",
+  external_id: "kunkurcomputer-lesson-cpu-scheduling",
   content_type: "article",
   title: "زمان‌بندی پردازنده برای کنکور: یک مثال، پنج الگوریتم، روی جدول زمانی",
   slug: "cpu-scheduling",

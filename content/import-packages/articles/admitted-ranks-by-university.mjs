@@ -20,7 +20,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-data-admitted-ranks-by-university",
+  external_id: "kunkurcomputer-data-admitted-ranks-by-university",
   content_type: "article",
   title: "با چه رتبه‌ای کجا قبول شدند؟ رتبهٔ قبولی ارشد مهندسی کامپیوتر در ۲۶ رشته‌محل",
   slug: "admitted-ranks-by-university",

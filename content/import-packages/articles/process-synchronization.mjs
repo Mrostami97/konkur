@@ -13,7 +13,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-process-synchronization",
+  external_id: "kunkurcomputer-lesson-process-synchronization",
   content_type: "article",
   title: "همگام‌سازی فرایندها برای کنکور: سه تلاش برای ناحیهٔ بحرانی، سمافور و اشتباه رایج در ترتیب",
   slug: "process-synchronization",

@@ -17,7 +17,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-data-top-rank-percentages",
+  external_id: "kunkurcomputer-data-top-rank-percentages",
   content_type: "article",
   title: "رتبهٔ زیر ۱۰۰ ارشد کامپیوتر با چه درصدهایی؟ تحلیل ۱٬۵۱۷ کارنامهٔ واقعی",
   slug: "top-rank-percentages",

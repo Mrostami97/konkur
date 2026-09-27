@@ -12,7 +12,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-deadlock-bankers-algorithm",
+  external_id: "kunkurcomputer-lesson-deadlock-bankers-algorithm",
   content_type: "article",
   title: "بن‌بست و الگوریتم بانکدار برای کنکور: وقتی منبع هست ولی نباید داد",
   slug: "deadlock-bankers-algorithm",

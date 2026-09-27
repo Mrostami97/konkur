@@ -15,7 +15,7 @@ const tex = (latex) => ({ type: "latex", latex });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-regular-languages-dfa-nfa",
+  external_id: "kunkurcomputer-lesson-regular-languages-dfa-nfa",
   content_type: "article",
   title: "زبان منظم، DFA و NFA برای کنکور: یک زبان، سه ساخت",
   slug: "regular-languages-dfa-nfa",

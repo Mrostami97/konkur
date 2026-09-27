@@ -14,7 +14,7 @@ const tex = (latex) => ({ type: "latex", latex });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-amortized-analysis",
+  external_id: "kunkurcomputer-lesson-amortized-analysis",
   content_type: "article",
   title: "تحلیل سرشکن به زبان کنکور: چرا یک عمل گران، میانگین را خراب نمی‌کند",
   slug: "amortized-analysis",

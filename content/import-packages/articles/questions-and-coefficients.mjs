@@ -18,7 +18,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-data-questions-and-coefficients",
+  external_id: "kunkurcomputer-data-questions-and-coefficients",
   content_type: "article",
   title: "هر درس ارشد کامپیوتر چند تست دارد و ضریبش چند است؟ جدول ۱۴۰۶ و تعداد تست سال‌های قبل",
   slug: "questions-and-coefficients",

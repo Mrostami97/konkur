@@ -12,7 +12,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-turing-machines-decidability",
+  external_id: "kunkurcomputer-lesson-turing-machines-decidability",
   content_type: "article",
   title: "ماشین تورینگ و تصمیم‌پذیری: نقشهٔ زبان‌ها از منظم تا تصمیم‌ناپذیر",
   slug: "turing-machines-decidability",

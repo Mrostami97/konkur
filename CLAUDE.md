@@ -93,9 +93,10 @@ Do not publish or commit raw scorecard/result data to this public repository unl
 - Canonical domain: **https://kunkurcomputer.ir**
 - Telegram channel: **@konkurcom** («کنکور کامپیوتر»); logo: `apps/web/public/brand/konkurcom-logo.png`
 
-Renamed by the owner on 2026-09-27 from کنکورصفریک / kunkur01 / kunkur01.ir. Stable identifiers that still carry
-the old prefix (e.g. article `external_id` values like `kunkur01-lesson-*`) are IDs, not branding: keep them, or
-re-imports create duplicates. A competitor operates at konkurcomputer.ir (k-**o**-nkur); ours is kunkurcomputer.ir
+Renamed by the owner on 2026-09-27 from کنکورصفریک / kunkur01 / kunkur01.ir. On 2026-09-28 the owner asked for
+external ids to carry the new name too: new ones use `kunkurcomputer-` (e.g. `kunkurcomputer-lesson-*`), and the
+migration `20260928090000_external_ids_kunkurcomputer` renamed the live `kunkur01-*` rows so re-imports still match
+instead of creating duplicates. Do not create new `kunkur01-*` ids. A competitor operates at konkurcomputer.ir (k-**o**-nkur); ours is kunkurcomputer.ir
 (k-**u**-nkur). In internal docs about competitors use the Latin `kunkurcomputer` for us so the two are never confused.
 
 Do not rename the brand or canonical domain.

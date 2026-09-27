@@ -15,7 +15,7 @@ const tex = (latex) => ({ type: "latex", latex });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-np-complete-reductions",
+  external_id: "kunkurcomputer-lesson-np-complete-reductions",
   content_type: "article",
   title: "NP-کامل و کاهش برای کنکور: زنجیرهٔ کاهش‌های مشهور و مسئله‌های دوقلو",
   slug: "np-complete-reductions",

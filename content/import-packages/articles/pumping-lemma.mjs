@@ -14,7 +14,7 @@ const tex = (latex) => ({ type: "latex", latex });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-pumping-lemma",
+  external_id: "kunkurcomputer-lesson-pumping-lemma",
   content_type: "article",
   title: "لم تزریق بدون ترس: اثبات نامنظم بودن به‌شکل یک بازی دونفره",
   slug: "pumping-lemma",

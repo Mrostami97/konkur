@@ -10,7 +10,7 @@ const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
 export default {
   schema_version: "article.v2",
-  external_id: "kunkur01-lesson-huffman-greedy",
+  external_id: "kunkurcomputer-lesson-huffman-greedy",
   content_type: "article",
   title: "کد هافمن برای کنکور: از ایدهٔ حریصانه تا تست سری هندسی",
   slug: "huffman-code-greedy",
