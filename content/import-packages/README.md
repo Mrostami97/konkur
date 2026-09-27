@@ -29,3 +29,7 @@ links to an unpublished one.
 `union-find-linear-sorting` links to `amortized-analysis`, and
 `np-complete-reductions` links to `turing-machines-decidability`; publish each
 after (or with) the lesson it links to.
+
+`deadlock-bankers-algorithm` links to `cpu-scheduling`, and
+`process-synchronization` links to both; publish the three operating-systems
+lessons together or in that order.
