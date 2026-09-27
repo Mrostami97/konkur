@@ -24,7 +24,7 @@
       "kind": "FIRST_PARTY_CHANNEL",
       "title": "کانال اصلی کنکور کامپیوتر",
       "publisher": "kunkurcomputer",
-      "canonicalUrl": "https://t.me/konkurcom",
+      "canonicalUrl": "https://t.me/kunkurcomputer",
       "sourceTier": "FIRST_PARTY",
       "checkedAt": "2026-09-08T00:00:00.000Z",
       "rightsBasis": "OWNED_BY_PUBLISHER",
@@ -134,16 +134,16 @@
     {
       "externalId": "editorial-source-90acf5084bd313d2b5b0",
       "kind": "WEB_PAGE",
-      "title": "آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
+      "title": "آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @kunkurcomputer",
       "publisher": "کنکور کامپیوتر",
-      "canonicalUrl": "https://t.me/konkurcom",
+      "canonicalUrl": "https://t.me/kunkurcomputer",
       "sourceTier": "SECONDARY",
       "checkedAt": "2026-09-08T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
       "mayLink": true,
       "mayAdapt": false,
       "commercialUseAllowed": false,
-      "attributionText": "کنکور کامپیوتر — آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
+      "attributionText": "کنکور کامپیوتر — آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @kunkurcomputer",
       "metadata": {
         "importedFrom": "apps/web/src/content/phase12-corpus.json"
       }
@@ -2011,7 +2011,7 @@
         {
           "source_external_id": "editorial-source-90acf5084bd313d2b5b0",
           "relation": "SUPPORTS",
-          "locator": "آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @konkurcom",
+          "locator": "آرشیو آموزشی و اطلاع‌رسانی کانال رسمی @kunkurcomputer",
           "order": 1
         }
       ],
@@ -6734,7 +6734,7 @@
         },
         {
           "type": "text",
-          "text": "• @konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای کنکور کامپیوتر است.\n• محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."
+          "text": "• @kunkurcomputer مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای کنکور کامپیوتر است.\n• محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."
         },
         {
           "type": "heading",

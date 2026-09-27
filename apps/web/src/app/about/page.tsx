@@ -17,7 +17,7 @@ export const metadata: Metadata = pageMetadata({
 
 const thesisUrl =
   "https://library.sharif.ir/parvan/resource/503037/%D9%85%D8%B3%D8%A7%DB%8C%D9%84-%D8%A8%D9%87%DB%8C%D9%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D8%B1%D9%88%DB%8C-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D8%A7%D9%81%D8%B1%D8%A7%D8%B2%D8%B4%D8%AF%D9%87/&from=search&&query=%D9%85%D8%AD%D9%85%D8%AF%20%D8%B1%D8%B3%D8%AA%D9%85%DB%8C&collectionPID=9&count=20&execute=true";
-const telegramUrl = "https://t.me/konkurcom";
+const telegramUrl = "https://t.me/kunkurcomputer";
 const roleTitle = "کارشناس ارشد مهندسی نرم‌افزار، گرایش الگوریتم و محاسبات، دانشگاه صنعتی شریف";
 
 // One Person, described once, so search and answer engines resolve the author
@@ -211,7 +211,7 @@ export default function AboutPage() {
         پایان‌نامهٔ کارشناسی ارشدم، «مسایل بهینه‌سازی شبکه روی منابع افرازشده»، در{" "}
         <a className="text-link" href={thesisUrl} target="_blank" rel="noreferrer">کتابخانهٔ دانشگاه شریف</a> ثبت است.
         کانال رسمی:{" "}
-        <a className="text-link" href={telegramUrl} target="_blank" rel="noreferrer">‎@konkurcom</a>
+        <a className="text-link" href={telegramUrl} target="_blank" rel="noreferrer">‎@kunkurcomputer</a>
         {" · "}
         <Link className="text-link" href="/editorial-policy">روش تولید محتوا</Link>
       </p>

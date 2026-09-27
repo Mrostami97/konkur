@@ -129,7 +129,7 @@ export default function LoginPage() {
                 سرویس پیامک سایت هنوز راه‌اندازی نشده، پس کد ورود به گوشی کسی نمی‌رسد. زمان راه‌اندازی در کانال
                 تلگرام اعلام می‌شود.
               </p>
-              <a className="lg-submit" href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">کانال تلگرام @konkurcom</a>
+              <a className="lg-submit" href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">کانال تلگرام @kunkurcomputer</a>
             </div>
           ) : step === "phone" ? (
             <form onSubmit={requestCode} className="lg-form">

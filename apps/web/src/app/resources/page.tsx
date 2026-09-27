@@ -20,10 +20,10 @@ export function generateMetadata({ searchParams }: { searchParams: Record<string
   });
 }
 const collections = [
-  { icon: "▶", title: "نمونه تدریس و ویدئو", description: "ویدئوهای آموزشی و حل مسئله از آرشیو رسمی.", href: "https://t.me/konkurcom" },
-  { icon: "PDF", title: "جزوه و فایل‌های رایگان", description: "فایل‌هایی که با اجازهٔ صاحب محتوا منتشر شده‌اند.", href: "https://t.me/konkurcom" },
-  { icon: "✓", title: "تحلیل سؤال و پاسخ", description: "پاسخ‌ها و نکته‌هایی که به مبحث مرتبط می‌شوند.", href: "https://t.me/konkurcom" },
-  { icon: "↗", title: "خبر و اطلاعیه", description: "آخرین خبرهای آزمون و آپدیت‌های کنکور کامپیوتر.", href: "https://t.me/konkurcom" },
+  { icon: "▶", title: "نمونه تدریس و ویدئو", description: "ویدئوهای آموزشی و حل مسئله از آرشیو رسمی.", href: "https://t.me/kunkurcomputer" },
+  { icon: "PDF", title: "جزوه و فایل‌های رایگان", description: "فایل‌هایی که با اجازهٔ صاحب محتوا منتشر شده‌اند.", href: "https://t.me/kunkurcomputer" },
+  { icon: "✓", title: "تحلیل سؤال و پاسخ", description: "پاسخ‌ها و نکته‌هایی که به مبحث مرتبط می‌شوند.", href: "https://t.me/kunkurcomputer" },
+  { icon: "↗", title: "خبر و اطلاعیه", description: "آخرین خبرهای آزمون و آپدیت‌های کنکور کامپیوتر.", href: "https://t.me/kunkurcomputer" },
 ];
 
 const fieldOptions = [
@@ -168,11 +168,11 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Re
         <EmptyState
           title={`هنوز منبع منتشرشده‌ای برای ${subject.shortTitle} ثبت نشده است`}
           description="این نتیجه عمداً خالی است؛ منابع پس از ثبت منبع، وضعیت حقوق استفاده و بازبینی نمایش داده می‌شوند."
-          action={<a className="button button-secondary" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">دیدن آرشیو @konkurcom</a>}
+          action={<a className="button button-secondary" href="https://t.me/kunkurcomputer" target="_blank" rel="noreferrer">دیدن آرشیو @kunkurcomputer</a>}
         />
       )}
       <section aria-labelledby="telegram-resources-title">
-        <div className="section-heading"><div><span className="eyebrow">کانال رسمی</span><h2 id="telegram-resources-title">مسیرهای پایهٔ آرشیو @konkurcom</h2></div></div>
+        <div className="section-heading"><div><span className="eyebrow">کانال رسمی</span><h2 id="telegram-resources-title">مسیرهای پایهٔ آرشیو @kunkurcomputer</h2></div></div>
         <div className="resource-grid">
           {collections.map((item) => (
             <a className="resource-card" href={item.href} target="_blank" rel="noreferrer" key={item.title}>

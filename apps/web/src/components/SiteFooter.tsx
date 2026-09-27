@@ -38,7 +38,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
         </div>
         <a className="ft-cta-btn" href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" aria-hidden><path d="M21 4 3 11l6 2 2 6 3-4 5 4z" /><path d="m9 13 8-6" /></svg>
-          عضویت در ‎@konkurcom
+          عضویت در ‎@kunkurcomputer
         </a>
       </div>
 

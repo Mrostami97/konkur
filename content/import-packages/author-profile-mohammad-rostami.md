@@ -38,7 +38,7 @@ https://kunkurcomputer.ir/brand/mohammad-rostami.png
 
 **پروفایل‌های دیگر (sameAs)**، هر کدام در یک خط:
 
-https://t.me/konkurcom
+https://t.me/kunkurcomputer
 https://t.me/Konkur_answer
 
 **منتشرشده (isPublished)**

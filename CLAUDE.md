@@ -91,7 +91,7 @@ Do not publish or commit raw scorecard/result data to this public repository unl
 - Brand: **کنکور کامپیوتر**
 - Latin name: **kunkurcomputer**
 - Canonical domain: **https://kunkurcomputer.ir**
-- Telegram channel: **@konkurcom** («کنکور کامپیوتر»); logo: `apps/web/public/brand/konkurcom-logo.png`
+- Telegram channel: **@kunkurcomputer** («کنکور کامپیوتر»; formerly @konkurcom, post numbers carry over); logo: `apps/web/public/brand/konkurcom-logo.png`
 
 Renamed by the owner on 2026-09-27 from کنکورصفریک / kunkur01 / kunkur01.ir. On 2026-09-28 the owner asked for
 external ids to carry the new name too: new ones use `kunkurcomputer-` (e.g. `kunkurcomputer-lesson-*`), and the

@@ -445,7 +445,7 @@ export default function AdminAchievementsPage() {
               <FieldRow>
                 <Field label="لینک پست اصلی" hint="مثلاً پست همین نتیجه در کانال تلگرام">
                   {(props) => (
-                    <Input {...props} value={form.sourceUrl} onChange={(e) => update("sourceUrl", e.target.value)} placeholder="https://t.me/konkurcom/…" dir="ltr" type="url" />
+                    <Input {...props} value={form.sourceUrl} onChange={(e) => update("sourceUrl", e.target.value)} placeholder="https://t.me/kunkurcomputer/…" dir="ltr" type="url" />
                   )}
                 </Field>
                 <Field label="لینک ویدیوی گفت‌وگو">

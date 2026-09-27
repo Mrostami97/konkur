@@ -2,16 +2,16 @@
   "schemaVersion": "phase14.resource-corpus.v1",
   "reviewedAt": "2026-09-09T00:00:00.000Z",
   "officialChannel": {
-    "handle": "@konkurcom",
-    "url": "https://t.me/konkurcom"
+    "handle": "@kunkurcomputer",
+    "url": "https://t.me/kunkurcomputer"
   },
   "sources": {
     "konkurcom138": {
       "externalId": "phase14-source-konkurcom-138",
       "kind": "FIRST_PARTY_CHANNEL",
       "title": "پست سرفصل داده‌ساختار و الگوریتم ۱۴۰۶",
-      "publisher": "کنکور کامپیوتر (@konkurcom)",
-      "canonicalUrl": "https://t.me/konkurcom/138",
+      "publisher": "کنکور کامپیوتر (@kunkurcomputer)",
+      "canonicalUrl": "https://t.me/kunkurcomputer/138",
       "sourceTier": "FIRST_PARTY",
       "checkedAt": "2026-09-09T00:00:00.000Z",
       "rightsBasis": "LINK_ONLY",
@@ -23,7 +23,7 @@
       "mayTranslate": false,
       "mayHost": false,
       "commercialUseAllowed": false,
-      "attributionText": "پیوند مستقیم به پست اصلی کانال رسمی @konkurcom.",
+      "attributionText": "پیوند مستقیم به پست اصلی کانال رسمی @kunkurcomputer.",
       "metadata": { "channelRole": "OFFICIAL", "telegramMessageId": "138" }
     },
     "legacy4014": {
@@ -177,7 +177,7 @@
       "kind": "TELEGRAM_POST",
       "accessMode": "PUBLIC",
       "hostingMode": "EXTERNAL_LINK",
-      "externalUrl": "https://t.me/konkurcom/138",
+      "externalUrl": "https://t.me/kunkurcomputer/138",
       "taxonomyDegrees": ["MASTER"],
       "taxonomyFields": ["computer-engineering", "information-technology"],
       "subjectCodes": ["data-structures-algorithms"],

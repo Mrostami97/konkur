@@ -137,7 +137,7 @@ export default async function ResourcePage({ params }: { params: { slug: string 
             <Link className="text-link" href="/editorial-policy">روش بررسی محتوا ←</Link>
           </div>
           <div className="surface-card telegram-card">
-            <span className="telegram-icon" aria-hidden="true">↗</span><strong>کانال رسمی</strong><p>نسخه‌های تازه و اصلاحیه‌ها در @konkurcom اعلام می‌شوند.</p><a className="button button-primary" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در کانال</a>
+            <span className="telegram-icon" aria-hidden="true">↗</span><strong>کانال رسمی</strong><p>نسخه‌های تازه و اصلاحیه‌ها در @kunkurcomputer اعلام می‌شوند.</p><a className="button button-primary" href="https://t.me/kunkurcomputer" target="_blank" rel="noreferrer">عضویت در کانال</a>
           </div>
         </aside>
       </div>

@@ -126,7 +126,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Sear
             <h2>فهرست نتایج الان در دسترس نیست</h2>
             <p>چند دقیقهٔ دیگر دوباره سر بزن.</p>
             <a className="h-btn h-btn-primary" href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
-              کانال تلگرام ‎@konkurcom
+              کانال تلگرام ‎@kunkurcomputer
             </a>
           </div>
         ) : all.length === 0 ? (

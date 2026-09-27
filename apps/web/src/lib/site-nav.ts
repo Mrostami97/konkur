@@ -134,4 +134,4 @@ export const SUBJECT_FAMILIES: { tone: "violet" | "teal" | "blue" | "rose" | "am
   { tone: "amber", title: "زبان" },
 ];
 
-export const TELEGRAM_URL = "https://t.me/konkurcom";
+export const TELEGRAM_URL = "https://t.me/kunkurcomputer";

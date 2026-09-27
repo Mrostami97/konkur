@@ -66,7 +66,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <StructuredData data={[
-          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکور کامپیوتر", alternateName: "kunkurcomputer", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/konkurcom"] },
+          { "@context": "https://schema.org", "@type": "Organization", "@id": absoluteUrl("/#organization"), name: "کنکور کامپیوتر", alternateName: "kunkurcomputer", url: absoluteUrl("/"), logo: absoluteUrl("/brand/konkurcom-logo.png"), sameAs: ["https://t.me/kunkurcomputer"] },
           { "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"), name: "کنکور کامپیوتر", alternateName: "kunkurcomputer", url: absoluteUrl("/"), inLanguage: "fa-IR", publisher: { "@id": absoluteUrl("/#organization") } },
         ]} />
         <PublicChrome>

@@ -8,8 +8,8 @@ const outputPath = resolve(projectRoot, "apps/api/src/seed-data/resource-drafts.
 const corpus = JSON.parse(await readFile(sourcePath, "utf8"));
 
 if (corpus.schemaVersion !== "phase14.resource-corpus.v1") throw new Error("Unsupported Phase 14 corpus schema");
-if (corpus.officialChannel?.handle !== "@konkurcom" || corpus.officialChannel?.url !== "https://t.me/konkurcom") {
-  throw new Error("The only official channel must be @konkurcom");
+if (corpus.officialChannel?.handle !== "@kunkurcomputer" || corpus.officialChannel?.url !== "https://t.me/kunkurcomputer") {
+  throw new Error("The only official channel must be @kunkurcomputer");
 }
 
 const sourceEntries = Object.entries(corpus.sources);

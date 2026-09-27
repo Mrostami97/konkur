@@ -9,7 +9,7 @@ const generated = JSON.parse(
 );
 
 const expectedResourceUrls = [
-  "https://t.me/konkurcom/138",
+  "https://t.me/kunkurcomputer/138",
   "https://t.me/Konkur_answer/4014",
   "https://t.me/Konkur_answer/4050",
   "https://t.me/Konkur_answer/4049",
@@ -43,7 +43,7 @@ const allowedCatalogKeys = new Set([
 const knownGuides = new Set(["choose-study-resources", "start-from-zero"]);
 
 assert.equal(corpus.schemaVersion, "phase14.resource-corpus.v1");
-assert.deepEqual(corpus.officialChannel, { handle: "@konkurcom", url: "https://t.me/konkurcom" });
+assert.deepEqual(corpus.officialChannel, { handle: "@kunkurcomputer", url: "https://t.me/kunkurcomputer" });
 assert.equal(corpus.resources.length, 8, "only the eight reviewed educational candidates may become Drafts");
 assert.equal(Object.keys(corpus.sources).length, 8, "every Draft must have one exact source record");
 assert.deepEqual(corpus.resources.map((item) => item.externalUrl), expectedResourceUrls);
@@ -87,7 +87,7 @@ for (const source of Object.values(corpus.sources)) {
     assert.doesNotMatch(source.publisher, /کانال رسمی/);
   } else {
     assert.equal(source.metadata.channelRole, "OFFICIAL");
-    assert.match(source.publisher, /@konkurcom/);
+    assert.match(source.publisher, /@kunkurcomputer/);
   }
 }
 

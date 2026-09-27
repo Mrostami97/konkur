@@ -132,7 +132,7 @@ Do not push raw personal messages into public content.
 
 Use the owner's:
 
-- @konkurcom
+- @kunkurcomputer
 - authorized archive sources
 - future comments/Q&A
 

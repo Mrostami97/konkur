@@ -156,12 +156,15 @@ const toAsciiDigits = (value) => value.replace(/[۰-۹]/g, (digit) => String("۰
 // Our own sources were named before the 2026-09-27 rename (kunkur01 ->
 // kunkurcomputer), and import packages refer to them by these ids. Hashing
 // their pre-rename identity keeps every id exactly what it was.
+// The Telegram channel moved from @konkurcom to @kunkurcomputer the same way.
+const legacyUrl = (url) => url.replace("kunkurcomputer.ir", "kunkur01.ir").replace(/t\.me\/kunkurcomputer(?![A-Za-z0-9_])/, "t.me/konkurcom");
+const legacyTitle = (title) => title.replace(/@kunkurcomputer(?![A-Za-z0-9_])/, "@konkurcom");
 const idIdentity = (source) =>
   source.publisher === "kunkurcomputer"
-    ? ["kunkur01", source.title.replace("کنکور کامپیوتر", "kunkur01"), source.url.replace("kunkurcomputer.ir", "kunkur01.ir")]
+    ? ["kunkur01", legacyTitle(source.title).replace("کنکور کامپیوتر", "kunkur01"), legacyUrl(source.url)]
     : source.publisher === "کنکور کامپیوتر"
-      ? ["کنکورصفریک", source.title.replace("کنکور کامپیوتر", "کنکورصفریک"), source.url.replace("kunkurcomputer.ir", "kunkur01.ir")]
-      : [source.publisher, source.title, source.url];
+      ? ["کنکورصفریک", legacyTitle(source.title).replace("کنکور کامپیوتر", "کنکورصفریک"), legacyUrl(source.url)]
+      : [source.publisher, legacyTitle(source.title), legacyUrl(source.url)];
 const sourceId = (source) => "editorial-source-" + createHash("sha256")
   .update(idIdentity(source).join("\n"))
   .digest("hex")

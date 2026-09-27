@@ -56,13 +56,13 @@ export default function SourcePolicyPage() {
 
       <section className="surface-card policy-note">
         <h2>منابع خودمان و محتوای ارسالی</h2>
-        <p>اگر محتوایی از کانال رسمی <strong dir="ltr">@konkurcom</strong> به سایت منتقل شود، پیوند پست اصلی در صورت دسترسی حفظ می‌شود. حساب‌ها و کانال‌های دیگر منبع رسمی کنکور کامپیوتر معرفی نمی‌شوند.</p>
+        <p>اگر محتوایی از کانال رسمی <strong dir="ltr">@kunkurcomputer</strong> به سایت منتقل شود، پیوند پست اصلی در صورت دسترسی حفظ می‌شود. حساب‌ها و کانال‌های دیگر منبع رسمی کنکور کامپیوتر معرفی نمی‌شوند.</p>
         <p>کارنامه، پیام یا تجربهٔ ارسالی فقط به اندازهٔ لازم استفاده می‌شود؛ اطلاعات شخصی باید حذف یا با رضایت روشن منتشر شود. امکان راستی‌آزمایی یک نمونه، آن را به قاعده‌ای عمومی یا تضمین نتیجه تبدیل نمی‌کند.</p>
       </section>
 
       <section className="surface-card policy-note">
         <h2>درخواست اصلاح یا حذف</h2>
-        <p>اگر صاحب اثری هستی و فکر می‌کنی انتساب ناقص است یا استفاده از محتوایت باید بررسی شود، نشانی صفحه، بخش دقیق و مدرک ارتباطت با اثر را از مسیرهای اعلام‌شده در <a className="text-link" href="https://t.me/konkurcom" target="_blank" rel="noreferrer">@konkurcom</a> بفرست. گزارش‌ها طبق <Link className="text-link" href="/corrections">سیاست اصلاح محتوا</Link> بررسی می‌شوند.</p>
+        <p>اگر صاحب اثری هستی و فکر می‌کنی انتساب ناقص است یا استفاده از محتوایت باید بررسی شود، نشانی صفحه، بخش دقیق و مدرک ارتباطت با اثر را از مسیرهای اعلام‌شده در <a className="text-link" href="https://t.me/kunkurcomputer" target="_blank" rel="noreferrer">@kunkurcomputer</a> بفرست. گزارش‌ها طبق <Link className="text-link" href="/corrections">سیاست اصلاح محتوا</Link> بررسی می‌شوند.</p>
       </section>
     </main>
   );

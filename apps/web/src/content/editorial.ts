@@ -56,7 +56,7 @@ const phd1406: EditorialSource = {
 const primaryChannel: EditorialSource = {
   title: "کانال اصلی کنکور کامپیوتر",
   publisher: "kunkurcomputer",
-  url: "https://t.me/konkurcom",
+  url: "https://t.me/kunkurcomputer",
   checkedAt: "۱۷ شهریور ۱۴۰۵",
 };
 
@@ -343,7 +343,7 @@ export const articles: EditorialPage[] = [
     reviewedAt: "۱۴۰۵-۰۶-۱۵",
     readingMinutes: 5,
     sections: [
-      { title: "یک کانال، یک مسیر", bullets: ["@konkurcom مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای کنکور کامپیوتر است.", "محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."] },
+      { title: "یک کانال، یک مسیر", bullets: ["@kunkurcomputer مرجع رسمی خبرها، مسیرهای یادگیری و آرشیو محتوای کنکور کامپیوتر است.", "محتواها در سایت با درس، مبحث، مقطع و تاریخ بازبینی برچسب می‌خورند تا از آرشیو پراکنده به مسیر قابل جست‌وجو تبدیل شوند."] },
       { title: "روش استفاده", bullets: ["قبل از دیدن ویدئو، مبحث و خروجی مورد انتظار را بنویس.", "بعد از هر محتوا حداقل سه تست یا سه پرسش بازیابی حل کن.", "لینک پست اصلی را کنار یادداشت نگه دار تا نسخه و زمینه گم نشود."] },
     ],
     sources: [primaryChannel],
@@ -382,10 +382,10 @@ const syllabusSourceBySubject: Record<string, { title: string; url: string }> = 
   "programming-fundamentals": { title: "مبانی کامپیوتر و برنامه‌سازی در Syllab", url: "https://syllab.ir/courses/40153" },
   "digital-logic": { title: "مدارهای منطقی در Syllab", url: "https://syllab.ir/courses/40212" },
   "computer-architecture": { title: "معماری کامپیوتر در Syllab", url: "https://syllab.ir/courses/40323" },
-  "data-structures-algorithms": { title: "پست رسمی سرفصل داده‌ساختار و الگوریتم ۱۴۰۶ در @konkurcom", url: "https://t.me/konkurcom/138" },
+  "data-structures-algorithms": { title: "پست رسمی سرفصل داده‌ساختار و الگوریتم ۱۴۰۶ در @kunkurcomputer", url: "https://t.me/kunkurcomputer/138" },
   "data-structures": { title: "داده‌ساختارها و الگوریتم‌ها در Syllab", url: "https://syllab.ir/courses/40254" },
   algorithms: { title: "داده‌ساختارها و الگوریتم‌ها در Syllab", url: "https://syllab.ir/courses/40254" },
-  automata: { title: "آرشیو رسمی سرفصل نظریه زبان‌ها و ماشین‌ها در @konkurcom", url: "https://t.me/konkurcom" },
+  automata: { title: "آرشیو رسمی سرفصل نظریه زبان‌ها و ماشین‌ها در @kunkurcomputer", url: "https://t.me/kunkurcomputer" },
   "operating-systems": { title: "سیستم‌های عامل در Syllab", url: "https://syllab.ir/courses/40424" },
   "artificial-intelligence": { title: "هوش مصنوعی در Syllab", url: "https://syllab.ir/courses/40417" },
   "computer-networks": { title: "شبکه‌های کامپیوتری در Syllab", url: "https://syllab.ir/courses/40443" },
