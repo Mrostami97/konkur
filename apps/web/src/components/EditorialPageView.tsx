@@ -7,6 +7,7 @@ import { RelatedContentGrid, type RelatedPublicItem } from "./PublicContent";
 import { NextSteps, readingNextSteps } from "./reading/NextSteps";
 import { ReadingHero } from "./reading/ReadingHero";
 import { ReadingProgress } from "./reading/ReadingProgress";
+import { OwnerByline } from "./OwnerByline";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
 
 /**
@@ -138,17 +139,7 @@ export function EditorialPageView({
             </section>
           )}
 
-          <section className="rd-author" aria-label="تهیه و بازبینی">
-            <span className="rd-author-mark" aria-hidden="true">ک</span>
-            <div>
-              <strong>تهیه‌شده در تحریریهٔ کنکور کامپیوتر</strong>
-              <p>
-                انتساب نویسنده و بازبین این نسخه بعد از تأیید نهایی کنار همین متن می‌آید. هر عدد و تاریخ این صفحه از منبع
-                رسمی آمده و در {page.reviewedAt} بازبینی شده است؛ روش کار ما را در{" "}
-                <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.
-              </p>
-            </div>
-          </section>
+          <OwnerByline note={<>هر عدد و تاریخ این صفحه از منبع رسمی آمده و در {page.reviewedAt} بازبینی شده است. </>} />
 
           <section className="sources-box" aria-labelledby="sources-title">
             <div><span>منابع و اعتبارسنجی</span><h2 id="sources-title">این مطلب بر چه اساسی نوشته شده؟</h2></div>
@@ -176,7 +167,7 @@ export function EditorialPageView({
           <div className="rd-side-cta">
             <strong>آپدیت‌های کنکور را از دست نده</strong>
             <p>خبرهای اصلی و تحلیل‌ها در کانال رسمی کنکور کامپیوتر منتشر می‌شوند.</p>
-            <a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
+            <a href="https://t.me/kunkurcomputer" target="_blank" rel="noreferrer">عضویت در @kunkurcomputer</a>
             <Link href="/free-videos">ویدیوی رایگان هر درس</Link>
           </div>
         </aside>

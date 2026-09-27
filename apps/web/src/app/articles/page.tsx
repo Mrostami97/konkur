@@ -9,6 +9,7 @@ import { articles as legacyArticles } from "../../content/editorial";
 import { apiGetPublic } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
+import { OWNER_NAME } from "../../components/OwnerByline";
 
 export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
   return pageMetadata({
@@ -63,7 +64,7 @@ export default async function ArticlesPage() {
               <b>{article.title}</b>
               <small>{article.summary}</small>
               <span className="pg-card-action pg-card-meta">
-                {article.authorProfile?.displayName ?? "تحریریهٔ کنکور کامپیوتر"}
+                {article.authorProfile?.displayName ?? OWNER_NAME}
                 {article.publishedAt ? ` · ${formatPublicDate(article.publishedAt)}` : ""}
               </span>
             </Link>

@@ -6,6 +6,7 @@ import { EmptyState } from "./ui";
 import { NextSteps, readingNextSteps } from "./reading/NextSteps";
 import { ReadingHero } from "./reading/ReadingHero";
 import { ReadingProgress } from "./reading/ReadingProgress";
+import { OWNER_NAME, OwnerByline, OwnerPhoto } from "./OwnerByline";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
 import { findSubject } from "../content/editorial";
 import { faqPageSchema } from "../lib/faq-schema";
@@ -404,24 +405,27 @@ export function PublicArticleView({
             <EmptyState title="متن کامل هنوز در دسترس نیست" description="این صفحه فقط اطلاعات انتشارِ تأییدشده را نمایش می‌دهد." />
           )}
 
-          <section className="rd-author" aria-label="تهیه و بازبینی">
-            <span className="rd-author-mark" aria-hidden="true">{article.authorProfile?.displayName.slice(0, 1) ?? "ک"}</span>
-            <div>
-              {article.authorProfile || article.reviewerProfile ? (
+          {article.authorProfile || article.reviewerProfile ? (
+            <section className="rd-author" aria-label="تهیه و بازبینی">
+              {[article.authorProfile, article.reviewerProfile].some((profile) => profile?.displayName === OWNER_NAME) ? (
+                <OwnerPhoto />
+              ) : (
+                <span className="rd-author-mark" aria-hidden="true">{article.authorProfile?.displayName.slice(0, 1) ?? "م"}</span>
+              )}
+              <div>
                 <strong>
                   {article.authorProfile && <ProfileLine profile={article.authorProfile} prefix="نویسنده:" />}
                   {article.authorProfile && article.reviewerProfile && " · "}
                   {article.reviewerProfile && <ProfileLine profile={article.reviewerProfile} prefix="بازبین:" />}
                 </strong>
-              ) : (
-                <strong>تهیه و بازبینی: تحریریهٔ کنکور کامپیوتر</strong>
-              )}
-              <p>
-                {article.authorProfile || article.reviewerProfile ? "" : "این مطلب را تحریریهٔ کنکور کامپیوتر بر پایهٔ منابع ذکرشده تهیه کرده است. "}
-                روش کار ما را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.
-              </p>
-            </div>
-          </section>
+                <p>
+                  روش کار را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.
+                </p>
+              </div>
+            </section>
+          ) : (
+            <OwnerByline />
+          )}
 
           <PublicSourceList sources={article.sources ?? []} />
           <RelatedContentGrid items={related} description="پیوندهای تأییدشده بر اساس درس، مبحث و پروندهٔ همین محتوا." />
@@ -443,7 +447,7 @@ export function PublicArticleView({
           <div className="rd-side-cta">
             <strong>کانال رسمی کنکور کامپیوتر</strong>
             <p>خبرها، آموزش‌ها و اصلاحیه‌های مطالب را از منبع رسمی دنبال کنید.</p>
-            <a href="https://t.me/konkurcom" target="_blank" rel="noreferrer">عضویت در @konkurcom</a>
+            <a href="https://t.me/kunkurcomputer" target="_blank" rel="noreferrer">عضویت در @kunkurcomputer</a>
             <Link href="/free-videos">ویدیوی رایگان هر درس</Link>
           </div>
         </aside>
