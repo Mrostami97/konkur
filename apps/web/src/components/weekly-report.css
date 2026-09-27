@@ -1,0 +1,44 @@
+/* --- Weekly report ---------------------------------------------------------
+   The consultation student's week: what the site logged, what they write,
+   and the consultant's answer. */
+.wr-week, .wr-form { margin-bottom: 1rem; }
+.wr-facts { display: grid; gap: 0.75rem; }
+.wr-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin: 0; }
+.wr-stats > div { padding: 0.8rem 0.95rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface-sunken); }
+.wr-stats dt { color: var(--muted); font-size: 0.74rem; font-weight: 600; }
+.wr-stats dd { margin: 0.2rem 0 0; color: var(--ink); font-size: 1rem; font-weight: 800; }
+.wr-exams { display: grid; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.wr-exams li { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.45rem 0.75rem; border-radius: var(--radius-md); background: var(--surface-sunken); color: var(--ink-700); font-size: 0.84rem; }
+.wr-exams b { color: var(--accent-hover); }
+.wr-form { display: grid; gap: 1.1rem; }
+.wr-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 1rem; align-items: start; }
+.wr-textarea { min-height: 6.5rem; padding-block: 0.75rem; line-height: 1.9; resize: vertical; }
+.wr-energy { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.4rem; }
+.wr-energy-option { display: grid; justify-items: center; gap: 0.1rem; padding: 0.55rem 0.2rem; border: 1.5px solid var(--line-strong); border-radius: var(--radius-lg); background: #fff; color: var(--ink); font: inherit; cursor: pointer; transition: border-color 0.15s ease, background-color 0.15s ease; }
+.wr-energy-option strong { font-size: 1rem; }
+.wr-energy-option small { color: var(--muted); font-size: 0.7rem; }
+.wr-energy-option:hover { border-color: var(--ink-300); }
+.wr-energy-option[data-on] { border-color: var(--accent); background: var(--accent-soft); }
+.wr-energy-option[data-on] small { color: var(--accent-hover); font-weight: 700; }
+.wr-energy-option:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wr-coach { display: flex; gap: 0.85rem; margin-bottom: 1rem; padding: 1rem 1.15rem; border: 1px solid var(--accent-line); border-radius: var(--radius-lg); background: var(--accent-soft); }
+.wr-coach-mark { display: grid; flex: none; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--accent); color: #fff; }
+.wr-coach-mark svg { width: 1.2rem; height: 1.2rem; }
+.wr-coach strong { color: var(--accent-hover); font-size: 0.9rem; }
+.wr-coach p { margin: 0.25rem 0 0; color: var(--ink); font-size: 0.9rem; line-height: 1.95; white-space: pre-line; }
+.wr-coach small { color: var(--muted); font-size: 0.72rem; }
+.wr-history { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.wr-history details { border: 1px solid var(--line); border-radius: var(--radius-lg); background: #fff; }
+.wr-history summary { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.9rem; padding: 0.8rem 1rem; cursor: pointer; list-style: none; }
+.wr-history summary::-webkit-details-marker { display: none; }
+.wr-history summary strong { flex: 1; min-width: 9rem; font-size: 0.9rem; }
+.wr-history summary > span:not(.st-badge) { color: var(--muted); font-size: 0.8rem; }
+.wr-history-body { display: grid; gap: 0.85rem; padding: 0 1rem 1rem; }
+.wr-text { display: grid; gap: 0.6rem; margin: 0; }
+.wr-text dt { color: var(--muted); font-size: 0.74rem; font-weight: 700; }
+.wr-text dd { margin: 0.15rem 0 0; color: var(--ink); font-size: 0.88rem; line-height: 1.9; white-space: pre-line; }
+@media (max-width: 720px) {
+  .wr-row, .wr-stats { grid-template-columns: minmax(0, 1fr); }
+}
+.wr-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.wr-chip { padding: 0.15rem 0.6rem; border: 1px solid var(--line); border-radius: var(--radius-xs); background: var(--surface-sunken); color: var(--ink-700); font-size: 0.76rem; font-weight: 600; }

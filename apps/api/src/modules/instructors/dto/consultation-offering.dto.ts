@@ -52,6 +52,12 @@ export class CreateOfferingDto {
   @IsString()
   @MinLength(10)
   description!: string;
+
+  /** The annual plan: buying it opens every course, every question-bank
+   * subject and every sold handout on the site for as long as it is valid. */
+  @IsOptional()
+  @IsBoolean()
+  includesAllAccess?: boolean;
 }
 
 /** Quota and instructor are absent on purpose: both were sold against, and
@@ -78,6 +84,13 @@ export class UpdateOfferingDto {
   @IsInt()
   @Min(0)
   amountRial?: number;
+
+  /** The annual plan: buying it opens every course, every question-bank
+   * subject and every sold handout on the site for as long as it is valid. */
+  @IsOptional()
+  @IsBoolean()
+  includesAllAccess?: boolean;
+
 
   @IsOptional()
   @IsISO8601()

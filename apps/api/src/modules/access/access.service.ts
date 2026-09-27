@@ -4,6 +4,10 @@ import { PrismaService } from "../../prisma/prisma.service";
 
 export type AccessTx = PrismaService | Prisma.TransactionClient;
 
+/** A product that opens everything -- courses, every bank subject, every
+ * sold handout, now and later: the annual consultation plan. */
+const ALL_ACCESS: Prisma.ProductWhereInput = { grantsAllAccess: true };
+
 /**
  * Single source of truth for "does this user have an active entitlement
  * granting X". Before this service existed, the entitlement-window
@@ -66,7 +70,13 @@ export class AccessService {
   /** Course access: bought directly (Product.courseId) or via an explicit
    * ProductCourseGrant (a bundle/multi-course product). */
   async hasActiveCourseAccess(userId: string, courseId: string, tx?: AccessTx): Promise<boolean> {
-    return this.hasActiveGrant(userId, { OR: [{ courseId }, { courseGrants: { some: { courseId } } }] }, tx);
+    return this.hasActiveGrant(userId, { OR: [{ courseId }, { courseGrants: { some: { courseId } } }, ALL_ACCESS] }, tx);
+  }
+
+  /** Whether an active entitlement opens the whole site: the annual
+   * consultation plan (Product.grantsAllAccess). */
+  async hasAllAccess(userId: string, tx?: AccessTx): Promise<boolean> {
+    return this.hasActiveGrant(userId, ALL_ACCESS, tx);
   }
 
   /** Resource access: sold on its own (ProductResourceGrant), or a handout
@@ -81,6 +91,7 @@ export class AccessService {
           { resourceGrants: { some: { resourceId } } },
           { course: withHandout },
           { courseGrants: { some: { course: withHandout } } },
+          ALL_ACCESS,
         ],
       },
       tx,
@@ -94,7 +105,7 @@ export class AccessService {
    * product that also carries a ProductQuestionBankGrant for its subject.
    */
   async hasActiveQuestionBankAccess(userId: string, subjectCode: string, tx?: AccessTx): Promise<boolean> {
-    return this.hasActiveGrant(userId, { questionBankGrants: { some: { subjectCode } } }, tx);
+    return this.hasActiveGrant(userId, { OR: [{ questionBankGrants: { some: { subjectCode } } }, ALL_ACCESS] }, tx);
   }
 
   /**
@@ -109,6 +120,7 @@ export class AccessService {
   ): Promise<Set<string>> {
     const distinct = [...new Set(subjectCodes)];
     if (distinct.length === 0) return new Set();
+    if (await this.hasAllAccess(userId, tx)) return new Set(distinct);
     const db = tx ?? this.prisma;
     const now = new Date();
     const entitlements = await db.entitlement.findMany({

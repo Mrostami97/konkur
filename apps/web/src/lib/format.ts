@@ -20,6 +20,14 @@ export function formatRial(amountRial: number): string {
   return `${amountRial.toLocaleString("fa-IR")} ریال`;
 }
 
+/** The same amount the way people say it: «۱۵ میلیون تومان», «۳۰۰ هزار تومان». */
+export function formatToman(amountRial: number): string {
+  const toman = Math.round(amountRial / 10);
+  if (toman >= 1_000_000 && toman % 100_000 === 0) return `${formatPersianNumber(toman / 1_000_000)} میلیون تومان`;
+  if (toman >= 1_000 && toman % 1_000 === 0) return `${formatPersianNumber(toman / 1_000)} هزار تومان`;
+  return `${formatPersianNumber(toman)} تومان`;
+}
+
 /** Revenue shares are stored in basis points so the arithmetic stays in
  * integers; people read percent. */
 export function formatSharePercent(basisPoints: number): string {

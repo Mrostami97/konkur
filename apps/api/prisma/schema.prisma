@@ -46,6 +46,7 @@ model User {
   consultationBookings ConsultationBooking[] @relation("ConsultationStudent")
   spotPlayerLicenses   SpotPlayerLicense[]
   coachPlans           CoachPlan[]           @relation("CoachPlanStudent")
+  weeklyReports        WeeklyReport[]        @relation("WeeklyReportStudent")
 
   @@map("users")
 }
@@ -296,6 +297,7 @@ model ContributorProfile {
   consultationOfferings ConsultationOffering[]
   consultationBookings  ConsultationBooking[]  @relation("ConsultationInstructor")
   coachPlans            CoachPlan[]            @relation("CoachPlanCoach")
+  reviewedReports       WeeklyReport[]         @relation("WeeklyReportReviewer")
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
@@ -681,6 +683,10 @@ model Product {
   courseId             String?
   course               Course?                    @relation(fields: [courseId], references: [id])
   isActive             Boolean                    @default(true)
+  /// The annual consultation plan: an active entitlement to this product
+  /// opens every course, every question-bank subject and every sold handout,
+  /// including ones published later (AccessService).
+  grantsAllAccess      Boolean                    @default(false)
   prices               Price[]
   orderItems           OrderItem[]
   entitlements         Entitlement[]
@@ -1771,4 +1777,33 @@ model CoachPlanItem {
 
   @@index([planId, day])
   @@map("coach_plan_items")
+}
+
+/// The student's own account of one week (Saturday to Friday, Tehran), filled
+/// in before the weekly consultation session. Study minutes and exam results
+/// are not stored here: they are read from StudySession and Attempt for the
+/// same week, so the report never disagrees with what was logged.
+model WeeklyReport {
+  id                  String              @id @default(uuid())
+  studentUserId       String
+  student             User                @relation("WeeklyReportStudent", fields: [studentUserId], references: [id], onDelete: Cascade)
+  /// The Saturday that starts the week.
+  weekStart           DateTime            @db.Date
+  testsSolved         Int                 @default(0)
+  /// How the week felt, 1 (very low) to 5 (very good).
+  energy              Int?
+  wentWell            String?
+  obstacles           String?
+  questions           String?
+  submittedAt         DateTime?
+  /// The consultant's feedback after reviewing it, shown to the student.
+  coachNote           String?
+  reviewedAt          DateTime?
+  reviewedByProfileId String?
+  reviewedBy          ContributorProfile? @relation("WeeklyReportReviewer", fields: [reviewedByProfileId], references: [id], onDelete: SetNull)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  @@unique([studentUserId, weekStart])
+  @@map("weekly_reports")
 }

@@ -24,6 +24,8 @@ interface NavItem {
   label: string;
   icon: GlyphName;
   exact?: boolean;
+  /** Shown only to students with a consultation plan. */
+  consultation?: boolean;
 }
 
 const NAV: { title: string; items: NavItem[] }[] = [
@@ -32,6 +34,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/account", label: "داشبورد", icon: "compass", exact: true },
       { href: "/account/plan", label: "برنامهٔ مشاور", icon: "calendar" },
+      { href: "/account/weekly", label: "گزارش هفتگی", icon: "list", consultation: true },
       { href: "/account/courses", label: "دوره‌های من", icon: "play" },
       { href: "/account/exams", label: "آزمون‌ها و رتبه‌ها", icon: "target" },
       { href: "/account/library", label: "جزوه‌ها و منابع من", icon: "book" },
@@ -74,6 +77,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
   const [me, setMe] = useState<StudentSession | null>(null);
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [isInstructor, setIsInstructor] = useState(false);
+  const [consults, setConsults] = useState(false);
   const [failed, setFailed] = useState(false);
   const [drawer, setDrawer] = useState(false);
 
@@ -84,8 +88,10 @@ export function StudentShell({ children }: { children: ReactNode }) {
       apiFetch<StudentProfile>("/me/profile"),
       // 403 here just means "not an instructor", which is the common case.
       apiFetch<unknown>("/me/instructor").then(() => true).catch(() => false),
+      // Any consultation bought, so the weekly report shows in the menu.
+      apiFetch<unknown[]>("/me/consultations/access").then((rows) => rows.length > 0).catch(() => false),
     ])
-      .then(([session, loaded, instructor]) => {
+      .then(([session, loaded, instructor, consultation]) => {
         if (cancelled) return;
         // The student panel is for students -- and for the main administrator,
         // who follows the site as a student too. Other staff and instructors
@@ -98,6 +104,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
         setMe(session);
         setProfile(loaded);
         setIsInstructor(instructor);
+        setConsults(consultation);
       })
       .catch((error) => {
         if (cancelled) return;
@@ -202,7 +209,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
             {NAV.map((group) => (
               <div className="st-nav-group" key={group.title}>
                 <p className="st-nav-title">{group.title}</p>
-                {group.items.map((item) => (
+                {group.items.filter((item) => !item.consultation || consults || pathname === item.href).map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}

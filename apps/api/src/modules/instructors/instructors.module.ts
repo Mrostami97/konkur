@@ -14,7 +14,13 @@ import {
   ConsultationsStudentController,
 } from "./consultations.controller";
 import { InstructorsService } from "./instructors.service";
-import { CoachStudentsController, StudentCoachPlansController } from "./coach-plans.controller";
+import {
+  CoachStudentsController,
+  CoachWeeklyReportsController,
+  StudentCoachPlansController,
+  StudentWeeklyReportsController,
+} from "./coach-plans.controller";
+import { WeeklyReportsService } from "./weekly-reports.service";
 import { CoachPlansService } from "./coach-plans.service";
 import { ConsultationsService } from "./consultations.service";
 
@@ -30,8 +36,10 @@ import { ConsultationsService } from "./consultations.service";
     ConsultationsAdminController,
     CoachStudentsController,
     StudentCoachPlansController,
+    StudentWeeklyReportsController,
+    CoachWeeklyReportsController,
   ],
-  providers: [InstructorsService, ConsultationsService, CoachPlansService],
+  providers: [InstructorsService, ConsultationsService, CoachPlansService, WeeklyReportsService],
   exports: [InstructorsService, ConsultationsService],
 })
 export class InstructorsModule {}

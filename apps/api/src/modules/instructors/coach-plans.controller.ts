@@ -2,6 +2,8 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from 
 import { RequestWithUser, SessionAuthGuard } from "../identity/guards/session-auth.guard";
 import { CoachPlansService } from "./coach-plans.service";
 import { CoachPlanDto, CompleteCoachItemDto } from "./dto/coach-plan.dto";
+import { ReviewWeeklyReportDto, SaveWeeklyReportDto } from "./dto/weekly-report.dto";
+import { WeeklyReportsService } from "./weekly-reports.service";
 
 /**
  * A consultant's view of the students they advise and the plans they write
@@ -68,5 +70,39 @@ export class StudentCoachPlansController {
   @Post("items/:itemId/reopen")
   reopen(@Req() req: RequestWithUser, @Param("itemId") itemId: string) {
     return this.plans.reopenItem(req.user!.id, itemId);
+  }
+}
+
+/** The student's weekly report, written before each weekly consultation session. */
+@Controller("me/weekly-reports")
+@UseGuards(SessionAuthGuard)
+export class StudentWeeklyReportsController {
+  constructor(private readonly reports: WeeklyReportsService) {}
+
+  @Get()
+  mine(@Req() req: RequestWithUser) {
+    return this.reports.mine(req.user!.id);
+  }
+
+  @Put("current")
+  save(@Req() req: RequestWithUser, @Body() dto: SaveWeeklyReportDto) {
+    return this.reports.saveCurrent(req.user!.id, dto);
+  }
+}
+
+/** A consultant reading and answering the weekly reports of their students. */
+@Controller("me/instructor")
+@UseGuards(SessionAuthGuard)
+export class CoachWeeklyReportsController {
+  constructor(private readonly reports: WeeklyReportsService) {}
+
+  @Get("students/:studentId/weekly-reports")
+  list(@Req() req: RequestWithUser, @Param("studentId") studentId: string) {
+    return this.reports.forCoach(req.user!.id, studentId);
+  }
+
+  @Put("weekly-reports/:reportId/review")
+  review(@Req() req: RequestWithUser, @Param("reportId") reportId: string, @Body() dto: ReviewWeeklyReportDto) {
+    return this.reports.review(req.user!.id, reportId, dto);
   }
 }

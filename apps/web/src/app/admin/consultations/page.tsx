@@ -30,6 +30,8 @@ interface Offering {
   description: string;
   isActive: boolean;
   amountRial: number | null;
+  /** The annual plan: buyers get every course, bank subject and handout. */
+  includesAllAccess: boolean;
   instructorProfile: { id: string; slug: string; displayName: string; isPublished: boolean };
   product: { id: string; slug: string; isActive: boolean };
   _count: { bookings: number };
@@ -173,7 +175,14 @@ export default function AdminConsultationsPage() {
                           </div>
                         )}
                       </td>
-                      <td>{offering.kind === "PACKAGE" ? "بسته" : "تک‌جلسه"}</td>
+                      <td>
+                        {offering.kind === "PACKAGE" ? "بسته" : "تک‌جلسه"}
+                        {offering.includesAllAccess && (
+                          <div style={{ marginTop: "var(--sp-1)" }}>
+                            <Badge tone="info">همهٔ خدمات سایت</Badge>
+                          </div>
+                        )}
+                      </td>
                       <td className="ds-table-numeric">{formatPersianNumber(offering.sessionQuota)}</td>
                       <td className="ds-table-numeric">
                         {formatPersianNumber(offering.durationMinutes)} دقیقه
@@ -228,6 +237,7 @@ function CreateOfferingForm({
   const [validUntil, setValidUntil] = useState("");
   const [headline, setHeadline] = useState("");
   const [description, setDescription] = useState("");
+  const [includesAllAccess, setIncludesAllAccess] = useState(false);
 
   const isPackage = kind === "PACKAGE";
 
@@ -244,6 +254,7 @@ function CreateOfferingForm({
       ...(validUntil ? { validUntil: new Date(`${validUntil}T23:59:59`).toISOString() } : {}),
       headline,
       description,
+      includesAllAccess: isPackage && includesAllAccess,
     });
     if (ok) {
       setSlug("");
@@ -332,12 +343,16 @@ function CreateOfferingForm({
         </FieldRow>
 
         <FieldRow>
-          <Field label="قیمت (ریال)" required>
+          <Field
+            label="قیمت (ریال)"
+            hint={Number(amountRial) > 0 ? `برابر ${formatPersianNumber(Math.round(Number(amountRial) / 10))} تومان` : "مثلاً ۱۵ میلیون تومان = ۱۵۰٬۰۰۰٬۰۰۰ ریال"}
+            required
+          >
             {(props) => (
               <Input
                 {...props}
                 value={amountRial}
-                onChange={(event) => setAmountRial(event.target.value)}
+                onChange={(event) => setAmountRial(event.target.value.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/D/g, ""))}
                 inputMode="numeric"
                 required
               />
@@ -388,6 +403,16 @@ function CreateOfferingForm({
             />
           )}
         </Field>
+
+        {isPackage && (
+          <label className="ds-check ds-check-rich">
+            <input type="checkbox" checked={includesAllAccess} onChange={(event) => setIncludesAllAccess(event.target.checked)} />
+            <span>
+              <strong>همهٔ خدمات سایت را شامل می‌شود (طرح سالانه)</strong>
+              <small>خریدار تا پایان اعتبار به همهٔ دوره‌ها، بانک سؤال همهٔ درس‌ها و همهٔ جزوه‌ها دسترسی دارد؛ حتی آن‌هایی که بعداً اضافه می‌شوند.</small>
+            </span>
+          </label>
+        )}
 
         <div>
           <Button type="submit" variant="primary" loading={busy}>

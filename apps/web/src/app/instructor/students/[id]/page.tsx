@@ -16,6 +16,7 @@ import {
 } from "../../../../components/ds";
 import { studentBackground, studentDisplayName, type CoachStudentDetail } from "../coach-data";
 import { blankDraft, draftFromPlan, PlanEditor, type PlanDraft } from "../PlanEditor";
+import { WeeklyReviews } from "../WeeklyReviews";
 
 const STATUS: Record<CoachPlan["status"], { label: string; tone: "neutral" | "success" | "warning" }> = {
   DRAFT: { label: "پیش‌نویس — دانشجو نمی‌بیند", tone: "warning" },
@@ -47,7 +48,7 @@ export default function CoachStudentPage({ params }: { params: { id: string } })
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 404
-          ? "این دانشجو از شما مشاوره رزرو نکرده است."
+          ? "این دانشجو از شما مشاوره نخریده و رزرو هم نکرده است."
           : err instanceof Error
             ? err.message
             : "خواندن اطلاعات دانشجو ممکن نشد.",
@@ -125,6 +126,8 @@ export default function CoachStudentPage({ params }: { params: { id: string } })
             <div className="ds-stack-lg">
               {notice && !actionError && <Alert tone="success">{notice}</Alert>}
               {actionError && <Alert tone="danger">{actionError}</Alert>}
+
+              <WeeklyReviews studentId={params.id} />
 
               {editing ? (
                 <PlanEditor

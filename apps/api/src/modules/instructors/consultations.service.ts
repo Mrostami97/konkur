@@ -91,6 +91,7 @@ export class ConsultationsService {
           description: dto.description,
           kind: ProductKind.CONSULTATION,
           isActive: true,
+          grantsAllAccess: dto.includesAllAccess ?? false,
           prices: { create: [{ amountRial: dto.amountRial, isActive: true }] },
         },
       });
@@ -166,6 +167,7 @@ export class ConsultationsService {
           // Deactivating the offering must also take the product off sale,
           // or it stays buyable through the commerce catalogue.
           isActive: dto.isActive,
+          ...(dto.includesAllAccess === undefined ? {} : { grantsAllAccess: dto.includesAllAccess }),
         },
       });
 
@@ -197,12 +199,13 @@ export class ConsultationsService {
       orderBy: [{ isActive: "desc" }, { createdAt: "desc" }],
       include: {
         instructorProfile: { select: { id: true, slug: true, displayName: true, isPublished: true } },
-        product: { select: { id: true, slug: true, isActive: true, prices: { where: { isActive: true } } } },
+        product: { select: { id: true, slug: true, isActive: true, grantsAllAccess: true, prices: { where: { isActive: true } } } },
         _count: { select: { bookings: true } },
       },
     });
     return offerings.map((offering) => ({
       ...offering,
+      includesAllAccess: offering.product.grantsAllAccess,
       amountRial: offering.product.prices[0]?.amountRial ?? null,
     }));
   }
@@ -231,12 +234,13 @@ export class ConsultationsService {
         instructorProfile: {
           select: { slug: true, displayName: true, roleTitle: true, avatarUrl: true },
         },
-        product: { select: { id: true, slug: true, prices: { where: { isActive: true }, take: 1 } } },
+        product: { select: { id: true, slug: true, grantsAllAccess: true, prices: { where: { isActive: true }, take: 1 } } },
       },
     });
 
     return offerings.map(({ product, ...offering }) => ({
       ...offering,
+      includesAllAccess: product.grantsAllAccess,
       productId: product.id,
       productSlug: product.slug,
       amountRial: product.prices[0]?.amountRial ?? null,

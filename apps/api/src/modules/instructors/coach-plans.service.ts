@@ -86,7 +86,7 @@ export class CoachPlansService {
 
   // --- consultant ------------------------------------------------------------
 
-  private async requireCoach(userId: string) {
+  async requireCoach(userId: string) {
     const coach = await this.prisma.contributorProfile.findUnique({
       where: { userId },
       select: { id: true, displayName: true },
@@ -95,16 +95,24 @@ export class CoachPlansService {
     return coach;
   }
 
-  private async assertCoachOf(coachId: string, studentUserId: string) {
-    const booking = await this.prisma.consultationBooking.findFirst({
-      where: {
-        instructorProfileId: coachId,
-        studentUserId,
-        status: { not: ConsultationBookingStatus.CANCELLED },
-      },
-      select: { id: true },
-    });
-    if (!booking) throw new NotFoundException("student not found");
+  /** A consultant's student: someone who booked them, or who bought one of
+   * their consultation offerings (the annual plan, before its first session). */
+  async assertCoachOf(coachId: string, studentUserId: string) {
+    const [booking, purchase] = await Promise.all([
+      this.prisma.consultationBooking.findFirst({
+        where: {
+          instructorProfileId: coachId,
+          studentUserId,
+          status: { not: ConsultationBookingStatus.CANCELLED },
+        },
+        select: { id: true },
+      }),
+      this.prisma.entitlement.findFirst({
+        where: { userId: studentUserId, revokedAt: null, product: { consultationOffering: { instructorProfileId: coachId } } },
+        select: { id: true },
+      }),
+    ]);
+    if (!booking && !purchase) throw new NotFoundException("student not found");
   }
 
   private async ownedPlan(coachId: string, planId: string) {
@@ -155,6 +163,15 @@ export class CoachPlansService {
       orderBy: { createdAt: "desc" },
     });
     const students = new Map<string, { student: (typeof bookings)[number]["student"]; sessions: number; nextSessionAt: Date | null }>();
+    // Buyers of this consultant's offerings are their students from the day
+    // they pay, before any session is booked.
+    const buyers = await this.prisma.entitlement.findMany({
+      where: { revokedAt: null, product: { consultationOffering: { instructorProfileId: coach.id } } },
+      select: { user: { select: STUDENT_SUMMARY } },
+    });
+    for (const { user } of buyers) {
+      if (!students.has(user.id)) students.set(user.id, { student: user, sessions: 0, nextSessionAt: null });
+    }
     const now = new Date();
     for (const booking of bookings) {
       const entry = students.get(booking.studentUserId) ?? { student: booking.student, sessions: 0, nextSessionAt: null };
