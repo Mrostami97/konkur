@@ -5,10 +5,14 @@ on:
   push:
     branches: [main]
 
-# A newer push to the same ref makes an in-flight run pointless.
+# On a branch, a newer push makes an in-flight run pointless. On main the
+# run also deploys: cancelling it on every push meant that while commits kept
+# landing a few minutes apart, no run ever reached the deploy. There, runs
+# queue instead -- GitHub keeps at most one pending run per group, replacing
+# it with the newest, so the queue never grows and the last commit deploys.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: read
