@@ -113,7 +113,11 @@ services:
       NGINX_ENVSUBST_FILTER: ^(WEB_DOMAIN|API_DOMAIN)$$
       CERT_RELOAD_INTERVAL_SECONDS: ${CERT_RELOAD_INTERVAL_SECONDS:-60}
     volumes:
-      - ./ops/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      # The directory, not the single file: a deploy rsyncs a new template
+      # into place (a new file, renamed over the old), and a single-file bind
+      # mount keeps showing the old one until the container is recreated.
+      # nginx renders only *.template files from here.
+      - ./ops/nginx:/etc/nginx/templates:ro
       - ./ops/nginx/watch-certs.sh:/usr/local/bin/watch-certs.sh:ro
       - nginx_certs:/etc/nginx/certs:ro
       - acme_challenge:/var/www/certbot:ro
