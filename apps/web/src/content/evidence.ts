@@ -290,7 +290,7 @@ export const studentResults: EvidenceDocument[] = [
 ];
 
 export const studentVideo: EvidenceVideo = {
-  src: "/evidence/phd-student-sources.mp4",
+  src: "/evidence/phd-student-sources.mp4?v=2",
   title: "از زبان خودش: چه خواند و چطور",
   description: "آرش ذوالفقاری، همان شاگردی که در دکتری ۱۶ تست ساختمان داده و الگوریتم را درست زد و حالا دانشجوی دکتری هوش مصنوعی شریف است، دربارهٔ منابعی که خواند می‌گوید.",
   duration: "۱:۳۰",

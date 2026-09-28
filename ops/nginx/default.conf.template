@@ -116,6 +116,21 @@ server {
         add_header Cache-Control "public, max-age=2592000, stale-while-revalidate=604800" always;
     }
 
+    # Video is streamed in byte ranges. The CDN caches a whole file and then
+    # answers every range request with all of it (200, not 206), so each
+    # seek or rebuffer restarts the download from the first byte. "private"
+    # keeps the CDN out of it: ranges reach Next, which answers them properly,
+    # and the browser still keeps its own copy for a day.
+    location ~* .(mp4|webm|m4v)$ {
+        set $upstream http://web:3000;
+        proxy_pass $upstream;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control "private, max-age=86400" always;
+    }
+
     location ~ ^/(brand|evidence|pdfjs)/|^/(icon-[0-9]+.png|manifest.json)$ {
         set $upstream http://web:3000;
         proxy_pass $upstream;

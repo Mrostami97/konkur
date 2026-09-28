@@ -1,6 +1,7 @@
-// v3: earlier versions also stored API responses (private account data and
-// purchased handouts) on the device; bumping the name deletes those caches.
-const CACHE_NAME = "kunkurcomputer-shell-v3";
+// v4: earlier versions also stored API responses (private account data and
+// purchased handouts) and whole video files on the device; bumping the name
+// deletes those caches.
+const CACHE_NAME = "kunkurcomputer-shell-v4";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -27,6 +28,9 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (/^\/(api|account|admin)(\/|$)/.test(url.pathname)) return;
+  // Video and audio stream in byte ranges; the browser plays them best on
+  // its own, and a whole video has no place in this cache.
+  if (request.headers.has("range") || request.destination === "video" || request.destination === "audio") return;
   event.respondWith(
     fetch(request)
       .then((response) => {
