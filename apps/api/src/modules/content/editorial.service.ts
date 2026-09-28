@@ -654,16 +654,20 @@ export class EditorialService {
     const copyCode = createHash("sha256").update(`${userId}:${resourceId}`).digest("hex").slice(0, 8).toUpperCase();
     const digest = artifact.checksum.replace("sha256:", "");
     const identity = createHash("sha256").update(`${name ?? ""}|${user.phone}`).digest("hex").slice(0, 12);
-    const key = `watermarked/v1/${digest}/${userId}-${identity}.pdf`;
+    // v2: copies stamped before the rename still read kunkur01.ir. Bump the
+    // version whenever the stamp's text or layout changes, so every reader's
+    // copy is made again instead of serving the old one.
+    const key = `watermarked/v2/${digest}/${userId}-${identity}.pdf`;
 
     if (!(await this.storage.objectExists(key))) {
       const chunks: Buffer[] = [];
       for await (const chunk of await this.storage.getObjectStream(artifact.storageKey)) chunks.push(Buffer.from(chunk));
-      const date = new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Tehran" })
-        .formatToParts(new Date())
-        .filter((part) => part.type !== "literal" && part.type !== "era")
-        .map((part) => part.value)
-        .join("/");
+      // Year/month/day, as dates are written in Persian: the "en" locale
+      // would order the parts month/day/year.
+      const parts = new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Tehran" })
+        .formatToParts(new Date());
+      const part = (type: "year" | "month" | "day") => parts.find((item) => item.type === type)?.value ?? "";
+      const date = `${part("year")}/${part("month")}/${part("day")}`;
       let stamped: Uint8Array;
       try {
         stamped = await watermarkPdf(Buffer.concat(chunks), { name, phone: user.phone, date, copyCode });
