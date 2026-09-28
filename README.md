@@ -1,120 +1,158 @@
-# Konkur — educational platform for CS/IT entrance exams
+# Konkur 360
 
-Konkur is an actively developed Persian educational platform for graduate and doctoral Computer Science, Computer Engineering, and Information Technology entrance-exam workflows.
+پلتفرم یکپارچهٔ آموزشی فارسی برای آمادگی کنکور کارشناسی ارشد و دکتری مهندسی کامپیوتر، علوم کامپیوتر و فناوری اطلاعات.
 
-This repository contains the web application, API, shared contracts, database migrations, editorial/content tooling, deployment automation, and production-oriented infrastructure used by the project.
+این مخزن فقط «بانک سؤال» یا «آزمون‌ساز» نیست. هستهٔ محصول یک mother site با هویت واحد دانشجو، محتوای نسخه‌دار، آموزش، بانک سؤال، آزمون، برنامه‌ریزی مطالعه، تحلیل، تخمین رتبه، انتخاب رشته، فروش/دسترسی و CRM است.
 
-## What is in the repository
+> این README نمای سریع پروژه است. مستندات فنی کامل در [docs/README.md](docs/README.md) قرار دارد.
 
-- **Web:** Next.js application with Persian/RTL UI, public content, student flows, and admin-facing surfaces.
-- **API:** NestJS + Prisma service for identity, content, resources, entitlements, educational data, and application workflows.
-- **Data:** PostgreSQL migrations and validated shared schemas/contracts.
-- **Object storage:** MinIO/S3-compatible media and resource storage.
-- **Infrastructure:** Docker Compose, nginx TLS termination, Certbot automation, backups/restore tooling, and GitHub Actions CI/CD.
-- **Editorial workflow:** versioned content, source/provenance metadata, draft/review controls, and generated corpus validation.
+## وضعیت فعلی
 
-The project is a product codebase, not only a demo. Some roadmap areas remain under active development; `TODO.md` and the documents under `docs/` describe current phases and constraints.
+مبنای این مستندات کد موجود در شاخهٔ main در ۱۹ سپتامبر ۲۰۲۶ است. فازهای ۰ تا ۱۷ در AGENTS.md به‌عنوان انجام‌شده ثبت شده‌اند و فاز ۱۸ (Polish, release, measurement) مرحلهٔ بعدی است.
 
-## Repository layout
+اصول غیرقابل‌مذاکرهٔ معماری:
 
-```text
-apps/
-  api/       NestJS/Prisma backend
-  web/       Next.js frontend
-contracts/   shared schemas, validators, and fixtures
-docs/        architecture, content, research, and phase notes
-ops/         deployment, TLS, backup/restore, and nginx tooling
-scripts/     repository and content automation
-```
+- یک هویت، یک پروفایل دانشجو و یک مدل Entitlement برای کل اکوسیستم.
+- دادهٔ خارجی فقط از مسیر نسخه‌دار contracts → staging → validate → review → publish وارد دادهٔ canonical می‌شود.
+- Runtime سایت هیچ AI/LLM/OCR/RAG/embedding provider را فراخوانی نمی‌کند.
+- محاسبات حساس به تصمیم مانند mastery و rank estimate باید deterministic/versioned و قابل بازتولید باشند.
+- Commerce تنها source of truth برای فعال بودن دسترسی است.
+- Assessment تنها source of truth برای پاسخ، attempt و score است.
+- Ingestion تنها درگاه رسمی ورود batch خارجی است.
 
-## Requirements
+## معماری در یک نگاه
+
+~~~mermaid
+flowchart LR
+    U[Browser / Student / Admin] --> N[NGINX :80/:443]
+    N --> W[Next.js Web]
+    N --> A[NestJS API]
+    A --> P[(PostgreSQL)]
+    A --> S[(MinIO / S3)]
+    A -. provisioned, not current app dependency .-> R[(Redis)]
+    C[Certbot + certs-init] --> N
+~~~
+
+- Web: Next.js 14 + React 18، App Router، RTL/Persian UI، SSR/SEO، KaTeX
+- API: NestJS 10 + Prisma 5
+- Database: PostgreSQL 16
+- Object storage: MinIO/S3-compatible
+- Edge/TLS: nginx + Certbot/certs-init
+- Workspace: pnpm 9.12، Node.js 20+
+- Contracts: JSON Schema + validators + fixtures
+- CI/CD: GitHub Actions، build/lint/typecheck/test/image validation/GHCR/deploy/healthz
+
+## دامنه‌های Backend
+
+| دامنه | مسئولیت اصلی |
+|---|---|
+| Identity | کاربر، نقش، Session، OTP/password، Consent، Profile |
+| Audit | ثبت عملیات مهم |
+| Content | مقاله، منبع، Contributor، Resource، workflow تحریریه |
+| Learning | Course/Module/Lesson/Enrollment/Progress |
+| Commerce | Product/Price/Order/Payment/Entitlement |
+| Ingestion | ZIP import، staging، review، publish، version/rollback، media |
+| Taxonomy | Subject/Topic و prerequisiteها |
+| Question Bank | مرور/فیلتر/ساخت سؤال و نسخه‌ها |
+| Assessment | Exam/Form/Attempt/Answer/Score/psychometrics |
+| Planning | Goal/Plan/Task/StudySession/SavedResource |
+| Analytics | Mastery، RankEstimate، Backtest، acceptance chance |
+| Admissions | University/Program/Capacity/ChoiceList |
+| CRM | Lead/Case/Interaction/Campaign و attribution |
+
+جزئیات مرزها و flowها: [docs/domain-model.md](docs/domain-model.md)
+
+## شروع سریع
+
+نیازمندی‌ها:
 
 - Node.js 20+
 - pnpm 9.12+
-- Docker Engine + Docker Compose plugin for the full stack
+- Docker Engine + Docker Compose plugin
 
-## Quick start
-
-```bash
+~~~bash
 git clone https://github.com/Mrostami97/konkur.git
 cd konkur
 corepack enable
 pnpm install --frozen-lockfile
 cp .env.example .env
 docker compose up -d --build
-```
+~~~
 
-For workspace-only development you can also run:
+برای توسعهٔ workspace:
 
-```bash
+~~~bash
 pnpm build
 pnpm lint
 pnpm typecheck
 pnpm test
 pnpm dev:api
 pnpm dev:web
-```
+~~~
 
-`docker-compose.yml` is also the production stack, so do not expose the local/default configuration to the public internet. Replace every production password in `.env` with a strong unique value.
+راهنمای کامل توسعه: [docs/development.md](docs/development.md)
+
+## ساختار مخزن
+
+~~~text
+apps/
+  api/          NestJS + Prisma backend
+  web/          Next.js frontend
+contracts/      JSON schemas, validators, fixtures
+docs/           Technical + product/content documentation
+docs/content/   Editorial/research/content-operating documents
+ops/            nginx, TLS, backup/restore, runbook
+scripts/        Editorial/resource/IndexNow automation
+.github/        CI/CD and contribution templates
+~~~
+
+## مستندات اصلی
+
+| سند | کاربرد |
+|---|---|
+| [Documentation index](docs/README.md) | نقطهٔ ورود مستندات |
+| [Architecture](docs/architecture.md) | معماری سیستم و flowهای اصلی |
+| [Domain model](docs/domain-model.md) | مالکیت دامنه‌ها و source of truth |
+| [Database](docs/database.md) | Prisma schema و روابط |
+| [API reference](docs/api-reference.md) | endpointها، auth و roles |
+| [Frontend](docs/frontend.md) | route map و ساختار Next.js |
+| [Content & ingestion](docs/content-ingestion.md) | contracts، provenance، review و versioning |
+| [Development](docs/development.md) | نصب، env، seed، migration و commandها |
+| [Testing & CI](docs/testing-ci.md) | تست‌ها و pipeline |
+| [Deployment & operations](docs/deployment-operations.md) | Docker، TLS، health، backup، rollback |
+| [Security model](docs/security-model.md) | session، RBAC، rate-limit، secrets، media |
+| [Current state & roadmap](docs/current-state-roadmap.md) | وضعیت واقعی و محدودیت‌های شناخته‌شده |
+
+همچنین [ops/runbook.md](ops/runbook.md)، [SECURITY.md](SECURITY.md)، [CONTRIBUTING.md](CONTRIBUTING.md) و [AGENTS.md](AGENTS.md) باید در تغییرات عملیاتی/معماری خوانده شوند.
 
 ## Administrator bootstrap
 
-There is **no production administrator credential in source code**. The test suite uses an explicitly test-only credential against disposable test databases; application startup and direct seeding outside `NODE_ENV=test` never fall back to it.
+هیچ credential ادمین production داخل سورس وجود ندارد. bootstrap فقط وقتی فعال است که هر دو متغیر زیر صریحاً مقدار داشته باشند:
 
-Administrator bootstrap is disabled unless both values are explicitly supplied at runtime:
-
-```dotenv
+~~~dotenv
 BOOTSTRAP_ADMIN_PHONE=
 BOOTSTRAP_ADMIN_PASSWORD=
-```
+~~~
 
-If only one is provided, startup fails rather than silently creating an unexpected account. After initial provisioning, keep the administrator password under normal account management and remove bootstrap values when they are no longer needed.
+بعد از provisioning اولیه، مقادیر bootstrap را حذف کنید.
 
-## Configuration
+## کیفیت و CI
 
-Start from `.env.example`. Important production-only values include:
+قبل از PR:
 
-| Variable | Purpose |
-| --- | --- |
-| `POSTGRES_PASSWORD` | PostgreSQL password |
-| `MINIO_ROOT_PASSWORD` | MinIO root/S3 secret |
-| `WEB_DOMAIN` | Canonical public hostname |
-| `TLS_MODE` | `auto`, `acme`, or `selfsigned` |
-| `ACME_EMAIL` | Let's Encrypt expiry/contact email |
-| `BOOTSTRAP_ADMIN_PHONE` | Optional initial administrator phone |
-| `BOOTSTRAP_ADMIN_PASSWORD` | Optional initial administrator password |
-
-GitHub Actions deployment additionally uses repository secrets such as `SSH_HOST`, `SSH_USER`, `SSH_KEY`, and `DEPLOY_PATH`. Never commit their real values.
-
-Detailed deployment, TLS, backup/restore, migration, rollback, and health-check procedures are documented in [`ops/runbook.md`](ops/runbook.md).
-
-## Testing and CI
-
-The GitHub Actions workflow builds the workspaces, runs lint/type checking, unit and integration tests, validates production images and TLS bootstrap, and deploys only from `main` after the preceding gates succeed.
-
-Before opening a pull request, run the checks relevant to your change:
-
-```bash
+~~~bash
 pnpm build
 pnpm lint
 pnpm typecheck
 pnpm test
-```
+~~~
 
-Behavior changes should include regression tests. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Pipeline فعلی علاوه بر موارد بالا، API e2e، SSR/SEO smoke tests، route semantics، production images، nginx/TLS bootstrap و post-deploy /healthz را نیز بررسی می‌کند.
 
-## Security and privacy
+## امنیت
 
-Do not put real credentials, private keys, production `.env` files, session material, or student PII in commits, fixtures, issues, or logs.
-
-For vulnerability reporting and credential-handling rules, see [`SECURITY.md`](SECURITY.md).
-
-## Contributing
-
-Contributions are welcome when they preserve the project's validation, provenance, privacy, and review rules. Start with [`CONTRIBUTING.md`](CONTRIBUTING.md) and keep pull requests focused and testable.
+credential، private key، production .env، session token و PII دانشجو نباید وارد commit، fixture، issue یا log شوند. برای گزارش آسیب‌پذیری از [SECURITY.md](SECURITY.md) استفاده کنید.
 
 ## License
 
-Original project source code and documentation are available under the [MIT License](LICENSE), except where a file or directory states otherwise.
-
-Third-party fonts, images, documents, dependencies, trademarks, and other assets are **not automatically relicensed under MIT**. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) before redistributing non-code assets.
+کد و مستندات اصلی پروژه تحت MIT هستند، مگر اینکه در فایل/دایرکتوری خاص خلاف آن ذکر شده باشد. assetها و منابع third-party خودکار تحت MIT قرار نمی‌گیرند؛ [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) را ببینید.
