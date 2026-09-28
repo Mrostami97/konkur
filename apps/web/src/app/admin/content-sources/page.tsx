@@ -272,10 +272,14 @@ function ContentSourcesAdmin() {
             <label className="field-group">
               <span>مبنای حقوقی استفاده</span>
               <select className="ds-select" value={form.rightsBasis} onChange={(event) => updateField("rightsBasis", event.target.value)}>
+                {/* Values the API accepts as documented hosting and commercial rights
+                    (editorial.service.ts DOCUMENTED_HOSTING_RIGHTS); a paid handout needs
+                    one of the first four plus «میزبانی فایل» and «استفادهٔ تجاری». */}
                 <option value="LINK_ONLY">فقط پیوند</option>
-                <option value="OWNED">مالکیت کنکور کامپیوتر</option>
-                <option value="LICENSED">دارای مجوز</option>
-                <option value="PUBLIC_DOMAIN">مالکیت عمومی</option>
+                <option value="OWNED_BY_PUBLISHER">مالکیت کنکور کامپیوتر</option>
+                <option value="SIGNED_PERMISSION">مجوز کتبی صاحب اثر</option>
+                <option value="USER_DECLARATION">اعلام مالکیت از سوی صاحب اثر</option>
+                <option value="OPEN_LICENSE">مجوز آزاد (مثل Creative Commons)</option>
                 <option value="FAIR_QUOTATION">نقل‌قول محدود</option>
               </select>
             </label>
