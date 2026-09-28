@@ -13,6 +13,14 @@ interface UploadedFile {
   pages: number;
 }
 
+/** The API's limit for a PDF; checked here too so a large file fails at once, not after a long upload. */
+const MAX_PDF_MB = 100;
+
+function fileSize(bytes: number) {
+  if (bytes < 1024 * 1024) return `${toPersianDigits(Math.max(1, Math.ceil(bytes / 1024)))} کیلوبایت`;
+  return `${toPersianDigits((bytes / 1024 / 1024).toFixed(1)).replace(".", "٫")} مگابایت`;
+}
+
 const RESOURCE_KINDS = [
   "NOTE",
   "VIDEO",
@@ -221,18 +229,27 @@ function ResourcesAdmin() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
   const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
+  // Shown right under the file field, not at the top of the form, so the
+  // outcome of an upload is never out of sight.
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   async function uploadFile(file: File | undefined) {
     if (!file) return;
+    setUploadError(null);
+    if (file.size > MAX_PDF_MB * 1024 * 1024) {
+      setUploadError(`حجم این PDF ${fileSize(file.size)} است؛ سقف ${toPersianDigits(MAX_PDF_MB)} مگابایت است. فایل را فشرده کنید یا به چند بخش تقسیم کنید.`);
+      return;
+    }
     setUploading(true);
     setUploadProgress({ loaded: 0, total: file.size });
-    setError(null);
     try {
       const result = await apiUpload<UploadedFile>("/admin/resource-files", file, setUploadProgress);
+      // A CDN page or an empty body is not a stored file.
+      if (!result || typeof result.id !== "string") throw new Error("سرور پاسخ درستی نداد و فایل ذخیره نشد. دوباره تلاش کنید.");
       setUploaded(result);
       setForm((current) => ({ ...current, sourceArtifactId: result.id }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "بارگذاری فایل انجام نشد.");
+      setUploadError(err instanceof Error ? err.message : "بارگذاری فایل انجام نشد.");
     } finally {
       setUploading(false);
       setUploadProgress(null);
@@ -553,15 +570,22 @@ function ResourcesAdmin() {
               </label>
             </div>
           </div>
-          <p className="field-hint">
-            {!PROTECTED_HOSTING_MODES.has(form.hostingMode)
-              ? "برای فایل، روش میزبانی را «فایل متعلق به کنکور کامپیوتر» بگذارید."
-              : uploaded && uploaded.id === form.sourceArtifactId
-                ? `${uploaded.filename} · ${toPersianDigits(uploaded.pages)} صفحه · ${toPersianDigits((uploaded.size / 1024 / 1024).toFixed(1))} مگابایت`
+          {uploadError ? (
+            <p className="form-error" role="alert">بارگذاری انجام نشد: {uploadError}</p>
+          ) : PROTECTED_HOSTING_MODES.has(form.hostingMode) && uploaded && uploaded.id === form.sourceArtifactId ? (
+            <p className="success-message" role="status">
+              ✓ فایل روی سرور ذخیره شد: {uploaded.filename} · {toPersianDigits(uploaded.pages)} صفحه · {fileSize(uploaded.size)}. برای وصل‌شدن به این منبع، فرم را با «
+              {editingId ? "ذخیرهٔ پیش‌نویس" : "ساخت پیش‌نویس"}» ثبت کنید.
+            </p>
+          ) : (
+            <p className="field-hint">
+              {!PROTECTED_HOSTING_MODES.has(form.hostingMode)
+                ? "برای فایل، روش میزبانی را «فایل متعلق به کنکور کامپیوتر» بگذارید."
                 : form.sourceArtifactId
-                  ? `فایل فعلی: ${form.sourceArtifactId.slice(0, 8)}…`
-                  : "هر خریدار نسخه‌ای با نام و شمارهٔ خودش روی هر صفحه می‌گیرد؛ فایل اصلی دانلود نمی‌شود."}
-          </p>
+                  ? "این منبع فایل PDF دارد و روی سرور ذخیره است. برای عوض‌کردنش فایل تازه را انتخاب کنید."
+                  : `PDF تا ${toPersianDigits(MAX_PDF_MB)} مگابایت. هر خریدار نسخه‌ای با نام و شمارهٔ خودش روی هر صفحه می‌گیرد؛ فایل اصلی دانلود نمی‌شود.`}
+            </p>
+          )}
 
           <label className="field-group">
             <span>نشانی بیرونی</span>
