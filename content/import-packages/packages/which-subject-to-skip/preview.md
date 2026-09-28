@@ -112,3 +112,4 @@ _در ۱٬۴۹۰ کارنامهٔ ارشد مهندسی کامپیوتر ۱۴۰�
 - [رتبهٔ زیر ۱۰۰ چند درصد می‌خواهد؟](/articles/top-rank-percentages)
 - [با پایهٔ ضعیف از کجا شروع کنم؟](/articles/study-plan-from-zero)
 - [مشاوره](/consultations)
+- [درصد زبان هر رتبه](/articles/language-percentage-by-rank)

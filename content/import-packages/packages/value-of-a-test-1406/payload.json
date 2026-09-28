@@ -201,6 +201,10 @@
           {
             "label": "مشاوره",
             "href": "/consultations"
+          },
+          {
+            "label": "درصد زبان هر رتبه",
+            "href": "/articles/language-percentage-by-rank"
           }
         ]
       }

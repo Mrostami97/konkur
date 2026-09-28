@@ -87,3 +87,4 @@ _درصد را به تعداد تست تبدیل کردیم: از ۸۳۸ کار�
 - [رتبهٔ ۵۰۰ تا ۳۰۰۰ چند درصد می‌خواهد؟](/articles/rank-500-to-3000-percentages)
 - [هر درس چند تست دارد و ضریبش چند است؟](/articles/questions-and-coefficients)
 - [مشاوره](/consultations)
+- [درصد زبان هر رتبه](/articles/language-percentage-by-rank)

@@ -79,3 +79,4 @@ _ضرایب ۱۴۰۶ ارزش تست‌ها را عوض می‌کند: زبان 
 - [ابزار تخمین رتبهٔ ارشد مهندسی کامپیوتر](/rank-calculator/master-computer-engineering)
 - [کد ضریب چه بود و ۱۴۰۶ چه عوض می‌کند؟](/articles/coefficient-codes-explained)
 - [مشاوره](/consultations)
+- [درصد زبان هر رتبه](/articles/language-percentage-by-rank)
