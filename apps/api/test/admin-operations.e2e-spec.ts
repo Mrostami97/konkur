@@ -273,6 +273,17 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
     });
   });
 
+  describe("products", () => {
+    it("refuses a second product with the same slug as a 409, not a 500", async () => {
+      const subject = `ops-slug-subject-${run}`;
+      await asAdmin("post", "/admin/subjects").send({ code: subject, title: "Slug subject" }).expect(201);
+      const body = { slug: `ops-slug-${run}`, title: "Slug bank", description: "ops", kind: "QUESTION_BANK", questionBankSubjectCodes: [subject] };
+      await asAdmin("post", "/admin/products").send(body).expect(201);
+      const again = await asAdmin("post", "/admin/products").send(body).expect(409);
+      expect(again.body.message).toBe("product slug already exists");
+    });
+  });
+
   describe("taxonomy", () => {
     it("deletes a subject only after its topics", async () => {
       const code = `ops-subject-${run}`;

@@ -66,6 +66,18 @@ const ORDER_STATUS: Record<string, { label: string; tone: "neutral" | "success" 
 const PAGE_SIZE = 20;
 const activePrice = (product: Product) => product.prices.find((price) => price.isActive);
 
+/** The API's reasons for refusing a product, in Persian. */
+function productRefusal(err: unknown) {
+  const message = err instanceof Error ? err.message : "";
+  if (/slug already exists/i.test(message)) return "این نشانی یکتا (slug) را محصول دیگری دارد؛ نشانی دیگری بنویسید، مثلاً با پسوند -2.";
+  if (/slug must be kebab-case/i.test(message)) return "نشانی یکتا فقط حروف کوچک لاتین، عدد و خط تیره است؛ مثلاً os-handout.";
+  if (/COURSE products/i.test(message)) return "برای محصول «دوره»، دوره را انتخاب کنید.";
+  if (/RESOURCE products/i.test(message)) return "برای محصول «منبع»، منبع (جزوه) را انتخاب کنید. فقط منبع‌های پولیِ منتشرشده در فهرست‌اند.";
+  if (/QUESTION_BANK products/i.test(message)) return "برای محصول «بانک سؤال» دقیقاً یک کد درس بنویسید.";
+  if (/BUNDLE products/i.test(message)) return "«بسته» باید دست‌کم دو چیز را باز کند: دوره، منبع یا بانک سؤال.";
+  return message || "ساخت محصول ناموفق بود.";
+}
+
 export default function CommerceAdminPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [resources, setResources] = useState<SellableResource[]>([]);
@@ -85,6 +97,7 @@ export default function CommerceAdminPage() {
   const [bankSubjects, setBankSubjects] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [createNotice, setCreateNotice] = useState<string | null>(null);
 
   const [priceProductId, setPriceProductId] = useState("");
   const [amountRial, setAmountRial] = useState("");
@@ -154,9 +167,10 @@ export default function CommerceAdminPage() {
     event.preventDefault();
     setCreating(true);
     setCreateError(null);
+    setCreateNotice(null);
     const subjectCodes = bankSubjects.split(",").map((code) => code.trim()).filter(Boolean);
     try {
-      await apiFetch("/admin/products", {
+      const created = await apiFetch<{ id: string; title: string }>("/admin/products", {
         method: "POST",
         body: {
           slug,
@@ -174,8 +188,11 @@ export default function CommerceAdminPage() {
       setBankSubjects("");
       setResourceId("");
       await load();
+      // The next step is its price: pick the new product there already.
+      setPriceProductId(created.id);
+      setCreateNotice(`محصول «${created.title}» ساخته شد. حالا در «افزودن قیمت» همین پایین، قیمتش را ثبت کنید تا فروشش باز شود.`);
     } catch (err) {
-      setCreateError(err instanceof Error ? err.message : "ساخت محصول ناموفق بود.");
+      setCreateError(productRefusal(err));
     } finally {
       setCreating(false);
     }
@@ -303,6 +320,7 @@ export default function CommerceAdminPage() {
             </Field>
 
             {createError && <Alert tone="danger">{createError}</Alert>}
+            {createNotice && <Alert tone="success">{createNotice}</Alert>}
             <div><Button type="submit" variant="primary" loading={creating}>ساخت محصول</Button></div>
           </form>
         </Card>

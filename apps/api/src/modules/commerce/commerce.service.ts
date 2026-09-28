@@ -83,6 +83,11 @@ export class CommerceService {
       throw new BadRequestException("BUNDLE products must grant at least two courses, resources, or bank subjects");
     }
 
+    // The slug is unique; without this a repeat would surface as a 500,
+    // which the CDN replaces with its own error page.
+    const taken = await this.prisma.product.findUnique({ where: { slug: dto.slug }, select: { id: true } });
+    if (taken) throw new ConflictException("product slug already exists");
+
     const product = await this.prisma.product.create({
       data: {
         slug: dto.slug,
