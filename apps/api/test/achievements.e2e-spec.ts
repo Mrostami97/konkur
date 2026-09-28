@@ -135,7 +135,7 @@ describe("Student results wall + free lectures (e2e)", () => {
     await request(app.getHttpServer()).get(photoPath).expect(404);
     await request(app.getHttpServer()).get(photoPath).set("Cookie", studentCookie).expect(404);
     // The admin managing the wall can still see it.
-    await request(app.getHttpServer()).get(photoPath).set("Cookie", adminCookie).expect(302);
+    await request(app.getHttpServer()).get(photoPath).set("Cookie", adminCookie).expect(200);
 
     await request(app.getHttpServer())
       .patch(`/admin/achievements/${created.body.id}`)
@@ -148,7 +148,7 @@ describe("Student results wall + free lectures (e2e)", () => {
         isPublished: true,
       })
       .expect(200);
-    await request(app.getHttpServer()).get(photoPath).expect(302);
+    await request(app.getHttpServer()).get(photoPath).expect(200);
 
     // Consent withdrawn: the photo goes dark immediately.
     await request(app.getHttpServer())
@@ -175,7 +175,7 @@ describe("Student results wall + free lectures (e2e)", () => {
 
     await request(app.getHttpServer()).get(photoPath).expect(404);
     await request(app.getHttpServer()).get(photoPath).set("Cookie", studentCookie).expect(404);
-    await request(app.getHttpServer()).get(photoPath).set("Cookie", adminCookie).expect(302);
+    await request(app.getHttpServer()).get(photoPath).set("Cookie", adminCookie).expect(200);
   });
 
   it("erases a result and its photo for good when the student asks", async () => {
@@ -197,7 +197,7 @@ describe("Student results wall + free lectures (e2e)", () => {
         isPublished: true,
       })
       .expect(201);
-    await request(app.getHttpServer()).get(photoPath).expect(302);
+    await request(app.getHttpServer()).get(photoPath).expect(200);
 
     await request(app.getHttpServer())
       .delete(`/admin/achievements/${created.body.id}`)

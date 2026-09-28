@@ -90,9 +90,10 @@ server {
     }
 
     location ^~ /api/ {
-        # Admins upload import zips and PDF notes; nginx refuses bodies over
+        # Admins upload import zips, PDF notes and sample-lesson videos (up to
+        # 300 MB, checked again by the API); nginx refuses bodies over
         # 1 MB unless told otherwise.
-        client_max_body_size 120m;
+        client_max_body_size 310m;
         set $api_upstream http://api:3001;
         rewrite ^/api/(.*)$ /$1 break;
         proxy_pass $api_upstream;
@@ -186,7 +187,7 @@ server {
     resolver 127.0.0.11 valid=10s;
 
     location / {
-        client_max_body_size 120m;
+        client_max_body_size 310m;
         set $upstream http://api:3001;
         proxy_pass $upstream;
         proxy_set_header Host $host;

@@ -1034,6 +1034,7 @@ a.ds-kpi:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 /* One authored content block: type selector, body, remove. */
 .ds-block-row { display: flex; align-items: flex-start; gap: var(--sp-3); }
 .ds-image-preview { display: block; max-width: 100%; max-height: 14rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-sunken); object-fit: contain; }
+.ds-video-preview { display: block; width: 100%; max-width: 28rem; max-height: 16rem; border-radius: var(--radius-md); background: var(--ink-900); }
 .ds-check { display: inline-flex; align-items: center; gap: var(--sp-2); color: var(--ink-700); font-size: var(--text-sm); cursor: pointer; }
 .ds-check input { width: 1rem; height: 1rem; accent-color: var(--accent); }
 .ds-file { align-self: flex-start; cursor: pointer; }

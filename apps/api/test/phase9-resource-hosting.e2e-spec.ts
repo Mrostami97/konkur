@@ -20,14 +20,15 @@ class CapturingOtpProvider implements OtpProvider {
 }
 
 class FakeObjectStorage {
-  async getObjectStream(storageKey: string) {
-    return Readable.from(Buffer.from(`protected:${storageKey}`));
-  }
+  /** Bytes of artifacts a test registered; anything else reads as a marker. */
+  objects = new Map<string, Buffer>();
 
-  async presignedGetUrl(storageKey: string) {
-    return `https://objects.example.test/${encodeURIComponent(storageKey)}`;
+  async getObjectStream(storageKey: string) {
+    return Readable.from(this.objects.get(storageKey) ?? Buffer.from(`protected:${storageKey}`));
   }
 }
+
+const fakeStorage = new FakeObjectStorage();
 
 describe("Phase 9 resource hosting boundaries (e2e)", () => {
   let app: INestApplication;
@@ -43,7 +44,7 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
       .overrideProvider(OTP_PROVIDER)
       .useValue(otp)
       .overrideProvider(ObjectStorageService)
-      .useValue(new FakeObjectStorage())
+      .useValue(fakeStorage)
       .compile();
     app = moduleRef.createNestApplication();
     app.use(cookieParser());
@@ -104,7 +105,7 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
         storageKey: `${checksum}/${label}.pdf`,
       },
     });
-    return { ...artifact, checksumWithoutPrefix: checksum };
+    return { ...artifact, checksumWithoutPrefix: checksum, bytes };
   }
 
   function resourcePayload(
@@ -340,7 +341,7 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
     await request(app.getHttpServer()).get(`/media/${artifact.checksumWithoutPrefix}`).expect(404);
   });
 
-  it("denies raw checksums for version-only references while preserving unrelated media redirects", async () => {
+  it("denies raw checksums for version-only references while still serving unrelated media", async () => {
     const source = await createSource("version-only");
     const referencedArtifact = await createArtifact("version-only");
     const unrelatedArtifact = await createArtifact("unrelated");
@@ -365,11 +366,13 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
     // media -- see MediaController. Narrowing "any session" to a real
     // per-artifact check waits on the entitlement model.
     await request(app.getHttpServer()).get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`).expect(403);
-    const redirect = await request(app.getHttpServer())
+    // Served by the API itself; storage is never reachable from a browser.
+    fakeStorage.objects.set(unrelatedArtifact.storageKey, unrelatedArtifact.bytes);
+    const served = await request(app.getHttpServer())
       .get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`)
       .set("Cookie", adminCookie)
-      .redirects(0);
-    expect(redirect.status).toBe(302);
-    expect(redirect.headers.location).toContain("objects.example.test");
+      .expect(200);
+    expect(served.headers["content-type"]).toBe("application/pdf");
+    expect(served.headers["content-length"]).toBe(String(unrelatedArtifact.bytes.length));
   });
 });

@@ -125,11 +125,26 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
         </figure>
       );
     }
-    case "video":
+    case "video": {
+      // An uploaded video (media_key) is served by the API in byte ranges;
+      // older imported blocks carry a plain url.
+      const src = block.media_key ? mediaUrl(assets, String(block.media_key)) : String(block.url ?? "");
+      if (!src) {
+        return (
+          <p key={index} className="cb-missing" title={String(block.media_key)}>
+            ویدیوی این بخش بارگذاری نشد.
+          </p>
+        );
+      }
+      const caption = typeof block.caption === "string" && block.caption.trim() ? block.caption : null;
       return (
-        // eslint-disable-next-line jsx-a11y/media-has-caption
-        <video key={index} controls className="cb-video" src={String(block.url ?? "")} />
+        <figure key={index} className="cb-figure">
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <video controls preload="metadata" playsInline className="cb-video" src={src} />
+          {caption && <figcaption>{caption}</figcaption>}
+        </figure>
       );
+    }
     case "table": {
       const rows = Array.isArray(block.rows) ? (block.rows as string[][]) : [];
       const headers = Array.isArray(block.headers) ? (block.headers as string[]) : [];

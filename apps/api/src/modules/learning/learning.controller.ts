@@ -1,12 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { memoryStorage } from "multer";
+import { diskStorage, memoryStorage } from "multer";
+import { tmpdir } from "os";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
-import { LearningService } from "./learning.service";
+import { LearningService, MAX_LESSON_VIDEO_BYTES } from "./learning.service";
 import { CreateCourseDto, SetCourseMaterialsDto } from "./dto/create-course.dto";
 import { CreateModuleDto, ReorderLessonsDto, UpdateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
@@ -168,6 +169,13 @@ export class LearningAdminController {
   @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
   uploadLessonImage(@Req() req: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
     return this.learning.uploadLessonImage(req.user!.id, file);
+  }
+
+  /** A lesson video, written to a temporary file rather than held in memory. */
+  @Post("lesson-videos")
+  @UseInterceptors(FileInterceptor("file", { storage: diskStorage({ destination: tmpdir() }), limits: { fileSize: MAX_LESSON_VIDEO_BYTES } }))
+  uploadLessonVideo(@Req() req: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
+    return this.learning.uploadLessonVideo(req.user!.id, file);
   }
 
 }

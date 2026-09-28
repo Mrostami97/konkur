@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { createHash } from "crypto";
+import { createReadStream, promises as fs } from "fs";
 import { AccessMode, EnrollmentSource, Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
@@ -10,10 +11,35 @@ import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, LessonAssetDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { fa } from "../../common/persian-digits";
+import { faststartMp4 } from "./mp4-faststart";
 
 type Tx = PrismaService | Prisma.TransactionClient;
 
 const MAX_LESSON_IMAGE_BYTES = 5 * 1024 * 1024;
+/** A free sample lesson is a short video; a whole session belongs in the
+ * course player. Also about the most a slow line uploads through the CDN. */
+export const MAX_LESSON_VIDEO_BYTES = 300 * 1024 * 1024;
+
+/** MP4 or WebM from the first bytes; a QuickTime .mov is told apart, since
+ * browsers play it unreliably. */
+async function sniffVideoType(path: string): Promise<"video/mp4" | "video/webm" | "quicktime" | null> {
+  const handle = await fs.open(path, "r");
+  const head = Buffer.alloc(12);
+  try {
+    await handle.read(head, 0, 12, 0);
+  } finally {
+    await handle.close();
+  }
+  if (head.toString("latin1", 4, 8) === "ftyp") return head.toString("latin1", 8, 12) === "qt  " ? "quicktime" : "video/mp4";
+  if (head.readUInt32BE(0) === 0x1a45dfa3) return "video/webm";
+  return null;
+}
+
+async function sha256OfFile(path: string): Promise<string> {
+  const hash = createHash("sha256");
+  for await (const chunk of createReadStream(path)) hash.update(chunk as Buffer);
+  return hash.digest("hex");
+}
 
 /** The declared type is the browser's guess from the file name; the leading
  * bytes are what the file actually is. Both must agree before it is stored
@@ -256,6 +282,56 @@ export class LearningService {
   }
 
   /**
+   * A video for a lesson -- in practice a free sample of a course. The
+   * upload arrives on disk, not in memory. An MP4 whose index sits at the
+   * end, as phones write it, is rewritten with the index first so it starts
+   * playing at once instead of after most of it has downloaded.
+   */
+  async uploadLessonVideo(actorId: string, file: Express.Multer.File | undefined) {
+    if (!file) throw new BadRequestException("no file uploaded");
+    const fastPath = `${file.path}.fast`;
+    try {
+      if (file.size > MAX_LESSON_VIDEO_BYTES) throw new BadRequestException("video must be 300 MB or smaller");
+      const sniffed = await sniffVideoType(file.path);
+      if (sniffed === "quicktime") {
+        throw new BadRequestException("MOV files play unreliably in browsers; export the video as MP4 (H.264) and upload that");
+      }
+      if (!sniffed) throw new BadRequestException("video must be an MP4 or WebM file");
+
+      let path = file.path;
+      if (sniffed === "video/mp4") {
+        const moved = await faststartMp4(file.path, fastPath).catch(() => {
+          throw new BadRequestException("the MP4 file is damaged or incomplete");
+        });
+        if (moved) path = fastPath;
+      }
+      const digest = await sha256OfFile(path);
+      const { size } = await fs.stat(path);
+      const checksum = `sha256:${digest}`;
+      const extension = sniffed === "video/webm" ? "webm" : "mp4";
+      const key = `${digest}/lesson-video.${extension}`;
+      if (!(await this.storage.objectExists(key))) {
+        await this.storage.putFile(key, path, sniffed);
+      }
+      const artifact = await this.prisma.sourceArtifact.upsert({
+        where: { checksum },
+        update: {},
+        create: { checksum, filename: `lesson-video.${extension}`, mimeType: sniffed, size, storageKey: key },
+      });
+      await this.audit.log({
+        actorUserId: actorId,
+        action: "lesson.video_uploaded",
+        targetType: "SourceArtifact",
+        targetId: artifact.id,
+      });
+      return { media_key: `vid-${digest.slice(0, 12)}`, checksum, url: `/media/${digest}`, size };
+    } finally {
+      await fs.rm(file.path, { force: true });
+      await fs.rm(fastPath, { force: true });
+    }
+  }
+
+  /**
    * Every image block must name an image the lesson carries, and every image
    * it carries must have been uploaded as an image -- otherwise the student
    * sees a broken figure, or a checksum points at something that is not a
@@ -268,13 +344,17 @@ export class LearningService {
       byKey.set(asset.media_key, { media_key: asset.media_key, checksum: asset.checksum });
     }
     const used = new Set<string>();
+    const kinds = new Map<string, "image/" | "video/">();
     blocks.forEach((block, index) => {
       const { type, media_key: mediaKey } = block as { type?: string; media_key?: unknown };
-      if (type !== "image") return;
+      // A video block is either an uploaded file (media_key) or, from older
+      // imports, a plain url; only the uploaded kind is checked here.
+      if (type !== "image" && !(type === "video" && mediaKey !== undefined)) return;
       if (typeof mediaKey !== "string" || !byKey.has(mediaKey)) {
-        throw new BadRequestException(`content_blocks[${index}] references an image the lesson does not carry`);
+        throw new BadRequestException(`content_blocks[${index}] references a ${type} the lesson does not carry`);
       }
       used.add(mediaKey);
+      kinds.set(mediaKey, type === "video" ? "video/" : "image/");
     });
     const kept = [...byKey.values()].filter((asset) => used.has(asset.media_key));
     if (kept.length === 0) return kept;
@@ -282,9 +362,12 @@ export class LearningService {
       where: { checksum: { in: kept.map((asset) => asset.checksum) } },
       select: { checksum: true, mimeType: true },
     });
-    const images = new Set(artifacts.filter((a) => a.mimeType.startsWith("image/")).map((a) => a.checksum));
-    const missing = kept.find((asset) => !images.has(asset.checksum));
-    if (missing) throw new BadRequestException(`image "${missing.media_key}" was not uploaded`);
+    const mimeOf = new Map(artifacts.map((artifact) => [artifact.checksum, artifact.mimeType]));
+    const missing = kept.find((asset) => !mimeOf.get(asset.checksum)?.startsWith(kinds.get(asset.media_key)!));
+    if (missing) {
+      const kind = kinds.get(missing.media_key) === "video/" ? "video" : "image";
+      throw new BadRequestException(`${kind} "${missing.media_key}" was not uploaded`);
+    }
     return kept;
   }
 

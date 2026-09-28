@@ -39,6 +39,16 @@ export class ObjectStorageService implements OnModuleInit {
     });
   }
 
+  /** Uploads a file from disk, streamed -- for files too large to hold in memory, like video. */
+  async putFile(key: string, path: string, mimeType: string): Promise<void> {
+    await this.client.fPutObject(this.bucket, key, path, { "Content-Type": mimeType });
+  }
+
+  /** Bytes [start, start + length) of an object, for answering a Range request. */
+  async getRangeStream(key: string, start: number, length: number): Promise<Readable> {
+    return this.client.getPartialObject(this.bucket, key, start, length);
+  }
+
   /** Real connectivity check for /healthz -- throws if the bucket can't be
    * reached, rather than swallowing the error like onModuleInit does. */
   async ping(): Promise<void> {
@@ -59,14 +69,9 @@ export class ObjectStorageService implements OnModuleInit {
     await this.client.removeObject(this.bucket, key);
   }
 
-  /** Short-lived signed URL (doc §9: "Signed URL کوتاه‌عمر"); the app never
-   * proxies media bytes itself, it just redirects here. */
-  async presignedGetUrl(key: string, expirySeconds = 300): Promise<string> {
-    return this.client.presignedGetObject(this.bucket, key, expirySeconds);
-  }
-
-  /** Protected resources are proxied by the API after an entitlement check;
-   * callers never receive an object-storage URL or key. */
+  /** Files are proxied by the API after its access check; callers never
+   * receive an object-storage URL or key. (Signed storage URLs were used
+   * once, but production storage is not reachable from outside the server.) */
   async getObjectStream(key: string): Promise<Readable> {
     return this.client.getObject(this.bucket, key);
   }

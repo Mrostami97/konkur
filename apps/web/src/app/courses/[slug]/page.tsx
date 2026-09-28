@@ -93,6 +93,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const materials = course.materials ?? [];
   const firstLessonId = lessons[0]?.id;
   const previewCount = lessons.filter((lesson) => lesson.isPreview).length;
+  const firstPreviewId = lessons.find((lesson) => lesson.isPreview)?.id;
   const purchasableProduct = accessMode === "ENTITLEMENT" ? product : null;
   const schemas: Record<string, unknown>[] = [
     {
@@ -218,6 +219,12 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                   <BuyButton productId={purchasableProduct.id} />
                 ) : (
                   <p className="cr-note">فروش این دوره هنوز باز نشده است.</p>
+                )}
+                {/* The free sample lessons, open without buying or signing in. */}
+                {firstPreviewId && (
+                  <Link className="ds-btn ds-btn-secondary cr-cta" href={`/lessons/${firstPreviewId}`}>
+                    تماشای نمونهٔ رایگان
+                  </Link>
                 )}
                 <ul className="cr-includes">
                   <li>همهٔ درس‌های دوره، به ترتیب فصل</li>

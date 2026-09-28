@@ -19,6 +19,14 @@ function randomPhone(): string {
   return `+9895${Math.floor(1_000_000 + Math.random() * 8_999_999)}`;
 }
 
+/** Collects a response body as raw bytes, whatever its content type. */
+function binary(res: request.Response, done: (err: Error | null, body: Buffer) => void) {
+  const stream = res as unknown as NodeJS.ReadableStream;
+  const chunks: Buffer[] = [];
+  stream.on("data", (chunk: Buffer) => chunks.push(chunk));
+  stream.on("end", () => done(null, Buffer.concat(chunks)));
+}
+
 /** A real 1x1 PNG, so the upload path is exercised with an actual image.
  * Bytes after IEND are ignored by decoders; they make this run's checksum its
  * own, so the image is not shared with another suite's upload of the same PNG. */
@@ -138,7 +146,10 @@ describe("Lesson images (e2e)", () => {
       .set("Cookie", adminCookie)
       .send({ isPreview: true })
       .expect(200);
-    await request(app.getHttpServer()).get(`/media/${digest}`).expect(302);
+    // Served by the API itself: storage is not reachable from a browser.
+    const served = await request(app.getHttpServer()).get(`/media/${digest}`).buffer(true).parse(binary).expect(200);
+    expect(served.headers["content-type"]).toBe("image/png");
+    expect(Buffer.compare(served.body as Buffer, TINY_PNG)).toBe(0);
     const read = await request(app.getHttpServer()).get(`/lessons/${lesson.body.id}`).expect(200);
     expect(read.body.assets).toEqual([{ media_key: mediaKey, checksum }]);
 

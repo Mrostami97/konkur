@@ -40,10 +40,6 @@ class MemoryObjectStorage {
     if (!object) throw new Error(`missing object ${key}`);
     return Readable.from(object);
   }
-
-  async presignedGetUrl(key: string) {
-    return `https://objects.example.test/${encodeURIComponent(key)}`;
-  }
 }
 
 async function samplePdf(pages: number) {

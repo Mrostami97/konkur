@@ -53,24 +53,31 @@ interface ModuleWithLessons {
   lessons: { id: string; title: string; isPreview?: boolean }[];
 }
 
-/** Block types the editor authors. An image is uploaded from here; a video
- * block (a URL) is kept as it is when a lesson is edited. */
+/** Block types the editor authors. Images and videos are uploaded from
+ * here; an older video block that is only a URL is kept as it is. */
 const BLOCK_TYPES = [
   { value: "text", label: "پاراگراف" },
   { value: "heading", label: "عنوان" },
   { value: "quote", label: "نقل‌قول" },
   { value: "latex", label: "فرمول (LaTeX)" },
   { value: "image", label: "تصویر" },
+  { value: "video", label: "ویدیو" },
 ] as const;
+
+/** Matches the API's limit; a free sample is a short clip, not a whole session. */
+const MAX_VIDEO_MB = 300;
 
 type BlockType = (typeof BLOCK_TYPES)[number]["value"];
 interface LessonImage { media_key: string; checksum: string; url: string }
+interface LessonVideo { media_key: string; checksum: string; url: string }
 interface DraftBlock {
   id: number;
   type: BlockType | "kept";
-  /** Text, formula, or for an image its description (alt text and caption). */
+  /** Text, formula, for an image its description (alt text and caption),
+   * or for a video its caption. */
   value: string;
   image?: LessonImage;
+  video?: LessonVideo;
   /** A block this editor does not author, carried through unchanged. */
   kept?: { type: string; [key: string]: unknown };
 }
@@ -88,6 +95,7 @@ const newBlock = (type: BlockType = "text"): DraftBlock => ({ id: (blockId += 1)
 function isFilled(block: DraftBlock) {
   if (block.type === "kept") return true;
   if (block.type === "image") return Boolean(block.image);
+  if (block.type === "video") return Boolean(block.video);
   return block.value.trim().length > 0;
 }
 
@@ -100,6 +108,10 @@ function toContentBlock(block: DraftBlock) {
     const text = block.value.trim();
     return { type: "image", media_key: block.image!.media_key, alt: text, ...(text ? { caption: text } : {}) };
   }
+  if (block.type === "video") {
+    const text = block.value.trim();
+    return { type: "video", media_key: block.video!.media_key, ...(text ? { caption: text } : {}) };
+  }
   return { type: "text", text: block.value };
 }
 
@@ -111,6 +123,15 @@ function fromLesson(lesson: LessonRow): DraftBlock[] {
     const text = (key: string) => String(block[key] ?? "");
     if (block.type === "text" || block.type === "heading" || block.type === "quote") return { id, type: block.type, value: text("text") };
     if (block.type === "latex") return { id, type: "latex", value: text("latex") };
+    if (block.type === "video" && checksumOf.has(text("media_key"))) {
+      const checksum = checksumOf.get(text("media_key"))!;
+      return {
+        id,
+        type: "video",
+        value: text("caption"),
+        video: { media_key: text("media_key"), checksum, url: `/media/${checksum.replace("sha256:", "")}` },
+      };
+    }
     const checksum = block.type === "image" ? checksumOf.get(text("media_key")) : undefined;
     if (checksum) {
       return {
@@ -156,6 +177,58 @@ function ImagePicker({ block, onUploaded }: { block: DraftBlock; onUploaded: (im
           onChange={(event) => void upload(event.target.files?.[0])}
         />
         {busy ? "در حال آپلود…" : block.image ? "تعویض تصویر" : "انتخاب فایل تصویر"}
+      </label>
+      {error && <Alert tone="danger">{error}</Alert>}
+    </div>
+  );
+}
+
+function VideoPicker({ block, onUploaded }: { block: DraftBlock; onUploaded: (video: LessonVideo) => void }) {
+  const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const busy = progress !== null;
+  const mb = (bytes: number) => toPersianDigits((bytes / 1024 / 1024).toFixed(1));
+
+  async function upload(file: File | undefined) {
+    if (!file) return;
+    setError(null);
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
+      setError(`حجم ویدیو بیش از ${toPersianDigits(MAX_VIDEO_MB)} مگابایت است. نمونه را کوتاه‌تر یا با کیفیت کمتر خروجی بگیرید.`);
+      return;
+    }
+    setProgress({ loaded: 0, total: file.size });
+    try {
+      onUploaded(await apiUpload<LessonVideo>("/admin/lesson-videos", file, setProgress));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "";
+      setError(/MOV/.test(message) ? "فایل MOV در مرورگرها درست پخش نمی‌شود؛ ویدیو را با فرمت MP4 (H.264) خروجی بگیرید و دوباره آپلود کنید." : message || "آپلود ویدیو ناموفق بود.");
+    } finally {
+      setProgress(null);
+    }
+  }
+
+  const percent = progress && progress.total > 0 ? Math.round((progress.loaded / progress.total) * 100) : 0;
+  return (
+    <div className="ds-stack-sm">
+      {block.video && (
+        // eslint-disable-next-line jsx-a11y/media-has-caption
+        <video className="ds-video-preview" src={`${API_URL}${block.video.url}`} controls preload="metadata" playsInline />
+      )}
+      <label className={`ds-btn ds-btn-secondary ds-btn-sm ds-file${busy ? " is-busy" : ""}`}>
+        <input
+          type="file"
+          className="sr-only"
+          accept="video/mp4,video/webm"
+          disabled={busy}
+          onChange={(event) => void upload(event.target.files?.[0])}
+        />
+        {busy
+          ? percent < 100
+            ? `در حال آپلود… ${toPersianDigits(percent)}٪ (${mb(progress.loaded)} از ${mb(progress.total)} مگابایت)`
+            : "در حال آماده‌سازی ویدیو…"
+          : block.video
+            ? "تعویض ویدیو"
+            : "انتخاب فایل ویدیو"}
       </label>
       {error && <Alert tone="danger">{error}</Alert>}
     </div>
@@ -208,9 +281,14 @@ function LessonForm({
       setError("برای هر بلوک تصویر، فایلی آپلود کنید یا آن بلوک را حذف کنید.");
       return;
     }
-    const assets = filled.flatMap((block) =>
-      block.type === "image" && block.image ? [{ media_key: block.image.media_key, checksum: block.image.checksum }] : [],
-    );
+    if (blocks.some((block) => block.type === "video" && !block.video)) {
+      setError("برای هر بلوک ویدیو، فایلی آپلود کنید یا آن بلوک را حذف کنید.");
+      return;
+    }
+    const assets = filled.flatMap((block) => {
+      const file = block.type === "image" ? block.image : block.type === "video" ? block.video : undefined;
+      return file ? [{ media_key: file.media_key, checksum: file.checksum }] : [];
+    });
     const unique = [...new Map(assets.map((asset) => [asset.media_key, asset])).values()];
     setBusy(true);
     setError(null);
@@ -277,6 +355,16 @@ function LessonForm({
                       onChange={(event) => update(block.id, { value: event.target.value })}
                     />
                   </div>
+                ) : block.type === "video" ? (
+                  <div className="ds-stack-sm">
+                    <VideoPicker block={block} onUploaded={(video) => update(block.id, { video })} />
+                    <Input
+                      value={block.value}
+                      placeholder="توضیح کوتاه زیر ویدیو (اختیاری)"
+                      aria-label={`توضیح ویدیو ${toPersianDigits(index + 1)}`}
+                      onChange={(event) => update(block.id, { value: event.target.value })}
+                    />
+                  </div>
                 ) : (
                   <Textarea
                     value={block.value}
@@ -298,10 +386,14 @@ function LessonForm({
             </div>
           ))}
         </div>
-        <p className="ds-hint">تصویر PNG، JPEG یا WebP تا ۵ مگابایت. توضیح تصویر برای کسی که تصویر را نمی‌بیند خوانده می‌شود.</p>
+        <p className="ds-hint">
+          تصویر PNG، JPEG یا WebP تا ۵ مگابایت؛ توضیح تصویر برای کسی که تصویر را نمی‌بیند خوانده می‌شود. ویدیو MP4 یا WebM تا
+          ۳۰۰ مگابایت؛ برای نمونهٔ رایگان یک تکهٔ کوتاه ۷۲۰p کافی است و روی اینترنت کند هم روان پخش می‌شود.
+        </p>
         <div className="ds-row">
           <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock()])}>افزودن بلوک متن</Button>
           <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock("image")])}>افزودن تصویر</Button>
+          <Button size="sm" type="button" onClick={() => setBlocks([...blocks, newBlock("video")])}>افزودن ویدیو</Button>
         </div>
       </div>
 

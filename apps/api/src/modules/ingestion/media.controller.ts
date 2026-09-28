@@ -22,6 +22,8 @@ export class MediaController {
       select: {
         id: true,
         storageKey: true,
+        mimeType: true,
+        size: true,
         resources: {
           select: { id: true },
           take: 1,
@@ -73,8 +75,7 @@ export class MediaController {
       const isPublic = achievementUses.some((use) => use.isPublished);
       const isAdmin = req.user?.roles.includes("ADMIN") ?? false;
       if (!isPublic && !isAdmin) throw new NotFoundException("media not found");
-      const url = await this.storage.presignedGetUrl(artifact.storageKey);
-      res.redirect(302, url);
+      await this.send(artifact, req, res);
       return;
     }
 
@@ -114,7 +115,63 @@ export class MediaController {
       }
     }
 
-    const url = await this.storage.presignedGetUrl(artifact.storageKey);
-    res.redirect(302, url);
+    await this.send(artifact, req, res);
   }
+
+  /**
+   * Streams the file itself, answering a single byte Range with 206 so a
+   * video can start at once and seek. The file used to be a redirect to a
+   * signed object-storage URL, but in production storage is only reachable
+   * inside the server, so that URL never worked from a browser.
+   *
+   * "private": the CDN caches whole files and then answers range requests
+   * with all of it, which breaks video. The checksum names the content, so
+   * the browser may keep its copy for a day.
+   */
+  private async send(artifact: { storageKey: string; mimeType: string; size: number }, req: RequestWithUser, res: Response) {
+    const total = artifact.size;
+    res.setHeader("Content-Type", artifact.mimeType);
+    res.setHeader("Accept-Ranges", "bytes");
+    res.setHeader("Cache-Control", "private, max-age=86400");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+
+    const range = parseRange(req.headers.range, total);
+    if (range === "unsatisfiable") {
+      res.status(416).setHeader("Content-Range", `bytes */${total}`);
+      res.end();
+      return;
+    }
+    const stream = range
+      ? await this.storage.getRangeStream(artifact.storageKey, range.start, range.end - range.start + 1)
+      : await this.storage.getObjectStream(artifact.storageKey);
+    if (range) {
+      res.status(206);
+      res.setHeader("Content-Range", `bytes ${range.start}-${range.end}/${total}`);
+      res.setHeader("Content-Length", String(range.end - range.start + 1));
+    } else {
+      res.status(200);
+      res.setHeader("Content-Length", String(total));
+    }
+    stream.on("error", () => res.destroy());
+    stream.pipe(res);
+  }
+}
+
+/**
+ * One "bytes=start-end" range (or "start-", or "-suffix"), clamped to the
+ * file. Several ranges at once are answered with the whole file, as HTTP
+ * allows; a range that starts past the end cannot be satisfied.
+ */
+export function parseRange(header: string | undefined, total: number): { start: number; end: number } | "unsatisfiable" | null {
+  const match = header ? /^bytes=(\d*)-(\d*)$/.exec(header.trim()) : null;
+  if (!match || (match[1] === "" && match[2] === "")) return null;
+  if (match[1] === "") {
+    const suffix = Number(match[2]);
+    if (suffix === 0) return "unsatisfiable";
+    return { start: Math.max(0, total - suffix), end: total - 1 };
+  }
+  const start = Number(match[1]);
+  const end = match[2] === "" ? total - 1 : Math.min(Number(match[2]), total - 1);
+  if (start >= total || end < start) return "unsatisfiable";
+  return { start, end };
 }
