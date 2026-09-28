@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContentBlocks } from "../../../components/ContentBlocks";
 import { ResourceAccess } from "../../../components/ResourceAccess";
 import { ResourceStudyActions } from "../../../components/ResourceStudyActions";
 import {
@@ -35,7 +36,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     path: `/resources/${params.slug}`,
     noIndex: true,
   });
-  return pageMetadata({ title: resource.title, description: resource.description ?? resource.summary, path: `/resources/${resource.slug}` });
+  // The summary is the short search snippet; the description is the page's
+  // full public text, often several paragraphs for a sold handout.
+  return pageMetadata({ title: resource.title, description: resource.summary, path: `/resources/${resource.slug}` });
 }
 
 export default async function ResourcePage({ params }: { params: { slug: string } }) {
@@ -51,7 +54,7 @@ export default async function ResourcePage({ params }: { params: { slug: string 
       "@context": "https://schema.org",
       "@type": "LearningResource",
       name: resource.title,
-      description: resource.description ?? resource.summary,
+      description: resource.summary,
       url: absoluteUrl(path),
       inLanguage: "fa-IR",
       learningResourceType: resourceKindLabel(resource.kind),
@@ -82,7 +85,7 @@ export default async function ResourcePage({ params }: { params: { slug: string 
               {resource.taxonomyDegrees.map((degree) => <span key={degree}>{degreeLabel(degree)}</span>)}
             </div>
             <h1>{resource.title}</h1>
-            <p className="editorial-deck">{resource.description ?? resource.summary}</p>
+            <p className="editorial-deck">{resource.summary}</p>
             <div className="editorial-byline">
               <div>
                 {resource.authorProfile && <span>تهیه‌کننده: <Link href={`/authors/${resource.authorProfile.slug}`}>{resource.authorProfile.displayName}</Link></span>}
@@ -98,6 +101,13 @@ export default async function ResourcePage({ params }: { params: { slug: string 
 
           <ResourceAccess initial={{ slug: resource.slug, accessMode: resource.accessMode, hostingMode: resource.hostingMode, canAccess: resource.canAccess, externalUrl: resource.externalUrl, courses: resource.courses, sample: resource.sample, sampleFor: resource.sampleFor }} />
           <ResourceStudyActions slug={resource.slug} />
+
+          {resource.description && (
+            <section className="editorial-body" aria-label="دربارهٔ این منبع">
+              {/* Public, server-rendered: lines starting with «•» or «۱.» become lists. */}
+              <ContentBlocks blocks={[{ type: "text", text: resource.description }]} />
+            </section>
+          )}
 
           {resource.catalogProfile && (
             <section className="surface-card" aria-labelledby="resource-fit-title">
