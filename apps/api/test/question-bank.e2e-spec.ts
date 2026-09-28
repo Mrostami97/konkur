@@ -463,7 +463,7 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .get(`/media/${checksum}`)
       .set("Cookie", adminCookie)
       .redirects(0);
-    expect(authedRes.status).toBe(302);
+    expect(authedRes.status).toBe(200);
   });
 
   it("filters the question bank by subject, exam year, and free-text", async () => {
@@ -562,7 +562,7 @@ describe("Taxonomy + Question Bank (e2e)", () => {
     expect(versionsRes.body.map((v: any) => v.version)).toEqual([1, 2, 3]);
   });
 
-  it("serves an ingested media asset via a short-lived redirect", async () => {
+  it("serves an ingested media asset once public content uses it", async () => {
     const externalId = `media-question-${Date.now()}`;
     const imageBuf = Buffer.from("fake-png-for-media-test");
     const checksum = sha256(imageBuf);
@@ -607,9 +607,11 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .set("Cookie", adminCookie)
       .expect(201);
 
+    // Served by the API itself: storage is never reachable from a browser.
     const res = await request(app.getHttpServer()).get(`/media/${checksum}`).redirects(0);
-    expect(res.status).toBe(302);
-    expect(res.headers.location).toMatch(/^http/);
+    expect(res.status).toBe(200);
+    expect(res.headers["content-type"]).toMatch(/^image\//);
+    expect(res.headers["accept-ranges"]).toBe("bytes");
   });
 it("retires a question out of the bank without destroying it, and can restore it", async () => {
     const externalId = `retire-${Date.now()}`;
