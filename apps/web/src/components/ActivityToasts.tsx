@@ -9,13 +9,13 @@ import { toPersianDigits } from "../lib/format";
 
 type ActivityEvent =
   | { id: string; kind: "signup"; at: string; degree: "MASTER" | "PHD" | null; field: string | null }
-  | { id: string; kind: "purchase"; at: string; product: string };
+  | { id: string; kind: "purchase"; at: string; product: string; href: string };
 
 const FIRST_DELAY_MS = 9_000;
-const GAP_MS = 32_000;
+const GAP_MS = 30_000;
 const VISIBLE_MS = 7_000;
 /** Across the whole visit, not per page, so moving around never floods anyone. */
-const MAX_PER_VISIT = 3;
+const MAX_PER_VISIT = 5;
 const STORE = "kz-activity";
 
 /** Pages where a notice would interrupt: signing in, and the pages behind it. */
@@ -39,6 +39,16 @@ function writeStore(value: { seen: string[]; shown: number; off: boolean }) {
   }
 }
 
+/** Real events in random order, so each visit shows a different one first. */
+function shuffled<T>(list: T[]) {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 function ago(iso: string) {
   const minutes = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60_000));
   if (minutes < 60) return `${toPersianDigits(minutes)} دقیقه پیش`;
@@ -49,7 +59,7 @@ function ago(iso: string) {
 
 function describe(event: ActivityEvent) {
   if (event.kind === "purchase") {
-    return { line: <>یک نفر <b>«{event.product}»</b> را تهیه کرد</>, cta: "دیدن دوره‌ها", href: "/courses" };
+    return { line: <>یک نفر <b>«{event.product}»</b> را تهیه کرد</>, cta: "دیدن و تهیه", href: event.href };
   }
   const degree = event.degree === "PHD" ? "دکتری" : event.degree === "MASTER" ? "ارشد" : null;
   const field = TARGET_FIELDS.find((option) => option.value === event.field)?.label ?? null;
@@ -58,10 +68,10 @@ function describe(event: ActivityEvent) {
 }
 
 /**
- * "Someone just joined / bought" notices, from real recent activity only.
- * The API sends nothing that identifies a person; with no recent activity
- * nothing appears. At most three per visit, one at a time, and closing one
- * ends them for the visit.
+ * "Someone just joined / bought" notices, from real recent activity only,
+ * in random order. The API sends nothing that identifies a person; with no
+ * recent activity nothing appears. At most five per visit, one at a time,
+ * and closing one ends them for the visit.
  */
 export function ActivityToasts() {
   const pathname = usePathname() ?? "";
@@ -94,7 +104,7 @@ export function ActivityToasts() {
 
     later(async () => {
       if (queue.current === null) {
-        queue.current = await apiFetch<ActivityEvent[]>("/site/activity").catch(() => []);
+        queue.current = shuffled(await apiFetch<ActivityEvent[]>("/site/activity").catch(() => []));
       }
       showNext();
     }, FIRST_DELAY_MS);

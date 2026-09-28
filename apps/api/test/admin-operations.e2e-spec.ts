@@ -232,7 +232,7 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
       expect(serialized).not.toContain(student.id);
       for (const event of anonymous.body) {
         expect(Object.keys(event).sort()).toEqual(
-          event.kind === "signup" ? ["at", "degree", "field", "id", "kind"] : ["at", "id", "kind", "product"],
+          event.kind === "signup" ? ["at", "degree", "field", "id", "kind"] : ["at", "href", "id", "kind", "product"],
         );
       }
 
@@ -241,6 +241,35 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
       expect(anonymous.body.map((event: { id: string }) => event.id)).toContain(ownId);
       const own = await http().get("/site/activity").set("Cookie", student.cookie).expect(200);
       expect(own.body.map((event: { id: string }) => event.id)).not.toContain(ownId);
+    });
+
+    it("counts sales made at checkout or by hand, never gifts or what staff give themselves", async () => {
+      const subject = `ops-activity-subject-${run}`;
+      await asAdmin("post", "/admin/subjects").send({ code: subject, title: "Activity subject" }).expect(201);
+      const product = await asAdmin("post", "/admin/products")
+        .send({ slug: `ops-activity-${run}`, title: `Activity bank ${run}`, description: "ops", kind: "QUESTION_BANK", questionBankSubjectCodes: [subject] })
+        .expect(201);
+      const buyer = await login(randomMobile());
+      const gifted = await login(randomMobile());
+      const grant = (userId: string, grantedVia: "MANUAL" | "GIFT") =>
+        asAdmin("post", "/admin/entitlements/grant").send({ userId, productId: product.body.id, grantedVia, reason: "ops activity" }).expect(201);
+      const sold = await grant(buyer.id, "MANUAL");
+      const gift = await grant(gifted.id, "GIFT");
+      const staff = await grant(adminId, "MANUAL");
+
+      const events = (await http().get("/site/activity").expect(200)).body as { id: string; kind: string; product?: string; href?: string }[];
+      const idOf = (id: string) => createHash("sha256").update(`purchase:${id}`).digest("hex").slice(0, 16);
+      const ids = events.map((event) => event.id);
+      expect(ids).toContain(idOf(sold.body.id));
+      expect(ids).not.toContain(idOf(gift.body.id));
+      expect(ids).not.toContain(idOf(staff.body.id));
+      const shown = events.find((event) => event.id === idOf(sold.body.id));
+      expect(shown).toMatchObject({ kind: "purchase", product: `Activity bank ${run}`, href: "/questions" });
+      expect(JSON.stringify(events)).not.toContain(buyer.id);
+
+      // The buyer is not shown their own purchase.
+      const own = (await http().get("/site/activity").set("Cookie", buyer.cookie).expect(200)).body as { id: string }[];
+      expect(own.map((event) => event.id)).not.toContain(idOf(sold.body.id));
     });
   });
 
