@@ -3,6 +3,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { applyUpgrade } from "./apply-upgrades.mjs";
 
 // Paths are relative to this file so the script works from any checkout; run it
 // from this folder after building contracts (pnpm --filter @konkurcom/contracts build).
@@ -13,7 +14,7 @@ const { validateArticleV2 } = require(`${repo}contracts/dist/validators.js`);
 const drafts = JSON.parse(await (await import("node:fs/promises")).readFile(`${repo}apps/api/src/seed-data/editorial-drafts.json`, "utf8")).articles;
 const slugs = process.argv.slice(2);
 for (const slug of slugs) {
-  const article = (await import(pathToFileURL(`articles/${slug}.mjs`).href)).default;
+  const article = applyUpgrade(slug, (await import(pathToFileURL(`articles/${slug}.mjs`).href)).default);
   // A package that replaces a live article must keep its type and slug: the public
   // URL is /articles/ or /guides/ + slug, and moving it needs the owner's approval.
   const existing = drafts.find((d) => d.external_id === article.external_id);
