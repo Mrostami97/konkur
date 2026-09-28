@@ -22,6 +22,7 @@ import {
 } from "../../../components/ds";
 
 interface Course { id: string; title: string }
+interface SellableResource { id: string; title: string; accessMode: string; reviewStatus: string }
 interface AdminUser { id: string; phone: string; name?: string | null }
 
 /** How a person reads in a picker: name first when there is one. */
@@ -49,7 +50,7 @@ type ProductKind = "COURSE" | "RESOURCE" | "BUNDLE" | "QUESTION_BANK";
 const KINDS: { value: ProductKind; label: string; note: string }[] = [
   { value: "COURSE", label: "دوره", note: "یک دوره را باز می‌کند؛ می‌توانید بانک سؤال درس‌های مرتبط را هم رایگان همراهش کنید." },
   { value: "QUESTION_BANK", label: "بانک سؤال", note: "فقط بانک سؤال یک درس را باز می‌کند و مستقل از دوره فروخته می‌شود." },
-  { value: "RESOURCE", label: "منبع", note: "دسترسی به یک منبع آموزشی." },
+  { value: "RESOURCE", label: "منبع", note: "دسترسی به یک منبع آموزشی، مثلاً یک جزوهٔ PDF. منبع باید «پولی؛ با دسترسی فعال» و منتشرشده باشد." },
   { value: "BUNDLE", label: "بسته", note: "ترکیبی از چند مورد بالا." },
 ];
 const kindLabel = (kind: ProductKind) => KINDS.find((item) => item.value === kind)?.label ?? kind;
@@ -67,6 +68,7 @@ const activePrice = (product: Product) => product.prices.find((price) => price.i
 
 export default function CommerceAdminPage() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [resources, setResources] = useState<SellableResource[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -79,6 +81,7 @@ export default function CommerceAdminPage() {
   const [description, setDescription] = useState("");
   const [kind, setKind] = useState<ProductKind>("COURSE");
   const [courseId, setCourseId] = useState("");
+  const [resourceId, setResourceId] = useState("");
   const [bankSubjects, setBankSubjects] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -124,13 +127,15 @@ export default function CommerceAdminPage() {
     setLoading(true);
     setError(null);
     try {
-      const [nextCourses, nextProducts, userResponse, nextOrders] = await Promise.all([
+      const [nextCourses, nextResources, nextProducts, userResponse, nextOrders] = await Promise.all([
         apiFetch<Course[]>("/admin/courses"),
+        apiFetch<SellableResource[]>("/admin/resources"),
         apiFetch<Product[]>("/admin/products"),
         apiFetch<{ users: AdminUser[] }>("/admin/users"),
         apiFetch<Order[]>("/admin/orders"),
       ]);
       setCourses(nextCourses);
+      setResources(nextResources);
       setProducts(nextProducts);
       setUsers(userResponse.users);
       setOrders(nextOrders);
@@ -159,6 +164,7 @@ export default function CommerceAdminPage() {
           description,
           kind,
           ...(kind === "COURSE" && courseId ? { courseId } : {}),
+          ...(kind === "RESOURCE" && resourceId ? { resourceIds: [resourceId] } : {}),
           ...(subjectCodes.length ? { questionBankSubjectCodes: subjectCodes } : {}),
         },
       });
@@ -166,6 +172,7 @@ export default function CommerceAdminPage() {
       setTitle("");
       setDescription("");
       setBankSubjects("");
+      setResourceId("");
       await load();
     } catch (err) {
       setCreateError(err instanceof Error ? err.message : "ساخت محصول ناموفق بود.");
@@ -253,6 +260,23 @@ export default function CommerceAdminPage() {
                   <Select {...props} value={courseId} onChange={(event) => setCourseId(event.target.value)} required>
                     <option value="">دوره را انتخاب کنید</option>
                     {courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}
+                  </Select>
+                )}
+              </Field>
+            )}
+
+            {kind === "RESOURCE" && (
+              <Field
+                label="منبع مرتبط"
+                hint="فقط منبع‌های پولی و منتشرشده در فهرست‌اند. اگر منبعتان نیست، اول در «منابع آموزشی» منتشرش کنید."
+                required
+              >
+                {(props) => (
+                  <Select {...props} value={resourceId} onChange={(event) => setResourceId(event.target.value)} required>
+                    <option value="">منبع را انتخاب کنید</option>
+                    {resources
+                      .filter((resource) => resource.accessMode === "ENTITLEMENT" && resource.reviewStatus === "PUBLISHED")
+                      .map((resource) => <option key={resource.id} value={resource.id}>{resource.title}</option>)}
                   </Select>
                 )}
               </Field>
