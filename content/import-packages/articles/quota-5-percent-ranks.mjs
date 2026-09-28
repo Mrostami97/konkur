@@ -4,6 +4,8 @@
 // quota: 43–147 cards a year; 1405 has too few), and 306 admissions in the 5%
 // quota from the fixed admissions data (tier B, aggregates only; pairs with
 // >= 5 cards, medians only). Eligibility rules are left to the booklet.
+// 1404-only table by university: owner database admissions + rankings, groups
+// of >= 6, all programs and periods together (analysis/admissions_1404.py).
 
 const text = (t) => ({ type: "text", text: t });
 const h2 = (t) => ({ type: "heading", level: 2, text: t });
@@ -90,6 +92,21 @@ export default {
     text(
       "ترتیب رشته‌محل‌ها تقریباً همان ترتیب سهمیهٔ آزاد است: هوش مصنوعی و نرم‌افزار شریف و تهران بالای جدول و معماری پایین‌تر. فقط عددها کوچک‌ترند، چون رتبه‌ها داخل سهمیه‌اند. نمونهٔ هر رشته‌محل کوچک است؛ این جدول را برای فهمیدن حدود کار به کار ببر.",
     ),
+    h3("فقط ۱۴۰۴، به تفکیک دانشگاه"),
+    text(
+      "برای تازه‌ترین سال، قبولی‌های سهمیهٔ ۵٪ ۱۴۰۴ را در دانشگاه‌هایی که دست‌کم ۶ کارنامه داشتند کنار هم گذاشتیم؛ همهٔ گرایش‌ها و دوره‌ها با هم:",
+    ),
+    {
+      type: "table",
+      headers: ["دانشگاه، ۱۴۰۴", "تعداد کارنامه", "میانهٔ رتبهٔ داخل سهمیه"],
+      rows: [
+        ["دانشگاه تهران", "۹", "۱۵"],
+        ["صنعتی شریف", "۱۰", "۱۶"],
+        ["صنعتی امیرکبیر", "۶", "۲۳"],
+        ["علم و صنعت ایران", "۷", "۵۹"],
+        ["شهید بهشتی", "۱۲", "۶۲"],
+      ],
+    },
 
     h2("از این عددها چطور استفاده کنی؟"),
     text(
