@@ -72,16 +72,41 @@ export async function apiFetch<T>(
   return body as T;
 }
 
-/** Multipart upload (e.g. the ingestion zip) with the session cookie attached. */
-export async function apiUpload<T>(path: string, file: File): Promise<T> {
+export interface UploadProgress {
+  loaded: number;
+  total: number;
+}
+
+/**
+ * Multipart upload (e.g. the ingestion zip, a handout PDF) with the session
+ * cookie attached. XMLHttpRequest rather than fetch, because only it reports
+ * upload progress: a large PDF on a slow line otherwise looks frozen.
+ */
+export function apiUpload<T>(path: string, file: File, onProgress?: (progress: UploadProgress) => void): Promise<T> {
   const formData = new FormData();
   formData.append("file", file);
-  const res = await fetch(`${API_URL}${path}`, {
-    method: "POST",
-    credentials: "include",
-    body: formData,
+  return new Promise<T>((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open("POST", `${API_URL}${path}`);
+    request.withCredentials = true;
+    if (onProgress) {
+      request.upload.onprogress = (event) => onProgress({ loaded: event.loaded, total: event.lengthComputable ? event.total : file.size });
+    }
+    request.onload = () => {
+      let body: unknown = request.responseText || undefined;
+      try {
+        body = request.responseText ? JSON.parse(request.responseText) : undefined;
+      } catch {
+        /* an HTML error page from the CDN; keep it as text */
+      }
+      if (request.status >= 200 && request.status < 300) resolve(body as T);
+      else if (request.status === 413) reject(new ApiError(413, "حجم فایل از سقف مجاز بیشتر است."));
+      else if (request.status === 502 || request.status === 503 || request.status === 504) {
+        reject(new ApiError(request.status, "سرور در دسترس نبود یا بارگذاری بیش از حد طول کشید. اتصال را بررسی و دوباره تلاش کنید."));
+      } else reject(errorFrom(request.status, request.statusText, body));
+    };
+    request.onerror = () => reject(new ApiError(0, "اتصال در میانهٔ بارگذاری قطع شد. دوباره تلاش کنید."));
+    request.onabort = () => reject(new ApiError(0, "بارگذاری لغو شد."));
+    request.send(formData);
   });
-  const body = await parseBody(res);
-  if (!res.ok) throw errorFrom(res.status, res.statusText, body);
-  return body as T;
 }

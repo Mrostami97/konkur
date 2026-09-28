@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
-import { apiFetch, apiUpload } from "../../../lib/api";
+import { apiFetch, apiUpload, type UploadProgress } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { SamplePicker } from "./SamplePicker";
 
@@ -219,20 +219,23 @@ function ResourcesAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
   const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
 
   async function uploadFile(file: File | undefined) {
     if (!file) return;
     setUploading(true);
+    setUploadProgress({ loaded: 0, total: file.size });
     setError(null);
     try {
-      const result = await apiUpload<UploadedFile>("/admin/resource-files", file);
+      const result = await apiUpload<UploadedFile>("/admin/resource-files", file, setUploadProgress);
       setUploaded(result);
       setForm((current) => ({ ...current, sourceArtifactId: result.id }));
     } catch (err) {
       setError(err instanceof Error ? err.message : "بارگذاری فایل انجام نشد.");
     } finally {
       setUploading(false);
+      setUploadProgress(null);
     }
   }
 
@@ -546,7 +549,7 @@ function ResourcesAdmin() {
                     event.target.value = "";
                   }}
                 />
-                <span>{uploading ? "در حال بارگذاری…" : form.sourceArtifactId ? "جایگزینی فایل" : "انتخاب فایل PDF"}</span>
+                <span>{uploading ? uploadLabel(uploadProgress) : form.sourceArtifactId ? "جایگزینی فایل" : "انتخاب فایل PDF"}</span>
               </label>
             </div>
           </div>
@@ -734,4 +737,13 @@ export default function ResourcesAdminPage() {
   return (
     <ResourcesAdmin />
   );
+}
+
+/** «در حال بارگذاری… ۴۵٪ (۴۲ از ۹۴ مگابایت)»; once every byte is sent, the server still checks the PDF. */
+function uploadLabel(progress: UploadProgress | null) {
+  if (!progress || progress.total <= 0) return "در حال بارگذاری…";
+  if (progress.loaded >= progress.total) return "فایل رسید؛ در حال بررسی PDF…";
+  const mb = (bytes: number) => toPersianDigits((bytes / 1024 / 1024).toFixed(1));
+  const percent = toPersianDigits(Math.floor((progress.loaded / progress.total) * 100));
+  return `در حال بارگذاری… ${percent}٪ (${mb(progress.loaded)} از ${mb(progress.total)} مگابایت)`;
 }
