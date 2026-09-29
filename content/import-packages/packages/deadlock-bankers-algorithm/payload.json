@@ -302,6 +302,14 @@
           {
             "label": "ویدیوهای رایگان",
             "href": "/free-videos"
+          },
+          {
+            "label": "همگام‌سازی فرایندها",
+            "href": "/articles/process-synchronization"
+          },
+          {
+            "label": "ترتیب مطالعهٔ درس‌ها",
+            "href": "/guides/master-computer-engineering-subjects-1406"
           }
         ]
       }
