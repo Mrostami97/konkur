@@ -94,3 +94,4 @@ _در ۱۱۷۲ کارنامهٔ رتبه‌های زیر ۱۰۰۰ ارشد کا�
 - [داده‌ساختار و الگوریتم: درصد هر رتبه](/articles/data-structures-algorithms-percentage-by-rank)
 - [نظریه و سیگنال: درصد هر رتبه](/articles/theory-signal-percentage-by-rank)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)

@@ -117,3 +117,4 @@ _کارنامه‌های سهمیهٔ ۵٪ ارشد مهندسی کامپیوت�
 - [معدل چقدر در رتبه اثر دارد؟](/articles/gpa-effect-on-rank)
 - [تقویم ثبت‌نام و برگزاری ۱۴۰۶](/guides/registration-calendar-1406)
 - [مشاوره](/consultations)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

@@ -102,3 +102,4 @@ _درصدهایت را با ضرایب کد گرایشت میانگین بگیر
 - [هر درس چند تست دارد و ضریبش چند است؟](/articles/questions-and-coefficients)
 - [کارنامهٔ کنکور ارشد را چطور بخوانیم؟](/articles/read-exam-report-card)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

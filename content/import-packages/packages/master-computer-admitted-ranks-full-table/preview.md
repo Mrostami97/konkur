@@ -119,3 +119,4 @@ _میانهٔ رتبهٔ قبولی همهٔ ۴۹ ترکیب گرایش و دا�
 - [رتبهٔ ۳۰۰ تا ۱۰۰۰: کجا قبول می‌شوند؟](/articles/rank-300-to-1000-admissions)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

@@ -106,3 +106,5 @@ _ضرایب ۱۴۰۶ هر سه مجموعهٔ کامپیوتر، تعداد تس
 - [تقویم ثبت‌نام و برگزاری ۱۴۰۶](/guides/registration-calendar-1406)
 - [خواندن کارنامه و فرمول درصد](/articles/read-exam-report-card)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)
+- [راهنمای کامل: تحلیل سال‌ها](/guides/master-computer-exam-years-guide)

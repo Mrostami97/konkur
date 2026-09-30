@@ -94,3 +94,4 @@ _از کارنامه‌های ارشد مهندسی کامپیوتر ۱۴۰۳ ک
 - [رتبهٔ ۵۰۰ تا ۳۰۰۰ چند درصد می‌خواهد؟](/articles/rank-500-to-3000-percentages)
 - [سهمیهٔ ۵٪ در ارشد کامپیوتر](/articles/quota-5-percent-ranks)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

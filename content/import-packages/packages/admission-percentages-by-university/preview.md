@@ -138,3 +138,4 @@ _از ۷۱۲ کارنامهٔ قبولی روزانهٔ ارشد مهندسی ک
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
 - [رتبهٔ زیر ۱۰۰ چند درصد می‌خواهد؟](/articles/top-rank-percentages)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

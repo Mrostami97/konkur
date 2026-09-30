@@ -95,3 +95,4 @@ _درصد لازم برای هر رتبه، کارنامهٔ معمول هر گ�
 - [سخت‌ترین کنکور ارشد کامپیوتر کدام سال بود؟](/articles/hardest-master-exam-year)
 - [درصد لازم برای رتبه‌های ۵۰۰ تا ۳۰۰۰](/articles/rank-500-to-3000-percentages)
 - [مشاوره](/consultations)
+- [راهنمای کامل: تحلیل سال‌ها](/guides/master-computer-exam-years-guide)

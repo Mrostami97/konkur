@@ -102,3 +102,4 @@ _میانهٔ رتبهٔ قبولی، رتبهٔ هر گرایش، درصد و �
 - [معدل قبول‌شده‌ها](/articles/master-admission-low-gpa)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

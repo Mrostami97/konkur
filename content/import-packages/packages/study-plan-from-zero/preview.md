@@ -101,6 +101,7 @@ _«پایهٔ ضعیف» برای هر کسی یک معنا دارد. این ر�
 - [صفحهٔ درس مبانی کامپیوتر و برنامه‌سازی](/subjects/programming-fundamentals)
 - [صفحهٔ درس ریاضیات گسسته](/subjects/discrete-math)
 - [اگر از رشتهٔ دیگری می‌آیی](/articles/change-major-to-computer)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

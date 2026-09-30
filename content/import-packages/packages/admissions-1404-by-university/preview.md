@@ -114,3 +114,4 @@ _۳۷۱ کارنامهٔ قبولی سهمیهٔ آزاد ارشد مهندسی 
 - [رتبهٔ قبولی شبانه در برابر روزانه](/articles/night-course-admission-ranks)
 - [رتبهٔ ۵۰۰ تا ۳۰۰۰ چند درصد می‌خواهد؟](/articles/rank-500-to-3000-percentages)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

@@ -96,3 +96,5 @@ _هر غلط یک‌سوم یک درست را می‌برد. با محاسبهٔ
 - [مدیریت زمان جلسهٔ کنکور](/articles/exam-time-management)
 - [هر درس چند تست دارد و ضریبش چند است؟](/articles/questions-and-coefficients)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

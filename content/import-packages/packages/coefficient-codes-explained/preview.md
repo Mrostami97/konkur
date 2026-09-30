@@ -102,3 +102,4 @@ _در ارشد مهندسی کامپیوتر ۱۴۰۰ تا ۱۴۰۵ هر داو�
 - [برای قبولی در هر رشته‌محل چه درصدی لازم است؟](/articles/admission-percentages-by-university)
 - [کارنامهٔ کنکور ارشد را چطور بخوانیم؟](/articles/read-exam-report-card)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)

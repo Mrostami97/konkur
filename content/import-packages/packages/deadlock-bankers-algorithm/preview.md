@@ -113,3 +113,4 @@ _چهار شرط بن‌بست، گراف تخصیص منابع و الگوری�
 - [ویدیوهای رایگان](/free-videos)
 - [همگام‌سازی فرایندها](/articles/process-synchronization)
 - [ترتیب مطالعهٔ درس‌ها](/guides/master-computer-engineering-subjects-1406)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

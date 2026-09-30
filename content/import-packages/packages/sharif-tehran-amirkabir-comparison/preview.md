@@ -116,3 +116,4 @@ _چهار دانشگاه بزرگ تهران را از روی کارنامه‌�
 - [معدل قبول‌شده‌های هر دانشگاه](/articles/master-admission-low-gpa)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

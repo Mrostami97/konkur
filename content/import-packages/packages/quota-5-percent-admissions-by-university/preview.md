@@ -103,3 +103,5 @@ _رتبهٔ قبولی، درصد و معدل قبول‌شده‌های سهم�
 - [میانگین وزنی لازم برای قبولی هر دانشگاه](/articles/admission-percentages-by-university)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

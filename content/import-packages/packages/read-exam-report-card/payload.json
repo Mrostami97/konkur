@@ -321,6 +321,10 @@
           {
             "label": "مشاورهٔ برنامه‌ریزی و انتخاب رشته",
             "href": "/consultations"
+          },
+          {
+            "label": "راهنمای کامل: رتبه و درصد",
+            "href": "/guides/master-computer-rank-and-percentage-guide"
           }
         ]
       }

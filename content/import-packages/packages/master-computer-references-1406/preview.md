@@ -88,3 +88,4 @@ _برای هر درس ارشد مهندسی کامپیوتر و فناوری ا�
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
 - [زمان‌بندی پردازنده برای کنکور](/articles/cpu-scheduling)
 - [مشاوره](/consultations)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

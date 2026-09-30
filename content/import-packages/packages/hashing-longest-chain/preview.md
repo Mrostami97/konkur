@@ -124,6 +124,7 @@ k! خیلی سریع رشد می‌کند. اگر k را از مرتبهٔ lg n 
 - [دوره‌ها](/courses)
 - [ویدیوهای رایگان](/free-videos)
 - [مشاوره](/consultations)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

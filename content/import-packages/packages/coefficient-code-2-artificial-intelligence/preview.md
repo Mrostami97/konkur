@@ -126,3 +126,4 @@ _وزن هر درس، کارنامه‌هایی که این کد بهترینش�
 - [رتبهٔ قبولی به تفکیک دانشگاه](/articles/admitted-ranks-by-university)
 - [تعداد تست و ضریب دروس](/articles/questions-and-coefficients)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)

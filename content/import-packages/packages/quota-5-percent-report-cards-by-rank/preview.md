@@ -86,3 +86,4 @@ _کارنامهٔ معمول رتبه‌های ۱ تا ۱۰۰۰ سهمیهٔ ۵�
 - [رتبهٔ زیر ۱۰۰ چند درصد می‌خواهد؟](/articles/top-rank-percentages)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

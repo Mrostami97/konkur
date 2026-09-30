@@ -300,6 +300,10 @@
           {
             "label": "ماشین تورینگ و تصمیم‌پذیری",
             "href": "/articles/turing-machines-decidability"
+          },
+          {
+            "label": "راهنمای کامل: آمادگی ۱۴۰۶",
+            "href": "/guides/master-computer-1406-preparation-guide"
           }
         ]
       },

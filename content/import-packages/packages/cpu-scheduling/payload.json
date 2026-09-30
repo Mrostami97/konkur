@@ -302,6 +302,10 @@
           {
             "label": "بن‌بست و الگوریتم بانکدار",
             "href": "/articles/deadlock-bankers-algorithm"
+          },
+          {
+            "label": "راهنمای کامل: آمادگی ۱۴۰۶",
+            "href": "/guides/master-computer-1406-preparation-guide"
           }
         ]
       }

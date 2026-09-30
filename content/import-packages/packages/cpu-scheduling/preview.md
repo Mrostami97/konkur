@@ -119,3 +119,4 @@ SRTF، یعنی نسخهٔ انحصاری SJF. در مثال این درس‌ن�
 - [ویدیوهای رایگان](/free-videos)
 - [مشاوره](/consultations)
 - [بن‌بست و الگوریتم بانکدار](/articles/deadlock-bankers-algorithm)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

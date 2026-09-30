@@ -101,6 +101,7 @@ O(1) سرشکن: کل n افزایش O(n) هزینه دارد، چون هر بی
 - [دوره‌ها](/courses)
 - [ویدیوهای رایگان](/free-videos)
 - [مشاوره](/consultations)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

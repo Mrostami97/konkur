@@ -90,3 +90,4 @@ _منبع کارنامه‌ها، پاک‌سازی، تعریف درصد و ر�
 - [رتبهٔ قبولی ارشد کامپیوتر به تفکیک دانشگاه](/articles/admitted-ranks-by-university)
 - [رتبهٔ زیر ۱۰۰ چند درصد می‌خواهد؟](/articles/top-rank-percentages)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

@@ -85,3 +85,5 @@ _رتبه و درصد قبول‌شده‌های شبانه و پردیس ارش
 - [ارشد کامپیوتر دانشگاه تهران](/articles/master-computer-tehran-admission)
 - [ارشد کامپیوتر خواجه‌نصیر](/articles/master-computer-kntu-admission)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

@@ -109,3 +109,4 @@ _بیشتر جدول‌های قبولی فقط شریف و تهران و امی
 - [کد ضریب چه بود و کدام به نفع تو بود؟](/articles/coefficient-codes-explained)
 - [مسیر انتخاب رشته](/admissions)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

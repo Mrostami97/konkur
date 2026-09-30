@@ -387,6 +387,10 @@
           {
             "label": "مشاوره",
             "href": "/consultations"
+          },
+          {
+            "label": "راهنمای کامل: دروس و ضرایب",
+            "href": "/guides/master-computer-subjects-and-coefficients-guide"
           }
         ]
       }

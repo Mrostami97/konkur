@@ -116,3 +116,4 @@ _۷۱۲ کارنامهٔ قبولی روزانهٔ سهمیهٔ آزاد ارش�
 - [کارنامهٔ کنکور ارشد را چطور بخوانیم؟](/articles/read-exam-report-card)
 - [پذیرش و ظرفیت دانشگاه‌ها](/admissions)
 - [مشاورهٔ انتخاب رشته](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

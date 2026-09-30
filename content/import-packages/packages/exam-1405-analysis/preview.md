@@ -127,3 +127,4 @@ _کارنامه‌های ارشد مهندسی کامپیوتر ۱۴۰۵ را ب
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
 - [مستندات تدریس](/evidence)
 - [مشاوره](/consultations)
+- [راهنمای کامل: تحلیل سال‌ها](/guides/master-computer-exam-years-guide)

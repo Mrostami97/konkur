@@ -413,6 +413,10 @@
           {
             "label": "مشاورهٔ انتخاب رشته",
             "href": "/consultations"
+          },
+          {
+            "label": "راهنمای کامل: قبولی دانشگاه‌ها",
+            "href": "/guides/master-computer-admissions-guide"
           }
         ]
       }

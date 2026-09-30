@@ -88,3 +88,5 @@ _درصد را به تعداد تست تبدیل کردیم: از ۸۳۸ کار�
 - [هر درس چند تست دارد و ضریبش چند است؟](/articles/questions-and-coefficients)
 - [مشاوره](/consultations)
 - [درصد زبان هر رتبه](/articles/language-percentage-by-rank)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)
+- [راهنمای کامل: تحلیل سال‌ها](/guides/master-computer-exam-years-guide)

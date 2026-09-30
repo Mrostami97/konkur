@@ -96,3 +96,5 @@ _کارنامه‌های قبولی روزانه، شبانه و پردیس ار
 - [برای قبولی در هر رشته‌محل چه درصدی لازم است؟](/articles/admission-percentages-by-university)
 - [مسیر انتخاب رشته](/admissions)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

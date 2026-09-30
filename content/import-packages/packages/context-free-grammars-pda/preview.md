@@ -111,6 +111,7 @@ CYK برای گرامر در فرم نرمال چامسکی عضویت یک رش
 - [صفحهٔ درس نظریهٔ زبان‌ها و ماشین‌ها](/subjects/automata)
 - [نتیجهٔ شاگردهای کلاس نظریه](/evidence)
 - [ماشین تورینگ و تصمیم‌پذیری](/articles/turing-machines-decidability)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

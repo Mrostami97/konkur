@@ -75,3 +75,4 @@ _رتبه‌های ۱۰۱ تا ۱۰۰۰ ارشد مهندسی کامپیوتر �
 - [درصد زبان هر رتبه](/articles/language-percentage-by-rank)
 - [رتبهٔ زیر ۱۰۰ چند درصد می‌خواهد؟](/articles/top-rank-percentages)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)

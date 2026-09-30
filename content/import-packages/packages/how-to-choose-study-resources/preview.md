@@ -80,6 +80,7 @@ _فیلم، جزوه، کتاب و بانک تست هر کدام کار متفا
 - [ویدیوهای رایگان](/free-videos)
 - [نقشهٔ درس‌ها و سرفصل‌ها](/subjects)
 - [با پایهٔ ضعیف از کجا شروع کنم؟](/articles/study-plan-from-zero)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

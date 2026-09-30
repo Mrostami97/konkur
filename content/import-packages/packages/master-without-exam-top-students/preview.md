@@ -79,3 +79,5 @@ _شرایط پذیرش بدون آزمون ارشد برای دانشجوهای 
 - [رتبهٔ قبولی ارشد کامپیوتر ۱۴۰۴ به تفکیک دانشگاه](/articles/admissions-1404-by-university)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

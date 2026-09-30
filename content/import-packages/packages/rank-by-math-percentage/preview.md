@@ -72,3 +72,4 @@ _کارنامه‌های ۱۴۰۳ و ۱۴۰۴ ارشد مهندسی کامپیو
 - [رتبهٔ زیر ۱۰۰ چند درصد می‌خواهد؟](/articles/top-rank-percentages)
 - [برای هر رتبه چند تست خالص لازم است؟](/articles/net-tests-per-rank)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

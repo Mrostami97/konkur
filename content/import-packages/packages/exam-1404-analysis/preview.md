@@ -101,3 +101,4 @@ _کارنامه‌های ارشد مهندسی کامپیوتر ۱۴۰۴ را ب
 - [سخت‌ترین کنکور ارشد کامپیوتر کدام سال بود؟](/articles/hardest-master-exam-year)
 - [رتبهٔ زیر ۱۰۰: هدف و زمان‌بندی ۱۴۰۶](/articles/rank-under-100-plan-1406)
 - [مشاوره](/consultations)
+- [راهنمای کامل: تحلیل سال‌ها](/guides/master-computer-exam-years-guide)

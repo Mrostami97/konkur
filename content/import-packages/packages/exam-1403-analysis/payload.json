@@ -386,6 +386,10 @@
           {
             "label": "مشاوره",
             "href": "/consultations"
+          },
+          {
+            "label": "راهنمای کامل: تحلیل سال‌ها",
+            "href": "/guides/master-computer-exam-years-guide"
           }
         ]
       }

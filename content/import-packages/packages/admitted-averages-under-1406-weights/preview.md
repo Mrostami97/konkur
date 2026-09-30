@@ -90,3 +90,4 @@ _میانگین وزنی قبول‌شده‌های روزانهٔ ۱۴۰۳ و �
 - [ارزش هر تست در ۱۴۰۶](/articles/value-of-a-test-1406)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)

@@ -113,3 +113,4 @@ _گرایش‌های ارشد مهندسی کامپیوتر را یکی‌یکی
 - [راهنمای ارشد علوم کامپیوتر ۱۴۰۶](/guides/master-computer-science-1406)
 - [ابزار تخمین رتبه](/rank-calculator/master-computer-engineering)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

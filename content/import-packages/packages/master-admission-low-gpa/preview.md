@@ -89,3 +89,4 @@ _از ۸۷۳ کارنامهٔ قبولی روزانهٔ سهمیهٔ آزاد ا
 - [برای هر رتبه چند تست خالص لازم است؟](/articles/net-tests-per-rank)
 - [ارشد بدون کنکور (استعداد درخشان)](/articles/master-without-exam-top-students)
 - [مشاوره](/consultations)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

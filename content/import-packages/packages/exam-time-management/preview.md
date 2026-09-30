@@ -111,3 +111,4 @@ _تست‌زنی سریع یعنی بدانی کدام تست را رها کنی
 - [خواندن کارنامه و فرمول درصد](/articles/read-exam-report-card)
 - [نمرهٔ منفی: کِی حدس بزنم؟](/articles/negative-marking-and-guessing)
 - [برای هر رتبه چند تست خالص لازم است؟](/articles/net-tests-per-rank)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

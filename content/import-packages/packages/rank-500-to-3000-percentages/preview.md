@@ -84,3 +84,4 @@ _بیشتر جدول‌ها فقط درصد رتبه‌های زیر ۱۰۰ را
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
 - [معدل چقدر در رتبه اثر دارد؟](/articles/gpa-effect-on-rank)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

@@ -117,3 +117,4 @@ _۱٬۵۱۷ کارنامهٔ سهمیهٔ آزاد ارشد مهندسی کام�
 - [هر درس چند تست دارد و ضریبش چند است؟](/articles/questions-and-coefficients)
 - [کارنامه‌های شاگردان کلاس](/evidence)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

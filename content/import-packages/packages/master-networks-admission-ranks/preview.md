@@ -99,3 +99,4 @@ _رتبهٔ قبولی روزانهٔ ارشد شبکه‌های کامپیوت�
 - [کدام کد ضریب بهتر است؟](/articles/coefficient-codes-explained)
 - [میانگین وزنی لازم برای قبولی هر دانشگاه](/articles/admission-percentages-by-university)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

@@ -76,3 +76,4 @@ _تاریخ ثبت‌نام و برگزاری کنکور ارشد و دکتری 
 - [دروس و ضرایب مجموعهٔ ۱۲۷۷](/guides/master-computer-engineering-subjects-1406)
 - [برنامهٔ شش‌ماهه تا کنکور](/guides/six-month-study-plan)
 - [از صفر شروع می‌کنی؟ برنامهٔ شروع](/articles/study-plan-from-zero)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

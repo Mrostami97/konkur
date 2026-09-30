@@ -23,11 +23,11 @@ export const LINKS = {
   lang: { label: "درصد زبان هر رتبه", href: "/articles/language-percentage-by-rank" },
   consult: { label: "مشاوره", href: "/consultations" },
 };
-export function envelope({ slug, title, summary, answer, blocks, tags, seoTitle, seoDescription, claim, sourceLocator, extraSources = [], validity }) {
+export function envelope({ contentType, slug, title, summary, answer, blocks, tags, seoTitle, seoDescription, claim, sourceLocator, extraSources = [], validity }) {
   return {
     schema_version: "article.v2",
     external_id: `kunkurcomputer-data-${slug}`,
-    content_type: "article",
+    content_type: contentType || "article",
     title,
     slug,
     summary,

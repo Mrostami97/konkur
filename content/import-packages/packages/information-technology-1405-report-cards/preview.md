@@ -83,3 +83,4 @@ _۴۲ کارنامهٔ رتبه‌های زیر ۱۰۰ ارشد فناوری ا�
 - [تحلیل کنکور ۱۴۰۵ از روی کارنامه‌ها](/articles/exam-1405-analysis)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: تحلیل سال‌ها](/guides/master-computer-exam-years-guide)

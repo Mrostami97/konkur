@@ -106,6 +106,7 @@ SAT → 3-SAT → خوشه → پوشش رأسی → دور همیلتونی →
 - [دوره‌ها](/courses)
 - [ویدیوهای رایگان](/free-videos)
 - [مشاوره](/consultations)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

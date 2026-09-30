@@ -94,3 +94,4 @@ _شش سال کارنامه‌های ارشد مهندسی کامپیوتر را
 - [رتبهٔ ۵۰۰ تا ۳۰۰۰ چند درصد می‌خواهد؟](/articles/rank-500-to-3000-percentages)
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
 - [مشاوره](/consultations)
+- [راهنمای کامل: تحلیل سال‌ها](/guides/master-computer-exam-years-guide)

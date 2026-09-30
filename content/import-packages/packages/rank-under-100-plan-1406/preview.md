@@ -94,3 +94,5 @@ _رتبه‌های زیر ۱۰۰ ارشد مهندسی کامپیوتر در ۱�
 - [دفترچهٔ خطا](/guides/error-log)
 - [دوره‌ها](/courses)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

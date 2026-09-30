@@ -356,6 +356,10 @@
           {
             "label": "مشاوره",
             "href": "/consultations"
+          },
+          {
+            "label": "راهنمای کامل: رتبه و درصد",
+            "href": "/guides/master-computer-rank-and-percentage-guide"
           }
         ]
       }

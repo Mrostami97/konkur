@@ -98,6 +98,7 @@ _کارشناسی‌ات کامپیوتر نیست و می‌خواهی ارشد
 - [مشاوره برای انتخاب مجموعه و برنامه](/consultations)
 - [تغییرات کنکور کامپیوتر ۱۴۰۶](/articles/computer-exam-changes-1406)
 - [برنامهٔ مطالعه از صفر](/articles/study-plan-from-zero)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

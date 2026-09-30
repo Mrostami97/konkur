@@ -95,3 +95,5 @@ _کارنامه‌های ۱۴۰۳ تا ۱۴۰۵ ارشد کامپیوتر را �
 - [تعداد تست و ضریب دروس](/articles/questions-and-coefficients)
 - [درصد زبان هر رتبه](/articles/language-percentage-by-rank)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

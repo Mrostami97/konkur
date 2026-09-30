@@ -111,3 +111,4 @@ _با کنار هم گذاشتن کارنامه‌هایی که درصدهای �
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
 - [کارنامهٔ کنکور ارشد را چطور بخوانیم؟](/articles/read-exam-report-card)
 - [مشاوره](/consultations)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

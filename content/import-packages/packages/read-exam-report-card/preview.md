@@ -120,3 +120,4 @@ _درصد از کجا می‌آید، چرا با ۱۰ درصد ریاضی هم 
 - [دروس و ضرایب ارشد مهندسی و علم کامپیوتر ۱۴۰۶](/guides/master-computer-engineering-subjects-1406)
 - [دروس و ضرایب ارشد فناوری اطلاعات ۱۴۰۶](/guides/master-information-technology-subjects-1406)
 - [مشاورهٔ برنامه‌ریزی و انتخاب رشته](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

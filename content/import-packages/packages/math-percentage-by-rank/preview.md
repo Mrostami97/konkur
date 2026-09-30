@@ -98,3 +98,4 @@ _رتبه‌های ۱ تا ۳۰۰۰ ارشد مهندسی کامپیوتر در 
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
 - [تعداد تست و ضریب دروس](/articles/questions-and-coefficients)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)

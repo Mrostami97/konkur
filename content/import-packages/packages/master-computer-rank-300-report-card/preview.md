@@ -122,3 +122,4 @@ _کارنامهٔ معمول رتبه‌های ۲۶۱ تا ۴۰۰ ارشد مه�
 - [رتبهٔ قبولی ارشد کامپیوتر به تفکیک دانشگاه](/articles/admitted-ranks-by-university)
 - [کدام کد ضریب بهتر است؟](/articles/coefficient-codes-explained)
 - [مشاوره](/consultations)
+- [راهنمای کامل: رتبه و درصد](/guides/master-computer-rank-and-percentage-guide)

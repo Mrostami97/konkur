@@ -112,6 +112,7 @@ p = log₄ 3 ≈ 0٫79. f(n) = n log n از n^0٫79 به‌طور چندجمله
 - [دوره‌ها](/courses)
 - [ویدیوهای رایگان](/free-videos)
 - [مشاوره](/consultations)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

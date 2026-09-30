@@ -310,6 +310,10 @@
           {
             "label": "مشاوره",
             "href": "/consultations"
+          },
+          {
+            "label": "راهنمای کامل: معدل و سهمیه",
+            "href": "/guides/master-computer-quota-gpa-guide"
           }
         ]
       }

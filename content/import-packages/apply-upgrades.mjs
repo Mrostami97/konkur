@@ -2,10 +2,10 @@
 // answer, extra FAQ pairs, extra internal links) applied by build.mjs on top of
 // each article. Kept in seo-upgrades.mjs so the article sources stay readable.
 import upgrades from "./seo-upgrades.mjs";
+import { PILLARS, pillarOf } from "./lib/pillars.mjs";
 
 export function applyUpgrade(slug, article) {
-  const u = upgrades[slug];
-  if (!u) return article;
+  const u = upgrades[slug] || {};
   const a = structuredClone(article);
   if (u.title) a.seo.title = u.title;
   if (u.description) a.seo.description = u.description;
@@ -26,6 +26,11 @@ export function applyUpgrade(slug, article) {
     const g = groups[groups.length - 1];
     if (!g) throw new Error(`${slug}: no link_group to extend`);
     for (const [label, href] of u.links) if (!g.items.some((i) => i.href === href)) g.items.push({ label, href });
+  }
+  // link every cluster article back to its hub guide(s)
+  if (!PILLARS.some((p) => p.slug === slug)) {
+    const g = blocks.filter((b) => b.type === "link_group").pop();
+    if (g) for (const p of pillarOf(slug).slice(0, 2)) if (!g.items.some((i) => i.href === `/guides/${p.slug}`)) g.items.push({ label: `راهنمای کامل: ${p.short}`, href: `/guides/${p.slug}` });
   }
   return a;
 }

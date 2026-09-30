@@ -80,3 +80,5 @@ _در ۱۵ دانشگاه، چند درصد قبول‌شده‌های روزا�
 - [ضرایب ۱۴۰۶: چه کسانی جلو می‌افتند؟](/articles/who-wins-under-1406-weights)
 - [معدل قبول‌شده‌ها](/articles/master-admission-low-gpa)
 - [مشاوره](/consultations)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)
+- [راهنمای کامل: معدل و سهمیه](/guides/master-computer-quota-gpa-guide)

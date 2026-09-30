@@ -182,6 +182,14 @@
           {
             "label": "مشاوره",
             "href": "/consultations"
+          },
+          {
+            "label": "راهنمای کامل: آمادگی ۱۴۰۶",
+            "href": "/guides/master-computer-1406-preparation-guide"
+          },
+          {
+            "label": "راهنمای کامل: معدل و سهمیه",
+            "href": "/guides/master-computer-quota-gpa-guide"
           }
         ]
       }

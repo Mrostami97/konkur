@@ -111,6 +111,7 @@ DFA نمی‌تواند حدس بزند. باید سه نماد آخر را هم
 - [دوره‌ها](/courses)
 - [ویدیوهای رایگان](/free-videos)
 - [مشاوره](/consultations)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

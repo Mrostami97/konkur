@@ -113,3 +113,5 @@ _در ۱٬۴۹۰ کارنامهٔ ارشد مهندسی کامپیوتر ۱۴۰�
 - [با پایهٔ ضعیف از کجا شروع کنم؟](/articles/study-plan-from-zero)
 - [مشاوره](/consultations)
 - [درصد زبان هر رتبه](/articles/language-percentage-by-rank)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

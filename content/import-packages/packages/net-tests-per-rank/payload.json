@@ -267,6 +267,14 @@
           {
             "label": "درصد زبان هر رتبه",
             "href": "/articles/language-percentage-by-rank"
+          },
+          {
+            "label": "راهنمای کامل: رتبه و درصد",
+            "href": "/guides/master-computer-rank-and-percentage-guide"
+          },
+          {
+            "label": "راهنمای کامل: تحلیل سال‌ها",
+            "href": "/guides/master-computer-exam-years-guide"
           }
         ]
       }

@@ -77,3 +77,4 @@ _رتبهٔ قبولی، درصد و معدل قبول‌شده‌های روز�
 - [رتبهٔ ۵۰۰ ارشد کامپیوتر](/articles/master-computer-rank-500-report-card)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

@@ -80,3 +80,5 @@ _ضرایب ۱۴۰۶ ارزش تست‌ها را عوض می‌کند: زبان 
 - [کد ضریب چه بود و ۱۴۰۶ چه عوض می‌کند؟](/articles/coefficient-codes-explained)
 - [مشاوره](/consultations)
 - [درصد زبان هر رتبه](/articles/language-percentage-by-rank)
+- [راهنمای کامل: دروس و ضرایب](/guides/master-computer-subjects-and-coefficients-guide)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)

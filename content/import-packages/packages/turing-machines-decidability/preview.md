@@ -106,6 +106,7 @@ _کدام مسئله تصمیم‌پذیر است، کدام فقط قابل‌�
 - [گرامر مستقل از متن و ماشین پشته‌ای](/articles/context-free-grammars-pda)
 - [صفحهٔ درس نظریهٔ زبان‌ها و ماشین‌ها](/subjects/automata)
 - [نتیجهٔ شاگردهای کلاس نظریه](/evidence)
+- [راهنمای کامل: آمادگی ۱۴۰۶](/guides/master-computer-1406-preparation-guide)
 
 ## قدم بعدی تو
 

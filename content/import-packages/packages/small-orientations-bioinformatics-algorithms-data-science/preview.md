@@ -88,3 +88,4 @@ _رتبهٔ قبولی، درصد و معدل قبول‌شده‌های سه گ
 - [ارشد نرم‌افزار: رتبهٔ قبولی هر دانشگاه](/articles/master-software-admission-ranks)
 - [کد ضریب ۴ (نرم‌افزار و الگوریتم)](/articles/coefficient-code-4-software)
 - [مشاوره](/consultations)
+- [راهنمای کامل: قبولی دانشگاه‌ها](/guides/master-computer-admissions-guide)

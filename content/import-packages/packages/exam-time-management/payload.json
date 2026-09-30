@@ -285,6 +285,10 @@
           {
             "label": "برای هر رتبه چند تست خالص لازم است؟",
             "href": "/articles/net-tests-per-rank"
+          },
+          {
+            "label": "راهنمای کامل: آمادگی ۱۴۰۶",
+            "href": "/guides/master-computer-1406-preparation-guide"
           }
         ]
       }
