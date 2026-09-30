@@ -23,7 +23,7 @@ const uni = (u) => UNI[u] || u;
 const CODE = { 1: "شبکه و امنیت", 2: "هوش مصنوعی", 3: "معماری", 4: "نرم‌افزار و بقیه" };
 const ALL = Object.entries(STATS).sort((a, b) => a[1].rank[1] - b[1].rank[1]);
 
-export function programArticle({ key, slug, name, tag, intro, note }) {
+export function programArticle({ key, slug, name, tag, intro, note, lessons = [], faq = [] }) {
   const d = STATS[key];
   if (!d) throw new Error(`no stats for ${key}`);
   const [q1, med, q3] = d.rank;
@@ -66,6 +66,26 @@ export function programArticle({ key, slug, name, tag, intro, note }) {
       note,
   ));
 
+  const uc = Object.entries(d.uniCard || {}).sort((a, b) => b[1][1] - a[1][1]);
+  if (uc.length > 1) {
+    blocks.push(h2(`کارنامهٔ قبول‌شده‌های ${name} در هر دانشگاه`));
+    blocks.push(text("میانهٔ میانگین چهار تخصصی، ریاضی و زبان قبول‌شده‌های این گرایش در هر دانشگاه (دست‌کم ۵ کارنامه). این جدول نشان می‌دهد برای هر دانشگاه تقریباً چه کارنامه‌ای لازم بوده:"));
+    blocks.push({ type: "table", headers: ["دانشگاه", "تعداد", "میانگین چهار تخصصی", "ریاضی", "زبان"], rows: uc.map(([u, [n, sp, m, l]]) => [uni(u), int(n), pct(sp), pct(m), pct(l)]) });
+  }
+  if (d.buckets) {
+    const B = ["۱ تا ۱۰۰", "۱۰۱ تا ۳۰۰", "۳۰۱ تا ۶۰۰", "بدتر از ۶۰۰"];
+    const few = (n) => (n === 0 ? "۰" : n < 5 ? "کمتر از ۵" : int(n));
+    blocks.push(h2(`قبول‌شده‌های ${name} چه رتبه‌هایی داشتند؟`));
+    blocks.push({ type: "table", headers: ["بازهٔ رتبه", "تعداد کارنامهٔ قبولی"], rows: B.map((b, i) => [b, few(d.buckets[i])]) });
+    blocks.push(text(`نیمهٔ وسط قبول‌شده‌ها میانگین چهار تخصصی ${int(d.specQ[0])} تا ${int(d.specQ[1])}٪ داشتند. شمارش‌های کمتر از ۵ را دقیق نمی‌آوریم.`));
+  }
+  const extra = [];
+  if (d.night) extra.push(`در دورهٔ شبانه ${int(d.night[0])} کارنامهٔ قبولی این گرایش داریم با میانهٔ رتبهٔ ${int(d.night[1])}.`);
+  if (d.q5) extra.push(`در سهمیهٔ ۵٪ ${int(d.q5[0])} کارنامهٔ قبولی روزانه داریم با میانهٔ رتبهٔ داخل سهمیه ${int(d.q5[1])}؛ رتبهٔ سهمیه با رتبهٔ آزاد قابل مقایسه نیست.`);
+  if (d.w1406) extra.push(`اگر قبول‌شده‌های روزانهٔ ۱۴۰۳ و ۱۴۰۴ این گرایش (${int(d.w1406[0])} کارنامه) با فرمول رسمی ۱۴۰۶، یعنی (زبان + ۲ × ریاضی + ۴ × تخصصی) ÷ ۷ و بدون معدل، حساب شوند، میانهٔ میانگین وزنی‌شان ${pct(d.w1406[1])} است. این مرز قبولی ۱۴۰۶ نیست، فقط جای قبول‌شده‌های اخیر را با فرمول جدید نشان می‌دهد.`);
+  if (extra.length) { blocks.push(h2("شبانه، سهمیهٔ ۵٪ و ضرایب ۱۴۰۶")); blocks.push(text(extra.join(" "))); }
+  if (lessons.length) { blocks.push(h2(`اگر ${name} می‌خواهی`)); for (const p of lessons) blocks.push(text(p)); }
+
   blocks.push(h2(`${name} در برابر گرایش‌های دیگر`));
   blocks.push({
     type: "table",
@@ -75,6 +95,7 @@ export function programArticle({ key, slug, name, tag, intro, note }) {
   blocks.push(text("فقط گرایش‌هایی که دست‌کم ۲۰ کارنامهٔ قبولی روزانه دارند در جدول آمده‌اند. رتبه‌ها در کد ضریب همان گرایش‌اند و مستقیم با هم قابل مقایسه نیستند؛ جدول فقط اندازهٔ رقابت را نشان می‌دهد."));
 
   blocks.push(h2("پرسش‌های پرتکرار"));
+  for (const [q, a] of faq) { blocks.push(h3(q)); blocks.push(text(a)); }
   blocks.push(h3(`رتبهٔ قبولی ارشد ${name} چند است؟`));
   blocks.push(text(`میانهٔ رتبهٔ قبولی روزانهٔ سهمیهٔ آزاد ${int(med)} بود (${int(d.n)} کارنامه، ${int(d.nUnis)} دانشگاه) و نیمهٔ وسط قبول‌شده‌ها رتبه‌ای بین ${int(q1)} و ${int(q3)} داشتند.`));
   blocks.push(h3(`کدام دانشگاه ${name} را آسان‌تر می‌دهد؟`));

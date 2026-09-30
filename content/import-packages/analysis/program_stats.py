@@ -40,3 +40,26 @@ for p, d in sorted(out.items(), key=lambda kv: kv[1]["rank"][1]):
     print(p, d["n"], round(100*d["share"]), "code", d["code"], [round(x) for x in d["rank"]], "nUnis", d["nUnis"])
     print("   unis", {u: (v[0], round(v[1])) for u, v in sorted(d["unis"].items(), key=lambda kv: kv[1][1])})
     print("   years", {y: (v[0], round(v[1])) for y, v in d["years"].items()}, "pct", [round(x) for x in d["pct"]], "spec", round(d["spec"]), "gpa", round(d["gpa"]["med"], 1), round(100*d["gpa"]["lt16"]), round(100*d["gpa"]["ge19"]), "zeroMath", round(100*d["zeroMath"]), "need", {k: v and round(v, 1) for k, v in d["need"].items()})
+
+# --- enrichment: per-university card, rank buckets, 1406 formula, quota 5%, night
+TESTS = {1403: [25, 20, 9, 20, 20, 19], 1404: [25, 20, 10, 20, 20, 20]}
+def w1406(a):
+    T = TESTS[a["year"]]; sp = sum(a["p"][j] * T[j] for j in range(2, 6)) / sum(T[2:])
+    return (a["p"][0] + 2 * a["p"][1] + 4 * sp) / 7
+BUCKETS = [(1, 100), (101, 300), (301, 600), (601, 100000)]
+for prog, d in out.items():
+    g = [a for a in day if a["prog"] == prog]
+    d["uniCard"] = {u: [len(v), st.median(sum(a["p"][2:]) / 4 for a in v), st.median(a["p"][1] for a in v), st.median(a["p"][0] for a in v)]
+                    for u in set(a["uni"] for a in g) if len(v := [a for a in g if a["uni"] == u]) >= 5}
+    d["buckets"] = [sum(1 for a in g if lo <= a["rank"] <= hi) for lo, hi in BUCKETS]
+    r = [a for a in g if a["year"] in TESTS]
+    d["w1406"] = [len(r), st.median(w1406(a) for a in r)] if len(r) >= 10 else None
+    q5 = [a for a in adm if a["quota"] == "5_percent" and a["period"] == "روزانه" and a["prog"] == prog]
+    d["q5"] = [len(q5), st.median(a["rank"] for a in q5)] if len(q5) >= 5 else None
+    nt = [a for a in adm if a["quota"] == "free" and a["period"] == "شبانه" and a["prog"] == prog]
+    d["night"] = [len(nt), st.median(a["rank"] for a in nt)] if len(nt) >= 5 else None
+    d["specQ"] = [st.quantiles([sum(a["p"][2:]) / 4 for a in g], n=4)[i] for i in (0, 2)]
+json.dump(out, open(os.path.join(HERE, "program_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+for p, d in out.items():
+    print("\n#", p, "buckets", d["buckets"], "w1406", d["w1406"] and (d["w1406"][0], round(d["w1406"][1], 1)), "q5", d["q5"], "night", d["night"], "specQ", [round(x) for x in d["specQ"]])
+    print("   uniCard", {u: (v[0], round(v[1]), round(v[2]), round(v[3])) for u, v in sorted(d["uniCard"].items(), key=lambda kv: -kv[1][1])})
