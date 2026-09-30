@@ -5,6 +5,7 @@ import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { OTP_PROVIDER, OtpProvider } from "./otp-provider";
 import { verifyPassword } from "./password-hasher";
+import { phoneVariants } from "./phone";
 
 const OTP_TTL_MINUTES = Number(process.env.OTP_TTL_MINUTES ?? 5);
 const OTP_MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS ?? 5);
@@ -117,15 +118,17 @@ export class IdentityService {
     password: string,
     ctx: AuthContext,
   ): Promise<{ token: string; user: SessionUser }> {
-    const user = await this.prisma.user.findUnique({
-      where: { phone },
+    // The same mobile number may be stored as 0935..., +98935... or 98935...
+    const candidates = await this.prisma.user.findMany({
+      where: { phone: { in: phoneVariants(phone) } },
       include: { roles: true },
     });
-    if (!user?.passwordHash || !(await verifyPassword(password, user.passwordHash))) {
-      throw new UnauthorizedException("invalid phone or password");
+    for (const user of candidates) {
+      if (user.passwordHash && (await verifyPassword(password, user.passwordHash))) {
+        return this.issueSession(user, ctx, "password");
+      }
     }
-
-    return this.issueSession(user, ctx, "password");
+    throw new UnauthorizedException("invalid phone or password");
   }
 
   private async issueSession(

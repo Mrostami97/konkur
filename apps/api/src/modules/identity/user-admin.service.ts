@@ -5,21 +5,9 @@ import { AuditService } from "../audit/audit.service";
 import { CreateUserDto } from "./dto/user-admin.dto";
 import { roleSetProblem } from "./account-roles";
 import { hashPassword } from "./password-hasher";
+import { mobileTail, phoneVariants } from "./phone";
 
 const MAX_PAGE_SIZE = 100;
-
-/** The ten digits after the leading 9 identify a mobile number, whichever
- * prefix it was typed with. */
-function mobileTail(phone: string): string | null {
-  const match = /9[0-9]{9}$/.exec(phone.replace(/[^0-9]/g, ""));
-  return match ? match[0] : null;
-}
-
-/** Every way the same mobile number may already be stored. */
-function phoneVariants(phone: string): string[] {
-  const tail = mobileTail(phone);
-  return tail ? [`0${tail}`, `+98${tail}`, `98${tail}`, `0098${tail}`, tail] : [phone];
-}
 
 const USER_SELECT = {
   id: true,

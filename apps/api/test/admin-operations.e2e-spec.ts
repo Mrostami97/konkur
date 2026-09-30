@@ -94,6 +94,16 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
       await http().post("/auth/password/login").send({ phone, password: "a-good-password" }).expect(200);
     });
 
+    it("signs in with the number typed in another form than the one stored", async () => {
+      const typed = randomMobile();
+      const stored = `+98${typed.slice(1)}`;
+      const account = await login(stored);
+      await asAdmin("post", `/admin/users/${account.id}/password`).send({ password: "a-good-password" }).expect(201);
+
+      await http().post("/auth/password/login").send({ phone: typed, password: "a-good-password" }).expect(200);
+      await http().post("/auth/password/login").send({ phone: typed, password: "wrong-password" }).expect(401);
+    });
+
     it("changes roles but never strips the acting admin or the last admin", async () => {
       const phone = randomMobile();
       const user = await asAdmin("post", "/admin/users").send({ phone, roles: ["STUDENT"] }).expect(201);
