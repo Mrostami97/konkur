@@ -26,3 +26,14 @@ json.dump(out, open(os.path.join(HERE, "metric_stats.json"), "w", encoding="utf-
 for name in ("spec", "math", "lang"):
     print(name)
     for r in out[name]: print("  ", r["lo"], r["hi"], r["n"], r.get("rank") and [round(x) for x in r["rank"]], r.get("le100") and round(100*r["le100"]), r.get("le300") and round(100*r["le300"]), r.get("le1000") and round(100*r["le1000"]), r.get("spec") and round(r["spec"]), r.get("math") and round(r["math"]), r.get("lang") and round(r["lang"]))
+
+# --- enrichment: per-year split of each band (1403 vs 1404), and the other two boxes' zero shares
+for name, key, bands in (("spec", lambda c: c["spec"], SPEC), ("math", lambda c: c["p"][1], MATH), ("lang", lambda c: c["p"][0], LANG)):
+    for i, (lo, hi) in enumerate(bands):
+        r = out[name][i]
+        for y in (1403, 1404):
+            g = [c for c in cs if c["year"] == y and lo <= key(c) < hi]
+            r[f"y{y}"] = [len(g), st.median(c["best"] for c in g)] if len(g) >= 10 else [len(g), None]
+json.dump(out, open(os.path.join(HERE, "metric_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+for name in ("spec", "math", "lang"):
+    print(name, [(r["lo"], r["hi"], r["y1403"][0], r["y1403"][1] and round(r["y1403"][1]), r["y1404"][0], r["y1404"][1] and round(r["y1404"][1])) for r in out[name]])

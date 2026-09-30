@@ -5,7 +5,7 @@ import { int, pct, text, h2, h3, LINKS, envelope, SRC_1406, load } from "./fmt.m
 
 const S = load("../analysis/metric_stats.json", import.meta.url);
 
-export function metricArticle({ key, slug, name, seoName, bandLabels, intro, note, y1406, faqLead }) {
+export function metricArticle({ key, slug, name, seoName, bandLabels, intro, note, y1406, faqLead, lessons = [], faq = [] }) {
   const rows = S[key];
   const ok = rows.map((r, i) => ({ ...r, label: bandLabels[i] })).filter((r) => r.rank);
   const small = rows.map((r, i) => ({ ...r, label: bandLabels[i] })).filter((r) => !r.rank);
@@ -29,6 +29,14 @@ export function metricArticle({ key, slug, name, seoName, bandLabels, intro, not
   if (small.length) blocks.push(text(`گروه‌های ${small.map((r) => `«${r.label}» (${int(r.n)} کارنامه)`).join(" و ")} کمتر از ۱۰ کارنامه دارند و در جدول نیامده‌اند.`));
   blocks.push(text(note));
 
+  const yr = rows.map((r, i) => ({ ...r, label: bandLabels[i] })).filter((r) => r.y1403 && (r.y1403[1] != null || r.y1404[1] != null));
+  if (yr.length) {
+    blocks.push(h2(`همان درصد ${name}، در ۱۴۰۳ و ۱۴۰۴`));
+    blocks.push(text("میانهٔ بهترین رتبه برای هر دسته، جدا برای هر سال. «—» یعنی کمتر از ۱۰ کارنامه در آن سال:"));
+    blocks.push({ type: "table", headers: [`درصد ${name}`, "۱۴۰۳: تعداد", "۱۴۰۳: میانهٔ رتبه", "۱۴۰۴: تعداد", "۱۴۰۴: میانهٔ رتبه"], rows: yr.map((r) => [r.label, int(r.y1403[0]), r.y1403[1] == null ? "—" : int(r.y1403[1]), int(r.y1404[0]), r.y1404[1] == null ? "—" : int(r.y1404[1])]) });
+  }
+  if (lessons.length) { blocks.push(h2("این جدول‌ها چه می‌گویند؟")); for (const p of lessons) blocks.push(text(p)); }
+
   blocks.push(h2("چطور از این جدول استفاده کنم؟"));
   blocks.push(text(`• درصد ${name} آزمون‌های آزمایشی‌ات را پیدا کن و ردیف مربوط را بخوان؛ به «نیمهٔ وسط» نگاه کن، نه فقط میانه.
 • به دو ستون آخر هم نگاه کن: اگر درس‌های دیگرت از میانهٔ آن ردیف پایین‌تر است، رتبه‌ات معمولاً بدتر از میانه می‌شود.
@@ -40,6 +48,7 @@ export function metricArticle({ key, slug, name, seoName, bandLabels, intro, not
   blocks.push(h2("پرسش‌های پرتکرار"));
   blocks.push(h3(faqLead.q1));
   blocks.push(text(faqLead.a1));
+  for (const [q, a] of faq) { blocks.push(h3(q)); blocks.push(text(a)); }
   blocks.push(h3(`با ${faqLead.lowLabel} چه رتبه‌ای می‌آوردند؟`));
   blocks.push(text(`میانهٔ بهترین رتبهٔ کارنامه‌های «${first.label}» ${int(first.rank[1])} بود (نیمهٔ وسط ${fmtRank(first)}؛ ${int(first.n)} کارنامه).`));
   blocks.push(h3(`با ${faqLead.highLabel} چه رتبه‌ای می‌آوردند؟`));

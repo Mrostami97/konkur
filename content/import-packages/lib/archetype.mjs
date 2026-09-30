@@ -2,7 +2,7 @@
 // from analysis/archetype_stats.json: four types by maths and language strength
 // (thresholds are round numbers near the band's medians); set 1277, free quota,
 // 1400-1405; groups >= 10.
-import { int, dec, pct, text, h2, h3, LINKS, envelope, load } from "./fmt.mjs";
+import { fa, int, dec, pct, text, h2, h3, LINKS, envelope, load } from "./fmt.mjs";
 
 const S = load("../analysis/archetype_stats.json", import.meta.url);
 const T = [["both", "ریاضی و زبان هر دو قوی"], ["math", "فقط ریاضی قوی"], ["lang", "فقط زبان قوی"], ["neither", "ریاضی و زبان هر دو ضعیف"]];
@@ -37,11 +37,31 @@ export function archetypeArticle({ key, slug, band, title, seoTitle, intro, note
     rows: T.map(([t, label]) => [label, `${int(d.types[t].nEarly)} کارنامه (${pct(early(t))})`, `${int(d.types[t].nLate)} کارنامه (${pct(late(t))})`]),
   });
   blocks.push(text(notes.shift));
+  if (d.perYear) {
+    const few = (n) => (n < 5 ? "کمتر از ۵" : int(n));
+    blocks.push(text("و سال‌به‌سال (سال‌هایی با دست‌کم ۱۰ کارنامه؛ شمارش‌های کمتر از ۵ دقیق نیامده):"));
+    blocks.push({ type: "table", headers: ["سال", "تعداد", ...T.map((t) => t[1])], rows: Object.entries(d.perYear).map(([y, v]) => [fa(y), int(v.n), ...T.map(([t]) => few(v[t]))]) });
+  }
+
+  const CODE = { 1: "شبکه", 2: "هوش مصنوعی", 3: "معماری", 4: "نرم‌افزار" };
+  const SP = ["نظریه و سیگنال", "داده‌ساختار، الگوریتم و هوش", "منطقی و معماری", "سیستم عامل، شبکه و پایگاه داده"];
+  blocks.push(h2("هر نوع در درس‌های تخصصی چه شکلی است؟"));
+  blocks.push(text("میانهٔ چهار دسته‌درس تخصصی هر نوع، و کدی که بیشتر از همه بهترین رتبهٔ آن نوع را داد:"));
+  blocks.push({
+    type: "table",
+    headers: ["نوع کارنامه", ...SP, "رایج‌ترین بهترین کد"],
+    rows: T.filter(([t]) => d.types[t].specBoxes).map(([t, label]) => {
+      const bc = Object.entries(d.types[t].bestCode).sort((a, b) => b[1] - a[1])[0];
+      return [label, ...d.types[t].specBoxes.map(pct), `${CODE[bc[0]]} (${int(bc[1])} از ${int(d.types[t].n)})`];
+    }),
+  });
+  if (notes.boxes) blocks.push(text(notes.boxes));
 
   blocks.push(h2("از این تقسیم‌بندی چه بگیریم؟"));
   blocks.push(text(notes.use));
 
   blocks.push(h2("پرسش‌های پرتکرار"));
+  for (const [q, a] of notes.faq || []) { blocks.push(h3(q)); blocks.push(text(a)); }
   blocks.push(h3(`رتبه‌های ${band} بیشتر چه کارنامه‌ای دارند؟`));
   const big = T.map(([t, label]) => [t, label]).sort((a, b) => d.types[b[0]].share - d.types[a[0]].share)[0];
   blocks.push(text(`بزرگ‌ترین گروه «${big[1]}» است: ${int(d.types[big[0]].n)} از ${int(d.n)} کارنامه (${pct(share(big[0]))}).`));

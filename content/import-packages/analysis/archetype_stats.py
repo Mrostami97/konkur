@@ -25,3 +25,20 @@ json.dump(out, open(os.path.join(HERE, "archetype_stats.json"), "w", encoding="u
 for k, d in out.items():
     print(k, d["cfg"], d["n"], "early", d["early"], "late", d["late"])
     for t, v in d["types"].items(): print("  ", t, v["n"], round(100*v["share"]), v["rank"] and [round(x) for x in v["rank"]], v["spec"] and [round(x) for x in v["spec"]], v["gpa"] and round(v["gpa"], 1), v["math"] and round(v["math"]), v["lang"] and round(v["lang"]), v["nEarly"], v["nLate"])
+
+# --- enrichment: per-year share of each type, best code per type, spec quartiles per type
+for name, cfg in CFG.items():
+    d = out[name]
+    g = [c for c in cards if cfg["lo"] <= c["best"] <= cfg["hi"]]
+    def typ(c):
+        m, l = c["p"][1] >= cfg["math"], c["p"][0] >= cfg["lang"]
+        return "both" if m and l else "math" if m else "lang" if l else "neither"
+    d["perYear"] = {str(y): dict(n=len(v), **{t: sum(typ(c) == t for c in v) for t in ("both", "math", "lang", "neither")}) for y in range(1400, 1406) if len(v := [c for c in g if c["year"] == y]) >= 10}
+    for t in ("both", "math", "lang", "neither"):
+        v = [c for c in g if typ(c) == t]
+        d["types"][t]["bestCode"] = dict(collections.Counter(c["bestCode"] for c in v))
+        d["types"][t]["specBoxes"] = [st.median(c["p"][j] for c in v) for j in range(2, 6)] if len(v) >= 10 else None
+json.dump(out, open(os.path.join(HERE, "archetype_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+for k, d in out.items():
+    print("\n#", k, d["perYear"])
+    for t, v in d["types"].items(): print("  ", t, v["bestCode"], v["specBoxes"] and [round(x) for x in v["specBoxes"]])
