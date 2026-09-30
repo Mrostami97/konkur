@@ -1,5 +1,6 @@
 "use client";
 
+import { forgetHandouts } from "../../lib/handout-cache";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -173,6 +174,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
 
   async function logout() {
     await apiFetch("/auth/logout", { method: "POST" }).catch(() => undefined);
+    await forgetHandouts();
     router.push("/");
   }
 

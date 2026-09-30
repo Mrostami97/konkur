@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { API_URL } from "../lib/api";
 import { toPersianDigits } from "../lib/format";
+import { cacheKey, openCache } from "../lib/handout-cache";
 
 type PdfDocument = {
   numPages: number;
@@ -16,6 +17,8 @@ type PdfPage = {
 
 const ZOOMS = [0.75, 1, 1.25, 1.5, 2];
 const LOAD_TIMEOUT_MS = 90_000;
+/** At 100% a page fills the column up to this width; zoom goes beyond it. */
+const MAX_PAGE_WIDTH = 980;
 
 /** A sold document arrives masked (see the API's sealStream): a 32-byte key, then the file XOR-ed with it. */
 const SEALED_MIME = "application/vnd.kunkurcomputer.sealed";
@@ -57,14 +60,25 @@ export function DocumentReader({ slug }: { slug: string }) {
     setReceived({ bytes: 0, total: null });
     (async () => {
       try {
-        const response = await fetch(`${API_URL}/resources/${encodeURIComponent(slug)}/content`, { credentials: "include", signal: controller.signal });
-        if (response.status === 401) throw new Error("برای خواندن این جزوه وارد حسابت شو.");
-        if (response.status === 403) throw new Error("این جزوه در کتابخانهٔ تو نیست.");
-        if (!response.ok) throw new Error("جزوه الان باز نشد. چند لحظهٔ دیگر دوباره امتحان کن.");
-        const total = Number(response.headers.get("Content-Length")) || null;
+        const cache = await openCache();
+        const kept = await cache?.match(cacheKey(slug)).catch(() => undefined);
+        const keptVersion = kept?.headers.get("X-Content-Version");
+        const response = await fetch(`${API_URL}/resources/${encodeURIComponent(slug)}/content`, {
+          credentials: "include",
+          signal: controller.signal,
+          headers: keptVersion ? { "X-Have-Version": keptVersion } : undefined,
+        });
+        if (response.status === 401 || response.status === 403) {
+          await cache?.delete(cacheKey(slug)).catch(() => undefined);
+          throw new Error(response.status === 401 ? "برای خواندن این جزوه وارد حسابت شو." : "این جزوه در کتابخانهٔ تو نیست.");
+        }
+        let source = response;
+        if (response.status === 204 && kept) source = kept;
+        else if (!response.ok) throw new Error("جزوه الان باز نشد. چند لحظهٔ دیگر دوباره امتحان کن.");
+        const total = Number(source.headers.get("Content-Length")) || null;
         const parts: Uint8Array[] = [];
         let bytes = 0;
-        const body = response.body?.getReader();
+        const body = source.body?.getReader();
         if (body) {
           for (;;) {
             const { done, value } = await body.read();
@@ -74,7 +88,7 @@ export function DocumentReader({ slug }: { slug: string }) {
             if (!cancelled) setReceived({ bytes, total });
           }
         } else {
-          parts.push(new Uint8Array(await response.arrayBuffer()));
+          parts.push(new Uint8Array(await source.arrayBuffer()));
         }
         const whole = new Uint8Array(parts.reduce((sum, part) => sum + part.length, 0));
         let at = 0;
@@ -83,7 +97,14 @@ export function DocumentReader({ slug }: { slug: string }) {
           at += part.length;
         }
         window.clearTimeout(timer);
-        const data = unseal(whole, response.headers.get("Content-Type"));
+        const contentType = source.headers.get("Content-Type");
+        const version = response.headers.get("X-Content-Version");
+        if (source === response && version && cache) {
+          await cache
+            .put(cacheKey(slug), new Response(whole.slice(), { headers: { "Content-Type": contentType ?? "", "X-Content-Version": version } }))
+            .catch(() => undefined);
+        }
+        const data = unseal(whole, contentType);
         const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
         pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
         loaded = (await pdfjs.getDocument({
@@ -140,7 +161,7 @@ export function DocumentReader({ slug }: { slug: string }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const pageWidth = Math.max(240, Math.round(width * zoom));
+  const pageWidth = Math.max(240, Math.round(Math.min(width, MAX_PAGE_WIDTH) * zoom));
 
   if (error) {
     return (
@@ -211,17 +232,17 @@ function PageView({
   useEffect(() => {
     const holder = holderRef.current;
     if (!holder) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setNear(true);
-          if (entry.intersectionRatio > 0.5) onVisible(number);
-        }
-      },
-      { rootMargin: "900px 0px", threshold: [0, 0.5] },
-    );
-    observer.observe(holder);
-    return () => observer.disconnect();
+    // Drawn a little ahead of the screen; counted as "current" only when it
+    // actually fills the middle of it (one observer with a margin did both,
+    // so pages far below the screen claimed to be the current one).
+    const ahead = new IntersectionObserver(([entry]) => entry.isIntersecting && setNear(true), { rootMargin: "900px 0px" });
+    const middle = new IntersectionObserver(([entry]) => entry.isIntersecting && onVisible(number), { rootMargin: "-50% 0px -50% 0px" });
+    ahead.observe(holder);
+    middle.observe(holder);
+    return () => {
+      ahead.disconnect();
+      middle.disconnect();
+    };
   }, [number, onVisible]);
 
   const draw = useCallback(async () => {

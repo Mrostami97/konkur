@@ -200,6 +200,20 @@ describe("Sold handouts: upload and view-only reading (e2e)", () => {
     const again = await request(app.getHttpServer()).get(contentPath).set("Cookie", buyerCookie).buffer(true).parse(binary).expect(200);
     expect(unseal(again.body as Buffer).equals(copy)).toBe(true);
 
+    // A reader that already holds this version gets an empty answer, after the
+    // same access check; someone without access is refused even with it.
+    const version = first.headers["x-content-version"];
+    expect(version).toBeTruthy();
+    const unchanged = await request(app.getHttpServer()).get(contentPath).set("Cookie", buyerCookie).set("X-Have-Version", version);
+    expect(unchanged.status).toBe(204);
+    expect(unchanged.headers["cache-control"]).toContain("no-store");
+    const stale = await request(app.getHttpServer()).get(contentPath).set("Cookie", buyerCookie).set("X-Have-Version", "sha256:old").buffer(true).parse(binary).expect(200);
+    expect(unseal(stale.body as Buffer).equals(copy)).toBe(true);
+    const outsider = await request(app.getHttpServer()).get(contentPath).set("Cookie", await login(randomPhone())).set("X-Have-Version", version);
+    expect(outsider.status).toBe(403);
+    const stranger = await request(app.getHttpServer()).get(contentPath).set("X-Have-Version", version);
+    expect([401, 403]).toContain(stranger.status);
+
     const otherPhone = randomPhone();
     const otherCookie = await login(otherPhone);
     await purchaseProduct(app, { buyerCookie: otherCookie, adminCookie, productId: product.body.id });
@@ -207,7 +221,7 @@ describe("Sold handouts: upload and view-only reading (e2e)", () => {
     expect(unseal(other.body as Buffer).equals(copy)).toBe(true);
 
     const opened = await prisma.auditLog.findMany({ where: { action: "resource.document_opened", targetId: resource.body.id } });
-    expect(opened.length).toBe(3);
+    expect(opened.length).toBe(5);
   });
   /** Uploads a PDF and publishes it as a resource with the given access. */
   async function publishHandout(label: string, accessMode: "ENTITLEMENT" | "ACCOUNT" | "PUBLIC") {

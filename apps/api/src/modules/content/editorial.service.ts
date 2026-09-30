@@ -581,9 +581,11 @@ export class EditorialService {
   async getResourceContent(
     slug: string,
     userId?: string,
+    haveVersion?: string,
   ): Promise<
     | { type: "json"; value: { contentBlocks?: unknown; externalUrl?: string } }
-    | { type: "stream"; stream: Readable; mimeType: string; filename: string; sealed?: boolean }
+    | { type: "stream"; stream: Readable; mimeType: string; filename: string; sealed?: boolean; version?: string }
+    | { type: "unchanged"; version: string }
   > {
     const resource = await this.prisma.resource.findUnique({
       where: { slug },
@@ -614,8 +616,13 @@ export class EditorialService {
           targetType: "Resource",
           targetId: resource.id,
         });
+        // The reader keeps the file in the browser; after the access check
+        // above, a copy it already holds only needs confirming, not resending.
+        const version = resource.sourceArtifact.checksum;
+        if (haveVersion === version) return { type: "unchanged", version };
         return {
           type: "stream",
+          version,
           stream: sealStream(await this.storage.getObjectStream(resource.sourceArtifact.storageKey)),
           mimeType: SEALED_MIME,
           filename: resource.sourceArtifact.filename,

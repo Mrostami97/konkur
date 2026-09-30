@@ -43,8 +43,14 @@ export class ResourcesPublicController {
   ) {
     response.setHeader("Cache-Control", "private, no-store");
     response.setHeader("X-Content-Type-Options", "nosniff");
-    const result = await this.editorial.getResourceContent(slug, request.user?.id);
+    const haveVersion = request.header("x-have-version") || undefined;
+    const result = await this.editorial.getResourceContent(slug, request.user?.id, haveVersion);
     if (result.type === "json") return response.json(result.value);
+    if (result.type === "unchanged") {
+      response.setHeader("X-Content-Version", result.version);
+      return response.status(204).end();
+    }
+    if (result.version) response.setHeader("X-Content-Version", result.version);
     response.setHeader("Content-Type", result.mimeType);
     // A sold document is read in the panel only: no filename, nothing to save.
     if (!result.sealed) {

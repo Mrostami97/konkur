@@ -865,7 +865,7 @@ a.st-ctask-title:hover { color: var(--st-blue); }
    A purchased PDF, drawn page by page onto canvases. The file carries the
    reader's name on every page; nothing here can be selected, dragged or
    printed. */
-.dr { display: grid; gap: 0.85rem; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.dr { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.85rem; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .dr-retry { margin-top: 1rem; padding: 0.55rem 1.4rem; border: 0; border-radius: 0.6rem; background: var(--accent); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 .dr-state { margin: 0; padding: 3rem 1rem; border-radius: var(--st-radius); background: var(--st-card); color: var(--ink-500); text-align: center; }
 .dr-bar {
@@ -888,7 +888,7 @@ a.st-ctask-title:hover { color: var(--st-blue); }
 .dr-zoom button:hover:not(:disabled) { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent); }
 .dr-zoom button:disabled { opacity: 0.4; cursor: default; }
 .dr-zoom button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.dr-frame { overflow-x: auto; padding: 1rem 0.5rem 1.25rem; border-radius: var(--st-radius); background: var(--surface-sunken); }
+.dr-frame { min-width: 0; overflow-x: auto; padding: 1rem 0.5rem 1.25rem; border-radius: var(--st-radius); background: var(--surface-sunken); }
 .dr-scroll { display: grid; justify-items: center; gap: 1rem; min-width: min-content; }
 .dr-page {
   position: relative; overflow: hidden; max-width: none;

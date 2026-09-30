@@ -1,5 +1,6 @@
 "use client";
 
+import { forgetHandouts } from "../../lib/handout-cache";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -140,6 +141,7 @@ export function Onboarding() {
 
   async function logout() {
     await apiFetch("/auth/logout", { method: "POST" }).catch(() => undefined);
+    await forgetHandouts();
     router.push("/");
   }
 
