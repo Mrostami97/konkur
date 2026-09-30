@@ -41,3 +41,15 @@ json.dump(out, open(os.path.join(HERE, "night_stats.json"), "w", encoding="utf-8
 for per in ("روزانه", "شبانه", "پردیس و خودگردان"):
     d = out[per]; print(per, d["n"], [round(x) for x in d["rank"]], "spec", round(d["spec"]), "gpa", d["gpa"] and round(d["gpa"], 1), "zm", round(d["zeroMath"], 2), {u: (v["n"], round(v["rankMed"])) for u, v in d["unis"].items()}, d["years"], d["progs"])
 print(out["compare"])
+
+# --- enrichment: night per (orientation, university), per year, card per university
+ng = [a for a in allm if a["period"] == "شبانه"]
+out["nightPairs"] = {f"{p}|{u}": [n, st.median(a["rank"] for a in ng if a["prog"] == p and a["uni"] == u)] for (p, u), n in collections.Counter((a["prog"], a["uni"]) for a in ng).items() if n >= 5}
+out["dayPairs"] = {}
+for k in out["nightPairs"]:
+    p, u = k.split("|"); d = [a["rank"] for a in allm if a["period"] == "روزانه" and a["prog"] == p and a["uni"] == u]
+    if len(d) >= 5: out["dayPairs"][k] = [len(d), st.median(d)]
+out["nightYears"] = {str(y): sum(1 for a in ng if a["year"] == y) for y in range(1400, 1405)}
+out["nightCard"] = {u: [len(v), st.median(sum(a["p"][2:]) / 4 for a in v), st.median(a["p"][1] for a in v), st.median(a["p"][0] for a in v), st.median(a["gpa"] for a in v if a["gpa"])] for u in set(a["uni"] for a in ng) if len(v := [a for a in ng if a["uni"] == u]) >= 10}
+json.dump(out, open(os.path.join(HERE, "night_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+print(out["nightPairs"]); print(out["dayPairs"]); print(out["nightYears"]); print({u: [v[0]] + [round(x, 1) for x in v[1:]] for u, v in out["nightCard"].items()})
