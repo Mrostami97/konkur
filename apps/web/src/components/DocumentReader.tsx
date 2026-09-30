@@ -15,6 +15,7 @@ type PdfPage = {
 };
 
 const ZOOMS = [0.75, 1, 1.25, 1.5, 2];
+const LOAD_TIMEOUT_MS = 90_000;
 
 /** A sold document arrives masked (see the API's sealStream): a 32-byte key, then the file XOR-ed with it. */
 const SEALED_MIME = "application/vnd.kunkurcomputer.sealed";
@@ -38,6 +39,9 @@ function unseal(body: Uint8Array, contentType: string | null): Uint8Array {
 export function DocumentReader({ slug, identity }: { slug: string; identity: string }) {
   const [doc, setDoc] = useState<PdfDocument | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const [waited, setWaited] = useState(0);
+  const [received, setReceived] = useState<{ bytes: number; total: number | null }>({ bytes: 0, total: null });
   const [ratio, setRatio] = useState(1.414);
   const [zoom, setZoom] = useState(1);
   const [current, setCurrent] = useState(1);
@@ -47,13 +51,42 @@ export function DocumentReader({ slug, identity }: { slug: string; identity: str
   useEffect(() => {
     let cancelled = false;
     let loaded: PdfDocument | null = null;
+    const controller = new AbortController();
+    // The first open of a handout makes the reader's own stamped copy on the
+    // server; if that never answers, say so instead of spinning for ever.
+    const timer = window.setTimeout(() => controller.abort(), LOAD_TIMEOUT_MS);
+    setError(null);
+    setWaited(0);
+    setReceived({ bytes: 0, total: null });
     (async () => {
       try {
-        const response = await fetch(`${API_URL}/resources/${encodeURIComponent(slug)}/content`, { credentials: "include" });
+        const response = await fetch(`${API_URL}/resources/${encodeURIComponent(slug)}/content`, { credentials: "include", signal: controller.signal });
         if (response.status === 401) throw new Error("برای خواندن این جزوه وارد حسابت شو.");
         if (response.status === 403) throw new Error("این جزوه در کتابخانهٔ تو نیست.");
         if (!response.ok) throw new Error("جزوه الان باز نشد. چند لحظهٔ دیگر دوباره امتحان کن.");
-        const data = unseal(new Uint8Array(await response.arrayBuffer()), response.headers.get("Content-Type"));
+        const total = Number(response.headers.get("Content-Length")) || null;
+        const parts: Uint8Array[] = [];
+        let bytes = 0;
+        const body = response.body?.getReader();
+        if (body) {
+          for (;;) {
+            const { done, value } = await body.read();
+            if (done) break;
+            parts.push(value);
+            bytes += value.length;
+            if (!cancelled) setReceived({ bytes, total });
+          }
+        } else {
+          parts.push(new Uint8Array(await response.arrayBuffer()));
+        }
+        const whole = new Uint8Array(parts.reduce((sum, part) => sum + part.length, 0));
+        let at = 0;
+        for (const part of parts) {
+          whole.set(part, at);
+          at += part.length;
+        }
+        window.clearTimeout(timer);
+        const data = unseal(whole, response.headers.get("Content-Type"));
         const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
         pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
         loaded = (await pdfjs.getDocument({
@@ -69,15 +102,26 @@ export function DocumentReader({ slug, identity }: { slug: string; identity: str
         setRatio(viewport.height / viewport.width);
         setDoc(loaded);
       } catch (err) {
+        window.clearTimeout(timer);
+        if (cancelled) return;
+        if (controller.signal.aborted) setError("ساختن نسخهٔ شخصی بیشتر از حد معمول طول کشید. دوباره امتحان کن؛ اگر باز هم باز نشد، به پشتیبانی خبر بده.");
         // A network failure surfaces as an English TypeError; say it in Persian.
-        if (!cancelled) setError(err instanceof Error && !(err instanceof TypeError) ? err.message : "جزوه باز نشد. اتصالت را بررسی کن و صفحه را دوباره باز کن.");
+        else setError(err instanceof Error && !(err instanceof TypeError) ? err.message : "جزوه باز نشد. اتصالت را بررسی کن و دوباره امتحان کن.");
       }
     })();
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
+      controller.abort();
       void loaded?.destroy();
     };
-  }, [slug]);
+  }, [slug, attempt]);
+
+  useEffect(() => {
+    if (doc || error) return undefined;
+    const tick = window.setInterval(() => setWaited((seconds) => seconds + 1), 1000);
+    return () => window.clearInterval(tick);
+  }, [doc, error, attempt]);
 
   // Pages follow the reading column's width; zoom scales from there.
   useEffect(() => {
@@ -101,8 +145,32 @@ export function DocumentReader({ slug, identity }: { slug: string; identity: str
 
   const pageWidth = Math.max(240, Math.round(width * zoom));
 
-  if (error) return <p className="dr-state" role="alert">{error}</p>;
-  if (!doc) return <p className="dr-state" aria-busy="true">در حال آماده کردن نسخهٔ شخصی تو…</p>;
+  if (error) {
+    return (
+      <div className="dr-state" role="alert">
+        <p style={{ margin: 0 }}>{error}</p>
+        <button type="button" className="dr-retry" onClick={() => setAttempt((n) => n + 1)}>تلاش دوباره</button>
+      </div>
+    );
+  }
+  if (!doc) {
+    const megabytes = (received.bytes / 1048576).toFixed(1).replace(".", "٫");
+    const percent = received.total ? Math.min(100, Math.round((received.bytes / received.total) * 100)) : null;
+    return (
+      <div className="dr-state" aria-busy="true" role="status">
+        <p style={{ margin: 0 }}>
+          {received.bytes > 0
+            ? `در حال دریافت جزوه… ${percent !== null ? `${toPersianDigits(percent)}٪` : `${toPersianDigits(megabytes)} مگابایت`}`
+            : "در حال آماده کردن نسخهٔ شخصی تو…"}
+        </p>
+        {received.bytes === 0 && waited >= 5 && (
+          <p style={{ margin: "0.6rem 0 0", fontSize: "0.85rem" }}>
+            بار اول، نام و شمارهٔ تو روی صفحه‌ها زده می‌شود و کمی بیشتر طول می‌کشد. دفعه‌های بعد فوری باز می‌شود. ({toPersianDigits(waited)} ثانیه)
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="dr" onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()}>

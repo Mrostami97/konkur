@@ -2,7 +2,7 @@ import { randomBytes } from "crypto";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { Readable, Transform } from "stream";
-import { degrees, PDFDocument, PDFPage, rgb } from "pdf-lib";
+import { degrees, PDFDocument, PDFEmbeddedPage, PDFPage, rgb } from "pdf-lib";
 
 /**
  * Stamps a buyer's own details on every page of a PDF, so a copy that leaks
@@ -128,8 +128,18 @@ export async function watermarkPdf(original: Uint8Array, stamp: WatermarkStamp):
   const footerLabel = shape(`نسخهٔ شخصی ${who}`, "rtl");
   const footerDetail = shape(`${phone} · ${stamp.copyCode}`, "ltr");
 
-  for (const page of doc.getPages()) {
-    const { width, height } = page.getSize();
+  // The stamp is drawn once per distinct page size, into a scratch document,
+  // and every page of that size then shows the same embedded copy. Drawing the
+  // outlines on each page instead put six large paths in every page: a
+  // several-hundred-page handout took hundreds of MB of RAM to stamp, which the
+  // small production server could not spare.
+  const scratch = await PDFDocument.create();
+  const stamps = new Map<string, PDFEmbeddedPage>();
+  const stampFor = async (width: number, height: number) => {
+    const key = `${width}x${height}`;
+    const cached = stamps.get(key);
+    if (cached) return cached;
+    const page = scratch.addPage([width, height]);
     const big = Math.max(18, Math.min(width, height) / 16);
     // Two diagonal stamps, so neither half of a page can be cut away clean.
     for (const fraction of [0.3, 0.72]) {
@@ -144,6 +154,15 @@ export async function watermarkPdf(original: Uint8Array, stamp: WatermarkStamp):
     const right = width / 2 + (labelWidth + gap + detailWidth) / 2;
     page.drawSvgPath(footerLabel.path, { x: right - labelWidth, y: small * 2.2, scale, color: MUTED, opacity: 0.75 });
     page.drawSvgPath(footerDetail.path, { x: right - labelWidth - gap - detailWidth, y: small * 2.2, scale, color: MUTED, opacity: 0.75 });
+    const embedded = await doc.embedPage(page);
+    stamps.set(key, embedded);
+    return embedded;
+  };
+
+  for (const page of doc.getPages()) {
+    const { width, height } = page.getSize();
+    const stamp = await stampFor(width, height);
+    page.drawPage(stamp, { x: 0, y: 0, width, height });
   }
 
   doc.setSubject(`Licensed copy ${stamp.copyCode} for ${stamp.phone}`);
