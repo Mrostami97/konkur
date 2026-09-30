@@ -19,6 +19,25 @@ const ZOOMS = [0.75, 1, 1.25, 1.5, 2];
 const LOAD_TIMEOUT_MS = 90_000;
 /** At 100% a page fills the column up to this width; zoom goes beyond it. */
 const MAX_PAGE_WIDTH = 980;
+const MAX_FULL_PAGE_WIDTH = 1200;
+
+/** Where this reader stopped in each handout; kept on this device only. */
+const lastPageKey = (slug: string) => `kc-reader-page:${slug}`;
+function readLastPage(slug: string): number | null {
+  try {
+    const value = Number(window.localStorage.getItem(lastPageKey(slug)));
+    return Number.isInteger(value) && value > 0 ? value : null;
+  } catch {
+    return null;
+  }
+}
+function writeLastPage(slug: string, page: number) {
+  try {
+    window.localStorage.setItem(lastPageKey(slug), String(page));
+  } catch {
+    // Storage may be blocked; resuming is a convenience, not a requirement.
+  }
+}
 
 /** A sold document arrives masked (see the API's sealStream): a 32-byte key, then the file XOR-ed with it. */
 const SEALED_MIME = "application/vnd.kunkurcomputer.sealed";
@@ -47,7 +66,13 @@ export function DocumentReader({ slug }: { slug: string }) {
   const [zoom, setZoom] = useState(1);
   const [current, setCurrent] = useState(1);
   const [width, setWidth] = useState(0);
-  const frameRef = useRef<HTMLDivElement>(null);
+  const [frame, setFrame] = useState<HTMLDivElement | null>(null);
+  const [full, setFull] = useState(false);
+  const [resumedFrom, setResumedFrom] = useState<number | null>(null);
+  const readerRef = useRef<HTMLDivElement>(null);
+  const nativeFull = useRef(false);
+  const currentRef = useRef(1);
+  const restored = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -141,14 +166,106 @@ export function DocumentReader({ slug }: { slug: string }) {
     return () => window.clearInterval(tick);
   }, [doc, error, attempt]);
 
-  // Pages follow the reading column's width; zoom scales from there.
+  // Pages follow the reading box's width; zoom scales from there.
   useEffect(() => {
-    const frame = frameRef.current;
-    if (!frame) return;
+    if (!frame) return undefined;
     const observer = new ResizeObserver(([entry]) => setWidth(Math.floor(entry.contentRect.width)));
     observer.observe(frame);
     return () => observer.disconnect();
-  }, [doc]);
+  }, [frame]);
+
+  const goTo = useCallback(
+    (page: number) => {
+      const target = frame?.querySelectorAll<HTMLElement>(".dr-page")[page - 1];
+      if (!frame || !target) return;
+      // Set before the observers report, so a resize right after still anchors here.
+      currentRef.current = page;
+      frame.scrollTop = target.offsetTop - 12;
+    },
+    [frame],
+  );
+
+  const onVisible = useCallback(
+    (page: number) => {
+      currentRef.current = page;
+      setCurrent(page);
+      if (restored.current) writeLastPage(slug, page);
+    },
+    [slug],
+  );
+
+  // Back where the reader left off last time, once the pages are laid out.
+  useEffect(() => {
+    if (!doc || width === 0 || restored.current) return undefined;
+    const last = readLastPage(slug);
+    const frameId = window.requestAnimationFrame(() => {
+      restored.current = true;
+      if (last && last > 1 && last <= doc.numPages) {
+        goTo(last);
+        setResumedFrom(last);
+      }
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [doc, width, slug, goTo]);
+
+  useEffect(() => {
+    if (resumedFrom === null) return undefined;
+    const timer = window.setTimeout(() => setResumedFrom(null), 7000);
+    return () => window.clearTimeout(timer);
+  }, [resumedFrom]);
+
+  // A zoom or a switch to full screen keeps the page being read in view.
+  const pageWidth = Math.max(240, Math.round(Math.min(width, full ? MAX_FULL_PAGE_WIDTH : MAX_PAGE_WIDTH) * zoom));
+  useEffect(() => {
+    if (!restored.current) return undefined;
+    const frameId = window.requestAnimationFrame(() => goTo(currentRef.current));
+    return () => window.cancelAnimationFrame(frameId);
+  }, [pageWidth, goTo]);
+
+  const toggleFull = useCallback(async () => {
+    if (!full) {
+      setFull(true);
+      // Real full screen where the browser allows it (not on iPhone); the
+      // reader fills the window either way.
+      try {
+        if (readerRef.current?.requestFullscreen) {
+          await readerRef.current.requestFullscreen();
+          nativeFull.current = true;
+        }
+      } catch {
+        nativeFull.current = false;
+      }
+    } else {
+      setFull(false);
+      if (document.fullscreenElement) await document.exitFullscreen().catch(() => undefined);
+      nativeFull.current = false;
+    }
+  }, [full]);
+
+  useEffect(() => {
+    const onChange = () => {
+      if (!document.fullscreenElement && nativeFull.current) {
+        nativeFull.current = false;
+        setFull(false);
+      }
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!full) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !document.fullscreenElement) setFull(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [full]);
 
   // Printing and saving the page are the two obvious ways out; both are
   // refused while the reader is open. Neither is a lock, only a deterrent.
@@ -160,8 +277,6 @@ export function DocumentReader({ slug }: { slug: string }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-
-  const pageWidth = Math.max(240, Math.round(Math.min(width, MAX_PAGE_WIDTH) * zoom));
 
   if (error) {
     return (
@@ -189,20 +304,45 @@ export function DocumentReader({ slug }: { slug: string }) {
   }
 
   return (
-    <div className="dr" onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()}>
+    <div
+      ref={readerRef}
+      className={full ? "dr dr-full" : "dr"}
+      onContextMenu={(event) => event.preventDefault()}
+      onDragStart={(event) => event.preventDefault()}
+    >
       <div className="dr-bar">
         <span className="dr-pages">صفحهٔ {toPersianDigits(current)} از {toPersianDigits(doc.numPages)}</span>
+        {resumedFrom !== null && (
+          <span className="dr-resume" role="status">
+            از صفحهٔ {toPersianDigits(resumedFrom)} ادامه می‌دهی
+            <button
+              type="button"
+              onClick={() => {
+                goTo(1);
+                setResumedFrom(null);
+              }}
+            >
+              از اول
+            </button>
+          </span>
+        )}
         <div className="dr-zoom" role="group" aria-label="بزرگ‌نمایی">
           <button type="button" onClick={() => setZoom((z) => ZOOMS[Math.max(0, ZOOMS.indexOf(z) - 1)])} disabled={zoom === ZOOMS[0]} aria-label="کوچک‌تر">−</button>
           <span>{toPersianDigits(Math.round(zoom * 100))}٪</span>
           <button type="button" onClick={() => setZoom((z) => ZOOMS[Math.min(ZOOMS.length - 1, ZOOMS.indexOf(z) + 1)])} disabled={zoom === ZOOMS[ZOOMS.length - 1]} aria-label="بزرگ‌تر">+</button>
+          <button type="button" className="dr-full-btn" onClick={() => void toggleFull()} aria-pressed={full} aria-label={full ? "خروج از تمام‌صفحه" : "تمام‌صفحه"} title={full ? "خروج از تمام‌صفحه" : "تمام‌صفحه"}>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              {full ? <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" /> : <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />}
+            </svg>
+          </button>
         </div>
       </div>
-      <div className="dr-frame" ref={frameRef}>
+      <div className="dr-frame" ref={setFrame}>
         <div className="dr-scroll">
           {width > 0 &&
+            frame &&
             Array.from({ length: doc.numPages }, (_, index) => (
-              <PageView key={index} doc={doc} number={index + 1} width={pageWidth} ratio={ratio} onVisible={setCurrent} />
+              <PageView key={index} doc={doc} number={index + 1} width={pageWidth} ratio={ratio} root={frame} onVisible={onVisible} />
             ))}
         </div>
       </div>
@@ -216,34 +356,38 @@ function PageView({
   number,
   width,
   ratio,
+  root,
   onVisible,
 }: {
   doc: PdfDocument;
   number: number;
   width: number;
   ratio: number;
+  root: HTMLElement;
   onVisible: (page: number) => void;
 }) {
   const holderRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [near, setNear] = useState(number <= 2);
-  const [height, setHeight] = useState(Math.round(width * ratio));
+  // Every page is sized before it is drawn, so jumping to a page lands on it.
+  const [ownRatio, setOwnRatio] = useState<number | null>(null);
+  const height = Math.round(width * (ownRatio ?? ratio));
 
   useEffect(() => {
     const holder = holderRef.current;
     if (!holder) return;
     // Drawn a little ahead of the screen; counted as "current" only when it
-    // actually fills the middle of it (one observer with a margin did both,
+    // actually crosses a line a third of the way down it (one observer with a margin did both,
     // so pages far below the screen claimed to be the current one).
-    const ahead = new IntersectionObserver(([entry]) => entry.isIntersecting && setNear(true), { rootMargin: "900px 0px" });
-    const middle = new IntersectionObserver(([entry]) => entry.isIntersecting && onVisible(number), { rootMargin: "-50% 0px -50% 0px" });
+    const ahead = new IntersectionObserver(([entry]) => entry.isIntersecting && setNear(true), { root, rootMargin: "900px 0px" });
+    const middle = new IntersectionObserver(([entry]) => entry.isIntersecting && onVisible(number), { root, rootMargin: "-30% 0px -70% 0px" });
     ahead.observe(holder);
     middle.observe(holder);
     return () => {
       ahead.disconnect();
       middle.disconnect();
     };
-  }, [number, onVisible]);
+  }, [number, onVisible, root]);
 
   const draw = useCallback(async () => {
     const canvas = canvasRef.current;
@@ -254,7 +398,7 @@ function PageView({
     const viewport = page.getViewport({ scale: (width / base.width) * pixels });
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
-    setHeight(Math.round((width / base.width) * base.height));
+    setOwnRatio(base.height / base.width);
     const context = canvas.getContext("2d");
     if (!context) return undefined;
     return page.render({ canvasContext: context, viewport });
