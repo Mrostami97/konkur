@@ -21,7 +21,7 @@ const uni = (u) => UNI[u] || u;
 const CODE = { 1: "شبکه و امنیت", 2: "هوش مصنوعی", 3: "معماری", 4: "نرم‌افزار و بقیه" };
 const list = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]);
 
-export function rankWindowArticle({ key, slug, rank, note }) {
+export function rankWindowArticle({ key, slug, rank, note, lessons = [], faq = [] }) {
   const d = STATS[key];
   const { lo, hi, center } = d;
   const win = `${int(lo)} تا ${int(hi)}`;
@@ -56,6 +56,25 @@ export function rankWindowArticle({ key, slug, rank, note }) {
   ));
 
   const codes = list(d.bestCode);
+  const few = (n) => (n < 5 ? "کمتر از ۵" : int(n));
+  const py = Object.entries(d.perYear || {});
+  if (py.length) {
+    blocks.push(h2(`کارنامهٔ رتبه‌های ${win} در هر سال`));
+    blocks.push(text("میانهٔ میانگین چهار تخصصی، ریاضی، زبان و معدل در سال‌هایی که دست‌کم ۱۰ کارنامه در این بازه داریم:"));
+    blocks.push({ type: "table", headers: ["سال", "تعداد", "میانگین چهار تخصصی", "ریاضی", "زبان", "معدل"], rows: py.map(([y, [n, sp, m, l, g]]) => [fa(y), int(n), pct(sp), pct(m), pct(l), dec(g)]) });
+  }
+  if (d.net1404) {
+    const T = [25, 20, 10, 20, 20, 20];
+    blocks.push(h2(`تست خالص رتبه‌های ${win} در ۱۴۰۴`));
+    blocks.push(text(`میانهٔ تست خالص هر درس در ${int(d.net1404[0])} کارنامهٔ ۱۴۰۴ این بازه (درست منهای یک‌سوم غلط). جمع این میانه‌ها میانهٔ کل نیست؛ هر ستون جدا خوانده شود.`));
+    blocks.push({ type: "table", headers: ["درس", "تعداد تست", "میانهٔ تست خالص"], rows: NAMES.map((n, i) => [n, int(T[i]), fa(d.net1404[1][i].toFixed(1))]) });
+  }
+  if (d.early && d.late) {
+    blocks.push(h2("این بازه در سال‌های اخیر چه تغییری کرد؟"));
+    blocks.push(text("نوع کارنامه‌ها بر اساس ریاضی (۱۵٪ یا بیشتر = قوی) و زبان (۳۰٪ یا بیشتر = قوی)، در ۱۴۰۰ تا ۱۴۰۳ و ۱۴۰۴ و ۱۴۰۵:"));
+    blocks.push({ type: "table", headers: ["دوره", "تعداد کارنامه", "ریاضی و زبان هر دو قوی", "ریاضی و زبان هر دو ضعیف"], rows: [["۱۴۰۰ تا ۱۴۰۳", d.early], ["۱۴۰۴ و ۱۴۰۵", d.late]].map(([l, [n, b, ne]]) => [l, int(n), `${few(b)}${b >= 5 ? ` (${pct((100 * b) / n)})` : ""}`, `${few(ne)}${ne >= 5 ? ` (${pct((100 * ne) / n)})` : ""}`]) });
+  }
+
   blocks.push(h2("کدام کد ضریب بهترین رتبه را داد؟"));
   blocks.push(text("هر کارنامه چهار رتبه دارد، یکی برای هر کد ضریب. اینکه بهترین رتبه در کدام کد بود، نشان می‌دهد کارنامه‌های این بازه در کدام درس‌ها قوی‌اند:"));
   blocks.push({ type: "table", headers: ["کد ضریب", "تعداد کارنامه", "سهم"], rows: codes.map(([c, n]) => [CODE[c], int(n), pct((100 * n) / d.n)]) });
@@ -75,7 +94,10 @@ export function rankWindowArticle({ key, slug, rank, note }) {
     blocks.push(text("این‌ها قبولی‌های کارنامه‌های منتشرشده است. همهٔ قبول‌شده‌ها کارنامه‌شان را منتشر نمی‌کنند و ظرفیت هر دانشگاه در هر سال فرق می‌کند؛ پس فهرست کامل نیست."));
   }
 
+  if (lessons.length) { blocks.push(h2(`اگر هدفت رتبهٔ ${int(rank)} است`)); for (const p of lessons) blocks.push(text(p)); }
+
   blocks.push(h2("پرسش‌های پرتکرار"));
+  for (const [q, a] of faq) { blocks.push(h3(q)); blocks.push(text(a)); }
   blocks.push(h3(`رتبهٔ ${int(rank)} ارشد کامپیوتر چند درصد است؟`));
   blocks.push(text(`میانهٔ میانگین چهار درس تخصصی رتبه‌های ${win} ${pct(d.spec[1])} بود (نیمهٔ وسط ${int(d.spec[0])} تا ${int(d.spec[2])}٪). برای میانگین وزنی، جدول بالا را ببین: با معدل ۱۷٫۵ در سال ۱۴۰۴ حدود ${pct(d.need["2"]["1404"] ?? 0)} در کد هوش مصنوعی لازم بود${d.need["2"]["1404"] == null ? "؛ آن سال این رتبه در دامنهٔ داده نیست" : ""}.`));
   blocks.push(h3(`با رتبهٔ ${int(rank)} کدام دانشگاه قبول می‌شوم؟`));

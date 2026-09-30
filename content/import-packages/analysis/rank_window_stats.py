@@ -41,3 +41,22 @@ for k, d in out.items():
     print(k, (d["lo"], d["hi"]), "n", d["n"], d["byYear"], "adm", d["admN"], d["admUni"], d["admProg"])
     print("   need2", {y: v and round(v) for y, v in d["need"]["2"].items()}, "gpa", [round(x, 1) for x in d["gpa"]], "spec", [round(x) for x in d["spec"]], "zm", round(100*d["zeroMath"]), "zl", round(100*d["zeroLang"]), "codes", d["bestCode"])
     print("   pairs", d["admPairs"])
+
+# --- enrichment: per-year typical card, 1404 net tests, card types early vs late, top programs
+T1404 = [25, 20, 10, 20, 20, 20]
+for key, d in out.items():
+    lo, hi = d["lo"], d["hi"]
+    g = [c for c in cards if lo <= c["best"] <= hi]
+    d["perYear"] = {str(y): [len(v), st.median(sum(c["p"][2:]) / 4 for c in v), st.median(c["p"][1] for c in v), st.median(c["p"][0] for c in v), st.median(c["gpa"] for c in v)]
+                    for y in range(1400, 1406) if len(v := [c for c in g if c["year"] == y]) >= 10}
+    v4 = [c for c in g if c["year"] == 1404]
+    d["net1404"] = [len(v4), [round(st.median(c["p"][j] for c in v4) * T1404[j] / 100, 1) for j in range(6)]] if len(v4) >= 10 else None
+    for name, yrs in (("early", range(1400, 1404)), ("late", (1404, 1405))):
+        v = [c for c in g if c["year"] in yrs]
+        d[name] = [len(v), sum(c["p"][1] >= 15 and c["p"][0] >= 30 for c in v), sum(c["p"][1] < 15 and c["p"][0] < 30 for c in v)] if len(v) >= 10 else None
+json.dump(out, open(os.path.join(HERE, "rank_window_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+for k, d in out.items():
+    print("\n#", k, d["lo"], d["hi"], "n", d["n"], "early", d["early"], "late", d["late"], "net1404", d["net1404"])
+    print("   perYear", {y: (v[0], round(v[1]), round(v[2]), round(v[3]), round(v[4], 1)) for y, v in d["perYear"].items()})
+    print("   need2", {y: v and round(v) for y, v in d["need"]["2"].items()}, "spec", [round(x) for x in d["spec"]], "gpa", [round(x, 1) for x in d["gpa"]], "zm", round(100*d["zeroMath"]), "zl", round(100*d["zeroLang"]), "ge19", round(100*d["ge19"]), "lt16", round(100*d["lt16"]))
+    print("   progs", d["admProg"], "unis", d["admUni"])
