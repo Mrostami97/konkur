@@ -5,16 +5,13 @@ import { useEffect, useState } from "react";
 import { DocumentReader } from "../../../../components/DocumentReader";
 import type { PublicResourceRecord } from "../../../../components/PublicContent";
 import { apiFetch, ApiError } from "../../../../lib/api";
-import { toPersianDigits } from "../../../../lib/format";
 import { AccountShell } from "../../AccountShell";
 import { READABLE_HOSTING } from "../../data";
-import { studentName, useStudent } from "../../student-context";
 
 /**
  * A handout read inside the student panel. Whether this student may read it
  * is the resource's own answer (bought, or open to members); the file itself
- * is fetched by the reader, which receives a copy stamped with this
- * student's name and number.
+ * is fetched by the reader, which shows it without offering a download.
  */
 /**
  * On a free sample (e.g. the first chapters): which paid handout it comes
@@ -38,7 +35,6 @@ function SampleCta({ resource, end = false }: { resource: PublicResourceRecord; 
 }
 
 export default function LibraryReaderPage({ params }: { params: { slug: string } }) {
-  const { me, profile } = useStudent();
   const [resource, setResource] = useState<PublicResourceRecord | null | undefined>(undefined);
   const [failed, setFailed] = useState(false);
 
@@ -48,12 +44,10 @@ export default function LibraryReaderPage({ params }: { params: { slug: string }
       .catch((error) => (error instanceof ApiError && error.status === 404 ? setResource(null) : setFailed(true)));
   }, [params.slug]);
 
-  const identity = `${profile ? studentName(profile) : ""} · ${toPersianDigits(me?.user.phone ?? "")}`;
-
   return (
     <AccountShell
       title={resource?.title ?? "جزوه"}
-      subtitle="نسخهٔ شخصی تو، با نام و شماره‌ات روی هر صفحه؛ فقط همین‌جا خوانده می‌شود."
+      subtitle="این جزوه فقط همین‌جا خوانده می‌شود."
       action={<Link href="/account/library" className="st-btn st-btn-soft">همهٔ جزوه‌ها</Link>}
     >
       {failed ? (
@@ -85,7 +79,7 @@ export default function LibraryReaderPage({ params }: { params: { slug: string }
       ) : (
         <>
           <SampleCta resource={resource} />
-          <DocumentReader slug={resource.slug} identity={identity} />
+          <DocumentReader slug={resource.slug} />
           <SampleCta resource={resource} end />
         </>
       )}

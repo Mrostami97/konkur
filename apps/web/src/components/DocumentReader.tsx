@@ -30,13 +30,11 @@ function unseal(body: Uint8Array, contentType: string | null): Uint8Array {
 }
 
 /**
- * Reads a purchased PDF inside the page. The file arrives already stamped
- * with the reader's name and number on every page (the API does that); this
- * view offers no download or print, and keeps the file in memory rather than
- * behind a link that could be saved or shared. It cannot stop a screenshot --
- * nothing in a browser can -- which is why the stamp is in the pages.
+ * Reads a purchased PDF inside the page. This view offers no download or
+ * print, and keeps the file in memory rather than behind a link that could
+ * be saved or shared. It cannot stop a screenshot; nothing in a browser can.
  */
-export function DocumentReader({ slug, identity }: { slug: string; identity: string }) {
+export function DocumentReader({ slug }: { slug: string }) {
   const [doc, setDoc] = useState<PdfDocument | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -52,8 +50,7 @@ export function DocumentReader({ slug, identity }: { slug: string; identity: str
     let cancelled = false;
     let loaded: PdfDocument | null = null;
     const controller = new AbortController();
-    // The first open of a handout makes the reader's own stamped copy on the
-    // server; if that never answers, say so instead of spinning for ever.
+    // If the server never answers, say so instead of spinning for ever.
     const timer = window.setTimeout(() => controller.abort(), LOAD_TIMEOUT_MS);
     setError(null);
     setWaited(0);
@@ -104,7 +101,7 @@ export function DocumentReader({ slug, identity }: { slug: string; identity: str
       } catch (err) {
         window.clearTimeout(timer);
         if (cancelled) return;
-        if (controller.signal.aborted) setError("ساختن نسخهٔ شخصی بیشتر از حد معمول طول کشید. دوباره امتحان کن؛ اگر باز هم باز نشد، به پشتیبانی خبر بده.");
+        if (controller.signal.aborted) setError("باز شدن جزوه بیشتر از حد معمول طول کشید. دوباره امتحان کن؛ اگر باز هم باز نشد، به پشتیبانی خبر بده.");
         // A network failure surfaces as an English TypeError; say it in Persian.
         else setError(err instanceof Error && !(err instanceof TypeError) ? err.message : "جزوه باز نشد. اتصالت را بررسی کن و دوباره امتحان کن.");
       }
@@ -161,12 +158,10 @@ export function DocumentReader({ slug, identity }: { slug: string; identity: str
         <p style={{ margin: 0 }}>
           {received.bytes > 0
             ? `در حال دریافت جزوه… ${percent !== null ? `${toPersianDigits(percent)}٪` : `${toPersianDigits(megabytes)} مگابایت`}`
-            : "در حال آماده کردن نسخهٔ شخصی تو…"}
+            : "در حال باز کردن جزوه…"}
         </p>
-        {received.bytes === 0 && waited >= 5 && (
-          <p style={{ margin: "0.6rem 0 0", fontSize: "0.85rem" }}>
-            بار اول، نام و شمارهٔ تو روی صفحه‌ها زده می‌شود و کمی بیشتر طول می‌کشد. دفعه‌های بعد فوری باز می‌شود. ({toPersianDigits(waited)} ثانیه)
-          </p>
+        {received.bytes === 0 && waited >= 8 && (
+          <p style={{ margin: "0.6rem 0 0", fontSize: "0.85rem" }}>کمی بیشتر از معمول طول کشیده؛ هنوز منتظر پاسخ سرور هستیم. ({toPersianDigits(waited)} ثانیه)</p>
         )}
       </div>
     );
@@ -190,7 +185,6 @@ export function DocumentReader({ slug, identity }: { slug: string; identity: str
             ))}
         </div>
       </div>
-      <p className="dr-note">این نسخه به نام <b>{identity}</b> ساخته شده و همین مشخصات روی هر صفحه‌اش هست؛ لطفاً آن را در اختیار دیگران نگذار.</p>
     </div>
   );
 }
