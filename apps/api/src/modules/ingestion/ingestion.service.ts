@@ -52,7 +52,9 @@ export class IngestionService {
     const idempotencyKey = sha256Buffer(fileBuffer);
 
     const existing = await this.prisma.importJob.findUnique({ where: { idempotencyKey } });
-    if (existing) return existing; // idempotent reimport: identical upload is a no-op
+    // idempotent reimport: an identical upload is a no-op -- unless the earlier run never
+    // finished staging (request aborted, API restarted), in which case pick it up again.
+    if (existing && existing.status !== ImportJobStatus.RECEIVED) return existing;
 
     const { items: rawItems, files } = parseImportZip(fileBuffer);
     if (rawItems.length === 0) throw new BadRequestException("payload.json contains no items");
@@ -66,18 +68,39 @@ export class IngestionService {
       throw new BadRequestException(`unknown schema_version: ${schemaVersion}`);
     }
 
-    const job = await this.prisma.importJob.create({
-      data: {
-        schemaVersion,
-        idempotencyKey,
-        submittedBy,
-        totalItems: rawItems.length,
-        status: ImportJobStatus.RECEIVED,
-      },
-    });
+    const job =
+      existing ??
+      (await this.prisma.importJob.create({
+        data: {
+          schemaVersion,
+          idempotencyKey,
+          submittedBy,
+          totalItems: rawItems.length,
+          status: ImportJobStatus.RECEIVED,
+        },
+      }));
 
+    // Items already staged by an interrupted earlier run are skipped.
+    const staged = new Set(
+      (await this.prisma.importItem.findMany({ where: { importJobId: job.id }, select: { externalId: true } })).map((i) => i.externalId),
+    );
     for (const rawItem of rawItems) {
-      await this.stageItem(job.id, schemaVersion, rawItem, files);
+      const externalId = extractExternalId(rawItem) ?? "unknown";
+      if (staged.has(externalId)) continue;
+      try {
+        await this.stageItem(job.id, schemaVersion, rawItem, files);
+      } catch (error) {
+        // One bad item must not abandon the whole job: record it as invalid and go on.
+        await this.prisma.importItem.create({
+          data: {
+            importJobId: job.id,
+            externalId,
+            rawPayload: rawItem as Prisma.InputJsonValue,
+            status: ImportItemStatus.INVALID,
+            validationErrors: [`staging failed: ${error instanceof Error ? error.message : String(error)}`] as unknown as Prisma.InputJsonValue,
+          },
+        });
+      }
     }
 
     return this.prisma.importJob.update({
