@@ -38,3 +38,24 @@ for j in range(1, 6):
     for a, b in B:
         print("  ", a, b, {y: (round(v[1]) if v else None) for y, v in d["byYear"][f"{a}-{b}"].items()}, "| old", round(d["old"][f"{a}-{b}"]["med"]), "zero", round(100*d["old"][f"{a}-{b}"]["zero"]))
     for k, v in d["recent"].items(): print("  ", k, v["n"], round(v["med"]), round(v["q1"]), round(v["q3"]), round(100*v["zero"]), round(v["net"], 1))
+
+# --- enrichment: weight per code, admitted medians per university / orientation, zero share by year
+import sys
+sys.path.insert(0, HERE)
+from adm_loader import load
+adm = [a for a in load() if a["quota"] == "free" and a["period"] == "روزانه"]
+W = MODEL["weights"]
+for j in range(6):
+    d = out[str(j)]
+    d["weights"] = {c: W[c][j] for c in "1234"}
+    d["byUni"] = {u: [len(v), st.median(a["p"][j] for a in v)] for u in set(a["uni"] for a in adm) if len(v := [a for a in adm if a["uni"] == u]) >= 10}
+    d["byProg"] = {p: [len(v), st.median(a["p"][j] for a in v)] for p in set(a["prog"] for a in adm) if len(v := [a for a in adm if a["prog"] == p]) >= 20}
+    d["zeroTop300"] = {str(y): [len(g), sum(c["p"][j] <= 0 for c in g) / len(g)] for y in range(1400, 1406) if len(g := [c for c in cards if c["year"] == y and c["best"] <= 300]) >= 10}
+    d["ge50Top100"] = {str(y): [len(g), sum(c["p"][j] >= 50 for c in g) / len(g)] for y in range(1400, 1406) if len(g := [c for c in cards if c["year"] == y and c["best"] <= 100]) >= 10}
+json.dump(out, open(os.path.join(HERE, "subject_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+for j in range(6):
+    d = out[str(j)]
+    print("\n#", d["name"], "w", d["weights"])
+    print("   byUni", {u: round(v[1]) for u, v in sorted(d["byUni"].items(), key=lambda kv: -kv[1][1])})
+    print("   byProg", {p: round(v[1]) for p, v in sorted(d["byProg"].items(), key=lambda kv: -kv[1][1])})
+    print("   zeroTop300", {y: (v[0], round(100 * v[1])) for y, v in d["zeroTop300"].items()}, "ge50Top100", {y: (v[0], round(100 * v[1])) for y, v in d["ge50Top100"].items()})

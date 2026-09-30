@@ -18,7 +18,8 @@ const BL = (b) => b.split("-").map(int).join(" تا ");
 const YEARS = ["1400", "1401", "1402", "1403", "1404", "1405"];
 const ORDER = Object.entries(STATS).sort((a, b) => b[1].corr - a[1].corr).map(([k]) => k);
 
-export function subjectArticle({ idx, slug, name, seoName, tag, intro, note, y1406, perTest }) {
+import { uni } from "./fmt.mjs";
+export function subjectArticle({ idx, slug, name, seoName, tag, intro, note, y1406, perTest, lessons = [], faq = [] }) {
   const d = STATS[String(idx)];
   const R = d.recent, O = d.old;
   const blocks = [];
@@ -64,11 +65,38 @@ export function subjectArticle({ idx, slug, name, seoName, tag, intro, note, y14
     `در ${int(d.nAll)} کارنامهٔ رتبهٔ ۳۰۰۰ یا بهتر، همبستگی رتبه‌ای درصد ${name} با بهترین رتبه ${fa(d.corr.toFixed(2))} است (۱ یعنی کامل، ۰ یعنی بی‌ارتباط). از شش جعبهٔ کارنامه، این درس ${fa(pos)}‌امین همراه رتبه است. همبستگی علت نیست: درسی که با رتبه همراه است لزوماً بیشترین وزن را در محاسبه ندارد؛ یعنی فقط می‌گوید رتبه‌های خوب در آن چه‌قدر از بقیه جدا می‌شوند.`,
   ));
 
+  if (d.zeroTop300) {
+    const ys = YEARS.filter((y) => d.zeroTop300[y] || d.ge50Top100[y]);
+    blocks.push(h2(`${name} در هر سال: چند نفر صفر زدند و چند نفر بالای ۵۰٪؟`));
+    blocks.push({
+      type: "table",
+      headers: ["سال", "صفر یا منفی در رتبه‌های زیر ۳۰۰", "۵۰٪ یا بیشتر در رتبه‌های زیر ۱۰۰"],
+      rows: ys.map((y) => [fa(y), d.zeroTop300[y] ? `${pct(100 * d.zeroTop300[y][1])} از ${int(d.zeroTop300[y][0])}` : "—", d.ge50Top100[y] ? `${pct(100 * d.ge50Top100[y][1])} از ${int(d.ge50Top100[y][0])}` : "—"]),
+    });
+  }
+
+  if (d.weights) {
+    const CODE = { 1: "کد ۱ (شبکه و امنیت)", 2: "کد ۲ (هوش مصنوعی)", 3: "کد ۳ (معماری)", 4: "کد ۴ (نرم‌افزار و بقیه)" };
+    blocks.push(h2(`وزن ${name} در چهار کد ضریب ۱۴۰۰ تا ۱۴۰۵`));
+    blocks.push({ type: "table", headers: ["کد ضریب", "ضریب", "سهم از میانگین وزنی"], rows: Object.entries(d.weights).map(([c, w]) => [CODE[c], int(w), pct((100 * w) / 15)]) });
+  }
+
+  const bu = Object.entries(d.byUni || {}).sort((a, b) => b[1][1] - a[1][1]);
+  const bp = Object.entries(d.byProg || {}).sort((a, b) => b[1][1] - a[1][1]);
+  if (bu.length) {
+    blocks.push(h2(`قبول‌شده‌ها در ${name} چند زدند؟`));
+    blocks.push(text(`میانهٔ درصد ${name} قبول‌شده‌های روزانهٔ سهمیهٔ آزاد در ۱۴۰۰ تا ۱۴۰۴، به تفکیک دانشگاه (دست‌کم ۱۰ کارنامه) و گرایش (دست‌کم ۲۰ کارنامه):`));
+    blocks.push({ type: "table", headers: ["دانشگاه", "تعداد", `میانهٔ ${name}`], rows: bu.map(([u, [n, m]]) => [uni(u), int(n), pct(m)]) });
+    blocks.push({ type: "table", headers: ["گرایش", "تعداد", `میانهٔ ${name}`], rows: bp.map(([p, [n, m]]) => [p, int(n), pct(m)]) });
+  }
+  if (lessons.length) { blocks.push(h2(`برنامه‌ریزی ${name} برای ۱۴۰۶`)); for (const p of lessons) blocks.push(text(p)); }
+
   blocks.push(h2("در ۱۴۰۶ چه چیزی عوض می‌شود؟"));
   blocks.push(text(y1406));
   blocks.push(text(perTest));
 
   blocks.push(h2("پرسش‌های پرتکرار"));
+  for (const [q, a] of faq) { blocks.push(h3(q)); blocks.push(text(a)); }
   const r1 = (y, b) => R[`${y}|${b}`];
   blocks.push(h3(`رتبهٔ زیر ۱۰۰ در ${name} چند درصد می‌زند؟`));
   blocks.push(text(`در ۱۴۰۴ میانهٔ رتبه‌های ۱ تا ۳۰ ${pct(r1("1404", "1-30").med)} و رتبه‌های ۳۱ تا ۱۰۰ ${pct(r1("1404", "31-100").med)} بود؛ در ۱۴۰۵ به‌ترتیب ${pct(r1("1405", "1-30").med)} و ${pct(r1("1405", "31-100").med)}. نیمهٔ وسط این گروه‌ها پهن است، پس این عددها هدف قطعی نیستند.`));
