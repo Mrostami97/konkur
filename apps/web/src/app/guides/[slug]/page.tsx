@@ -43,6 +43,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: result.article.seoDescription ?? result.article.summary,
       path: publicArticlePath(result.article),
       type: "article",
+      publishedTime: result.article.publishedAt,
+      modifiedTime: result.article.reviewedAt ?? result.article.updatedAt,
     });
   }
   const staticGuide = findEditorialPage(params.slug) ?? findPhase12EditorialPage(params.slug);

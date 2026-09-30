@@ -316,6 +316,9 @@ export function PublicArticleView({
     headline: article.title,
     description: article.seoDescription ?? article.summary,
     inLanguage: "fa-IR",
+    isAccessibleForFree: true,
+    articleSection: collectionName,
+    image: [absoluteUrl("/brand/konkurcom-logo.png")],
     mainEntityOfPage: { "@id": `${absoluteUrl(path)}#webpage` },
     publisher: { "@id": absoluteUrl("/#organization") },
   };
@@ -327,6 +330,7 @@ export function PublicArticleView({
     name: article.title,
     mainEntity: { "@id": `${absoluteUrl(path)}#article` },
     inLanguage: "fa-IR",
+    ...(article.quickAnswer ? { speakable: { "@type": "SpeakableSpecification", cssSelector: [".answer-first p"] } } : {}),
   };
   if (article.publishedAt) articleSchema.datePublished = article.publishedAt;
   if (article.reviewedAt ?? article.updatedAt) articleSchema.dateModified = article.reviewedAt ?? article.updatedAt;

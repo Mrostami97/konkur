@@ -28,12 +28,16 @@ export function pageMetadata({
   path,
   type = "website",
   noIndex = false,
+  publishedTime,
+  modifiedTime,
 }: {
   title: string;
   description: string;
   path: string;
   type?: "website" | "article";
   noIndex?: boolean;
+  publishedTime?: string | null;
+  modifiedTime?: string | null;
 }): Metadata {
   const url = absoluteUrl(path);
   const image = absoluteUrl("/brand/konkurcom-logo.png");
@@ -50,6 +54,8 @@ export function pageMetadata({
       description,
       url,
       images: [{ url: image, width: 600, height: 600, alt: SITE_NAME }],
+      ...(type === "article" && publishedTime ? { publishedTime } : {}),
+      ...(type === "article" && (modifiedTime ?? publishedTime) ? { modifiedTime: (modifiedTime ?? publishedTime) as string } : {}),
     },
     twitter: { card: "summary_large_image", title, description, images: [image] },
   };
