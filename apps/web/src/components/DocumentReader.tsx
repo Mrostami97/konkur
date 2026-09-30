@@ -52,11 +52,11 @@ function unseal(body: Uint8Array, contentType: string | null): Uint8Array {
 }
 
 /**
- * Reads a purchased PDF inside the page. This view offers no download or
- * print, and keeps the file in memory rather than behind a link that could
- * be saved or shared. It cannot stop a screenshot; nothing in a browser can.
+ * Reads a purchased PDF inside the page. The file arrives already stamped
+ * with the reader's name and number on every page (the API does that), so
+ * the same copy can also be saved from here.
  */
-export function DocumentReader({ slug }: { slug: string }) {
+export function DocumentReader({ slug, title }: { slug: string; title?: string }) {
   const [doc, setDoc] = useState<PdfDocument | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -73,6 +73,7 @@ export function DocumentReader({ slug }: { slug: string }) {
   const nativeFull = useRef(false);
   const currentRef = useRef(1);
   const restored = useRef(false);
+  const fileRef = useRef<Uint8Array | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -130,10 +131,12 @@ export function DocumentReader({ slug }: { slug: string }) {
             .catch(() => undefined);
         }
         const data = unseal(whole, contentType);
+        // pdf.js takes over the bytes it is given, so it gets its own copy.
+        fileRef.current = data;
         const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
         pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
         loaded = (await pdfjs.getDocument({
-          data,
+          data: data.slice(),
           isEvalSupported: false,
           standardFontDataUrl: "/pdfjs/standard_fonts/",
           cMapUrl: "/pdfjs/cmaps/",
@@ -267,16 +270,18 @@ export function DocumentReader({ slug }: { slug: string }) {
     };
   }, [full]);
 
-  // Printing and saving the page are the two obvious ways out; both are
-  // refused while the reader is open. Neither is a lock, only a deterrent.
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      const key = event.key.toLowerCase();
-      if ((event.ctrlKey || event.metaKey) && (key === "s" || key === "p")) event.preventDefault();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  const download = useCallback(() => {
+    const bytes = fileRef.current;
+    if (!bytes) return;
+    const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${(title ?? "").replace(/[\\/:*?"<>|]+/g, " ").trim() || slug}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  }, [slug, title]);
 
   if (error) {
     return (
@@ -327,6 +332,12 @@ export function DocumentReader({ slug }: { slug: string }) {
           </span>
         )}
         <div className="dr-zoom" role="group" aria-label="بزرگ‌نمایی">
+          <button type="button" className="dr-download" onClick={download} title="دانلود PDF، با نام و شمارهٔ تو روی هر صفحه">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+            </svg>
+            دانلود
+          </button>
           <button type="button" onClick={() => setZoom((z) => ZOOMS[Math.max(0, ZOOMS.indexOf(z) - 1)])} disabled={zoom === ZOOMS[0]} aria-label="کوچک‌تر">−</button>
           <span>{toPersianDigits(Math.round(zoom * 100))}٪</span>
           <button type="button" onClick={() => setZoom((z) => ZOOMS[Math.min(ZOOMS.length - 1, ZOOMS.indexOf(z) + 1)])} disabled={zoom === ZOOMS[ZOOMS.length - 1]} aria-label="بزرگ‌تر">+</button>

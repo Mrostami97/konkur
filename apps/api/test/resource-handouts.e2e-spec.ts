@@ -8,7 +8,7 @@ import request from "supertest";
 import { AppModule } from "../src/app.module";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
 import { ObjectStorageService } from "../src/modules/ingestion/object-storage.service";
-import { SEALED_MIME, unseal } from "../src/modules/content/pdf-document";
+import { SEALED_MIME, unseal } from "../src/modules/content/pdf-watermark";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { seed, SEED_ADMIN_PHONE } from "../src/seed";
 import { purchaseProduct } from "./helpers/purchase";
@@ -54,7 +54,7 @@ function binary(res: request.Response, callback: (error: Error | null, body: Buf
   res.on("end", () => callback(null, Buffer.concat(chunks)));
 }
 
-describe("Sold handouts: upload and view-only reading (e2e)", () => {
+describe("Sold handouts: upload, watermarked personal copies (e2e)", () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let otp: CapturingOtpProvider;
@@ -118,7 +118,7 @@ describe("Sold handouts: upload and view-only reading (e2e)", () => {
       .expect(400);
   });
 
-  it("shows a buyer the handout in the reader, sealed, and nobody else the file", async () => {
+  it("gives each buyer their own stamped copy and nobody else the file", async () => {
     const original = await samplePdf(3);
     const uploaded = await request(app.getHttpServer())
       .post("/admin/resource-files")
@@ -190,15 +190,22 @@ describe("Sold handouts: upload and view-only reading (e2e)", () => {
     expect(first.headers["content-disposition"]).toBeUndefined();
     expect(first.headers["cache-control"]).toContain("no-store");
     expect((first.body as Buffer).subarray(0, 5).toString("latin1")).not.toBe("%PDF-");
-    // The reader gets the file as uploaded: nothing about the buyer is written into it.
     const copy = unseal(first.body as Buffer);
-    expect(copy.equals(original)).toBe(true);
-    const shown = await PDFDocument.load(copy);
-    expect(shown.getPageCount()).toBe(3);
-    expect(shown.getSubject() ?? "").not.toContain(buyerPhone);
+    expect(copy.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    expect(copy.equals(original)).toBe(false);
+    const stamped = await PDFDocument.load(copy);
+    expect(stamped.getPageCount()).toBe(3);
+    const subject = stamped.getSubject() ?? "";
+    expect(subject).toContain(buyerPhone);
+    const copyCode = subject.match(/Licensed copy ([0-9A-F]{8})/)?.[1];
+    expect(copyCode).toBeDefined();
+
+    // The stamped copy is made once and then served from storage.
+    const writes = storage.puts.length;
 
     const again = await request(app.getHttpServer()).get(contentPath).set("Cookie", buyerCookie).buffer(true).parse(binary).expect(200);
     expect(unseal(again.body as Buffer).equals(copy)).toBe(true);
+    expect(storage.puts.length).toBe(writes);
 
     // A reader that already holds this version gets an empty answer, after the
     // same access check; someone without access is refused even with it.
@@ -217,11 +224,17 @@ describe("Sold handouts: upload and view-only reading (e2e)", () => {
     const otherPhone = randomPhone();
     const otherCookie = await login(otherPhone);
     await purchaseProduct(app, { buyerCookie: otherCookie, adminCookie, productId: product.body.id });
+    // Another buyer gets a copy carrying their own number, not the first one's.
     const other = await request(app.getHttpServer()).get(contentPath).set("Cookie", otherCookie).buffer(true).parse(binary).expect(200);
-    expect(unseal(other.body as Buffer).equals(copy)).toBe(true);
+    const otherSubject = (await PDFDocument.load(unseal(other.body as Buffer))).getSubject() ?? "";
+    expect(otherSubject).toContain(otherPhone);
+    expect(otherSubject).not.toContain(buyerPhone);
+    // ...and their copy's version is not the first buyer's.
+    expect(other.headers["x-content-version"]).not.toBe(version);
 
     const opened = await prisma.auditLog.findMany({ where: { action: "resource.document_opened", targetId: resource.body.id } });
     expect(opened.length).toBe(5);
+    expect(opened.map((entry) => (entry.metadata as { copyCode?: string }).copyCode)).toContain(copyCode);
   });
   /** Uploads a PDF and publishes it as a resource with the given access. */
   async function publishHandout(label: string, accessMode: "ENTITLEMENT" | "ACCOUNT" | "PUBLIC") {

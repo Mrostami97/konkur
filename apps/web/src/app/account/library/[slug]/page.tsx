@@ -11,7 +11,8 @@ import { READABLE_HOSTING } from "../../data";
 /**
  * A handout read inside the student panel. Whether this student may read it
  * is the resource's own answer (bought, or open to members); the file itself
- * is fetched by the reader, which shows it without offering a download.
+ * is fetched by the reader, which receives a copy stamped with this
+ * student's name and number and can save that copy.
  */
 /**
  * On a free sample (e.g. the first chapters): which paid handout it comes
@@ -47,7 +48,7 @@ export default function LibraryReaderPage({ params }: { params: { slug: string }
   return (
     <AccountShell
       title={resource?.title ?? "جزوه"}
-      subtitle="این جزوه فقط همین‌جا خوانده می‌شود."
+      subtitle="نسخهٔ شخصی تو، با نام و شماره‌ات روی هر صفحه؛ هم همین‌جا خوانده می‌شود و هم دانلود."
       action={<Link href="/account/library" className="st-btn st-btn-soft">همهٔ جزوه‌ها</Link>}
     >
       {failed ? (
@@ -79,7 +80,7 @@ export default function LibraryReaderPage({ params }: { params: { slug: string }
       ) : (
         <>
           <SampleCta resource={resource} />
-          <DocumentReader slug={resource.slug} />
+          <DocumentReader slug={resource.slug} title={resource.title} />
           <SampleCta resource={resource} end />
         </>
       )}

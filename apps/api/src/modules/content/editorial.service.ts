@@ -2,7 +2,9 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
+  ServiceUnavailableException,
   UnauthorizedException,
 } from "@nestjs/common";
 import {
@@ -22,7 +24,7 @@ import { ARTICLE_BLOCK_TYPES, LESSON_BLOCK_TYPES, assertValidContentBlocks } fro
 import { AuditService } from "../audit/audit.service";
 import { ObjectStorageService } from "../ingestion/object-storage.service";
 import { AccessService } from "../access/access.service";
-import { inspectPdf, SEALED_MIME, sealStream } from "./pdf-document";
+import { inspectPdf, SEALED_MIME, sealStream, watermarkPdf } from "./pdf-watermark";
 import {
   CreateContentSourceDto,
   CreateContributorDto,
@@ -608,22 +610,15 @@ export class EditorialService {
         throw new NotFoundException("resource content is not available");
       }
       // Anything that is not free to everyone is a sold or members-only
-      // document: it is shown in the panel reader only, never offered as a file.
+      // document: each reader gets their own copy, stamped with their name
+      // and number on every page, never the original file.
       if (resource.sourceArtifact.mimeType === "application/pdf" && resource.accessMode !== AccessMode.PUBLIC && userId) {
-        await this.audit.log({
-          actorUserId: userId,
-          action: "resource.document_opened",
-          targetType: "Resource",
-          targetId: resource.id,
-        });
-        // The reader keeps the file in the browser; after the access check
-        // above, a copy it already holds only needs confirming, not resending.
-        const version = resource.sourceArtifact.checksum;
-        if (haveVersion === version) return { type: "unchanged", version };
+        const copy = await this.personalCopy(resource.id, resource.sourceArtifact, userId, haveVersion);
+        if (!copy.stream) return { type: "unchanged", version: copy.version };
         return {
           type: "stream",
-          version,
-          stream: sealStream(await this.storage.getObjectStream(resource.sourceArtifact.storageKey)),
+          version: copy.version,
+          stream: sealStream(copy.stream),
           mimeType: SEALED_MIME,
           filename: resource.sourceArtifact.filename,
           sealed: true,
@@ -652,9 +647,68 @@ export class EditorialService {
   }
 
   /**
+   * The reader's own watermarked copy of a PDF. Made once per reader, per
+   * file and per name/phone, then kept in object storage, so a change of
+   * name on the profile produces a fresh copy rather than a stale one. When
+   * the reader's browser already holds this exact copy (`haveVersion`),
+   * nothing is made or sent.
+   */
+  private async personalCopy(
+    resourceId: string,
+    artifact: { checksum: string; storageKey: string },
+    userId: string,
+    haveVersion?: string,
+  ): Promise<{ version: string; stream?: Readable }> {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { phone: true, profile: { select: { firstName: true, lastName: true } } },
+    });
+    const name = [user.profile?.firstName, user.profile?.lastName].filter(Boolean).join(" ") || null;
+    const copyCode = createHash("sha256").update(`${userId}:${resourceId}`).digest("hex").slice(0, 8).toUpperCase();
+    const digest = artifact.checksum.replace("sha256:", "");
+    const identity = createHash("sha256").update(`${name ?? ""}|${user.phone}`).digest("hex").slice(0, 12);
+    // v2: copies stamped before the rename still read kunkur01.ir. Bump the
+    // version whenever the stamp's text or layout changes, so every reader's
+    // copy is made again instead of serving the old one.
+    const key = `watermarked/v2/${digest}/${userId}-${identity}.pdf`;
+    const version = createHash("sha256").update(key).digest("hex").slice(0, 24);
+
+    await this.audit.log({
+      actorUserId: userId,
+      action: "resource.document_opened",
+      targetType: "Resource",
+      targetId: resourceId,
+      metadata: { copyCode },
+    });
+    if (haveVersion === version) return { version };
+
+    if (!(await this.storage.objectExists(key))) {
+      const chunks: Buffer[] = [];
+      for await (const chunk of await this.storage.getObjectStream(artifact.storageKey)) chunks.push(Buffer.from(chunk));
+      // Year/month/day, as dates are written in Persian: the "en" locale
+      // would order the parts month/day/year.
+      const parts = new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Tehran" })
+        .formatToParts(new Date());
+      const part = (type: "year" | "month" | "day") => parts.find((item) => item.type === type)?.value ?? "";
+      const date = `${part("year")}/${part("month")}/${part("day")}`;
+      let stamped: Uint8Array;
+      try {
+        stamped = await watermarkPdf(Buffer.concat(chunks), { name, phone: user.phone, date, copyCode });
+      } catch (error) {
+        // Never fall back to the unstamped file: a sold copy without its
+        // buyer on it is exactly what this path exists to prevent.
+        new Logger(EditorialService.name).error(`watermark failed for resource ${resourceId}: ${String(error)}`);
+        throw new ServiceUnavailableException("نسخهٔ شخصی این جزوه الان ساخته نشد؛ به پشتیبانی خبر بدهید.");
+      }
+      await this.storage.putObject(key, Buffer.from(stamped), "application/pdf");
+    }
+    return { version, stream: await this.storage.getObjectStream(key) };
+  }
+
+  /**
    * Stores a PDF an author uploads for a resource and returns the artifact to
    * attach. Only a PDF that opens and is not password-protected is accepted,
-   * because the reader in the panel has to be able to open it.
+   * because every sold copy is stamped by rewriting the file.
    */
   async uploadResourceFile(actorId: string, file: Express.Multer.File | undefined) {
     if (!file) throw new BadRequestException("فایلی فرستاده نشد.");
