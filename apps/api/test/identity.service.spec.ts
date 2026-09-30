@@ -27,6 +27,12 @@ function buildFakePrisma() {
         }
         return user;
       }),
+      findMany: jest.fn(async ({ where, include }: any) => {
+        const phones: string[] = where.phone.in;
+        return [...users.values()]
+          .filter((u) => phones.includes(u.phone))
+          .map((u) => (include?.roles ? { ...u, roles: userRoles.filter((r) => r.userId === u.id) } : u));
+      }),
       create: jest.fn(async ({ data }: any) => {
         const user = { id: nextId(), ...data };
         users.set(user.id, user);

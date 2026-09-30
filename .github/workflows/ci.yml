@@ -670,6 +670,12 @@ jobs:
           # down, at the cost of a slow deploy.
           $DOCKER compose up -d --no-build || $DOCKER compose up -d --build
 
+          # Every deploy leaves the previous images behind; on the small VPS
+          # they filled the disk and Postgres could no longer start. Images
+          # in use by a container are never removed; volumes are untouched.
+          $DOCKER image prune -a -f --filter "until=24h" || true
+          $DOCKER builder prune -a -f --filter "until=24h" || true
+
           # nginx reads its config from a mounted template that is rendered
           # only when the container starts, and `up` leaves an unchanged
           # container running -- so a new template would never load. Render
