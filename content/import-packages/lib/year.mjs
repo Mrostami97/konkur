@@ -54,6 +54,47 @@ export function yearArticle({ year, slug, tests, notes, tag }) {
   });
   blocks.push(text(notes.card));
 
+  if (d.shift) {
+    blocks.push(h2(`${fa(year)} در برابر ${fa(year - 1)}: کدام درس سخت‌تر شد؟`));
+    blocks.push(text(`تفاوت میانهٔ درصد هر درس با سال قبل، در همان گروه رتبه (به واحد درصد). عدد منفی یعنی رتبه‌های همان گروه در ${fa(year)} درصد کمتری زدند، یعنی آن درس سخت‌تر بود یا داوطلب‌های آن سال در آن ضعیف‌تر بودند؛ از کارنامه‌ها نمی‌شود این دو را جدا کرد.`));
+    blocks.push({
+      type: "table",
+      headers: ["گروه رتبه", ...NAMES],
+      rows: BANDS.filter((b) => d.shift[b]).map((b) => [BL(b), ...d.shift[b].map((v) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${int(Math.abs(v))}`)]),
+    });
+    blocks.push(text(notes.shift));
+  }
+
+  if (d.net) {
+    blocks.push(h2(`تست خالص هر گروه رتبه در ${fa(year)}`));
+    blocks.push(text(`میانهٔ درصد ضرب در تعداد تست هر درس در ${fa(year)} (${NAMES.map((n, j) => `${n} ${d.tests[j] ? int(d.tests[j]) : "نامشخص"}`).join("، ")}). تست خالص یعنی درست منهای یک‌سوم غلط.`));
+    blocks.push({
+      type: "table",
+      headers: ["گروه رتبه", ...NAMES],
+      rows: BANDS.filter((b) => d.net[b]).map((b) => [BL(b), ...d.net[b].map((v) => (v == null ? "—" : fa(v.toFixed(1))))]),
+    });
+  }
+
+  if (d.top100) {
+    const t = d.top100;
+    const CODE = { 1: "شبکه و امنیت", 2: "هوش مصنوعی", 3: "معماری", 4: "نرم‌افزار" };
+    blocks.push(h2(`رتبه‌های زیر ۱۰۰ در ${fa(year)} چه شکلی بودند؟`));
+    blocks.push({
+      type: "table",
+      headers: ["شاخص", "مقدار"],
+      rows: [
+        ["تعداد کارنامه", int(t.n)],
+        ["میانهٔ میانگین چهار تخصصی (نیمهٔ وسط)", `${pct(t.spec)} (${int(t.specQ[0])} تا ${int(t.specQ[1])}٪)`],
+        ["معدل (نیمهٔ وسط)", `${dec(t.gpaQ[0])} تا ${dec(t.gpaQ[1])}`],
+        ["معدل ۱۹ یا بیشتر", pct(100 * t.ge19)],
+        ["ریاضی ۱۵٪+ و زبان ۳۰٪+ هر دو", `${int(t.both)} کارنامه (${pct((100 * t.both) / t.n)})`],
+        ["ریاضی زیر ۱۵٪ و زبان زیر ۳۰٪ هر دو", `${int(t.neither)} کارنامه (${pct((100 * t.neither) / t.n)})`],
+        ...Object.entries(t.bestCode).sort((a, b) => b[1] - a[1]).map(([c, n]) => [`بهترین رتبه در کد ${CODE[c]}`, `${int(n)} کارنامه`]),
+      ],
+    });
+    blocks.push(text(notes.top));
+  }
+
   const unis = Object.entries(d.adm.unis).sort((a, b) => a[1][1] - b[1][1]);
   if (unis.length) {
     blocks.push(h2(`رتبهٔ قبولی دانشگاه‌ها در ${fa(year)}`));
@@ -64,7 +105,20 @@ export function yearArticle({ year, slug, tests, notes, tag }) {
       rows: unis.map(([u, [n, m]]) => [UNI[u] || u, int(n), int(m)]),
     });
     blocks.push(text(notes.adm));
+    const progs = Object.entries(d.adm.progs).sort((a, b) => a[1][1] - b[1][1]);
+    if (progs.length) {
+      blocks.push(text(`میانهٔ رتبهٔ قبولی هر گرایش در ${fa(year)} (دست‌کم ۵ کارنامه):`));
+      blocks.push({ type: "table", headers: ["گرایش", "تعداد کارنامه", "میانهٔ رتبه"], rows: progs.map(([p, [n, m]]) => [p, int(n), int(m)]) });
+    }
+    const pairs = Object.entries(d.adm.pairs).sort((a, b) => a[1][1] - b[1][1]);
+    if (pairs.length) {
+      blocks.push(text(`و رشته‌محل‌هایی که در ${fa(year)} دست‌کم ۵ کارنامهٔ قبولی دارند:`));
+      blocks.push({ type: "table", headers: ["گرایش", "دانشگاه", "تعداد", "میانهٔ رتبه"], rows: pairs.map(([k, [n, m]]) => { const [p, u] = k.split("|"); return [p, UNI[u] || u, int(n), int(m)]; }) });
+    }
   }
+
+  blocks.push(h2(`${fa(year)} برای داوطلب ۱۴۰۶ چه درسی دارد؟`));
+  for (const para of notes.lessons) blocks.push(text(para));
 
   blocks.push(h2("پرسش‌های پرتکرار"));
   blocks.push(h3(`برای رتبهٔ ۱۰۰ ارشد کامپیوتر در ${fa(year)} چند درصد لازم بود؟`));
@@ -80,6 +134,7 @@ export function yearArticle({ year, slug, tests, notes, tag }) {
     blocks.push(h3(`رتبهٔ قبولی شریف در ${fa(year)} چند بود؟`));
     blocks.push(text(`میانهٔ رتبهٔ قبولی روزانهٔ سهمیهٔ آزاد شریف ${int(d.adm.unis["صنعتی شریف"][1])} بود (${int(d.adm.unis["صنعتی شریف"][0])} کارنامه، همهٔ گرایش‌ها).`));
   }
+  for (const [q, a] of notes.faq || []) { blocks.push(h3(q)); blocks.push(text(a)); }
   blocks.push(h3("چند کارنامه از این سال داریم؟"));
   blocks.push(text(`${int(d.n)} کارنامهٔ سهمیهٔ آزاد مجموعهٔ ۱۲۷۷ که ${int(d.nTop3000)} تایشان رتبهٔ ۳۰۰۰ یا بهتر دارند، و ${int(d.adm.n)} کارنامهٔ قبولی روزانه.`));
 
