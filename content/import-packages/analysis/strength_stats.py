@@ -21,3 +21,18 @@ for a, b in B:
     out["bands"][f"{a}-{b}"] = dict(n=len(g), strong={str(k): v for k, v in strong.items()}, weak={str(k): v for k, v in weak.items()}, gap=q(gaps), ge50={str(k): v for k, v in ge50.items()}, tiesStrong=ties_s, tiesWeak=ties_w)
 json.dump(out, open(os.path.join(HERE, "strength_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 for k, d in out["bands"].items(): print(k, d["n"], "strong", d["strong"], "weak", d["weak"], "gap", [round(x) for x in d["gap"]], "ge50", d["ge50"], "ties", d["tiesStrong"], d["tiesWeak"])
+
+# --- enrichment: by strongest box -> median best rank, maths, language (best rank <= 1000); per-year strongest share (top 300)
+g = [c for c in cards if c["best"] <= 1000]
+out["byStrong"] = {}
+for k in range(4):
+    v = [c for c in g if [c["p"][j] for j in SP].index(max(c["p"][j] for j in SP)) == k]
+    out["byStrong"][str(k)] = [len(v), st.median(c["best"] for c in v), st.median(c["p"][1] for c in v), st.median(c["p"][0] for c in v), st.median(sum(c["p"][2:]) / 4 for c in v)]
+out["strongYear"] = {}
+for y in range(1400, 1406):
+    v = [c for c in cards if c["year"] == y and c["best"] <= 300]
+    if len(v) >= 10:
+        cnt = collections.Counter([c["p"][j] for j in SP].index(max(c["p"][j] for j in SP)) for c in v)
+        out["strongYear"][str(y)] = [len(v)] + [cnt.get(k, 0) for k in range(4)]
+json.dump(out, open(os.path.join(HERE, "strength_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+print({k: [v[0], round(v[1]), round(v[2]), round(v[3]), round(v[4])] for k, v in out["byStrong"].items()}); print(out["strongYear"])

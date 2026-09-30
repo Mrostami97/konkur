@@ -44,3 +44,10 @@ json.dump(out, open(os.path.join(HERE, "quota5_stats.json"), "w", encoding="utf-
 print({k: (round(v, 2) if isinstance(v, float) else v) for k, v in out.items() if k not in ("byUni", "byProg")})
 print({u: (v["n"], round(v["rank"]), v["nFree"], v["rankFree"] and round(v["rankFree"])) for u, v in out["byUni"].items()})
 for p, v in out["byProg"].items(): print(p, v["n"], round(v["rank"]), v["nFree"], v["rankFree"] and round(v["rankFree"]), {y: x and round(x, 1) for y, x in v["need5"].items()}, {y: x and round(x, 1) for y, x in v["needFree"].items()})
+
+# --- enrichment: 5% card per university, in-quota rank buckets, per-year counts
+out["uniCard5"] = {u: [len(v), st.median(sum(a["p"][2:]) / 4 for a in v), st.median(a["p"][1] for a in v), st.median(a["p"][0] for a in v)] for u in set(a["uni"] for a in f5) if len(v := [a for a in f5 if a["uni"] == u]) >= 10}
+out["buckets5"] = [sum(1 for a in f5 if lo <= a["rank"] <= hi) for lo, hi in ((1, 30), (31, 100), (101, 300), (301, 100000))]
+out["progCard5"] = {p: [len(v), st.median(sum(a["p"][2:]) / 4 for a in v), st.median(a["p"][1] for a in v), st.median(a["p"][0] for a in v)] for p in set(a["prog"] for a in f5) if len(v := [a for a in f5 if a["prog"] == p]) >= 10}
+json.dump(out, open(os.path.join(HERE, "quota5_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+print({u: [v[0]] + [round(x) for x in v[1:]] for u, v in out["uniCard5"].items()}); print(out["buckets5"]); print({p: [v[0]] + [round(x) for x in v[1:]] for p, v in out["progCard5"].items()})
