@@ -57,3 +57,23 @@ for u, d in out.items():
         d["need"][p] = {"code": code, **{str(y): need(y, code, m) for y in (1403, 1404, 1405)}}
 json.dump(out, open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uni_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 for u in order: print(u, {p: {k: (round(v, 1) if isinstance(v, float) else v) for k, v in nd.items()} for p, nd in out[u]["need"].items()})
+
+# --- enrichment: per-orientation typical card, rank buckets, 1406-formula average (1403-1404)
+TESTS = {1403: [25, 20, 9, 20, 20, 19], 1404: [25, 20, 10, 20, 20, 20]}
+def w1406(a):
+    T = TESTS[a["year"]]; sp = sum(a["p"][j] * T[j] for j in range(2, 6)) / sum(T[2:])
+    return (a["p"][0] + 2 * a["p"][1] + 4 * sp) / 7
+BUCKETS = [(1, 100), (101, 300), (301, 600), (601, 100000)]
+for u, d in out.items():
+    g = [a for a in day if a["uni"] == u]
+    d["progCard"] = {p: [len(v), st.median(sum(a["p"][2:]) / 4 for a in v), st.median(a["p"][1] for a in v), st.median(a["p"][0] for a in v)]
+                     for p in set(a["prog"] for a in g) if len(v := [a for a in g if a["prog"] == p]) >= 5}
+    d["buckets"] = [sum(1 for a in g if lo <= a["rank"] <= hi) for lo, hi in BUCKETS]
+    r = [a for a in g if a["year"] in TESTS]
+    d["w1406"] = [len(r), st.median(w1406(a) for a in r)] if len(r) >= 10 else None
+    d["specQ"] = [st.quantiles([sum(a["p"][2:]) / 4 for a in g], n=4)[i] for i in (0, 2)]
+json.dump(out, open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "uni_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+for u in order:
+    d = out[u]
+    print("\n#", u, "buckets", d["buckets"], "w1406", d["w1406"] and (d["w1406"][0], round(d["w1406"][1], 1)), "specQ", [round(x) for x in d["specQ"]])
+    print("   progCard", {p: (v[0], round(v[1]), round(v[2]), round(v[3])) for p, v in d["progCard"].items()})

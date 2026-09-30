@@ -23,7 +23,7 @@ const LABEL = {
 };
 const label = (k) => LABEL[k] || k;
 
-export function universityArticle({ key, slug, name, short, note }) {
+export function universityArticle({ key, slug, name, short, note, lessons = [], faq = [] }) {
   const d = STATS[key];
   if (!d) throw new Error(`no stats for ${key}`);
   const [q1, med, q3] = d.rank;
@@ -88,6 +88,28 @@ export function universityArticle({ key, slug, name, short, note }) {
   if (g) pn.push(`میانهٔ معدل ${dec(g.med)} بود (نیمهٔ وسط ${dec(g.q[0])} تا ${dec(g.q[2])})؛ ${pct(100 * g.lt16)} معدل زیر ۱۶ و ${pct(100 * g.ge19)} معدل ۱۹ یا بیشتر داشتند.`);
   blocks.push(text(`${pn.join(" ")} ${note}`));
 
+  const pc = Object.entries(d.progCard || {}).sort((a, b) => b[1][1] - a[1][1]);
+  if (pc.length > 1) {
+    blocks.push(h2(`کارنامهٔ معمول هر گرایش در ${short}`));
+    blocks.push(text("میانهٔ میانگین چهار تخصصی، ریاضی و زبان قبول‌شده‌های هر گرایش (فقط گرایش‌های دارای دست‌کم ۵ کارنامه):"));
+    blocks.push({ type: "table", headers: ["گرایش", "تعداد", "میانگین چهار تخصصی", "ریاضی", "زبان"], rows: pc.map(([p, [n, sp, m, l]]) => [p, int(n), pct(sp), pct(m), pct(l)]) });
+  }
+
+  if (d.buckets) {
+    const B = ["۱ تا ۱۰۰", "۱۰۱ تا ۳۰۰", "۳۰۱ تا ۶۰۰", "بدتر از ۶۰۰"];
+    const few = (n) => (n === 0 ? "۰" : n < 5 ? "کمتر از ۵" : int(n));
+    blocks.push(h2(`قبول‌شده‌های ${short} چه رتبه‌هایی داشتند؟`));
+    blocks.push(text(`تعداد کارنامه‌های قبولی روزانه در هر بازهٔ رتبه (رتبه در کد گرایش قبول‌شده). شمارش‌های کمتر از ۵ را دقیق نمی‌آوریم. میانگین چهار تخصصی نیمهٔ وسط قبول‌شده‌ها بین ${int(d.specQ[0])} و ${int(d.specQ[1])}٪ بود.`));
+    blocks.push({ type: "table", headers: ["بازهٔ رتبه", "تعداد کارنامهٔ قبولی"], rows: B.map((b, i) => [b, few(d.buckets[i])]) });
+  }
+
+  if (d.w1406) {
+    const all = Object.values(STATS).filter((x) => x.w1406).map((x) => x.w1406[1]).sort((a, b) => b - a);
+    const pos = all.indexOf(d.w1406[1]) + 1;
+    blocks.push(h2(`قبول‌شده‌های ${short} با ضرایب ۱۴۰۶`));
+    blocks.push(text(`اگر قبول‌شده‌های روزانهٔ ۱۴۰۳ و ۱۴۰۴ ${short} (${int(d.w1406[0])} کارنامه) با فرمول رسمی ۱۴۰۶ حساب شوند، یعنی (زبان + ۲ × ریاضی + ۴ × تخصصی) ÷ ۷ بدون معدل، میانهٔ میانگین وزنی‌شان ${pct(d.w1406[1])} است؛ ${fa(pos)}‌امین از ${fa(all.length)} دانشگاهی که این عدد را برایشان داریم. این مرز قبولی ۱۴۰۶ نیست، فقط نشان می‌دهد قبول‌شده‌های دو سال اخیر با فرمول جدید کجا می‌ایستند.`));
+  }
+
   blocks.push(h2(`${short} در میان دانشگاه‌ها`));
   blocks.push(text(
     `از ${fa(ORDER.length)} دانشگاهی که دست‌کم ۱۰ کارنامهٔ قبولی روزانه دارند، ${short} از نظر میانهٔ رتبه ${fa(d.order)}‌ام است.` +
@@ -105,7 +127,13 @@ export function universityArticle({ key, slug, name, short, note }) {
     blocks.push(text(lines.join(" ")));
   }
 
+  if (lessons.length) {
+    blocks.push(h2(`اگر ${short} هدف توست`));
+    for (const para of lessons) blocks.push(text(para));
+  }
+
   blocks.push(h2("پرسش‌های پرتکرار"));
+  for (const [q, a] of faq) { blocks.push(h3(q)); blocks.push(text(a)); }
   blocks.push(h3(`رتبهٔ قبولی ارشد کامپیوتر ${short} چند است؟`));
   blocks.push(text(`میانهٔ رتبهٔ قبولی روزانهٔ سهمیهٔ آزاد ${int(med)} بود (${int(d.n)} کارنامه، ۱۴۰۰ تا ۱۴۰۴) و نیمهٔ وسط قبول‌شده‌ها رتبه‌ای بین ${int(q1)} و ${int(q3)} داشتند. رتبه در کد ضریب همان گرایش حساب می‌شود.`));
   blocks.push(h3(ai ? `برای هوش مصنوعی ${short} چه رتبه‌ای لازم است؟` : `کدام گرایش ${short} آسان‌تر قبول می‌شود؟`));
