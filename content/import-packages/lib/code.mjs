@@ -18,7 +18,7 @@ const UNI = { "صنعتی شریف": "شریف", "تهران": "دانشگاه �
 const uni = (u) => UNI[u] || u;
 const BL = (b) => b.split("-").map(int).join(" تا ");
 
-export function codeArticle({ code, slug, label, short, intro, note }) {
+export function codeArticle({ code, slug, label, short, intro, note, lessons = [], faq = [] }) {
   const d = STATS[code];
   const W = d.weights, sumW = W.reduce((a, b) => a + b, 0);
   const share = (100 * d.nBest) / d.nTop;
@@ -49,6 +49,23 @@ export function codeArticle({ code, slug, label, short, intro, note }) {
   }
   blocks.push(text(note));
 
+  if (d.byYear) {
+    blocks.push(h2(`سهم ${short} در هر سال`));
+    blocks.push({ type: "table", headers: ["سال", "کارنامه‌هایی که بهترین رتبه‌شان در این کد است", "کل کارنامه‌ها", "سهم"], rows: Object.entries(d.byYear).map(([y, [n, t]]) => [fa(y), int(n), int(t), pct((100 * n) / t)]) });
+  }
+  const bc = Object.entries(d.bandCard || {});
+  if (bc.length) {
+    blocks.push(h2(`کارنامهٔ کسانی که ${short} بهترین کدشان بود`));
+    blocks.push(text("میانهٔ درصد هر درس در کارنامه‌هایی که بهترین رتبه‌شان در این کد بود، به تفکیک گروه رتبه (دست‌کم ۱۰ کارنامه):"));
+    blocks.push({ type: "table", headers: ["گروه رتبه", "تعداد", ...NAMES], rows: bc.map(([b, [n, ...p]]) => [BL(b), int(n), ...p.map(pct)]) });
+  }
+  const pc = Object.entries(d.progCard || {}).sort((a, b) => b[1][0] - a[1][0]);
+  if (pc.length) {
+    blocks.push(text(`و قبول‌شده‌هایی که با این کد قبول شدند، به تفکیک گرایش (دست‌کم ۱۰ کارنامه):`));
+    blocks.push({ type: "table", headers: ["گرایش", "تعداد", "میانگین چهار تخصصی", "ریاضی", "زبان"], rows: pc.map(([p, [n, sp, m, l]]) => [p, int(n), pct(sp), pct(m), pct(l)]) });
+  }
+  if (lessons.length) { blocks.push(h2(`${short} به درد چه کسی می‌خورد؟`)); for (const p of lessons) blocks.push(text(p)); }
+
   blocks.push(h2("اگر این کد بهترین کدت نباشد"));
   blocks.push(text(
     `رتبهٔ این کد نسبت به بهترین رتبهٔ همان کارنامه: میانه ${two(d.ratio[1])} برابر (نیمهٔ وسط ${two(d.ratio[0])} تا ${two(d.ratio[2])}). در رتبه‌های زیر ۱۰۰ میانه ${two(d.ratioTop100[1])} برابر است (نیمهٔ وسط ${two(d.ratioTop100[0])} تا ${two(d.ratioTop100[2])}). یعنی مثلاً اگر بهترین رتبه‌ات ۱۰۰ باشد، در این کد معمولاً حدود ${int(100 * d.ratioTop100[1])} می‌شود.`,
@@ -70,6 +87,7 @@ export function codeArticle({ code, slug, label, short, intro, note }) {
   blocks.push(text("رتبه‌ها در همین کد و برای همان گرایش‌اند، پس بین دانشگاه‌ها قابل مقایسه‌اند ولی بین کدها نه."));
 
   blocks.push(h2("پرسش‌های پرتکرار"));
+  for (const [q, a] of faq) { blocks.push(h3(q)); blocks.push(text(a)); }
   blocks.push(h3(`ضریب ${int(code)} ارشد کامپیوتر برای کدام گرایش‌هاست؟`));
   blocks.push(text(`برای ${progs.map(([p]) => p).join("، ")}. ${int(d.admN)} قبولی روزانهٔ سهمیهٔ آزاد در داده با این کد بود.`));
   blocks.push(h3(`وزن درس‌ها در کد ${int(code)} چه بود؟`));

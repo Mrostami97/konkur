@@ -45,3 +45,19 @@ for c, d in out.items():
     print("  box", d["box"] and [round(x[1]) for x in d["box"]], "others", [round(x) for x in d["boxOthers"]])
     print("  need", {r: {y: v and round(v) for y, v in ys.items()} for r, ys in d["need"].items()})
     print("  adm", d["admN"], {p: (v[0], round(v[1])) for p, v in d["admProg"].items()}, {u: (v[0], round(v[1])) for u, v in d["admUni"].items()})
+
+# --- enrichment: best-code share per year, card of best-code cards per band, admitted card per orientation
+for code in "1234":
+    d = out[code]
+    d["byYear"] = {str(y): [sum(1 for c in top if c["year"] == y and c["bestCode"] == code), sum(1 for c in top if c["year"] == y)] for y in range(1400, 1406)}
+    d["bandCard"] = {}
+    for a, b in B:
+        g = [c for c in top if a <= c["best"] <= b and c["bestCode"] == code]
+        if len(g) >= 10: d["bandCard"][f"{a}-{b}"] = [len(g)] + [st.median(c["p"][j] for c in g) for j in range(6)]
+    aa = [a for a in adm if a["code"] == code]
+    d["progCard"] = {p: [len(v), st.median(sum(a["p"][2:]) / 4 for a in v), st.median(a["p"][1] for a in v), st.median(a["p"][0] for a in v)] for p in set(a["prog"] for a in aa) if len(v := [a for a in aa if a["prog"] == p]) >= 10}
+json.dump(out, open(os.path.join(HERE, "code_stats.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+for c, d in out.items():
+    print("\n#", c, "byYear", {y: f"{v[0]}/{v[1]}" for y, v in d["byYear"].items()})
+    print("   bandCard", {k: [v[0]] + [round(x) for x in v[1:]] for k, v in d["bandCard"].items()})
+    print("   progCard", {p: [v[0]] + [round(x) for x in v[1:]] for p, v in d["progCard"].items()})
