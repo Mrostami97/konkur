@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from "@nestjs/comm
 import { Degree, ReviewStatus } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ContentSearchQueryDto, PublicReportCardsQueryDto } from "./dto/content-discovery.dto";
+import { firstArticlePublishedAt, newestPublicationFirst, publishedArticleHistoryDates } from "./article-publication-dates";
 
 type SearchResultType = "ARTICLE" | "RESOURCE" | "SUBJECT" | "TOPIC" | "CONTRIBUTOR";
 
@@ -101,6 +102,7 @@ export class ContentDiscoveryService {
       this.prisma.article.findMany({
         where: { reviewStatus: ReviewStatus.PUBLISHED },
         select: {
+          id: true,
           slug: true,
           title: true,
           summary: true,
@@ -139,6 +141,7 @@ export class ContentDiscoveryService {
         select: { slug: true, displayName: true, roleTitle: true, shortBio: true, bioBlocks: true },
       }),
     ]);
+    const articleDates = await publishedArticleHistoryDates(this.prisma, articles.map((article) => article.id));
 
     const candidates: SearchCandidate[] = [
       ...articles.map((article) => ({
@@ -150,7 +153,7 @@ export class ContentDiscoveryService {
         titleSearch: article.title,
         summarySearch: [article.summary, article.quickAnswer].filter(Boolean).join(" "),
         bodySearch: this.jsonText(article.contentBlocks),
-        metadata: { contentType: article.contentType, publishedAt: article.publishedAt },
+        metadata: { contentType: article.contentType, publishedAt: firstArticlePublishedAt(article.publishedAt, articleDates.get(article.id)) },
       })),
       ...resources.map((resource) => ({
         type: "RESOURCE" as const,
@@ -245,12 +248,12 @@ export class ContentDiscoveryService {
         authoredArticles: {
           where: { reviewStatus: ReviewStatus.PUBLISHED },
           orderBy: { publishedAt: "desc" },
-          select: { slug: true, title: true, summary: true, contentType: true, publishedAt: true },
+          select: { id: true, slug: true, title: true, summary: true, contentType: true, publishedAt: true },
         },
         reviewedArticles: {
           where: { reviewStatus: ReviewStatus.PUBLISHED },
           orderBy: { publishedAt: "desc" },
-          select: { slug: true, title: true, summary: true, contentType: true, publishedAt: true },
+          select: { id: true, slug: true, title: true, summary: true, contentType: true, publishedAt: true },
         },
         authoredResources: {
           where: { reviewStatus: ReviewStatus.PUBLISHED },
@@ -282,6 +285,10 @@ export class ContentDiscoveryService {
       },
     });
     if (!contributor) throw new NotFoundException("contributor not found");
+    const articleDates = await publishedArticleHistoryDates(this.prisma, [
+      ...contributor.authoredArticles.map((article) => article.id),
+      ...contributor.reviewedArticles.map((article) => article.id),
+    ]);
     return {
       kind: contributor.kind,
       slug: contributor.slug,
@@ -293,14 +300,16 @@ export class ContentDiscoveryService {
       thesisUrl: contributor.thesisUrl,
       sameAs: contributor.sameAs,
       updatedAt: contributor.updatedAt,
-      authoredArticles: contributor.authoredArticles.map((article) => ({
+      authoredArticles: newestPublicationFirst(contributor.authoredArticles.map(({ id, ...article }) => ({
         ...article,
+        publishedAt: firstArticlePublishedAt(article.publishedAt, articleDates.get(id)),
         href: article.contentType === "GUIDE" ? `/guides/${article.slug}` : `/articles/${article.slug}`,
-      })),
-      reviewedArticles: contributor.reviewedArticles.map((article) => ({
+      }))),
+      reviewedArticles: newestPublicationFirst(contributor.reviewedArticles.map(({ id, ...article }) => ({
         ...article,
+        publishedAt: firstArticlePublishedAt(article.publishedAt, articleDates.get(id)),
         href: article.contentType === "GUIDE" ? `/guides/${article.slug}` : `/articles/${article.slug}`,
-      })),
+      }))),
       authoredResources: contributor.authoredResources.map((resource) => ({
         ...resource,
         href: `/resources/${resource.slug}`,

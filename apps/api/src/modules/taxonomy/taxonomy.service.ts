@@ -4,6 +4,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { CreateSubjectDto } from "./dto/create-subject.dto";
 import { CreateTopicDto } from "./dto/create-topic.dto";
 import { fa } from "../../common/persian-digits";
+import { firstArticlePublishedAt, newestPublicationFirst, publishedArticleHistoryDates } from "../content/article-publication-dates";
 
 @Injectable()
 export class TaxonomyService {
@@ -129,6 +130,7 @@ export class TaxonomyService {
         where: { reviewStatus: ReviewStatus.PUBLISHED, subjectCodes: { has: subject.code } },
         orderBy: [{ publishedAt: "desc" }, { title: "asc" }],
         select: {
+          id: true,
           slug: true,
           title: true,
           summary: true,
@@ -150,6 +152,7 @@ export class TaxonomyService {
         },
       }),
     ]);
+    const articleDates = await publishedArticleHistoryDates(this.prisma, articles.map((article) => article.id));
 
     return {
       code: subject.code,
@@ -161,10 +164,11 @@ export class TaxonomyService {
       prerequisites: subject.prerequisites.map(({ prerequisite }) => prerequisite),
       topics: subject.topics,
       relatedContent: {
-        articles: articles.map((article) => ({
+        articles: newestPublicationFirst(articles.map(({ id, ...article }) => ({
           ...article,
+          publishedAt: firstArticlePublishedAt(article.publishedAt, articleDates.get(id)),
           href: article.contentType === "GUIDE" ? `/guides/${article.slug}` : `/articles/${article.slug}`,
-        })),
+        }))),
         resources: resources.map((resource) => ({ ...resource, href: `/resources/${resource.slug}` })),
         courses: subject.courses.map((course) => ({ ...course, href: `/courses/${course.slug}` })),
       },
@@ -206,6 +210,7 @@ export class TaxonomyService {
         where: { reviewStatus: ReviewStatus.PUBLISHED, topicCodes: { has: topic.code } },
         orderBy: [{ publishedAt: "desc" }, { title: "asc" }],
         select: {
+          id: true,
           slug: true,
           title: true,
           summary: true,
@@ -246,6 +251,7 @@ export class TaxonomyService {
         },
       }),
     ]);
+    const articleDates = await publishedArticleHistoryDates(this.prisma, articles.map((article) => article.id));
 
     return {
       code: topic.code,
@@ -257,10 +263,11 @@ export class TaxonomyService {
       subject: topic.subject,
       prerequisites: topic.prerequisites.map(({ prerequisite }) => prerequisite),
       relatedContent: {
-        articles: articles.map((article) => ({
+        articles: newestPublicationFirst(articles.map(({ id, ...article }) => ({
           ...article,
+          publishedAt: firstArticlePublishedAt(article.publishedAt, articleDates.get(id)),
           href: article.contentType === "GUIDE" ? `/guides/${article.slug}` : `/articles/${article.slug}`,
-        })),
+        }))),
         resources: resources.map((resource) => ({ ...resource, href: `/resources/${resource.slug}` })),
         courses: courses.map((course) => ({ ...course, href: `/courses/${course.slug}` })),
       },

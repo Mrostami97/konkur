@@ -7,6 +7,7 @@ import { AuditService } from "../audit/audit.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { SourceLinkDto } from "./dto/editorial.dto";
 import { UpdateArticleDto } from "./dto/update-article.dto";
+import { firstArticlePublishedAt, newestPublicationFirst, publishedArticleHistoryDates } from "./article-publication-dates";
 
 const EDITABLE_STATUSES: ReviewStatus[] = [ReviewStatus.DRAFT, ReviewStatus.REJECTED];
 const articleEditorialInclude = {
@@ -229,7 +230,7 @@ export class ContentService {
       const payload = await this.assertArticlePayloadPublishable(revision.payload, article, tx);
       const reviewer = await tx.contributorProfile.findUnique({ where: { userId: reviewerId } });
       const now = new Date();
-      const canonical = await this.applyArticleV2(tx, articleId, revision.version, payload, reviewer?.id, now);
+      const canonical = await this.applyArticleV2(tx, articleId, revision.version, payload, reviewer?.id, now, article.reviewStatus === ReviewStatus.PUBLISHED ? article.publishedAt : null);
       await tx.contentVersion.update({
         where: { id: revision.id },
         data: { reviewStatus: ReviewStatus.PUBLISHED, reviewedByUserId: reviewerId, reviewedAt: now, publishedAt: now },
@@ -270,13 +271,15 @@ export class ContentService {
 
   async listPublished() {
     const articles = await this.prisma.article.findMany({ where: { reviewStatus: ReviewStatus.PUBLISHED }, orderBy: { publishedAt: "desc" }, include: publicArticleInclude });
-    return articles.map((article) => this.toPublicArticle(article));
+    const history = await publishedArticleHistoryDates(this.prisma, articles.map((article) => article.id));
+    return newestPublicationFirst(articles.map((article) => this.toPublicArticle(article, firstArticlePublishedAt(article.publishedAt, history.get(article.id)))));
   }
 
   async getPublishedBySlug(slug: string) {
     const article = await this.prisma.article.findUnique({ where: { slug }, include: publicArticleInclude });
     if (!article || article.reviewStatus !== ReviewStatus.PUBLISHED) throw new NotFoundException("article not found");
-    return this.toPublicArticle(article);
+    const history = await publishedArticleHistoryDates(this.prisma, [article.id]);
+    return this.toPublicArticle(article, firstArticlePublishedAt(article.publishedAt, history.get(article.id)));
   }
 
   async listAll() {
@@ -357,7 +360,7 @@ export class ContentService {
     return validation.data;
   }
 
-  private async applyArticleV2(tx: Prisma.TransactionClient, articleId: string, version: number, payload: ArticleV2, reviewerProfileId: string | undefined, now: Date) {
+  private async applyArticleV2(tx: Prisma.TransactionClient, articleId: string, version: number, payload: ArticleV2, reviewerProfileId: string | undefined, now: Date, canonicalPublishedAt: Date | null) {
     const sourceIds = payload.sources.map((source) => source.source_external_id);
     const sources = await tx.contentSource.findMany({ where: { externalId: { in: sourceIds }, archivedAt: null } });
     const sourceByExternalId = new Map(sources.map((source) => [source.externalId, source.id]));
@@ -365,6 +368,7 @@ export class ContentService {
       throw new BadRequestException("every article source must reference an active ContentSource externalId");
     }
     const author = payload.editorial?.author_slug ? await tx.contributorProfile.findUnique({ where: { slug: payload.editorial.author_slug } }) : null;
+    const history = await publishedArticleHistoryDates(tx, [articleId]);
     return tx.article.update({
       where: { id: articleId },
       data: {
@@ -392,7 +396,7 @@ export class ContentService {
         reviewerProfileId,
         reviewedAt: now,
         reviewStatus: ReviewStatus.PUBLISHED,
-        publishedAt: now,
+        publishedAt: firstArticlePublishedAt(canonicalPublishedAt, history.get(articleId)) ?? now,
         version,
         sources: { deleteMany: {}, create: payload.sources.map((source) => ({ sourceId: sourceByExternalId.get(source.source_external_id)!, relation: source.relation, locator: source.locator, claim: source.claim, order: source.order ?? 0 })) },
       },
@@ -453,7 +457,7 @@ export class ContentService {
     return "draft";
   }
 
-  private toPublicArticle(article: PublicArticleRecord) {
+  private toPublicArticle(article: PublicArticleRecord, publishedAt: Date | null) {
     return {
       id: article.id,
       externalId: article.externalId,
@@ -479,7 +483,7 @@ export class ContentService {
       reviewStatus: article.reviewStatus,
       version: article.version,
       createdAt: article.createdAt,
-      publishedAt: article.publishedAt,
+      publishedAt,
       updatedAt: article.updatedAt,
       sources: article.sources.map((link) => ({
         relation: link.relation,
