@@ -34,7 +34,7 @@ export default async function GuidesPage() {
         <div className="pg-shell pg-hero">
           <p className="pg-eyebrow">راهنمای منبع‌دار</p>
           <h1>از انتخاب مسیر تا برنامهٔ هفته و روز آزمون</h1>
-          <p className="pg-lede">راهنماهای اجرایی مطالعه و صفحات رسمی ۱۴۰۶، با پاسخ کوتاه، تاریخ بررسی، منبع و قدم بعدی روشن.</p>
+          <p className="pg-lede">راهنماهای اجرایی مطالعه و صفحات رسمی ۱۴۰۶، با پاسخ کوتاه، تاریخ ثبت یا بررسی، منبع و قدم بعدی روشن.</p>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ export default async function GuidesPage() {
               <span className="pg-card-meta">{guide.category} · {guide.field}</span>
               <b>{guide.title}</b>
               <small>{guide.description}</small>
-              <span className="pg-card-action pg-card-meta">بررسی {guide.reviewedAt}</span>
+              <span className="pg-card-action pg-card-meta">{guide.reviewer === "در انتظار بازبینی انسانی" ? "تاریخ ثبت" : "بررسی"} {guide.reviewedAt}</span>
             </Link>
           ))}
         </div>
