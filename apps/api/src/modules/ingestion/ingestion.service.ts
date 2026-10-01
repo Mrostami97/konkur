@@ -17,6 +17,7 @@ import {
 } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
+import { firstArticlePublishedAt, publishedArticleHistoryDates } from "../content/article-publication-dates";
 import { ObjectStorageService } from "./object-storage.service";
 import { parseImportZip } from "./zip-reader";
 import { sha256Buffer, sha256Json } from "./checksum";
@@ -361,6 +362,7 @@ export class IngestionService {
         payload,
         review.reviewedByUserId,
         review.reviewedAt,
+        publishedAt,
         importItemId,
       );
 
@@ -420,13 +422,19 @@ export class IngestionService {
     payload: ContractItem,
     reviewerId: string,
     reviewedAt: Date,
+    publishedAt: Date,
     importItemId?: string,
   ): Promise<{ entityId: string; version: number; entityType: VersionedEntityType; supersededVersions?: number[] }> {
     if (schemaVersion === "article.v1") {
       const p = payload as ArticleV1;
-      const existing = await tx.article.findUnique({ where: { externalId: p.external_id } });
+      let existing = await tx.article.findUnique({ where: { externalId: p.external_id } });
+      if (existing) {
+        await this.lockArticle(tx, existing.id);
+        existing = await tx.article.findUnique({ where: { id: existing.id } });
+      }
       const reviewer = await tx.contributorProfile.findUnique({ where: { userId: reviewerId } });
       const version = (existing?.version ?? 0) + 1;
+      const history = existing ? await publishedArticleHistoryDates(tx, [existing.id]) : new Map<string, Date>();
       const data = {
         externalId: p.external_id,
         slug: p.slug,
@@ -441,7 +449,7 @@ export class IngestionService {
         reviewedAt,
         version,
         reviewStatus: "PUBLISHED" as const,
-        publishedAt: new Date(),
+        publishedAt: firstArticlePublishedAt(existing?.reviewStatus === "PUBLISHED" ? existing.publishedAt : null, existing ? history.get(existing.id) : undefined) ?? publishedAt,
       };
       const article = existing
         ? await tx.article.update({ where: { id: existing.id }, data })
@@ -502,7 +510,7 @@ export class IngestionService {
         : null;
       if (p.editorial?.author_slug && !author) throw new BadRequestException("article.v2 author profile does not exist");
       const reviewer = await tx.contributorProfile.findUnique({ where: { userId: reviewerId } });
-      const now = new Date();
+      const history = existing ? await publishedArticleHistoryDates(tx, [existing.id]) : new Map<string, Date>();
       const sourceRows = p.sources.map((source) => ({
         sourceId: sourceByExternalId.get(source.source_external_id)!,
         relation: source.relation,
@@ -536,7 +544,7 @@ export class IngestionService {
         reviewedAt,
         version,
         reviewStatus: "PUBLISHED" as const,
-        publishedAt: now,
+        publishedAt: firstArticlePublishedAt(existing?.reviewStatus === "PUBLISHED" ? existing.publishedAt : null, existing ? history.get(existing.id) : undefined) ?? publishedAt,
       };
       const article = existing
         ? await tx.article.update({
@@ -662,16 +670,21 @@ export class IngestionService {
       return draft;
     }
 
-    const latest = await this.prisma.contentVersion.findFirstOrThrow({
-      where: { entityType, entityId },
-      orderBy: { version: "desc" },
-    });
-    const newVersion = latest.version + 1;
     const payload = target.payload as unknown as ContractItem;
 
-    await this.prisma.$transaction(async (tx) => {
+    const newVersion = await this.prisma.$transaction(async (tx) => {
+      if (entityType === VersionedEntityType.ARTICLE) await this.lockArticle(tx, entityId);
+      const latest = await tx.contentVersion.findFirstOrThrow({
+        where: { entityType, entityId },
+        orderBy: { version: "desc" },
+      });
+      const newVersion = latest.version + 1;
+      const now = new Date();
       if (entityType === VersionedEntityType.ARTICLE) {
         const p = payload as ArticleV1;
+        const current = await tx.article.findUniqueOrThrow({ where: { id: entityId }, select: { publishedAt: true, reviewStatus: true } });
+        const history = await publishedArticleHistoryDates(tx, [entityId]);
+        const reviewer = await tx.contributorProfile.findUnique({ where: { userId: actorId }, select: { id: true } });
         await tx.article.update({
           where: { id: entityId },
           data: {
@@ -682,6 +695,9 @@ export class IngestionService {
             taxonomyMajor: p.taxonomy.major,
             taxonomyTags: p.taxonomy.tags ?? [],
             version: newVersion,
+            publishedAt: firstArticlePublishedAt(current.reviewStatus === "PUBLISHED" ? current.publishedAt : null, history.get(entityId)),
+            reviewedAt: now,
+            reviewerProfileId: reviewer?.id ?? null,
           },
         });
       } else if (entityType === VersionedEntityType.REPORT_CARD) {
@@ -719,8 +735,8 @@ export class IngestionService {
           reviewStatus: "PUBLISHED",
           createdByUserId: actorId,
           reviewedByUserId: actorId,
-          reviewedAt: new Date(),
-          publishedAt: new Date(),
+          reviewedAt: now,
+          publishedAt: now,
         },
       });
 
@@ -734,6 +750,7 @@ export class IngestionService {
         },
         tx,
       );
+      return newVersion;
     });
 
     return { entityId, newVersion, restoredFromVersion: toVersion };

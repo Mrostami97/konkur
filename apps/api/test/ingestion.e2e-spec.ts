@@ -306,6 +306,8 @@ describe("Ingestion pipeline (e2e)", () => {
 
     const articleV1 = await prisma.article.findUniqueOrThrow({ where: { externalId } });
     expect(articleV1.version).toBe(1);
+    const firstPublishedAt = articleV1.publishedAt?.toISOString();
+    expect(firstPublishedAt).toBeTruthy();
 
     // v2: same external_id, different title -> a genuinely different zip
     const zip2 = buildZip(articlePayload(externalId, "Versioned Title v2 (edited)", sha256(imageBuf)), [
@@ -335,6 +337,11 @@ describe("Ingestion pipeline (e2e)", () => {
     const articleV2 = await prisma.article.findUniqueOrThrow({ where: { externalId } });
     expect(articleV2.version).toBe(2);
     expect(articleV2.title).toBe("Versioned Title v2 (edited)");
+    expect(articleV2.publishedAt?.toISOString()).toBe(firstPublishedAt);
+    const secondVersion = await prisma.contentVersion.findUniqueOrThrow({
+      where: { entityType_entityId_version: { entityType: "ARTICLE", entityId: articleV2.id, version: 2 } },
+    });
+    expect(secondVersion.publishedAt!.getTime()).toBeGreaterThanOrEqual(new Date(firstPublishedAt!).getTime());
 
     // Rollback to version 1: creates version 3 with v1's content, history intact.
     const rollbackRes = await request(app.getHttpServer())
@@ -343,6 +350,13 @@ describe("Ingestion pipeline (e2e)", () => {
       .send({ entityType: "ARTICLE", entityId: articleV2.id, toVersion: 1 })
       .expect(201);
     expect(rollbackRes.body.newVersion).toBe(3);
+    const rolledBackArticle = await prisma.article.findUniqueOrThrow({ where: { externalId } });
+    const rollbackVersion = await prisma.contentVersion.findUniqueOrThrow({
+      where: { entityType_entityId_version: { entityType: "ARTICLE", entityId: rolledBackArticle.id, version: 3 } },
+    });
+    expect(rolledBackArticle.publishedAt?.toISOString()).toBe(firstPublishedAt);
+    expect(rolledBackArticle.reviewedAt?.toISOString()).toBe(rollbackVersion.reviewedAt?.toISOString());
+    expect(rollbackVersion.publishedAt!.getTime()).toBeGreaterThanOrEqual(new Date(firstPublishedAt!).getTime());
 
     const articleAfterRollback = await prisma.article.findUniqueOrThrow({ where: { id: articleV2.id } });
     expect(articleAfterRollback.title).toBe("Versioned Title v1");

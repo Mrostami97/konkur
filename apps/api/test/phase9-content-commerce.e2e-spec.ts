@@ -811,6 +811,31 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     expect((audit.metadata as { publisherUserId: string; reviewedByUserId: string }).reviewedByUserId).toBe(reviewer.user.id);
     const publicArticle = await request(app.getHttpServer()).get("/articles/" + externalId).expect(200);
     expect(publicArticle.body.reviewerProfile).toMatchObject({ slug: reviewerProfile.body.slug });
+    const firstPublishedAt = publicArticle.body.publishedAt as string;
+    const revisedPayload = { ...payload, title: "Revised import with separate reviewer" };
+    const nextJob = await request(app.getHttpServer())
+      .post("/admin/import")
+      .set("Cookie", reviewer.cookie)
+      .attach("file", buildImportZip(revisedPayload), "phase9-article-v2-revision.zip")
+      .expect(201);
+    const nextItems = await request(app.getHttpServer())
+      .get("/admin/import/" + nextJob.body.id + "/items")
+      .set("Cookie", reviewer.cookie)
+      .expect(200);
+    await request(app.getHttpServer())
+      .post("/admin/import/items/review")
+      .set("Cookie", reviewer.cookie)
+      .send({ itemIds: [nextItems.body[0].id], decision: "APPROVE" })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post("/admin/import/" + nextJob.body.id + "/publish")
+      .set("Cookie", adminCookie)
+      .expect(201);
+    const revisedArticle = await prisma.article.findUniqueOrThrow({ where: { externalId } });
+    expect(revisedArticle.publishedAt?.toISOString()).toBe(firstPublishedAt);
+    const revisedPublic = await request(app.getHttpServer()).get("/articles/" + externalId).expect(200);
+    expect(revisedPublic.body.title).toBe(revisedPayload.title);
+    expect(revisedPublic.body.publishedAt).toBe(firstPublishedAt);
   });
 
   it("lets an approved import replace an article's open draft and records what it closed", async () => {
@@ -834,6 +859,7 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       })
       .expect(201);
     const draftArticle = await prisma.article.findUniqueOrThrow({ where: { id: created.body.id } });
+    await prisma.article.update({ where: { id: draftArticle.id }, data: { publishedAt: new Date("2001-01-01T00:00:00.000Z") } });
     const openDraft = await prisma.contentVersion.findFirstOrThrow({
       where: { entityType: "ARTICLE", entityId: draftArticle.id, reviewStatus: "DRAFT" },
     });
@@ -891,6 +917,7 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     expect(published.reviewStatus).toBe("PUBLISHED");
     expect(published.title).toBe("Better imported text");
     expect(published.version).toBeGreaterThan(openDraft.version);
+    expect(published.publishedAt!.getUTCFullYear()).toBeGreaterThan(2020);
     const audit = await prisma.auditLog.findFirstOrThrow({
       where: { action: "import.published", targetType: "ARTICLE", targetId: draftArticle.id },
       orderBy: { createdAt: "desc" },
@@ -955,10 +982,14 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
       })
       .expect(201);
     await request(app.getHttpServer()).get("/articles/" + slug).expect(404);
+    await prisma.article.update({ where: { id: created.body.id }, data: { publishedAt: new Date("2001-01-01T00:00:00.000Z") } });
     await request(app.getHttpServer()).post("/admin/articles/" + created.body.id + "/submit").set("Cookie", adminCookie).expect(201);
     await request(app.getHttpServer()).post("/admin/articles/" + created.body.id + "/approve").set("Cookie", adminCookie).expect(201);
     const firstPublic = await request(app.getHttpServer()).get("/articles/" + slug).expect(200);
     expect(firstPublic.body.title).toBe("Original title");
+    const firstPublishedAt = firstPublic.body.publishedAt as string;
+    expect(firstPublishedAt).toBeTruthy();
+    expect(new Date(firstPublishedAt).getUTCFullYear()).toBeGreaterThan(2020);
     expect(firstPublic.body.authorProfile).toBeNull();
     expect(firstPublic.body.reviewerProfile).toBeNull();
     expect(firstPublic.body).not.toHaveProperty("authorId");
@@ -973,6 +1004,12 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
 
     const revision = await request(app.getHttpServer()).post("/admin/articles/" + created.body.id + "/revise").set("Cookie", adminCookie).expect(201);
     await request(app.getHttpServer()).post("/admin/articles/" + created.body.id + "/revise").set("Cookie", adminCookie).expect(403);
+    // A draft's date cannot become the public first-publication date, even if
+    // historical data contains a stray timestamp on an unpublished version.
+    await prisma.contentVersion.update({ where: { id: revision.body.id }, data: { publishedAt: new Date("2001-01-01T00:00:00.000Z") } });
+    await request(app.getHttpServer()).get("/articles/" + slug).expect(200).expect((response) => {
+      expect(response.body.publishedAt).toBe(firstPublishedAt);
+    });
     await request(app.getHttpServer())
       .post("/admin/content/rollback")
       .set("Cookie", adminCookie)
@@ -994,7 +1031,57 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     await request(app.getHttpServer()).post("/admin/articles/" + created.body.id + "/versions/2/approve").set("Cookie", adminCookie).expect(201);
     await request(app.getHttpServer()).get("/articles/" + slug).expect(200).expect((response) => {
       expect(response.body.title).toBe("Revised title");
+      expect(response.body.publishedAt).toBe(firstPublishedAt);
     });
+    const revisedCanonical = await prisma.article.findUniqueOrThrow({ where: { id: created.body.id } });
+    expect(revisedCanonical.publishedAt?.toISOString()).toBe(firstPublishedAt);
+    const revisedVersion = await prisma.contentVersion.findUniqueOrThrow({ where: { entityType_entityId_version: { entityType: "ARTICLE", entityId: created.body.id, version: 2 } } });
+    expect(revisedVersion.publishedAt!.getTime()).toBeGreaterThan(new Date(firstPublishedAt).getTime());
+
+    const newerSlug = "phase9-newer-article-" + suffix;
+    const newer = await request(app.getHttpServer())
+      .post("/admin/articles")
+      .set("Cookie", adminCookie)
+      .send({
+        slug: newerSlug,
+        title: "Newer first publication",
+        summary: "Checks original publication ordering after a revision.",
+        quickAnswer: "This article was first published after the versioned article.",
+        contentBlocks: [{ type: "text", text: "A later publication date." }],
+        taxonomyMajor: ["computer-engineering"],
+        taxonomyTags: ["phase9"],
+        taxonomyDegrees: ["MASTER"],
+        taxonomyFields: ["computer-engineering"],
+        seoTitle: "Newer first publication",
+        seoDescription: "A source-backed article that checks the first-publication ordering of article lists.",
+        sourceLinks: [{ sourceId, relation: "SUPPORTS", order: 0 }],
+      })
+      .expect(201);
+    await request(app.getHttpServer()).post("/admin/articles/" + newer.body.id + "/submit").set("Cookie", adminCookie).expect(201);
+    await request(app.getHttpServer()).post("/admin/articles/" + newer.body.id + "/approve").set("Cookie", adminCookie).expect(201);
+    const newerCanonical = await prisma.article.findUniqueOrThrow({ where: { id: newer.body.id } });
+
+    // Published history repairs a previously overwritten canonical date at
+    // read time, without changing production rows through a one-off script.
+    await prisma.article.update({ where: { id: created.body.id }, data: { publishedAt: new Date("2030-01-01T00:00:00.000Z") } });
+    await request(app.getHttpServer()).get("/articles/" + slug).expect(200).expect((response) => {
+      expect(response.body.publishedAt).toBe(firstPublishedAt);
+    });
+    const listed = await request(app.getHttpServer()).get("/articles").expect(200);
+    expect(listed.body.find((item: { slug: string }) => item.slug === slug)?.publishedAt).toBe(firstPublishedAt);
+    const olderIndex = listed.body.findIndex((item: { slug: string }) => item.slug === slug);
+    const newerIndex = listed.body.findIndex((item: { slug: string }) => item.slug === newerSlug);
+    expect(newerIndex).toBeGreaterThanOrEqual(0);
+    expect(olderIndex).toBeGreaterThan(newerIndex);
+
+    // Legacy published articles may have a trustworthy canonical publication
+    // date older than the first version record available in this database.
+    const legacyPublishedAt = new Date("2020-01-01T00:00:00.000Z");
+    await prisma.article.update({ where: { id: newer.body.id }, data: { publishedAt: legacyPublishedAt } });
+    await request(app.getHttpServer()).get("/articles/" + newerSlug).expect(200).expect((response) => {
+      expect(response.body.publishedAt).toBe(legacyPublishedAt.toISOString());
+    });
+    await prisma.article.update({ where: { id: newer.body.id }, data: { publishedAt: newerCanonical.publishedAt } });
 
     const rollback = await request(app.getHttpServer())
       .post("/admin/content/rollback")
@@ -1009,7 +1096,10 @@ describe("Phase 9 content, learning access and commerce (e2e)", () => {
     await request(app.getHttpServer()).post("/admin/articles/" + created.body.id + "/versions/3/approve").set("Cookie", adminCookie).expect(201);
     await request(app.getHttpServer()).get("/articles/" + slug).expect(200).expect((response) => {
       expect(response.body.title).toBe("Original title");
+      expect(response.body.publishedAt).toBe(firstPublishedAt);
     });
+    const restoredCanonical = await prisma.article.findUniqueOrThrow({ where: { id: created.body.id } });
+    expect(restoredCanonical.publishedAt?.toISOString()).toBe(firstPublishedAt);
 
     await request(app.getHttpServer()).get("/admin/articles").set("Cookie", studentCookie).expect(403);
   });
