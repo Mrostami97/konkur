@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   PublicBreadcrumbs,
-  PublicServiceError,
   RelatedContentGrid,
   accessModeLabel,
   contentTypeLabel,
@@ -48,12 +47,10 @@ async function loadTopic(slug: string) {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const result = await loadTopic(params.slug);
-  if (!result.topic) return pageMetadata({
-    title: "مبحث آموزشی در دسترس نیست",
-    description: "این مبحث پیدا نشد یا سرویس محتوا موقتاً در دسترس نیست.",
-    path: `/topics/${params.slug}`,
-    noIndex: true,
-  });
+  // Keep metadata and HTTP status aligned with the page. This route has no
+  // loading.tsx because its streaming fallback would commit HTTP 200 first.
+  if (result.unavailable) throw new Error("Public content service is unavailable");
+  if (!result.topic) notFound();
   return pageMetadata({
     title: `${result.topic.title}؛ آموزش و منابع کنکور`,
     description: result.topic.description ?? `پیش‌نیازها و محتوای منتشرشدهٔ مبحث ${result.topic.title}.`,
@@ -71,9 +68,7 @@ function relatedItems(topic: PublicTopicDetail): RelatedPublicItem[] {
 
 export default async function TopicPage({ params }: { params: { slug: string } }) {
   const result = await loadTopic(params.slug);
-  if (result.unavailable) {
-    return <main className="page-container"><PublicServiceError label="صفحهٔ مبحث" /></main>;
-  }
+  if (result.unavailable) throw new Error("Public content service is unavailable");
   if (!result.topic) notFound();
   const topic = result.topic;
   const path = `/topics/${topic.slug}`;

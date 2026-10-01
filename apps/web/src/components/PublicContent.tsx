@@ -10,7 +10,7 @@ import { OWNER_NAME, OwnerByline, OwnerPhoto } from "./OwnerByline";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
 import { findSubject } from "../content/editorial";
 import { faqPageSchema } from "../lib/faq-schema";
-import { absoluteUrl, personReference } from "../lib/seo";
+import { absoluteUrl, articleModifiedTime, personReference } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
 
 export type PublicContentBlock = { type: string; [key: string]: unknown };
@@ -309,6 +309,7 @@ export function PublicArticleView({
   const publishedAt = formatPublicDate(article.publishedAt);
   const reviewedAt = formatPublicDate(article.reviewedAt ?? article.sourceValidatedAt ?? article.updatedAt);
   const reviewDueAt = formatPublicDate(article.reviewDueAt);
+  const genuineModifiedTime = articleModifiedTime(article.publishedAt, article.reviewedAt);
   const articleSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -318,7 +319,6 @@ export function PublicArticleView({
     inLanguage: "fa-IR",
     isAccessibleForFree: true,
     articleSection: collectionName,
-    image: [absoluteUrl("/brand/konkurcom-logo.png")],
     mainEntityOfPage: { "@id": `${absoluteUrl(path)}#webpage` },
     publisher: { "@id": absoluteUrl("/#organization") },
   };
@@ -330,10 +330,9 @@ export function PublicArticleView({
     name: article.title,
     mainEntity: { "@id": `${absoluteUrl(path)}#article` },
     inLanguage: "fa-IR",
-    ...(article.quickAnswer ? { speakable: { "@type": "SpeakableSpecification", cssSelector: [".answer-first p"] } } : {}),
   };
   if (article.publishedAt) articleSchema.datePublished = article.publishedAt;
-  if (article.reviewedAt ?? article.updatedAt) articleSchema.dateModified = article.reviewedAt ?? article.updatedAt;
+  if (genuineModifiedTime) articleSchema.dateModified = genuineModifiedTime;
   if (article.authorProfile) articleSchema.author = personReference(article.authorProfile);
   if (article.reviewerProfile) webPageSchema.reviewedBy = personReference(article.reviewerProfile);
   if (article.sources.length > 0) {

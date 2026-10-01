@@ -10,6 +10,7 @@ import {
 import { apiGetPublic } from "../../../lib/api";
 import { articles, findEditorialPage } from "../../../content/editorial";
 import { pageMetadata } from "../../../lib/seo";
+import { relatedTaxonomyItems } from "../../../lib/related-taxonomy";
 
 interface TaxonomyEntry {
   code: string;
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       path: publicArticlePath(result.article),
       type: "article",
       publishedTime: result.article.publishedAt,
-      modifiedTime: result.article.reviewedAt ?? result.article.updatedAt,
+      modifiedTime: result.article.reviewedAt,
     });
   }
   const legacy = findEditorialPage(params.slug);
@@ -54,14 +55,9 @@ async function relatedTaxonomy(article: PublicArticleRecord): Promise<RelatedPub
       apiGetPublic<TaxonomyEntry[]>("/subjects"),
       apiGetPublic<TaxonomyEntry[]>("/topics"),
     ]);
-    const subjectCodes = new Set(article.subjectCodes);
-    const topicCodes = new Set(article.topicCodes);
-    return [
-      ...(subjects ?? []).filter((item) => subjectCodes.has(item.code)).map((item) => ({ href: `/subjects/${item.slug}`, title: item.title, label: "درس" })),
-      ...(topics ?? []).filter((item) => topicCodes.has(item.code)).map((item) => ({ href: `/topics/${item.slug}`, title: item.title, label: "مبحث" })),
-    ].slice(0, 6);
+    return relatedTaxonomyItems(article, subjects ?? [], topics ?? []);
   } catch {
-    return [];
+    return relatedTaxonomyItems(article);
   }
 }
 

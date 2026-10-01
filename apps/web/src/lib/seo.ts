@@ -22,6 +22,17 @@ export function personReference(profile: { slug: string; displayName: string }) 
     url: absoluteUrl(`/authors/${profile.slug}`),
   };
 }
+
+/** A review is a modification date only when it happened after publication. */
+export function articleModifiedTime(publishedTime?: string | null, reviewedAt?: string | null) {
+  if (!publishedTime || !reviewedAt) return undefined;
+  const published = Date.parse(publishedTime);
+  const reviewed = Date.parse(reviewedAt);
+  return Number.isFinite(published) && Number.isFinite(reviewed) && reviewed >= published
+    ? new Date(reviewed).toISOString()
+    : undefined;
+}
+
 export function pageMetadata({
   title,
   description,
@@ -41,6 +52,7 @@ export function pageMetadata({
 }): Metadata {
   const url = absoluteUrl(path);
   const image = absoluteUrl("/brand/konkurcom-logo.png");
+  const genuineModifiedTime = articleModifiedTime(publishedTime, modifiedTime);
   return {
     title,
     description,
@@ -55,7 +67,7 @@ export function pageMetadata({
       url,
       images: [{ url: image, width: 600, height: 600, alt: SITE_NAME }],
       ...(type === "article" && publishedTime ? { publishedTime } : {}),
-      ...(type === "article" && (modifiedTime ?? publishedTime) ? { modifiedTime: (modifiedTime ?? publishedTime) as string } : {}),
+      ...(type === "article" && genuineModifiedTime ? { modifiedTime: genuineModifiedTime } : {}),
     },
     twitter: { card: "summary_large_image", title, description, images: [image] },
   };

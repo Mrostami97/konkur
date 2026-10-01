@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { editorialDateIso, findSubject, type EditorialPage } from "../content/editorial";
-import { absoluteUrl } from "../lib/seo";
+import { absoluteUrl, articleModifiedTime, OWNER_PROFILE_SLUG, personReference } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
 import { StructuredData } from "./StructuredData";
 import { RelatedContentGrid, type RelatedPublicItem } from "./PublicContent";
 import { NextSteps, readingNextSteps } from "./reading/NextSteps";
 import { ReadingHero } from "./reading/ReadingHero";
 import { ReadingProgress } from "./reading/ReadingProgress";
-import { OwnerByline } from "./OwnerByline";
+import { OWNER_NAME, OwnerPhoto } from "./OwnerByline";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
 
 /**
@@ -46,6 +46,11 @@ export function EditorialPageView({
   ];
   const lead = relatedSubjects[0];
   const tone = lead ? SUBJECT_TONE[lead.slug] ?? "blue" : basePath === "/guides" ? "teal" : "blue";
+  const authorIsOwner = page.author === OWNER_NAME;
+  const reviewerIsOwner = page.reviewer === OWNER_NAME;
+  const reviewPending = page.reviewer === "در انتظار بازبینی انسانی";
+  const publishedAt = editorialDateIso(page.publishedAt);
+  const modifiedAt = reviewPending ? undefined : articleModifiedTime(publishedAt, editorialDateIso(page.reviewedAt));
 
   return (
     <main className="rd-page">
@@ -58,8 +63,11 @@ export function EditorialPageView({
             headline: page.title,
             description: page.description,
             inLanguage: "fa-IR",
-            datePublished: editorialDateIso(page.publishedAt),
-            dateModified: editorialDateIso(page.reviewedAt),
+            author: authorIsOwner
+              ? personReference({ slug: OWNER_PROFILE_SLUG, displayName: OWNER_NAME })
+              : { "@type": "Organization", name: page.author, url: absoluteUrl("/") },
+            datePublished: publishedAt,
+            ...(modifiedAt ? { dateModified: modifiedAt } : {}),
             mainEntityOfPage: absoluteUrl(path),
             publisher: { "@type": "Organization", name: "کنکور کامپیوتر", url: absoluteUrl("/") },
             about: [page.degree, page.field, "کنکور تحصیلات تکمیلی"],
@@ -82,7 +90,7 @@ export function EditorialPageView({
         title={page.title}
         deck={page.description}
         meta={[
-          <span key="reviewed"><Glyph name="shield" />آخرین بررسی <b>{page.reviewedAt}</b></span>,
+          <span key="reviewed"><Glyph name="shield" />{reviewPending ? "تاریخ ثبت" : "آخرین بررسی"} <b>{page.reviewedAt}</b></span>,
           <span key="minutes"><Glyph name="pace" /><b>{toPersianDigits(page.readingMinutes)}</b> دقیقه مطالعه</span>,
           <span key="sources"><Glyph name="list" /><b>{toPersianDigits(page.sources.length)}</b> منبع</span>,
         ]}
@@ -94,7 +102,9 @@ export function EditorialPageView({
           {showOfficialDisclaimer && (
             <aside className="official-disclaimer editorial-disclaimer">
               <strong>اعتبار اطلاعات ۱۴۰۶</strong>
-              <p>این راهنما در {page.reviewedAt} بازبینی شده است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است.</p>
+              <p>{reviewPending
+                ? "بازبینی انسانی این راهنما هنوز تأیید نشده است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است."
+                : `این راهنما در ${page.reviewedAt} بازبینی شده است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است.`}</p>
             </aside>
           )}
 
@@ -139,7 +149,18 @@ export function EditorialPageView({
             </section>
           )}
 
-          <OwnerByline note={<>هر عدد و تاریخ این صفحه از منبع رسمی آمده و در {page.reviewedAt} بازبینی شده است. </>} />
+          <section className="rd-author" aria-label="تهیه و بازبینی">
+            {authorIsOwner ? <OwnerPhoto /> : <span className="rd-author-mark" aria-hidden="true">ک</span>}
+            <div>
+              <strong>
+                نویسنده: {authorIsOwner ? <Link href="/about">{page.author}</Link> : page.author}
+                {reviewPending
+                  ? " · بازبینی انسانی: در انتظار تأیید"
+                  : <> · بازبین: {reviewerIsOwner ? <Link href="/about">{page.reviewer}</Link> : page.reviewer}</>}
+              </strong>
+              <p>منابع این مطلب در پایین صفحه آمده‌اند. روش کار را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.</p>
+            </div>
+          </section>
 
           <section className="sources-box" aria-labelledby="sources-title">
             <div><span>منابع و اعتبارسنجی</span><h2 id="sources-title">این مطلب بر چه اساسی نوشته شده؟</h2></div>

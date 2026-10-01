@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
 import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const webDirectory = fileURLToPath(new URL("..", import.meta.url));
@@ -19,7 +20,7 @@ function article(slug, contentType) {
     taxonomyTags: [],
     taxonomyDegrees: [],
     taxonomyFields: [],
-    subjectCodes: [],
+    subjectCodes: ["automata"],
     topicCodes: [],
     seoTitle: null,
     seoDescription: null,
@@ -35,10 +36,24 @@ function article(slug, contentType) {
   };
 }
 
-async function listen(server) {
+function topic(slug) {
+  return {
+    code: "MOCK_TOPIC",
+    slug,
+    title: "مبحث آزمایشی",
+    description: "توضیح مبحث برای آزمون مسیریابی.",
+    order: 1,
+    metadata: {},
+    subject: { code: "MOCK_SUBJECT", slug: "mock-subject", title: "درس آزمایشی", description: null },
+    prerequisites: [],
+    relatedContent: { articles: [], resources: [], courses: [] },
+  };
+}
+
+async function listen(server, port = 0, hostname = "127.0.0.1") {
   await new Promise((resolve, reject) => {
     server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolve);
+    server.listen(port, hostname, resolve);
   });
   const address = server.address();
   assert.ok(address && typeof address === "object");
@@ -108,11 +123,33 @@ const api = createServer((request, response) => {
     response.end(JSON.stringify(article("mock-article", "ARTICLE")));
     return;
   }
+  if (path === "/articles") {
+    response.end(JSON.stringify([
+      { ...article("mock-reviewed-before-publish", "ARTICLE"), reviewedAt: "2026-09-15T00:00:00.000Z" },
+      { ...article("mock-guide", "GUIDE"), reviewedAt: "2026-09-15T00:00:00.000Z" },
+    ]));
+    return;
+  }
+  if (path === "/articles/mock-reviewed-before-publish" || path === "/articles/mock-reviewed-after-publish") {
+    const publishedAt = "2026-09-16T00:00:00.000Z";
+    const reviewedAt = path.endsWith("before-publish") ? "2026-09-15T00:00:00.000Z" : "2026-09-17T00:00:00.000Z";
+    response.end(JSON.stringify({
+      ...article(path.slice("/articles/".length), "ARTICLE"),
+      quickAnswer: "این پاسخ کوتاه و عمومی است.",
+      publishedAt,
+      reviewedAt,
+    }));
+    return;
+  }
+  if (path === "/topics/mock-topic") {
+    response.end(JSON.stringify(topic("mock-topic")));
+    return;
+  }
   if (path === "/subjects" || path === "/topics") {
     response.end("[]");
     return;
   }
-  if (path === "/articles/mock-unavailable" || path === "/courses/mock-unavailable") {
+  if (path === "/articles/mock-unavailable" || path === "/courses/mock-unavailable" || path === "/topics/mock-unavailable") {
     response.statusCode = 503;
     response.end(JSON.stringify({ statusCode: 503, message: "Service Unavailable" }));
     return;
@@ -121,24 +158,40 @@ const api = createServer((request, response) => {
   response.end(JSON.stringify({ statusCode: 404, message: "Not Found" }));
 });
 
-const apiPort = await listen(api);
+const serverMode = process.env.WEB_ROUTING_MODE === "production" ? "start" : "dev";
+// Next's proxy destination is baked into its production routes manifest at
+// build time. Bind the mock at that loopback destination rather than pointing
+// the runtime env at another port and accidentally testing the real service.
+let apiOrigin;
+if (serverMode === "start") {
+  const manifest = JSON.parse(await readFile(new URL("../.next/routes-manifest.json", import.meta.url), "utf8"));
+  const rewrites = Array.isArray(manifest.rewrites)
+    ? manifest.rewrites
+    : [...manifest.rewrites.beforeFiles, ...manifest.rewrites.afterFiles, ...manifest.rewrites.fallback];
+  const gateway = rewrites.find((entry) => entry.source === "/api/:path*");
+  assert.ok(gateway, "production build must contain the same-origin API gateway");
+  const origin = new URL(gateway.destination);
+  assert.ok(["localhost", "127.0.0.1", "[::1]"].includes(origin.hostname), "routing tests must never bind or call a non-local API");
+  await listen(api, Number(origin.port || 80), origin.hostname.replace(/^\[|\]$/g, ""));
+  apiOrigin = origin.origin;
+} else {
+  apiOrigin = `http://127.0.0.1:${await listen(api)}`;
+}
 const webPort = await freePort();
 const isWindows = process.platform === "win32";
-const command = isWindows ? (process.env.ComSpec ?? "cmd.exe") : "pnpm";
-const commandArguments = isWindows
-  ? ["/d", "/s", "/c", `pnpm exec next dev --hostname 127.0.0.1 --port ${webPort}`]
-  : ["exec", "next", "dev", "--hostname", "127.0.0.1", "--port", String(webPort)];
+const nextCli = fileURLToPath(new URL("../node_modules/next/dist/bin/next", import.meta.url));
+const commandArguments = [nextCli, serverMode, "--hostname", "127.0.0.1", "--port", String(webPort)];
 const nextEnvironment = { ...process.env };
 delete nextEnvironment.NEXT_PUBLIC_API_URL;
 let output = "";
 const web = spawn(
-  command,
+  process.execPath,
   commandArguments,
   {
     cwd: webDirectory,
     env: {
       ...nextEnvironment,
-      INTERNAL_API_URL: `http://127.0.0.1:${apiPort}`,
+      INTERNAL_API_URL: apiOrigin,
       NEXT_PUBLIC_SITE_URL: canonicalOrigin,
       NEXT_TELEMETRY_DISABLED: "1",
     },
@@ -166,6 +219,7 @@ try {
     "/articles/slug-does-not-exist",
     "/guides/slug-does-not-exist",
     "/courses/slug-does-not-exist",
+    "/topics/slug-does-not-exist",
   ]) {
     const response = await fetch(`${baseUrl}${path}`, { redirect: "manual" });
     const html = await response.text();
@@ -183,10 +237,66 @@ try {
   assert.equal(misplacedArticle.status, 308, "a non-guide requested under /guides must permanently redirect");
   assert.equal(misplacedArticle.headers.get("location"), "/articles/mock-article");
 
+  const validTopic = await fetch(`${baseUrl}/topics/mock-topic`);
+  const validTopicHtml = await validTopic.text();
+  assert.equal(validTopic.status, 200, "a published topic must stay accessible");
+  assert.equal(h1Count(validTopicHtml), 1, "a published topic must render one h1");
+  assert.match(validTopicHtml, /مبحث آزمایشی/, "a published topic must render its title");
+  assert.match(validTopicHtml, /<link rel="canonical" href="https:\/\/kunkurcomputer\.ir\/topics\/mock-topic"/, "a published topic must retain its canonical URL");
+
+  for (const path of ["/articles/mock-article", "/guides/mock-guide"]) {
+    const html = visibleMarkup(await (await fetch(`${baseUrl}${path}`)).text());
+    assert.match(html, /href="\/subjects\/automata"/, "existing editorial subjects must remain linked when API taxonomy is empty");
+  }
+  for (const [collection, slug] of [["articles", "mock-reviewed-before-publish"], ["guides", "mock-guide"]]) {
+    const xml = await (await fetch(`${baseUrl}/sitemaps/${collection}.xml`)).text();
+    assert.match(xml, new RegExp(`<loc>${canonicalOrigin}/${collection}/${slug}</loc><lastmod>2026-09-16T00:00:00.000Z</lastmod>`), "sitemap lastmod must never use a review older than publication");
+  }
+
+  const datedBefore = await fetch(`${baseUrl}/articles/mock-reviewed-before-publish`);
+  const datedBeforeHtml = await datedBefore.text();
+  const beforeSchemas = [...datedBeforeHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .flatMap((match) => { const value = JSON.parse(match[1]); return Array.isArray(value) ? value : [value]; });
+  const beforeArticle = beforeSchemas.find((item) => item["@type"] === "Article");
+  const beforePage = beforeSchemas.find((item) => item["@type"] === "WebPage");
+  assert.equal(beforeArticle?.datePublished, "2026-09-16T00:00:00.000Z");
+  assert.ok(!("dateModified" in beforeArticle), "a review before publication must not be marked as a later modification");
+  assert.ok(!("image" in beforeArticle), "the site logo must not be marked as the article's representative image");
+  assert.ok(!("speakable" in beforePage), "Persian educational articles must not claim English-only speakable support");
+  assert.doesNotMatch(datedBeforeHtml, /<meta property="article:modified_time"/, "OG modified time must not precede publication");
+
+  const datedAfterHtml = await (await fetch(`${baseUrl}/articles/mock-reviewed-after-publish`)).text();
+  const afterSchemas = [...datedAfterHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .flatMap((match) => { const value = JSON.parse(match[1]); return Array.isArray(value) ? value : [value]; });
+  const afterArticle = afterSchemas.find((item) => item["@type"] === "Article");
+  assert.equal(afterArticle?.dateModified, "2026-09-17T00:00:00.000Z", "a real post-publication review remains in Article schema");
+  assert.match(datedAfterHtml, /<meta property="article:modified_time" content="2026-09-17T00:00:00.000Z"/, "OG must retain a genuine post-publication review date");
+
+  const pendingHtml = await (await fetch(`${baseUrl}/guides/active-review`)).text();
+  const pendingSchemas = [...pendingHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .flatMap((match) => { const value = JSON.parse(match[1]); return Array.isArray(value) ? value : [value]; });
+  const pendingArticle = pendingSchemas.find((item) => item["@type"] === "Article");
+  assert.equal(pendingArticle?.author?.["@type"], "Organization", "editorial attribution must not invent a personal author");
+  assert.equal(pendingArticle.author.name, "تحریریه کنکور کامپیوتر");
+  assert.ok(!("dateModified" in pendingArticle), "a pending human review must not become a modification date");
+  assert.match(visibleMarkup(pendingHtml), /بازبینی انسانی: در انتظار تأیید/, "pending human review must be visible");
+  assert.doesNotMatch(visibleMarkup(pendingHtml), /تهیه و بازبینی:/, "a pending guide must not claim the owner already reviewed it");
+
+  const ownerHtml = await (await fetch(`${baseUrl}/guides/master-computer-engineering-1406`)).text();
+  const ownerSchemas = [...ownerHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .flatMap((match) => { const value = JSON.parse(match[1]); return Array.isArray(value) ? value : [value]; });
+  const ownerArticle = ownerSchemas.find((item) => item["@type"] === "Article");
+  assert.equal(ownerArticle?.author?.["@type"], "Person");
+  assert.equal(ownerArticle.author.name, "محمد رستمی", "an explicitly declared personal author must be retained");
+  assert.match(visibleMarkup(ownerHtml), /نویسنده:/);
+  assert.match(visibleMarkup(ownerHtml), /بازبین:/);
+  assert.match(visibleMarkup(ownerHtml), /تحریریه کنکور کامپیوتر/);
+
   for (const path of [
     "/articles/mock-unavailable",
     "/guides/mock-unavailable",
     "/courses/mock-unavailable",
+    "/topics/mock-unavailable",
   ]) {
     const unavailable = await fetch(`${baseUrl}${path}`, { redirect: "manual" });
     const html = await unavailable.text();
@@ -198,7 +308,7 @@ try {
   }
 
   console.log(
-    "Phase 18 routing tests passed: same-origin API, hard 404 pages, permanent redirects, and outage handling are verified.",
+    `Phase 18 routing tests passed (${serverMode}): status codes, article dates, source attribution, sitemaps and subject links verified.`,
   );
 } finally {
   stopProcess(web);

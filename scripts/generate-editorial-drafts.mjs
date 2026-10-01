@@ -165,13 +165,19 @@ const idIdentity = (source) =>
     : source.publisher === "کنکور کامپیوتر"
       ? ["کنکورصفریک", legacyTitle(source.title).replace("کنکور کامپیوتر", "کنکورصفریک"), legacyUrl(source.url)]
       : [source.publisher, legacyTitle(source.title), legacyUrl(source.url)];
-const sourceId = (source) => "editorial-source-" + createHash("sha256")
+// A corrected source title must not create a new identity: imports and live
+// ArticleSource records already refer to the original external id.
+const sourceId = (source) => source.externalId ?? "editorial-source-" + createHash("sha256")
   .update(idIdentity(source).join("\n"))
   .digest("hex")
   .slice(0, 20);
 const clamp = (value, max) => value.length <= max ? value : value.slice(0, max - 1).trim() + "…";
 const checkedAt = (value) => {
   const normalized = toAsciiDigits(value ?? "");
+  if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
+    const date = new Date(normalized + "T00:00:00.000Z");
+    if (!Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === normalized) return date.toISOString();
+  }
   const writtenDate = normalized.match(/(\d{1,2})\s+شهریور\s+1405/);
   const numericDate = normalized.match(/^1405[/-]0?6[/-](\d{1,2})$/);
   const day = Number(writtenDate?.[1] ?? numericDate?.[1]);

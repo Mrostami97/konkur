@@ -1,9 +1,8 @@
 // SEO/AEO audit of built packages: node audit-seo.mjs [slug ...]
-// Flags what search and answer engines reward: a snippet-length title and
-// description, a short direct answer first, real question headings with answers
-// (FAQ), tables, internal links and enough depth. Thresholds are guidance
-// (Google shows ~60 title characters and ~155 description characters; answer
-// engines quote a direct answer of roughly 40-70 words).
+// Report structural/content defects and descriptive metrics. Google has no
+// ideal word count, fixed title character limit, FAQ quota, or special AEO
+// markup requirement. FAQ/table/link counts are observations, not ranking
+// scores. See developers.google.com/search/docs/fundamentals/ai-optimization-guide.
 import { readdir, readFile } from "node:fs/promises";
 
 const slugs = process.argv.length > 2 ? process.argv.slice(2) : (await readdir("packages")).sort();
@@ -23,16 +22,13 @@ for (const slug of slugs) {
   const qa = a.quick_answer || "";
   const firstSentence = qa.split(/[.؟!]\s/)[0];
   const issues = [];
-  if (a.seo.title.length > 60) issues.push(`seo.title ${a.seo.title.length}>60`);
-  if (a.seo.description.length < 110) issues.push(`desc ${a.seo.description.length}<110`);
-  if (a.seo.description.length > 165) issues.push(`desc ${a.seo.description.length}>165`);
-  if (words(qa) > 85) issues.push(`answer ${words(qa)}w>85`);
-  if (words(firstSentence) > 40) issues.push(`1st sentence ${words(firstSentence)}w`);
-  if (faq.length < 6) issues.push(`faq ${faq.length}<6`);
-  if (links.length < 5) issues.push(`links ${links.length}<5`);
-  if (blocks.filter((b) => b.type === "table").length === 0) issues.push("no table");
-  if (h2.length < 5) issues.push(`h2 ${h2.length}<5`);
-  if (words(text) < 900) issues.push(`words ${words(text)}<900`);
+  if (!a.seo.title?.trim()) issues.push("missing SEO title");
+  if (!a.seo.description?.trim()) issues.push("missing description");
+  if (!qa.trim()) issues.push("missing direct answer");
+  if (blocks.some((b) => b.type === "heading" && b.level === 1)) issues.push("body repeats the page H1");
+  if (blocks.some((b) => b.type === "image" && !b.alt?.trim())) issues.push("image missing alt text");
+  if (!a.sources?.length) issues.push("missing sources");
+  if (links.some((item) => !/^\/[A-Za-z0-9][A-Za-z0-9/_-]*(?:[?#][^\s]*)?$/.test(item.href))) issues.push("invalid internal link");
   rows.push({ slug, type: a.content_type, titleLen: a.title.length, seoTitle: a.seo.title.length, desc: a.seo.description.length, answerWords: words(qa), faq: faq.length, h2: h2.length, tables: blocks.filter((b) => b.type === "table").length, links: links.length, words: words(text), issues });
 }
 console.table(rows.map(({ issues, ...r }) => r));
