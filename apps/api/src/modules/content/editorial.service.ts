@@ -667,10 +667,10 @@ export class EditorialService {
     const copyCode = createHash("sha256").update(`${userId}:${resourceId}`).digest("hex").slice(0, 8).toUpperCase();
     const digest = artifact.checksum.replace("sha256:", "");
     const identity = createHash("sha256").update(`${name ?? ""}|${user.phone}`).digest("hex").slice(0, 12);
-    // v2: copies stamped before the rename still read kunkur01.ir. Bump the
-    // version whenever the stamp's text or layout changes, so every reader's
-    // copy is made again instead of serving the old one.
-    const key = `watermarked/v2/${digest}/${userId}-${identity}.pdf`;
+    // v3: the footer line was dropped from the stamp. Bump the version
+    // whenever the stamp's text or layout changes, so every reader's copy is
+    // made again instead of serving the old one.
+    const key = `watermarked/v3/${digest}/${userId}-${identity}.pdf`;
     const version = createHash("sha256").update(key).digest("hex").slice(0, 24);
 
     await this.audit.log({

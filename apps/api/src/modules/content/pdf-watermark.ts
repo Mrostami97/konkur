@@ -94,7 +94,6 @@ function getShaper() {
 }
 
 const INK = rgb(0.04, 0.35, 0.3);
-const MUTED = rgb(0.3, 0.33, 0.37);
 
 /** Draws a run of shaped lines centred on (cx, cy), rotated by `angle` degrees. */
 function drawCentred(page: PDFPage, lines: { line: ShapedLine; size: number }[], cx: number, cy: number, angle: number, upem: number, opacity: number) {
@@ -125,12 +124,10 @@ export async function watermarkPdf(original: Uint8Array, stamp: WatermarkStamp):
   const phone = toPersianDigits(stamp.phone);
   const nameLine = shape(who, "rtl");
   const detailLine = shape(`${phone} · ${toPersianDigits(stamp.date)} · kunkurcomputer.ir`, "ltr");
-  const footerLabel = shape(`نسخهٔ شخصی ${who}`, "rtl");
-  const footerDetail = shape(`${phone} · ${stamp.copyCode}`, "ltr");
 
   // The stamp is drawn once per distinct page size, into a scratch document,
   // and every page of that size then shows the same embedded copy. Drawing the
-  // outlines on each page instead put six large paths in every page: a
+  // outlines on each page instead put several large paths in every page: a
   // several-hundred-page handout took hundreds of MB of RAM to stamp, which the
   // small production server could not spare.
   const scratch = await PDFDocument.create();
@@ -145,15 +142,6 @@ export async function watermarkPdf(original: Uint8Array, stamp: WatermarkStamp):
     for (const fraction of [0.3, 0.72]) {
       drawCentred(page, [{ line: nameLine, size: big }, { line: detailLine, size: big * 0.55 }], width / 2, height * fraction, 32, upem, 0.11);
     }
-    // A small, legible line along the foot of the page.
-    const small = Math.max(6.5, Math.min(width, height) / 70);
-    const scale = small / upem;
-    const gap = small * 0.8;
-    const labelWidth = footerLabel.width * scale;
-    const detailWidth = footerDetail.width * scale;
-    const right = width / 2 + (labelWidth + gap + detailWidth) / 2;
-    page.drawSvgPath(footerLabel.path, { x: right - labelWidth, y: small * 2.2, scale, color: MUTED, opacity: 0.75 });
-    page.drawSvgPath(footerDetail.path, { x: right - labelWidth - gap - detailWidth, y: small * 2.2, scale, color: MUTED, opacity: 0.75 });
     const embedded = await doc.embedPage(page);
     stamps.set(key, embedded);
     return embedded;
