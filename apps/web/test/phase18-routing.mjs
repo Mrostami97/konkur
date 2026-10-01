@@ -215,6 +215,12 @@ try {
     "the same-origin /api gateway must return the upstream payload",
   );
 
+  const guideIndexHtml = visibleMarkup(await (await fetch(`${baseUrl}/guides`)).text());
+  const pendingGuideCard = guideIndexHtml.match(/<a\b[^>]*href="\/guides\/weekly-study-plan"[^>]*>([\s\S]*?)<\/a>/);
+  assert.ok(pendingGuideCard, "the pending weekly-plan guide must have a card on the guide index");
+  assert.match(pendingGuideCard[1], /تاریخ ثبت/, "a pending guide card must label its date as recorded, not reviewed");
+  assert.doesNotMatch(pendingGuideCard[1], /بررسی ۱۴۰۵/, "a pending guide card must not claim a completed review");
+
   for (const path of [
     "/articles/slug-does-not-exist",
     "/guides/slug-does-not-exist",

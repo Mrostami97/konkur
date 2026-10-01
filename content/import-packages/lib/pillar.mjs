@@ -14,13 +14,12 @@ const read = (slug) => {
   }
 };
 const href = (a) => `/${a.content_type === "guide" ? "guides" : "articles"}/${a.slug}`;
-const firstSentences = (s, n = 2) => (s.match(/[^.؟!]+[.؟!]?/g) || [s]).slice(0, n).join("").trim();
 
 export function pillarArticle(slug) {
   const P = PILLARS.find((p) => p.slug === slug);
   if (!P) throw new Error(`unknown pillar ${slug}`);
   const blocks = [text(P.intro)];
-  blocks.push({ type: "table", headers: ["بخش", "تعداد مطلب", "برای چه پرسشی؟"], rows: P.clusters.map((c) => [c[0], int(c[2].length), c[1].replace(/:$/, "").replace(/.$/, "")]) });
+  blocks.push({ type: "table", headers: ["بخش", "تعداد مطلب", "برای چه پرسشی؟"], rows: P.clusters.map((c) => [c[0], int(c[2].length), c[1].replace(/:$/, "")]) });
   let total = 0;
   for (const [heading, lead, slugs] of P.clusters) {
     const arts = slugs.map(read);
@@ -29,7 +28,7 @@ export function pillarArticle(slug) {
     blocks.push(text(lead));
     for (const a of arts) {
       blocks.push(h3(a.title));
-      blocks.push(text(firstSentences(a.quick_answer)));
+      blocks.push(text(a.quick_answer));
     }
     blocks.push({ type: "link_group", items: arts.map((a) => ({ label: a.title.split(":")[0].split("؟")[0] + (a.title.includes("؟") ? "؟" : ""), href: href(a) })) });
   }
