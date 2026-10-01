@@ -114,6 +114,27 @@ assert.deepEqual(
   "the six supplied Telegram evidence sources and their original URLs must remain exact",
 );
 
+// Source labels were checked against the actual posts on 2026-10-01. Keep
+// their live/import identities stable even though the old titles were wrong.
+const correctedSources = [
+  ["evidenceTheory100", "editorial-source-0bd9d17f6b6977a18bdc", "کارنامهٔ دکتری مهندسی کامپیوتر؛ رتبهٔ ۳۲ در سهمیه"],
+  ["evidenceData10", "editorial-source-f526984e864803b3d027", "کارنامهٔ ارشد با ۱۰۰٪ نظریهٔ زبان‌ها و ماشین‌ها"],
+  ["evidenceData9", "editorial-source-72aac1c49c7ed427c66b", "ادعای تطبیق ۹ سؤال از ۱۲ سؤال داده‌ساختار و الگوریتم ارشد"],
+  ["evidencePhd", "editorial-source-1e18761aca8ace6ff458", "پست دربارهٔ سؤال درهم‌سازی و ادعای حل آن در کلاس"],
+  ["evidenceQuestionDesign", "editorial-source-d619754ba9283d3271e1", "مرور ادعاهای کانال دربارهٔ تطبیق مطالب کلاس با کنکور و طراحی سؤال"],
+];
+for (const [key, externalId, title] of correctedSources) {
+  const source = corpus.sources[key];
+  assert.equal(source.externalId, externalId);
+  assert.equal(source.title, title);
+  const matches = generatedSeed.sources.filter((item) => item.canonicalUrl === source.url);
+  assert.equal(matches.length, 1, `${key} must not create a duplicate source after retitling`);
+  assert.equal(matches[0].externalId, externalId);
+  assert.equal(matches[0].title, title);
+  assert.equal(matches[0].checkedAt, "2026-10-01T00:00:00.000Z");
+  assert.equal(matches[0].metadata.supportedClaim, source.supportedClaim);
+}
+
 for (const [sourceId, source] of Object.entries(corpus.sources)) {
   assertNonEmpty(source.title, `${sourceId}.title`);
   assertNonEmpty(source.publisher, `${sourceId}.publisher`);

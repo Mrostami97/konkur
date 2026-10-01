@@ -132,6 +132,13 @@ jobs:
           pnpm --filter @konkurcom/api exec prisma migrate status
           pnpm --filter @konkurcom/api run test
 
+      # Status codes depend on streaming behavior; verify the production Next
+      # build against a controlled upstream, including topic 404 vs API outage.
+      - name: Production routing and article SEO regressions
+        env:
+          WEB_ROUTING_MODE: production
+        run: pnpm --filter @konkurcom/web run test:phase18:routing
+
       # Only four API e2e specs need real S3. Starting MinIO here keeps install,
       # compilation, linting, migrations, and unit tests independent from an
       # external container registry. GitHub Actions services cannot override

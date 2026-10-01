@@ -4,7 +4,7 @@ import { phase12EditorialPages } from "../content/phase12";
 import { isMergedGuide, withoutMergedGuides } from "./merged-pages";
 import { apiGetPublic } from "./api";
 import type { Availability } from "./availability";
-import { absoluteUrl } from "./seo";
+import { absoluteUrl, articleModifiedTime } from "./seo";
 
 type SitemapEntry = {
   loc: string;
@@ -97,13 +97,13 @@ export async function guideSitemapEntries(): Promise<SitemapCollection> {
     { loc: absoluteUrl("/guides") },
     ...withoutMergedGuides([...guides, ...phase12EditorialPages]).filter((guide) => !publishedTypes.has(guide.slug) || publishedTypes.get(guide.slug) === "GUIDE").map((guide) => ({
       loc: absoluteUrl(`/guides/${guide.slug}`),
-      lastmod: asIso(editorialDateIso(guide.reviewedAt)),
+      lastmod: articleModifiedTime(editorialDateIso(guide.publishedAt), editorialDateIso(guide.reviewedAt)) ?? asIso(editorialDateIso(guide.publishedAt)),
     })),
     ...published
       .filter((article) => article.contentType === "GUIDE" && !isMergedGuide(article.slug))
       .map((article) => ({
         loc: absoluteUrl(`/guides/${article.slug}`),
-        lastmod: asIso(article.reviewedAt ?? article.updatedAt ?? article.publishedAt),
+        lastmod: articleModifiedTime(article.publishedAt, article.reviewedAt) ?? asIso(article.publishedAt),
       })),
   ]) };
 }
@@ -117,13 +117,13 @@ export async function articleSitemapEntries(): Promise<SitemapCollection> {
     { loc: absoluteUrl("/articles") },
     ...articles.filter((article) => !publishedTypes.has(article.slug) || publishedTypes.get(article.slug) !== "GUIDE").map((article) => ({
       loc: absoluteUrl(`/articles/${article.slug}`),
-      lastmod: asIso(editorialDateIso(article.reviewedAt)),
+      lastmod: articleModifiedTime(editorialDateIso(article.publishedAt), editorialDateIso(article.reviewedAt)) ?? asIso(editorialDateIso(article.publishedAt)),
     })),
     ...published
       .filter((article) => article.contentType !== "GUIDE")
       .map((article) => ({
         loc: absoluteUrl(`/articles/${article.slug}`),
-        lastmod: asIso(article.reviewedAt ?? article.updatedAt ?? article.publishedAt),
+        lastmod: articleModifiedTime(article.publishedAt, article.reviewedAt) ?? asIso(article.publishedAt),
       })),
     ...authors.map((slug) => ({ loc: absoluteUrl(`/authors/${slug}`) })),
   ]) };
