@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma, Role } from "@prisma/client";
+import { OrderStatus, Prisma, Role } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { CreateUserDto } from "./dto/user-admin.dto";
@@ -141,6 +141,72 @@ export class UserAdminService {
     });
     const updated = await this.prisma.user.findUniqueOrThrow({ where: { id: userId }, select: USER_SELECT });
     return toView(updated);
+  }
+
+  /** The phone number is the sign-in name, so changing it changes how the
+   * person signs in; their open sessions stay as they are. */
+  async changePhone(actorId: string, userId: string, phone: string) {
+    const tail = mobileTail(phone);
+    if (!tail) throw new BadRequestException("شمارهٔ موبایل معتبر نیست.");
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { id: true, phone: true } });
+    if (!user) throw new NotFoundException("user not found");
+    const taken = await this.prisma.user.findFirst({
+      where: { phone: { in: phoneVariants(phone) }, id: { not: userId } },
+      select: { id: true },
+    });
+    if (taken) throw new ConflictException("کاربر دیگری با این شماره هست.");
+    if (mobileTail(user.phone) === tail && user.phone === `0${tail}`) {
+      return toView(await this.prisma.user.findUniqueOrThrow({ where: { id: userId }, select: USER_SELECT }));
+    }
+    const updated = await this.prisma.user.update({ where: { id: userId }, data: { phone: `0${tail}` }, select: USER_SELECT });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "user.phone_changed",
+      targetType: "User",
+      targetId: userId,
+      metadata: { before: user.phone, after: updated.phone },
+    });
+    return toView(updated);
+  }
+
+  /**
+   * Deletes an account and everything that hangs off it (sessions, attempts,
+   * study history, unpaid orders, access grants). An account with a paid order
+   * or a consultation booking is kept: those are financial and service
+   * records that must not vanish with a person. An instructor profile stays
+   * public, only unlinked from the deleted account.
+   */
+  async remove(actorId: string, userId: string) {
+    if (userId === actorId) throw new BadRequestException("حساب خودتان را نمی‌توانید حذف کنید.");
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: USER_SELECT });
+    if (!user) throw new NotFoundException("user not found");
+    const [paidOrders, bookings] = await Promise.all([
+      this.prisma.order.count({ where: { userId, status: OrderStatus.PAID } }),
+      this.prisma.consultationBooking.count({ where: { studentUserId: userId } }),
+    ]);
+    if (paidOrders > 0) {
+      throw new BadRequestException("این کاربر خرید پرداخت‌شده دارد و سوابق مالی‌اش نباید پاک شود. به‌جای حذف، دسترسی‌هایش را بگیرید و نشست‌هایش را ببندید.");
+    }
+    if (bookings > 0) {
+      throw new BadRequestException("این کاربر جلسهٔ مشاوره دارد و حذف نمی‌شود. اول جلسه‌هایش را در بخش مشاوره‌ها پاک کنید.");
+    }
+    const view = toView(user);
+    try {
+      await this.prisma.user.delete({ where: { id: userId } });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+        throw new BadRequestException("این کاربر به داده‌ای وصل است که نگه داشته می‌شود و حذف نمی‌شود.");
+      }
+      throw error;
+    }
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "user.deleted_by_admin",
+      targetType: "User",
+      targetId: userId,
+      metadata: { phone: user.phone, name: view.name, roles: view.roles },
+    });
+    return { deleted: true };
   }
 
   /** Setting someone else's password also signs them out everywhere, so an

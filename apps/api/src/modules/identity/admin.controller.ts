@@ -1,9 +1,9 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "./guards/session-auth.guard";
 import { RolesGuard } from "./guards/roles.guard";
 import { Roles } from "./guards/roles.decorator";
-import { CreateUserDto, SetPasswordDto, SetRolesDto } from "./dto/user-admin.dto";
+import { ChangePhoneDto, CreateUserDto, SetPasswordDto, SetRolesDto } from "./dto/user-admin.dto";
 import { UserAdminService } from "./user-admin.service";
 
 /** Staff and account management. Administrators only. */
@@ -39,6 +39,16 @@ export class AdminController {
   @Put("users/:id/roles")
   setRoles(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: SetRolesDto) {
     return this.users.setRoles(req.user!.id, id, dto.roles);
+  }
+
+  @Put("users/:id/phone")
+  changePhone(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: ChangePhoneDto) {
+    return this.users.changePhone(req.user!.id, id, dto.phone);
+  }
+
+  @Delete("users/:id")
+  deleteUser(@Req() req: RequestWithUser, @Param("id") id: string) {
+    return this.users.remove(req.user!.id, id);
   }
 
   @Post("users/:id/password")

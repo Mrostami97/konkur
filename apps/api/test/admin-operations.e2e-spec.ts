@@ -5,6 +5,7 @@ import { Test } from "@nestjs/testing";
 import cookieParser from "cookie-parser";
 import request from "supertest";
 import { AppModule } from "../src/app.module";
+import { PrismaService } from "../src/prisma/prisma.service";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
 import { seed, SEED_ADMIN_PHONE } from "../src/seed";
 
@@ -115,8 +116,48 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
       await asAdmin("put", `/admin/users/${adminId}/roles`).send({ roles: ["STUDENT"] }).expect(400);
     });
 
+    it("changes a user's sign-in number, in any typed form, and refuses one already taken", async () => {
+      const first = await asAdmin("post", "/admin/users").send({ phone: randomMobile(), roles: ["STUDENT"] }).expect(201);
+      const takenPhone = randomMobile();
+      await asAdmin("post", "/admin/users").send({ phone: takenPhone, roles: ["STUDENT"] }).expect(201);
+      await asAdmin("post", `/admin/users/${first.body.id}/password`).send({ password: "a-good-password" }).expect(201);
+
+      const fresh = randomMobile();
+      const changed = await asAdmin("put", `/admin/users/${first.body.id}/phone`).send({ phone: `+98${fresh.slice(1)}` }).expect(200);
+      expect(changed.body.phone).toBe(fresh);
+      await http().post("/auth/password/login").send({ phone: fresh, password: "a-good-password" }).expect(200);
+      await http().post("/auth/password/login").send({ phone: first.body.phone, password: "a-good-password" }).expect(401);
+
+      await asAdmin("put", `/admin/users/${first.body.id}/phone`).send({ phone: `+98${takenPhone.slice(1)}` }).expect(409);
+      await asAdmin("put", `/admin/users/${first.body.id}/phone`).send({ phone: "12345" }).expect(400);
+      await asAdmin("put", `/admin/users/${first.body.id}/phone`).send({ phone: fresh }).expect(200);
+    });
+
+    it("deletes a user, even an administrator, but never yourself or someone with a paid order", async () => {
+      const prisma = app.get(PrismaService);
+      const student = await login(randomMobile());
+      await asAdmin("delete", `/admin/users/${student.id}`).expect(200);
+      expect(await prisma.user.findUnique({ where: { id: student.id } })).toBeNull();
+      await http().get("/auth/me").set("Cookie", student.cookie).expect(401);
+      await asAdmin("delete", `/admin/users/${student.id}`).expect(404);
+
+      const other = await asAdmin("post", "/admin/users").send({ phone: randomMobile(), roles: ["ADMIN"] }).expect(201);
+      await asAdmin("delete", `/admin/users/${other.body.id}`).expect(200);
+      const deletions = await prisma.auditLog.count({ where: { action: "user.deleted_by_admin", targetId: other.body.id } });
+      expect(deletions).toBe(1);
+
+      await asAdmin("delete", `/admin/users/${adminId}`).expect(400);
+
+      const buyer = await asAdmin("post", "/admin/users").send({ phone: randomMobile(), roles: ["STUDENT"] }).expect(201);
+      await prisma.order.create({ data: { userId: buyer.body.id, status: "PAID", totalAmountRial: 1_000_000 } });
+      await asAdmin("delete", `/admin/users/${buyer.body.id}`).expect(400);
+      expect(await prisma.user.findUnique({ where: { id: buyer.body.id } })).not.toBeNull();
+    });
+
     it("is closed to everyone but administrators", async () => {
       const student = await login(randomMobile());
+      await http().put(`/admin/users/${student.id}/phone`).set("Cookie", student.cookie).send({ phone: randomMobile() }).expect(403);
+      await http().delete(`/admin/users/${student.id}`).set("Cookie", student.cookie).expect(403);
       await http().get("/admin/users?page=1").set("Cookie", student.cookie).expect(403);
       await http().post("/admin/users").set("Cookie", student.cookie).send({ phone: randomMobile(), roles: ["ADMIN"] }).expect(403);
       await http().put(`/admin/users/${student.id}/roles`).set("Cookie", student.cookie).send({ roles: ["ADMIN"] }).expect(403);

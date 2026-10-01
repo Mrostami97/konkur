@@ -315,16 +315,21 @@ export function ConfirmDialog({
   onCancel: () => void;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelRef = useRef(onCancel);
+  cancelRef.current = onCancel;
 
+  // Focus moves into the dialog only when it opens. Keying this on `onCancel`
+  // (a new function on every render of most pages) pulled focus off a field
+  // after each keystroke, so only the first character of a typed value stuck.
   useEffect(() => {
     if (!open) return;
     dialogRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onCancel();
+      if (event.key === "Escape") cancelRef.current();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onCancel]);
+  }, [open]);
 
   if (!open) return null;
 

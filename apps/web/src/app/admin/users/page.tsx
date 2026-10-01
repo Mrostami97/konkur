@@ -165,6 +165,9 @@ export default function AdminUsersPage() {
   const [passwordTarget, setPasswordTarget] = useState<AdminUser | null>(null);
   const [password, setPassword] = useState("");
   const [signOutTarget, setSignOutTarget] = useState<AdminUser | null>(null);
+  const [phoneTarget, setPhoneTarget] = useState<AdminUser | null>(null);
+  const [newPhone, setNewPhone] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
   const [busy, setBusy] = useState(false);
   const [dialogError, setDialogError] = useState<string | null>(null);
 
@@ -193,6 +196,9 @@ export default function AdminUsersPage() {
     setRoleTarget(null);
     setPasswordTarget(null);
     setSignOutTarget(null);
+    setPhoneTarget(null);
+    setDeleteTarget(null);
+    setNewPhone("");
     setPassword("");
     setDialogError(null);
   }
@@ -218,7 +224,7 @@ export default function AdminUsersPage() {
     <>
       <AdminPageHeader
         title="کاربران و نقش‌ها"
-        description="جست‌وجوی کاربران، دادن یا گرفتن نقش، گذاشتن رمز ورود و بستن نشست‌ها. هر تغییر در تاریخچهٔ ممیزی ثبت می‌شود."
+        description="جست‌وجوی کاربران، دادن یا گرفتن نقش، گذاشتن رمز ورود، تغییر شمارهٔ ورود، بستن نشست‌ها و حذف حساب. هر تغییر در تاریخچهٔ ممیزی ثبت می‌شود."
       />
       <div className="ds-stack-lg">
         <Card padded={false}>
@@ -295,7 +301,9 @@ export default function AdminUsersPage() {
                         <div className="ds-table-actions">
                           <Button size="sm" onClick={() => { closeDialogs(); setDraftRoles(user.roles); setRoleTarget(user); }}>نقش‌ها</Button>
                           <Button size="sm" onClick={() => { closeDialogs(); setPasswordTarget(user); }}>رمز ورود</Button>
+                          <Button size="sm" onClick={() => { closeDialogs(); setNewPhone(user.phone); setPhoneTarget(user); }}>تغییر شماره</Button>
                           <Button size="sm" variant="ghost" onClick={() => { closeDialogs(); setSignOutTarget(user); }}>بستن نشست‌ها</Button>
+                          <Button size="sm" variant="ghost" onClick={() => { closeDialogs(); setDeleteTarget(user); }}>حذف</Button>
                         </div>
                       </td>
                     </tr>
@@ -374,6 +382,53 @@ export default function AdminUsersPage() {
         }
         onCancel={closeDialogs}
       >
+        {dialogError && <Alert tone="danger">{dialogError}</Alert>}
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        open={phoneTarget !== null}
+        title={`تغییر شمارهٔ ${phoneTarget ? nameOf(phoneTarget) : ""}`}
+        description="شمارهٔ موبایل همان نام ورود است. بعد از تغییر، کاربر با شمارهٔ تازه (و همان رمز قبلی) وارد می‌شود. نشست‌های باز او بسته نمی‌شود."
+        confirmLabel="ذخیرهٔ شماره"
+        busy={busy}
+        confirmDisabled={!/^(\+98|0098|98|0)?9[0-9]{9}$/.test(toEnglishDigits(newPhone).replace(/\s/g, ""))}
+        onConfirm={() =>
+          void run(async () => {
+            await apiFetch(`/admin/users/${phoneTarget!.id}/phone`, {
+              method: "PUT",
+              body: { phone: toEnglishDigits(newPhone).replace(/\s/g, "") },
+            });
+            return `شمارهٔ ${nameOf(phoneTarget!)} عوض شد.`;
+          })
+        }
+        onCancel={closeDialogs}
+      >
+        <Field label="شمارهٔ موبایل تازه" hint="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" required>
+          {(props) => (
+            <Input {...props} dir="ltr" inputMode="tel" value={newPhone} onChange={(event) => setNewPhone(event.target.value)} />
+          )}
+        </Field>
+        {dialogError && <div style={{ marginTop: "var(--sp-3)" }}><Alert tone="danger">{dialogError}</Alert></div>}
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title={`حذف ${deleteTarget ? nameOf(deleteTarget) : ""}`}
+        description="حساب برای همیشه پاک می‌شود، با نشست‌ها، سابقهٔ آزمون و مطالعه، سفارش‌های پرداخت‌نشده و دسترسی‌هایش. این کار برگشت ندارد. کاربری که خرید پرداخت‌شده یا جلسهٔ مشاوره دارد حذف نمی‌شود. نقش مدیر هم از این راه حذف می‌شود، جز حساب خودتان."
+        confirmLabel="حذف برای همیشه"
+        tone="danger"
+        busy={busy}
+        onConfirm={() =>
+          void run(async () => {
+            await apiFetch(`/admin/users/${deleteTarget!.id}`, { method: "DELETE" });
+            return `${nameOf(deleteTarget!)} حذف شد.`;
+          })
+        }
+        onCancel={closeDialogs}
+      >
+        {deleteTarget?.roles.includes("ADMIN") && (
+          <div style={{ marginBottom: "var(--sp-3)" }}><Alert tone="warning">این حساب مدیر است.</Alert></div>
+        )}
         {dialogError && <Alert tone="danger">{dialogError}</Alert>}
       </ConfirmDialog>
     </>

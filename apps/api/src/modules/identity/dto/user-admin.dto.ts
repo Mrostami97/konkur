@@ -35,3 +35,8 @@ export class SetPasswordDto {
   @MaxLength(128)
   password!: string;
 }
+
+export class ChangePhoneDto {
+  @Matches(/^(\+98|0098|98|0)?9[0-9]{9}$/, { message: "phone must be an Iranian mobile number" })
+  phone!: string;
+}
