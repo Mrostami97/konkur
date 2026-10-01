@@ -48,7 +48,14 @@ for (const page of pages) {
   assert.match(result.body, /data-phase12="verified-guide"/, `${route} must expose the Phase 12 marker`);
   assert.match(result.body, /پاسخ سریع/, `${route} must render its answer-first block`);
   assert.match(result.body, /منابع و اعتبارسنجی/, `${route} must render sources`);
-  assert.match(result.body, /آخرین بررسی/, `${route} must render its review date`);
+  assert.match(result.body, /تاریخ ثبت/, `${route} must show the date recorded for the unreviewed fallback`);
+  assert.match(result.body, /بازبینی انسانی: در انتظار تأیید/, `${route} must disclose its pending review`);
+  const schemas = [...result.body.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .flatMap(match => { const value = JSON.parse(match[1]); return Array.isArray(value) ? value : [value]; });
+  const articleSchema = schemas.find(item => item["@type"] === "Article");
+  assert.equal(articleSchema?.author?.["@type"], "Organization", `${route} must retain editorial attribution`);
+  assert.equal(articleSchema.author.name, "تحریریه کنکور کامپیوتر");
+  assert.ok(!("dateModified" in articleSchema), `${route} must not turn pending review into a modification date`);
   if (page.kind === "OFFICIAL") {
     assert.match(result.body, /ملاک نهایی/, `${route} must carry the official-source warning`);
   }
