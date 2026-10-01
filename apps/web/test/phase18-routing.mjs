@@ -288,6 +288,9 @@ try {
   const ownerArticle = ownerSchemas.find((item) => item["@type"] === "Article");
   assert.equal(ownerArticle?.author?.["@type"], "Person");
   assert.equal(ownerArticle.author.name, "محمد رستمی", "an explicitly declared personal author must be retained");
+  assert.match(visibleMarkup(ownerHtml), /نویسنده:/);
+  assert.match(visibleMarkup(ownerHtml), /بازبین:/);
+  assert.match(visibleMarkup(ownerHtml), /تحریریه کنکور کامپیوتر/);
 
   for (const path of [
     "/articles/mock-unavailable",
