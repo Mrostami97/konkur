@@ -283,7 +283,7 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
       expect(serialized).not.toContain(student.id);
       for (const event of anonymous.body) {
         expect(Object.keys(event).sort()).toEqual(
-          event.kind === "signup" ? ["at", "degree", "field", "id", "kind"] : ["at", "href", "id", "kind", "product"],
+          event.kind === "signup" ? ["at", "degree", "field", "id", "kind"] : ["at", "href", "id", "kind", "name", "noun", "product"],
         );
       }
 
@@ -315,7 +315,7 @@ describe("Admin operations: users, roles and safe deletes (e2e)", () => {
       expect(ids).not.toContain(idOf(gift.body.id));
       expect(ids).not.toContain(idOf(staff.body.id));
       const shown = events.find((event) => event.id === idOf(sold.body.id));
-      expect(shown).toMatchObject({ kind: "purchase", product: `Activity bank ${run}`, href: "/questions" });
+      expect(shown).toMatchObject({ kind: "purchase", product: `Activity bank ${run}`, noun: null, name: `Activity bank ${run}`, href: "/questions" });
       expect(JSON.stringify(events)).not.toContain(buyer.id);
 
       // The buyer is not shown their own purchase.

@@ -9,7 +9,7 @@ import { toPersianDigits } from "../lib/format";
 
 type ActivityEvent =
   | { id: string; kind: "signup"; at: string; degree: "MASTER" | "PHD" | null; field: string | null }
-  | { id: string; kind: "purchase"; at: string; product: string; href: string };
+  | { id: string; kind: "purchase"; at: string; product: string; noun: string | null; name: string; href: string };
 
 const FIRST_DELAY_MS = 9_000;
 const GAP_MS = 30_000;
@@ -59,7 +59,8 @@ function ago(iso: string) {
 
 function describe(event: ActivityEvent) {
   if (event.kind === "purchase") {
-    return { line: <>یک نفر <b>«{event.product}»</b> را تهیه کرد</>, cta: "دیدن و تهیه", href: event.href };
+    const what = event.name ?? event.product;
+    return { line: <>یک نفر {event.noun ? `${event.noun} ` : ""}<b>«{what}»</b> را تهیه کرد</>, cta: "دیدن و تهیه", href: event.href };
   }
   const degree = event.degree === "PHD" ? "دکتری" : event.degree === "MASTER" ? "ارشد" : null;
   const field = TARGET_FIELDS.find((option) => option.value === event.field)?.label ?? null;
