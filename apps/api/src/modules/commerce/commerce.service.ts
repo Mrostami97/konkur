@@ -214,7 +214,7 @@ export class CommerceService {
           (product.consultationOffering.validUntil !== null &&
             product.consultationOffering.validUntil <= new Date())))
     ) {
-      throw new NotFoundException("product not available for purchase");
+      throw new NotFoundException("این محصول الان برای خرید باز نیست.");
     }
     const price = product.prices[0];
 
@@ -226,7 +226,7 @@ export class CommerceService {
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
     });
     if (!bankAccount) {
-      throw new BadRequestException("no active bank account is configured to receive transfers");
+      throw new BadRequestException("ثبت سفارش الان ممکن نیست، چون هنوز کارتی برای دریافت پول تنظیم نشده. به پشتیبانی خبر بده.");
     }
 
     const referenceCode = await this.allocateReferenceCode();
