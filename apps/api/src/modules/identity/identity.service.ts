@@ -142,7 +142,17 @@ export class IdentityService {
     });
     for (const user of candidates) {
       if (user.passwordHash && (await verifyPassword(password, user.passwordHash))) {
-        return this.issueSession(user, ctx, "password");
+        // Keep password hashing outside the lock. A rotation updates this same
+        // user row before revoking sessions, so recheck the verified credential
+        // under the lock and issue the session before releasing it.
+        return this.prisma.$transaction(async (tx) => {
+          await tx.$queryRaw`SELECT "id" FROM "users" WHERE "id" = ${user.id} FOR UPDATE`;
+          const current = await tx.user.findUnique({ where: { id: user.id }, include: { roles: true } });
+          if (!current || current.passwordHash !== user.passwordHash) {
+            throw new UnauthorizedException("invalid phone or password");
+          }
+          return this.issueSession(current, ctx, "password", tx);
+        });
       }
     }
     throw new UnauthorizedException("invalid phone or password");

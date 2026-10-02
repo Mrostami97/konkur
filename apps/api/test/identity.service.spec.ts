@@ -5,6 +5,7 @@ import { AuditService } from "../src/modules/audit/audit.service";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { ConsoleOtpProvider, OtpProvider } from "../src/modules/identity/otp-provider";
 import { hashPassword } from "../src/modules/identity/password-hasher";
+import { UserAdminService } from "../src/modules/identity/user-admin.service";
 
 function buildFakePrisma() {
   const users = new Map<string, any>();
@@ -17,6 +18,7 @@ function buildFakePrisma() {
 
   const db = {
     $executeRaw: jest.fn(async () => 1),
+    $queryRaw: jest.fn(async () => []),
     $transaction: jest.fn(),
     user: {
       findUnique: jest.fn(async ({ where, include }: any) => {
@@ -38,6 +40,11 @@ function buildFakePrisma() {
       create: jest.fn(async ({ data }: any) => {
         const user = { id: nextId(), ...data };
         users.set(user.id, user);
+        return user;
+      }),
+      update: jest.fn(async ({ where, data }: any) => {
+        const user = users.get(where.id);
+        Object.assign(user, data);
         return user;
       }),
     },
@@ -107,6 +114,12 @@ function buildFakePrisma() {
         const row = sessions.find((s) => s.id === where.id);
         Object.assign(row, data);
         return row;
+      }),
+      updateMany: jest.fn(async ({ where, data }: any) => {
+        const rows = sessions.filter((row) => row.userId === where.userId &&
+          row.revokedAt === where.revokedAt && row.tokenHash !== where.tokenHash?.not);
+        rows.forEach((row) => Object.assign(row, data));
+        return { count: rows.length };
       }),
     },
     _debug: { users, userRoles, otpCodes, sessions, outboxEvents },
@@ -197,6 +210,49 @@ describe("IdentityService", () => {
     await expect(service.loginWithPassword(phone, "wrong", {})).rejects.toBeInstanceOf(
       UnauthorizedException,
     );
+  });
+
+  it("rejects an old-password login whose user snapshot predates a completed rotation", async () => {
+    await service.requestOtp(phone);
+    const user = [...prisma._debug.users.values()][0];
+    user.passwordHash = await hashPassword("synthetic-old-password");
+    const admin = new UserAdminService(prisma, audit);
+    const originalRead = prisma.user.findMany.bind(prisma.user);
+    let release!: () => void;
+    let entered!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const readFinished = new Promise<void>((resolve) => { entered = resolve; });
+    const spy = jest.spyOn(prisma.user, "findMany").mockImplementationOnce((...args) =>
+      originalRead(...args).then(async (snapshot) => {
+        entered();
+        await gate;
+        return snapshot;
+      }) as never);
+    const pendingLogin = service.loginWithPassword(phone, "synthetic-old-password", {});
+    // Attach the rejection observer before releasing the controlled read.
+    const denied = expect(pendingLogin).rejects.toBeInstanceOf(UnauthorizedException);
+    try {
+      await readFinished;
+      await admin.setPassword("operator", user.id, "synthetic-new-password");
+      release();
+      await denied;
+      expect(prisma._debug.sessions).toHaveLength(0);
+      expect((await service.loginWithPassword(phone, "synthetic-new-password", {})).user.id).toBe(user.id);
+    } finally {
+      release();
+      spy.mockRestore();
+    }
+  });
+
+  it("revokes a password session when login completes before rotation", async () => {
+    await service.requestOtp(phone);
+    const user = [...prisma._debug.users.values()][0];
+    user.passwordHash = await hashPassword("synthetic-old-password");
+    const admin = new UserAdminService(prisma, audit);
+    const { token } = await service.loginWithPassword(phone, "synthetic-old-password", {});
+    expect((await service.validateSession(token))?.id).toBe(user.id);
+    expect((await admin.setPassword("operator", user.id, "synthetic-new-password")).sessionsRevoked).toBe(1);
+    expect(await service.validateSession(token)).toBeNull();
   });
 
   it("claims a code once when two verifications read the same pending snapshot", async () => {
