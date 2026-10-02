@@ -1,0 +1,78 @@
+name: Private production preparation
+
+on:
+  push:
+    branches: [codex/security-hardening-2026-10-02]
+    paths:
+      - ops/prepare-production.sh
+      - .github/workflows/security-production-prepare.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-production-prepare
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.repository == 'Mrostami97/konkur' && github.ref == 'refs/heads/codex/security-hardening-2026-10-02'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Protect environment permissions and create a private validated backup
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          PRODUCTION_INSPECTION_PUBLIC_KEY: ${{ vars.PRODUCTION_INSPECTION_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          SSH_USER="${SSH_USER:-root}"
+          DEPLOY_PATH="${DEPLOY_PATH:-/opt/app}"
+          [[ "${SSH_HOST:-}" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]] || { echo 'Invalid SSH host.' >&2; exit 1; }
+          [[ "$SSH_USER" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]] || { echo 'Invalid SSH user.' >&2; exit 1; }
+          [[ "$DEPLOY_PATH" =~ ^/[a-zA-Z0-9_./-]+$ ]] || { echo 'Invalid deployment path.' >&2; exit 1; }
+          [ -n "${SSH_KNOWN_HOSTS:-}" ] || { echo 'Verified SSH host pin is required.' >&2; exit 1; }
+          [ -n "${PRODUCTION_INSPECTION_PUBLIC_KEY:-}" ] || { echo 'Operator public encryption key is required.' >&2; exit 1; }
+          umask 077
+          known="$RUNNER_TEMP/prepare-known-hosts"
+          key="$RUNNER_TEMP/prepare-key"
+          report="$RUNNER_TEMP/prepare-report"
+          trap 'rm -f -- "$known" "$key" "$report"' EXIT
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$known"
+          ssh-keygen -l -f "$known" >/dev/null
+          ssh-keygen -F "$SSH_HOST" -f "$known" >/dev/null
+          ssh_command=(ssh -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$known" -o ConnectTimeout=20 -o ConnectionAttempts=1)
+          if [ -n "${SSH_KEY:-}" ]; then
+            printf '%s\n' "$SSH_KEY" > "$key"
+            ssh_command+=(-o BatchMode=yes -i "$key")
+          elif [ -n "${SSH_PASS:-}" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq sshpass
+            export SSHPASS="$SSH_PASS"
+            ssh_command=(sshpass -e "${ssh_command[@]}")
+          else
+            echo 'No existing SSH authentication is configured.' >&2
+            exit 1
+          fi
+          remote="$SSH_USER@$SSH_HOST"
+          preparation_status=0
+          # Stream only the reviewed preparation and private backup helper.
+          # No source sync, rotation, restart, migration, restore or firewall change.
+          {
+            printf 'PREPARE_BACKUP_SHA256=%q\n' "$(sha256sum ops/backup.sh | awk '{ print $1 }')"
+            printf 'PREPARE_BACKUP_BASE64=%q\n' "$(base64 -w0 ops/backup.sh)"
+            cat ops/prepare-production.sh
+          } | "${ssh_command[@]}" "$remote" "cd '$DEPLOY_PATH' && bash -s" >"$report" 2>&1 || preparation_status=1
+          chmod 600 "$report"
+          node scripts/encrypt-production-inspection.mjs < "$report"
+          if [ "$preparation_status" -ne 0 ]; then
+            echo 'Production preparation stopped safely; review the encrypted diagnostics.' >&2
+            exit 1
+          fi
+          echo 'Production preparation completed; encrypted diagnostics were provided.'
