@@ -341,6 +341,13 @@ export class ConsultationsService {
       // Oldest entitlement with quota left, so the balance that expires
       // soonest is spent first.
       for (const entitlement of entitlements) {
+        // Serialize quota consumption for this purchase at READ COMMITTED.
+        // Other requests see the first booking after this lock is released.
+        await tx.$queryRaw`SELECT "id" FROM "entitlements" WHERE "id" = ${entitlement.id} FOR UPDATE`;
+        const current = await tx.entitlement.findUnique({ where: { id: entitlement.id } });
+        const now = new Date();
+        if (!current || current.userId !== userId || current.productId !== offering.productId
+          || current.revokedAt || current.startAt > now || (current.endAt && current.endAt <= now)) continue;
         const used = await tx.consultationBooking.count({
           where: { entitlementId: entitlement.id, status: { in: QUOTA_CONSUMING } },
         });
@@ -384,22 +391,23 @@ export class ConsultationsService {
    * quota, and who cancelled is recorded. */
   async cancelBooking(actorUserId: string, bookingId: string, reason: string) {
     const booking = await this.loadParticipantBooking(actorUserId, bookingId);
-    if (booking.status === ConsultationBookingStatus.COMPLETED) {
-      throw new BadRequestException("a completed session cannot be cancelled");
+    if (booking.status === ConsultationBookingStatus.COMPLETED || booking.status === ConsultationBookingStatus.NO_SHOW) {
+      throw new BadRequestException("a completed or missed session cannot be cancelled");
     }
     if (booking.status === ConsultationBookingStatus.CANCELLED) {
       throw new BadRequestException("this session is already cancelled");
     }
 
-    const updated = await this.prisma.consultationBooking.update({
-      where: { id: bookingId },
+    const cancelled = await this.prisma.consultationBooking.updateMany({
+      where: { id: bookingId, status: booking.status },
       data: {
         status: ConsultationBookingStatus.CANCELLED,
         cancelledAt: new Date(),
         cancelReason: reason,
       },
-      select: BOOKING_SELECT,
     });
+    if (cancelled.count !== 1) throw new BadRequestException("booking changed; refresh before cancelling");
+    const updated = await this.prisma.consultationBooking.findUniqueOrThrow({ where: { id: bookingId }, select: BOOKING_SELECT });
 
     await this.audit.log({
       actorUserId,
@@ -449,16 +457,17 @@ export class ConsultationsService {
     const scheduledAt = new Date(dto.scheduledAt);
     if (Number.isNaN(scheduledAt.getTime())) throw new BadRequestException("scheduledAt must be a valid date");
 
-    const updated = await this.prisma.consultationBooking.update({
-      where: { id: bookingId },
+    const confirmed = await this.prisma.consultationBooking.updateMany({
+      where: { id: bookingId, status: booking.status },
       data: {
         status: ConsultationBookingStatus.CONFIRMED,
         scheduledAt,
         meetingUrl: dto.meetingUrl,
         instructorNote: dto.instructorNote,
       },
-      select: BOOKING_SELECT,
     });
+    if (confirmed.count !== 1) throw new BadRequestException("booking changed; refresh before scheduling");
+    const updated = await this.prisma.consultationBooking.findUniqueOrThrow({ where: { id: bookingId }, select: BOOKING_SELECT });
 
     await this.audit.log({
       actorUserId: userId,
@@ -490,15 +499,16 @@ export class ConsultationsService {
       throw new BadRequestException("only a confirmed session can be closed");
     }
 
-    const updated = await this.prisma.consultationBooking.update({
-      where: { id: bookingId },
+    const closed = await this.prisma.consultationBooking.updateMany({
+      where: { id: bookingId, status: ConsultationBookingStatus.CONFIRMED },
       data: {
         status: ConsultationBookingStatus[outcome],
         completedAt: outcome === "COMPLETED" ? new Date() : null,
         instructorNote: instructorNote ?? undefined,
       },
-      select: BOOKING_SELECT,
     });
+    if (closed.count !== 1) throw new BadRequestException("booking changed; refresh before closing");
+    const updated = await this.prisma.consultationBooking.findUniqueOrThrow({ where: { id: bookingId }, select: BOOKING_SELECT });
 
     await this.audit.log({
       actorUserId: userId,

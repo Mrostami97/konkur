@@ -61,7 +61,9 @@ export class HealthzController {
       await fn();
       return { status: "ok", latencyMs: Date.now() - start };
     } catch (err) {
-      return { status: "error", latencyMs: Date.now() - start, error: (err as Error).message };
+      // Dependency messages can contain internal hosts, paths or credentials.
+      void err;
+      return { status: "error", latencyMs: Date.now() - start, error: "dependency check failed" };
     }
   }
 }

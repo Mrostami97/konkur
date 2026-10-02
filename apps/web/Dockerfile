@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS base
+FROM node:24-bookworm-slim AS base
 RUN corepack enable
 WORKDIR /repo
 
@@ -22,8 +22,9 @@ WORKDIR /app
 # dependencies. Keeping static/public assets beside the generated monorepo
 # server avoids shipping the full pnpm store and source tree (previously
 # ~1.65 GB on the VPS).
-COPY --from=build /repo/apps/web/.next/standalone ./
-COPY --from=build /repo/apps/web/.next/static ./apps/web/.next/static
-COPY --from=build /repo/apps/web/public ./apps/web/public
+COPY --chown=node:node --from=build /repo/apps/web/.next/standalone ./
+COPY --chown=node:node --from=build /repo/apps/web/.next/static ./apps/web/.next/static
+COPY --chown=node:node --from=build /repo/apps/web/public ./apps/web/public
+USER node
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]

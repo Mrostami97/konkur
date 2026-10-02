@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS base
+FROM node:24-bookworm-slim AS base
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 WORKDIR /repo
@@ -27,6 +27,8 @@ RUN pnpm --filter @konkurcom/api deploy --prod /prod/api \
 FROM base AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
-COPY --from=production /prod/api ./
+COPY --chown=node:node --from=production /prod/api ./
+COPY --chown=node:node scripts/check-production-config.mjs ./scripts/check-production-config.mjs
+USER node
 EXPOSE 3001
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/bootstrap-admin.js && node dist/main.js"]
+CMD ["sh", "-c", "node scripts/check-production-config.mjs --require-credentials && node_modules/.bin/prisma migrate deploy && node dist/bootstrap-admin.js && node dist/main.js"]

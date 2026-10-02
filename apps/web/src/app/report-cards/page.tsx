@@ -127,7 +127,8 @@ function pageHref(searchParams: ReportCardSearchParams, page: number): string {
   return query ? `/report-cards?${query}` : "/report-cards";
 }
 
-export async function generateMetadata({ searchParams }: { searchParams: ReportCardSearchParams }): Promise<Metadata> {
+export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<ReportCardSearchParams> }): Promise<Metadata> {
+  const searchParams = await pendingSearchParams;
   const page = requestedPage(searchParams.page);
   const hasQuery = Object.values(searchParams).some((value) => first(value) !== "");
   const result = await loadPageData(searchParams, page);
@@ -214,7 +215,8 @@ function ReportCard({ report }: { report: PublicReportCard }) {
   );
 }
 
-export default async function ReportCardsPage({ searchParams }: { searchParams: ReportCardSearchParams }) {
+export default async function ReportCardsPage({ searchParams: pendingSearchParams }: { searchParams: Promise<ReportCardSearchParams> }) {
+  const searchParams = await pendingSearchParams;
   const page = requestedPage(searchParams.page);
   const result = await loadPageData(searchParams, page);
   const path = "/report-cards";

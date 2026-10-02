@@ -51,7 +51,8 @@ async function load<T>(path: string): Promise<T | null> {
   }
 }
 
-export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const searchParams = await pendingSearchParams;
   const summary = await load<Summary>("/achievements/summary");
   const filtered = Boolean(first(searchParams.year) || first(searchParams.subject));
   return pageMetadata({
@@ -76,7 +77,8 @@ function filterHref(year: string | undefined, subject: string | undefined) {
   return query ? `/results?${query}` : "/results";
 }
 
-export default async function ResultsPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function ResultsPage({ searchParams: pendingSearchParams }: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await pendingSearchParams;
   const [rows, summary] = await Promise.all([
     load<Achievement[]>("/achievements?limit=200"),
     load<Summary>("/achievements/summary"),

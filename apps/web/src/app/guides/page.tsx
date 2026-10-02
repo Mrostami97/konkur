@@ -7,7 +7,8 @@ import { apiGetPublic } from "../../lib/api";
 import { isMergedGuide, withoutMergedGuides } from "../../lib/merged-pages";
 import { pageMetadata } from "../../lib/seo";
 
-export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
+export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
+  const searchParams = await pendingSearchParams;
   return pageMetadata({
     title: "راهنمای برنامه‌ریزی و کنکور ۱۴۰۶ کامپیوتر",
     description: "راهنماهای عملی برنامه‌ریزی، مرور، جمع‌بندی و اطلاعات رسمی ارشد و دکتری کامپیوتر، IT و علوم کامپیوتر.",

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { ContentBlocks } from "../../../components/ContentBlocks";
@@ -31,7 +31,8 @@ interface Outline {
  * "done" and the way on -- previous and next come from the course's public
  * outline, so a student moves through a course without going back to it.
  */
-export default function LessonPage({ params }: { params: { id: string } }) {
+export default function LessonPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = use(pendingParams);
   const router = useRouter();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [forbidden, setForbidden] = useState(false);

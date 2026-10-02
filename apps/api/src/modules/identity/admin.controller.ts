@@ -53,7 +53,7 @@ export class AdminController {
 
   @Post("users/:id/password")
   setPassword(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: SetPasswordDto) {
-    return this.users.setPassword(req.user!.id, id, dto.password);
+    return this.users.setPassword(req.user!.id, id, dto.password, req.cookies?.session);
   }
 
   @Post("users/:id/sessions/revoke")

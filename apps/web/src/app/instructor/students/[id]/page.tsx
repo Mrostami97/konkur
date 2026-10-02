@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../../../lib/api";
 import { COACH_KINDS, dayLabel, isoDay, type CoachPlan } from "../../../../lib/coach";
 import { formatPersianNumber } from "../../../../lib/format";
@@ -29,7 +29,8 @@ function withProgress(plan: CoachPlan): CoachPlan {
   return { ...plan, progress: { total: plan.items.length, done, percent: plan.items.length ? Math.round((done / plan.items.length) * 100) : 0 } };
 }
 
-export default function CoachStudentPage({ params }: { params: { id: string } }) {
+export default function CoachStudentPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = use(pendingParams);
   const [detail, setDetail] = useState<CoachStudentDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

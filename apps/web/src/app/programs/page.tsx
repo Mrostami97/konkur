@@ -130,7 +130,8 @@ async function loadCatalog(filters: ProgramFilters) {
   }
 }
 
-export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const searchParams = await pendingSearchParams;
   const hasFilters = Object.keys(searchParams).length > 0;
   const result = await loadCatalog(requestedFilters(searchParams));
   const noIndex = hasFilters || result.unavailable;
@@ -187,7 +188,8 @@ function ProgramCard({ program }: { program: PublicProgram }) {
   );
 }
 
-export default async function ProgramsPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function ProgramsPage({ searchParams: pendingSearchParams }: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await pendingSearchParams;
   const filters = requestedFilters(searchParams);
   const result = await loadCatalog(filters);
   const breadcrumbs = [{ name: "خانه", href: "/" }, { name: "انتخاب‌رشته", href: "/admissions" }, { name: "رشته‌محل‌ها" }];

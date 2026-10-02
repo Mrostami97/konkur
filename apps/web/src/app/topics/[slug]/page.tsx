@@ -45,7 +45,8 @@ async function loadTopic(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadTopic(params.slug);
   // Keep metadata and HTTP status aligned with the page. This route has no
   // loading.tsx because its streaming fallback would commit HTTP 200 first.
@@ -66,7 +67,8 @@ function relatedItems(topic: PublicTopicDetail): RelatedPublicItem[] {
   ];
 }
 
-export default async function TopicPage({ params }: { params: { slug: string } }) {
+export default async function TopicPage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = await pendingParams;
   const result = await loadTopic(params.slug);
   if (result.unavailable) throw new Error("Public content service is unavailable");
   if (!result.topic) notFound();

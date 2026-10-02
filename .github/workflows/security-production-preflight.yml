@@ -66,8 +66,8 @@ jobs:
           "${docker_command[@]}" info >/dev/null
           echo 'Running compose services:'
           "${docker_command[@]}" compose ps --services --filter status=running
-          echo "API runtime uid: $("${docker_command[@]}" compose exec -T api id -u)"
-          echo "Web runtime uid: $("${docker_command[@]}" compose exec -T web id -u)"
+          echo "API runtime uid: $("${docker_command[@]}" compose exec -T api id -u < /dev/null)"
+          echo "Web runtime uid: $("${docker_command[@]}" compose exec -T web id -u < /dev/null)"
           if [ -f .env ]; then echo "Server environment file mode: $(stat -c '%a' .env)"; fi
           if [ -d ops/backups ]; then
             echo "Local SQL backup count: $(find ops/backups -maxdepth 1 -type f -name '*.sql.gz' | wc -l)"

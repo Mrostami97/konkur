@@ -28,7 +28,8 @@ async function loadResource(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const { resource } = await loadResource(params.slug);
   if (!resource) return pageMetadata({
     title: "منبع آموزشی در دسترس نیست",
@@ -41,7 +42,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return pageMetadata({ title: resource.title, description: resource.summary, path: `/resources/${resource.slug}` });
 }
 
-export default async function ResourcePage({ params }: { params: { slug: string } }) {
+export default async function ResourcePage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = await pendingParams;
   const result = await loadResource(params.slug);
   if (result.unavailable) return <main className="page-container"><PublicServiceError label="منبع آموزشی" /></main>;
   if (!result.resource) notFound();

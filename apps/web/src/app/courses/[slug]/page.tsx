@@ -59,7 +59,8 @@ async function loadCourseProduct(courseSlug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadCourse(params.slug);
   if (!result.course) {
     return pageMetadata({
@@ -76,7 +77,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 const ACCESS_LABEL = { PUBLIC: "دورهٔ رایگان", ACCOUNT: "ویژهٔ اعضا", ENTITLEMENT: "دورهٔ تخصصی" } as const;
 
-export default async function CoursePage({ params }: { params: { slug: string } }) {
+export default async function CoursePage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = await pendingParams;
   const courseResult = await loadCourse(params.slug);
   if (!courseResult.course) {
     if (courseResult.unavailable) throw new Error("Public learning service is unavailable");

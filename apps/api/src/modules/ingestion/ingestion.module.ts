@@ -1,13 +1,14 @@
 import { Module } from "@nestjs/common";
 import { AuditModule } from "../audit/audit.module";
 import { IdentityModule } from "../identity/identity.module";
+import { AccessModule } from "../access/access.module";
 import { ContentRollbackController, IngestionController } from "./ingestion.controller";
 import { IngestionService } from "./ingestion.service";
 import { MediaController } from "./media.controller";
 import { ObjectStorageService } from "./object-storage.service";
 
 @Module({
-  imports: [AuditModule, IdentityModule],
+  imports: [AuditModule, IdentityModule, AccessModule],
   controllers: [IngestionController, ContentRollbackController, MediaController],
   providers: [IngestionService, ObjectStorageService],
   exports: [IngestionService, ObjectStorageService],

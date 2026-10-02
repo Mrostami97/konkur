@@ -240,7 +240,8 @@ function getPhase11Content(slug: string): Phase11SubjectContent | null {
     : null;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadSubject(params.slug);
   if (result.subject) {
     return pageMetadata({
@@ -429,7 +430,8 @@ function LegacySubjectPage({ slug, apiUnavailable, learning }: { slug: string; a
   );
 }
 
-export default async function SubjectPage({ params }: { params: { slug: string } }) {
+export default async function SubjectPage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = await pendingParams;
   const [result, learning] = await Promise.all([loadSubject(params.slug), loadLearning(params.slug)]);
   if (result.subject) return <CanonicalSubjectPage subject={result.subject} learning={learning} />;
   if (findSubject(params.slug)) return <LegacySubjectPage slug={params.slug} apiUnavailable={result.unavailable} learning={learning} />;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { ContentBlocks } from "../../../components/ContentBlocks";
@@ -53,7 +53,8 @@ const OPTION_KEYS: Record<string, number> = {
  * (see PublicChrome): under time pressure the only things on screen are the
  * questions, the clock, what is answered, and the way out.
  */
-export default function AttemptPage({ params }: { params: { id: string } }) {
+export default function AttemptPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = use(pendingParams);
   const router = useRouter();
   const [attempt, setAttempt] = useState<AttemptState | null>(null);
   const [loading, setLoading] = useState(true);

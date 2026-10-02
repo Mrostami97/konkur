@@ -138,7 +138,7 @@ describe("Lesson images (e2e)", () => {
     await request(app.getHttpServer()).post(`/admin/courses/${courseId}/publish`).set("Cookie", adminCookie).expect(201);
 
     // A paid lesson's image is not handed to a guest by checksum.
-    await request(app.getHttpServer()).get(`/media/${digest}`).expect(403);
+    await request(app.getHttpServer()).get(`/media/${digest}`).expect(404);
 
     // Once the lesson is a free preview, anyone who can read it can see it.
     await request(app.getHttpServer())

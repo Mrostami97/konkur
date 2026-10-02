@@ -8,9 +8,10 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
-    "test": "node test/faq-schema.mjs && node test/subject-names.mjs && node test/content-blocks.mjs && node test/rank-calculator.mjs && node test/phase11-corpus.mjs && node test/phase12-corpus.mjs && node test/phase13-corpus.mjs && node test/phase14-resources.mjs && node test/phase18-course-catalog.mjs && node --test ../../content/import-packages/test/pillar.test.mjs && pnpm run test:phase17",
+    "test": "node test/faq-schema.mjs && node test/subject-names.mjs && node test/content-blocks.mjs && node test/rank-calculator.mjs && node test/phase11-corpus.mjs && node test/phase12-corpus.mjs && node test/phase13-corpus.mjs && node test/phase14-resources.mjs && node test/phase18-course-catalog.mjs && node --test ../../content/import-packages/test/pillar.test.mjs && corepack pnpm run test:phase17",
     "test:phase17": "node ../../scripts/generate-editorial-drafts.mjs --check && node test/phase17-corpus.mjs",
     "test:seo": "node test/phase10-seo.mjs",
+    "test:next-migration": "node test/next-request-props.mjs",
     "test:phase11:ssr": "node test/phase11-ssr.mjs",
     "test:phase12:ssr": "node test/phase12-ssr.mjs",
     "test:phase13:ssr": "node test/phase13-ssr.mjs",
@@ -18,19 +19,19 @@
   },
   "dependencies": {
     "katex": "^0.16.11",
-    "next": "14.2.15",
+    "next": "15.5.27",
     "pdfjs-dist": "4.10.38",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "sharp": "0.33.5"
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@types/katex": "^0.16.7",
     "@types/node": "^20.16.11",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.15",
+    "eslint-config-next": "15.5.27",
     "typescript": "^5.6.3"
   }
 }

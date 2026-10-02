@@ -11,7 +11,8 @@ import { findSubject, subjects } from "../../content/editorial";
 import { apiGetPublic } from "../../lib/api";
 import { pageMetadata } from "../../lib/seo";
 
-export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
+export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
+  const searchParams = await pendingSearchParams;
   return pageMetadata({
     title: "منابع رایگان کنکور کامپیوتر",
     description: "دسترسی منظم به تحلیل‌ها، نمونه تدریس، پاسخ‌ها و راهنماهای رایگان کانال رسمی کنکور کامپیوتر.",
@@ -58,7 +59,8 @@ function publicResourceQuery(searchParams: Record<string, string | string[] | un
   return serialized ? `/resources?${serialized}` : "/resources";
 }
 
-export default async function ResourcesPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
+export default async function ResourcesPage({ searchParams: pendingSearchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const searchParams = await pendingSearchParams;
   const requestedSubject = firstParam(searchParams.subject);
   const subject = requestedSubject ? findSubject(requestedSubject) : undefined;
   let unavailable = false;

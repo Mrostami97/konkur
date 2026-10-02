@@ -6,6 +6,7 @@ import { CreateUserDto } from "./dto/user-admin.dto";
 import { roleSetProblem } from "./account-roles";
 import { hashPassword } from "./password-hasher";
 import { mobileTail, phoneVariants } from "./phone";
+import { createHash } from "crypto";
 
 const MAX_PAGE_SIZE = 100;
 
@@ -212,14 +213,21 @@ export class UserAdminService {
   /** Setting someone else's password also signs them out everywhere, so an
    * old session cannot outlive the credential change. An admin setting their
    * own password keeps the session they are using. */
-  async setPassword(actorId: string, userId: string, password: string) {
+  async setPassword(actorId: string, userId: string, password: string, currentSessionToken?: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
     if (!user) throw new NotFoundException("user not found");
     const passwordHash = await hashPassword(password);
+    // Only a validated request cookie can identify the session being retained.
+    // Calls without that context revoke all sessions, including the caller's.
+    const currentTokenHash = userId === actorId && currentSessionToken
+      ? createHash("sha256").update(currentSessionToken).digest("hex")
+      : undefined;
     const sessionsRevoked = await this.prisma.$transaction(async (tx) => {
       await tx.user.update({ where: { id: userId }, data: { passwordHash } });
-      if (userId === actorId) return 0;
-      const revoked = await tx.session.updateMany({ where: { userId, revokedAt: null }, data: { revokedAt: new Date() } });
+      const revoked = await tx.session.updateMany({
+        where: { userId, revokedAt: null, ...(currentTokenHash ? { tokenHash: { not: currentTokenHash } } : {}) },
+        data: { revokedAt: new Date() },
+      });
       return revoked.count;
     });
     await this.audit.log({

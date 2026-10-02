@@ -38,13 +38,19 @@ jobs:
           --health-retries 10
 
     env:
+      SECURITY_TEST_DATABASE: "1"
       DATABASE_URL: postgresql://konkur:konkur@localhost:5432/konkurcom?schema=public
+      SECURITY_TEST_DATABASE_URL: postgresql://konkur:konkur@localhost:5432/konkurcom?schema=public
       S3_ENDPOINT: localhost
       S3_PORT: "9000"
       S3_USE_SSL: "false"
       S3_ACCESS_KEY: konkur
       S3_SECRET_KEY: konkur123
       S3_BUCKET: konkurcom-media
+      # Compose image/config gates use explicit disposable values. These are
+      # never forwarded to the production SSH process or persisted on a VPS.
+      POSTGRES_PASSWORD: ci-only-compose-postgres-2026
+      MINIO_ROOT_PASSWORD: ci-only-compose-minio-2026
       # quay.io and Docker Hub stopped serving MinIO RELEASE.2025-09-07T16-13-09Z
       # (quay.io/minio/minio@sha256:14cea493…, the release the compose file still
       # pins). CI pulls our own private GHCR copy of that exact release instead,
@@ -52,20 +58,41 @@ jobs:
       MINIO_IMAGE: ghcr.io/mrostami97/minio:RELEASE.2025-09-07T16-13-09Z@sha256:e24674a10563b54e09c8ac768a17d4f65558d792ca8ee23dd3b8c4ab3bd9bd11
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # action-setup reads the pinned pnpm version from package.json's
       # `packageManager` field; setup-node then caches the pnpm store keyed on
       # the lockfile, which is the single biggest win on repeat runs.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Security and deployment script regressions
+        env:
+          BACKUP_SECURITY_DOCKER_TEST: "1"
+        run: |
+          set -euo pipefail
+          node --test scripts/test/check-security-audit.test.mjs \
+            scripts/test/check-production-config.test.mjs \
+            scripts/test/backup-security.test.mjs
+
+      # Inspect dev and production dependencies. Network/format failures and
+      # every new advisory fail this step; five short-lived unused-feature
+      # exceptions are constrained by package/version/path and source guards.
+      - name: Dependency security gate
+        run: |
+          set -euo pipefail
+          audit_status=0
+          pnpm audit --json > "$RUNNER_TEMP/dependency-audit.json" || audit_status=$?
+          node scripts/check-security-audit.mjs \
+            --audit-file "$RUNNER_TEMP/dependency-audit.json" \
+            --audit-status "$audit_status"
 
       # Both are prerequisites for typecheck: apps/api imports @prisma/client's
       # generated types and @konkurcom/contracts by its built types entrypoint.
@@ -76,6 +103,9 @@ jobs:
           set -euo pipefail
           pnpm --filter @konkurcom/api exec prisma generate
           pnpm -w run build
+
+      - name: Next request-prop compatibility regressions
+        run: pnpm --filter @konkurcom/web run test:next-migration
 
       - name: Lint and typecheck
         run: |
@@ -304,17 +334,15 @@ jobs:
       # (<project>-<service>), so the server's `docker compose up --no-build`
       # picks these up with no image: overrides in docker-compose.yml.
       - name: Build production images
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: docker compose build api web
 
       - name: Validate production image runtimes and size
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           set -euo pipefail
           docker run --rm --entrypoint sh konkurcom-360-api:latest -ec \
-            'test -f dist/main.js && test -f dist/bootstrap-admin.js && test -x node_modules/.bin/prisma'
+            'test "$(id -u)" -ne 0 && test -f dist/main.js && test -f dist/bootstrap-admin.js && test -x node_modules/.bin/prisma && test -f scripts/check-production-config.mjs && probe="$(mktemp /tmp/security-runtime-XXXXXX)" && rm -- "$probe"'
           docker run --rm --entrypoint sh konkurcom-360-web:latest -ec \
-            'test -f apps/web/server.js && test -d apps/web/.next/static && test -d apps/web/public'
+            'test "$(id -u)" -ne 0 && test -f apps/web/server.js && test -d apps/web/.next/static && test -d apps/web/public && probe="$(mktemp /tmp/security-runtime-XXXXXX)" && rm -- "$probe" && mkdir -p apps/web/.next/cache && probe="$(mktemp apps/web/.next/cache/security-runtime-XXXXXX)" && rm -- "$probe"'
 
           API_BYTES="$(docker image inspect --format '{{.Size}}' konkurcom-360-api:latest)"
           WEB_BYTES="$(docker image inspect --format '{{.Size}}' konkurcom-360-web:latest)"
@@ -333,7 +361,6 @@ jobs:
       # the server. This catches regressions where a command override bypasses
       # nginx's template renderer and silently serves the stock welcome page.
       - name: Validate nginx TLS gateway bootstrap
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
           WEB_DOMAIN: kunkurcomputer.ir
           API_DOMAIN: api.kunkurcomputer.ir
@@ -383,10 +410,12 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           SSH_PASS: ${{ secrets.SSH_PASS }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           DEPLOY_WEB_DOMAIN: ${{ vars.WEB_DOMAIN }}
           DEPLOY_API_DOMAIN: ${{ vars.API_DOMAIN }}
+          DEPLOY_TRUSTED_PROXY_CIDRS: ${{ vars.TRUSTED_PROXY_CIDRS }}
           GH_TOKEN: ${{ github.token }}
           GHCR_USER: ${{ github.actor }}
           REPO: ${{ github.repository }}
@@ -410,15 +439,43 @@ jobs:
               exit 1
             fi
           done
+          # This value is later single-quoted in an SSH command and stored in
+          # .env. Reject all shell punctuation/newlines before that boundary,
+          # then reuse the runtime's exact CIDR validation and normalize it.
+          DEPLOY_TRUSTED_PROXY_CIDRS="$(node --input-type=module <<'CIDRS'
+          import { validateProxyCidrs } from "./scripts/check-production-config.mjs";
+          const value = process.env.DEPLOY_TRUSTED_PROXY_CIDRS ?? "";
+          if (!/^[0-9a-fA-F:.,/ ]*$/u.test(value) || (value && !value.trim())) {
+            console.error("ERROR: invalid characters in deployment trusted proxy CIDRs.");
+            process.exit(1);
+          }
+          const errors = validateProxyCidrs(value);
+          if (errors.length) {
+            console.error("ERROR: deployment trusted proxy CIDRs are malformed or have a zero prefix.");
+            process.exit(1);
+          }
+          console.log(value.trim().split(/[ ,]+/u).filter(Boolean).join(","));
+          CIDRS
+          )"
           REMOTE="$SSH_USER@$SSH_HOST"
           echo "Deploying to $REMOTE:$DEPLOY_PATH for https://$DEPLOY_WEB_DOMAIN"
 
           mkdir -p ~/.ssh
-          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          if [ -z "${SSH_KNOWN_HOSTS:-}" ]; then
+            echo "ERROR: configure SSH_KNOWN_HOSTS from the independently verified server host key before deployment."
+            exit 1
+          fi
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh-keygen -lf ~/.ssh/known_hosts >/dev/null
+          ssh-keygen -F "$SSH_HOST" -f ~/.ssh/known_hosts >/dev/null || {
+            echo "ERROR: the verified host key does not cover SSH_HOST."
+            exit 1
+          }
 
           # SSH_KEY is primary; SSH_PASS is the fallback (via sshpass, reading
           # the password from the environment rather than argv).
-          SSH_OPTIONS="-o ServerAliveInterval=30 -o ServerAliveCountMax=6 -o TCPKeepAlive=yes -o ConnectTimeout=30"
+          SSH_OPTIONS="-o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o ServerAliveInterval=30 -o ServerAliveCountMax=6 -o TCPKeepAlive=yes -o ConnectTimeout=30"
           if [ -n "${SSH_KEY:-}" ]; then
             printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
             chmod 600 ~/.ssh/deploy_key
@@ -570,11 +627,12 @@ jobs:
           echo "== Shipping source =="
           if echo "$PROVISION_OUT" | grep -q 'has_rsync=yes'; then
             # --delete keeps the server free of files deleted upstream, but
-            # .env lives only on the server (secrets, domains) and must survive.
+            # .env and private backups live only on the server and must survive.
             rsync -az --delete \
               --exclude '.git' --exclude '.env' --exclude '.deploy-images' --exclude 'node_modules' \
               --exclude '.next' --exclude 'dist' --exclude '.turbo' \
               --exclude 'coverage' --exclude 'playwright-report' --exclude 'test-results' \
+              --exclude '/ops/backups/' \
               -e "$SSH" ./ "$REMOTE:$DEPLOY_PATH/"
           else
             echo "No rsync on the server -- falling back to a token-authenticated clone."
@@ -663,7 +721,15 @@ jobs:
           # Persist the validated production hostnames so manual compose
           # restarts and host reboots use the same public routing as CI.
           touch .env
-          for assignment in "WEB_DOMAIN=$WEB_DOMAIN" "API_DOMAIN=$API_DOMAIN"; do
+          chmod 600 .env
+          assignments=("WEB_DOMAIN=$WEB_DOMAIN" "API_DOMAIN=$API_DOMAIN")
+          # An unset repository variable preserves the server's established
+          # proxy allowlist. Do not export an empty TRUSTED_PROXY_CIDRS that
+          # would override the value Docker Compose reads from .env.
+          if [ -n "${DEPLOY_TRUSTED_PROXY_CIDRS:-}" ]; then
+            assignments+=("TRUSTED_PROXY_CIDRS=$DEPLOY_TRUSTED_PROXY_CIDRS")
+          fi
+          for assignment in "${assignments[@]}"; do
             key="${assignment%%=*}"
             if grep -q "^${key}=" .env; then
               sed -i "s|^${key}=.*|${assignment}|" .env
@@ -671,6 +737,22 @@ jobs:
               printf '%s\n' "$assignment" >> .env
             fi
           done
+
+          # Offline credential/config checks run from the already-tested API
+          # image. Failure leaves every currently running service untouched.
+          $DOCKER compose run --rm --no-deps --entrypoint node api \
+            scripts/check-production-config.mjs --require-credentials
+
+          # Back up an existing running database before any restart/recreate.
+          # First provisioning has no Postgres container and therefore no dump.
+          RUNNING_POSTGRES="$($DOCKER compose ps --status running --quiet postgres)"
+          if [ -n "$RUNNING_POSTGRES" ]; then
+            BACKUP_USE_SUDO=0
+            [ "$DOCKER" = "docker" ] || BACKUP_USE_SUDO=1
+            DOCKER_BIN=docker DOCKER_USE_SUDO="$BACKUP_USE_SUDO" bash ops/backup.sh
+          else
+            echo "No running Postgres container; skipping first-provision backup."
+          fi
 
           # --no-build: use the images the runner just shipped. Falling back to
           # a local build keeps a botched image transfer from taking the site
@@ -714,9 +796,8 @@ jobs:
           done
 
           if [ "$API_HEALTHY" -ne 1 ]; then
-            echo "ERROR: API not healthy after 180s. Last /healthz response: ${RESPONSE:-<no response>}" >&2
+            echo "ERROR: API not healthy after 180s. Inspect service logs privately on the server." >&2
             $DOCKER compose ps || true
-            $DOCKER compose logs --tail 80 api nginx || true
             exit 1
           fi
 
@@ -736,9 +817,8 @@ jobs:
           done
 
           if [ "$WEB_HEALTHY" -ne 1 ]; then
-            echo "ERROR: web not healthy after 180s. Last HTTPS / status: ${WEB_STATUS:-<no response>}" >&2
+            echo "ERROR: web not healthy after 180s. Inspect web and gateway logs privately on the server." >&2
             $DOCKER compose ps || true
-            $DOCKER compose logs --tail 80 web nginx || true
             exit 1
           fi
 
@@ -762,9 +842,8 @@ jobs:
           done
 
           if [ "$TRUSTED_TLS" -ne 1 ]; then
-            echo "ERROR: no trusted public TLS certificate after 360s. Last status: ${TRUSTED_TLS_STATUS:-<no response>}" >&2
+            echo "ERROR: no trusted public TLS certificate after 360s. Inspect certificate and gateway logs privately on the server." >&2
             $DOCKER compose ps || true
-            $DOCKER compose logs --tail 120 certbot nginx || true
             exit 1
           fi
 
@@ -782,4 +861,5 @@ jobs:
           run_remote /tmp/up.sh \
             "DEPLOY_PATH='$DEPLOY_PATH'" \
             "WEB_DOMAIN='$DEPLOY_WEB_DOMAIN'" \
-            "API_DOMAIN='$DEPLOY_API_DOMAIN'"
+            "API_DOMAIN='$DEPLOY_API_DOMAIN'" \
+            "DEPLOY_TRUSTED_PROXY_CIDRS='$DEPLOY_TRUSTED_PROXY_CIDRS'"

@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 /**
  * Line icons for the panel sidebars and KPI tiles.
  *

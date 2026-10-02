@@ -334,7 +334,7 @@ export class AssessmentService {
         throw new BadRequestException("DYNAMIC exam is missing subjectCode/questionCount");
       }
       const candidates = await this.prisma.question.findMany({
-        where: { subjectCode: exam.subjectCode },
+        where: { subjectCode: exam.subjectCode, retiredAt: null },
         select: { id: true },
       });
       if (candidates.length < exam.questionCount) {
@@ -406,22 +406,34 @@ export class AssessmentService {
   }
 
   async saveAnswer(attemptId: string, userId: string, questionId: string, selectedOption: number | null | undefined) {
-    const attempt = await this.prisma.attempt.findUnique({ where: { id: attemptId } });
-    if (!attempt) throw new NotFoundException("attempt not found");
-    if (attempt.userId !== userId) throw new ForbiddenException("not your attempt");
-    if (attempt.status !== AttemptStatus.IN_PROGRESS) {
-      throw new ForbiddenException("attempt is no longer in progress");
-    }
-    if (attempt.deadlineAt < new Date()) {
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Grading's status update locks this same row. Hold it until the answer
+      // write commits, so a checked save cannot complete after finalization.
+      await tx.$queryRaw`SELECT "id" FROM "attempts" WHERE "id" = ${attemptId} FOR UPDATE`;
+      const attempt = await tx.attempt.findUnique({ where: { id: attemptId } });
+      if (!attempt) throw new NotFoundException("attempt not found");
+      if (attempt.userId !== userId) throw new ForbiddenException("not your attempt");
+      if (attempt.status !== AttemptStatus.IN_PROGRESS) {
+        throw new ForbiddenException("attempt is no longer in progress");
+      }
+      if (attempt.deadlineAt <= new Date()) return { expired: true as const };
+      const item = await tx.examItem.findUnique({
+        where: { examFormId_questionId: { examFormId: attempt.examFormId, questionId } },
+        select: { id: true },
+      });
+      if (!item) throw new BadRequestException("question is not part of this attempt");
+      const answer = await tx.answer.upsert({
+        where: { attemptId_questionId: { attemptId, questionId } },
+        update: { selectedOption: selectedOption ?? null, answeredAt: new Date() },
+        create: { attemptId, questionId, selectedOption: selectedOption ?? null },
+      });
+      return { expired: false as const, answer };
+    });
+    if (result.expired) {
       await this.finalizeAttempt(attemptId, AttemptStatus.EXPIRED);
       throw new ForbiddenException("attempt has expired");
     }
-
-    return this.prisma.answer.upsert({
-      where: { attemptId_questionId: { attemptId, questionId } },
-      update: { selectedOption: selectedOption ?? null, answeredAt: new Date() },
-      create: { attemptId, questionId, selectedOption: selectedOption ?? null },
-    });
+    return result.answer;
   }
 
   /**
@@ -536,7 +548,11 @@ export class AssessmentService {
   async getPsychometrics(examId: string) {
     const attempts = await this.prisma.attempt.findMany({
       where: { examId, status: { in: [AttemptStatus.SUBMITTED, AttemptStatus.EXPIRED] } },
-      include: { answers: true, score: true },
+      include: {
+        answers: true,
+        score: true,
+        examForm: { select: { items: { select: { questionId: true } } } },
+      },
     });
     if (attempts.length === 0) return { attemptCount: 0, items: [] };
 
@@ -547,8 +563,11 @@ export class AssessmentService {
 
     for (const attempt of attempts) {
       const rawScore = attempt.score?.rawScore ?? 0;
+      const formQuestions = new Set(attempt.examForm.items.map((item) => item.questionId));
       for (const answer of attempt.answers) {
-        if (answer.selectedOption == null) continue;
+        // Historical answers saved before form membership was enforced do
+        // not describe a question the student was actually asked.
+        if (answer.selectedOption == null || !formQuestions.has(answer.questionId)) continue;
         const question = await this.prisma.question.findUnique({
           where: { id: answer.questionId },
           select: { correctOption: true },

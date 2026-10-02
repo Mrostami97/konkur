@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: konkur
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-konkur}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD explicitly in the server .env}
       POSTGRES_DB: konkurcom
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -36,7 +36,7 @@ services:
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: konkur
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-konkur123}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD explicitly in the server .env}
     volumes:
       - minio_data:/data
     healthcheck:
@@ -56,12 +56,12 @@ services:
       minio:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://konkur:${POSTGRES_PASSWORD:-konkur}@postgres:5432/konkurcom?schema=public
+      DATABASE_URL: postgresql://konkur:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD explicitly in the server .env}@postgres:5432/konkurcom?schema=public
       PORT: 3001
       FRONTEND_URL: https://${WEB_DOMAIN:-localhost}
-      # Proxies in front of nginx: the CDN. Rate limits key on the visitor
-      # this many X-Forwarded-For entries from the right (0 without a CDN).
-      TRUSTED_PROXY_HOPS: ${TRUSTED_PROXY_HOPS:-1}
+      # Verified reverse-proxy CIDRs only. Empty means nginx's direct peer;
+      # configure the CDN's actual egress networks before a CDN deployment.
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
       SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-720}
       OTP_TTL_MINUTES: ${OTP_TTL_MINUTES:-5}
       OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS:-5}
@@ -69,7 +69,7 @@ services:
       S3_PORT: 9000
       S3_USE_SSL: "false"
       S3_ACCESS_KEY: konkur
-      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-konkur123}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD explicitly in the server .env}
       S3_BUCKET: konkurcom-media
       BOOTSTRAP_ADMIN_PHONE: ${BOOTSTRAP_ADMIN_PHONE:-}
       BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
