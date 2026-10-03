@@ -119,6 +119,14 @@ jobs:
             echo 'Host nftables table inventory:'
             nft list tables 2>/dev/null || true
           fi
+          echo 'RPC/NFS service state and dependencies:'
+          for unit in rpcbind.service rpcbind.socket nfs-server.service nfs-client.target; do
+            systemctl show "$unit" --property=LoadState,ActiveState,UnitFileState,Requires,Wants,RequiredBy,WantedBy 2>/dev/null || true
+          done
+          echo 'NFS/CIFS mount destinations (no credential options):'
+          findmnt -rn -t nfs,nfs4,cifs -o TARGET,FSTYPE 2>/dev/null || true
+          echo 'NFS exports configured:'
+          if [ -s /etc/exports ] && awk '!/^\s*#/ && NF { found=1 } END {exit !found}' /etc/exports; then echo yes; else echo no; fi
           if command -v firewall-cmd >/dev/null 2>&1; then
             firewall-cmd --state 2>/dev/null || true
           else
