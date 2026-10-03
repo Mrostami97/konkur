@@ -109,6 +109,11 @@ jobs:
           if command -v ss >/dev/null 2>&1; then
             echo 'Host TCP listening addresses (no process command lines):'
             ss -lnt
+            echo 'RPC TCP/UDP listeners, independently inspected in IPv4/IPv6:'
+            for family in -ltn4 -ltn6 -lun4 -lun6; do
+              echo "$family"
+              ss -H "$family" 'sport = :111'
+            done
           fi
           if command -v iptables >/dev/null 2>&1; then
             echo 'Host INPUT and Docker forwarding policy:'
@@ -121,7 +126,7 @@ jobs:
           fi
           echo 'RPC/NFS service state and dependencies:'
           for unit in rpcbind.service rpcbind.socket nfs-server.service nfs-client.target; do
-            systemctl show "$unit" --property=LoadState,ActiveState,UnitFileState,Requires,Wants,RequiredBy,WantedBy 2>/dev/null || true
+            systemctl show "$unit" --property=LoadState,ActiveState,UnitFileState,Requires,Wants,RequiredBy,WantedBy,ConsistsOf,BoundBy,PropagatesStopTo,TriggeredBy 2>/dev/null || true
           done
           echo 'NFS/CIFS mount destinations (no credential options):'
           findmnt -rn -t nfs,nfs4,cifs -o TARGET,FSTYPE 2>/dev/null || true

@@ -76,6 +76,7 @@ jobs:
       - name: Security and deployment script regressions
         env:
           BACKUP_SECURITY_DOCKER_TEST: "1"
+          RPC_HARDENING_DOCKER_TEST: "1"
         run: |
           set -euo pipefail
           node --test scripts/test/check-security-audit.test.mjs \
@@ -83,7 +84,8 @@ jobs:
             scripts/test/encrypt-production-inspection.test.mjs \
             scripts/test/check-production-config.test.mjs \
             scripts/test/backup-security.test.mjs \
-            scripts/test/rotation-security.test.mjs
+            scripts/test/rotation-security.test.mjs \
+            scripts/test/rpcbind-hardening.test.mjs
 
       # Inspect dev and production dependencies. Network/format failures and
       # every new advisory fail this step; five short-lived unused-feature
