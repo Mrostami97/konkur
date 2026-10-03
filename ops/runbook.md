@@ -423,3 +423,35 @@ over the smaller image size.
 pino/OpenTelemetry — is a later-phase Observability item per doc §5.1).
 `docker compose logs -f <service>` covers every service, including `nginx`,
 `certs-init`, `api`, and `web`.
+
+## Internal credential maintenance
+
+`ops/rotate-internal-credentials.sh` is a reviewed, opt-in rotation for this
+site's PostgreSQL role and MinIO root credential. It requires private `.env`
+permissions, an existing ADMIN password credential, a validated SQL backup
+less than two hours old, sufficient space for a media archive, and the pinned
+MinIO release without KMS, external identity or file-provided credentials.
+Verify the disposable Docker fixture before using it on a server. Avoid an
+overlapping deployment; the script also takes a local exclusive rotation lock.
+
+Run it from the existing deployment root with `ROTATE_INTERNAL_CREDENTIALS=1`.
+The Bash orchestrator uses the cached running API image for offline helpers;
+it does not require host Node, pull images, build, remove persistent volumes,
+change the actual administrator password, or run a data restore. Existing
+images, commands and persistent mount sources are pinned for both forward
+operation and rollback. The API pauses while database and storage credentials
+change. Separate bounded readiness and access checks verify administrator
+hashes, an existing object, unchanged IAM records and rejection of old secrets.
+
+Generated secrets and rollback state stay in a private directory under
+`ops/backups`, excluded from Git, image builds and deploy deletion. Keep this
+state until post-maintenance verification is complete. Recovery uses the old
+environment, exact database verifier and cached images; it requires the Docker
+daemon and storage to remain available. A failed recovery needs local operator
+attention and must never be described as successful.
+
+The temporary `security-production-rotate.yml` workflow is restricted to the
+review branch and changes to that workflow file. It sends only the reviewed
+helpers over pinned SSH, checks their digests, bounds setup and execution, and
+returns encrypted diagnostics. It is not triggered by application edits or
+normal pushes to `main`.
