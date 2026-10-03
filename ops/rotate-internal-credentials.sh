@@ -163,6 +163,7 @@ offline() {
     --mount "type=bind,src=$VALIDATOR_PATH,dst=/helper/scripts/check-production-config.mjs,readonly" \
     "$API_IMAGE" /helper/ops/rotate-internal-credentials.mjs "$1" /state >>"$LOG" 2>&1
 }
+PHASE=offline-plan
 offline plan
 
 PHASE=backup-validation

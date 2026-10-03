@@ -60,6 +60,8 @@ jobs:
           fi
           remote="$SSH_USER@$SSH_HOST"
           rotation_status=0
+          # Legacy absent-key compatibility was verified against real isolated
+          # services; explicit empty/mismatching values still fail before mutation.
           # Only these reviewed helpers are sent. New credentials are generated
           # locally on the server, never returned to CI or printed in public logs.
           {

@@ -4,6 +4,26 @@ import { createHash, createHmac, pbkdf2Sync } from "node:crypto";
 
 const rotation = await import("../../ops/rotate-internal-credentials.mjs").catch(() => ({}));
 
+test("legacy omitted credential variables require agreement between running clients and services", () => {
+  const services = {
+    api: { DATABASE_URL: "postgresql://konkur:synthetic_pg@postgres:5432/konkurcom?schema=public", S3_ENDPOINT: "minio", S3_ACCESS_KEY: "konkur", S3_SECRET_KEY: "synthetic_s3", S3_BUCKET: "konkurcom-media" },
+    postgres: { POSTGRES_USER: "konkur", POSTGRES_DB: "konkurcom", POSTGRES_PASSWORD: "synthetic_pg" },
+    minio: { MINIO_ROOT_USER: "konkur", MINIO_ROOT_PASSWORD: "synthetic_s3" },
+  };
+  assert.equal(typeof rotation.assertInternalConfiguration, "function");
+  assert.equal(rotation.assertInternalConfiguration({}, services).hostname, "postgres");
+  assert.doesNotThrow(() => rotation.assertInternalConfiguration({ POSTGRES_PASSWORD: "synthetic_pg", MINIO_ROOT_PASSWORD: "synthetic_s3" }, services));
+  for (const env of [{ POSTGRES_PASSWORD: "" }, { POSTGRES_PASSWORD: "different" }, { MINIO_ROOT_PASSWORD: "" }, { MINIO_ROOT_PASSWORD: "different" }]) {
+    assert.throws(() => rotation.assertInternalConfiguration(env, services), /configuration/);
+  }
+  for (const mismatch of [
+    { ...services, postgres: { ...services.postgres, POSTGRES_PASSWORD: "different" } },
+    { ...services, minio: { ...services.minio, MINIO_ROOT_PASSWORD: "different" } },
+    { ...services, api: { ...services.api, DATABASE_URL: services.api.DATABASE_URL.replace("postgres:5432", "foreign:5432") } },
+    { ...services, api: { ...services.api, S3_SECRET_KEY: "" }, minio: { ...services.minio, MINIO_ROOT_PASSWORD: "" } },
+  ]) assert.throws(() => rotation.assertInternalConfiguration({}, mismatch), /configuration/);
+});
+
 test("environment parsing never executes shell syntax and refuses interpolation ambiguity", () => {
   assert.equal(typeof rotation.parseEnv, "function");
   assert.deepEqual({ ...rotation.parseEnv("A='literal # value'\nB=plain # comment\nC=\"literal\"\n") }, {

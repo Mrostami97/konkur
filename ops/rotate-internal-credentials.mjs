@@ -75,6 +75,26 @@ function containerEnv(container) {
   return env;
 }
 
+export function assertInternalConfiguration(env, { api, postgres, minio }) {
+  let database;
+  try { database = new URL(api.DATABASE_URL); } catch { throw new Error("Existing database configuration is invalid"); }
+  // Legacy Compose supplied defaults when these two .env keys were absent.
+  // Derive the old credentials only from agreeing, inspected running services;
+  // any explicitly configured value, including an empty value, must match.
+  if (!["postgres:", "postgresql:"].includes(database.protocol) || database.hostname !== "postgres"
+    || database.username !== "konkur" || database.pathname !== "/konkurcom"
+    || !postgres.POSTGRES_PASSWORD || decodeURIComponent(database.password) !== postgres.POSTGRES_PASSWORD
+    || (Object.hasOwn(env, "POSTGRES_PASSWORD") && env.POSTGRES_PASSWORD !== postgres.POSTGRES_PASSWORD)
+    || postgres.POSTGRES_USER !== "konkur" || postgres.POSTGRES_DB !== "konkurcom"
+    || api.S3_ENDPOINT !== "minio" || api.S3_ACCESS_KEY !== "konkur"
+    || !minio.MINIO_ROOT_PASSWORD || api.S3_SECRET_KEY !== minio.MINIO_ROOT_PASSWORD
+    || (Object.hasOwn(env, "MINIO_ROOT_PASSWORD") && env.MINIO_ROOT_PASSWORD !== minio.MINIO_ROOT_PASSWORD)
+    || minio.MINIO_ROOT_USER !== "konkur" || !api.S3_BUCKET) {
+    throw new Error("Internal service configuration does not match the private environment");
+  }
+  return database;
+}
+
 function readPlan(state) {
   const source = readFileSync(resolve(state, ".env.old"), "utf8");
   const env = parseEnv(source);
@@ -90,16 +110,7 @@ function readPlan(state) {
   const api = containerEnv(services.api);
   const postgres = containerEnv(services.postgres);
   const minio = containerEnv(services.minio);
-  let database;
-  try { database = new URL(api.DATABASE_URL); } catch { throw new Error("Existing database configuration is invalid"); }
-  if (!["postgres:", "postgresql:"].includes(database.protocol) || database.hostname !== "postgres"
-    || database.username !== "konkur" || database.pathname !== "/konkurcom"
-    || decodeURIComponent(database.password) !== env.POSTGRES_PASSWORD
-    || postgres.POSTGRES_PASSWORD !== env.POSTGRES_PASSWORD || postgres.POSTGRES_USER !== "konkur"
-    || postgres.POSTGRES_DB !== "konkurcom"
-    || api.S3_ENDPOINT !== "minio" || api.S3_ACCESS_KEY !== "konkur" || api.S3_SECRET_KEY !== env.MINIO_ROOT_PASSWORD
-    || minio.MINIO_ROOT_USER !== "konkur" || minio.MINIO_ROOT_PASSWORD !== env.MINIO_ROOT_PASSWORD
-    || !api.S3_BUCKET) throw new Error("Internal service configuration does not match the private environment");
+  const database = assertInternalConfiguration(env, { api, postgres, minio });
   // The official image declares *_FILE defaults even when those files do not
   // exist. The host orchestrator checks their actual existence before this step.
   if (Object.keys(minio).some((key) => /^MINIO_(?:KMS|KES|ETCD|IDENTITY)/u.test(key) && !key.endsWith("_FILE") && minio[key])) {

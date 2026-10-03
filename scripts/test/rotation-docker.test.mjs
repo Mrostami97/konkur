@@ -39,9 +39,9 @@ test("internal credential rotation preserves objects/admin/web and recovers from
     const composeDefinition = {
       name: project,
       services: {
-        postgres: { image: "postgres:16", environment: { POSTGRES_USER: "konkur", POSTGRES_DB: "konkurcom", POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}" }, volumes: ["postgres_data:/var/lib/postgresql/data"], healthcheck: { test: ["CMD", "pg_isready", "-U", "konkur", "-d", "konkurcom"], interval: "2s", timeout: "2s", retries: 30 } },
-        minio: { image: minioImage, command: ["server", "/data", "--console-address", ":9001"], environment: { MINIO_ROOT_USER: "konkur", MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}" }, volumes: ["minio_data:/data"], healthcheck: { test: ["CMD", "mc", "ready", "local"], interval: "2s", timeout: "2s", retries: 30 } },
-        api: { image: apiImage, depends_on: { postgres: { condition: "service_healthy" }, minio: { condition: "service_healthy" } }, environment: { NODE_ENV: "production", DATABASE_URL: "postgresql://konkur:${POSTGRES_PASSWORD}@postgres:5432/konkurcom?schema=public", PORT: "3001", FRONTEND_URL: "https://fixture.invalid", TRUSTED_PROXY_CIDRS: "", S3_ENDPOINT: "minio", S3_PORT: "9000", S3_USE_SSL: "false", S3_ACCESS_KEY: "konkur", S3_SECRET_KEY: "${MINIO_ROOT_PASSWORD}", S3_BUCKET: "konkurcom-media", BOOTSTRAP_ADMIN_PHONE: "09990000000", BOOTSTRAP_ADMIN_PASSWORD: "${BOOTSTRAP_ADMIN_PASSWORD:-}" } },
+        postgres: { image: "postgres:16", environment: { POSTGRES_USER: "konkur", POSTGRES_DB: "konkurcom", POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-synthetic_pg_8aKyNTwY}" }, volumes: ["postgres_data:/var/lib/postgresql/data"], healthcheck: { test: ["CMD", "pg_isready", "-U", "konkur", "-d", "konkurcom"], interval: "2s", timeout: "2s", retries: 30 } },
+        minio: { image: minioImage, command: ["server", "/data", "--console-address", ":9001"], environment: { MINIO_ROOT_USER: "konkur", MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-synthetic_s3_5fGvGvzy}" }, volumes: ["minio_data:/data"], healthcheck: { test: ["CMD", "mc", "ready", "local"], interval: "2s", timeout: "2s", retries: 30 } },
+        api: { image: apiImage, depends_on: { postgres: { condition: "service_healthy" }, minio: { condition: "service_healthy" } }, environment: { NODE_ENV: "production", DATABASE_URL: "postgresql://konkur:${POSTGRES_PASSWORD:-synthetic_pg_8aKyNTwY}@postgres:5432/konkurcom?schema=public", PORT: "3001", FRONTEND_URL: "https://fixture.invalid", TRUSTED_PROXY_CIDRS: "", S3_ENDPOINT: "minio", S3_PORT: "9000", S3_USE_SSL: "false", S3_ACCESS_KEY: "konkur", S3_SECRET_KEY: "${MINIO_ROOT_PASSWORD:-synthetic_s3_5fGvGvzy}", S3_BUCKET: "konkurcom-media", BOOTSTRAP_ADMIN_PHONE: "09990000000", BOOTSTRAP_ADMIN_PASSWORD: "${BOOTSTRAP_ADMIN_PASSWORD:-}" } },
         web: { image: apiImage, entrypoint: ["node", "-e", "setInterval(()=>{},1000)"], environment: { INTERNAL_API_URL: "http://api:3001" } },
       }, volumes: { postgres_data: {}, minio_data: {} },
     };
@@ -57,7 +57,8 @@ cp /source/scripts/check-production-config.mjs scripts/
 cat > docker-compose.yml <<'COMPOSE'
 ${JSON.stringify(composeDefinition)}
 COMPOSE
-printf '%s\n' 'POSTGRES_PASSWORD=synthetic_pg_8aKyNTwY' 'MINIO_ROOT_PASSWORD=synthetic_s3_5fGvGvzy' 'BOOTSTRAP_ADMIN_PHONE=09990000000' 'BOOTSTRAP_ADMIN_PASSWORD=synthetic_admin_p7nDSvwu' > .env
+# Mirror the confirmed production legacy omission; defaults exist only here.
+printf '%s\n' 'BOOTSTRAP_ADMIN_PHONE=09990000000' 'BOOTSTRAP_ADMIN_PASSWORD=synthetic_admin_p7nDSvwu' > .env
 chmod 600 .env
 docker compose up -d --no-build --pull never > ops/backups/fixture-private.log 2>&1
 for attempt in $(seq 1 50); do
