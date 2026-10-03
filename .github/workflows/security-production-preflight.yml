@@ -68,10 +68,39 @@ jobs:
           "${docker_command[@]}" compose ps --services --filter status=running
           echo "API runtime uid: $("${docker_command[@]}" compose exec -T api id -u < /dev/null)"
           echo "Web runtime uid: $("${docker_command[@]}" compose exec -T web id -u < /dev/null)"
-          if [ -f .env ]; then echo "Server environment file mode: $(stat -c '%a' .env)"; fi
+          if [ -f .env ]; then
+            echo "Server environment file mode: $(stat -c '%a' .env)"
+            for field in POSTGRES_PASSWORD MINIO_ROOT_PASSWORD; do
+              if grep -Eq "^[[:space:]]*(export[[:space:]]+)?$field[[:space:]]*=" .env; then
+                echo "$field is explicitly configured in the environment file."
+              else
+                echo "$field is absent from the environment file; running service defaults require review."
+              fi
+            done
+          fi
           if [ -d ops/backups ]; then
             echo "Local SQL backup count: $(find ops/backups -maxdepth 1 -type f -name '*.sql.gz' | wc -l)"
             echo "Backup directory mode: $(stat -c '%a' ops/backups)"
+            last_rotation="$(find ops/backups -maxdepth 1 -type d -name '.credential-rotation-*' -printf '%T@ %p\n' | sort -nr | awk 'NR == 1 {sub(/^[^ ]+ /, ""); print}')"
+            if [ -n "$last_rotation" ]; then
+              echo 'Last rotation state filenames (contents remain private):'
+              find "$last_rotation" -maxdepth 1 -type f -printf '%f\n'
+              # Emit only known static helper errors, never raw configuration,
+              # stack traces, JSON parse excerpts, credentials or user records.
+              for diagnostic in "$last_rotation"/helper-error-*.txt; do
+                [ -f "$diagnostic" ] || continue
+                IFS= read -r first_line < "$diagnostic" || true
+                case "$first_line" in
+                  'Error: Internal service configuration does not match the private environment'|\
+                  'Error: Existing service identity is invalid'|\
+                  'Error: Storage mount destinations drifted from existing services'|\
+                  'Error: Private Linux state directory is required'|\
+                  'Error: Ambiguous environment configuration'|\
+                  'Error: Unsupported environment configuration') printf '%s\n' "$first_line" ;;
+                  *) echo 'A private helper diagnostic exists; further local review is required.' ;;
+                esac
+              done
+            fi
           else
             echo 'Local SQL backup directory is absent.'
           fi
