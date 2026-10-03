@@ -130,6 +130,13 @@ jobs:
           done
           echo 'NFS/CIFS mount destinations (no credential options):'
           findmnt -rn -t nfs,nfs4,cifs -o TARGET,FSTYPE 2>/dev/null || true
+          echo 'Filesystem types and mount destinations, without options or credentials:'
+          findmnt --raw --noheadings --output TARGET,FSTYPE 2>/dev/null || true
+          echo 'fstab row validation metadata, without source paths or options:'
+          awk '/^[[:space:]]*(#|$)/ { next } { print "fields=" NF, "type=" $3, "network-source=" ($1 ~ /:/ || $1 ~ /^\/\//) }' /etc/fstab
+          echo 'Binfmt local kernel mount and automount definitions:'
+          systemctl show proc-sys-fs-binfmt_misc.mount --property=LoadState,ActiveState,What,Where,Type 2>/dev/null || true
+          systemctl show proc-sys-fs-binfmt_misc.automount --property=LoadState,ActiveState,UnitFileState,Where 2>/dev/null || true
           echo 'NFS exports configured:'
           if [ -s /etc/exports ] && awk '!/^\s*#/ && NF { found=1 } END {exit !found}' /etc/exports; then echo yes; else echo no; fi
           if command -v firewall-cmd >/dev/null 2>&1; then
