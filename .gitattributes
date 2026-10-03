@@ -33,6 +33,9 @@ apps/api/src/seed-data/*.json text eol=lf
 *.mjs text eol=lf
 *.cjs text eol=lf
 
+# pnpm patch identity is content-addressed and must survive Windows checkouts.
+patches/** text eol=lf
+
 # Never touch these.
 *.png binary
 *.jpg binary

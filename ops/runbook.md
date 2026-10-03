@@ -434,6 +434,13 @@ MinIO release without KMS, external identity or file-provided credentials.
 Verify the disposable Docker fixture before using it on a server. Avoid an
 overlapping deployment; the script also takes a local exclusive rotation lock.
 
+Legacy deployments may omit the two password variables and use Compose
+defaults. Only agreeing credentials from the inspected running client and
+database/storage containers are accepted in that case; actual access is still
+verified before any mutation. Explicit empty or conflicting on-disk values
+are rejected. New secrets are written explicitly, while rollback preserves
+the original environment and pins the actual old container credentials.
+
 Run it from the existing deployment root with `ROTATE_INTERNAL_CREDENTIALS=1`.
 The Bash orchestrator uses the cached running API image for offline helpers;
 it does not require host Node, pull images, build, remove persistent volumes,

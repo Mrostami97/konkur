@@ -33,13 +33,26 @@ Before applying production changes, confirm verified SSH host key, trusted CDN p
 
 Fresh production image builds on this workstation were blocked by an upstream HTTP 403 for a base-image layer. Fresh builds in GitHub CI resolved that verification limit: commits e6cba95 and 4293e65 passed the production build, nonroot/cache-write/image-size and gateway-bootstrap gates.
 
-Internal credential maintenance passed six unit tests and a real disposable
+Internal credential maintenance passed seven unit tests and a real disposable
 PostgreSQL/MinIO fixture: existing object, IAM user, administrator password and
 web service preservation; old credential rejection; wrong configuration,
-missing backup and missing administrator refusal; database and storage failure
+missing backup and missing administrator refusal; confirmed legacy absent-key
+Compose defaults; database and storage failure
 recovery. Five offline streaming/integrity/cleanup cases also passed. This
 fixture verifies the maintenance path using cached images, while the fresh
 application runtime is verified separately in CI.
+
+On 2026-10-03 the raw dependency feed added HIGH advisory
+GHSA-vfj7-8cjw-p6xm for braces 3.0.3, without a released upstream fix. The
+bounded-depth changes from upstream open PR #72 at commit
+d0d575e55e74a4e0218e5248fafb79efc3e54ebb are backported locally. The gate
+continues to report one raw HIGH separately from five unused-feature Moderate
+exceptions. It requires the exact patch digest, lock identity, both consumer
+resolutions, installed version and seven source hashes, plus real malicious
+string and direct-AST regressions. Missing or altered proof fails deployment.
+The local remediation review expires on 2026-11-01; replace it with an official
+fixed release after verification when available. Fifteen audit/remediation
+tests, ten contract tests and thirteen authentication tests passed freshly.
 
 Production-only service/configuration/backup checks and post-deploy
 public/private response verification remain rollout gates; fixture success

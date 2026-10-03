@@ -2,6 +2,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { bracesRemediation, isReviewedBracesFinding, verifyBracesRemediation } from "./check-braces-remediation.mjs";
 
 const severityLevels = ["info", "low", "moderate", "high", "critical"];
 const advisoryPattern = /^GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/;
@@ -69,7 +70,7 @@ export async function loadFeatureState(root = repoRoot) {
   for (const directory of ["apps/api/src", "apps/web/src", "contracts/src"]) await scan(path.join(root, directory));
   const require = createRequire(path.join(root, "apps/api/package.json"));
   const minioVersion = require("minio/package.json").version;
-  return { sources, minioVersion };
+  return { sources, minioVersion, bracesRemediation: await verifyBracesRemediation(root) };
 }
 export function guardFailures(guard, state) {
   requireValid(object(state) && Array.isArray(state.sources) && state.sources.length > 0, "Feature inspection is unavailable");
@@ -117,9 +118,18 @@ export function checkAudit(feed, policy, { auditStatus, now = new Date(), featur
   const exceptions = reviewExceptions(policy, now);
   const failures = [];
   const accepted = [];
+  const remediated = [];
+  const patchProof = featureState?.bracesRemediation;
+  if (patchProof && patchProof.verified !== true) failures.push(`Local braces remediation could not be verified: ${(patchProof.failures ?? []).join("; ")}`);
   const checkedGuards = new Map();
   for (const record of records) {
     const id = record.github_advisory_id;
+    if (id === bracesRemediation.advisoryId) {
+      if (!isReviewedBracesFinding(record) || patchProof?.verified !== true || patchProof.patchSha256 !== bracesRemediation.patchSha256 || now.getTime() >= day(bracesRemediation.expiresOn)) {
+        failures.push(`${id}: high advisory requires the exact verified local patch, reviewed consumer paths and an unexpired review`);
+      } else remediated.push({ advisoryId: id, severity: record.severity, source: bracesRemediation.source, expiresOn: bracesRemediation.expiresOn });
+      continue;
+    }
     const exception = exceptions.get(id);
     if (!exception) { failures.push(`${id}: unreviewed ${record.severity} advisory in ${record.module_name}`); continue; }
     if (exception.moduleName !== record.module_name || exception.severity !== record.severity || !record.findings.every((finding) => exception.versions.includes(finding.version) && finding.paths.every((value) => reviewedDependencyPath(record.module_name, value)))) {
@@ -131,7 +141,7 @@ export function checkAudit(feed, policy, { auditStatus, now = new Date(), featur
     if (featureFailures.length) { failures.push(`${id}: ${featureFailures.join("; ")}`); continue; }
     accepted.push({ advisoryId: id, expiresOn: exception.expiresOn, reason: exception.reason });
   }
-  return { passed: failures.length === 0, advisories: records.length, accepted, failures };
+  return { passed: failures.length === 0, advisories: records.length, accepted, remediated, failures };
 }
 
 async function main() {
@@ -142,8 +152,9 @@ async function main() {
   const featureState = await loadFeatureState();
   const result = checkAudit(feed, policy, { auditStatus: Number(args[3]), featureState });
   if (!result.passed) throw new Error(result.failures.join("\n"));
-  console.log(`Dependency security gate passed: ${result.advisories} reviewed exceptions; all expire within 31 days.`);
+  console.log(`Dependency security gate passed: ${result.advisories} raw advisories; ${result.accepted.length} reviewed unused-feature exceptions; ${result.remediated.length} verified local remediations.`);
   for (const exception of result.accepted) console.log(`${exception.advisoryId}: reviewed unused feature; expires ${exception.expiresOn}`);
+  for (const remediation of result.remediated) console.log(`${remediation.advisoryId}: raw severity ${remediation.severity}; locally patched, SHA256 and exploit regression verified; review expires ${remediation.expiresOn}; ${remediation.source}`);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   main().catch((error) => { console.error(`Dependency security gate FAILED: ${error.message}`); process.exitCode = 1; });

@@ -66,6 +66,8 @@ jobs:
           "${docker_command[@]}" info >/dev/null
           echo 'Running compose services:'
           "${docker_command[@]}" compose ps --services --filter status=running
+          echo 'Published service ports:'
+          "${docker_command[@]}" compose ps --format '{{.Service}} {{.Publishers}}'
           echo "API runtime uid: $("${docker_command[@]}" compose exec -T api id -u < /dev/null)"
           echo "Web runtime uid: $("${docker_command[@]}" compose exec -T web id -u < /dev/null)"
           if [ -f .env ]; then
@@ -103,6 +105,19 @@ jobs:
             fi
           else
             echo 'Local SQL backup directory is absent.'
+          fi
+          if command -v ss >/dev/null 2>&1; then
+            echo 'Host TCP listening addresses (no process command lines):'
+            ss -lnt
+          fi
+          if command -v iptables >/dev/null 2>&1; then
+            echo 'Host INPUT and Docker forwarding policy:'
+            iptables -S INPUT 2>/dev/null || true
+            iptables -S DOCKER-USER 2>/dev/null || true
+          fi
+          if command -v nft >/dev/null 2>&1; then
+            echo 'Host nftables table inventory:'
+            nft list tables 2>/dev/null || true
           fi
           if command -v firewall-cmd >/dev/null 2>&1; then
             firewall-cmd --state 2>/dev/null || true

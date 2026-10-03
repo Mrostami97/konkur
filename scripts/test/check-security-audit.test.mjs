@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { checkAudit, guardFailures, parseAudit } from "../check-security-audit.mjs";
+import { checkAudit, guardFailures, loadFeatureState, parseAudit } from "../check-security-audit.mjs";
 
 const policy = JSON.parse(await readFile(new URL("../security-audit-exceptions.json", import.meta.url), "utf8"));
 const now = new Date("2026-10-02T12:00:00Z");
@@ -113,4 +113,27 @@ test("MinIO exceptions reject SDK drift, missing wrappers, new callsites and dyn
 test("UTF-8 BOM is supported without tolerating trailing output", () => {
   assert.deepEqual(parseAudit(`\uFEFF${JSON.stringify(audit())}`), audit());
   assert.throws(() => parseAudit(`${JSON.stringify(audit())}\nregistry warning`), /not valid JSON/);
+});
+
+const locallyPatchedBraces = {
+  github_advisory_id: "GHSA-vfj7-8cjw-p6xm", module_name: "braces", severity: "high",
+  findings: [{ version: "3.0.3", paths: ["apps/api > @nestjs/cli@10.4.9 > chokidar@3.6.0 > braces@3.0.3", "contracts > jest@29.7.0 > micromatch@4.0.8 > braces@3.0.3"] }],
+};
+test("a high advisory remains visible and requires verified local remediation", async () => {
+  assert.equal(check(audit([locallyPatchedBraces])).passed, false);
+  const state = await loadFeatureState();
+  const result = check(audit([locallyPatchedBraces]), { featureState: state });
+  assert.equal(result.passed, true);
+  assert.equal(result.advisories, 1);
+  assert.equal(result.accepted.length, 0);
+  assert.equal(result.remediated.length, 1);
+  assert.equal(result.remediated[0].severity, "high");
+  assert.equal(result.remediated[0].advisoryId, locallyPatchedBraces.github_advisory_id);
+  for (const changes of [
+    { github_advisory_id: "GHSA-aaaa-bbbb-cccc" }, { severity: "critical" }, { module_name: "other" },
+    { findings: [{ version: "3.0.4", paths: locallyPatchedBraces.findings[0].paths }] },
+    { findings: [{ version: "3.0.3", paths: ["apps/api > new-parser@1.0.0 > braces@3.0.3"] }] },
+  ]) assert.equal(check(audit([{ ...locallyPatchedBraces, ...changes }]), { featureState: state }).passed, false);
+  assert.equal(check(audit([locallyPatchedBraces]), { featureState: { ...state, bracesRemediation: { verified: false, failures: ["missing patch"] } } }).passed, false);
+  assert.equal(check(audit([locallyPatchedBraces]), { featureState: state, now: new Date("2026-11-01T00:00:00Z") }).passed, false);
 });

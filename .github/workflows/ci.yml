@@ -79,6 +79,7 @@ jobs:
         run: |
           set -euo pipefail
           node --test scripts/test/check-security-audit.test.mjs \
+            scripts/test/braces-remediation.test.mjs \
             scripts/test/check-production-config.test.mjs \
             scripts/test/backup-security.test.mjs \
             scripts/test/rotation-security.test.mjs
@@ -86,6 +87,8 @@ jobs:
       # Inspect dev and production dependencies. Network/format failures and
       # every new advisory fail this step; five short-lived unused-feature
       # exceptions are constrained by package/version/path and source guards.
+      # The separately reported braces HIGH requires an exact local backport,
+      # installed-code hashes and exploit regressions, with a review expiry.
       - name: Dependency security gate
         run: |
           set -euo pipefail

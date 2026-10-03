@@ -5,6 +5,7 @@ WORKDIR /repo
 
 FROM base AS deps
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+COPY patches patches
 COPY contracts/package.json contracts/package.json
 COPY apps/api/package.json apps/api/package.json
 RUN pnpm install --frozen-lockfile --filter @konkurcom/api...
