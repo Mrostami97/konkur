@@ -36,7 +36,8 @@ async function loadGuide(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadGuide(params.slug);
   if (result.article) {
     return pageMetadata({
@@ -67,7 +68,8 @@ async function relatedTaxonomy(article: PublicArticleRecord): Promise<RelatedPub
   }
 }
 
-export default async function GuidePage({ params }: { params: { slug: string } }) {
+export default async function GuidePage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = await pendingParams;
   // next.config.mjs answers these first; this keeps the merge if that layer is bypassed.
   if (isMergedGuide(params.slug)) permanentRedirect(canonicalHref(`/guides/${params.slug}`));
   const result = await loadGuide(params.slug);

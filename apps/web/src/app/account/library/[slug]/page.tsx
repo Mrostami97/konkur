@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { DocumentReader } from "../../../../components/DocumentReader";
 import type { PublicResourceRecord } from "../../../../components/PublicContent";
 import { apiFetch, ApiError } from "../../../../lib/api";
@@ -35,7 +35,8 @@ function SampleCta({ resource, end = false }: { resource: PublicResourceRecord; 
   );
 }
 
-export default function LibraryReaderPage({ params }: { params: { slug: string } }) {
+export default function LibraryReaderPage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = use(pendingParams);
   const [resource, setResource] = useState<PublicResourceRecord | null | undefined>(undefined);
   const [failed, setFailed] = useState(false);
 

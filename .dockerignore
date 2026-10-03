@@ -28,6 +28,7 @@ node_modules
 .env.*
 **/.env
 **/.env.*
+ops/backups
 
 # Tooling, editor and assistant state.
 .claude

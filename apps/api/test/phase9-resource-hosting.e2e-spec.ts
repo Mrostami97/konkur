@@ -93,16 +93,20 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
     return response.body as { id: string };
   }
 
-  async function createArtifact(label: string) {
-    const bytes = Buffer.from(`resource-hosting-${label}-${suffix}`);
+  async function createArtifact(label: string, mimeType = "application/pdf") {
+    const marker = Buffer.from(`resource-hosting-${label}-${suffix}`);
+    const bytes = mimeType === "image/png" ? Buffer.concat([
+      Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=", "base64"), marker,
+    ]) : marker;
+    const extension = mimeType === "image/png" ? "png" : "pdf";
     const checksum = createHash("sha256").update(bytes).digest("hex");
     const artifact = await prisma.sourceArtifact.create({
       data: {
         checksum: `sha256:${checksum}`,
-        filename: `${label}.pdf`,
-        mimeType: "application/pdf",
+        filename: `${label}.${extension}`,
+        mimeType,
         size: bytes.length,
-        storageKey: `${checksum}/${label}.pdf`,
+        storageKey: `${checksum}/${label}.${extension}`,
       },
     });
     return { ...artifact, checksumWithoutPrefix: checksum, bytes };
@@ -344,7 +348,7 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
   it("denies raw checksums for version-only references while still serving unrelated media", async () => {
     const source = await createSource("version-only");
     const referencedArtifact = await createArtifact("version-only");
-    const unrelatedArtifact = await createArtifact("unrelated");
+    const unrelatedArtifact = await createArtifact("unrelated", "image/png");
     const created = await request(app.getHttpServer())
       .post("/admin/resources")
       .set("Cookie", adminCookie)
@@ -360,19 +364,20 @@ describe("Phase 9 resource hosting boundaries (e2e)", () => {
     });
     await request(app.getHttpServer()).get(`/media/${referencedArtifact.checksumWithoutPrefix}`).expect(404);
 
-    // The resource denial above must not sweep up unrelated media: this
-    // artifact still resolves. It now needs a session, because an artifact
-    // that no public Question or published Article references is not public
-    // media -- see MediaController. Narrowing "any session" to a real
-    // per-artifact check waits on the entitlement model.
-    await request(app.getHttpServer()).get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`).expect(403);
+    // Resource denial must not sweep up unrelated passive staff previews.
+    // An orphan artifact is unavailable to anonymous or ordinary accounts.
+    await request(app.getHttpServer()).get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`).expect(404);
     // Served by the API itself; storage is never reachable from a browser.
     fakeStorage.objects.set(unrelatedArtifact.storageKey, unrelatedArtifact.bytes);
     const served = await request(app.getHttpServer())
       .get(`/media/${unrelatedArtifact.checksumWithoutPrefix}`)
       .set("Cookie", adminCookie)
       .expect(200);
-    expect(served.headers["content-type"]).toBe("application/pdf");
+    expect(served.headers["content-type"]).toBe("image/png");
     expect(served.headers["content-length"]).toBe(String(unrelatedArtifact.bytes.length));
+
+    // Legacy active documents use the dedicated resource reader, never raw media.
+    const legacyPdf = await createArtifact("legacy-orphan-pdf");
+    await request(app.getHttpServer()).get(`/media/${legacyPdf.checksumWithoutPrefix}`).set("Cookie", adminCookie).expect(404);
   });
 });

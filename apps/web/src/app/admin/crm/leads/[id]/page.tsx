@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { use, FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../../../lib/api";
 import {
   AdminPageHeader,
@@ -45,7 +45,8 @@ const INTERACTION_LABEL: Record<string, string> = {
   risk_alert: "هشدار ریزش",
 };
 
-export default function LeadDetailPage({ params }: { params: { id: string } }) {
+export default function LeadDetailPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = use(pendingParams);
   const leadId = params.id;
   const [lead, setLead] = useState<LeadDetail | null>(null);
   const [loading, setLoading] = useState(true);

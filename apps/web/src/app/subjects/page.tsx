@@ -14,7 +14,8 @@ interface PublicSubjectSummary {
   prerequisites?: { prerequisite?: { code: string; title: string } }[];
 }
 
-export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
+export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
+  const searchParams = await pendingSearchParams;
   return pageMetadata({
     title: "درس‌های کنکور کامپیوتر و IT ۱۴۰۶",
     description: "صفحهٔ جامع هر درس با پیش‌نیازها، مباحث و محتوای آموزشی منتشرشده.",

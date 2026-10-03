@@ -1,8 +1,8 @@
-import katex from "katex";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, type JSX } from "react";
 import { API_URL } from "../lib/api";
 import { splitMath } from "../lib/math-text";
+import { renderLatex } from "../lib/math-render";
 
 type Block = { type: string; [key: string]: unknown };
 type Asset = { media_key: string; checksum: string };
@@ -11,14 +11,6 @@ function mediaUrl(assets: Asset[], mediaKey: string): string | null {
   const asset = assets.find((a) => a.media_key === mediaKey);
   if (!asset) return null;
   return `${API_URL}/media/${asset.checksum.replace("sha256:", "")}`;
-}
-
-function renderLatex(source: string, displayMode = false): string {
-  try {
-    return katex.renderToString(source, { throwOnError: false, output: "html", displayMode });
-  } catch {
-    return source;
-  }
 }
 
 /** Text with inline ($...$) and display ($$...$$) formulas typeset in place. */

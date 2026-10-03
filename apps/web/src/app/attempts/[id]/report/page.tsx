@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../../../../lib/api";
 import { konkurPercent, toPersianDigits } from "../../../../lib/format";
 import { ContentBlocks } from "../../../../components/ContentBlocks";
@@ -53,7 +53,8 @@ function percent(value: number) {
   return `${toPersianDigits(value.toFixed(1))}٪`;
 }
 
-export default function ReportPage({ params }: { params: { id: string } }) {
+export default function ReportPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = use(pendingParams);
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

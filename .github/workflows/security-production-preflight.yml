@@ -1,0 +1,133 @@
+name: Read-only production prerequisites
+
+on:
+  push:
+    branches: [codex/security-hardening-2026-10-02]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'Mrostami97/konkur' && github.ref == 'refs/heads/codex/security-hardening-2026-10-02'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Inspect existing services and validate runtime configuration
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASS: ${{ secrets.SSH_PASS }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          PRODUCTION_INSPECTION_PUBLIC_KEY: ${{ vars.PRODUCTION_INSPECTION_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          SSH_USER="${SSH_USER:-root}"
+          DEPLOY_PATH="${DEPLOY_PATH:-/opt/app}"
+          [[ "${SSH_HOST:-}" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]] || { echo 'Invalid SSH host.' >&2; exit 1; }
+          [[ "$SSH_USER" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]] || { echo 'Invalid SSH user.' >&2; exit 1; }
+          [[ "$DEPLOY_PATH" =~ ^/[a-zA-Z0-9_./-]+$ ]] || { echo 'Invalid deployment path.' >&2; exit 1; }
+          [ -n "${SSH_KNOWN_HOSTS:-}" ] || { echo 'Verified SSH host pin is required.' >&2; exit 1; }
+          [ -n "${PRODUCTION_INSPECTION_PUBLIC_KEY:-}" ] || { echo 'Operator public encryption key is required.' >&2; exit 1; }
+          umask 077
+          known="$RUNNER_TEMP/preflight-known-hosts"
+          key="$RUNNER_TEMP/preflight-key"
+          report="$RUNNER_TEMP/preflight-report"
+          trap 'rm -f -- "$known" "$key" "$report"' EXIT
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$known"
+          ssh-keygen -l -f "$known" >/dev/null
+          ssh-keygen -F "$SSH_HOST" -f "$known" >/dev/null
+          ssh_command=(ssh -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$known" -o ConnectTimeout=20 -o ConnectionAttempts=1)
+          if [ -n "${SSH_KEY:-}" ]; then
+            printf '%s\n' "$SSH_KEY" > "$key"
+            ssh_command+=(-o BatchMode=yes -i "$key")
+          elif [ -n "${SSH_PASS:-}" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq sshpass
+            export SSHPASS="$SSH_PASS"
+            ssh_command=(sshpass -e "${ssh_command[@]}")
+          else
+            echo 'No existing SSH authentication is configured.' >&2
+            exit 1
+          fi
+          remote="$SSH_USER@$SSH_HOST"
+          inspection_status=0
+
+          # Read only: no source sync, backup creation, package upgrade,
+          # service restart, password change, firewall change or data write.
+          "${ssh_command[@]}" "$remote" "cd '$DEPLOY_PATH' && bash -s" >"$report" 2>&1 <<'INSPECT' || inspection_status=1
+          set -euo pipefail
+          docker_command=(docker)
+          if ! docker info >/dev/null 2>&1; then docker_command=(sudo docker); fi
+          "${docker_command[@]}" info >/dev/null
+          echo 'Running compose services:'
+          "${docker_command[@]}" compose ps --services --filter status=running
+          echo 'Published service ports:'
+          "${docker_command[@]}" compose ps --format '{{.Service}} {{.Publishers}}'
+          echo "API runtime uid: $("${docker_command[@]}" compose exec -T api id -u < /dev/null)"
+          echo "Web runtime uid: $("${docker_command[@]}" compose exec -T web id -u < /dev/null)"
+          echo 'Application runtime image identity, without environment values:'
+          for service in api web; do
+            container="$("${docker_command[@]}" compose ps --quiet "$service")"
+            [ -n "$container" ] || exit 1
+            "${docker_command[@]}" inspect --format '{{.Config.Image}} {{.Config.User}} {{.Image}}' "$container"
+          done
+          if [ -f .env ]; then
+            echo "Server environment file mode: $(stat -c '%a' .env)"
+            for field in POSTGRES_PASSWORD MINIO_ROOT_PASSWORD; do
+              if grep -Eq "^[[:space:]]*(export[[:space:]]+)?$field[[:space:]]*=" .env; then
+                echo "$field is explicitly configured in the environment file."
+              else
+                echo "$field is absent from the environment file; running service defaults require review."
+              fi
+            done
+          fi
+          if [ -d ops/backups ]; then
+            echo "Local SQL backup count: $(find ops/backups -maxdepth 1 -type f -name '*.sql.gz' | wc -l)"
+            echo "Backup directory mode: $(stat -c '%a' ops/backups)"
+            last_rotation="$(find ops/backups -maxdepth 1 -type d -name '.credential-rotation-*' -printf '%T@ %p\n' | sort -nr | awk 'NR == 1 {sub(/^[^ ]+ /, ""); print}')"
+            if [ -n "$last_rotation" ]; then
+              echo 'Last rotation state filenames (contents remain private):'
+              find "$last_rotation" -maxdepth 1 -type f -printf '%f\n'
+              # Emit only known static helper errors, never raw configuration,
+              # stack traces, JSON parse excerpts, credentials or user records.
+              for diagnostic in "$last_rotation"/helper-error-*.txt; do
+                [ -f "$diagnostic" ] || continue
+                IFS= read -r first_line < "$diagnostic" || true
+                case "$first_line" in
+                  'Error: Internal service configuration does not match the private environment'|\
+                  'Error: Existing service identity is invalid'|\
+                  'Error: Storage mount destinations drifted from existing services'|\
+                  'Error: Private Linux state directory is required'|\
+                  'Error: Ambiguous environment configuration'|\
+                  'Error: Unsupported environment configuration') printf '%s\n' "$first_line" ;;
+                  *) echo 'A private helper diagnostic exists; further local review is required.' ;;
+                esac
+              done
+            fi
+          else
+            echo 'Local SQL backup directory is absent.'
+          fi
+          INSPECT
+
+          # Validate effective credentials in the already running API process
+          # environment. The offline checker prints field names only. Nothing
+          # is written to the server and credentials never return to the runner.
+          {
+            cat scripts/check-production-config.mjs
+            cat <<'VALIDATE'
+          const preflightErrors = validateProductionConfig(process.env, { requireCredentials: true });
+          for (const error of preflightErrors) console.error(`Production prerequisite: ${error}`);
+          if (preflightErrors.length) process.exitCode = 1;
+          else console.log('Effective production configuration passed offline validation.');
+          VALIDATE
+          } | "${ssh_command[@]}" "$remote" "cd '$DEPLOY_PATH' && if docker info >/dev/null 2>&1; then docker compose exec -T api node --input-type=module -; else sudo docker compose exec -T api node --input-type=module -; fi" >>"$report" 2>&1 || inspection_status=1
+          node scripts/encrypt-production-inspection.mjs < "$report"
+          if [ "$inspection_status" -ne 0 ]; then
+            echo 'Production prerequisites need operator review; encrypted diagnostics were provided.' >&2
+            exit 1
+          fi

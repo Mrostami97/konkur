@@ -130,7 +130,8 @@ function legacySearch(query: string): SearchItem[] {
     .map(({ item: { body: _body, ...item } }) => item);
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
+export default async function SearchPage({ searchParams: pendingSearchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const searchParams = await pendingSearchParams;
   const query = firstValue(searchParams.q).trim().slice(0, 120);
   const requestedPage = pageNumber(searchParams.page);
   let response: SearchResponse | null = null;

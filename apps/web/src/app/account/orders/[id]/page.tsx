@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../../lib/api";
 import { formatPersianNumber, formatRial } from "../../../../lib/format";
 import { AccountShell } from "../../AccountShell";
@@ -67,7 +67,8 @@ function nowLocal() {
   return new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 }
 
-export default function OrderPaymentPage({ params }: { params: { id: string } }) {
+export default function OrderPaymentPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = use(pendingParams);
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

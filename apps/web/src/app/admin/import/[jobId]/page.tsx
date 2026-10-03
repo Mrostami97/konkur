@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, FormEvent, useCallback, useEffect, useState } from "react";
+import { use, Fragment, FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../../lib/api";
 import { toPersianDigits } from "../../../../lib/format";
 import {
@@ -144,7 +144,8 @@ function RollbackTool({ prefill }: { prefill: { entityId: string; entityType: En
   );
 }
 
-export default function ImportJobDetailPage({ params }: { params: { jobId: string } }) {
+export default function ImportJobDetailPage({ params: pendingParams }: { params: Promise<{ jobId: string }> }) {
+  const params = use(pendingParams);
   const jobId = params.jobId;
   const [job, setJob] = useState<ImportJob | null>(null);
   const [items, setItems] = useState<ImportItem[]>([]);

@@ -22,6 +22,11 @@ function sha256(buf: Buffer): string {
   return createHash("sha256").update(buf).digest("hex");
 }
 
+function pngFixture(label: string): Buffer {
+  const image = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=", "base64");
+  return Buffer.concat([image, Buffer.from(label)]);
+}
+
 function randomPhone(): string {
   const suffix = Math.floor(1_000_000 + Math.random() * 8_999_999);
   return `+9894${suffix}`;
@@ -175,12 +180,15 @@ describe("Taxonomy + Question Bank (e2e)", () => {
     expect(versionsRes.body).toHaveLength(1);
   });
 
-  it("never leaks correctOption/solutionBlocks to anonymous or unentitled callers", async () => {
+  it("never leaks non-sample question content to anonymous or unentitled callers", async () => {
     const externalId = `no-leak-${Date.now()}`;
+    // Repeated suites share the disposable DB. Public samples from another
+    // case are intentionally readable, so isolate this locked fixture.
+    const subjectCode = `no-leak-subject-${externalId}`;
     const jobRes = await request(app.getHttpServer())
       .post("/admin/questions")
       .set("Cookie", adminCookie)
-      .send(questionDto(externalId, "algorithms", 1405))
+      .send(questionDto(externalId, subjectCode, 1405))
       .expect(201);
     const itemsRes = await request(app.getHttpServer())
       .get(`/admin/import/${jobRes.body.id}/items`)
@@ -197,18 +205,22 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .expect(201);
     const question = await prisma.question.findUniqueOrThrow({ where: { externalId } });
 
-    // Anonymous: neither getById nor list ever returns the answer key.
+    // Anonymous: neither getById nor list returns this locked answer key.
     const anonById = await request(app.getHttpServer()).get(`/questions/${question.id}`).expect(200);
     expect(anonById.body.correctOption).toBeUndefined();
     expect(anonById.body.solutionBlocks).toBeUndefined();
 
     const anonList = await request(app.getHttpServer())
-      .get(`/questions?subjectCode=algorithms`)
+      .get(`/questions?subjectCode=${subjectCode}`)
       .expect(200);
-    expect(anonList.body.items.length).toBeGreaterThan(0);
+    expect(anonList.body.items).toHaveLength(1);
+    expect(anonList.body.items[0].id).toBe(question.id);
     for (const item of anonList.body.items) {
       expect(item.correctOption).toBeUndefined();
       expect(item.solutionBlocks).toBeUndefined();
+      expect(item.isSample).toBe(false);
+      expect(item.stemBlocks).toBeUndefined();
+      expect(item.options).toBeUndefined();
     }
 
     // Logged-in but with no entitlement model to grant access: same result.
@@ -231,12 +243,17 @@ describe("Taxonomy + Question Bank (e2e)", () => {
     expect(studentById.body.solutionBlocks).toBeUndefined();
 
     const studentList = await request(app.getHttpServer())
-      .get(`/questions?subjectCode=algorithms`)
+      .get(`/questions?subjectCode=${subjectCode}`)
       .set("Cookie", unentitledCookie)
       .expect(200);
+    expect(studentList.body.items).toHaveLength(1);
+    expect(studentList.body.items[0].id).toBe(question.id);
     for (const item of studentList.body.items) {
       expect(item.correctOption).toBeUndefined();
       expect(item.solutionBlocks).toBeUndefined();
+      expect(item.isSample).toBe(false);
+      expect(item.stemBlocks).toBeUndefined();
+      expect(item.options).toBeUndefined();
     }
   });
 
@@ -422,7 +439,7 @@ describe("Taxonomy + Question Bank (e2e)", () => {
 
   it("denies anonymous media access to an artifact not (yet) part of any public content", async () => {
     const externalId = `staged-only-${Date.now()}`;
-    const imageBuf = Buffer.from("fake-png-for-staged-media-test");
+    const imageBuf = pngFixture(`staged-${externalId}`);
     const checksum = sha256(imageBuf);
     const zip = buildZip(
       {
@@ -455,10 +472,10 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .expect(201);
 
     const anonRes = await request(app.getHttpServer()).get(`/media/${checksum}`).redirects(0);
-    expect(anonRes.status).toBe(403);
+    expect(anonRes.status).toBe(404);
 
-    // An authenticated caller (no per-artifact entitlement model yet, so any
-    // identified session) is allowed through, unlike the anonymous caller.
+    // Content staff can preview staged files; an ordinary student cannot.
+    await request(app.getHttpServer()).get(`/media/${checksum}`).set("Cookie", studentCookie).expect(404);
     const authedRes = await request(app.getHttpServer())
       .get(`/media/${checksum}`)
       .set("Cookie", adminCookie)
@@ -564,14 +581,15 @@ describe("Taxonomy + Question Bank (e2e)", () => {
 
   it("serves an ingested media asset once public content uses it", async () => {
     const externalId = `media-question-${Date.now()}`;
-    const imageBuf = Buffer.from("fake-png-for-media-test");
+    const subjectCode = `media-subject-${externalId}`;
+    const imageBuf = pngFixture(`sample-${externalId}`);
     const checksum = sha256(imageBuf);
     const zip = buildZip(
       {
         schema_version: "question.v1",
         external_id: externalId,
         exam: { degree: "master", major: "computer-engineering", year: 1405 },
-        subject_code: "algorithms",
+        subject_code: subjectCode,
         topic_codes: ["asymptotic-analysis"],
         stem_blocks: [{ type: "image", media_key: "fig1" }],
         options: [
@@ -607,11 +625,23 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .set("Cookie", adminCookie)
       .expect(201);
 
+    // Non-sample bank media requires a grant even after publication.
+    await request(app.getHttpServer()).get(`/media/${checksum}`).expect(404);
+    const published = await prisma.question.findUniqueOrThrow({ where: { externalId } });
+    await request(app.getHttpServer()).post(`/admin/questions/${published.id}/sample`)
+      .set("Cookie", adminCookie).send({ isSample: true }).expect(201);
+
     // Served by the API itself: storage is never reachable from a browser.
     const res = await request(app.getHttpServer()).get(`/media/${checksum}`).redirects(0);
     expect(res.status).toBe(200);
     expect(res.headers["content-type"]).toMatch(/^image\//);
     expect(res.headers["accept-ranges"]).toBe("bytes");
+
+    // Return the sample fixture to locked state and verify that a fresh
+    // media request observes the revoked public access.
+    await request(app.getHttpServer()).post(`/admin/questions/${published.id}/sample`)
+      .set("Cookie", adminCookie).send({ isSample: false }).expect(201);
+    await request(app.getHttpServer()).get(`/media/${checksum}`).expect(404);
   });
 it("retires a question out of the bank without destroying it, and can restore it", async () => {
     const externalId = `retire-${Date.now()}`;

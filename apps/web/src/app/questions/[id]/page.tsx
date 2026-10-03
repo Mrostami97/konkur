@@ -3,7 +3,8 @@ import { QuestionView } from "./QuestionView";
 import "../questions.css";
 
 /** Server shell: hands the client view the Persian subject names it shows. */
-export default function QuestionDetailPage({ params }: { params: { id: string } }) {
+export default async function QuestionDetailPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = await pendingParams;
   const subjectTitles = Object.fromEntries(subjects.map((subject) => [subject.slug, subject.title]));
   return <QuestionView id={params.id} subjectTitles={subjectTitles} />;
 }

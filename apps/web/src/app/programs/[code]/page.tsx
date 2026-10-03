@@ -103,7 +103,8 @@ async function loadProgram(code: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { code: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ code: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadProgram(params.code);
   if (!result.program) {
     return pageMetadata({
@@ -124,7 +125,8 @@ export async function generateMetadata({ params }: { params: { code: string } })
   };
 }
 
-export default async function ProgramPage({ params }: { params: { code: string } }) {
+export default async function ProgramPage({ params: pendingParams }: { params: Promise<{ code: string }> }) {
+  const params = await pendingParams;
   const result = await loadProgram(params.code);
   if (result.unavailable) {
     return <main className="page-container"><PublicServiceError label="صفحهٔ رشته‌محل" /></main>;

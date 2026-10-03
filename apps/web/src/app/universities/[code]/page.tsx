@@ -103,7 +103,8 @@ async function loadUniversity(code: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { code: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ code: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadUniversity(params.code);
   if (!result.university) {
     return pageMetadata({
@@ -123,7 +124,8 @@ export async function generateMetadata({ params }: { params: { code: string } })
   };
 }
 
-export default async function UniversityPage({ params }: { params: { code: string } }) {
+export default async function UniversityPage({ params: pendingParams }: { params: Promise<{ code: string }> }) {
+  const params = await pendingParams;
   const result = await loadUniversity(params.code);
   if (result.unavailable) {
     return <main className="page-container"><PublicServiceError label="صفحهٔ دانشگاه" /></main>;

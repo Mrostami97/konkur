@@ -1,9 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
-import { Role } from "@prisma/client";
+import { Inject, Injectable, ServiceUnavailableException, UnauthorizedException } from "@nestjs/common";
+import { Prisma, Role } from "@prisma/client";
 import { createHash, randomBytes, randomInt } from "crypto";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../../prisma/prisma.service";
-import { OTP_PROVIDER, OtpProvider } from "./otp-provider";
+import { ConsoleOtpProvider, OTP_PROVIDER, OtpProvider } from "./otp-provider";
 import { verifyPassword } from "./password-hasher";
 import { phoneVariants } from "./phone";
 
@@ -38,79 +38,96 @@ export class IdentityService {
     @Inject(OTP_PROVIDER) private readonly otpProvider: OtpProvider,
   ) {}
 
-  async requestOtp(phone: string, attribution?: { source?: string; campaignCode?: string }): Promise<void> {
-    let user = await this.prisma.user.findUnique({ where: { phone } });
-    let isNewUser = false;
-    if (!user) {
-      user = await this.prisma.user.create({ data: { phone } });
-      isNewUser = true;
+  private assertOtpAvailable() {
+    if (process.env.NODE_ENV === "production" && this.otpProvider instanceof ConsoleOtpProvider) {
+      throw new ServiceUnavailableException("OTP login is not configured");
     }
+  }
 
-    if (isNewUser) {
-      await this.prisma.userRole.create({
-        data: { userId: user.id, role: Role.STUDENT },
-      });
-      await this.prisma.outboxEvent.create({
-        data: {
-          eventType: "UserOnboarded",
-          payload: {
-            userId: user.id,
-            phone: user.phone,
-            source: attribution?.source,
-            campaignCode: attribution?.campaignCode,
+  async requestOtp(phone: string, attribution?: { source?: string; campaignCode?: string }): Promise<void> {
+    this.assertOtpAvailable();
+    const code = generateOtpCode();
+    await this.prisma.$transaction(async (tx) => {
+      // Issuance and verification use the same lock, including first registration.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`otp:${phone}`}))`;
+      let user = await tx.user.findUnique({ where: { phone } });
+      if (!user) {
+        user = await tx.user.create({ data: { phone } });
+        await tx.userRole.create({ data: { userId: user.id, role: Role.STUDENT } });
+        await tx.outboxEvent.create({
+          data: {
+            eventType: "UserOnboarded",
+            payload: {
+              userId: user.id,
+              phone: user.phone,
+              source: attribution?.source,
+              campaignCode: attribution?.campaignCode,
+            },
           },
+        });
+        await this.audit.log({
+          actorUserId: user.id,
+          action: "user.registered",
+          targetType: "User",
+          targetId: user.id,
+        }, tx);
+      }
+      // A new challenge replaces every older pending challenge, including expired ones.
+      await tx.otpCode.updateMany({
+        where: { userId: user.id, consumedAt: null },
+        data: { consumedAt: new Date() },
+      });
+      await tx.otpCode.create({
+        data: {
+          userId: user.id,
+          phone,
+          codeHash: hash(code),
+          expiresAt: new Date(Date.now() + OTP_TTL_MINUTES * 60_000),
         },
       });
-      await this.audit.log({
-        actorUserId: user.id,
-        action: "user.registered",
-        targetType: "User",
-        targetId: user.id,
-      });
-    }
-
-    const code = generateOtpCode();
-    await this.prisma.otpCode.create({
-      data: {
-        userId: user.id,
-        phone,
-        codeHash: hash(code),
-        expiresAt: new Date(Date.now() + OTP_TTL_MINUTES * 60_000),
-      },
     });
-
     await this.otpProvider.send(phone, code);
   }
 
   async verifyOtp(phone: string, code: string, ctx: AuthContext): Promise<{ token: string; user: SessionUser }> {
-    const user = await this.prisma.user.findUnique({
-      where: { phone },
-      include: { roles: true },
-    });
-    if (!user) throw new UnauthorizedException("invalid phone or code");
-
-    const otp = await this.prisma.otpCode.findFirst({
-      where: { userId: user.id, consumedAt: null },
-      orderBy: { createdAt: "desc" },
-    });
-    if (!otp) throw new UnauthorizedException("invalid phone or code");
-    if (otp.expiresAt < new Date()) throw new UnauthorizedException("code expired");
-    if (otp.attempts >= OTP_MAX_ATTEMPTS) throw new UnauthorizedException("too many attempts");
-
-    if (otp.codeHash !== hash(code)) {
-      await this.prisma.otpCode.update({
-        where: { id: otp.id },
-        data: { attempts: { increment: 1 } },
+    this.assertOtpAvailable();
+    const result = await this.prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`otp:${phone}`}))`;
+      const user = await tx.user.findUnique({ where: { phone }, include: { roles: true } });
+      if (!user) return { ok: false as const, reason: "invalid phone or code" };
+      const otp = await tx.otpCode.findFirst({
+        where: { userId: user.id, consumedAt: null },
+        orderBy: { createdAt: "desc" },
       });
-      throw new UnauthorizedException("invalid phone or code");
-    }
-
-    await this.prisma.otpCode.update({
-      where: { id: otp.id },
-      data: { consumedAt: new Date() },
+      if (!otp) return { ok: false as const, reason: "invalid phone or code" };
+      const now = new Date();
+      if (otp.expiresAt <= now) return { ok: false as const, reason: "code expired" };
+      if (otp.attempts >= OTP_MAX_ATTEMPTS) return { ok: false as const, reason: "too many attempts" };
+      const activeChallenge = {
+        id: otp.id,
+        userId: user.id,
+        consumedAt: null,
+        expiresAt: { gt: now },
+        attempts: { lt: OTP_MAX_ATTEMPTS },
+        codeHash: otp.codeHash,
+      };
+      if (otp.codeHash !== hash(code)) {
+        await tx.otpCode.updateMany({
+          where: activeChallenge,
+          data: { attempts: { increment: 1 } },
+        });
+        // Throw only after commit: throwing here would roll back the failed attempt.
+        return { ok: false as const, reason: "invalid phone or code" };
+      }
+      const claimed = await tx.otpCode.updateMany({
+        where: activeChallenge,
+        data: { consumedAt: now },
+      });
+      if (claimed.count !== 1) return { ok: false as const, reason: "invalid phone or code" };
+      return { ok: true as const, session: await this.issueSession(user, ctx, "otp", tx) };
     });
-
-    return this.issueSession(user, ctx, "otp");
+    if (!result.ok) throw new UnauthorizedException(result.reason);
+    return result.session;
   }
 
   async loginWithPassword(
@@ -125,7 +142,17 @@ export class IdentityService {
     });
     for (const user of candidates) {
       if (user.passwordHash && (await verifyPassword(password, user.passwordHash))) {
-        return this.issueSession(user, ctx, "password");
+        // Keep password hashing outside the lock. A rotation updates this same
+        // user row before revoking sessions, so recheck the verified credential
+        // under the lock and issue the session before releasing it.
+        return this.prisma.$transaction(async (tx) => {
+          await tx.$queryRaw`SELECT "id" FROM "users" WHERE "id" = ${user.id} FOR UPDATE`;
+          const current = await tx.user.findUnique({ where: { id: user.id }, include: { roles: true } });
+          if (!current || current.passwordHash !== user.passwordHash) {
+            throw new UnauthorizedException("invalid phone or password");
+          }
+          return this.issueSession(current, ctx, "password", tx);
+        });
       }
     }
     throw new UnauthorizedException("invalid phone or password");
@@ -135,9 +162,11 @@ export class IdentityService {
     user: { id: string; phone: string; roles: { role: Role }[] },
     ctx: AuthContext,
     method: "otp" | "password",
+    tx?: Prisma.TransactionClient,
   ): Promise<{ token: string; user: SessionUser }> {
     const rawToken = randomBytes(32).toString("hex");
-    await this.prisma.session.create({
+    const db = tx ?? this.prisma;
+    await db.session.create({
       data: {
         userId: user.id,
         tokenHash: hash(rawToken),
@@ -153,7 +182,7 @@ export class IdentityService {
       targetType: "User",
       targetId: user.id,
       metadata: { method },
-    });
+    }, tx);
 
     return {
       token: rawToken,

@@ -21,6 +21,11 @@ function sha256(buf: Buffer): string {
   return createHash("sha256").update(buf).digest("hex");
 }
 
+function pngFixture(label: string): Buffer {
+  const image = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=", "base64");
+  return Buffer.concat([image, Buffer.from(label)]);
+}
+
 function randomPhone(): string {
   const suffix = Math.floor(1_000_000 + Math.random() * 8_999_999);
   return `+9893${suffix}`;
@@ -131,7 +136,7 @@ describe("Ingestion pipeline (e2e)", () => {
 
   it("runs the full article pipeline: receive -> stage -> review -> publish -> visible on the portal", async () => {
     const externalId = `ingest-article-${Date.now()}`;
-    const imageBuf = Buffer.from("fake-png-bytes-for-testing");
+    const imageBuf = pngFixture("article-v1");
     const zip = buildZip(articlePayload(externalId, "Ingested Title v1", sha256(imageBuf)), [
       { name: "fig1.png", buffer: imageBuf },
     ]);
@@ -279,7 +284,7 @@ describe("Ingestion pipeline (e2e)", () => {
 
   it("republishing a changed external_id bumps the version, and rollback restores an old one without losing history", async () => {
     const externalId = `ingest-versioned-${Date.now()}`;
-    const imageBuf = Buffer.from("fake-png-v1");
+    const imageBuf = pngFixture("version-v1");
 
     // v1
     const zip1 = buildZip(articlePayload(externalId, "Versioned Title v1", sha256(imageBuf)), [

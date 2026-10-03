@@ -21,6 +21,7 @@ import { firstArticlePublishedAt, publishedArticleHistoryDates } from "../conten
 import { ObjectStorageService } from "./object-storage.service";
 import { parseImportZip } from "./zip-reader";
 import { sha256Buffer, sha256Json } from "./checksum";
+import { IMPORT_IMAGE_MIME_TYPES, isSafeImportFilename, sniffImportImageMime } from "./media-types";
 
 type ContractItem = ArticleV1 | ArticleV2 | QuestionV1 | ReportCardV1;
 type PublicationReview = { reviewedByUserId: string; reviewedAt: Date };
@@ -172,6 +173,10 @@ export class IngestionService {
     const assets: { media_key: string; filename: string; mime_type: string; checksum: string }[] =
       (rawItem as Record<string, unknown>).assets as typeof assets | undefined ?? [];
     for (const asset of assets) {
+      if (!isSafeImportFilename(asset.filename) || asset.filename === "payload.json") {
+        assetErrors.push(`asset ${asset.media_key} must use a safe filename at the zip root`);
+        continue;
+      }
       const fileBuf = files.get(asset.filename);
       if (!fileBuf) {
         assetErrors.push(`asset ${asset.filename} referenced but not present in the zip`);
@@ -180,6 +185,10 @@ export class IngestionService {
       const actualChecksum = `sha256:${sha256Buffer(fileBuf)}`;
       if (actualChecksum !== asset.checksum) {
         assetErrors.push(`asset ${asset.filename} checksum mismatch`);
+        continue;
+      }
+      if (!IMPORT_IMAGE_MIME_TYPES.has(asset.mime_type) || sniffImportImageMime(fileBuf) !== asset.mime_type) {
+        assetErrors.push(`asset ${asset.filename} must be a PNG, JPEG, WebP, GIF or AVIF image whose bytes match mime_type`);
         continue;
       }
       const key = `${asset.checksum.replace("sha256:", "")}/${asset.filename}`;

@@ -11,7 +11,8 @@ import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
 import { OWNER_NAME } from "../../components/OwnerByline";
 
-export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
+export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
+  const searchParams = await pendingSearchParams;
   return pageMetadata({
     title: "مقاله‌ها و راهنماهای کنکور کامپیوتر",
     description: "مقاله‌های منبع‌دار دربارهٔ برنامه‌ریزی، منابع، کارنامه و تغییرات کنکور ارشد و دکتری کامپیوتر.",

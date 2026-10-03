@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-02",
+  "exceptions": [
+    {
+      "advisoryId": "GHSA-5v7r-6r5c-r473",
+      "moduleName": "file-type",
+      "severity": "moderate",
+      "versions": ["20.4.1"],
+      "guard": "unused-file-type",
+      "expiresOn": "2026-11-01",
+      "reason": "Nest 10 pins file-type 20.4.1, but application source does not import this parser or use Nest FileTypeValidator. The affected ASF parser is not called. Reassess before introducing file sniffing or migrating Nest.",
+      "source": "https://github.com/sindresorhus/file-type/security/advisories/GHSA-5v7r-6r5c-r473"
+    },
+    {
+      "advisoryId": "GHSA-j47w-4g3g-c36v",
+      "moduleName": "file-type",
+      "severity": "moderate",
+      "versions": ["20.4.1"],
+      "guard": "unused-file-type",
+      "expiresOn": "2026-11-01",
+      "reason": "The affected ZIP identification parser is not called by application source or Nest FileTypeValidator. Upload security currently uses bounded archive parsing and explicit media validation. A forced ESM major override is not a compatible Nest 10 update.",
+      "source": "https://github.com/sindresorhus/file-type/security/advisories/GHSA-j47w-4g3g-c36v"
+    },
+    {
+      "advisoryId": "GHSA-36xv-jgw5-4q75",
+      "moduleName": "@nestjs/core",
+      "severity": "moderate",
+      "versions": ["10.4.22"],
+      "guard": "unused-sse",
+      "expiresOn": "2026-11-01",
+      "reason": "The affected SSE message id/type serialization has no endpoint in this application: no Sse decorator, SseStream or EventSource use is present. The supported vendor fix requires a coordinated Nest 11/Express 5 migration.",
+      "source": "https://github.com/nestjs/nest/security/advisories/GHSA-36xv-jgw5-4q75"
+    },
+    {
+      "advisoryId": "GHSA-vcc3-ghjq-m6fr",
+      "moduleName": "decode-uri-component",
+      "severity": "moderate",
+      "versions": ["0.2.2"],
+      "guard": "unused-minio-decoder",
+      "expiresOn": "2026-11-01",
+      "reason": "MinIO 8.0.7 uses query-string.stringify; the affected decoder is on parsing paths. The only MinIO application wrapper invokes a reviewed finite set of storage operations and does not expose query parsing or arbitrary SDK methods.",
+      "source": "https://github.com/advisories/GHSA-vcc3-ghjq-m6fr"
+    },
+    {
+      "advisoryId": "GHSA-528h-pc64-c93x",
+      "moduleName": "stream-json",
+      "severity": "moderate",
+      "versions": ["1.9.1"],
+      "guard": "unused-stream-json-filters",
+      "expiresOn": "2026-11-01",
+      "reason": "MinIO 8.0.7 loads a JSONL Parser in its notification subsystem, not the affected Pick/Ignore/Filter/Replace classes. The application neither imports stream-json nor calls listenBucketNotification; a major 3 substitution is not a reviewed SDK-compatible update.",
+      "source": "https://github.com/advisories/GHSA-528h-pc64-c93x"
+    }
+  ]
+}

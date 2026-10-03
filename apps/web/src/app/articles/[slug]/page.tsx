@@ -30,7 +30,8 @@ async function loadArticle(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadArticle(params.slug);
   if (result.article) {
     return pageMetadata({
@@ -61,7 +62,8 @@ async function relatedTaxonomy(article: PublicArticleRecord): Promise<RelatedPub
   }
 }
 
-export default async function ArticlePage({ params }: { params: { slug: string } }) {
+export default async function ArticlePage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = await pendingParams;
   const result = await loadArticle(params.slug);
   if (result.article) {
     if (result.article.contentType === "GUIDE") permanentRedirect(`/guides/${result.article.slug}`);

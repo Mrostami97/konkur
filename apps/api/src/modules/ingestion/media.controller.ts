@@ -1,10 +1,12 @@
-import { Controller, ForbiddenException, Get, NotFoundException, Param, Req, Res, UseGuards } from "@nestjs/common";
-import { AccessMode, ReviewStatus, VersionedEntityType } from "@prisma/client";
+import { Controller, Get, NotFoundException, Param, Req, Res, UseGuards } from "@nestjs/common";
+import { AccessMode, ReviewStatus, Role, VersionedEntityType } from "@prisma/client";
 import type { Response } from "express";
 import { PrismaService } from "../../prisma/prisma.service";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
 import { RequestWithUser } from "../identity/guards/session-auth.guard";
 import { ObjectStorageService } from "./object-storage.service";
+import { AccessService } from "../access/access.service";
+import { isSafeMediaMime } from "./media-types";
 
 @Controller("media")
 @UseGuards(OptionalSessionAuthGuard)
@@ -12,10 +14,12 @@ export class MediaController {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storage: ObjectStorageService,
+    private readonly access: AccessService,
   ) {}
 
   @Get(":checksum")
   async redirectToMedia(@Param("checksum") checksum: string, @Req() req: RequestWithUser, @Res() res: Response) {
+    if (!/^[a-f0-9]{64}$/.test(checksum)) throw new NotFoundException("media not found");
     const fullChecksum = `sha256:${checksum}`;
     const artifact = await this.prisma.sourceArtifact.findUnique({
       where: { checksum: fullChecksum },
@@ -30,7 +34,8 @@ export class MediaController {
         },
       },
     });
-    if (!artifact) throw new NotFoundException("media not found");
+    // Protect existing legacy/staged artifacts too, not just future uploads.
+    if (!artifact || !isSafeMediaMime(artifact.mimeType)) throw new NotFoundException("media not found");
     const [resourceVersion, resourceAudit] = await Promise.all([
       this.prisma.contentVersion.findFirst({
         where: {
@@ -56,8 +61,7 @@ export class MediaController {
       throw new NotFoundException("media not found");
     }
 
-    // Student photos follow their own rule, checked before the signed-in
-    // pass-through below. A photo belongs to a real person who agreed to be
+    // Student photos follow their own rule. A photo belongs to a real person who agreed to be
     // shown on the results wall; if their result is unpublished -- never
     // consented, or consent withdrawn -- the photo must not be reachable by
     // anyone who happens to hold the checksum, signed in or not. Only an
@@ -69,53 +73,59 @@ export class MediaController {
     });
     // Keyed by where the upload stored it as well as by current use: a photo
     // that was replaced, or whose row was deleted, is still a person's face
-    // and must not fall through to the signed-in pass-through below.
+    // and must not fall through to ordinary content access below.
     const isAchievementPhoto = /\/achievement\.(jpg|png|webp)$/.test(artifact.storageKey);
     if (achievementUses.length > 0 || isAchievementPhoto) {
       const isPublic = achievementUses.some((use) => use.isPublished);
-      const isAdmin = req.user?.roles.includes("ADMIN") ?? false;
+      const isAdmin = req.user?.roles.includes(Role.ADMIN) && !req.user.roles.includes(Role.STUDENT);
       if (!isPublic && !isAdmin) throw new NotFoundException("media not found");
       await this.send(artifact, req, res);
       return;
     }
 
-    if (!req.user) {
-      // Anonymous callers may only resolve a checksum that is already
-      // reachable through a genuinely public, unauthenticated API response:
-      // a Question's stem/option imagery (questions have no draft state --
-      // see question-bank.service.ts PUBLIC_QUESTION_SELECT) or a PUBLISHED
-      // Article's imagery, or a lesson that anyone may open (a preview
-      // lesson, or any lesson of a public course). Everything else (in-review/draft article assets,
-      // orphaned or admin-only ingestion artifacts, etc.) requires a session,
-      // since there is no per-artifact entitlement model yet to check more
-      // precisely than "is this caller identified at all".
-      const [publicQuestion, publicArticle, openLesson] = await Promise.all([
-        this.prisma.question.findFirst({
-          where: { assets: { array_contains: [{ checksum: fullChecksum }] } },
-          select: { id: true },
-        }),
-        this.prisma.article.findFirst({
-          where: {
-            reviewStatus: ReviewStatus.PUBLISHED,
-            assets: { array_contains: [{ checksum: fullChecksum }] },
-          },
-          select: { id: true },
-        }),
-        this.prisma.lesson.findFirst({
-          where: {
-            assets: { array_contains: [{ checksum: fullChecksum }] },
-            courseModule: { course: { isPublished: true } },
-            OR: [{ isPreview: true }, { courseModule: { course: { accessMode: AccessMode.PUBLIC } } }],
-          },
-          select: { id: true },
-        }),
-      ]);
-      if (!publicQuestion && !publicArticle && !openLesson) {
-        throw new ForbiddenException("media requires an authenticated session");
-      }
+    // Staff may inspect unpublished uploads, but a student's session is not
+    // permission to read a paid lesson, a locked bank or an orphaned file.
+    const roles = req.user?.roles ?? [];
+    const isContentStaff = !roles.includes(Role.STUDENT) &&
+      roles.some((role) => role === Role.ADMIN || role === Role.AUTHOR || role === Role.REVIEWER);
+    if (!isContentStaff && !(await this.canReadContentMedia(fullChecksum, req.user?.id))) {
+      throw new NotFoundException("media not found");
     }
 
     await this.send(artifact, req, res);
+  }
+
+  private async canReadContentMedia(checksum: string, userId?: string): Promise<boolean> {
+    const assets = { array_contains: [{ checksum }] };
+    const [article, questions, lessons, ownAttempt] = await Promise.all([
+      this.prisma.article.findFirst({
+        where: { reviewStatus: ReviewStatus.PUBLISHED, assets }, select: { id: true },
+      }),
+      this.prisma.question.findMany({
+        where: { retiredAt: null, assets }, select: { isSample: true, subjectCode: true },
+      }),
+      this.prisma.lesson.findMany({
+        where: { assets, courseModule: { course: { isPublished: true } } },
+        select: { isPreview: true, courseModule: { select: { course: { select: { id: true, accessMode: true } } } } },
+      }),
+      // Attempts legitimately expose their own form imagery, including old
+      // reports whose question was since retired. Answer rows are not a grant.
+      userId ? this.prisma.attempt.findFirst({
+        where: { userId, examForm: { items: { some: { question: { assets } } } } },
+        select: { id: true },
+      }) : null,
+    ]);
+    if (article || ownAttempt || questions.some((question) => question.isSample)) return true;
+    if (lessons.some((lesson) => lesson.isPreview || lesson.courseModule.course.accessMode === AccessMode.PUBLIC)) return true;
+    if (!userId) return false;
+    if (lessons.some((lesson) => lesson.courseModule.course.accessMode === AccessMode.ACCOUNT)) return true;
+    const subjects = await this.access.accessibleQuestionBankSubjects(userId, questions.map((question) => question.subjectCode));
+    if (subjects.size > 0) return true;
+    const courseIds = [...new Set(lessons.map((lesson) => lesson.courseModule.course.id))];
+    for (const courseId of courseIds) {
+      if (await this.access.hasActiveCourseAccess(userId, courseId)) return true;
+    }
+    return false;
   }
 
   /**
@@ -124,16 +134,16 @@ export class MediaController {
    * signed object-storage URL, but in production storage is only reachable
    * inside the server, so that URL never worked from a browser.
    *
-   * "private": the CDN caches whole files and then answers range requests
-   * with all of it, which breaks video. The checksum names the content, so
-   * the browser may keep its copy for a day.
+   * Do not cache a permission-bearing response: access, publication and
+   * photo consent can change even though the file's checksum stays the same.
    */
   private async send(artifact: { storageKey: string; mimeType: string; size: number }, req: RequestWithUser, res: Response) {
     const total = artifact.size;
     res.setHeader("Content-Type", artifact.mimeType);
     res.setHeader("Accept-Ranges", "bytes");
-    res.setHeader("Cache-Control", "private, max-age=86400");
+    res.setHeader("Cache-Control", "private, no-store");
     res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
 
     const range = parseRange(req.headers.range, total);
     if (range === "unsatisfiable") {

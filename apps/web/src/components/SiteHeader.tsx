@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type JSX } from "react";
 import { apiFetch } from "../lib/api";
 import { useComingSoon } from "../lib/availability";
 import { EXAM_DATES, daysUntil } from "../lib/exam-dates";

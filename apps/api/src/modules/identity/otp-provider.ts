@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, ServiceUnavailableException } from "@nestjs/common";
 
 export const OTP_PROVIDER = "OTP_PROVIDER";
 
@@ -17,6 +17,9 @@ export class ConsoleOtpProvider implements OtpProvider {
   private readonly logger = new Logger(ConsoleOtpProvider.name);
 
   async send(phone: string, code: string): Promise<void> {
+    if (process.env.NODE_ENV === "production") {
+      throw new ServiceUnavailableException("OTP login is not configured");
+    }
     this.logger.log(`OTP for ${phone}: ${code} (console provider, no SMS gateway configured)`);
   }
 }

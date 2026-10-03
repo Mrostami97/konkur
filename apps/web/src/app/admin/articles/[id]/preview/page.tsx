@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 
-export default function ArticlePreviewPage({ params }: { params: { id: string } }) {
+export default async function ArticlePreviewPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
+  const params = await pendingParams;
   return <ArticlePreviewClient articleId={params.id} />;
 }

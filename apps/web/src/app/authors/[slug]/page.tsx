@@ -75,7 +75,8 @@ async function loadContributor(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: pendingParams }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await pendingParams;
   const result = await loadContributor(params.slug);
   if (!result.contributor) return pageMetadata({
     title: "پروفایل تحریریه در دسترس نیست",
@@ -110,7 +111,8 @@ function resourceItems(items: ContributorResource[], prefix?: string): RelatedPu
   }));
 }
 
-export default async function AuthorPage({ params }: { params: { slug: string } }) {
+export default async function AuthorPage({ params: pendingParams }: { params: Promise<{ slug: string }> }) {
+  const params = await pendingParams;
   const result = await loadContributor(params.slug);
   if (result.unavailable) {
     return <main className="page-container"><PublicServiceError label="پروفایل نویسنده" /></main>;

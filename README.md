@@ -81,10 +81,11 @@ Start from `.env.example`. Important production-only values include:
 | `WEB_DOMAIN` | Canonical public hostname |
 | `TLS_MODE` | `auto`, `acme`, or `selfsigned` |
 | `ACME_EMAIL` | Let's Encrypt expiry/contact email |
+| `TRUSTED_PROXY_CIDRS` | Reviewed CDN peer networks for visitor rate limits; empty for direct nginx |
 | `BOOTSTRAP_ADMIN_PHONE` | Optional initial administrator phone |
 | `BOOTSTRAP_ADMIN_PASSWORD` | Optional initial administrator password |
 
-GitHub Actions deployment additionally uses repository secrets such as `SSH_HOST`, `SSH_USER`, `SSH_KEY`, and `DEPLOY_PATH`. Never commit their real values.
+GitHub Actions deployment additionally uses repository secrets such as `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` (independently verified server host key), and `DEPLOY_PATH`. Never commit their real values.
 
 Detailed deployment, TLS, backup/restore, migration, rollback, and health-check procedures are documented in [`ops/runbook.md`](ops/runbook.md).
 

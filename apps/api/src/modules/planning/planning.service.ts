@@ -16,7 +16,7 @@ import { UpsertGoalDto } from "./dto/upsert-goal.dto";
 import { LogStudySessionDto } from "./dto/log-study-session.dto";
 import { StudyHistoryQueryDto } from "./dto/study-history-query.dto";
 
-const MASTERY_RULE_VERSION = "mastery-rule.v1";
+const MASTERY_RULE_VERSION = "mastery-rule.v2";
 const MASTERY_THRESHOLD = 0.6;
 const RECENCY_HALF_LIFE_DAYS = 30;
 const MAX_TASKS_PER_DAY = 3;
@@ -209,13 +209,26 @@ export class PlanningService {
         selectedOption: { not: null },
         attempt: { userId, status: { in: ["SUBMITTED", "EXPIRED"] } },
       },
-      include: { question: { select: { topicCodes: true, subjectCode: true, correctOption: true } } },
+      include: {
+        question: { select: { topicCodes: true, subjectCode: true, correctOption: true } },
+        attempt: { select: { examFormId: true } },
+      },
     });
+
+    const formItems = answers.length === 0 ? [] : await db.examItem.findMany({
+      where: {
+        examFormId: { in: [...new Set(answers.map((a) => a.attempt.examFormId))] },
+        questionId: { in: [...new Set(answers.map((a) => a.questionId))] },
+      },
+      select: { examFormId: true, questionId: true },
+    });
+    const membership = new Set(formItems.map((item) => `${item.examFormId}:${item.questionId}`));
 
     const byTopic = new Map<string, { subjectCode: string; weightedCorrect: number; weightTotal: number; count: number }>();
     const now = Date.now();
 
     for (const answer of answers) {
+      if (!membership.has(`${answer.attempt.examFormId}:${answer.questionId}`)) continue;
       const isCorrect = answer.selectedOption === answer.question.correctOption;
       const daysAgo = (now - answer.answeredAt.getTime()) / (1000 * 60 * 60 * 24);
       const weight = Math.pow(0.5, daysAgo / RECENCY_HALF_LIFE_DAYS);
@@ -234,6 +247,14 @@ export class PlanningService {
       }
     }
 
+    // Remove obsolete evidence after a recompute, including any historical
+    // responses that were never part of their recorded exam form.
+    await db.masteryState.deleteMany({
+      where: {
+        userId,
+        ...(byTopic.size > 0 ? { topicCode: { notIn: [...byTopic.keys()] } } : {}),
+      },
+    });
     const results = [];
     for (const [topicCode, bucket] of byTopic) {
       const masteryScore = bucket.weightTotal > 0 ? bucket.weightedCorrect / bucket.weightTotal : 0;

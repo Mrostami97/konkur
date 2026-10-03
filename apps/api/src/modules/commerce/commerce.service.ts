@@ -332,8 +332,8 @@ export class CommerceService {
       throw new BadRequestException("paidAt cannot be before the order was opened");
     }
 
-    const updated = await this.prisma.payment.update({
-      where: { id: payment.id },
+    const claimed = await this.prisma.payment.updateMany({
+      where: { id: payment.id, status: payment.status },
       data: {
         status: PaymentStatus.AWAITING_REVIEW,
         receiptTrackingCode: dto.trackingCode,
@@ -347,8 +347,9 @@ export class CommerceService {
         reviewedAt: null,
         reviewedByUserId: null,
       },
-      include: { bankAccount: true },
     });
+    if (claimed.count !== 1) throw new BadRequestException("payment changed; refresh before submitting a receipt");
+    const updated = await this.prisma.payment.findUniqueOrThrow({ where: { id: payment.id }, include: { bankAccount: true } });
 
     await this.audit.log({
       actorUserId: userId,
@@ -390,6 +391,7 @@ export class CommerceService {
    */
   async confirmPayment(adminId: string, paymentId: string) {
     const result = await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT "id" FROM "payments" WHERE "id" = ${paymentId} FOR UPDATE`;
       const payment = await tx.payment.findUnique({
         where: { id: paymentId },
         include: { order: { include: { items: true } } },
@@ -401,6 +403,7 @@ export class CommerceService {
       if (payment.order.status === OrderStatus.PAID) {
         throw new BadRequestException("this order is already paid");
       }
+      if (payment.order.status === OrderStatus.CANCELED) throw new BadRequestException("this order was cancelled");
 
       const productId = payment.order.items[0]?.productId;
       if (!productId) throw new BadRequestException("this order has no items");
@@ -425,7 +428,11 @@ export class CommerceService {
           rejectionReason: null,
         },
       });
-      await tx.order.update({ where: { id: payment.orderId }, data: { status: OrderStatus.PAID } });
+      const paidOrder = await tx.order.updateMany({
+        where: { id: payment.orderId, status: { notIn: [OrderStatus.PAID, OrderStatus.CANCELED] } },
+        data: { status: OrderStatus.PAID },
+      });
+      if (paidOrder.count !== 1) throw new BadRequestException("order changed; refresh before confirming");
 
       const entitlement = await tx.entitlement.create({
         data: {
@@ -480,8 +487,8 @@ export class CommerceService {
       throw new BadRequestException("a confirmed payment cannot be rejected; revoke the entitlement instead");
     }
 
-    const updated = await this.prisma.payment.update({
-      where: { id: paymentId },
+    const rejected = await this.prisma.payment.updateMany({
+      where: { id: paymentId, status: payment.status },
       data: {
         status: PaymentStatus.REJECTED,
         reviewedAt: new Date(),
@@ -489,6 +496,8 @@ export class CommerceService {
         rejectionReason: reason,
       },
     });
+    if (rejected.count !== 1) throw new BadRequestException("payment changed; refresh before rejecting");
+    const updated = await this.prisma.payment.findUniqueOrThrow({ where: { id: paymentId } });
 
     await this.audit.log({
       actorUserId: adminId,

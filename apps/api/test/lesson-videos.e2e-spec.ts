@@ -153,7 +153,7 @@ describe("Lesson videos (e2e)", () => {
     await http().post(`/admin/courses/${courseId}/publish`).set("Cookie", adminCookie).expect(201);
 
     // A paid lesson's video is not handed to a guest.
-    await http().get(`/media/${digest}`).expect(403);
+    await http().get(`/media/${digest}`).expect(404);
     await http().patch(`/admin/lessons/${lesson.body.id}`).set("Cookie", adminCookie).send({ isPreview: true }).expect(200);
 
     // Whole file: the index now comes before the media, and its chunk offset
@@ -161,8 +161,8 @@ describe("Lesson videos (e2e)", () => {
     const whole = await http().get(`/media/${digest}`).buffer(true).parse(binary).expect(200);
     expect(whole.headers["content-type"]).toBe("video/mp4");
     expect(whole.headers["accept-ranges"]).toBe("bytes");
-    // Kept out of the CDN, which answers range requests with the whole file.
-    expect(whole.headers["cache-control"]).toBe("private, max-age=86400");
+    // Consent and entitlement changes must be checked on every new request.
+    expect(whole.headers["cache-control"]).toBe("private, no-store");
     const stored = whole.body as Buffer;
     const layout = inspect(stored);
     expect(layout.types).toEqual(["ftyp", "moov", "mdat"]);
