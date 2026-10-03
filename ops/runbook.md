@@ -462,32 +462,3 @@ review branch and changes to that workflow file. It sends only the reviewed
 helpers over pinned SSH, checks their digests, bounds setup and execution, and
 returns encrypted diagnostics. It is not triggered by application edits or
 normal pushes to `main`.
-
-## Unused host RPC maintenance
-
-`ops/disable-unused-rpcbind.sh` is opt-in (`RPC_HARDENING=1`) and runs from
-the existing deployment root. Before any service change it requires private
-root-owned configuration/backups, stable active RPC units, no configured or
-mounted NFS/CIFS exports/filesystems, no kernel NFS workers and a registry
-containing only the portmapper. It inspects reverse dependencies, stop
-propagation and activation triggers, refusing unrelated active or enabled
-consumers. It checks the existing site and API through verified origin TLS.
-
-Only `rpcbind.socket` and `rpcbind.service` are disabled and stopped. The
-operation verifies TCP/UDP port 111 is closed in both IPv4 and IPv6 and checks
-site/API health again. A failure after mutation attempts restoration of the
-exact original RPC enablement and active states, with a fresh health check;
-failed recovery is reported explicitly. It does not alter SSH or firewall
-policy. State remains private under `ops/backups` and is excluded from deploy
-deletion. The exclusive lock prevents overlapping RPC maintenance.
-
-Run the cached isolated Linux fixture before use:
-
-```sh
-RPC_HARDENING_DOCKER_TEST=1 node --test scripts/test/rpcbind-hardening.test.mjs
-```
-
-The temporary `security-host-rpc.yml` workflow uses pinned SSH and digest-checked
-helpers with encrypted diagnostics. Its three-minute execution deadline allows
-another four minutes for bounded recovery. It is restricted to the review
-branch and changes to its own workflow file; normal `main` pushes do not run it.

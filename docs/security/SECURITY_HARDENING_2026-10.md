@@ -54,13 +54,9 @@ The local remediation review expires on 2026-11-01; replace it with an official
 fixed release after verification when available. Fifteen audit/remediation
 tests, ten contract tests and thirteen authentication tests passed freshly.
 
-Unused-RPC maintenance passed an isolated Linux fixture with 79 scenarios:
-active/enabled reverse consumers, stop propagation and activation triggers
-refuse before mutation; only the two RPC units change on success; TCP/UDP in
-both address families, private state and exact recovery are checked. Five
-offline digest/stream/cleanup workflow cases passed. The opt-in workflow
-reserves four minutes for recovery after its execution deadline. These are
-fixture results, separate from actual host verification.
+The owner narrowed the remaining rollout on 2026-10-04 to application
+security. Host RPC maintenance and provider configuration changes are deferred;
+the temporary RPC workflow is removed so integration cannot trigger them.
 
 Production-only service/configuration/backup checks and post-deploy
 public/private response verification remain rollout gates; fixture success
