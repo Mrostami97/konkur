@@ -70,6 +70,12 @@ jobs:
           "${docker_command[@]}" compose ps --format '{{.Service}} {{.Publishers}}'
           echo "API runtime uid: $("${docker_command[@]}" compose exec -T api id -u < /dev/null)"
           echo "Web runtime uid: $("${docker_command[@]}" compose exec -T web id -u < /dev/null)"
+          echo 'Application runtime image identity, without environment values:'
+          for service in api web; do
+            container="$("${docker_command[@]}" compose ps --quiet "$service")"
+            [ -n "$container" ] || exit 1
+            "${docker_command[@]}" inspect --format '{{.Config.Image}} {{.Config.User}} {{.Image}}' "$container"
+          done
           if [ -f .env ]; then
             echo "Server environment file mode: $(stat -c '%a' .env)"
             for field in POSTGRES_PASSWORD MINIO_ROOT_PASSWORD; do
@@ -105,47 +111,6 @@ jobs:
             fi
           else
             echo 'Local SQL backup directory is absent.'
-          fi
-          if command -v ss >/dev/null 2>&1; then
-            echo 'Host TCP listening addresses (no process command lines):'
-            ss -lnt
-            echo 'RPC TCP/UDP listeners, independently inspected in IPv4/IPv6:'
-            for family in -ltn4 -ltn6 -lun4 -lun6; do
-              echo "$family"
-              ss -H "$family" 'sport = :111'
-            done
-          fi
-          if command -v iptables >/dev/null 2>&1; then
-            echo 'Host INPUT and Docker forwarding policy:'
-            iptables -S INPUT 2>/dev/null || true
-            iptables -S DOCKER-USER 2>/dev/null || true
-          fi
-          if command -v nft >/dev/null 2>&1; then
-            echo 'Host nftables table inventory:'
-            nft list tables 2>/dev/null || true
-          fi
-          echo 'RPC/NFS service state and dependencies:'
-          for unit in rpcbind.service rpcbind.socket nfs-server.service nfs-client.target; do
-            systemctl show "$unit" --property=LoadState,ActiveState,UnitFileState,Requires,Wants,RequiredBy,WantedBy,ConsistsOf,BoundBy,PropagatesStopTo,TriggeredBy 2>/dev/null || true
-          done
-          echo 'NFS/CIFS mount destinations (no credential options):'
-          findmnt -rn -t nfs,nfs4,cifs -o TARGET,FSTYPE 2>/dev/null || true
-          echo 'Filesystem types and mount destinations, without options or credentials:'
-          findmnt --raw --noheadings --output TARGET,FSTYPE 2>/dev/null || true
-          echo 'fstab row validation metadata, without source paths or options:'
-          awk '/^[[:space:]]*(#|$)/ { next } { print "fields=" NF, "type=" $3, "network-source=" ($1 ~ /:/ || $1 ~ /^\/\//) }' /etc/fstab
-          echo 'Binfmt local kernel mount and automount definitions:'
-          systemctl show proc-sys-fs-binfmt_misc.mount --property=LoadState,ActiveState,What,Where,Type 2>/dev/null || true
-          systemctl show proc-sys-fs-binfmt_misc.automount --property=LoadState,ActiveState,UnitFileState,Where 2>/dev/null || true
-          echo 'NFS exports configured:'
-          if [ -s /etc/exports ] && awk '!/^\s*#/ && NF { found=1 } END {exit !found}' /etc/exports; then echo yes; else echo no; fi
-          if command -v firewall-cmd >/dev/null 2>&1; then
-            firewall-cmd --state 2>/dev/null || true
-          else
-            echo 'firewalld state unavailable; other host firewall rules were not inspected.'
-          fi
-          if command -v sshd >/dev/null 2>&1; then
-            sshd -T 2>/dev/null | awk '$1 == "permitrootlogin" || $1 == "passwordauthentication" || $1 == "pubkeyauthentication" || $1 == "maxauthtries" {print}' || true
           fi
           INSPECT
 
