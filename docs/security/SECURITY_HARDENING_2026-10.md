@@ -24,11 +24,25 @@ Before applying production changes, confirm verified SSH host key, trusted CDN p
 
 ## Verified maintenance gates
 
-- API unit: 15 suites / 101 tests passed. API integration: 30 suites / 189 tests passed on explicitly isolated disposable Postgres and object storage; production data was not used.
+- API unit: 15 suites / 103 tests passed. API integration: 30 suites / 189 tests passed on explicitly isolated disposable Postgres and object storage; production data was not used. A separate real PostgreSQL lock fixture verified stale password-login rejection and session revocation under queued credential rotation.
 - Web build, typecheck, lint and corpus tests passed. The production Next migration fixture passed 36 HTTP/SSR, metadata, sitemap, outage and image checks.
 - Gateway configuration validation and 13 response/header/cache cases passed.
 - Real disposable Postgres backup/restore passed. Directory mode 700, file mode 600, failed-dump rejection and atomic publication were verified separately on Linux.
 - Dependency and offline production configuration gates passed 18 tests; the opt-in Linux backup gate also passed. Remaining advisory exceptions are narrow, source-guarded and expire on 2026-11-01.
 - Workflow YAML and Bash parsing, six offline deployment scenarios and 14 proxy-network cases passed. Production backups are excluded from source synchronization deletion; effective credentials are checked before service restart.
 
-Fresh production image builds on this workstation were blocked by the upstream registry returning HTTP 403 for a base-image layer. Cached images predate this change and do not prove its runtime. Fresh build/nonroot/cache-write/image-size and gateway-bootstrap gates now run for pull requests. Production-only service/configuration/backup checks and post-deploy public/private response verification remain rollout gates; local success does not assert a live deployment.
+Fresh production image builds on this workstation were blocked by an upstream HTTP 403 for a base-image layer. Fresh builds in GitHub CI resolved that verification limit: commits e6cba95 and 4293e65 passed the production build, nonroot/cache-write/image-size and gateway-bootstrap gates.
+
+Internal credential maintenance passed six unit tests and a real disposable
+PostgreSQL/MinIO fixture: existing object, IAM user, administrator password and
+web service preservation; old credential rejection; wrong configuration,
+missing backup and missing administrator refusal; database and storage failure
+recovery. Five offline streaming/integrity/cleanup cases also passed. This
+fixture verifies the maintenance path using cached images, while the fresh
+application runtime is verified separately in CI.
+
+Production-only service/configuration/backup checks and post-deploy
+public/private response verification remain rollout gates; fixture success
+does not assert a live deployment. Off-server encrypted database/media backup
+retention and independently verified alternate SSH access remain operational
+requirements before stronger host restrictions.
