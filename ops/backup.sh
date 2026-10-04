@@ -36,7 +36,9 @@ TMP_NAME="${TMP_FILE##*/}"
 OUT_FILE="${BACKUP_DIR}/${TMP_NAME#.}"
 OUT_FILE="${OUT_FILE%.tmp}.sql.gz"
 
-"${DOCKER_CMD[@]}" "${COMPOSE_ARGS[@]}" exec -T postgres pg_dump -U konkur -d konkurcom | gzip > "$TMP_FILE"
+# pg_dump needs no stdin. A parent may itself read a deployment script from
+# stdin; the Docker client must not consume those remaining shell commands.
+"${DOCKER_CMD[@]}" "${COMPOSE_ARGS[@]}" exec -T postgres pg_dump -U konkur -d konkurcom < /dev/null | gzip > "$TMP_FILE"
 test -s "$TMP_FILE"
 gzip -t "$TMP_FILE"
 if [ "$(gzip -cd "$TMP_FILE" | wc -c)" -eq 0 ]; then

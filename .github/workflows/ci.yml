@@ -76,6 +76,7 @@ jobs:
       - name: Security and deployment script regressions
         env:
           BACKUP_SECURITY_DOCKER_TEST: "1"
+          DEPLOYMENT_SECURITY_DOCKER_TEST: "1"
         run: |
           set -euo pipefail
           node --test scripts/test/check-security-audit.test.mjs \
@@ -83,6 +84,7 @@ jobs:
             scripts/test/encrypt-production-inspection.test.mjs \
             scripts/test/check-production-config.test.mjs \
             scripts/test/backup-security.test.mjs \
+            scripts/test/deployment-security.test.mjs \
             scripts/test/rotation-security.test.mjs
 
       # Inspect dev and production dependencies. Network/format failures and
@@ -518,7 +520,10 @@ jobs:
 
           run_remote() {  # run_remote <script> [VAR=val ...]
             local script="$1"; shift
-            cat /tmp/prelude.sh "$script" | $SSH "$REMOTE" "$* bash -s"
+            # Receive the entire script before executing it. Compose commands
+            # keep stdin open by default and can otherwise swallow the rest of
+            # a streamed bash -s program, producing a false successful deploy.
+            cat /tmp/prelude.sh "$script" | $SSH "$REMOTE" "$* bash -c 'set -euo pipefail; umask 077; deploy_script=\$(mktemp /tmp/konkur-deploy-XXXXXXXX); cleanup() { rm -f -- \"\$deploy_script\"; }; trap cleanup EXIT; trap \"exit 129\" HUP; trap \"exit 130\" INT; trap \"exit 143\" TERM; cat > \"\$deploy_script\"; bash \"\$deploy_script\" < /dev/null'"
           }
 
           # ---- 1. provision ----------------------------------------------
@@ -764,6 +769,26 @@ jobs:
           # down, at the cost of a slow deploy.
           $DOCKER compose up -d --no-build || $DOCKER compose up -d --build
 
+          # Health alone can pass against the previous containers. Prove both
+          # running application services use this release's tested GHCR images
+          # and the non-root uid declared by both production Dockerfiles.
+          for service in api web; do
+            case "$service" in api) release_image="$API_IMAGE" ;; web) release_image="$WEB_IMAGE" ;; esac
+            expected_id="$($DOCKER image inspect --format '{{.Id}}' "$release_image")"
+            container_id="$($DOCKER compose ps --status running --quiet "$service")"
+            [[ "$expected_id" =~ ^sha256:[a-f0-9]{64}$ && "$container_id" =~ ^[a-f0-9]{12,64}$ ]] || {
+              echo "ERROR: cannot verify the running $service release image." >&2; exit 1;
+            }
+            actual_id="$($DOCKER inspect --format '{{.Image}}' "$container_id")"
+            [ "$actual_id" = "$expected_id" ] || {
+              echo "ERROR: running $service does not use the tested release image." >&2; exit 1;
+            }
+            runtime_uid="$($DOCKER compose exec -T "$service" id -u)"
+            [ "$runtime_uid" = 1000 ] || {
+              echo "ERROR: running $service does not use the required non-root uid." >&2; exit 1;
+            }
+          done
+
           # Every deploy leaves the previous images behind; on the small VPS
           # they filled the disk and Postgres could no longer start. Images
           # in use by a container are never removed; volumes are untouched.
@@ -777,7 +802,7 @@ jobs:
           # new config does not pass `nginx -t`, the running one stays.
           $DOCKER compose exec -T nginx sh -ec \
             '/docker-entrypoint.d/20-envsubst-on-templates.sh >/dev/null && nginx -t && nginx -s reload' \
-            || echo "WARNING: nginx config was not reloaded; the previous one is still serving." >&2
+            || { echo "ERROR: gateway configuration was not rendered, validated and reloaded." >&2; exit 1; }
 
           # /healthz reports real connectivity to every dependency the API has
           # (Postgres, MinIO/S3), not just "the process started". Hit both the
@@ -860,11 +885,20 @@ jobs:
           printf '%s\n' "$REDIRECT_HEADERS" | tr -d '\r' \
             | grep -Fqi "location: https://${WEB_DOMAIN}/phase18-probe"
           echo "Canonical HTTP redirect verified for $WEB_DOMAIN."
+          printf 'Deployment complete for release %s.\n' "$DEPLOY_RELEASE"
           UP
 
           echo "== Starting services and waiting for /healthz =="
-          run_remote /tmp/up.sh \
+          deploy_status=0
+          DEPLOY_OUTPUT="$(run_remote /tmp/up.sh \
             "DEPLOY_PATH='$DEPLOY_PATH'" \
             "WEB_DOMAIN='$DEPLOY_WEB_DOMAIN'" \
             "API_DOMAIN='$DEPLOY_API_DOMAIN'" \
-            "DEPLOY_TRUSTED_PROXY_CIDRS='$DEPLOY_TRUSTED_PROXY_CIDRS'"
+            "DEPLOY_TRUSTED_PROXY_CIDRS='$DEPLOY_TRUSTED_PROXY_CIDRS'" \
+            "API_IMAGE='$API_IMAGE'" "WEB_IMAGE='$WEB_IMAGE'" \
+            "DEPLOY_RELEASE='$GITHUB_SHA'")" || deploy_status=$?
+          printf '%s\n' "$DEPLOY_OUTPUT"
+          [ "$deploy_status" -eq 0 ] || exit "$deploy_status"
+          printf '%s\n' "$DEPLOY_OUTPUT" | grep -Fxq "Deployment complete for release $GITHUB_SHA." || {
+            echo "ERROR: remote deployment did not reach verified release completion." >&2; exit 1;
+          }

@@ -71,11 +71,22 @@ jobs:
           echo "API runtime uid: $("${docker_command[@]}" compose exec -T api id -u < /dev/null)"
           echo "Web runtime uid: $("${docker_command[@]}" compose exec -T web id -u < /dev/null)"
           echo 'Application runtime image identity, without environment values:'
+          echo 'Effective application image references:'
+          "${docker_command[@]}" compose config --images
           for service in api web; do
             container="$("${docker_command[@]}" compose ps --quiet "$service")"
             [ -n "$container" ] || exit 1
             "${docker_command[@]}" inspect --format '{{.Config.Image}} {{.Config.User}} {{.Image}}' "$container"
+            "${docker_command[@]}" inspect --format '{{index .Config.Labels "com.docker.compose.project.config_files"}} {{index .Config.Labels "com.docker.compose.project.working_dir"}} {{index .Config.Labels "com.docker.compose.project"}}' "$container"
           done
+          echo 'Published release image metadata, without environment values:'
+          for image in konkurcom-360-api:latest konkurcom-360-web:latest; do
+            "${docker_command[@]}" image inspect --format '{{.Id}} {{.Config.User}} {{json .RepoTags}}' "$image" 2>/dev/null || echo 'Expected release image is unavailable.'
+          done
+          echo 'Loaded application gateway security directives:'
+          "${docker_command[@]}" compose exec --interactive=false -T nginx nginx -T < /dev/null 2>/dev/null | awk '/include.*security-headers|add_header Strict-Transport-Security|proxy_hide_header X-Powered-By/ {print}'
+          echo 'Verified origin response headers, without cookies or response data:'
+          curl --silent --show-error --max-time 15 --resolve kunkurcomputer.ir:443:127.0.0.1 --dump-header - --output /dev/null https://kunkurcomputer.ir/api/healthz | awk 'BEGIN{IGNORECASE=1} /^HTTP\/|^Strict-Transport-Security:|^X-Content-Type-Options:|^X-Frame-Options:|^Referrer-Policy:|^Permissions-Policy:|^Content-Security-Policy:|^X-Powered-By:|^Cache-Control:/ {print}'
           if [ -f .env ]; then
             echo "Server environment file mode: $(stat -c '%a' .env)"
             for field in POSTGRES_PASSWORD MINIO_ROOT_PASSWORD; do
@@ -112,6 +123,7 @@ jobs:
           else
             echo 'Local SQL backup directory is absent.'
           fi
+          echo 'Read-only application inspection completed.'
           INSPECT
 
           # Validate effective credentials in the already running API process

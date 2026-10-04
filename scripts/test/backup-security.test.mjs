@@ -22,6 +22,9 @@ cat > "$FIXTURE_ROOT/bin/docker" <<'DOCKER'
 #!/usr/bin/env bash
 set -euo pipefail
 test "$*" = "compose --file $FIXTURE_ROOT/compose.yaml exec -T postgres pg_dump -U konkur -d konkurcom"
+# Emulate Docker's default stdin attachment. The backup must close it so this
+# child cannot drain the enclosing streamed fixture/deployment program.
+cat > "$FIXTURE_ROOT/child-stdin"
 case "$DUMP_MODE" in
   success) printf '%s\n' 'CREATE TABLE synthetic_fixture (id integer);' 'INSERT INTO synthetic_fixture VALUES (1);' ;;
   partial-failure) printf '%s\n' 'incomplete dump'; exit 17 ;;
@@ -39,6 +42,7 @@ export PATH="$FIXTURE_ROOT/bin:$PATH"
 backup="$FIXTURE_ROOT/project/ops/backup.sh"
 cd /tmp
 bash "$backup" > /dev/null
+test ! -s "$FIXTURE_ROOT/child-stdin"
 directory="$FIXTURE_ROOT/project/ops/backups"
 test "$(stat -c '%a' "$directory")" = 700
 first="$(find "$directory" -type f -name '*.sql.gz')"
