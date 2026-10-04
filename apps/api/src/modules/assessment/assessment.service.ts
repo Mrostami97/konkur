@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { AttemptStatus, ExamMode, QuestionQuality } from "@prisma/client";
+import { AttemptStatus, ExamMode, Prisma, QuestionQuality } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { ProfileService } from "../identity/profile/profile.service";
@@ -7,6 +7,22 @@ import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { fa } from "../../common/persian-digits";
 import { isAcceptedAnswer } from "../ingestion/question-payload";
+import {
+  Breakdown,
+  GradedItem,
+  RANK_BOXES,
+  breakdownOf,
+  konkurPercentOf,
+  questionStatMinimum,
+  rankBoxOf,
+  rankMinimum,
+  tarazOf,
+  weightedTaraz,
+} from "./exam-report";
+
+/** Longest single stretch of time one question can add to its total: a tab
+ * left open overnight must not read as hours of thought. */
+const MAX_ACTIVITY_MS = 15 * 60_000;
 
 const SCORE_VERSION = "score-rule.v1";
 
@@ -32,8 +48,9 @@ function stripAnswerKey<
 }
 
 /** Below this many participants a rank says more about who happened to take
- * the exam than about the student, so it is withheld. */
-export const MIN_PARTICIPANTS_FOR_RANK = 5;
+ * the exam than about the student, so it is withheld (owner's policy: 30,
+ * configurable with EXAM_RANK_MIN_PARTICIPANTS). */
+export const MIN_PARTICIPANTS_FOR_RANK = rankMinimum;
 
 /**
  * The konkur percentage: every wrong answer cancels a third of a right one.
@@ -56,7 +73,7 @@ interface Entrant {
  * once, with their first submitted attempt; a retake is placed against the
  * others without counting twice.
  */
-export function standingOf(population: Entrant[], userId: string, attemptId: string, percent: number) {
+export function standingOf(population: Entrant[], userId: string, attemptId: string, percent: number, minimum = rankMinimum()) {
   const participants = population.length;
   const others = population.filter((entry) => entry.userId !== userId);
   const official = population.find((entry) => entry.userId === userId)?.attemptId === attemptId;
@@ -64,7 +81,7 @@ export function standingOf(population: Entrant[], userId: string, attemptId: str
   const percents = population.map((entry) => entry.percent);
   const mean = participants ? percents.reduce((sum, value) => sum + value, 0) / participants : 0;
   const sd = participants ? Math.sqrt(percents.reduce((sum, value) => sum + (value - mean) ** 2, 0) / participants) : 0;
-  const ranked = participants >= MIN_PARTICIPANTS_FOR_RANK;
+  const ranked = participants >= minimum;
   const distribution = Array.from({ length: 10 }, (_, bucket) => ({
     from: bucket * 10,
     to: bucket * 10 + 10,
@@ -72,7 +89,7 @@ export function standingOf(population: Entrant[], userId: string, attemptId: str
   }));
   return {
     participants,
-    minimumForRank: MIN_PARTICIPANTS_FOR_RANK,
+    minimumForRank: minimum,
     isOfficial: official,
     konkurPercent: round1(percent),
     rank: ranked ? 1 + others.filter((entry) => entry.percent > percent).length : null,
@@ -159,6 +176,86 @@ export class AssessmentService {
       targetId: examId,
     });
     return exam;
+  }
+
+  /**
+   * A simulator of one real exam: its reviewed questions in booklet order,
+   * grouped into the konkur's sections so the report card can show each
+   * section's percentage and estimate the rank that year. Rebuilt in place
+   * while nobody has sat it; frozen once someone has.
+   */
+  async createSimulator(actorId: string, examCode: string, examYear: number, durationMinutes: number) {
+    const questions = await this.prisma.question.findMany({
+      where: { examCode, examYear, retiredAt: null, qualityTier: { not: QuestionQuality.DRAFT } },
+      select: { id: true, subjectCode: true },
+      orderBy: [{ bookletNumber: "asc" }, { questionNumber: "asc" }],
+    });
+    if (questions.length === 0) {
+      throw new BadRequestException("این کنکور هنوز سؤال بازبینی‌شده ندارد؛ اول کلید و متن سؤال‌هایش را در صف بازبینی تأیید کنید.");
+    }
+    const inBooklet = await this.prisma.question.count({ where: { examCode, examYear, retiredAt: null } });
+
+    const slug = `simulator-${examCode}-${examYear}`;
+    const existing = await this.prisma.exam.findUnique({ where: { slug }, include: { _count: { select: { attempts: true } } } });
+    if (existing && existing._count.attempts > 0) {
+      throw new ConflictException("این شبیه‌ساز شرکت‌کننده داشته و سؤال‌هایش دیگر عوض نمی‌شود.");
+    }
+
+    const title = `شبیه‌ساز کنکور ارشد مهندسی کامپیوتر ${fa(examYear)}`;
+    const description =
+      inBooklet > questions.length
+        ? `${fa(questions.length)} سؤال کنکور ${fa(examYear)} (کد ${fa(Number(examCode))}) به ترتیب دفترچه، با زمان‌بندی و نمرهٔ منفی واقعی. سؤال‌های درس‌هایی که از کنکور ۱۴۰۶ حذف شده‌اند و سؤال‌های بازبینی‌نشده در آن نیستند.`
+        : `همهٔ ${fa(questions.length)} سؤال کنکور ${fa(examYear)} (کد ${fa(Number(examCode))}) به ترتیب دفترچه، با زمان‌بندی و نمرهٔ منفی واقعی.`;
+
+    const exam = await this.prisma.$transaction(async (tx) => {
+      if (existing) await tx.exam.delete({ where: { id: existing.id } });
+      const created = await tx.exam.create({
+        data: {
+          slug,
+          title,
+          description,
+          mode: ExamMode.STATIC,
+          durationMinutes,
+          simulatesExamCode: examCode,
+          simulatesYear: examYear,
+          createdBy: actorId,
+        },
+      });
+      const form = await tx.examForm.create({ data: { examId: created.id } });
+      const boxes = [...RANK_BOXES.map((box) => box.key), null];
+      const sectionIds = new Map<string | null, string>();
+      let order = 0;
+      for (const key of boxes) {
+        if (!questions.some((question) => rankBoxOf(question.subjectCode) === key)) continue;
+        const section = await tx.examSection.create({
+          data: {
+            examId: created.id,
+            order: order++,
+            title: RANK_BOXES.find((box) => box.key === key)?.title ?? "سایر درس‌ها",
+            rankBox: key,
+          },
+        });
+        sectionIds.set(key, section.id);
+      }
+      await tx.examItem.createMany({
+        data: questions.map((question, index) => ({
+          examFormId: form.id,
+          questionId: question.id,
+          order: index,
+          sectionId: sectionIds.get(rankBoxOf(question.subjectCode)) ?? null,
+        })),
+      });
+      return created;
+    });
+
+    await this.audit.log({
+      actorUserId: actorId,
+      action: existing ? "exam.simulator_rebuilt" : "exam.simulator_created",
+      targetType: "Exam",
+      targetId: exam.id,
+      metadata: { examCode, examYear, questions: questions.length, inBooklet },
+    });
+    return { ...exam, questions: questions.length, inBooklet };
   }
 
   listAllExams() {
@@ -381,12 +478,13 @@ export class AssessmentService {
     startedAt: Date;
     deadlineAt: Date;
     remainingSeconds: number;
+    sections: { id: string; title: string; order: number }[];
     items: unknown[];
   }> {
     const attempt = await this.prisma.attempt.findUnique({
       where: { id: attemptId },
       include: {
-        exam: true,
+        exam: { include: { sections: { orderBy: { order: "asc" }, select: { id: true, title: true, order: true } } } },
         examForm: { include: { items: { orderBy: { order: "asc" }, include: { question: { include: { passage: true } } } } } },
         answers: true,
       },
@@ -399,11 +497,16 @@ export class AssessmentService {
       return this.getAttempt(attemptId, userId);
     }
 
-    const answerByQuestion = new Map(attempt.answers.map((a) => [a.questionId, a.selectedOption]));
-    const items = attempt.examForm.items.map((item) => ({
-      ...stripAnswerKey(item),
-      selectedOption: answerByQuestion.get(item.questionId) ?? null,
-    }));
+    const answerByQuestion = new Map(attempt.answers.map((a) => [a.questionId, a]));
+    const items = attempt.examForm.items.map((item) => {
+      const answer = answerByQuestion.get(item.questionId);
+      return {
+        ...stripAnswerKey(item),
+        selectedOption: answer?.selectedOption ?? null,
+        flagged: answer?.flagged ?? false,
+        timeSpentMs: answer?.timeSpentMs ?? 0,
+      };
+    });
 
     return {
       id: attempt.id,
@@ -412,6 +515,7 @@ export class AssessmentService {
       startedAt: attempt.startedAt,
       deadlineAt: attempt.deadlineAt,
       remainingSeconds: Math.max(0, Math.floor((attempt.deadlineAt.getTime() - Date.now()) / 1000)),
+      sections: attempt.exam.sections,
       items,
     };
   }
@@ -433,9 +537,15 @@ export class AssessmentService {
         select: { id: true },
       });
       if (!item) throw new BadRequestException("question is not part of this attempt");
+      const previous = await tx.answer.findUnique({
+        where: { attemptId_questionId: { attemptId, questionId } },
+        select: { selectedOption: true },
+      });
+      // A change of mind: an option already chosen replaced or cleared.
+      const changed = previous?.selectedOption != null && previous.selectedOption !== (selectedOption ?? null);
       const answer = await tx.answer.upsert({
         where: { attemptId_questionId: { attemptId, questionId } },
-        update: { selectedOption: selectedOption ?? null, answeredAt: new Date() },
+        update: { selectedOption: selectedOption ?? null, answeredAt: new Date(), ...(changed ? { changeCount: { increment: 1 } } : {}) },
         create: { attemptId, questionId, selectedOption: selectedOption ?? null },
       });
       return { expired: false as const, answer };
@@ -445,6 +555,34 @@ export class AssessmentService {
       throw new ForbiddenException("attempt has expired");
     }
     return result.answer;
+  }
+
+  /**
+   * How the student is working: time spent on each question since the last
+   * report, and which ones they flagged for review. Sent in small batches by
+   * the exam page; ignored quietly once the attempt is over, because a late
+   * batch must not fail the submit that follows it.
+   */
+  async recordActivity(attemptId: string, userId: string, entries: { questionId: string; timeSpentMs?: number; flagged?: boolean }[]) {
+    const attempt = await this.prisma.attempt.findUnique({ where: { id: attemptId }, select: { userId: true, status: true, examFormId: true, deadlineAt: true } });
+    if (!attempt) throw new NotFoundException("attempt not found");
+    if (attempt.userId !== userId) throw new ForbiddenException("not your attempt");
+    if (attempt.status !== AttemptStatus.IN_PROGRESS || attempt.deadlineAt <= new Date()) return { recorded: 0 };
+    const inForm = new Set(
+      (await this.prisma.examItem.findMany({ where: { examFormId: attempt.examFormId }, select: { questionId: true } })).map((item) => item.questionId),
+    );
+    const valid = entries.filter((entry) => inForm.has(entry.questionId));
+    await this.prisma.$transaction(
+      valid.map((entry) => {
+        const ms = Math.max(0, Math.min(MAX_ACTIVITY_MS, Math.round(entry.timeSpentMs ?? 0)));
+        return this.prisma.answer.upsert({
+          where: { attemptId_questionId: { attemptId, questionId: entry.questionId } },
+          update: { timeSpentMs: { increment: ms }, ...(entry.flagged === undefined ? {} : { flagged: entry.flagged }) },
+          create: { attemptId, questionId: entry.questionId, selectedOption: null, timeSpentMs: ms, flagged: entry.flagged ?? false },
+        });
+      }),
+    );
+    return { recorded: valid.length };
   }
 
   /**
@@ -480,10 +618,23 @@ export class AssessmentService {
       const finalizedAttempt = await tx.attempt.findUniqueOrThrow({ where: { id: attemptId } });
       const items = await tx.examItem.findMany({
         where: { examFormId: finalizedAttempt.examFormId },
-        include: { question: { select: { correctOption: true, acceptedOptions: true } } },
+        include: { question: { select: { correctOption: true, acceptedOptions: true, subjectCode: true } } },
       });
       const answers = await tx.answer.findMany({ where: { attemptId } });
       const answerByQuestion = new Map(answers.map((a) => [a.questionId, a.selectedOption]));
+      const timeByQuestion = new Map(answers.map((a) => [a.questionId, a.timeSpentMs]));
+      const sections = await tx.examSection.findMany({ where: { examId: finalizedAttempt.examId } });
+      const graded: GradedItem[] = items.map((item) => {
+        const selected = answerByQuestion.get(item.questionId);
+        return {
+          questionId: item.questionId,
+          sectionId: item.sectionId,
+          subjectCode: item.question.subjectCode,
+          outcome: selected == null ? "blank" : isAcceptedAnswer(item.question, selected) ? "correct" : "wrong",
+          timeSpentMs: timeByQuestion.get(item.questionId) ?? 0,
+        };
+      });
+      const breakdown = breakdownOf(graded, sections);
 
       let correctCount = 0;
       let wrongCount = 0;
@@ -511,6 +662,7 @@ export class AssessmentService {
           unansweredCount,
           rawScore,
           percentCorrect,
+          breakdown: breakdown as unknown as Prisma.InputJsonValue,
         },
       });
     });
@@ -533,15 +685,90 @@ export class AssessmentService {
       throw new ForbiddenException("attempt is still in progress; submit it first");
     }
 
-    const answerByQuestion = new Map(attempt.answers.map((a) => [a.questionId, a.selectedOption]));
+    const answerByQuestion = new Map(attempt.answers.map((a) => [a.questionId, a]));
+    const breakdown = (attempt.score?.breakdown as unknown as Breakdown | null) ?? null;
+
+    // The other participants: each one's first graded attempt at this exam.
+    const rows = await this.prisma.attempt.findMany({
+      where: { examId: attempt.examId, status: AttemptStatus.SUBMITTED, score: { isNot: null } },
+      orderBy: [{ submittedAt: "asc" }, { id: "asc" }],
+      select: { id: true, userId: true, score: { select: { breakdown: true, correctCount: true, wrongCount: true, unansweredCount: true } } },
+    });
+    const firsts = new Map<string, (typeof rows)[number]>();
+    for (const row of rows) if (!firsts.has(row.userId)) firsts.set(row.userId, row);
+    const entrants = [...firsts.values()];
+
+    const sections = (breakdown?.sections ?? []).map((section) => {
+      const population = entrants
+        .map((entrant) => (entrant.score?.breakdown as unknown as Breakdown | null)?.sections.find((other) => other.sectionId === section.sectionId)?.percent)
+        .filter((value): value is number => typeof value === "number");
+      const average = population.length ? population.reduce((sum, value) => sum + value, 0) / population.length : null;
+      return { ...section, taraz: tarazOf(section.percent, population), average };
+    });
+
+    // How many participants got each question right -- the "golden misses"
+    // are the ones most got right and this student did not.
+    const formQuestionIds = attempt.examForm.items.map((item) => item.questionId);
+    const statsReady = entrants.length >= questionStatMinimum();
+    const crowd = new Map<string, number>();
+    if (statsReady) {
+      const answers = await this.prisma.answer.findMany({
+        where: { attemptId: { in: entrants.map((entrant) => entrant.id) }, questionId: { in: formQuestionIds } },
+        select: { questionId: true, selectedOption: true },
+      });
+      const keys = new Map(attempt.examForm.items.map((item) => [item.questionId, item.question]));
+      for (const answer of answers) {
+        const question = keys.get(answer.questionId);
+        if (question && isAcceptedAnswer(question, answer.selectedOption)) crowd.set(answer.questionId, (crowd.get(answer.questionId) ?? 0) + 1);
+      }
+    }
+
+    const history = await this.prisma.attempt.findMany({
+      where: { userId, status: { in: [AttemptStatus.SUBMITTED, AttemptStatus.EXPIRED] }, score: { isNot: null } },
+      orderBy: { submittedAt: "desc" },
+      take: 12,
+      select: {
+        id: true,
+        submittedAt: true,
+        exam: { select: { title: true } },
+        score: { select: { correctCount: true, wrongCount: true, unansweredCount: true, breakdown: true } },
+      },
+    });
+    const profile = await this.prisma.profile.findUnique({ where: { userId }, select: { gpa: true } });
+
     return {
       examTitle: attempt.exam.title,
+      exam: { id: attempt.exam.id, simulatesExamCode: attempt.exam.simulatesExamCode, simulatesYear: attempt.exam.simulatesYear },
       status: attempt.status,
+      submittedAt: attempt.submittedAt,
       score: attempt.score,
-      items: attempt.examForm.items.map((item) => ({
-        question: item.question,
-        selectedOption: answerByQuestion.get(item.questionId) ?? null,
+      sections,
+      subjects: breakdown?.subjects ?? [],
+      timeSpentMs: breakdown?.timeSpentMs ?? attempt.answers.reduce((sum, answer) => sum + answer.timeSpentMs, 0),
+      overallTaraz: weightedTaraz(sections),
+      participants: entrants.length,
+      rankMinimum: rankMinimum(),
+      questionStatMinimum: questionStatMinimum(),
+      gpa: profile?.gpa ?? null,
+      history: history.map((row) => ({
+        attemptId: row.id,
+        examTitle: row.exam.title,
+        submittedAt: row.submittedAt,
+        konkurPercent: row.score ? konkurPercentOf(row.score.correctCount, row.score.wrongCount, row.score.correctCount + row.score.wrongCount + row.score.unansweredCount) : null,
+        sections: ((row.score?.breakdown as unknown as Breakdown | null)?.sections ?? []).map((section) => ({ rankBox: section.rankBox, title: section.title, percent: section.percent })),
       })),
+      items: attempt.examForm.items.map((item) => {
+        const answer = answerByQuestion.get(item.questionId);
+        return {
+          question: item.question,
+          sectionId: item.sectionId,
+          selectedOption: answer?.selectedOption ?? null,
+          timeSpentMs: answer?.timeSpentMs ?? 0,
+          flagged: answer?.flagged ?? false,
+          changeCount: answer?.changeCount ?? 0,
+          crowdCorrectPercent: statsReady ? Math.round(((crowd.get(item.questionId) ?? 0) / entrants.length) * 100) : null,
+        };
+      }),
     };
   }
 

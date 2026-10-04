@@ -7,6 +7,8 @@ import { AssessmentService } from "./assessment.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { SaveAnswerDto } from "./dto/save-answer.dto";
+import { ActivityDto } from "./dto/activity.dto";
+import { CreateSimulatorDto } from "./dto/create-simulator.dto";
 
 @Controller("exams")
 export class ExamsPublicController {
@@ -53,6 +55,12 @@ export class AssessmentStudentController {
     return this.assessment.saveAnswer(id, req.user!.id, questionId, dto.selectedOption);
   }
 
+  /** Time spent per question and review flags, sent in small batches while the exam runs. */
+  @Post("attempts/:id/activity")
+  activity(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: ActivityDto) {
+    return this.assessment.recordActivity(id, req.user!.id, dto.entries);
+  }
+
   @Post("attempts/:id/submit")
   submit(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.assessment.submitAttempt(id, req.user!.id);
@@ -83,6 +91,12 @@ export class AssessmentAdminController {
   @Post()
   create(@Req() req: RequestWithUser, @Body() dto: CreateExamDto) {
     return this.assessment.createExam(req.user!.id, dto);
+  }
+
+  /** Build (or rebuild, while nobody has sat it) the simulator of one real exam year. */
+  @Post("simulators")
+  createSimulator(@Req() req: RequestWithUser, @Body() dto: CreateSimulatorDto) {
+    return this.assessment.createSimulator(req.user!.id, dto.examCode, dto.examYear, dto.durationMinutes);
   }
 
   @Post(":id/items")

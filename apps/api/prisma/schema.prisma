@@ -1211,22 +1211,27 @@ enum ExamMode {
 }
 
 model Exam {
-  id              String     @id @default(uuid())
-  slug            String     @unique
-  title           String
-  description     String
-  mode            ExamMode
-  durationMinutes Int
+  id                String        @id @default(uuid())
+  slug              String        @unique
+  title             String
+  description       String
+  mode              ExamMode
+  durationMinutes   Int
   // DYNAMIC-mode selection rule: draw questionCount random published
   // questions matching subjectCode. Not used for STATIC exams.
-  subjectCode     String?
-  questionCount   Int?
-  isPublished     Boolean    @default(false)
-  createdBy       String?
-  forms           ExamForm[]
-  attempts        Attempt[]
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  subjectCode       String?
+  questionCount     Int?
+  isPublished       Boolean       @default(false)
+  createdBy         String?
+  // A simulator replays one real exam (code + year) in its booklet order;
+  // its report card can then place the student against that year's results.
+  simulatesExamCode String?
+  simulatesYear     Int?
+  forms             ExamForm[]
+  sections          ExamSection[]
+  attempts          Attempt[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@map("exams")
 }
@@ -1243,14 +1248,33 @@ model ExamForm {
   @@map("exam_forms")
 }
 
+/// A scored part of an exam -- the konkur's «درس امتحانی». The report card
+/// gives each its own percentage and standard score; rankBox names the box of
+/// the 1277 rank model it stands for, so a simulator can estimate a rank.
+model ExamSection {
+  id          String     @id @default(uuid())
+  examId      String
+  exam        Exam       @relation(fields: [examId], references: [id], onDelete: Cascade)
+  order       Int
+  title       String
+  rankBox     String?
+  coefficient Float      @default(1)
+  items       ExamItem[]
+
+  @@index([examId])
+  @@map("exam_sections")
+}
+
 model ExamItem {
-  id         String   @id @default(uuid())
+  id         String       @id @default(uuid())
   examFormId String
-  examForm   ExamForm @relation(fields: [examFormId], references: [id], onDelete: Cascade)
+  examForm   ExamForm     @relation(fields: [examFormId], references: [id], onDelete: Cascade)
   questionId String
-  question   Question @relation(fields: [questionId], references: [id])
+  question   Question     @relation(fields: [questionId], references: [id])
   order      Int
-  points     Float    @default(1)
+  points     Float        @default(1)
+  sectionId  String?
+  section    ExamSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
 
   @@unique([examFormId, questionId])
   @@index([examFormId])
@@ -1292,6 +1316,10 @@ model Answer {
   question       Question @relation(fields: [questionId], references: [id])
   selectedOption Int?
   answeredAt     DateTime @default(now())
+  // How the student worked, for the report card's time and strategy view.
+  timeSpentMs    Int      @default(0)
+  flagged        Boolean  @default(false)
+  changeCount    Int      @default(0)
 
   @@unique([attemptId, questionId])
   @@map("answers")
@@ -1310,6 +1338,9 @@ model Score {
   unansweredCount Int
   rawScore        Float
   percentCorrect  Float
+  /// Per-section results frozen at grading, so a later edit to the exam
+  /// cannot quietly change an issued report card.
+  breakdown       Json?
   computedAt      DateTime @default(now())
 
   @@map("scores")

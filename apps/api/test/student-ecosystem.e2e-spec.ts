@@ -1,4 +1,6 @@
 import "reflect-metadata";
+// These tests rank a five-person exam; the site itself waits for 30.
+process.env.EXAM_RANK_MIN_PARTICIPANTS = "5";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import cookieParser from "cookie-parser";
