@@ -73,6 +73,8 @@ services:
       S3_BUCKET: konkurcom-media
       BOOTSTRAP_ADMIN_PHONE: ${BOOTSTRAP_ADMIN_PHONE:-}
       BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      # Issues a buyer's licence for a course's videos; set only in the server .env.
+      SPOTPLAYER_API_KEY: ${SPOTPLAYER_API_KEY:-}
 
   web:
     build:
