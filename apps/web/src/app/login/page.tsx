@@ -27,12 +27,17 @@ function cleanCode(value: string) {
 /**
  * Where to go after signing in: the ?next= page the visitor came from, but
  * only a path on this site -- never another host, which would make the
- * login page a redirect anyone could point elsewhere.
+ * login page a redirect anyone could point elsewhere. With no such page,
+ * the administrator lands on the admin panel and everyone else on their own
+ * panel; the administrator can still open the student panel from there.
  */
-function afterLogin() {
+function afterLogin(roles: string[] = []) {
   const next = new URLSearchParams(window.location.search).get("next") ?? "";
-  return /^\/(?![/\\])/.test(next) ? next : "/account";
+  if (/^\/(?![/\\])/.test(next)) return next;
+  return roles.includes("ADMIN") ? "/admin" : "/account";
 }
+
+type SignedIn = { user: { roles: string[] } };
 
 /** The API's validation messages are English; say the same thing in Persian. */
 function friendly(err: unknown, fallback: string) {
@@ -73,8 +78,8 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      await apiFetch("/auth/otp/verify", { method: "POST", body: { phone: cleanPhone(phone), code } });
-      router.push(afterLogin());
+      const signedIn = await apiFetch<SignedIn>("/auth/otp/verify", { method: "POST", body: { phone: cleanPhone(phone), code } });
+      router.push(afterLogin(signedIn.user.roles));
     } catch (err) {
       setError(friendly(err, "کد درست نیست یا منقضی شده است."));
     } finally {
@@ -87,8 +92,8 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      await apiFetch("/auth/password/login", { method: "POST", body: { phone: cleanPhone(phone), password } });
-      router.push(afterLogin());
+      const signedIn = await apiFetch<SignedIn>("/auth/password/login", { method: "POST", body: { phone: cleanPhone(phone), password } });
+      router.push(afterLogin(signedIn.user.roles));
     } catch (err) {
       setError(friendly(err, "ورود با رمز عبور انجام نشد."));
     } finally {
