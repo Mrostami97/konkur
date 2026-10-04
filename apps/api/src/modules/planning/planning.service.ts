@@ -15,6 +15,7 @@ import { AccessService } from "../access/access.service";
 import { UpsertGoalDto } from "./dto/upsert-goal.dto";
 import { LogStudySessionDto } from "./dto/log-study-session.dto";
 import { StudyHistoryQueryDto } from "./dto/study-history-query.dto";
+import { isAcceptedAnswer } from "../ingestion/question-payload";
 
 const MASTERY_RULE_VERSION = "mastery-rule.v2";
 const MASTERY_THRESHOLD = 0.6;
@@ -210,7 +211,7 @@ export class PlanningService {
         attempt: { userId, status: { in: ["SUBMITTED", "EXPIRED"] } },
       },
       include: {
-        question: { select: { topicCodes: true, subjectCode: true, correctOption: true } },
+        question: { select: { topicCodes: true, subjectCode: true, correctOption: true, acceptedOptions: true } },
         attempt: { select: { examFormId: true } },
       },
     });
@@ -229,7 +230,7 @@ export class PlanningService {
 
     for (const answer of answers) {
       if (!membership.has(`${answer.attempt.examFormId}:${answer.questionId}`)) continue;
-      const isCorrect = answer.selectedOption === answer.question.correctOption;
+      const isCorrect = isAcceptedAnswer(answer.question, answer.selectedOption);
       const daysAgo = (now - answer.answeredAt.getTime()) / (1000 * 60 * 60 * 24);
       const weight = Math.pow(0.5, daysAgo / RECENCY_HALF_LIFE_DAYS);
 

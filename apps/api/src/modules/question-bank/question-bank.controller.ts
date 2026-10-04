@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
-import { Role } from "@prisma/client";
+import { QuestionQuality, Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -8,6 +8,7 @@ import { QuestionBankService } from "./question-bank.service";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 import { RetireQuestionDto } from "./dto/retire-question.dto";
 import { SetSampleDto } from "./dto/set-sample.dto";
+import { ReviewQuestionDto } from "./dto/review-question.dto";
 
 @Controller("questions")
 @UseGuards(OptionalSessionAuthGuard)
@@ -81,6 +82,7 @@ export class QuestionsAdminController {
     @Query("examYear") examYear?: string,
     @Query("q") q?: string,
     @Query("includeRetired") includeRetired?: string,
+    @Query("qualityTier") qualityTier?: string,
     @Query("page") page?: string,
     @Query("pageSize") pageSize?: string,
   ) {
@@ -89,6 +91,7 @@ export class QuestionsAdminController {
       examYear: examYear ? Number(examYear) : undefined,
       q,
       includeRetired: includeRetired === "true",
+      qualityTier: qualityTier && qualityTier in QuestionQuality ? (qualityTier as QuestionQuality) : undefined,
       page: page ? Number(page) : undefined,
       pageSize: pageSize ? Number(pageSize) : undefined,
     });
@@ -104,6 +107,13 @@ export class QuestionsAdminController {
   @Roles(Role.ADMIN)
   restore(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.questionBank.restore(req.user!.id, id);
+  }
+
+  /** The review queue: confirm (or withdraw) that the text and the key match the original. */
+  @Post(":id/review")
+  @Roles(Role.REVIEWER, Role.ADMIN)
+  review(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: ReviewQuestionDto) {
+    return this.questionBank.review(req.user!.id, id, dto);
   }
 
   @Post(":id/sample")

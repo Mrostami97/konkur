@@ -1,11 +1,12 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { AttemptStatus, ExamMode } from "@prisma/client";
+import { AttemptStatus, ExamMode, QuestionQuality } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { ProfileService } from "../identity/profile/profile.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { fa } from "../../common/persian-digits";
+import { isAcceptedAnswer } from "../ingestion/question-payload";
 
 const SCORE_VERSION = "score-rule.v1";
 
@@ -18,12 +19,14 @@ function shuffle<T>(items: T[]): T[] {
   return arr;
 }
 
-/** Strips the answer key so an in-progress attempt never leaks it to the student. */
+/** Strips the answer key -- the key, any other option it accepts, and the
+ * solution -- so an in-progress attempt never leaks it to the student. */
 function stripAnswerKey<
-  T extends { question: { correctOption: number; solutionBlocks: unknown; [key: string]: unknown } },
+  T extends { question: { correctOption: number; acceptedOptions: number[]; solutionBlocks: unknown; [key: string]: unknown } },
 >(item: T) {
-  const { correctOption, solutionBlocks, ...rest } = item.question;
+  const { correctOption, acceptedOptions, solutionBlocks, ...rest } = item.question;
   void correctOption;
+  void acceptedOptions;
   void solutionBlocks;
   return { ...item, question: rest };
 }
@@ -129,6 +132,14 @@ export class AssessmentService {
     }
     const form = exam.forms[0];
     if (!form) throw new NotFoundException("exam form not found");
+    const question = await this.prisma.question.findUnique({
+      where: { id: dto.questionId },
+      select: { qualityTier: true, retiredAt: true },
+    });
+    if (!question || question.retiredAt) throw new NotFoundException("question not found");
+    if (question.qualityTier === QuestionQuality.DRAFT) {
+      throw new BadRequestException("سؤالی که متن یا کلیدش هنوز بازبینی نشده به آزمون اضافه نمی‌شود.");
+    }
     return this.prisma.examItem.create({
       data: {
         examFormId: form.id,
@@ -334,7 +345,7 @@ export class AssessmentService {
         throw new BadRequestException("DYNAMIC exam is missing subjectCode/questionCount");
       }
       const candidates = await this.prisma.question.findMany({
-        where: { subjectCode: exam.subjectCode, retiredAt: null },
+        where: { subjectCode: exam.subjectCode, retiredAt: null, qualityTier: { not: QuestionQuality.DRAFT } },
         select: { id: true },
       });
       if (candidates.length < exam.questionCount) {
@@ -376,7 +387,7 @@ export class AssessmentService {
       where: { id: attemptId },
       include: {
         exam: true,
-        examForm: { include: { items: { orderBy: { order: "asc" }, include: { question: true } } } },
+        examForm: { include: { items: { orderBy: { order: "asc" }, include: { question: { include: { passage: true } } } } } },
         answers: true,
       },
     });
@@ -469,7 +480,7 @@ export class AssessmentService {
       const finalizedAttempt = await tx.attempt.findUniqueOrThrow({ where: { id: attemptId } });
       const items = await tx.examItem.findMany({
         where: { examFormId: finalizedAttempt.examFormId },
-        include: { question: { select: { correctOption: true } } },
+        include: { question: { select: { correctOption: true, acceptedOptions: true } } },
       });
       const answers = await tx.answer.findMany({ where: { attemptId } });
       const answerByQuestion = new Map(answers.map((a) => [a.questionId, a.selectedOption]));
@@ -482,7 +493,7 @@ export class AssessmentService {
         const selected = answerByQuestion.get(item.questionId);
         if (selected == null) {
           unansweredCount += 1;
-        } else if (selected === item.question.correctOption) {
+        } else if (isAcceptedAnswer(item.question, selected)) {
           correctCount += 1;
           rawScore += item.points;
         } else {
@@ -511,7 +522,7 @@ export class AssessmentService {
       where: { id: attemptId },
       include: {
         exam: true,
-        examForm: { include: { items: { orderBy: { order: "asc" }, include: { question: true } } } },
+        examForm: { include: { items: { orderBy: { order: "asc" }, include: { question: { include: { passage: true } } } } } },
         answers: true,
         score: true,
       },
@@ -570,7 +581,7 @@ export class AssessmentService {
         if (answer.selectedOption == null || !formQuestions.has(answer.questionId)) continue;
         const question = await this.prisma.question.findUnique({
           where: { id: answer.questionId },
-          select: { correctOption: true },
+          select: { correctOption: true, acceptedOptions: true },
         });
         if (!question) continue;
         const stat = byQuestion.get(answer.questionId) ?? {
@@ -580,7 +591,7 @@ export class AssessmentService {
           total: 0,
         };
         stat.total += 1;
-        if (answer.selectedOption === question.correctOption) {
+        if (isAcceptedAnswer(question, answer.selectedOption)) {
           stat.correct += 1;
           stat.correctScores.push(rawScore);
         } else {

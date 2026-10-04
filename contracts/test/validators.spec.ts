@@ -72,4 +72,22 @@ describe("invalid fixtures", () => {
     expect(result.valid).toBe(false);
     expect(result.errors.join(" ")).toMatch(/option numbers must be exactly/);
   });
+
+  it("accepts question-v2.json: no topic or solution yet, two accepted options, review state", () => {
+    const result = validateQuestion(load(validDir, "question-v2.json"));
+    expect(result.errors).toEqual([]);
+    expect(result.valid).toBe(true);
+  });
+
+  it("rejects a question.v2 whose accepted options leave out correct_option", () => {
+    const result = validateQuestion(load(invalidDir, "question-v2-accepted-without-correct.json"));
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain("/accepted_options must include correct_option");
+  });
+
+  it("rejects a question.v2 without its review state", () => {
+    const item = load(validDir, "question-v2.json") as Record<string, unknown>;
+    delete item.review;
+    expect(validateQuestion(item).valid).toBe(false);
+  });
 });

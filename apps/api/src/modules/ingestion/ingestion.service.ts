@@ -3,6 +3,7 @@ import {
   ArticleV1,
   ArticleV2,
   QuestionV1,
+  QuestionV2,
   ReportCardV1,
   validateArticle,
   validateQuestion,
@@ -22,10 +23,11 @@ import { ObjectStorageService } from "./object-storage.service";
 import { parseImportZip } from "./zip-reader";
 import { sha256Buffer, sha256Json } from "./checksum";
 import { IMPORT_IMAGE_MIME_TYPES, isSafeImportFilename, sniffImportImageMime } from "./media-types";
+import { questionRowFromPayload } from "./question-payload";
 
-type ContractItem = ArticleV1 | ArticleV2 | QuestionV1 | ReportCardV1;
+type ContractItem = ArticleV1 | ArticleV2 | QuestionV1 | QuestionV2 | ReportCardV1;
 type PublicationReview = { reviewedByUserId: string; reviewedAt: Date };
-const SUPPORTED_SCHEMA_VERSIONS = ["article.v1", "article.v2", "report-card.v1", "question.v1"] as const;
+const SUPPORTED_SCHEMA_VERSIONS = ["article.v1", "article.v2", "report-card.v1", "question.v1", "question.v2"] as const;
 
 function extractExternalId(item: unknown): string | null {
   if (item && typeof item === "object" && typeof (item as Record<string, unknown>).external_id === "string") {
@@ -587,25 +589,10 @@ export class IngestionService {
       return { entityId: reportCard.id, version, entityType: VersionedEntityType.REPORT_CARD };
     }
 
-    const p = payload as QuestionV1;
+    const p = payload as QuestionV1 | QuestionV2;
     const existing = await tx.question.findUnique({ where: { externalId: p.external_id } });
     const version = (existing?.version ?? 0) + 1;
-    const data = {
-      externalId: p.external_id,
-      examDegree: p.exam.degree.toUpperCase() as "MASTER" | "PHD",
-      examMajor: p.exam.major,
-      examYear: p.exam.year,
-      subjectCode: p.subject_code,
-      topicCodes: p.topic_codes,
-      stemBlocks: p.stem_blocks as unknown as Prisma.InputJsonValue,
-      options: p.options as unknown as Prisma.InputJsonValue,
-      correctOption: p.correct_option,
-      solutionBlocks: p.solution_blocks as unknown as Prisma.InputJsonValue,
-      assets: (p.assets ?? []) as unknown as Prisma.InputJsonValue,
-      source: (p.source ?? null) as unknown as Prisma.InputJsonValue,
-      provenance: p.provenance as unknown as Prisma.InputJsonValue,
-      version,
-    };
+    const data = { externalId: p.external_id, ...(await questionRowFromPayload(tx, p)), version };
     const question = existing
       ? await tx.question.update({ where: { id: existing.id }, data })
       : await tx.question.create({ data });
@@ -721,16 +708,10 @@ export class IngestionService {
           },
         });
       } else {
-        const p = payload as QuestionV1;
+        const p = payload as QuestionV1 | QuestionV2;
         await tx.question.update({
           where: { id: entityId },
-          data: {
-            stemBlocks: p.stem_blocks as unknown as Prisma.InputJsonValue,
-            options: p.options as unknown as Prisma.InputJsonValue,
-            correctOption: p.correct_option,
-            solutionBlocks: p.solution_blocks as unknown as Prisma.InputJsonValue,
-            version: newVersion,
-          },
+          data: { ...(await questionRowFromPayload(tx, p)), version: newVersion },
         });
       }
 

@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Degree, Prisma } from "@prisma/client";
+import { Degree, Prisma, QuestionQuality } from "@prisma/client";
+import { qualityTierOf } from "../ingestion/question-payload";
 import { PrismaService } from "../../prisma/prisma.service";
 import { IngestionService } from "../ingestion/ingestion.service";
 import { AccessService } from "../access/access.service";
@@ -16,7 +17,12 @@ export interface QuestionFilters {
   q?: string;
   page?: number;
   pageSize?: number;
+  /** Admin only: one quality tier, e.g. the DRAFT review queue. */
+  qualityTier?: QuestionQuality;
 }
+
+/** What every student-facing read requires: in the bank, and checked. */
+const STUDENT_VISIBLE: Prisma.QuestionWhereInput = { retiredAt: null, qualityTier: { not: QuestionQuality.DRAFT } };
 
 /**
  * The projection returned for a question's stem/body -- the shared shape of
@@ -34,6 +40,12 @@ const PUBLIC_QUESTION_SELECT = {
   examYear: true,
   subjectCode: true,
   topicCodes: true,
+  examCode: true,
+  bookletNumber: true,
+  questionNumber: true,
+  sectionTitle: true,
+  qualityTier: true,
+  passage: { select: { externalId: true, blocks: true } },
   stemBlocks: true,
   options: true,
   assets: true,
@@ -58,6 +70,9 @@ const LOCKED_QUESTION_SELECT = {
   examYear: true,
   subjectCode: true,
   topicCodes: true,
+  examCode: true,
+  questionNumber: true,
+  qualityTier: true,
   isSample: true,
   version: true,
   createdAt: true,
@@ -69,6 +84,7 @@ const LOCKED_QUESTION_SELECT = {
 const ANSWERED_QUESTION_SELECT = {
   ...PUBLIC_QUESTION_SELECT,
   correctOption: true,
+  acceptedOptions: true,
   solutionBlocks: true,
 } satisfies Prisma.QuestionSelect;
 
@@ -101,7 +117,9 @@ export class QuestionBankService {
     // A retired question is out of the bank. It stays readable to admin for
     // history and for past attempt reports, but no public or student path may
     // surface it again.
-    const where: Prisma.QuestionWhereInput = { retiredAt: null };
+    // Unchecked (DRAFT) questions wait in the admin review queue and never
+    // reach a student, listed or locked.
+    const where: Prisma.QuestionWhereInput = { ...STUDENT_VISIBLE };
     if (filters.subjectCode) where.subjectCode = filters.subjectCode;
     if (filters.topicCode) where.topicCodes = { has: filters.topicCode };
     if (filters.examDegree) where.examDegree = filters.examDegree.toUpperCase() as Degree;
@@ -166,7 +184,7 @@ export class QuestionBankService {
     // Matches `list`: a retired question is gone from the bank, and a stale
     // permalink must not be the one way back to it.
     const locked = await this.prisma.question.findFirst({
-      where: { id, retiredAt: null },
+      where: { id, ...STUDENT_VISIBLE },
       select: LOCKED_QUESTION_SELECT,
     });
     if (!locked) throw new NotFoundException("question not found");
@@ -209,6 +227,7 @@ export class QuestionBankService {
 
     const where: Prisma.QuestionWhereInput = {};
     if (!filters.includeRetired) where.retiredAt = null;
+    if (filters.qualityTier) where.qualityTier = filters.qualityTier;
     if (filters.subjectCode) where.subjectCode = filters.subjectCode;
     if (filters.topicCode) where.topicCodes = { has: filters.topicCode };
     if (filters.examDegree) where.examDegree = filters.examDegree.toUpperCase() as Degree;
@@ -226,10 +245,14 @@ export class QuestionBankService {
     const [items, total] = await this.prisma.$transaction([
       this.prisma.question.findMany({
         where,
-        select: { ...ANSWERED_QUESTION_SELECT, retiredAt: true, retiredReason: true },
+        select: { ...ANSWERED_QUESTION_SELECT, textVerified: true, keyVerified: true, source: true, retiredAt: true, retiredReason: true },
         skip: (page - 1) * pageSize,
         take: pageSize,
-        orderBy: { createdAt: "desc" },
+        // The review queue reads like the booklet: newest exam first, then
+        // in printed order. Hand-authored questions (no slot) come after.
+        orderBy: filters.qualityTier
+          ? [{ examYear: "desc" }, { bookletNumber: "asc" }, { questionNumber: "asc" }]
+          : { createdAt: "desc" },
       }),
       this.prisma.question.count({ where }),
     ]);
@@ -291,11 +314,14 @@ export class QuestionBankService {
   async setSample(actorId: string, id: string, isSample: boolean) {
     const question = await this.prisma.question.findUnique({
       where: { id },
-      select: { id: true, retiredAt: true },
+      select: { id: true, retiredAt: true, qualityTier: true },
     });
     if (!question) throw new NotFoundException("question not found");
     if (question.retiredAt && isSample) {
       throw new BadRequestException("a retired question cannot be made a public sample");
+    }
+    if (question.qualityTier === QuestionQuality.DRAFT && isSample) {
+      throw new BadRequestException("سؤالی که متن یا کلیدش هنوز بازبینی نشده نمونهٔ عمومی نمی‌شود.");
     }
 
     const updated = await this.prisma.question.update({
@@ -309,6 +335,36 @@ export class QuestionBankService {
       action: isSample ? "question.sample_set" : "question.sample_cleared",
       targetType: "Question",
       targetId: id,
+    });
+    return updated;
+  }
+
+  /**
+   * The review queue's verdict: the text matches the original booklet, and/or
+   * the key matches the final key. The quality tier follows from it, so a
+   * question reaches students the moment both are confirmed. Un-confirming
+   * takes it back out (and out of the public samples).
+   */
+  async review(actorId: string, id: string, verdict: { textVerified?: boolean; keyVerified?: boolean }) {
+    const question = await this.prisma.question.findUnique({
+      where: { id },
+      select: { id: true, textVerified: true, keyVerified: true, solutionBlocks: true, qualityTier: true },
+    });
+    if (!question) throw new NotFoundException("question not found");
+    const textVerified = verdict.textVerified ?? question.textVerified;
+    const keyVerified = verdict.keyVerified ?? question.keyVerified;
+    const qualityTier = qualityTierOf({ textVerified, keyVerified, solutionBlocks: question.solutionBlocks });
+    const updated = await this.prisma.question.update({
+      where: { id },
+      data: { textVerified, keyVerified, qualityTier, ...(qualityTier === QuestionQuality.DRAFT ? { isSample: false } : {}) },
+      select: { id: true, externalId: true, textVerified: true, keyVerified: true, qualityTier: true, isSample: true },
+    });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "question.reviewed",
+      targetType: "Question",
+      targetId: id,
+      metadata: { before: question.qualityTier, after: qualityTier, textVerified, keyVerified },
     });
     return updated;
   }

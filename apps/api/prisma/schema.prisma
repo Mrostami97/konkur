@@ -904,22 +904,59 @@ model Entitlement {
 // is Phase 3's Content Engine; this table's shape does not need to survive
 // that rewrite unchanged.
 // ---------------------------------------------------------------------------
+/// How far a question has been checked. A student only ever sees SILVER or
+/// GOLD; DRAFT waits in the admin review queue (text or key not yet compared
+/// with the original booklet). GOLD also has a worked solution. Derived on
+/// publish and on review, never typed by hand.
+enum QuestionQuality {
+  GOLD
+  SILVER
+  DRAFT
+}
+
+/// Text shared by several questions -- the reading passage of the English
+/// section -- stored once and shown above each of its questions.
+model QuestionPassage {
+  id         String     @id @default(uuid())
+  externalId String     @unique
+  blocks     Json
+  questions  Question[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("question_passages")
+}
+
 model Question {
-  id             String     @id @default(uuid())
-  externalId     String     @unique
-  examDegree     Degree
-  examMajor      String
-  examYear       Int
-  subjectCode    String
-  topicCodes     String[]
-  stemBlocks     Json
-  options        Json
-  correctOption  Int
-  solutionBlocks Json
-  assets         Json       @default("[]")
-  source         Json?
-  provenance     Json
-  version        Int        @default(1)
+  id              String           @id @default(uuid())
+  externalId      String           @unique
+  examDegree      Degree
+  examMajor       String
+  examYear        Int
+  // Where the question sits in the real booklet: exam code (1277), booklet,
+  // number and printed section. Lets a past exam be replayed in its order.
+  examCode        String?
+  bookletNumber   Int?
+  questionNumber  Int?
+  sectionTitle    String?
+  subjectCode     String
+  topicCodes      String[]
+  passageId       String?
+  passage         QuestionPassage? @relation(fields: [passageId], references: [id])
+  stemBlocks      Json
+  options         Json
+  correctOption   Int
+  // Every option the final key accepts. Empty means just correctOption; the
+  // exam board sometimes accepts two after an objection.
+  acceptedOptions Int[]            @default([])
+  solutionBlocks  Json
+  textVerified    Boolean          @default(true)
+  keyVerified     Boolean          @default(true)
+  qualityTier     QuestionQuality  @default(SILVER)
+  assets          Json             @default("[]")
+  source          Json?
+  provenance      Json
+  version         Int              @default(1)
   // Phase 17 (doc/roadmap/LEARNING_GROWTH_ACCESS_AND_AEO.md §2.1): admin-set
   // flag -- NOT auto-selected. A sample question is fully public, including
   // `correctOption`/`solutionBlocks`: it is the shop-window/AEO asset for its
@@ -928,24 +965,26 @@ model Question {
   // newly-ingested question stays gated until an admin deliberately flags
   // it, from the bank screen in the admin panel. Retiring a question clears
   // this flag: a retired question must not keep acting as a shop-window.
-  isSample       Boolean    @default(false)
+  isSample        Boolean          @default(false)
   // A retired question leaves the bank and can no longer be added to an exam,
   // but the row stays: ExamItem and Answer reference it without a cascade, so
   // deleting one that has ever been sat is refused by the database, and even
   // where a delete would succeed it would destroy what a past attempt's report
   // renders from. Reads filter on this rather than on a boolean so the panel
   // can also show when, and `retiredReason` records why.
-  retiredAt      DateTime?
-  retiredReason  String?
-  examItems      ExamItem[]
-  answers        Answer[]
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  retiredAt       DateTime?
+  retiredReason   String?
+  examItems       ExamItem[]
+  answers         Answer[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@index([subjectCode])
   @@index([subjectCode, isSample])
   @@index([retiredAt])
   @@index([subjectCode, retiredAt])
+  @@index([qualityTier])
+  @@index([examYear, examCode])
   @@map("questions")
 }
 

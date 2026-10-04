@@ -135,3 +135,29 @@ export interface QuestionV1 {
   source?: { page?: number; question_number?: number };
   provenance: Provenance;
 }
+
+/**
+ * A past-exam question straight from the archive. Unlike v1 it may still lack
+ * topics and a worked solution, may accept more than one option (keys the
+ * exam board corrected), may share a reading passage with its neighbours,
+ * and carries the review state of its text and key so the server can keep an
+ * unreviewed question out of students' sight.
+ */
+export interface QuestionV2 {
+  schema_version: "question.v2";
+  external_id: string;
+  exam: { degree: "master" | "phd"; major: string; year: number; code?: string };
+  slot?: { booklet?: number; number: number; section?: string };
+  subject_code: string;
+  topic_codes: string[];
+  passage?: { external_id: string; blocks: QuestionBlock[] };
+  stem_blocks: QuestionBlock[];
+  options: QuestionOption[];
+  correct_option: 1 | 2 | 3 | 4;
+  accepted_options?: (1 | 2 | 3 | 4)[];
+  solution_blocks: QuestionBlock[];
+  review: { text_verified: boolean; key_verified: boolean; notes?: string[] };
+  assets?: Asset[];
+  source?: { page?: number; question_number?: number; booklet?: number; archive_path?: string; crop_media_key?: string };
+  provenance: Omit<Provenance, "producer_type"> & { producer_type: "external_ai" | "human" | "ocr" };
+}
