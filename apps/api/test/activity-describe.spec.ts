@@ -31,7 +31,8 @@ describe("activity notices name what was actually bought", () => {
 
   it("calls a product that opens several things a package, under its own title", () => {
     const product = { ...base, title: "بستهٔ ارشد", kind: ProductKind.BUNDLE, course: course("الگوریتم"), resourceGrants: [resource("سیستم عامل")] };
-    expect(describeSale(product)).toEqual({ noun: "بستهٔ", name: "بستهٔ ارشد" });
+    expect(describeSale(product)).toEqual({ noun: null, name: "بستهٔ ارشد" });
+    expect(describeSale({ ...product, title: "ارشد ۱۴۰۶" })).toEqual({ noun: "بستهٔ", name: "ارشد ۱۴۰۶" });
   });
 
   it("ignores a resource that is not published, falling back to the product title", () => {
@@ -43,5 +44,17 @@ describe("activity notices name what was actually bought", () => {
   it("keeps consultations and question banks under their own titles", () => {
     expect(describeSale({ ...base, title: "مشاورهٔ سالانه", kind: ProductKind.CONSULTATION })).toEqual({ noun: null, name: "مشاورهٔ سالانه" });
     expect(describeSale({ ...base, title: "بانک سؤال الگوریتم", kind: ProductKind.QUESTION_BANK })).toEqual({ noun: null, name: "بانک سؤال الگوریتم" });
+  });
+});
+
+describe("activity notices read naturally with the titles admins actually write", () => {
+  it("does not repeat «جزوهٔ» and leaves the « | » subtitle to the page", () => {
+    const product = { ...base, resourceGrants: [resource("جزوهٔ سیستم عامل کنکور ارشد و دکتری ۱۴۰۶ | طبق سیلبرشاتز، تست‌های ۸۶ تا ۱۴۰۵")] };
+    expect(describeSale(product)).toEqual({ noun: null, name: "جزوهٔ سیستم عامل کنکور ارشد و دکتری ۱۴۰۶" });
+  });
+
+  it("does not repeat «دوره» either, but adds it when the title lacks it", () => {
+    expect(describeSale({ ...base, kind: ProductKind.COURSE, course: course("دورهٔ جامع الگوریتم") })).toEqual({ noun: null, name: "دورهٔ جامع الگوریتم" });
+    expect(describeSale({ ...base, kind: ProductKind.COURSE, course: course("الگوریتم") })).toEqual({ noun: "دورهٔ", name: "الگوریتم" });
   });
 });

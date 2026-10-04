@@ -50,6 +50,18 @@ function resourceNoun(kind: ResourceKind) {
  * A product that opens several things is a package, named by its title.
  */
 export function describeSale(product: SoldProduct): { noun: string | null; name: string } {
+  const named = describeContents(product);
+  // A title already saying what it is («جزوهٔ سیستم عامل …») needs no second
+  // «جزوهٔ» in front, and a notice shows only the title, not the subtitle
+  // after « | » that the page itself carries.
+  const name = named.name.split(/\s+[|｜]\s+/)[0].trim() || named.name;
+  // «دورهٔ» → «دور»: the stem matches «دوره»، «دورهٔ» and «دوره‌های» alike.
+  const stem = named.noun?.replace(/ٔ$/u, "").replace(/[ۀهی]$/u, "");
+  if (stem && name.startsWith(stem)) return { noun: null, name };
+  return { noun: named.noun, name };
+}
+
+function describeContents(product: SoldProduct): { noun: string | null; name: string } {
   if (product.kind === ProductKind.CONSULTATION || product.kind === ProductKind.QUESTION_BANK) {
     return { noun: null, name: product.title };
   }
