@@ -221,13 +221,15 @@ export class QuestionBankService {
    * an operator needs to see what was taken out of the bank and why, and needs
    * a way back to a question they retired by mistake.
    */
-  async listForAdmin(filters: QuestionFilters & { includeRetired?: boolean }) {
+  async listForAdmin(filters: QuestionFilters & { includeRetired?: boolean; examCode?: string }) {
     const page = filters.page && filters.page > 0 ? filters.page : 1;
-    const pageSize = filters.pageSize && filters.pageSize > 0 && filters.pageSize <= 100 ? filters.pageSize : 20;
+    // One exam year (up to ~150 questions) fits a single review page.
+    const pageSize = filters.pageSize && filters.pageSize > 0 && filters.pageSize <= 200 ? filters.pageSize : 20;
 
     const where: Prisma.QuestionWhereInput = {};
     if (!filters.includeRetired) where.retiredAt = null;
     if (filters.qualityTier) where.qualityTier = filters.qualityTier;
+    if (filters.examCode) where.examCode = filters.examCode;
     if (filters.subjectCode) where.subjectCode = filters.subjectCode;
     if (filters.topicCode) where.topicCodes = { has: filters.topicCode };
     if (filters.examDegree) where.examDegree = filters.examDegree.toUpperCase() as Degree;
@@ -250,7 +252,7 @@ export class QuestionBankService {
         take: pageSize,
         // The review queue reads like the booklet: newest exam first, then
         // in printed order. Hand-authored questions (no slot) come after.
-        orderBy: filters.qualityTier
+        orderBy: filters.qualityTier || filters.examCode
           ? [{ examYear: "desc" }, { bookletNumber: "asc" }, { questionNumber: "asc" }]
           : { createdAt: "desc" },
       }),
@@ -367,6 +369,63 @@ export class QuestionBankService {
       metadata: { before: question.qualityTier, after: qualityTier, textVerified, keyVerified },
     });
     return updated;
+  }
+
+  /** Per exam year: how many of its archive questions are in each tier. */
+  async reviewSummary() {
+    const rows = await this.prisma.question.groupBy({
+      by: ["examCode", "examYear", "qualityTier"],
+      where: { retiredAt: null, examCode: { not: null } },
+      _count: { _all: true },
+    });
+    const byExam = new Map<string, { examCode: string; examYear: number; GOLD: number; SILVER: number; DRAFT: number; keysUnchecked: number }>();
+    for (const row of rows) {
+      const key = `${row.examCode}-${row.examYear}`;
+      const entry = byExam.get(key) ?? { examCode: row.examCode!, examYear: row.examYear, GOLD: 0, SILVER: 0, DRAFT: 0, keysUnchecked: 0 };
+      entry[row.qualityTier] = row._count._all;
+      byExam.set(key, entry);
+    }
+    const unchecked = await this.prisma.question.groupBy({
+      by: ["examCode", "examYear"],
+      where: { retiredAt: null, examCode: { not: null }, keyVerified: false },
+      _count: { _all: true },
+    });
+    for (const row of unchecked) {
+      const entry = byExam.get(`${row.examCode}-${row.examYear}`);
+      if (entry) entry.keysUnchecked = row._count._all;
+    }
+    return [...byExam.values()].sort((a, b) => b.examYear - a.examYear || a.examCode.localeCompare(b.examCode));
+  }
+
+  /**
+   * The quick way through a year's keys: the reviewer has compared the year's
+   * answer table on screen with the official final key and it matches, so
+   * every question of that exam gets its key confirmed at once. Each tier is
+   * recomputed from its own text check and solution.
+   */
+  async confirmExamKey(actorId: string, examCode: string, examYear: number) {
+    const questions = await this.prisma.question.findMany({
+      where: { examCode, examYear, retiredAt: null },
+      select: { id: true, textVerified: true, solutionBlocks: true, keyVerified: true },
+    });
+    if (questions.length === 0) throw new NotFoundException("no questions for this exam");
+    const changed = questions.filter((question) => !question.keyVerified);
+    await this.prisma.$transaction(
+      changed.map((question) =>
+        this.prisma.question.update({
+          where: { id: question.id },
+          data: { keyVerified: true, qualityTier: qualityTierOf({ textVerified: question.textVerified, keyVerified: true, solutionBlocks: question.solutionBlocks }) },
+        }),
+      ),
+    );
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "question.exam_key_confirmed",
+      targetType: "Exam",
+      targetId: `${examCode}-${examYear}`,
+      metadata: { questions: questions.length, confirmed: changed.length },
+    });
+    return { questions: questions.length, confirmed: changed.length };
   }
 
   async createDirect(actorId: string, dto: CreateQuestionDto) {

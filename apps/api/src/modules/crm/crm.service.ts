@@ -38,6 +38,15 @@ export class CrmService {
         });
         await this.prisma.outboxEvent.update({ where: { id: event.id }, data: { publishedAt: new Date() } });
       } catch (err) {
+        // The person was deleted before their sign-up became a lead: there is
+        // no one left to follow up, and retrying every five seconds forever
+        // would only fill the log.
+        const userExists = await this.prisma.user.count({ where: { id: payload.userId } });
+        if (!userExists) {
+          await this.prisma.outboxEvent.update({ where: { id: event.id }, data: { publishedAt: new Date() } });
+          this.logger.warn(`outbox event ${event.id} dropped: its user no longer exists`);
+          continue;
+        }
         this.logger.error(`failed to process outbox event ${event.id}: ${(err as Error).message}`);
       }
     }

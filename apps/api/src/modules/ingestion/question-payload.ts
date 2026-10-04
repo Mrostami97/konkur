@@ -18,10 +18,42 @@ export function qualityTierOf(question: { textVerified: boolean; keyVerified: bo
  * v2 payload says itself how far it was checked. A shared passage is stored
  * once by its external id and linked.
  */
-export async function questionRowFromPayload(tx: Prisma.TransactionClient, payload: QuestionV1 | QuestionV2) {
+/** What a question already looked like, for keeping a reviewer's verdict. */
+export interface ReviewedQuestion {
+  stemBlocks: unknown;
+  options: unknown;
+  correctOption: number;
+  acceptedOptions: number[];
+  textVerified: boolean;
+  keyVerified: boolean;
+}
+
+/** Key order does not count: Postgres stores JSONB with its keys reordered. */
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.keys(value as Record<string, unknown>).sort().map((key) => [key, canonical((value as Record<string, unknown>)[key])]));
+  }
+  return value;
+}
+const sameJson = (a: unknown, b: unknown) => JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
+
+export async function questionRowFromPayload(
+  tx: Prisma.TransactionClient,
+  payload: QuestionV1 | QuestionV2,
+  existing?: ReviewedQuestion | null,
+) {
   const v2 = payload.schema_version === "question.v2" ? payload : null;
-  const textVerified = v2 ? v2.review.text_verified : true;
-  const keyVerified = v2 ? v2.review.key_verified : true;
+  const accepted = v2?.accepted_options ?? [];
+  const acceptedOptions = accepted.length > 1 ? [...accepted].sort() : [];
+  // A re-import of the archive (the bank rebuilt after other fixes) must not
+  // undo a confirmation made in the review queue -- unless this question's
+  // own text or key is what changed, which needs looking at again.
+  const textUnchanged = !!existing && sameJson(existing.stemBlocks, payload.stem_blocks) && sameJson(existing.options, payload.options);
+  const keyUnchanged =
+    !!existing && existing.correctOption === payload.correct_option && sameJson(existing.acceptedOptions, v2 ? acceptedOptions : existing.acceptedOptions);
+  const textVerified = v2 ? v2.review.text_verified || (textUnchanged && existing!.textVerified) : true;
+  const keyVerified = v2 ? v2.review.key_verified || (keyUnchanged && existing!.keyVerified) : true;
 
   let passageId: string | null = null;
   if (v2?.passage) {
@@ -33,7 +65,6 @@ export async function questionRowFromPayload(tx: Prisma.TransactionClient, paylo
     passageId = passage.id;
   }
 
-  const accepted = v2?.accepted_options ?? [];
   // A v1 payload (a staff edit in the panel) knows nothing of the booklet
   // slot, passage or extra accepted keys: it leaves them as they are rather
   // than wiping what the archive import recorded.
@@ -45,7 +76,7 @@ export async function questionRowFromPayload(tx: Prisma.TransactionClient, paylo
         sectionTitle: v2.slot?.section ?? null,
         passageId,
         // Only worth storing when the key accepts more than the one option.
-        acceptedOptions: accepted.length > 1 ? [...accepted].sort() : [],
+        acceptedOptions,
       }
     : {};
   return {

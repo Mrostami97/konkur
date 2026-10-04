@@ -8,7 +8,7 @@ import { QuestionBankService } from "./question-bank.service";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 import { RetireQuestionDto } from "./dto/retire-question.dto";
 import { SetSampleDto } from "./dto/set-sample.dto";
-import { ReviewQuestionDto } from "./dto/review-question.dto";
+import { ConfirmExamKeyDto, ReviewQuestionDto } from "./dto/review-question.dto";
 
 @Controller("questions")
 @UseGuards(OptionalSessionAuthGuard)
@@ -53,6 +53,19 @@ export class QuestionsPublicController {
 export class QuestionsAdminController {
   constructor(private readonly questionBank: QuestionBankService) {}
 
+  /** The review queue's overview: per exam year, questions by tier and keys left to check. */
+  @Get("review-summary")
+  @Roles(Role.REVIEWER, Role.ADMIN)
+  reviewSummary() {
+    return this.questionBank.reviewSummary();
+  }
+
+  @Post("exam-key/confirm")
+  @Roles(Role.REVIEWER, Role.ADMIN)
+  confirmExamKey(@Req() req: RequestWithUser, @Body() dto: ConfirmExamKeyDto) {
+    return this.questionBank.confirmExamKey(req.user!.id, dto.examCode, dto.examYear);
+  }
+
   @Get(":id/versions")
   @Roles(Role.AUTHOR, Role.REVIEWER, Role.ADMIN)
   listVersions(@Param("id") id: string) {
@@ -83,6 +96,7 @@ export class QuestionsAdminController {
     @Query("q") q?: string,
     @Query("includeRetired") includeRetired?: string,
     @Query("qualityTier") qualityTier?: string,
+    @Query("examCode") examCode?: string,
     @Query("page") page?: string,
     @Query("pageSize") pageSize?: string,
   ) {
@@ -92,6 +106,7 @@ export class QuestionsAdminController {
       q,
       includeRetired: includeRetired === "true",
       qualityTier: qualityTier && qualityTier in QuestionQuality ? (qualityTier as QuestionQuality) : undefined,
+      examCode,
       page: page ? Number(page) : undefined,
       pageSize: pageSize ? Number(pageSize) : undefined,
     });

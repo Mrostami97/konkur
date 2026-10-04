@@ -183,4 +183,66 @@ describe("Past-exam archive questions (question.v2)", () => {
     expect(score.body.correctCount).toBe(1);
     expect(score.body.wrongCount).toBe(1);
   });
+
+  it("summarises the queue per exam year and confirms a whole year's key at once", async () => {
+    const summary = await http().get("/admin/questions/review-summary").set("Cookie", adminCookie).expect(200);
+    const year = summary.body.find((row: { examCode: string; examYear: number }) => row.examCode === "1277" && row.examYear === 1403);
+    expect(year.DRAFT).toBeGreaterThanOrEqual(1);
+    expect(year.keysUnchecked).toBeGreaterThanOrEqual(1);
+
+    const student = await examReadyStudent();
+    await http().post("/admin/questions/exam-key/confirm").set("Cookie", student).send({ examCode: "1277", examYear: 1403 }).expect(403);
+    const confirmed = await http().post("/admin/questions/exam-key/confirm").set("Cookie", adminCookie).send({ examCode: "1277", examYear: 1403 }).expect(201);
+    expect(confirmed.body.confirmed).toBeGreaterThanOrEqual(1);
+    // b had its text confirmed earlier and only its key withdrawn: it is back with students.
+    await http().get(`/questions/${ids.b}`).expect(200);
+    const after = await http().get("/admin/questions/review-summary").set("Cookie", adminCookie).expect(200);
+    expect(after.body.find((row: { examCode: string; examYear: number }) => row.examCode === "1277" && row.examYear === 1403).keysUnchecked).toBe(0);
+  });
+
+  it("approves a whole exam year in one go", async () => {
+    // 150 ids once overflowed the indexed audit target and answered 500.
+    const verified = { text_verified: true, key_verified: true };
+    const items = Array.from({ length: 150 }, (_, n) => ({
+      ...archiveQuestion(`archive-year-${run}-${n}`, subjectCode, n + 1, { review: verified }),
+      exam: { degree: "master", major: "computer-engineering", year: 1399, code: "1277" },
+    }));
+    const zip = new AdmZip();
+    zip.addFile("payload.json", Buffer.from(JSON.stringify(items)));
+    const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "year.zip").expect(201);
+    const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+    await http()
+      .post("/admin/import/items/review")
+      .set("Cookie", adminCookie)
+      .send({ itemIds: staged.body.map((item: { id: string }) => item.id), decision: "APPROVE" })
+      .expect(201);
+    const published = await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+    expect(published.body).toHaveLength(150);
+  });
+
+  it("keeps a confirmation from the review queue when the same question is imported again", async () => {
+    const id = `archive-reimport-${run}`;
+    const unchecked = { text_verified: true, key_verified: false };
+    async function importOne(item: unknown) {
+      const zip = new AdmZip();
+      zip.addFile("payload.json", Buffer.from(JSON.stringify([item])));
+      const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "one.zip").expect(201);
+      const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+      await http().post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: [staged.body[0].id], decision: "APPROVE" }).expect(201);
+      await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+    }
+    const original = { ...archiveQuestion(id, subjectCode, 120, { review: unchecked }), exam: { degree: "master", major: "computer-engineering", year: 1398, code: "1277" } };
+    await importOne(original);
+    const row = (await http().get(`/admin/questions?q=${id}`).set("Cookie", adminCookie).expect(200)).body.items[0];
+    expect(row.qualityTier).toBe("DRAFT");
+    await http().post(`/admin/questions/${row.id}/review`).set("Cookie", adminCookie).send({ keyVerified: true }).expect(201);
+
+    // Rebuilt bank, nothing changed for this question: the confirmation stays.
+    await importOne({ ...original, review: { ...unchecked, notes: ["rebuilt"] } });
+    expect((await http().get(`/admin/questions?q=${id}`).set("Cookie", adminCookie)).body.items[0]).toMatchObject({ keyVerified: true, qualityTier: "SILVER" });
+
+    // Its key was corrected in the bank: look at it again.
+    await importOne({ ...original, correct_option: 4 });
+    expect((await http().get(`/admin/questions?q=${id}`).set("Cookie", adminCookie)).body.items[0]).toMatchObject({ keyVerified: false, qualityTier: "DRAFT" });
+  });
 });

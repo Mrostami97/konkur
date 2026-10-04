@@ -125,6 +125,8 @@ const records = (await readFile(path.join(bankRoot, "outputs/question_bank/activ
 await mkdir(outDir, { recursive: true });
 const report = { generated_at: new Date().toISOString(), bank_generated_at: generatedAt, years: {} };
 const seenIds = new Set();
+/** Each year's items and files, kept to pack the first-import bundles. */
+const built = [];
 
 for (const year of [...new Set(records.map((record) => record.year))].sort()) {
   const zip = new AdmZip();
@@ -220,6 +222,7 @@ for (const year of [...new Set(records.map((record) => record.year))].sort()) {
 
   report.years[year] = summary;
   if (items.length === 0) continue;
+  built.push({ year, items, files });
   zip.addFile("payload.json", Buffer.from(JSON.stringify(items)));
   for (const [name, buffer] of files) zip.addFile(name, buffer);
   const out = path.join(outDir, `questions-1277-${year}.zip`);
@@ -227,6 +230,33 @@ for (const year of [...new Set(records.map((record) => record.year))].sort()) {
   const size = zip.toBuffer().length;
   summary.zip_bytes = size;
   if (size > 50 * 1024 * 1024 || files.size + 1 > 1000) summary.warning = "zip exceeds the importer limits (50 MB / 1000 entries)";
+}
+
+// The first import, in as few uploads as the importer allows: whole years
+// packed together while a bundle stays under 1000 entries/items and 45 MB.
+const bundles = [];
+for (const year of built) {
+  const bytes = [...year.files.values()].reduce((sum, buffer) => sum + buffer.length, 0);
+  const last = bundles[bundles.length - 1];
+  if (last && last.entries + year.files.size + 1 <= 999 && last.items.length + year.items.length <= 1000 && last.bytes + bytes <= 45 * 1024 * 1024) {
+    last.items.push(...year.items);
+    for (const [name, buffer] of year.files) last.files.set(name, buffer);
+    last.entries += year.files.size;
+    last.bytes += bytes;
+    last.years.push(year.year);
+  } else {
+    bundles.push({ items: [...year.items], files: new Map(year.files), entries: year.files.size + 1, bytes, years: [year.year] });
+  }
+}
+report.bundles = [];
+for (const bundle of bundles) {
+  const zip = new AdmZip();
+  zip.addFile("payload.json", Buffer.from(JSON.stringify(bundle.items)));
+  for (const [name, buffer] of bundle.files) zip.addFile(name, buffer);
+  const name = `bundle-${bundle.years[0]}-${bundle.years[bundle.years.length - 1]}.zip`;
+  zip.writeZip(path.join(outDir, name));
+  report.bundles.push({ name, years: bundle.years, questions: bundle.items.length, entries: bundle.files.size + 1 });
+  console.log(`${name}: ${bundle.items.length} questions, ${bundle.files.size + 1} entries, ${(zip.toBuffer().length / 1048576).toFixed(1)} MB`);
 }
 
 await writeFile(path.join(outDir, "report.json"), JSON.stringify(report, null, 2));

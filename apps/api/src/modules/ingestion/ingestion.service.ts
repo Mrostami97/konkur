@@ -294,13 +294,18 @@ export class IngestionService {
       });
       results.push(updated);
     }
-    await this.audit.log({
-      actorUserId: reviewerId,
-      action: decision === "APPROVE" ? "import.items_approved" : "import.items_rejected",
-      targetType: "ImportItem",
-      targetId: itemIds.join(","),
-      metadata: { count: itemIds.length, note },
-    });
+    // One entry per job, the item ids in metadata: a whole exam year approved
+    // at once is 100+ ids, far beyond what the indexed targetId can hold.
+    for (const jobId of new Set(items.map((item) => item.importJobId))) {
+      const ids = items.filter((item) => item.importJobId === jobId).map((item) => item.id);
+      await this.audit.log({
+        actorUserId: reviewerId,
+        action: decision === "APPROVE" ? "import.items_approved" : "import.items_rejected",
+        targetType: "ImportJob",
+        targetId: jobId,
+        metadata: { count: ids.length, itemIds: ids, note },
+      });
+    }
     return results;
   }
 
@@ -592,7 +597,7 @@ export class IngestionService {
     const p = payload as QuestionV1 | QuestionV2;
     const existing = await tx.question.findUnique({ where: { externalId: p.external_id } });
     const version = (existing?.version ?? 0) + 1;
-    const data = { externalId: p.external_id, ...(await questionRowFromPayload(tx, p)), version };
+    const data = { externalId: p.external_id, ...(await questionRowFromPayload(tx, p, existing)), version };
     const question = existing
       ? await tx.question.update({ where: { id: existing.id }, data })
       : await tx.question.create({ data });
@@ -709,9 +714,10 @@ export class IngestionService {
         });
       } else {
         const p = payload as QuestionV1 | QuestionV2;
+        const current = await tx.question.findUnique({ where: { id: entityId } });
         await tx.question.update({
           where: { id: entityId },
-          data: { ...(await questionRowFromPayload(tx, p)), version: newVersion },
+          data: { ...(await questionRowFromPayload(tx, p, current)), version: newVersion },
         });
       }
 

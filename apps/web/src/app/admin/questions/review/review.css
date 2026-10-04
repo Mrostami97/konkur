@@ -1,0 +1,78 @@
+/* Review queue for archive questions: the year's key as a compact grid, then
+   each question beside the crop of its original booklet. */
+
+.rq-muted { color: var(--muted); font-size: var(--text-sm); }
+
+.rq-key {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4.25rem, 1fr));
+  gap: var(--sp-2);
+}
+.rq-key li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--warning-soft);
+  font-size: var(--text-sm);
+}
+.rq-key li[data-checked] { background: var(--surface); }
+.rq-key li span { color: var(--muted); }
+.rq-key li b { font-weight: var(--weight-bold); }
+
+.rq-card { display: grid; gap: var(--sp-4); }
+.rq-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); }
+.rq-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-items: start;
+}
+.rq-text { min-width: 0; }
+.rq-passage {
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+.rq-passage summary { cursor: pointer; font-weight: var(--weight-semibold); }
+.rq-options { list-style: none; margin: var(--sp-3) 0 0; padding: 0; display: grid; gap: var(--sp-2); }
+.rq-options li {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: baseline;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.rq-options li > div, .rq-options li p { margin: 0; }
+.rq-options li[data-key] { border-color: var(--accent); background: var(--accent-soft); }
+.rq-option-number { font-weight: var(--weight-bold); color: var(--muted); }
+
+.rq-source { margin: 0; }
+.rq-source img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+.rq-source figcaption { margin-top: var(--sp-1); color: var(--muted); font-size: var(--text-xs); }
+
+.rq-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+
+
+tr[data-selected] td { background: var(--accent-soft); }
+
+@media (max-width: 860px) {
+  .rq-body { grid-template-columns: minmax(0, 1fr); }
+  .rq-source { order: -1; }
+}

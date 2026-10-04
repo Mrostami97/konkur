@@ -35,6 +35,7 @@ const NAV_GROUPS: { title: string; links: NavLink[] }[] = [
     title: "سنجش و آموزش",
     links: [
       { href: "/admin/questions", label: "بانک سؤال", icon: "question", roles: ["AUTHOR", "REVIEWER", "ADMIN"] },
+      { href: "/admin/questions/review", label: "بازبینی سؤال‌های کنکور", icon: "check", roles: ["REVIEWER", "ADMIN"] },
       { href: "/admin/exams", label: "آزمون‌ها", icon: "exam", roles: ["AUTHOR", "ADMIN"] },
       { href: "/admin/courses", label: "دوره‌ها", icon: "course", roles: ["AUTHOR", "ADMIN"] },
       { href: "/admin/import", label: "ورود داده", icon: "import", roles: ["REVIEWER", "ADMIN"] },
