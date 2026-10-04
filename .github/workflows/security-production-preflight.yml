@@ -84,7 +84,7 @@ jobs:
             "${docker_command[@]}" image inspect --format '{{.Id}} {{.Config.User}} {{json .RepoTags}}' "$image" 2>/dev/null || echo 'Expected release image is unavailable.'
           done
           echo 'Loaded application gateway security directives:'
-          "${docker_command[@]}" compose exec -T nginx nginx -T 2>/dev/null | awk '/include.*security-headers|add_header Strict-Transport-Security|proxy_hide_header X-Powered-By/ {print}'
+          "${docker_command[@]}" compose exec --interactive=false -T nginx nginx -T < /dev/null 2>/dev/null | awk '/include.*security-headers|add_header Strict-Transport-Security|proxy_hide_header X-Powered-By/ {print}'
           echo 'Verified origin response headers, without cookies or response data:'
           curl --silent --show-error --max-time 15 --resolve kunkurcomputer.ir:443:127.0.0.1 --dump-header - --output /dev/null https://kunkurcomputer.ir/api/healthz | awk 'BEGIN{IGNORECASE=1} /^HTTP\/|^Strict-Transport-Security:|^X-Content-Type-Options:|^X-Frame-Options:|^Referrer-Policy:|^Permissions-Policy:|^Content-Security-Policy:|^X-Powered-By:|^Cache-Control:/ {print}'
           if [ -f .env ]; then
@@ -123,6 +123,7 @@ jobs:
           else
             echo 'Local SQL backup directory is absent.'
           fi
+          echo 'Read-only application inspection completed.'
           INSPECT
 
           # Validate effective credentials in the already running API process
