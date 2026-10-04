@@ -59,11 +59,13 @@ export async function apiGetPublic<T>(path: string): Promise<T | null> {
 /** Browser-side fetch that carries the session cookie for authenticated calls. */
 export async function apiFetch<T>(
   path: string,
-  options: { method?: string; body?: unknown } = {},
+  options: { method?: string; body?: unknown; keepalive?: boolean } = {},
 ): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     method: options.method ?? "GET",
     credentials: "include",
+    // Lets a last report leave while the page is being closed.
+    keepalive: options.keepalive,
     headers: options.body ? { "Content-Type": "application/json" } : undefined,
     body: options.body ? JSON.stringify(options.body) : undefined,
   });

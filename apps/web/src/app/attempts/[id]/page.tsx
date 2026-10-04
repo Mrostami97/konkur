@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { ContentBlocks } from "../../../components/ContentBlocks";
@@ -15,8 +15,12 @@ interface Item {
   questionId: string;
   order: number;
   points: number;
+  sectionId: string | null;
+  flagged: boolean;
   question: {
     id: string;
+    subjectCode: string;
+    passage: { externalId: string; blocks: Block[] } | null;
     stemBlocks: Block[];
     options: Option[];
     assets: { media_key: string; checksum: string }[];
@@ -29,8 +33,17 @@ interface AttemptState {
   examTitle: string;
   status: "IN_PROGRESS" | "SUBMITTED" | "EXPIRED";
   remainingSeconds: number;
+  sections: { id: string; title: string; order: number }[];
   items: Item[];
 }
+
+/** How often the time spent per question and the flags are sent. */
+const ACTIVITY_FLUSH_MS = 15_000;
+/** How often an answer that failed to save is tried again. */
+const RETRY_MS = 5_000;
+
+/** The English section reads left to right, punctuation included. */
+const textDirection = (subjectCode: string) => (subjectCode === "english" ? { dir: "ltr" as const, lang: "en" } : {});
 
 type SaveState = "saved" | "saving" | "failed";
 
@@ -71,6 +84,13 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
   const [submitError, setSubmitError] = useState<string | null>(null);
   const submittingRef = useRef(false);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+  /** Not yet reported: milliseconds per question, and flag changes. */
+  const pendingTime = useRef(new Map<string, number>());
+  const pendingFlags = useRef(new Map<string, boolean>());
+  /** Answers the server has not confirmed, tried again until it does. */
+  const unsaved = useRef(new Map<string, number | null>());
+  const currentQuestion = useRef<string | null>(null);
+  const [online, setOnline] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -79,6 +99,7 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
       const data = await apiFetch<AttemptState>(`/attempts/${params.id}`);
       setAttempt(data);
       setRemaining(data.remainingSeconds);
+      setFlagged(new Set(data.items.filter((item) => item.flagged).map((item) => item.questionId)));
       if (data.status !== "IN_PROGRESS") router.push(`/attempts/${params.id}/report`);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -95,10 +116,61 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
     void load();
   }, [load]);
 
-  const submit = useCallback(async () => {
+  /** Sends the time spent and flag changes gathered since the last report. A
+   * failed report keeps its entries for the next one. */
+  const flushActivity = useCallback(
+    async (keepalive = false) => {
+      const ids = new Set([...pendingTime.current.keys(), ...pendingFlags.current.keys()]);
+      if (ids.size === 0) return;
+      const entries = [...ids].map((questionId) => ({
+        questionId,
+        timeSpentMs: Math.round(pendingTime.current.get(questionId) ?? 0),
+        ...(pendingFlags.current.has(questionId) ? { flagged: pendingFlags.current.get(questionId) } : {}),
+      }));
+      pendingTime.current.clear();
+      pendingFlags.current.clear();
+      try {
+        await apiFetch(`/attempts/${params.id}/activity`, { method: "POST", body: { entries }, keepalive });
+      } catch {
+        for (const entry of entries) {
+          pendingTime.current.set(entry.questionId, (pendingTime.current.get(entry.questionId) ?? 0) + entry.timeSpentMs);
+          if (entry.flagged !== undefined && !pendingFlags.current.has(entry.questionId)) pendingFlags.current.set(entry.questionId, entry.flagged);
+        }
+      }
+    },
+    [params.id],
+  );
+
+  /** Tries every unconfirmed answer once more; returns how many still failed. */
+  const retryUnsaved = useCallback(async () => {
+    for (const [questionId, option] of [...unsaved.current]) {
+      setSaveState((previous) => ({ ...previous, [questionId]: "saving" }));
+      try {
+        await apiFetch(`/attempts/${params.id}/answers/${questionId}`, { method: "PUT", body: { selectedOption: option } });
+        if (unsaved.current.get(questionId) === option) unsaved.current.delete(questionId);
+        setSaveState((previous) => ({ ...previous, [questionId]: "saved" }));
+      } catch (err) {
+        // The attempt is over: nothing more will be accepted.
+        if (err instanceof ApiError && err.status === 403) unsaved.current.clear();
+        setSaveState((previous) => ({ ...previous, [questionId]: "failed" }));
+      }
+    }
+    return unsaved.current.size;
+  }, [params.id]);
+
+  const submit = useCallback(async (manual = false) => {
     if (submittingRef.current) return;
     submittingRef.current = true;
     try {
+      // Answers and time first: a submit must not leave anything behind.
+      const stillUnsaved = await retryUnsaved();
+      if (manual && stillUnsaved > 0) {
+        submittingRef.current = false;
+        setConfirming(false);
+        setSubmitError(`${toPersianDigits(stillUnsaved)} پاسخ هنوز به سرور نرسیده. اتصال اینترنت را بررسی کن و دوباره «پایان آزمون» را بزن؛ پاسخ‌ها مدام دوباره فرستاده می‌شوند.`);
+        return;
+      }
+      await flushActivity();
       await apiFetch(`/attempts/${params.id}/submit`, { method: "POST" });
       router.push(`/attempts/${params.id}/report`);
     } catch (err) {
@@ -106,7 +178,51 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
       setConfirming(false);
       setSubmitError(err instanceof Error ? err.message : "ثبت آزمون ناموفق بود. دوباره تلاش کنید.");
     }
-  }, [params.id, router]);
+  }, [flushActivity, params.id, retryUnsaved, router]);
+
+  // Time on the question in view, while the page is visible; reported in
+  // batches, and once more when the page is hidden or closed.
+  const attemptId = attempt?.id;
+  const inProgress = attempt?.status === "IN_PROGRESS";
+  useEffect(() => {
+    if (!attemptId || !inProgress) return;
+    let last = Date.now();
+    const tick = setInterval(() => {
+      const now = Date.now();
+      const id = currentQuestion.current;
+      if (id && document.visibilityState === "visible") {
+        pendingTime.current.set(id, (pendingTime.current.get(id) ?? 0) + Math.min(now - last, 5_000));
+      }
+      last = now;
+    }, 1_000);
+    const flush = setInterval(() => void flushActivity(), ACTIVITY_FLUSH_MS);
+    const retry = setInterval(() => {
+      if (unsaved.current.size > 0) void retryUnsaved();
+    }, RETRY_MS);
+    const onHidden = () => {
+      if (document.visibilityState === "hidden") void flushActivity(true);
+    };
+    const onPageHide = () => void flushActivity(true);
+    const onOnline = () => {
+      setOnline(true);
+      void retryUnsaved();
+    };
+    const onOffline = () => setOnline(false);
+    setOnline(navigator.onLine);
+    document.addEventListener("visibilitychange", onHidden);
+    window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    return () => {
+      clearInterval(tick);
+      clearInterval(flush);
+      clearInterval(retry);
+      document.removeEventListener("visibilitychange", onHidden);
+      window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
+    };
+  }, [attemptId, inProgress, flushActivity, retryUnsaved]);
 
   useEffect(() => {
     if (!attempt || attempt.status !== "IN_PROGRESS") return;
@@ -136,13 +252,17 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
           : previous,
       );
       setSaveState((previous) => ({ ...previous, [questionId]: "saving" }));
+      unsaved.current.set(questionId, option);
       try {
         await apiFetch(`/attempts/${params.id}/answers/${questionId}`, {
           method: "PUT",
           body: { selectedOption: option },
         });
+        // A newer choice made meanwhile is still waiting for its own save.
+        if (unsaved.current.get(questionId) === option) unsaved.current.delete(questionId);
         setSaveState((previous) => ({ ...previous, [questionId]: "saved" }));
-      } catch {
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 403) unsaved.current.delete(questionId);
         setSaveState((previous) => ({ ...previous, [questionId]: "failed" }));
       }
     },
@@ -154,6 +274,7 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
       const next = new Set(previous);
       if (next.has(questionId)) next.delete(questionId);
       else next.add(questionId);
+      pendingFlags.current.set(questionId, next.has(questionId));
       return next;
     });
   }, []);
@@ -167,6 +288,10 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
     setCurrent(index);
     setPaletteOpen(false);
   }, []);
+
+  useEffect(() => {
+    currentQuestion.current = attempt?.items[current]?.questionId ?? null;
+  }, [attempt, current]);
 
   // The question in view is the one the keyboard answers.
   const itemCount = attempt?.items.length ?? 0;
@@ -228,6 +353,18 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
   const unanswered = total - answered;
   const flaggedCount = flagged.size;
   const failedSaves = Object.values(saveState).filter((state) => state === "failed").length;
+  const sectionTitle = useMemo(() => new Map((attempt?.sections ?? []).map((section) => [section.id, section.title])), [attempt]);
+  /** Question numbers sharing each reading passage, for its heading. */
+  const passageRange = useMemo(() => {
+    const ranges = new Map<string, { first: number; last: number }>();
+    (attempt?.items ?? []).forEach((item, index) => {
+      const key = item.question.passage?.externalId;
+      if (!key) return;
+      const range = ranges.get(key);
+      ranges.set(key, range ? { ...range, last: index + 1 } : { first: index + 1, last: index + 1 });
+    });
+    return ranges;
+  }, [attempt]);
   // Announced once per threshold, not every second.
   const stage = remaining > 0 && remaining <= 60 ? 2 : remaining > 0 && remaining <= 300 ? 1 : 0;
   const stageMessage = stage === 2 ? "کمتر از یک دقیقه مانده است." : stage === 1 ? "پنج دقیقه تا پایان آزمون مانده است." : "";
@@ -249,19 +386,22 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
         {attempt.items.map((item, index) => {
           const done = item.selectedOption !== null;
           const isFlagged = flagged.has(item.questionId);
+          const newSection = item.sectionId && item.sectionId !== attempt.items[index - 1]?.sectionId;
           return (
+            <Fragment key={item.questionId}>
+            {newSection && <span className="at-grid-section">{sectionTitle.get(item.sectionId!)}</span>}
             <button
               type="button"
               className="at-dot"
               data-done={done || undefined}
               data-flag={isFlagged || undefined}
               aria-current={index === current ? "true" : undefined}
-              key={item.questionId}
               onClick={() => goTo(index)}
               aria-label={`سؤال ${toPersianDigits(index + 1)}، ${done ? "پاسخ داده شده" : "بی‌پاسخ"}${isFlagged ? "، علامت‌دار" : ""}`}
             >
               {toPersianDigits(index + 1)}
             </button>
+            </Fragment>
           );
         })}
       </div>
@@ -314,10 +454,14 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
           {attempt && (
             <div className="at-body">
               <div className="at-sheet">
-                {failedSaves > 0 && (
+                {!online && (
+                  <Alert tone="warning">
+                    اینترنت قطع است. به آزمون ادامه بده؛ پاسخ‌هایت روی همین صفحه می‌مانند و با وصل شدن خودکار ذخیره می‌شوند.
+                  </Alert>
+                )}
+                {failedSaves > 0 && online && (
                   <Alert tone="danger">
-                    {toPersianDigits(failedSaves)} پاسخ روی سرور ثبت نشد. روی همان سؤال‌ها دوباره گزینه را انتخاب
-                    کنید تا ذخیره شوند.
+                    {toPersianDigits(failedSaves)} پاسخ هنوز روی سرور ثبت نشده؛ هر چند ثانیه خودکار دوباره فرستاده می‌شود.
                   </Alert>
                 )}
                 {submitError && <Alert tone="danger">{submitError}</Alert>}
@@ -325,11 +469,17 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
                 {attempt.items.map((item, index) => {
                   const state = saveState[item.questionId];
                   const isFlagged = flagged.has(item.questionId);
+                  const newSection = item.sectionId && item.sectionId !== attempt.items[index - 1]?.sectionId;
+                  const passage = item.question.passage;
+                  const range = passage ? passageRange.get(passage.externalId) : undefined;
+                  const firstOfPassage = !!passage && passage.externalId !== attempt.items[index - 1]?.question.passage?.externalId;
+                  const direction = textDirection(item.question.subjectCode);
                   return (
+                    <Fragment key={item.questionId}>
+                    {newSection && <h2 className="at-section">{sectionTitle.get(item.sectionId!)}</h2>}
                     <section
                       className="at-q"
                       id={`q-${index + 1}`}
-                      key={item.questionId}
                       data-index={index}
                       data-current={index === current || undefined}
                       ref={(node) => {
@@ -363,11 +513,20 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
                         </span>
                       </div>
 
-                      <div className="at-stem">
+                      {passage && range && (
+                        <details className="at-passage" open={firstOfPassage} {...direction}>
+                          <summary>
+                            متن مشترک سؤال‌های {toPersianDigits(range.first)} تا {toPersianDigits(range.last)}
+                          </summary>
+                          <ContentBlocks blocks={passage.blocks} assets={item.question.assets} />
+                        </details>
+                      )}
+
+                      <div className="at-stem" {...direction}>
                         <ContentBlocks blocks={item.question.stemBlocks} assets={item.question.assets} />
                       </div>
 
-                      <div className="at-options" role="radiogroup" aria-labelledby={`q-${index + 1}-n`}>
+                      <div className="at-options" role="radiogroup" aria-labelledby={`q-${index + 1}-n`} {...direction}>
                         {item.question.options.map((option) => {
                           const on = item.selectedOption === option.number;
                           return (
@@ -388,6 +547,7 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
                         })}
                       </div>
                     </section>
+                    </Fragment>
                   );
                 })}
 
@@ -434,7 +594,7 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
               : "به همهٔ سؤال‌ها پاسخ داده‌ای. پس از ثبت، امکان تغییر پاسخ‌ها نیست."
         }
         confirmLabel="ثبت کن"
-        onConfirm={submit}
+        onConfirm={() => void submit(true)}
         onCancel={() => setConfirming(false)}
       />
     </main>
