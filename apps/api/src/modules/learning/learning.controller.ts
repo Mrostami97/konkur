@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage, memoryStorage } from "multer";
 import { tmpdir } from "os";
@@ -12,6 +12,8 @@ import { CreateCourseDto, SetCourseMaterialsDto } from "./dto/create-course.dto"
 import { CreateModuleDto, ReorderLessonsDto, UpdateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { SpotPlayerService } from "./spotplayer.service";
+import { VIDEO_CHUNK_BYTES, VideoUploadService } from "./video-upload.service";
+import { StartVideoUploadDto } from "./dto/start-video-upload.dto";
 
 @Controller("courses")
 export class CoursesPublicController {
@@ -86,7 +88,10 @@ export class LearningStudentController {
 @UseGuards(SessionAuthGuard, RolesGuard)
 @Roles(Role.AUTHOR, Role.ADMIN)
 export class LearningAdminController {
-  constructor(private readonly learning: LearningService) {}
+  constructor(
+    private readonly learning: LearningService,
+    private readonly videoUploads: VideoUploadService,
+  ) {}
 
   @Get("courses")
   listAll() {
@@ -176,6 +181,33 @@ export class LearningAdminController {
   @UseInterceptors(FileInterceptor("file", { storage: diskStorage({ destination: tmpdir() }), limits: { fileSize: MAX_LESSON_VIDEO_BYTES } }))
   uploadLessonVideo(@Req() req: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
     return this.learning.uploadLessonVideo(req.user!.id, file);
+  }
+
+  /** A lesson video in pieces (see VideoUploadService): start, send each piece, complete, then poll. */
+  @Post("lesson-videos/uploads")
+  startVideoUpload(@Req() req: RequestWithUser, @Body() dto: StartVideoUploadDto) {
+    return this.videoUploads.start(req.user!.id, dto.size);
+  }
+
+  @Put("lesson-videos/uploads/:id/chunks/:index")
+  @UseInterceptors(FileInterceptor("chunk", { storage: memoryStorage(), limits: { fileSize: VIDEO_CHUNK_BYTES } }))
+  putVideoChunk(
+    @Req() req: RequestWithUser,
+    @Param("id") id: string,
+    @Param("index", ParseIntPipe) index: number,
+    @UploadedFile() chunk: Express.Multer.File | undefined,
+  ) {
+    return this.videoUploads.putChunk(req.user!.id, id, index, chunk?.buffer);
+  }
+
+  @Post("lesson-videos/uploads/:id/complete")
+  completeVideoUpload(@Req() req: RequestWithUser, @Param("id") id: string) {
+    return this.videoUploads.complete(req.user!.id, id);
+  }
+
+  @Get("lesson-videos/uploads/:id")
+  videoUploadStatus(@Req() req: RequestWithUser, @Param("id") id: string) {
+    return this.videoUploads.status(req.user!.id, id);
   }
 
 }

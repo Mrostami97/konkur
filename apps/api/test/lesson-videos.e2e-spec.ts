@@ -40,9 +40,9 @@ function box(type: string, ...body: Buffer[]) {
  * index (moov) last, with one chunk offset pointing at the media. The run id
  * in the media makes this upload's checksum its own.
  */
-function mp4WithIndexLast(brand = "isom") {
+function mp4WithIndexLast(brand = "isom", padding = 0) {
   const ftyp = box("ftyp", Buffer.from(brand, "latin1"), Buffer.alloc(4), Buffer.from("isommp41", "latin1"));
-  const media = Buffer.from(`CHUNK:${randomUUID()}`, "latin1");
+  const media = Buffer.concat([Buffer.from(`CHUNK:${randomUUID()}`, "latin1"), Buffer.alloc(padding)]);
   const mdat = box("mdat", media);
   const chunkAt = ftyp.length + 8;
   const stcoBody = Buffer.alloc(12);
@@ -189,5 +189,37 @@ describe("Lesson videos (e2e)", () => {
         assets: [{ media_key: "v", checksum: `sha256:${"b".repeat(64)}` }],
       })
       .expect(400);
+  });
+
+  it("takes a large video in pieces, retried pieces included, and processes it after the last one", async () => {
+    // Over one 8 MB piece, so it goes up in two.
+    const { file } = mp4WithIndexLast("isom", 9 * 1024 * 1024);
+    const started = await http().post("/admin/lesson-videos/uploads").set("Cookie", adminCookie).send({ size: file.length }).expect(201);
+    const { uploadId, chunkBytes, chunks } = started.body as { uploadId: string; chunkBytes: number; chunks: number };
+    expect(chunks).toBe(2);
+    await http().post("/admin/lesson-videos/uploads").set("Cookie", studentCookie).send({ size: file.length }).expect(403);
+    const piece = (index: number) => file.subarray(index * chunkBytes, Math.min(file.length, (index + 1) * chunkBytes));
+    const put = (index: number, body: Buffer, cookie = adminCookie) =>
+      http().put(`/admin/lesson-videos/uploads/${uploadId}/chunks/${index}`).set("Cookie", cookie).attach("chunk", body, "chunk");
+
+    await put(0, piece(0)).expect(200);
+    // Completing early names what is missing; a wrong-sized piece is refused.
+    await http().post(`/admin/lesson-videos/uploads/${uploadId}/complete`).set("Cookie", adminCookie).expect(400);
+    await put(1, piece(1).subarray(1)).expect(400);
+    await put(1, piece(1)).expect(200);
+    await put(1, piece(1)).expect(200); // a retried piece is harmless
+    await put(0, Buffer.from("x"), studentCookie).expect(403);
+
+    await http().post(`/admin/lesson-videos/uploads/${uploadId}/complete`).set("Cookie", adminCookie).expect(201);
+    let state: { status: string; result?: { checksum: string; media_key: string } } = { status: "processing" };
+    for (let i = 0; i < 50 && state.status === "processing"; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      state = (await http().get(`/admin/lesson-videos/uploads/${uploadId}`).set("Cookie", adminCookie).expect(200)).body;
+    }
+    expect(state.status).toBe("done");
+    expect(state.result!.media_key).toMatch(/^vid-/);
+    const stored = await http().get(`/media/${state.result!.checksum.replace("sha256:", "")}`).set("Cookie", adminCookie).buffer(true).parse(binary).expect(200);
+    expect(inspect(stored.body as Buffer).types).toEqual(["ftyp", "moov", "mdat"]);
+    expect((stored.body as Buffer).length).toBe(file.length);
   });
 });

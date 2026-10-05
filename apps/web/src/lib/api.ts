@@ -112,3 +112,71 @@ export function apiUpload<T>(path: string, file: File, onProgress?: (progress: U
     request.send(formData);
   });
 }
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** One piece of a file, with its own progress. */
+function putPiece(path: string, piece: Blob, onProgress: (loaded: number) => void): Promise<void> {
+  const formData = new FormData();
+  formData.append("chunk", piece, "chunk");
+  return new Promise<void>((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open("PUT", `${API_URL}${path}`);
+    request.withCredentials = true;
+    request.upload.onprogress = (event) => onProgress(event.loaded);
+    request.onload = () => {
+      if (request.status >= 200 && request.status < 300) return resolve();
+      let body: unknown;
+      try {
+        body = request.responseText ? JSON.parse(request.responseText) : undefined;
+      } catch {
+        /* an HTML error page from the CDN */
+      }
+      reject(errorFrom(request.status, request.statusText, body));
+    };
+    request.onerror = () => reject(new ApiError(0, "اتصال قطع شد."));
+    request.send(formData);
+  });
+}
+
+/**
+ * Uploads a large file in pieces (the lesson-video upload): each piece is a
+ * short request, so a slow connection never runs into the CDN's limit on how
+ * long one request may take, and a piece that fails is sent again. After the
+ * last piece the server processes the file while this waits for the result.
+ */
+export async function uploadInPieces<T>(base: string, file: File, onProgress?: (progress: UploadProgress) => void): Promise<T> {
+  const { uploadId, chunkBytes, chunks } = await apiFetch<{ uploadId: string; chunkBytes: number; chunks: number }>(base, {
+    method: "POST",
+    body: { size: file.size },
+  });
+  for (let index = 0; index < chunks; index++) {
+    const start = index * chunkBytes;
+    const piece = file.slice(start, Math.min(file.size, start + chunkBytes));
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await putPiece(`${base}/${uploadId}/chunks/${index}`, piece, (loaded) => onProgress?.({ loaded: start + loaded, total: file.size }));
+        break;
+      } catch (error) {
+        // A refusal (4xx) will not change on retry; a dropped connection may.
+        const refused = error instanceof ApiError && error.status >= 400 && error.status < 500;
+        if (refused || attempt >= 6) throw error;
+        await wait(2000 * attempt);
+      }
+    }
+  }
+  await apiFetch(`${base}/${uploadId}/complete`, { method: "POST" });
+  onProgress?.({ loaded: file.size, total: file.size });
+  for (let misses = 0; ; ) {
+    await wait(2000);
+    try {
+      const state = await apiFetch<{ status: string; result?: T; error?: string }>(`${base}/${uploadId}`);
+      misses = 0;
+      if (state.status === "done") return state.result as T;
+      if (state.status === "failed") throw new ApiError(400, state.error ?? "processing failed");
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 400) throw error;
+      if (++misses >= 15) throw error;
+    }
+  }
+}

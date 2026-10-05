@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { API_URL, apiFetch, apiUpload } from "../../../lib/api";
+import { API_URL, apiFetch, apiUpload, uploadInPieces } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import {
   AdminPageHeader,
@@ -198,10 +198,20 @@ function VideoPicker({ block, onUploaded }: { block: DraftBlock; onUploaded: (vi
     }
     setProgress({ loaded: 0, total: file.size });
     try {
-      onUploaded(await apiUpload<LessonVideo>("/admin/lesson-videos", file, setProgress));
+      onUploaded(await uploadInPieces<LessonVideo>("/admin/lesson-videos/uploads", file, setProgress));
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
-      setError(/MOV/.test(message) ? "فایل MOV در مرورگرها درست پخش نمی‌شود؛ ویدیو را با فرمت MP4 (H.264) خروجی بگیرید و دوباره آپلود کنید." : message || "آپلود ویدیو ناموفق بود.");
+      setError(
+        /MOV/.test(message)
+          ? "فایل MOV در مرورگرها درست پخش نمی‌شود؛ ویدیو را با فرمت MP4 (H.264) خروجی بگیرید و دوباره آپلود کنید."
+          : /MP4 or WebM/.test(message)
+            ? "این فایل MP4 یا WebM نیست. ویدیو را با فرمت MP4 (H.264) خروجی بگیرید."
+            : /damaged|incomplete/.test(message)
+              ? "فایل MP4 ناقص یا خراب است؛ دوباره از نرم‌افزار ویرایش خروجی بگیرید."
+              : message
+                ? `آپلود ویدیو ناموفق بود: ${message}`
+                : "آپلود ویدیو ناموفق بود. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.",
+      );
     } finally {
       setProgress(null);
     }

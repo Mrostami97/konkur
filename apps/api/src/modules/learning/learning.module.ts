@@ -10,6 +10,7 @@ import {
 } from "./learning.controller";
 import { LearningService } from "./learning.service";
 import { SpotPlayerService } from "./spotplayer.service";
+import { VideoUploadService } from "./video-upload.service";
 import { HttpSpotPlayerClient, SPOTPLAYER_CLIENT } from "./spotplayer.client";
 
 @Module({
@@ -18,6 +19,7 @@ import { HttpSpotPlayerClient, SPOTPLAYER_CLIENT } from "./spotplayer.client";
   providers: [
     LearningService,
     SpotPlayerService,
+    VideoUploadService,
     // Only the real client is registered. There is deliberately no stub that
     // invents a licence key: it would hand a paying student a key that opens
     // nothing, and they would find out after paying. With no API key set,

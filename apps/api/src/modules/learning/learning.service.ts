@@ -289,9 +289,24 @@ export class LearningService {
    */
   async uploadLessonVideo(actorId: string, file: Express.Multer.File | undefined) {
     if (!file) throw new BadRequestException("no file uploaded");
-    const fastPath = `${file.path}.fast`;
     try {
       if (file.size > MAX_LESSON_VIDEO_BYTES) throw new BadRequestException("video must be 300 MB or smaller");
+      return await this.storeLessonVideo(actorId, file.path);
+    } finally {
+      await fs.rm(file.path, { force: true });
+    }
+  }
+
+  /**
+   * Checks a received video file and stores it: MP4 or WebM only, an MP4
+   * rewritten so it starts playing before it has fully downloaded, stored
+   * once by content hash. Shared by the single-request upload and the upload
+   * in pieces; the caller removes `sourcePath`.
+   */
+  async storeLessonVideo(actorId: string, sourcePath: string) {
+    const file = { path: sourcePath };
+    const fastPath = `${sourcePath}.fast`;
+    try {
       const sniffed = await sniffVideoType(file.path);
       if (sniffed === "quicktime") {
         throw new BadRequestException("MOV files play unreliably in browsers; export the video as MP4 (H.264) and upload that");
@@ -326,7 +341,6 @@ export class LearningService {
       });
       return { media_key: `vid-${digest.slice(0, 12)}`, checksum, url: `/media/${digest}`, size };
     } finally {
-      await fs.rm(file.path, { force: true });
       await fs.rm(fastPath, { force: true });
     }
   }
