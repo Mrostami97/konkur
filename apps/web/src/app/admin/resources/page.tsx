@@ -63,6 +63,7 @@ interface ContentSource {
   sourceStatus: string;
   archivedAt?: string | null;
   mayHost: boolean;
+  commercialUseAllowed: boolean;
   rightsBasis: string;
 }
 
@@ -287,6 +288,24 @@ function ResourcesAdmin() {
     ),
     [contentSources, form.sources],
   );
+
+  // A hosted file needs a linked source that allows hosting; a paid one also
+  // needs commercial use. The form says which of the two is still missing
+  // instead of failing later at publish.
+  const rightsGap = useMemo(() => {
+    if (!PROTECTED_HOSTING_MODES.has(form.hostingMode)) return null;
+    const linked = form.sources
+      .map((link) => contentSources.find((source) => source.id === link.sourceId))
+      .filter((source): source is ContentSource => Boolean(source));
+    const missing: string[] = [];
+    if (!linked.some((source) => source.mayHost && DOCUMENTED_HOSTING_RIGHTS.has(source.rightsBasis))) {
+      missing.push("«میزبانی فایل» با مبنای حقوقی مالکیت یا مجوز");
+    }
+    if (form.accessMode === "ENTITLEMENT" && !linked.some((source) => source.commercialUseAllowed && DOCUMENTED_HOSTING_RIGHTS.has(source.rightsBasis))) {
+      missing.push("«استفادهٔ تجاری»");
+    }
+    return missing;
+  }, [contentSources, form.accessMode, form.hostingMode, form.sources]);
 
   function resetForm() {
     setEditingId(null);
@@ -630,17 +649,32 @@ function ResourcesAdmin() {
             <label className="field-group ds-field-flex">
               <span>افزودن سند</span>
               <select className="ds-select" value={sourceToAdd} onChange={(event) => setSourceToAdd(event.target.value)}>
-                <option value="">یک منبع را انتخاب کنید</option>
-                {availableSources.map((source) => (
-                  <option key={source.id} value={source.id}>
-                    {source.title} — {source.publisher}
-                    {source.mayHost && DOCUMENTED_HOSTING_RIGHTS.has(source.rightsBasis) ? " — مجوز میزبانی ثبت‌شده" : ""}
-                  </option>
-                ))}
+                <option value="">{availableSources.length === 0 ? "منبع فعالی برای اتصال نیست" : "یک منبع را انتخاب کنید"}</option>
+                {availableSources.map((source) => {
+                  const hosts = source.mayHost && DOCUMENTED_HOSTING_RIGHTS.has(source.rightsBasis);
+                  const commercial = source.commercialUseAllowed && DOCUMENTED_HOSTING_RIGHTS.has(source.rightsBasis);
+                  return (
+                    <option key={source.id} value={source.id}>
+                      {source.title} — {source.publisher}
+                      {hosts && commercial ? " — ✓ مجوز میزبانی و استفادهٔ تجاری" : hosts ? " — مجوز میزبانی (بدون استفادهٔ تجاری)" : " — بدون مجوز میزبانی"}
+                    </option>
+                  );
+                })}
               </select>
             </label>
             <button className="ds-btn ds-btn-secondary" type="button" disabled={!sourceToAdd} onClick={addSource}>اتصال منبع</button>
+            <button className="ds-btn ds-btn-secondary" type="button" disabled={loading} onClick={() => void load()}>بارگذاری دوبارهٔ فهرست</button>
           </div>
+          <p className="field-hint">
+            منبع تازه را در <a className="text-link" href="/admin/content-sources">منابع محتوا</a> بسازید؛ بعد از ساخت، «بارگذاری دوبارهٔ فهرست» را بزنید.
+            {contentSources.length > 0 && availableSources.length === 0 && form.sources.length === 0 ? " منبع‌های موجود همه آرشیو یا غیرفعال‌اند." : ""}
+          </p>
+          {rightsGap && rightsGap.length > 0 && (
+            <p className="form-error" role="alert">
+              {form.sources.length === 0 ? "هنوز منبعی وصل نشده است. " : "منبع‌های وصل‌شده کافی نیستند. "}
+              برای این جزوه باید منبعی با {rightsGap.join(" و ")} وصل شود؛ منبع را در «منابع محتوا» ویرایش و تیک آن را بزنید.
+            </p>
+          )}
 
           <div style={{ display: "grid", gap: "0.75rem", marginTop: "1rem" }}>
             {form.sources.map((source, index) => {
