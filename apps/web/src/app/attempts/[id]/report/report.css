@@ -129,3 +129,92 @@
   .rp-rank { padding-inline-end: 0; padding-bottom: 1rem; border-inline-end: 0; border-bottom: 1px solid var(--line); }
   .rp-tabs { width: 100%; overflow-x: auto; }
 }
+
+/* ---------------------------------------------------------- report card */
+.rp-issued { margin: 0.35rem 0 0; color: var(--muted); font-size: var(--text-xs); }
+.rp-q-meta { display: inline-flex; gap: 0.75rem; margin-inline-start: auto; margin-inline-end: 0.75rem; color: var(--muted); font-size: var(--text-xs); }
+.rp-passage { margin-bottom: 0.75rem; padding: 0.75rem 1rem; border: 1px solid var(--line-soft); border-radius: var(--radius-md); background: var(--surface-sunken); line-height: 1.9; }
+.rp-passage summary { cursor: pointer; font-weight: var(--weight-semibold); }
+.rp-passage[dir="ltr"] summary { direction: rtl; text-align: right; }
+
+.rc-block { display: grid; gap: 1rem; padding: 1.4rem 1.6rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.rc-head h2 { margin: 0; color: var(--ink); font-size: var(--text-lg); font-weight: var(--weight-bold); }
+.rc-head p { margin: 0.35rem 0 0; color: var(--muted); font-size: var(--text-sm); line-height: 1.8; }
+.rc-note { margin: 0; color: var(--muted); font-size: var(--text-sm); line-height: 1.8; }
+.rc-link { padding: 0; border: 0; background: none; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+.rc-table-wrap { overflow-x: auto; }
+.rc-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.rc-table th, .rc-table td { padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--line-soft); text-align: center; white-space: nowrap; }
+.rc-table thead th { color: var(--muted); font-weight: var(--weight-semibold); }
+.rc-table tbody th { text-align: right; font-weight: var(--weight-semibold); white-space: normal; }
+.rc-table tfoot th { text-align: right; }
+.rc-percent { min-width: 7rem; }
+.rc-percent b { display: block; }
+.rc-bar { display: block; height: 6px; margin-top: 0.3rem; overflow: hidden; border-radius: 99px; background: var(--surface-sunken); }
+.rc-bar span { display: block; height: 100%; background: var(--accent); }
+.rc-bar span[data-tone="weak"] { background: var(--danger); }
+.rc-bar span[data-tone="mid"] { background: var(--warning); }
+.rc-bar span[data-tone="good"] { background: var(--success); }
+
+.rc-quota { display: inline-flex; gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--line); border-radius: 99px; width: fit-content; }
+.rc-quota button { padding: 0.3rem 0.9rem; border: 0; border-radius: 99px; background: none; color: var(--muted); font: inherit; font-size: var(--text-sm); cursor: pointer; }
+.rc-quota button[aria-checked="true"] { background: var(--accent); color: var(--accent-on-ink, #fff); }
+.rc-codes { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 0.75rem; }
+.rc-code { display: grid; gap: 0.2rem; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-sunken); }
+.rc-code span { color: var(--muted); font-size: var(--text-xs); }
+.rc-code strong { font-size: var(--text-xl); font-weight: var(--weight-heavy); }
+.rc-code small { color: var(--muted); font-size: var(--text-xs); }
+
+.rc-subjects { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.rc-subjects li { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto; grid-template-areas: "name score links" "detail detail detail"; gap: 0.25rem 1rem; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--line-soft); }
+.rc-subject-name { grid-area: name; font-weight: var(--weight-semibold); }
+.rc-subject-score { grid-area: score; display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem; align-items: center; }
+.rc-subject-score .rc-bar { margin: 0; }
+.rc-subject-score em { font-style: normal; font-size: var(--text-xs); }
+.rc-subject-score em[data-tone="weak"] { color: var(--danger); }
+.rc-subject-score em[data-tone="mid"] { color: var(--warning); }
+.rc-subject-score em[data-tone="good"] { color: var(--success); }
+.rc-subject-detail { grid-area: detail; color: var(--muted); font-size: var(--text-xs); }
+.rc-subject-links { grid-area: links; display: inline-flex; gap: 0.75rem; font-size: var(--text-sm); }
+
+.rc-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.75rem; }
+.rc-facts > div { display: grid; gap: 0.2rem; padding: 0.9rem 1rem; border-radius: var(--radius-md); background: var(--surface-sunken); }
+.rc-facts span { color: var(--muted); font-size: var(--text-xs); }
+.rc-facts strong { font-size: var(--text-xl); font-weight: var(--weight-heavy); }
+.rc-facts small { color: var(--muted); font-size: var(--text-xs); line-height: 1.7; }
+.rc-timeshare h3 { margin: 0 0 0.5rem; font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.rc-timeshare-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr) auto; gap: 0.75rem; align-items: center; padding: 0.3rem 0; font-size: var(--text-sm); }
+.rc-twin { display: grid; gap: 3px; }
+.rc-twin span { display: block; height: 6px; border-radius: 99px; }
+.rc-twin-time { background: var(--accent); }
+.rc-twin-questions { background: var(--line-strong); }
+.rc-timeshare-row small { color: var(--muted); }
+.rc-list-line { margin: 0; font-size: var(--text-sm); line-height: 2; }
+
+.rc-golden { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.rc-golden li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 1rem; align-items: center; padding: 0.45rem 0; border-bottom: 1px solid var(--line-soft); font-size: var(--text-sm); }
+
+.rc-trend { display: flex; align-items: flex-end; gap: 0.5rem; height: 8rem; margin: 0; padding: 0; list-style: none; }
+.rc-trend li { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0.25rem; height: 100%; max-width: 3.5rem; }
+.rc-trend-bar { width: 100%; border-radius: 6px 6px 0 0; background: var(--accent); }
+.rc-trend small { color: var(--muted); font-size: var(--text-xs); }
+
+.rc-next ol { display: grid; gap: 0.5rem; margin: 0; padding-inline-start: 1.25rem; line-height: 1.9; }
+
+@media (max-width: 640px) {
+  .rc-block { padding: 1.1rem 1rem; }
+  .rc-subjects li { grid-template-columns: minmax(0, 1fr); grid-template-areas: "name" "score" "detail" "links"; }
+  .rc-golden li { grid-template-columns: auto minmax(0, 1fr); }
+  .rc-timeshare-row { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The PDF: the report card itself, without page chrome or interactive bits. */
+@media print {
+  .rp-top-actions, .rp-tabs, .rp-strip, .rc-quota, .rc-subject-links, .rp-review { display: none !important; }
+  .rp, .rc-block { background: #fff !important; }
+  .rc-block { break-inside: avoid; border-color: #ccc; }
+  .rp-lead { color: #000 !important; background: #f1f1f1 !important; }
+  .rp-lead strong, .rp-lead h2, .rp-lead p { color: #000 !important; }
+  a { color: inherit; text-decoration: none; }
+}

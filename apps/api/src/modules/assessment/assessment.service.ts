@@ -237,8 +237,18 @@ export class AssessmentService {
         });
         sectionIds.set(key, section.id);
       }
+      // Section by section, each in booklet order: a section is never split,
+      // even where the booklet printed a subject out of its usual place.
+      const boxIndex = (subjectCode: string) => {
+        const index = RANK_BOXES.findIndex((box) => box.key === rankBoxOf(subjectCode));
+        return index === -1 ? RANK_BOXES.length : index;
+      };
+      const ordered = questions
+        .map((question, position) => ({ question, position }))
+        .sort((a, b) => boxIndex(a.question.subjectCode) - boxIndex(b.question.subjectCode) || a.position - b.position)
+        .map((entry) => entry.question);
       await tx.examItem.createMany({
-        data: questions.map((question, index) => ({
+        data: ordered.map((question, index) => ({
           examFormId: form.id,
           questionId: question.id,
           order: index,

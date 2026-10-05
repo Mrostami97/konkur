@@ -7,6 +7,7 @@ import { konkurPercent, toPersianDigits } from "../../../../lib/format";
 import { ContentBlocks } from "../../../../components/ContentBlocks";
 import { DataState } from "../../../../components/ds";
 import { StandingPanel } from "./StandingPanel";
+import { ReportCard, type CardItem, type CardReport } from "./ReportCard";
 import "./report.css";
 
 interface Block { type: string; [key: string]: unknown }
@@ -15,17 +16,26 @@ interface Option { number: number; blocks: Block[] }
 interface ReportItem {
   question: {
     id: string;
+    subjectCode: string;
+    passage: { externalId: string; blocks: Block[] } | null;
     stemBlocks: Block[];
     options: Option[];
     correctOption: number;
+    acceptedOptions: number[];
     solutionBlocks: Block[];
     assets: { media_key: string; checksum: string }[];
   };
+  sectionId: string | null;
   selectedOption: number | null;
+  timeSpentMs: number;
+  changeCount: number;
+  flagged: boolean;
+  crowdCorrectPercent: number | null;
 }
 
-interface Report {
+interface Report extends CardReport {
   examTitle: string;
+  submittedAt: string | null;
   status: string;
   score: {
     correctCount: number;
@@ -41,10 +51,20 @@ interface Report {
 type Outcome = "correct" | "wrong" | "blank";
 type Filter = "all" | Outcome;
 
+/** An option the final key accepts: the key, or another one accepted after objections. */
+function isKey(question: ReportItem["question"], option: number) {
+  return option === question.correctOption || (question.acceptedOptions ?? []).includes(option);
+}
+
 function outcomeOf(item: ReportItem): Outcome {
   if (item.selectedOption === null) return "blank";
-  return item.selectedOption === item.question.correctOption ? "correct" : "wrong";
+  return isKey(item.question, item.selectedOption) ? "correct" : "wrong";
 }
+
+/** The English section reads left to right, punctuation included. */
+const textDirection = (subjectCode: string) => (subjectCode === "english" ? { dir: "ltr" as const, lang: "en" } : {});
+
+const issued = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
 const OUTCOME_LABEL: Record<Outcome, string> = { correct: "درست", wrong: "نادرست", blank: "بی‌پاسخ" };
 const OUTCOME_MARK: Record<Outcome, string> = { correct: "✓", wrong: "✕", blank: "–" };
@@ -97,6 +117,21 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
     });
   };
 
+  const cardItems: CardItem[] = useMemo(
+    () =>
+      rows.map(({ item, index, outcome }) => ({
+        index,
+        outcome,
+        sectionId: item.sectionId,
+        subjectCode: item.question.subjectCode,
+        timeSpentMs: item.timeSpentMs,
+        changeCount: item.changeCount,
+        flagged: item.flagged,
+        crowdCorrectPercent: item.crowdCorrectPercent,
+      })),
+    [rows],
+  );
+
   const total = counts.all;
   const share = (count: number) => `${total ? (count / total) * 100 : 0}%`;
 
@@ -105,10 +140,14 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
       <header className="rp-top">
         <div className="rp-wrap rp-top-inner">
           <div>
-            <p className="rp-kicker">گزارش آزمون</p>
+            <p className="rp-kicker">کارنامهٔ آزمون</p>
             <h1>{report?.examTitle ?? "نتیجهٔ آزمون"}</h1>
+            {report?.submittedAt && <p className="rp-issued">صادرشده در {issued.format(new Date(report.submittedAt))}</p>}
           </div>
           <nav className="rp-top-actions" aria-label="بعد از آزمون">
+            <button type="button" className="ds-btn ds-btn-primary rp-print" onClick={() => window.print()}>
+              دریافت PDF کارنامه
+            </button>
             <Link className="ds-btn ds-btn-secondary" href="/account/exams">آزمون‌ها و رتبه‌های من</Link>
             <Link className="ds-btn ds-btn-ghost" href="/exams">آزمون‌های دیگر</Link>
           </nav>
@@ -142,6 +181,8 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
               </section>
 
               {report.status === "SUBMITTED" && <StandingPanel attemptId={params.id} />}
+
+              <ReportCard report={report} items={cardItems} onJump={jump} />
 
               {/* ----------------------------------------------------- review */}
               <section className="rp-review" aria-labelledby="rp-review-title">
@@ -185,19 +226,30 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
                     <article className="rp-q" id={`r-${index + 1}`} key={item.question.id} tabIndex={-1} data-outcome={outcome}>
                       <div className="rp-q-head">
                         <span className="rp-q-n">سؤال {toPersianDigits(index + 1)}</span>
+                        <span className="rp-q-meta">
+                          {item.timeSpentMs > 0 && <span className="tnum">{toPersianDigits(Math.max(1, Math.round(item.timeSpentMs / 1000)))} ثانیه</span>}
+                          {item.crowdCorrectPercent !== null && <span className="tnum">{toPersianDigits(item.crowdCorrectPercent)}٪ درست زدند</span>}
+                        </span>
                         <span className="rp-status" data-outcome={outcome}>
                           <span aria-hidden="true">{OUTCOME_MARK[outcome]}</span> {OUTCOME_LABEL[outcome]}
                         </span>
                       </div>
 
-                      <div className="rp-stem">
+                      {item.question.passage && (
+                        <details className="rp-passage" {...textDirection(item.question.subjectCode)}>
+                          <summary>متن مشترک</summary>
+                          <ContentBlocks blocks={item.question.passage.blocks} assets={item.question.assets} />
+                        </details>
+                      )}
+
+                      <div className="rp-stem" {...textDirection(item.question.subjectCode)}>
                         <ContentBlocks blocks={item.question.stemBlocks} assets={item.question.assets} />
                       </div>
 
-                      <div className="rp-options">
+                      <div className="rp-options" {...textDirection(item.question.subjectCode)}>
                         {item.question.options.map((option) => {
                           const chosen = item.selectedOption === option.number;
-                          const isAnswer = option.number === item.question.correctOption;
+                          const isAnswer = isKey(item.question, option.number);
                           return (
                             <div
                               className="rp-option"

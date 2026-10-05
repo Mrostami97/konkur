@@ -317,6 +317,116 @@ function PsychometricsPanel({ examId }: { examId: string }) {
   );
 }
 
+interface ExamYear {
+  examCode: string;
+  examYear: number;
+  GOLD: number;
+  SILVER: number;
+  DRAFT: number;
+}
+
+/**
+ * A simulator of one real exam year, built from that year's reviewed
+ * questions in booklet order and the konkur's sections. Its report card
+ * estimates the rank the same percentages earned that year.
+ */
+function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {
+  const [years, setYears] = useState<ExamYear[] | null>(null);
+  const [selected, setSelected] = useState("");
+  const [minutes, setMinutes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiFetch<ExamYear[]>("/admin/questions/review-summary")
+      .then((rows) => setYears(rows.filter((row) => row.GOLD + row.SILVER > 0)))
+      .catch(() => setYears(null));
+  }, []);
+
+  const year = years?.find((row) => `${row.examCode}-${row.examYear}` === selected) ?? null;
+  const ready = year ? year.GOLD + year.SILVER : 0;
+
+  async function build(event: FormEvent) {
+    event.preventDefault();
+    if (!year) return;
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const built = await apiFetch<{ title: string; questions: number; inBooklet: number }>("/admin/exams/simulators", {
+        method: "POST",
+        body: { examCode: year.examCode, examYear: year.examYear, durationMinutes: Number(minutes) },
+      });
+      setNotice(
+        `«${built.title}» با ${toPersianDigits(built.questions)} سؤال ساخته شد${built.inBooklet > built.questions ? ` (${toPersianDigits(built.inBooklet - built.questions)} سؤال این سال هنوز بازبینی نشده و در آن نیست)` : ""}. از فهرست پایین منتشرش کن.`,
+      );
+      onBuilt();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ساخت شبیه‌ساز ممکن نشد.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Only reviewers and admins can read the review summary; others skip this card.
+  if (years === null) return null;
+  return (
+    <Card>
+      <h2 className="ds-card-title">شبیه‌ساز کنکور یک سال</h2>
+      <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)", marginBottom: "var(--sp-4)" }}>
+        سؤال‌های بازبینی‌شدهٔ یک کنکور، به ترتیب دفترچه و در بخش‌های کنکور. کارنامه‌اش درصد و تراز هر بخش را می‌دهد و رتبهٔ تقریبی آن سال
+        را از روی کارنامه‌های واقعی تخمین می‌زند. تا وقتی کسی در آن شرکت نکرده، ساختن دوباره‌اش همان آزمون را به‌روز می‌کند.
+      </p>
+      {years.length === 0 ? (
+        <Alert tone="info">هنوز سالی سؤال آمادهٔ آزمون ندارد؛ اول در «بازبینی سؤال‌های کنکور» کلید سال‌ها را تأیید کن.</Alert>
+      ) : (
+        <form className="ds-form" onSubmit={build}>
+          <FieldRow>
+            <Field label="کنکور" required>
+              {(props) => (
+                <Select
+                  {...props}
+                  value={selected}
+                  onChange={(event) => {
+                    setSelected(event.target.value);
+                    const row = years.find((item) => `${item.examCode}-${item.examYear}` === event.target.value);
+                    if (row && !minutes) setMinutes(String(Math.round((row.GOLD + row.SILVER) * 1.5)));
+                  }}
+                  required
+                >
+                  <option value="">انتخاب سال</option>
+                  {years.map((row) => (
+                    <option key={`${row.examCode}-${row.examYear}`} value={`${row.examCode}-${row.examYear}`}>
+                      {toPersianDigits(row.examYear)} (کد {toPersianDigits(Number(row.examCode))}) · {toPersianDigits(row.GOLD + row.SILVER)} سؤال آماده
+                      {row.DRAFT > 0 ? ` · ${toPersianDigits(row.DRAFT)} در انتظار بازبینی` : ""}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+            <Field label="زمان آزمون (دقیقه)" hint="زمان واقعی دفترچهٔ همان سال را بگذار؛ پیش‌فرض یک‌ونیم دقیقه برای هر سؤال است" required>
+              {(props) => <Input {...props} type="number" min={10} max={600} value={minutes} onChange={(event) => setMinutes(event.target.value)} required />}
+            </Field>
+          </FieldRow>
+          {year && year.DRAFT > 0 && (
+            <Alert tone="warning">
+              {toPersianDigits(year.DRAFT)} سؤال این سال هنوز بازبینی نشده و در شبیه‌ساز نمی‌آید؛ شبیه‌ساز {toPersianDigits(ready)} سؤال خواهد داشت.
+            </Alert>
+          )}
+          {error && <Alert tone="danger">{error}</Alert>}
+          {notice && <Alert tone="success">{notice}</Alert>}
+          <div>
+            <Button type="submit" variant="primary" loading={busy} disabled={!year || !minutes}>
+              ساخت شبیه‌ساز
+            </Button>
+          </div>
+        </form>
+      )}
+    </Card>
+  );
+}
+
 export function ExamsAdmin({ subjects }: { subjects: SubjectOption[] }) {
   const subjectTitle = useMemo(() => {
     const names = new Map(subjects.map((subject) => [subject.code, subject.title]));
@@ -430,6 +540,7 @@ export function ExamsAdmin({ subjects }: { subjects: SubjectOption[] }) {
       />
 
       <div className="ds-stack-lg">
+        <SimulatorBuilder onBuilt={() => void load()} />
         <Card>
           <h2 className="ds-card-title">آزمون تازه</h2>
           <form onSubmit={createExam} className="ds-form">
