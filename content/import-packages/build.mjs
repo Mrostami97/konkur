@@ -4,6 +4,18 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { applyUpgrade } from "./apply-upgrades.mjs";
+import { existsSync, readFileSync } from "node:fs";
+
+// Articles edited on the live site are pulled back by sync-live.mjs; their published
+// text, SEO, taxonomy and sources replace the source file so a build never reverts them.
+function withLiveOverride(slug, article) {
+  const file = `live-overrides/${slug}.json`;
+  if (!existsSync(file)) return article;
+  const o = JSON.parse(readFileSync(file, "utf8"));
+  const a = { ...article, title: o.title, summary: o.summary, quick_answer: o.quick_answer, seo: { ...article.seo, ...o.seo }, content_blocks: o.content_blocks, taxonomy: { ...article.taxonomy, ...o.taxonomy, degrees: (o.taxonomy.degrees || article.taxonomy.degrees).map((d) => d.toLowerCase()) } };
+  if (o.importable) a.sources = o.sources;
+  return Object.defineProperty(a, "_live", { value: true, enumerable: false });
+}
 
 // Paths are relative to this file so the script works from any checkout; run it
 // from this folder after building contracts (pnpm --filter @konkurcom/contracts build).
@@ -14,7 +26,7 @@ const { validateArticleV2 } = require(`${repo}contracts/dist/validators.js`);
 const drafts = JSON.parse(await (await import("node:fs/promises")).readFile(`${repo}apps/api/src/seed-data/editorial-drafts.json`, "utf8")).articles;
 const slugs = process.argv.slice(2);
 for (const slug of slugs) {
-  const article = applyUpgrade(slug, (await import(pathToFileURL(`articles/${slug}.mjs`).href)).default);
+  const article = applyUpgrade(slug, withLiveOverride(slug, (await import(pathToFileURL(`articles/${slug}.mjs`).href)).default));
   // A package that replaces a live article must keep its type and slug: the public
   // URL is /articles/ or /guides/ + slug, and moving it needs the owner's approval.
   const existing = drafts.find((d) => d.external_id === article.external_id);

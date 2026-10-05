@@ -48,3 +48,19 @@ with different schema versions. On the job page, use the checkbox in the
 table header to select every valid item. Then approve them and press
 «انتشار تأییدشده‌ها»; all of them publish together, so links between them
 never point at an unpublished page.
+
+## Articles edited on the live site
+
+The owner edits some articles in the admin panel. Before rebuilding a bundle, pull
+those edits back so a re-import never reverts them:
+
+```
+node sync-live.mjs <slug> <slug> ...
+```
+
+It writes `live-overrides/<slug>.json` (published text, SEO, taxonomy and sources);
+`build.mjs` lays it over `articles/<slug>.mjs` and skips the `seo-upgrades.mjs`
+overlay for that slug. If a live source cannot be matched to a ContentSource
+external id (sources added only in the admin panel), the override is marked
+`importable: false` and `bundle.mjs` leaves the article out of every zip; add any
+new links to such an article by hand in the admin panel.

@@ -22,7 +22,8 @@ const COURSES = [
 ];
 
 export function applyUpgrade(slug, article) {
-  const u = upgrades[slug] || {};
+  // an article pulled back from the live site already carries its own text, FAQ and links
+  const u = article._live ? {} : upgrades[slug] || {};
   const a = structuredClone(article);
   if (u.title) a.seo.title = u.title;
   if (u.description) a.seo.description = u.description;

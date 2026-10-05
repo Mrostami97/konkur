@@ -17,6 +17,13 @@ if (!out || !out.endsWith(".zip") || slugs.length === 0) {
 
 const items = [];
 for (const slug of slugs) {
+  // An article edited on the site whose sources could not be matched to an external id
+  // (see sync-live.mjs) would lose those sources if re-imported: leave it out.
+  const ov = `live-overrides/${slug}.json`;
+  if ((await import("node:fs")).existsSync(ov) && !JSON.parse(await readFile(ov, "utf8")).importable) {
+    console.error(slug, "skipped: edited on the site with sources this repo cannot reference");
+    continue;
+  }
   const payload = JSON.parse(await readFile(`packages/${slug}/payload.json`, "utf8"));
   items.push(...(Array.isArray(payload) ? payload : [payload]));
 }
