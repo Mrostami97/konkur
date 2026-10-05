@@ -3,6 +3,7 @@ import { Fragment, type JSX } from "react";
 import { API_URL } from "../lib/api";
 import { splitMath } from "../lib/math-text";
 import { renderLatex } from "../lib/math-render";
+import { VideoPlayer } from "./video/VideoPlayer";
 
 type Block = { type: string; [key: string]: unknown };
 type Asset = { media_key: string; checksum: string };
@@ -131,8 +132,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
       const caption = typeof block.caption === "string" && block.caption.trim() ? block.caption : null;
       return (
         <figure key={index} className="cb-figure">
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video controls preload="metadata" playsInline className="cb-video" src={src} />
+          <VideoPlayer src={src} title={caption ?? undefined} />
           {caption && <figcaption>{caption}</figcaption>}
         </figure>
       );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { StructuredData } from "../../components/StructuredData";
 import { EvidenceScorecard } from "../../components/EvidenceScorecard";
 import { Glyph } from "../../components/SubjectIcon";
+import { VideoPlayer } from "../../components/video/VideoPlayer";
 import { alignmentEvidence, evidenceStats, matchedQuestions, questionDesignEvidence, studentResults, studentVideo, type EvidenceDocument } from "../../content/evidence";
 import { toEnglishDigits, toPersianDigits } from "../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../lib/seo";
@@ -159,9 +160,7 @@ export default function EvidencePage() {
                     <h3 id="student-video">{studentVideo.title}</h3>
                     <p>{studentVideo.description}</p>
                   </div>
-                  <video controls preload="metadata" playsInline src={studentVideo.src}>
-                    مرورگرت پخش ویدئو را پشتیبانی نمی‌کند؛ <a href={studentVideo.src}>فایل ویدئو را دانلود کن</a>.
-                  </video>
+                  <VideoPlayer src={studentVideo.src} title={studentVideo.title} />
                 </section>
               )}
             </section>

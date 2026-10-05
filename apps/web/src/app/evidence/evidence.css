@@ -305,7 +305,7 @@
 .ev-video h3 { margin: .7rem 0 .5rem; color: #fff; font-size: 1.2rem; }
 .ev-video p { margin: 0 0 .8rem; color: var(--on-ink-muted); font-size: .8rem; line-height: 2; }
 .ev-video a { color: var(--accent-on-ink); font-size: .74rem; font-weight: 800; }
-.ev-video video { width: 100%; max-height: 420px; border-radius: var(--radius-lg); background: var(--ink-900); }
+.ev-video .vp { max-height: 420px; }
 
 /* ---------------------------------------------------------------- archive */
 
