@@ -257,6 +257,14 @@
         "type": "link_group",
         "items": [
           {
+            "label": "دورهٔ درس‌نامهٔ ساختمان داده و الگوریتم",
+            "href": "/courses/data-structures-algorithms"
+          },
+          {
+            "label": "دورهٔ حل تست ساختمان داده و الگوریتم",
+            "href": "/courses/data-structures-algorithms-tests"
+          },
+          {
             "label": "تحلیل سرشکن به زبان کنکور",
             "href": "/articles/amortized-analysis"
           },

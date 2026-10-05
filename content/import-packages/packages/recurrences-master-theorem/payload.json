@@ -284,6 +284,14 @@
         "type": "link_group",
         "items": [
           {
+            "label": "دورهٔ درس‌نامهٔ ساختمان داده و الگوریتم",
+            "href": "/courses/data-structures-algorithms"
+          },
+          {
+            "label": "دورهٔ حل تست ساختمان داده و الگوریتم",
+            "href": "/courses/data-structures-algorithms-tests"
+          },
+          {
             "label": "مستندات تطبیق کلاس با کنکور ۱۴۰۵",
             "href": "/evidence"
           },

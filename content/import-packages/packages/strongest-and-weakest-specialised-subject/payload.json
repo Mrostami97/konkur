@@ -401,6 +401,14 @@
         "type": "link_group",
         "items": [
           {
+            "label": "دورهٔ درس‌نامهٔ ساختمان داده و الگوریتم",
+            "href": "/courses/data-structures-algorithms"
+          },
+          {
+            "label": "دورهٔ حل تست ساختمان داده و الگوریتم",
+            "href": "/courses/data-structures-algorithms-tests"
+          },
+          {
             "label": "ابزار تخمین رتبهٔ ارشد مهندسی کامپیوتر",
             "href": "/rank-calculator/master-computer-engineering"
           },

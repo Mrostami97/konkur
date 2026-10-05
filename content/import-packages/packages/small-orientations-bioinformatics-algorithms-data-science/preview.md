@@ -112,6 +112,8 @@ _رتبهٔ قبولی، درصد و معدل قبول‌شده‌های سه گ
 
 درصدهای آزمون‌هایت را در ابزار تخمین رتبه بزن و اگر به یکی از این گرایش‌های کوچک فکر می‌کنی، در مشاوره دانشگاه‌ها و امکانات هر کدام را با هم بررسی می‌کنیم.
 
+- [دورهٔ درس‌نامهٔ ساختمان داده و الگوریتم](/courses/data-structures-algorithms)
+- [دورهٔ حل تست ساختمان داده و الگوریتم](/courses/data-structures-algorithms-tests)
 - [ابزار تخمین رتبهٔ ارشد مهندسی کامپیوتر](/rank-calculator/master-computer-engineering)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)
 - [رتبهٔ قبولی ارشد کامپیوتر به تفکیک دانشگاه](/articles/admitted-ranks-by-university)

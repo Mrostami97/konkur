@@ -162,6 +162,8 @@ _وزن هر درس، کارنامه‌هایی که این کد بهترینش�
 
 درصدهای آزمون‌هایت را در ابزار تخمین رتبه بزن تا رتبهٔ هر چهار کد را کنار هم ببینی. برای انتخاب گرایش بر اساس درصدهای خودت هم در مشاوره کنارت هستیم.
 
+- [دورهٔ درس‌نامهٔ ساختمان داده و الگوریتم](/courses/data-structures-algorithms)
+- [دورهٔ حل تست ساختمان داده و الگوریتم](/courses/data-structures-algorithms-tests)
 - [ابزار تخمین رتبهٔ ارشد مهندسی کامپیوتر](/rank-calculator/master-computer-engineering)
 - [کد ضریب ارشد کامپیوتر: کدام بهتر است؟](/articles/coefficient-codes-explained)
 - [گرایش‌های ارشد کامپیوتر](/articles/master-computer-orientations)

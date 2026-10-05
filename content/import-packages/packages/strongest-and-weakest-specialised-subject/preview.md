@@ -114,6 +114,8 @@ _در ۱۱۷۲ کارنامهٔ رتبه‌های زیر ۱۰۰۰ ارشد کا�
 
 درصد درس‌های تخصصی آزمون‌هایت را کنار این جدول‌ها بگذار و ببین کدام درس بیشتر از میانه عقب است. در مشاوره برنامه‌ات را بر همین اساس می‌چینیم.
 
+- [دورهٔ درس‌نامهٔ ساختمان داده و الگوریتم](/courses/data-structures-algorithms)
+- [دورهٔ حل تست ساختمان داده و الگوریتم](/courses/data-structures-algorithms-tests)
 - [ابزار تخمین رتبهٔ ارشد مهندسی کامپیوتر](/rank-calculator/master-computer-engineering)
 - [رتبهٔ زیر ۱۰۰ چند درصد می‌خواهد؟](/articles/top-rank-percentages)
 - [کدام درس را می‌شود نخواند؟](/articles/which-subject-to-skip)
