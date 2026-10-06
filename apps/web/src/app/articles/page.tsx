@@ -1,7 +1,5 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import {
-  contentTypeLabel,
   formatPublicDate,
   type PublicArticleRecord,
 } from "../../components/PublicContent";
@@ -10,6 +8,9 @@ import { apiGetPublic } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
 import { OWNER_NAME } from "../../components/OwnerByline";
+import { ArticlesExplorer, type ArticleRow } from "./ArticlesExplorer";
+import { shelvesOf } from "./shelves";
+import "./articles.css";
 
 export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
   const searchParams = await pendingSearchParams;
@@ -21,6 +22,25 @@ export async function generateMetadata({ searchParams: pendingSearchParams }: { 
   });
 }
 
+/** Every string in the content blocks, for a word count. */
+function textOf(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map(textOf).join(" ");
+  if (value && typeof value === "object") {
+    return Object.entries(value)
+      .filter(([key]) => key !== "type" && key !== "media_key" && key !== "href")
+      .map(([, inner]) => textOf(inner))
+      .join(" ");
+  }
+  return "";
+}
+
+/** Persian prose reads at about 200 words a minute; tables slow it a little. */
+function readingMinutes(article: PublicArticleRecord) {
+  const words = textOf(article.contentBlocks).split(/\s+/).filter(Boolean).length;
+  return Math.max(2, Math.round(words / 200));
+}
+
 export default async function ArticlesPage() {
   let apiUnavailable = false;
   let published: PublicArticleRecord[] = [];
@@ -29,25 +49,51 @@ export default async function ArticlesPage() {
   } catch {
     apiUnavailable = true;
   }
-  const apiArticles = published.filter((item) => item.contentType !== "GUIDE");
+  const apiArticles = published
+    .filter((item) => item.contentType !== "GUIDE")
+    .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""));
   const publishedSlugs = new Set(published.map((article) => article.slug));
   const legacyOnly = legacyArticles.filter((article) => !publishedSlugs.has(article.slug));
 
+  // Only what a card shows goes to the browser, not each article's body.
+  const rows: ArticleRow[] = [
+    ...apiArticles.map((article) => ({
+      slug: article.slug,
+      title: article.title,
+      summary: article.summary,
+      tags: article.taxonomyTags.slice(0, 3),
+      shelves: shelvesOf(article.taxonomyTags, article.subjectCodes),
+      byline: article.authorProfile?.displayName ?? OWNER_NAME,
+      date: article.publishedAt ? formatPublicDate(article.publishedAt) : null,
+      minutes: readingMinutes(article),
+    })),
+    ...legacyOnly.map((article) => ({
+      slug: article.slug,
+      title: article.title,
+      summary: article.description,
+      tags: [article.category],
+      shelves: shelvesOf([article.category]),
+      byline: article.degree,
+      date: null,
+      minutes: article.readingMinutes,
+    })),
+  ];
+
   return (
-    <main className="pg">
-      <div className="pg-hero-wrap">
-        <div className="pg-shell pg-hero">
-          <p className="pg-eyebrow">کتابخانهٔ کنکور کامپیوتر</p>
+    <main className="al">
+      <header className="al-hero">
+        <div className="al-wrap">
+          <p className="al-kicker">کتابخانهٔ کنکور کامپیوتر</p>
           <h1>مقاله‌های کاربردی، نه محتوای پُرکننده</h1>
-          <p className="pg-lede">
-            فقط مطالب منتشرشدهٔ تحریریه نمایش داده می‌شوند؛ هر مطلب تاریخ اعتبار، منبع و وضعیت
-            انتساب روشن دارد.
+          <p className="al-lede">
+            تحلیل کارنامه‌ها و رتبه‌ها، راهنمای دانشگاه و انتخاب رشته، درس‌نامه‌ها و برنامه‌ریزی؛ هر مطلب با تاریخ، منبع و نام نویسنده.
           </p>
+          {rows.length > 0 && <p className="al-total">{toPersianDigits(rows.length)} مقاله</p>}
         </div>
-      </div>
+      </header>
 
       {apiUnavailable && (
-        <div className="pg-shell pg-band">
+        <div className="al-wrap al-offline">
           <div className="ds-alert ds-alert-warning">
             <span>
               <strong>نسخهٔ آفلاین.</strong> سرویس محتوا در دسترس نیست؛ مطالب پایهٔ سایت نمایش داده
@@ -57,31 +103,7 @@ export default async function ArticlesPage() {
         </div>
       )}
 
-      <section className="pg-shell pg-sec">
-        <div className="pg-grid pg-grid-wide">
-          {apiArticles.map((article) => (
-            <Link className="pg-card" key={article.slug} href={`/articles/${article.slug}`}>
-              <span className="pg-badge">{contentTypeLabel(article.contentType)}</span>
-              <b>{article.title}</b>
-              <small>{article.summary}</small>
-              <span className="pg-card-action pg-card-meta">
-                {article.authorProfile?.displayName ?? OWNER_NAME}
-                {article.publishedAt ? ` · ${formatPublicDate(article.publishedAt)}` : ""}
-              </span>
-            </Link>
-          ))}
-          {legacyOnly.map((article) => (
-            <Link className="pg-card" key={article.slug} href={`/articles/${article.slug}`}>
-              <span className="pg-badge">{article.category}</span>
-              <b>{article.title}</b>
-              <small>{article.description}</small>
-              <span className="pg-card-action pg-card-meta">
-                {article.degree} · {toPersianDigits(article.readingMinutes)} دقیقه
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <ArticlesExplorer rows={rows} />
     </main>
   );
 }

@@ -8,7 +8,9 @@ import { VideoLicensePanel } from "../../../components/VideoLicensePanel";
 import { CourseProgressPanel } from "../../../components/CourseProgressPanel";
 import { StructuredData } from "../../../components/StructuredData";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
-import { findDirectCourseProduct, formatRial, type CatalogProduct } from "../catalog";
+import { Glyph, SubjectGlyph } from "../../../components/SubjectIcon";
+import { courseFormat, courseShortTitle, findDirectCourseProduct, formatRial, type CatalogProduct, type CourseInstructor } from "../catalog";
+import { courseSubject, courseSubjectTitle, courseTone } from "../course-visual";
 import "../course.css";
 
 interface Lesson {
@@ -31,6 +33,8 @@ interface Course {
   title: string;
   description: string;
   accessMode?: "PUBLIC" | "ACCOUNT" | "ENTITLEMENT";
+  subject?: { code: string; title: string } | null;
+  instructors?: CourseInstructor[];
   modules: CourseModule[];
   /** Handouts that come with the course; read in the student panel. */
   materials?: { slug: string; title: string; summary: string }[];
@@ -93,6 +97,9 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
   const path = `/courses/${course.slug}`;
   const lessons = course.modules.flatMap((module) => module.lessons);
   const materials = course.materials ?? [];
+  const instructors = course.instructors ?? [];
+  const subject = courseSubject(course);
+  const subjectTitle = courseSubjectTitle(course);
   const firstLessonId = lessons[0]?.id;
   const previewCount = lessons.filter((lesson) => lesson.isPreview).length;
   const firstPreviewId = lessons.find((lesson) => lesson.isPreview)?.id;
@@ -122,25 +129,53 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
   let lessonNumber = 0;
 
   return (
-    <main className="cr">
+    <main className="cr" data-tone={courseTone(course)}>
       <StructuredData data={schemas} />
 
-      <header className="cr-top">
-        <div className="cr-wrap">
-          <nav className="cr-crumbs" aria-label="مسیر صفحه">
-            <Link href="/courses">دوره‌ها</Link>
-            <span aria-hidden="true">/</span>
-            <span>{course.title}</span>
-          </nav>
-          <p className="cr-kicker">{ACCESS_LABEL[accessMode]}</p>
-          <h1>{course.title}</h1>
-          <p className="cr-lede">{course.description}</p>
-          <p className="cr-facts">
-            <span>{toPersianDigits(course.modules.length)} فصل</span>
-            <span>{toPersianDigits(lessons.length)} درس</span>
-            {previewCount > 0 && <span>{toPersianDigits(previewCount)} درس نمونهٔ آزاد</span>}
-            {materials.length > 0 && <span>{toPersianDigits(materials.length)} جزوه</span>}
-          </p>
+      <header className="cr-top cr-hero" data-tone={courseTone(course)}>
+        <div className="cr-wrap cr-hero-inner">
+          <div className="cr-hero-text">
+            <nav className="cr-crumbs" aria-label="مسیر صفحه">
+              <Link href="/courses">دوره‌ها</Link>
+              <span aria-hidden="true">/</span>
+              <span>{courseShortTitle(course.title)}</span>
+            </nav>
+            <p className="cr-kicker">
+              {courseFormat(course)}
+              {subjectTitle ? ` · ${subjectTitle}` : ""}
+              {accessMode !== "ENTITLEMENT" ? ` · ${ACCESS_LABEL[accessMode]}` : ""}
+            </p>
+            <h1>{course.title}</h1>
+            <p className="cr-lede">{course.description}</p>
+            <ul className="cr-facts">
+              <li><Glyph name="list" />{toPersianDigits(course.modules.length)} فصل</li>
+              <li><Glyph name="play" />{toPersianDigits(lessons.length)} درس</li>
+              {previewCount > 0 && <li className="cr-fact-free"><Glyph name="spark" />{toPersianDigits(previewCount)} درس نمونهٔ رایگان</li>}
+              {materials.length > 0 && <li><Glyph name="book" />{toPersianDigits(materials.length)} جزوه</li>}
+            </ul>
+            {instructors.length > 0 && (
+              <div className="cr-teachers">
+                {instructors.map((person) => (
+                  <Link key={person.slug} href={`/authors/${person.slug}`} className="cr-teacher">
+                    {person.avatarUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={person.avatarUrl} alt="" width={44} height={44} />
+                    ) : (
+                      <span className="cr-teacher-initial" aria-hidden="true">{person.displayName.slice(0, 1)}</span>
+                    )}
+                    <span>
+                      <small>مدرس</small>
+                      <strong>{person.displayName}</strong>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="cr-hero-art" aria-hidden="true">
+            <span className="cr-hero-ring" />
+            {subject ? <SubjectGlyph slug={subject} className="cr-hero-glyph" /> : <Glyph name="book" className="cr-hero-glyph" />}
+          </div>
         </div>
       </header>
 

@@ -417,7 +417,7 @@ export class LearningService {
           orderBy: { sortOrder: "asc" },
           select: { contributorProfile: { select: { slug: true, displayName: true, avatarUrl: true } } },
         },
-        modules: { select: { _count: { select: { lessons: true } } } },
+        modules: { select: { _count: { select: { lessons: true } }, lessons: { where: { isPreview: true }, select: { id: true } } } },
       },
     });
 
@@ -426,6 +426,8 @@ export class LearningService {
       instructors: instructors.map((row) => row.contributorProfile),
       moduleCount: modules.length,
       lessonCount: modules.reduce((sum, row) => sum + row._count.lessons, 0),
+      // The free sample lessons, so a catalogue card can offer them.
+      previewCount: modules.reduce((sum, row) => sum + row.lessons.length, 0),
       // Whether there is video, not where it lives: the id stays private.
       hasVideo: spotPlayerCourseId !== null,
     }));
@@ -456,6 +458,13 @@ export class LearningService {
         fieldTargets: true,
         createdAt: true,
         updatedAt: true,
+        subject: { select: { code: true, title: true } },
+        // Published teacher profiles only, as on the catalogue.
+        instructors: {
+          where: { contributorProfile: { isPublished: true } },
+          orderBy: { sortOrder: "asc" },
+          select: { contributorProfile: { select: { slug: true, displayName: true, avatarUrl: true, roleTitle: true } } },
+        },
         modules: {
           orderBy: { order: "asc" },
           include: {
@@ -475,8 +484,12 @@ export class LearningService {
       },
     });
     if (!course || !course.isPublished) throw new NotFoundException("course not found");
-    const { materials, ...rest } = course;
-    return { ...rest, materials: materials.map((row) => row.resource) };
+    const { materials, instructors, ...rest } = course;
+    return {
+      ...rest,
+      instructors: instructors.map((row) => row.contributorProfile),
+      materials: materials.map((row) => row.resource),
+    };
   }
 
   /**
