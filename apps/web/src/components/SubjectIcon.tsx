@@ -20,6 +20,13 @@ const GLYPHS: Record<string, ReactNode> = {
   curve: <><path d="M3 18c4 0 5-11 9-11s5 11 9 11" /><path d="M3 21h18" /></>,
   gate: <><path d="M6 6h5a6 6 0 0 1 0 12H6z" /><path d="M2 9h4M2 15h4M17 12h5" /></>,
   automaton: <><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /><path d="M12 2v4M18.4 12h3.6" /></>,
+  // A finite automaton: start arrow, a state with a self-loop, a transition,
+  // and an accepting state drawn as a double circle.
+  dfa: <><path d="M1.5 12h2.2M2.9 10.8 4.1 12l-1.2 1.2" /><circle cx="7.4" cy="12" r="3.1" /><path d="M5.7 9.4c-.9-3.4 4.3-3.4 3.4 0" /><path d="M10.6 12h3.9M13.3 10.8l1.2 1.2-1.2 1.2" /><circle cx="18.4" cy="12" r="3.3" /><circle cx="18.4" cy="12" r="1.7" /></>,
+  // An operating system: a terminal window with a prompt.
+  terminal: <><rect x="2.5" y="4" width="19" height="16" rx="2.5" /><path d="M2.5 8.2h19" /><path d="m6.8 11.6 2.8 2.2-2.8 2.2M12 16.4h5" /></>,
+  // Logic and architecture: a chip with an AND gate on it.
+  logicChip: <><rect x="5.5" y="5.5" width="13" height="13" rx="2" /><path d="M9 2.5v3M15 2.5v3M9 18.5v3M15 18.5v3M2.5 9h3M2.5 15h3M18.5 9h3M18.5 15h3" /><path d="M9.2 9.3h2.6a2.7 2.7 0 0 1 0 5.4H9.2z" /></>,
   glyph: <><path d="M4 19 9 5l5 14M5.8 15h6.4" /><path d="M17 10v9M17 10c2.5 0 3.5 1.4 3.5 3s-1 3-3.5 3" /></>,
   neural: <><circle cx="5" cy="7" r="1.8" /><circle cx="5" cy="17" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="7" r="1.8" /><circle cx="19" cy="17" r="1.8" /><path d="M6.6 8.1 10.5 10.8M6.6 15.9 10.5 13.2M13.5 10.8 17.4 8.1M13.5 13.2 17.4 15.9" /></>,
   layers: <><path d="M12 3 3 7.5 12 12l9-4.5z" /><path d="m3 12.5 9 4.5 9-4.5" /><path d="m3 17 9 4.5 9-4.5" /></>,
@@ -52,8 +59,8 @@ export const SUBJECT_GLYPH: Record<string, GlyphName> = {
   "data-structures-algorithms": "tree",
   "data-structures": "tree",
   algorithms: "branch",
-  automata: "automaton",
-  "operating-systems": "chip",
+  automata: "dfa",
+  "operating-systems": "terminal",
   "artificial-intelligence": "neural",
   "computer-networks": "hub",
   databases: "cylinder",

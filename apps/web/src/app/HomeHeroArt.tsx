@@ -1,28 +1,35 @@
 import Image from "next/image";
-import { Glyph, SUBJECT_GLYPH } from "../components/SubjectIcon";
+import { Glyph, type GlyphName } from "../components/SubjectIcon";
 
 /**
- * The homepage's picture: the logo's pentagon drawn large, with a subject at
- * each node and signals running round the cycle -- the subjects of the exam
- * are one connected graph, and the site sits in the middle of it. Two real
- * results from the evidence page float beside it.
+ * The homepage's picture: the logo's pentagon drawn large, with a specialised
+ * subject of the exam at each node and signals running round the cycle -- the
+ * subjects are one connected graph, and the site sits in the middle of it.
+ *
+ * Nothing floats over it (the owner's call): results belong with their
+ * sources further down the page, and the hero stays quiet.
  *
  * Node positions and colours follow /brand/konkurcom-logo.png.
  */
 
-const NODES = [
-  { x: 301, y: 44, color: "#ef0809", subject: "data-structures-algorithms", label: "داده‌ساختار" },
-  { x: 527, y: 199, color: "#086ef6", subject: "automata", label: "نظریه زبان‌ها" },
-  { x: 461, y: 466, color: "#09b90d", subject: "operating-systems", label: "سیستم عامل" },
-  { x: 139, y: 466, color: "#ee0808", subject: "discrete-math", label: "گسسته" },
-  { x: 73, y: 199, color: "#086ef6", subject: "databases", label: "پایگاه داده" },
-] as const;
+/**
+ * The specialised subjects of the 1406 computer-engineering master's (1277),
+ * grouped as its rank model groups them: logic and architecture share a node,
+ * so five nodes hold all six.
+ */
+const NODES: { x: number; y: number; color: string; key: string; glyph: GlyphName; label: string }[] = [
+  { x: 301, y: 44, color: "#ef0809", key: "ds", glyph: "tree", label: "داده‌ساختارها و الگوریتم‌ها" },
+  { x: 527, y: 199, color: "#086ef6", key: "theory", glyph: "dfa", label: "نظریه زبان‌ها" },
+  { x: 461, y: 466, color: "#09b90d", key: "os", glyph: "terminal", label: "سیستم عامل" },
+  { x: 139, y: 466, color: "#ee0808", key: "arch", glyph: "logicChip", label: "منطقی و معماری" },
+  { x: 73, y: 199, color: "#086ef6", key: "ai", glyph: "neural", label: "هوش مصنوعی" },
+];
 
 const W = 600;
 const H = 520;
 const CYCLE = `M${NODES.map((node) => `${node.x} ${node.y}`).join(" L")} Z`;
 
-export function HomeHeroArt({ proof }: { proof: { value: string; label: string }[] }) {
+export function HomeHeroArt() {
   return (
     <div className="hx-art">
       <div className="hx-art-board" aria-hidden="true">
@@ -33,7 +40,7 @@ export function HomeHeroArt({ proof }: { proof: { value: string; label: string }
           <path d={CYCLE} className="hx-art-edge" />
           {/* Spokes from every subject to the centre. */}
           {NODES.map((node) => (
-            <line key={node.subject} x1={node.x} y1={node.y} x2={W / 2} y2={H / 2 + 6} className="hx-art-spoke" />
+            <line key={node.key} x1={node.x} y1={node.y} x2={W / 2} y2={H / 2 + 6} className="hx-art-spoke" />
           ))}
           {[0, 1, 2].map((index) => (
             <circle key={index} r="7" className="hx-art-pulse">
@@ -43,7 +50,7 @@ export function HomeHeroArt({ proof }: { proof: { value: string; label: string }
         </svg>
         {NODES.map((node, index) => (
           <span
-            key={node.subject}
+            key={node.key}
             className="hx-art-node"
             style={{
               left: `${(node.x / W) * 100}%`,
@@ -52,7 +59,7 @@ export function HomeHeroArt({ proof }: { proof: { value: string; label: string }
               animationDelay: `${index * 0.6}s`,
             }}
           >
-            <Glyph name={SUBJECT_GLYPH[node.subject] ?? "book"} />
+            <Glyph name={node.glyph} />
             <small>{node.label}</small>
           </span>
         ))}
@@ -61,22 +68,6 @@ export function HomeHeroArt({ proof }: { proof: { value: string; label: string }
         </span>
       </div>
 
-      {proof.map((figure, index) => (
-        <p className={`hx-float hx-float-${index + 1}`} key={figure.value}>
-          <span className="hx-float-icon" aria-hidden="true"><Glyph name="trophy" /></span>
-          <span>
-            <strong>{figure.value}</strong>
-            <small>{figure.label}</small>
-          </span>
-        </p>
-      ))}
-      <p className="hx-float hx-float-3">
-        <span className="hx-float-icon hx-float-icon-play" aria-hidden="true"><Glyph name="play" /></span>
-        <span>
-          <strong>ویدیوی رایگان</strong>
-          <small>برای هر درس</small>
-        </span>
-      </p>
     </div>
   );
 }

@@ -76,13 +76,23 @@ const ESSENTIAL_GUIDES = ["start-from-zero", "registration-calendar-1406", "mast
 
 const toLatin = (value: string) => value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
 
-/** Two named results with different ranks, best first, and the class figure. */
+/**
+ * The latest master's results (every named 1405 master's scorecard), then the
+ * two best ranks of earlier years, then the class figure. Each rank carries
+ * its year and student, as on the evidence page.
+ */
 const proof = (() => {
-  const ranked = studentResults
-    .filter((row) => row.student && row.hero && row.category === "کارنامه")
+  const named = studentResults.filter((row) => row.student && row.hero && row.category === "کارنامه");
+  const latest = named.filter((row) => row.year === "۱۴۰۵" && row.hero!.label.includes("ارشد"));
+  const earlier = named
+    .filter((row) => !latest.includes(row))
     .sort((a, b) => Number(toLatin(a.hero!.value)) - Number(toLatin(b.hero!.value)));
-  const distinct = ranked.filter((row, index) => ranked.findIndex((other) => other.hero!.value === row.hero!.value) === index);
-  const figures = distinct.slice(0, 2).map((row) => ({ value: `رتبهٔ ${row.hero!.value}`, label: `${row.hero!.label} · ${row.student}` }));
+  const best = earlier.filter((row, index) => earlier.findIndex((other) => other.hero!.value === row.hero!.value) === index).slice(0, 2);
+  const figures = [...latest, ...best].map((row) => ({
+    value: `رتبهٔ ${row.hero!.value}`,
+    // The figure already says «رتبهٔ», so the label starts at what the rank is in.
+    label: `کنکور ${row.year} · ${row.hero!.label.replace(/^رتبهٔ\s*/, "")} · ${row.student}`,
+  }));
   const alignment = evidenceStats.find((stat) => stat.value.includes("از ۱۲"));
   if (alignment) figures.push({ value: alignment.value, label: alignment.label });
   return figures;
@@ -118,7 +128,7 @@ export default async function HomePage() {
     return page ? [{ href: canonicalHref(`/guides/${slug}`), kind: page.category, title: page.title, summary: page.description, date: null }] : [];
   });
   const seen = new Set<string>();
-  const reading = [...fromPublished, ...fromGuides].filter((row) => !seen.has(row.href) && seen.add(row.href)).slice(0, 5);
+  const reading = [...fromPublished, ...fromGuides].filter((row) => !seen.has(row.href) && seen.add(row.href)).slice(0, 3);
 
   // Lesson courses first: they are where a newcomer starts.
   const catalog = courses
@@ -127,8 +137,7 @@ export default async function HomePage() {
       )
     : [];
 
-  // The search box answers from these pages as the student types; the rail
-  // under it shows the tools and lessons, drifting past slowly.
+  // The search box answers from these pages as the student types.
   const guideList = withoutMergedGuides([...phase12EditorialPages, ...guides]);
   const guideEntries: HeroEntry[] = guideList.map((page) => ({
     title: page.title,
@@ -142,15 +151,6 @@ export default async function HomePage() {
     return list.filter((entry) => !hrefs.has(entry.href) && hrefs.add(entry.href));
   };
   const searchEntries = unique([...TOOLS, ...articleEntries, ...guideEntries, ...subjectEntries]);
-  const rails = [unique([...TOOLS, ...subjectEntries])];
-
-  // Every figure is a count of what the site actually holds.
-  const stats = [
-    catalog.length > 0 ? { value: catalog.length, label: "دورهٔ کامل", href: "/courses", icon: "play" as GlyphName } : null,
-    fromPublished.length > 0 ? { value: fromPublished.length, label: "مقالهٔ تحلیلی", href: "/articles", icon: "list" as GlyphName } : null,
-    { value: subjects.length, label: "درس با نقشهٔ مطالعه", href: "/subjects", icon: "book" as GlyphName },
-    { value: guideList.length, label: "راهنمای رسمی و برنامه", href: "/guides", icon: "compass" as GlyphName },
-  ].filter((row): row is NonNullable<typeof row> => row !== null);
 
   // Extends the site-wide WebSite entity from the layout (same @id) with the
   // search box, rather than declaring a second, competing site entity.
@@ -193,25 +193,10 @@ export default async function HomePage() {
               </Link>
               <Link href="/articles/study-plan-from-zero" className="hx-btn hx-btn-ghost">از صفر شروع کن</Link>
             </div>
-            <HeroSearch entries={searchEntries} examples={SEARCH_EXAMPLES} rows={rails} />
+            <HeroSearch entries={searchEntries} examples={SEARCH_EXAMPLES} rows={[]} />
           </div>
-          <HomeHeroArt proof={proof.slice(0, 2)} />
+          <HomeHeroArt />
         </div>
-      </section>
-
-      {/* What is here, counted. */}
-      <section className="h-wrap hx-stats-wrap" aria-label="کنکور کامپیوتر در یک نگاه">
-        <ul className="hx-stats">
-          {stats.map((stat) => (
-            <li key={stat.label}>
-              <Link href={stat.href}>
-                <span className="hx-stat-icon"><Glyph name={stat.icon} /></span>
-                <strong className="tnum">{toPersianDigits(stat.value)}</strong>
-                <span>{stat.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
       </section>
 
       {/* The courses: the product, right after the promise. */}
@@ -299,8 +284,8 @@ export default async function HomePage() {
               <Link href="/articles" className="h-link">همهٔ مقاله‌ها ←</Link>
             </header>
             <div className="hx-reading">
-              {reading.map((item, index) => (
-                <Link href={item.href} className={`hx-read${index === 0 ? " hx-read-lead" : ""}`} key={item.href}>
+              {reading.map((item) => (
+                <Link href={item.href} className="hx-read" key={item.href}>
                   <span className="hx-read-kind">{item.kind}</span>
                   <h3>{item.title}</h3>
                   <p>{item.summary}</p>
@@ -312,19 +297,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* One last way in. */}
-      <section className="h-wrap hx-final" aria-labelledby="hc-final-title">
-        <div className="hx-final-card">
-          <div>
-            <h2 id="hc-final-title">از امروز شروع کن، نه از فردا</h2>
-            <p>برنامهٔ شروع از صفر را بخوان، ویدیوی رایگان اولین درس را ببین، و با بانک سؤال بفهم کجای کاری.</p>
-          </div>
-          <div className="hx-actions">
-            <Link href="/articles/study-plan-from-zero" className="hx-btn hx-btn-light">برنامهٔ شروع از صفر</Link>
-            <Link href="/free-videos" className="hx-btn hx-btn-ghost-light">ویدیوهای رایگان</Link>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

@@ -42,11 +42,6 @@ function ArticleCard({ row, lead = false }: { row: ArticleRow; lead?: boolean })
       </span>
       <h2 className="al-card-title">{row.title}</h2>
       <p className="al-card-summary">{row.summary}</p>
-      {row.tags.length > 0 && (
-        <ul className="al-card-tags" aria-label="برچسب‌ها">
-          {row.tags.map((tag) => <li key={tag}>{tag}</li>)}
-        </ul>
-      )}
       <span className="al-card-meta">
         <span>{row.byline}{row.date ? ` · ${row.date}` : ""}</span>
         <span className="al-card-time">
