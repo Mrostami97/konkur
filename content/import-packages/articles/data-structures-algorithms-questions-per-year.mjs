@@ -1,3 +1,3 @@
 import { subjectBudgetArticle } from "../lib/budget.mjs";
 
-export default subjectBudgetArticle("ساختمان داده و الگوریتم");
+export default subjectBudgetArticle("داده‌ساختارها و الگوریتم‌ها");

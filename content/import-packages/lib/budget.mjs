@@ -26,7 +26,7 @@ export const SUBJECTS = {
   "زبان": { slug: "english", page: "english", code: "english", in1406: "در هر دو مجموعه، با ضریب ۱", related: "language-percentage-by-rank" },
   "ریاضیات گسسته": { slug: "discrete-math", page: "discrete-math", code: "discrete-math", in1406: "در هر دو مجموعه، در بستهٔ ریاضیات با ضریب ۲", related: "math-percentage-by-rank" },
   "آمار و احتمال مهندسی": { slug: "statistics", page: "statistics", code: "statistics", in1406: "در هر دو مجموعه، در بستهٔ ریاضیات با ضریب ۲", related: "math-percentage-by-rank" },
-  "ساختمان داده و الگوریتم": { slug: "data-structures-algorithms", page: "data-structures-algorithms", code: "data-structures-algorithms", in1406: "در هر دو مجموعه، در بستهٔ تخصصی با ضریب ۴ و با عنوان یکپارچهٔ «داده‌ساختارها و الگوریتم‌ها»", related: "data-structures-algorithms-percentage-by-rank", course: "/courses/data-structures-algorithms" },
+  "داده‌ساختارها و الگوریتم‌ها": { slug: "data-structures-algorithms", oldName: "ساختمان داده و طراحی الگوریتم", page: "data-structures-algorithms", code: "data-structures-algorithms", in1406: "در هر دو مجموعه، در بستهٔ تخصصی با ضریب ۴ و با سرفصل تازهٔ ۱۴۰۶", related: "data-structures-algorithms-percentage-by-rank", course: "/courses/data-structures-algorithms" },
   "سیستم‌های عامل": { slug: "operating-systems", page: "operating-systems", code: "operating-systems", in1406: "در هر دو مجموعه، در بستهٔ تخصصی با ضریب ۴", related: "os-network-db-percentage-by-rank", lessons: [["همگام‌سازی فرایندها", "process-synchronization"], ["بن‌بست و الگوریتم بانکدار", "deadlock-bankers-algorithm"], ["زمان‌بندی پردازنده", "cpu-scheduling"]] },
   "هوش مصنوعی": { slug: "artificial-intelligence", page: "artificial-intelligence", code: "artificial-intelligence", in1406: "در هر دو مجموعه، در بستهٔ تخصصی با ضریب ۴", related: "data-structures-algorithms-percentage-by-rank" },
   "شبکه‌های کامپیوتری": { slug: "computer-networks", page: "computer-networks", code: "computer-networks", in1406: "فقط در مجموعهٔ ۱۲۷۶ (IT)، در بستهٔ تخصصی با ضریب ۴؛ در مجموعهٔ ۱۲۷۷ دیگر نیست", related: "os-network-db-percentage-by-rank" },
@@ -139,6 +139,7 @@ export function subjectBudgetArticle(subject) {
   const quick = `${recentLine.join(" و ")}. جای ${subject} در ۱۴۰۶: ${meta.in1406}؛ تعداد تست هر درس ۱۴۰۶ با دفترچهٔ ثبت‌نام اعلام می‌شود.`;
 
   const blocks = [];
+  if (meta.oldName) blocks.push(text(`در ۱۴۰۶ نام و سرفصل این درس عوض شد و «${subject}» شد. دفترچه‌های سال‌های قبل آن را «${meta.oldName}» یا جداگانه «ساختمان داده‌ها» و «طراحی الگوریتم» نوشته‌اند؛ در جدول‌های این صفحه همهٔ آن‌ها زیر همین نام شمرده شده‌اند. برای ۱۴۰۶ طبق سرفصل تازه بخوان، نه فقط طبق فصل‌های قدیمی.`));
   blocks.push(text(`«از ${subject} چند تست می‌آید؟» را با حدس جواب نمی‌دهیم. همهٔ دفترچه‌های ارشد مهندسی کامپیوتر از ۱۳۸۹ تا ۱۴۰۵ و ارشد IT از ۱۳۸۶ تا ۱۴۰۵ را سؤال‌به‌سؤال در بانک سؤال کنکور کامپیوتر وارد کرده‌ایم و هر سؤال را با تصویر اصلی‌اش مقایسه کرده‌ایم. جدول‌های این صفحه شمارش همان دفترچه‌هاست.`));
   blocks.push(h2(`تعداد تست ${subject} در هر سال`));
   blocks.push(text(`هر عدد، تست‌های ${subject} در دفترچهٔ همان سال است، کنار تعداد کل سؤال‌های دفترچه. «—» یعنی آن سال در بانک نیست؛ «۰» یعنی دفترچه این درس را نداشت. تست‌هایی که بعداً در کلید نهایی حذف شدند هم شمرده شده‌اند.`));
