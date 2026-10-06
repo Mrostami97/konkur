@@ -18,7 +18,7 @@
     "test:phase18:routing": "node test/phase18-routing.mjs"
   },
   "dependencies": {
-    "katex": "^0.16.11",
+    "katex": "^0.18.2",
     "next": "15.5.27",
     "pdfjs-dist": "4.10.38",
     "react": "19.3.0",

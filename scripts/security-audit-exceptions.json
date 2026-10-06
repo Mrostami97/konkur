@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "reviewedOn": "2026-10-02",
+  "reviewedOn": "2026-10-06",
   "exceptions": [
     {
       "advisoryId": "GHSA-5v7r-6r5c-r473",
@@ -51,6 +51,26 @@
       "expiresOn": "2026-11-01",
       "reason": "MinIO 8.0.7 loads a JSONL Parser in its notification subsystem, not the affected Pick/Ignore/Filter/Replace classes. The application neither imports stream-json nor calls listenBucketNotification; a major 3 substitution is not a reviewed SDK-compatible update.",
       "source": "https://github.com/advisories/GHSA-528h-pc64-c93x"
+    },
+    {
+      "advisoryId": "GHSA-hqr4-qq8f-hg3x",
+      "moduleName": "stream-json",
+      "severity": "moderate",
+      "versions": ["1.9.1"],
+      "guard": "unused-stream-json-filters",
+      "expiresOn": "2026-11-01",
+      "reason": "The re-scan is in the JSONC parser and verifier. MinIO 8.0.7 requires only stream-json/jsonl/Parser (notification.js), which splits lines and calls JSON.parse; the application neither imports stream-json nor calls listenBucketNotification.",
+      "source": "https://github.com/advisories/GHSA-hqr4-qq8f-hg3x"
+    },
+    {
+      "advisoryId": "GHSA-mjw6-4jj6-33hc",
+      "moduleName": "stream-json",
+      "severity": "moderate",
+      "versions": ["1.9.1"],
+      "guard": "unused-stream-json-filters",
+      "expiresOn": "2026-11-01",
+      "reason": "The prototype pollution is in Assembler. The only module MinIO 8.0.7 loads is jsonl/Parser, which builds values with JSON.parse and never uses Assembler; the application neither imports stream-json nor calls listenBucketNotification.",
+      "source": "https://github.com/advisories/GHSA-mjw6-4jj6-33hc"
     }
   ]
 }

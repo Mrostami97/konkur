@@ -4,7 +4,7 @@ import test from "node:test";
 import { checkAudit, guardFailures, loadFeatureState, parseAudit } from "../check-security-audit.mjs";
 
 const policy = JSON.parse(await readFile(new URL("../security-audit-exceptions.json", import.meta.url), "utf8"));
-const now = new Date("2026-10-02T12:00:00Z");
+const now = new Date("2026-10-06T12:00:00Z");
 const cleanState = {
   minioVersion: "8.0.7",
   sources: [{ path: "apps/api/src/modules/ingestion/object-storage.service.ts", text: 'import { Client } from "minio"; class Storage { get() { return this.client.getObject("bucket", "key"); } }' }],
@@ -27,11 +27,11 @@ function check(feed, changes = {}, nextPolicy = policy) {
   return checkAudit(feed, nextPolicy, { now, auditStatus: Object.keys(feed.advisories).length ? 1 : 0, featureState: cleanState, ...changes });
 }
 
-test("accepts a clean full audit and the five exact reviewed unused-feature exceptions", () => {
+test("accepts a clean full audit and the seven exact reviewed unused-feature exceptions", () => {
   assert.equal(check(audit()).passed, true);
   const result = check(audit(policy.exceptions.map((exception) => record(exception))));
   assert.equal(result.passed, true);
-  assert.equal(result.accepted.length, 5);
+  assert.equal(result.accepted.length, 7);
 });
 test("unknown advisories fail at every severity, including low and info", () => {
   for (const severity of ["info", "low", "moderate", "high", "critical"]) {
@@ -78,7 +78,7 @@ test("invalid, duplicated or unsupported policy entries cannot become broad exce
     (next) => { next.exceptions[0].guard = "anything"; },
     (next) => { next.exceptions[0].severity = "high"; },
     (next) => { next.exceptions[0].expiresOn = "2026-02-30"; },
-    (next) => { next.reviewedOn = "2026-10-03"; },
+    (next) => { next.reviewedOn = "2026-10-07"; },
   ]) { const next = structuredClone(policy); mutate(next); assert.throws(() => check(audit([record()]), {}, next)); }
 });
 test("new file sniffing, SSE, decoder and stream operations invalidate their exceptions", () => {
