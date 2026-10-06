@@ -17,6 +17,8 @@ export interface CatalogCourse {
   moduleCount?: number;
   lessonCount?: number;
   previewCount?: number;
+  /** Total length in minutes, set by the admin. */
+  durationMinutes?: number | null;
   hasVideo?: boolean;
 }
 

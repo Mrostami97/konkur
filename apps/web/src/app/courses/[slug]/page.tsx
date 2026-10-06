@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { apiGetPublic } from "../../../lib/api";
-import { toPersianDigits } from "../../../lib/format";
+import { formatDuration, isoDuration, toPersianDigits } from "../../../lib/format";
 import { BuyButton } from "../../../components/BuyButton";
 import { VideoLicensePanel } from "../../../components/VideoLicensePanel";
 import { CourseProgressPanel } from "../../../components/CourseProgressPanel";
@@ -36,6 +36,7 @@ interface Course {
   accessMode?: "PUBLIC" | "ACCOUNT" | "ENTITLEMENT";
   subject?: { code: string; title: string } | null;
   instructors?: CourseInstructor[];
+  durationMinutes?: number | null;
   modules: CourseModule[];
   /** Handouts that come with the course; read in the student panel. */
   materials?: { slug: string; title: string; summary: string }[];
@@ -114,6 +115,7 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
       url: absoluteUrl(path),
       provider: { "@id": absoluteUrl("/#organization") },
       inLanguage: "fa-IR",
+      ...(course.durationMinutes ? { timeRequired: isoDuration(course.durationMinutes) } : {}),
       ...(purchasableProduct?.prices?.[0] ? { offers: { "@type": "Offer", price: purchasableProduct.prices[0].amountRial, priceCurrency: "IRR", url: absoluteUrl(path) } } : {}),
     },
     {
@@ -149,6 +151,7 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
             <h1>{course.title}</h1>
             <p className="cr-lede">{course.description}</p>
             <ul className="cr-facts">
+              {course.durationMinutes ? <li><Glyph name="pace" />{formatDuration(course.durationMinutes)}</li> : null}
               <li><Glyph name="list" />{toPersianDigits(course.modules.length)} فصل</li>
               <li><Glyph name="play" />{toPersianDigits(lessons.length)} درس</li>
               {previewCount > 0 && <li className="cr-fact-free"><Glyph name="spark" />{toPersianDigits(previewCount)} درس نمونهٔ رایگان</li>}

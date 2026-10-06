@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { API_URL, apiFetch, apiUpload, uploadInPieces } from "../../../lib/api";
-import { toPersianDigits } from "../../../lib/format";
+import { formatDuration, toEnglishDigits, toPersianDigits } from "../../../lib/format";
 import {
   AdminPageHeader,
   Alert,
@@ -24,6 +24,7 @@ interface Course {
   title: string;
   description?: string;
   spotPlayerCourseId?: string | null;
+  durationMinutes?: number | null;
   isPublished: boolean;
   modules?: ModuleWithLessons[];
   materials?: { resource: Handout }[];
@@ -39,6 +40,40 @@ interface Handout {
 }
 
 /** Only these can come with a course: a published file the site keeps, not free to all. */
+/** Hours and minutes as typed (Persian or Latin digits) to whole minutes; null when both are empty or zero. */
+function minutesOf(hours: string, minutes: string): number | null {
+  const h = Number(toEnglishDigits(hours.trim()) || 0);
+  const m = Number(toEnglishDigits(minutes.trim()) || 0);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+  const total = Math.round(h * 60 + m);
+  return total > 0 ? total : null;
+}
+
+/** The course's length, as shown on its card and page. */
+function DurationFields({
+  hours,
+  minutes,
+  onHours,
+  onMinutes,
+}: {
+  hours: string;
+  minutes: string;
+  onHours: (value: string) => void;
+  onMinutes: (value: string) => void;
+}) {
+  const total = minutesOf(hours, minutes);
+  return (
+    <FieldRow>
+      <Field label="مدت دوره: ساعت" hint={total ? `روی سایت: ${formatDuration(total)}` : "مجموع ویدیوهای دوره؛ روی کارت و صفحهٔ دوره نوشته می‌شود"}>
+        {(props) => <Input {...props} inputMode="numeric" value={hours} onChange={(event) => onHours(event.target.value)} placeholder="مثلاً ۴۰" />}
+      </Field>
+      <Field label="و دقیقه">
+        {(props) => <Input {...props} inputMode="numeric" value={minutes} onChange={(event) => onMinutes(event.target.value)} placeholder="مثلاً ۳۰" />}
+      </Field>
+    </FieldRow>
+  );
+}
+
 function isAttachable(resource: Handout) {
   return (
     resource.reviewStatus === "PUBLISHED" &&
@@ -700,6 +735,8 @@ export default function CoursesAdminPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [spotPlayerCourseId, setSpotPlayerCourseId] = useState("");
+  const [durationHours, setDurationHours] = useState("");
+  const [durationRest, setDurationRest] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -707,6 +744,8 @@ export default function CoursesAdminPage() {
   const [publishTarget, setPublishTarget] = useState<Course | null>(null);
   const [videoTarget, setVideoTarget] = useState<Course | null>(null);
   const [videoId, setVideoId] = useState("");
+  const [videoHours, setVideoHours] = useState("");
+  const [videoRest, setVideoRest] = useState("");
   const [videoBusy, setVideoBusy] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
@@ -742,9 +781,12 @@ export default function CoursesAdminPage() {
           title,
           description,
           ...(spotPlayerCourseId.trim() ? { spotPlayerCourseId: spotPlayerCourseId.trim() } : {}),
+          ...(minutesOf(durationHours, durationRest) !== null ? { durationMinutes: minutesOf(durationHours, durationRest) } : {}),
         },
       });
       setSlug("");
+      setDurationHours("");
+      setDurationRest("");
       setTitle("");
       setDescription("");
       await load();
@@ -770,12 +812,14 @@ export default function CoursesAdminPage() {
           title: course.title,
           description: course.description ?? "",
           ...(videoId.trim() ? { spotPlayerCourseId: videoId.trim() } : {}),
+          // Empty hours and minutes clear the duration.
+          durationMinutes: minutesOf(videoHours, videoRest),
         },
       });
       setVideoTarget(null);
       await load();
     } catch (err) {
-      setVideoError(err instanceof Error ? err.message : "ذخیرهٔ شناسهٔ ویدیو ممکن نشد.");
+      setVideoError(err instanceof Error ? err.message : "ذخیرهٔ ویدیو و مدت دوره ممکن نشد.");
     } finally {
       setVideoBusy(false);
     }
@@ -852,6 +896,7 @@ export default function CoursesAdminPage() {
                 />
               )}
             </Field>
+            <DurationFields hours={durationHours} minutes={durationRest} onHours={setDurationHours} onMinutes={setDurationRest} />
             {createError && <Alert tone="danger">{createError}</Alert>}
             <div><Button type="submit" variant="primary" loading={creating}>ساخت دوره</Button></div>
           </form>
@@ -887,6 +932,7 @@ export default function CoursesAdminPage() {
                           ) : (
                             <Badge>بدون ویدیو</Badge>
                           )}
+                          {course.durationMinutes ? <Badge>{formatDuration(course.durationMinutes)}</Badge> : <Badge tone="warning">مدت ثبت نشده</Badge>}
                         </div>
                       </div>
                       <div className="ds-row">
@@ -897,11 +943,13 @@ export default function CoursesAdminPage() {
                           size="sm"
                           onClick={() => {
                             setVideoId(course.spotPlayerCourseId ?? "");
+                            setVideoHours(course.durationMinutes ? String(Math.floor(course.durationMinutes / 60)) : "");
+                            setVideoRest(course.durationMinutes ? String(course.durationMinutes % 60) : "");
                             setVideoError(null);
                             setVideoTarget(course);
                           }}
                         >
-                          تنظیم ویدیو
+                          ویدیو و مدت
                         </Button>
                         <Button size="sm" onClick={() => setExpanded(expanded === course.id ? null : course.id)}>
                           {expanded === course.id ? "بستن" : "سرفصل‌ها و درس‌ها"}
@@ -928,8 +976,8 @@ export default function CoursesAdminPage() {
 
       <ConfirmDialog
         open={videoTarget !== null}
-        title={`ویدیوی «${videoTarget?.title ?? ""}»`}
-        description="شناسهٔ دوره را از پنل اسپات‌پلیر بردارید و اینجا بگذارید. خالی گذاشتن یعنی این دوره ویدیو ندارد و بخش ویدیو روی صفحهٔ دوره نشان داده نمی‌شود."
+        title={`ویدیو و مدت «${videoTarget?.title ?? ""}»`}
+        description="شناسهٔ دوره را از پنل اسپات‌پلیر بردارید و اینجا بگذارید؛ خالی یعنی این دوره ویدیو ندارد. مدت دوره روی کارت و صفحهٔ دوره نوشته می‌شود؛ خالی گذاشتن ساعت و دقیقه آن را پاک می‌کند."
         confirmLabel="ذخیره"
         busy={videoBusy}
         onConfirm={() => void saveVideoId()}
@@ -943,6 +991,7 @@ export default function CoursesAdminPage() {
             <Input {...props} dir="ltr" value={videoId} onChange={(event) => setVideoId(event.target.value)} />
           )}
         </Field>
+        <DurationFields hours={videoHours} minutes={videoRest} onHours={setVideoHours} onMinutes={setVideoRest} />
         {videoError && (
           <div style={{ marginTop: "var(--sp-3)" }}>
             <Alert tone="danger">{videoError}</Alert>

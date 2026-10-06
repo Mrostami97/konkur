@@ -223,6 +223,22 @@ describe("SpotPlayer video licences (e2e)", () => {
     expect(status.body.hasVideo).toBe(true);
   });
 
+  it("lets an operator state a course's length, shown on the catalogue and the syllabus", async () => {
+    const slug = `plain-course-${suffix}`;
+    const base = { slug, title: "No video", description: "d", spotPlayerCourseId: `sp-added-${suffix}` };
+    const set = await request(app.getHttpServer()).patch(`/admin/courses/${plainCourseId}`).set("Cookie", adminCookie).send({ ...base, durationMinutes: 2550 }).expect(200);
+    expect(set.body.durationMinutes).toBe(2550);
+
+    const catalogue = await request(app.getHttpServer()).get("/courses").expect(200);
+    expect(catalogue.body.find((row: { slug: string }) => row.slug === slug).durationMinutes).toBe(2550);
+    expect((await request(app.getHttpServer()).get(`/courses/${slug}`).expect(200)).body.durationMinutes).toBe(2550);
+
+    // Leaving it out keeps it; null clears it; nonsense is refused.
+    expect((await request(app.getHttpServer()).patch(`/admin/courses/${plainCourseId}`).set("Cookie", adminCookie).send(base).expect(200)).body.durationMinutes).toBe(2550);
+    expect((await request(app.getHttpServer()).patch(`/admin/courses/${plainCourseId}`).set("Cookie", adminCookie).send({ ...base, durationMinutes: null }).expect(200)).body.durationMinutes).toBeNull();
+    await request(app.getHttpServer()).patch(`/admin/courses/${plainCourseId}`).set("Cookie", adminCookie).send({ ...base, durationMinutes: -5 }).expect(400);
+  });
+
   it("keeps course editing away from students", async () => {
     await request(app.getHttpServer())
       .patch(`/admin/courses/${plainCourseId}`)

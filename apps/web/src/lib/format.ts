@@ -28,6 +28,22 @@ export function formatToman(amountRial: number): string {
   return `${formatPersianNumber(toman)} تومان`;
 }
 
+/** A length in minutes as people say it: «۴۲ ساعت و ۳۰ دقیقه», «۴۰ ساعت», «۴۵ دقیقه». */
+export function formatDuration(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (hours === 0) return `${toPersianDigits(rest)} دقیقه`;
+  if (rest === 0) return `${toPersianDigits(hours)} ساعت`;
+  return `${toPersianDigits(hours)} ساعت و ${toPersianDigits(rest)} دقیقه`;
+}
+
+/** The same length for schema.org, ISO 8601: PT42H30M. */
+export function isoDuration(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return `PT${hours ? `${hours}H` : ""}${rest || !hours ? `${rest}M` : ""}`;
+}
+
 /** Revenue shares are stored in basis points so the arithmetic stays in
  * integers; people read percent. */
 export function formatSharePercent(basisPoints: number): string {

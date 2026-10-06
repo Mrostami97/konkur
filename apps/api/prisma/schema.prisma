@@ -476,6 +476,9 @@ model Course {
   /// The course id on SpotPlayer, the offline DRM player the videos live in.
   /// Null means this course has no video component.
   spotPlayerCourseId String?
+  /// The course's total length in minutes (its videos), set by the admin and
+  /// shown on its card and page. Null when not stated.
+  durationMinutes    Int?
   spotPlayerLicenses SpotPlayerLicense[]
   achievements       StudentAchievement[]
   materials          CourseMaterial[]

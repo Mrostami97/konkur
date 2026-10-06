@@ -2,7 +2,7 @@ import Link from "next/link";
 import { courseFormat, courseShortTitle, type CourseCatalogItem } from "../app/courses/catalog";
 import { coursePublishers, courseSubject, courseSubjectTitle, courseTone } from "../app/courses/course-visual";
 import { CourseArt } from "./CourseArt";
-import { toPersianDigits } from "../lib/format";
+import { formatDuration, toPersianDigits } from "../lib/format";
 import { Glyph } from "./SubjectIcon";
 import "./course-card.css";
 
@@ -19,6 +19,7 @@ export function CourseCard({ item, headingLevel = 3 }: { item: CourseCatalogItem
   const publishers = coursePublishers(course);
   const Heading = headingLevel === 2 ? "h2" : "h3";
   const facts = [
+    course.durationMinutes ? formatDuration(course.durationMinutes) : null,
     course.moduleCount ? `${toPersianDigits(course.moduleCount)} فصل` : null,
     course.lessonCount ? `${toPersianDigits(course.lessonCount)} درس` : null,
   ].filter(Boolean);

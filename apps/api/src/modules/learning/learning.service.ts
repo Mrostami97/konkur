@@ -411,6 +411,7 @@ export class LearningService {
         createdAt: true,
         updatedAt: true,
         spotPlayerCourseId: true,
+        durationMinutes: true,
         subject: { select: { code: true, title: true } },
         instructors: {
           where: { contributorProfile: { isPublished: true } },
@@ -458,6 +459,7 @@ export class LearningService {
         fieldTargets: true,
         createdAt: true,
         updatedAt: true,
+        durationMinutes: true,
         subject: { select: { code: true, title: true } },
         // Published teacher profiles only, as on the catalogue.
         instructors: {
