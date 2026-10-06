@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AddChoiceButton } from "../../components/AddChoiceButton";
 import { AdmissionsJourney } from "../../components/AdmissionsJourney";
-import { PublicBreadcrumbs, PublicServiceError, degreeLabel, formatPublicDate } from "../../components/PublicContent";
-import { StructuredData } from "../../components/StructuredData";
 import { ComingSoon } from "../../components/ComingSoon";
-import { EmptyState, PageHeader, SectionHeader, StatCard } from "../../components/ui";
+import { PublicServiceError } from "../../components/PublicContent";
+import { StructuredData } from "../../components/StructuredData";
 import { apiGetPublic } from "../../lib/api";
+import { EXAM_SETS } from "../../lib/admissions";
 import { formatPersianNumber, toPersianDigits } from "../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../lib/seo";
+import { ChoiceFinder, type CatalogRow, type FinderFilters } from "./ChoiceFinder";
+import "./admissions.css";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -19,126 +20,60 @@ interface PublicSource {
   checkedAt: string;
 }
 
-interface PublicCapacity {
-  examYear: number;
-  quota: string;
-  capacity: number;
-  source: PublicSource;
+interface Catalog {
+  examYear: number | null;
+  source: PublicSource | null;
+  programs: {
+    id: string;
+    code: string;
+    title: string;
+    examSetCode: string | null;
+    coefficientGroup: number | null;
+    orientation: string | null;
+    period: CatalogRow["period"] | null;
+    location: string | null;
+    city: string | null;
+    gender: CatalogRow["gender"];
+    university: { code: string; title: string };
+    selectionCode: string | null;
+    capacity: number;
+    notes: string | null;
+  }[];
 }
 
-interface PublicUniversitySummary {
-  id: string;
-  code: string;
-  title: string;
-  city: string;
-  programCount: number;
-  source: PublicSource;
-}
-
-interface PublicProgram {
-  id: string;
-  code: string;
-  title: string;
-  degree: string;
-  field: string;
-  tuitionType: string;
-  hasDormitory: boolean;
-  source: PublicSource;
-  university: Omit<PublicUniversitySummary, "programCount">;
-  capacities: PublicCapacity[];
-}
-
-interface ProgramFilters {
-  degree?: "master" | "phd";
-  field?: string;
-  city?: string;
-  university?: string;
-}
-
-function firstParam(value?: string | string[]) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
-function requestedFilters(searchParams: SearchParams): ProgramFilters {
-  const degree = firstParam(searchParams.degree);
-  return {
-    degree: degree === "master" || degree === "phd" ? degree : undefined,
-    field: firstParam(searchParams.field)?.trim() || undefined,
-    city: firstParam(searchParams.city)?.trim() || undefined,
-    university: firstParam(searchParams.university)?.trim() || undefined,
-  };
-}
-
-function filterQuery(filters: ProgramFilters) {
-  const query = new URLSearchParams();
-  if (filters.degree) query.set("degree", filters.degree);
-  if (filters.field) query.set("field", filters.field);
-  if (filters.city) query.set("city", filters.city);
-  if (filters.university) query.set("university", filters.university);
-  return query.toString();
-}
-
-function fieldLabel(field: string) {
-  return ({
-    "computer-engineering": "مهندسی کامپیوتر",
-    computer: "مهندسی کامپیوتر",
-    "information-technology": "فناوری اطلاعات",
-    it: "فناوری اطلاعات",
-    "computer-science": "علوم کامپیوتر",
-    software: "نرم‌افزار",
-    "artificial-intelligence": "هوش مصنوعی",
-    ai: "هوش مصنوعی",
-  } as Record<string, string>)[field.toLocaleLowerCase("en-US")] ?? field;
-}
-
-function tuitionLabel(tuitionType: string) {
-  return ({ FREE: "بدون شهریه", PAID: "شهریه‌پرداز" } as Record<string, string>)[tuitionType] ?? tuitionType;
-}
-
-function quotaLabel(quota: string) {
-  return ({
-    "region-1": "منطقهٔ یک",
-    "region-2": "منطقهٔ دو",
-    "region-3": "منطقهٔ سه",
-    free: "آزاد",
-  } as Record<string, string>)[quota.toLocaleLowerCase("en-US")] ?? toPersianDigits(quota);
-}
-
-function latestCapacities(capacities: PublicCapacity[]) {
-  if (capacities.length === 0) return [];
-  const latestYear = Math.max(...capacities.map((item) => item.examYear));
-  return capacities.filter((item) => item.examYear === latestYear);
-}
-
-async function loadCatalog(filters: ProgramFilters) {
+async function loadCatalog() {
   try {
-    const query = filterQuery(filters);
-    const allProgramsRequest = apiGetPublic<PublicProgram[]>("/programs");
-    const [programs, allPrograms, universities] = await Promise.all([
-      query ? apiGetPublic<PublicProgram[]>(`/programs?${query}`) : allProgramsRequest,
-      allProgramsRequest,
-      apiGetPublic<PublicUniversitySummary[]>("/universities"),
-    ]);
-    return {
-      programs: programs ?? [],
-      allPrograms: allPrograms ?? [],
-      universities: universities ?? [],
-      unavailable: false,
-    };
+    return { catalog: await apiGetPublic<Catalog>("/admissions/catalog?degree=master"), unavailable: false };
   } catch {
-    return { programs: [], allPrograms: [], universities: [], unavailable: true };
+    return { catalog: null, unavailable: true };
   }
 }
 
-export async function generateMetadata({ searchParams: pendingSearchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
-  const searchParams = await pendingSearchParams;
-  const hasFilters = Object.keys(searchParams).length > 0;
-  const result = await loadCatalog(requestedFilters(searchParams));
-  const noIndex = hasFilters || result.unavailable;
+const first = (value?: string | string[]) => (Array.isArray(value) ? value[0] : value) ?? "";
+
+function filtersFrom(searchParams: SearchParams): FinderFilters {
+  return {
+    set: first(searchParams.set),
+    group: first(searchParams.group),
+    orientation: first(searchParams.o),
+    periods: first(searchParams.period).split(",").filter(Boolean),
+    city: first(searchParams.city),
+    gender: first(searchParams.gender),
+    query: first(searchParams.q),
+    sort: first(searchParams.sort),
+  };
+}
+
+export async function generateMetadata({ searchParams: pending }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const searchParams = await pending;
+  const { catalog, unavailable } = await loadCatalog();
+  // One indexable page: a filtered view is the same list.
+  const noIndex = Object.keys(searchParams).length > 0 || unavailable || !catalog?.programs.length;
+  const year = catalog?.examYear ? toPersianDigits(catalog.examYear) : "";
   return {
     ...pageMetadata({
-      title: "رشته‌محل‌ها و دانشگاه‌های کنکور کامپیوتر",
-      description: "جست‌وجوی رشته‌محل‌های ارشد و دکتری کامپیوتر که به منبع رسمی و تاریخ بررسی مشخص متصل‌اند.",
+      title: `ابزار انتخاب رشتهٔ ارشد کامپیوتر${year ? ` با ظرفیت‌های ${year}` : ""}`,
+      description: "همهٔ کدهای رشته‌محل ارشد مهندسی کامپیوتر، IT و علوم کامپیوتر از دفترچهٔ انتخاب رشته: فیلتر بر اساس گرایش، دوره، شهر و جنسیت، و ساختن فهرست انتخاب‌ها به ترتیب.",
       path: "/programs",
       noIndex,
     }),
@@ -146,207 +81,109 @@ export async function generateMetadata({ searchParams: pendingSearchParams }: { 
   };
 }
 
-function ProgramCard({ program }: { program: PublicProgram }) {
-  const capacities = latestCapacities(program.capacities);
-  return (
-    <article className="catalog-card program-card">
-      <div>
-        <div className="catalog-card-meta">
-          <span>{degreeLabel(program.degree)}</span>
-          <span>{fieldLabel(program.field)}</span>
-        </div>
-        <h3><Link href={`/programs/${encodeURIComponent(program.code)}`}>{program.title}</Link></h3>
-        <p>
-          <Link className="text-link" href={`/universities/${encodeURIComponent(program.university.code)}`}>
-            {program.university.title}
-          </Link>
-          {` · ${program.university.city}`}
-        </p>
-        <p className="muted-copy">
-          {tuitionLabel(program.tuitionType)}
-          {program.hasDormitory ? " · خوابگاه در دادهٔ این رشته‌محل ثبت شده" : ""}
-        </p>
-        {capacities.length > 0 && (
-          <div className="subject-tags" aria-label="آخرین ظرفیت ثبت‌شده">
-            {capacities.map((item) => (
-              <span key={`${item.examYear}-${item.quota}`}>
-                {toPersianDigits(item.examYear)} · {quotaLabel(item.quota)}: {formatPersianNumber(item.capacity)} نفر
-              </span>
-            ))}
-          </div>
-        )}
-        <p className="muted-copy">
-          منبع: <a href={program.source.canonicalUrl} target="_blank" rel="noreferrer">{program.source.publisher}</a>
-          {formatPublicDate(program.source.checkedAt) ? ` · بررسی ${formatPublicDate(program.source.checkedAt)}` : ""}
-        </p>
-      </div>
-      <div>
-        <Link className="text-link" href={`/programs/${encodeURIComponent(program.code)}`}>جزئیات و ظرفیت‌ها ←</Link>
-        <AddChoiceButton programId={program.id} />
-      </div>
-    </article>
-  );
-}
+export default async function ProgramsPage({ searchParams: pending }: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await pending;
+  const { catalog, unavailable } = await loadCatalog();
 
-export default async function ProgramsPage({ searchParams: pendingSearchParams }: { searchParams: Promise<SearchParams> }) {
-  const searchParams = await pendingSearchParams;
-  const filters = requestedFilters(searchParams);
-  const result = await loadCatalog(filters);
-  const breadcrumbs = [{ name: "خانه", href: "/" }, { name: "انتخاب‌رشته", href: "/admissions" }, { name: "رشته‌محل‌ها" }];
-
-  if (result.unavailable) {
+  if (unavailable || !catalog) {
     return (
       <main className="page-container">
-        <PageHeader
-          eyebrow="دادهٔ رسمی انتخاب‌رشته"
-          title="دانشگاه‌ها و رشته‌محل‌ها"
-          description="داده‌های این صفحه به منبع رسمی متصل‌اند و هنگام قطعی سرویس، نتیجهٔ خالی یا قدیمی نمایش داده نمی‌شود."
-        />
-        <PublicServiceError label="فهرست رشته‌محل‌های رسمی" />
+        <PublicServiceError label="فهرست رشته‌محل‌ها" />
       </main>
     );
   }
 
-  const fields = [...new Set(result.allPrograms.map((item) => item.field))].sort((a, b) => fieldLabel(a).localeCompare(fieldLabel(b), "fa"));
-  const cities = [...new Set(result.universities.map((item) => item.city))].sort((a, b) => a.localeCompare(b, "fa"));
-  const filterCount = Object.values(filters).filter(Boolean).length;
-  const schemas = [
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      name: "رشته‌محل‌های منبع‌دار کنکور کامپیوتر",
-      description: "فهرست رشته‌محل‌هایی که منبع رسمی فعال برای آن‌ها ثبت شده است.",
-      url: absoluteUrl("/programs"),
-      inLanguage: "fa-IR",
-      mainEntity: {
-        "@type": "ItemList",
-        numberOfItems: result.programs.length,
-        itemListElement: result.programs.map((program, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          name: `${program.title}، ${program.university.title}`,
-          url: absoluteUrl(`/programs/${encodeURIComponent(program.code)}`),
-        })),
-      },
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: breadcrumbs.map((item, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: item.name,
-        item: absoluteUrl(item.href ?? "/programs"),
-      })),
-    },
-  ];
+  const rows: CatalogRow[] = catalog.programs
+    // Sets the site has labels for; a new set (PhD, say) needs its entry in EXAM_SETS.
+    .filter((program) => EXAM_SETS.some((set) => set.code === program.examSetCode) && program.period && program.selectionCode)
+    .map((program) => ({
+      id: program.id,
+      code: program.code,
+      set: program.examSetCode!,
+      group: program.coefficientGroup ?? 0,
+      orientation: program.orientation ?? program.title,
+      period: program.period!,
+      university: program.university.title,
+      universityCode: program.university.code,
+      city: program.city ?? "",
+      location: program.location ?? "",
+      gender: program.gender,
+      capacity: program.capacity,
+      selectionCode: program.selectionCode!,
+      notes: program.notes ?? "",
+    }));
+  const year = catalog.examYear ?? 0;
+  const totalSeats = rows.reduce((sum, row) => sum + row.capacity, 0);
 
   return (
-    <main className="page-container">
-      <StructuredData data={schemas} />
-      <PublicBreadcrumbs items={breadcrumbs} />
-      <PageHeader
-        eyebrow="دادهٔ رسمی انتخاب‌رشته"
-        title="دانشگاه‌ها و رشته‌محل‌ها"
-        description="فقط رکوردهایی در این صفحه می‌آیند که به منبع رسمی فعال و تاریخ بررسی مشخص متصل باشند. ظرفیت‌ها ممکن است با اصلاحیه‌های بعدی تغییر کنند."
-        action={<Link className="button button-secondary" href="/choices">انتخاب‌های من</Link>}
+    <main className="af-page">
+      <StructuredData
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "ابزار انتخاب رشتهٔ ارشد کامپیوتر",
+            url: absoluteUrl("/programs"),
+            applicationCategory: "EducationalApplication",
+            operatingSystem: "Web",
+            inLanguage: "fa-IR",
+            offers: { "@type": "Offer", price: "0", priceCurrency: "IRR" },
+          },
+        ]}
       />
-
-      <aside className="official-disclaimer">
-        <strong>ملاک نهایی چیست؟</strong>
-        <p>دفترچهٔ انتخاب‌رشته و اصلاحیه‌های سازمان سنجش ملاک نهایی‌اند. نبودن یک رشته‌محل در این فهرست به معنی ارائه‌نشدن آن نیست؛ ممکن است هنوز منبع رسمی آن در سامانه ثبت نشده باشد.</p>
-      </aside>
-
-      <form className="surface-card field-grid" action="/programs" method="get">
-        <div className="field-grid field-grid-two">
-          <label className="field-group">
-            <span>مقطع</span>
-            <select className="field-input" name="degree" defaultValue={filters.degree ?? ""}>
-              <option value="">همهٔ مقاطع</option>
-              <option value="master">ارشد</option>
-              <option value="phd">دکتری</option>
-            </select>
-          </label>
-          <label className="field-group">
-            <span>رشته یا گرایش ثبت‌شده</span>
-            <select className="field-input" name="field" defaultValue={filters.field ?? ""}>
-              <option value="">همهٔ رشته‌ها و گرایش‌ها</option>
-              {fields.map((field) => <option value={field} key={field}>{fieldLabel(field)}</option>)}
-            </select>
-          </label>
-          <label className="field-group">
-            <span>شهر</span>
-            <select className="field-input" name="city" defaultValue={filters.city ?? ""}>
-              <option value="">همهٔ شهرها</option>
-              {cities.map((city) => <option value={city} key={city}>{city}</option>)}
-            </select>
-          </label>
-          <label className="field-group">
-            <span>دانشگاه</span>
-            <select className="field-input" name="university" defaultValue={filters.university ?? ""}>
-              <option value="">همهٔ دانشگاه‌ها</option>
-              {result.universities.map((university) => (
-                <option value={university.code} key={university.code}>{university.title}</option>
-              ))}
-            </select>
-          </label>
+      <header className="af-hero">
+        <div className="af-wrap">
+          <span className="af-eyebrow">انتخاب رشتهٔ ارشد</span>
+          <h1>ابزار انتخاب رشتهٔ ارشد کامپیوتر</h1>
+          {rows.length > 0 ? (
+            <>
+              <p>
+                {formatPersianNumber(rows.length)} کد رشته‌محل و {formatPersianNumber(totalSeats)} ظرفیت از دفترچهٔ انتخاب رشتهٔ {toPersianDigits(year)}.
+                گرایش، دوره و شهر را فیلتر کن، کدها را به فهرستت اضافه کن و به ترتیب دلخواه بچین.
+              </p>
+              <ul className="af-hero-facts">
+                <li><b>{formatPersianNumber(rows.length)}</b> کد رشته‌محل</li>
+                <li><b>{formatPersianNumber(new Set(rows.map((row) => row.university)).size)}</b> دانشگاه و مؤسسه</li>
+                <li><b>{formatPersianNumber(totalSeats)}</b> ظرفیت</li>
+              </ul>
+            </>
+          ) : (
+            <p>کدهای رشته‌محل هر سال با منبع رسمی سازمان سنجش اینجا می‌آیند.</p>
+          )}
         </div>
-        <div className="catalog-card-footer">
-          <button className="button button-primary" type="submit">اعمال فیلترها</button>
-          {filterCount > 0 && <Link className="button button-secondary" href="/programs">پاک‌کردن فیلترها</Link>}
-        </div>
-      </form>
+      </header>
 
-      <div className="stats-grid" aria-label="خلاصهٔ داده‌های رسمی">
-        <StatCard label="رشته‌محل منبع‌دار" value={formatPersianNumber(result.programs.length)} detail={filterCount > 0 ? "منطبق با فیلترهای انتخابی" : "در فهرست فعلی"} />
-        <StatCard label="دانشگاه منبع‌دار" value={formatPersianNumber(result.universities.length)} detail="دارای منبع رسمی فعال" tone="blue" />
-        <StatCard label="فیلتر فعال" value={formatPersianNumber(filterCount)} detail="نشانی فیلتر قابل اشتراک است" tone="purple" />
+      <div className="af-wrap af-body">
+        {rows.length === 0 ? (
+          <ComingSoon
+            icon="building"
+            title="کدهای رشته‌محل به‌زودی"
+            text="هر رشته‌محل فقط با منبع رسمی سازمان سنجش اینجا می‌آید."
+            alternatives={[
+              { href: "/articles/master-computer-engineering-capacity-1405", label: "ظرفیت ارشد مهندسی کامپیوتر ۱۴۰۵" },
+              { href: "/articles/admitted-ranks-by-university", label: "رتبهٔ قبولی هر دانشگاه" },
+            ]}
+          />
+        ) : (
+          <>
+            <aside className="af-caution">
+              <strong>کدهای {toPersianDigits(year)}</strong>
+              <p>
+                کد رشته‌محل‌ها و ظرفیت‌ها از دفترچهٔ انتخاب رشتهٔ {toPersianDigits(year)} است. سازمان سنجش هر سال کدها را از نو شماره‌گذاری می‌کند؛
+                فهرستت را برای برنامه‌ریزی بساز و وقتی دفترچهٔ سال بعد آمد، کدهای تازه همین‌جا جایگزین می‌شوند. ملاک نهایی، دفترچه و اصلاحیه‌های سازمان سنجش است.
+              </p>
+            </aside>
+            <ChoiceFinder rows={rows} year={year} initial={filtersFrom(searchParams)} />
+            {catalog.source && (
+              <p className="af-source">
+                منبع: <a href={catalog.source.canonicalUrl} target="_blank" rel="noreferrer">{catalog.source.title}</a>، {catalog.source.publisher}.
+                {" "}برای رقابت هر رشته‌محل، <Link href="/articles/admitted-ranks-by-university">رتبه‌های قبولی سال‌های قبل</Link> را هم ببین.
+              </p>
+            )}
+          </>
+        )}
+        <AdmissionsJourney current="programs" />
       </div>
-
-      <SectionHeader
-        title="رشته‌محل‌های قابل بررسی"
-        description="هر کارت به صفحهٔ جزئیات، ظرفیت‌های منبع‌دار و صفحهٔ دانشگاه متصل است."
-      />
-      {result.allPrograms.length === 0 ? (
-        <ComingSoon
-          icon="building"
-          title="ظرفیت و رشته‌محل‌ها به‌زودی"
-          text="هر رشته‌محل فقط با منبع رسمی سنجش و تاریخ بررسی اینجا می‌آید. فهرست ۱۴۰۶ بعد از انتشار دفترچهٔ انتخاب‌رشته و بازبینی منبع منتشر می‌شود."
-          alternatives={[
-            { href: "/admissions", label: "مسیر انتخاب‌رشته" },
-            { href: "/guides/registration-calendar-1406", label: "تقویم رسمی ۱۴۰۶" },
-            { href: "/guides/official-notices-and-corrections", label: "اطلاعیه‌ها" },
-          ]}
-        />
-      ) : result.programs.length === 0 ? (
-        <EmptyState
-          title="رشته‌محل منبع‌داری با این فیلترها پیدا نشد"
-          description="فیلترها را پاک کنید یا پس از ثبت و بررسی منبع رسمی دوباره به این صفحه سر بزنید."
-          action={filterCount > 0 ? <Link className="button button-secondary" href="/programs">نمایش همهٔ رکوردهای رسمی</Link> : undefined}
-        />
-      ) : (
-        <div className="program-grid">
-          {result.programs.map((program) => <ProgramCard program={program} key={program.id} />)}
-        </div>
-      )}
-
-      {result.universities.length > 0 && (
-        <section>
-          <SectionHeader title="دانشگاه‌های دارای منبع رسمی" description="صفحهٔ هر دانشگاه فقط برنامه‌هایی را نشان می‌دهد که منبع رسمی فعال دارند." />
-          <div className="article-grid">
-            {result.universities.map((university) => (
-              <Link className="article-card" href={`/universities/${encodeURIComponent(university.code)}`} key={university.id}>
-                <span className="article-meta">{university.city}</span>
-                <h3>{university.title}</h3>
-                <p>{formatPersianNumber(university.programCount)} رشته‌محل منبع‌دار</p>
-                <span className="text-link">مشاهدهٔ صفحهٔ دانشگاه ←</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <AdmissionsJourney current="programs" />
     </main>
   );
 }

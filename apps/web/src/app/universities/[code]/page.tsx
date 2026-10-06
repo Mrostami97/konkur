@@ -14,7 +14,8 @@ import {
 import { StructuredData } from "../../../components/StructuredData";
 import { EmptyState, PageHeader, SectionHeader, StatCard } from "../../../components/ui";
 import { apiGetPublic } from "../../../lib/api";
-import { formatPersianNumber } from "../../../lib/format";
+import { formatPersianNumber, toPersianDigits } from "../../../lib/format";
+import { GENDER_LABEL, examSetTitle, isKeyNote, noteItems, periodLabel, type ProgramGender } from "../../../lib/admissions";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
 
 interface PublicSource {
@@ -28,6 +29,8 @@ interface PublicCapacity {
   examYear: number;
   quota: string;
   capacity: number;
+  selectionCode?: string | null;
+  notes?: string | null;
   source: PublicSource;
 }
 
@@ -39,6 +42,12 @@ interface PublicProgram {
   field: string;
   tuitionType: string;
   hasDormitory: boolean;
+  examSetCode?: string | null;
+  orientation?: string | null;
+  period?: string | null;
+  location?: string | null;
+  city?: string | null;
+  gender?: ProgramGender;
   source: PublicSource;
   university: {
     id: string;
@@ -119,8 +128,10 @@ export async function generateMetadata({ params: pendingParams }: { params: Prom
       title: `${result.university.title}؛ رشته‌محل‌های کنکور کامپیوتر`,
       description: `رشته‌محل‌ها و ظرفیت‌های منبع‌دار ${result.university.title} در ${result.university.city}.`,
       path: `/universities/${encodeURIComponent(result.university.code)}`,
+      noIndex: true,
     }),
-    robots: { index: true, follow: true },
+    // Held back from the index like the program pages: no programmatic SEO pages yet (CLAUDE.md).
+    robots: { index: false, follow: true },
   };
 }
 
@@ -140,6 +151,22 @@ export default async function UniversityPage({ params: pendingParams }: { params
     { name: "رشته‌محل‌ها", href: "/programs" },
     { name: university.title },
   ];
+  // Booklet programs, as one table in the booklet's order; hand-entered ones keep their cards.
+  const booklet = university.programs
+    .filter((program) => program.examSetCode)
+    .map((program) => {
+      const year = Math.max(...program.capacities.map((c) => c.examYear));
+      const rows = program.capacities.filter((c) => c.examYear === year);
+      return {
+        program,
+        latest: {
+          capacity: rows.reduce((sum, c) => sum + c.capacity, 0),
+          selectionCode: rows.find((c) => c.selectionCode)?.selectionCode ?? null,
+          notes: rows.find((c) => c.notes)?.notes ?? null,
+        },
+      };
+    })
+    .sort((a, b) => (a.latest.selectionCode ?? "").localeCompare(b.latest.selectionCode ?? ""));
   const degrees = new Set(university.programs.map((program) => program.degree));
   const capacityRecords = university.programs.reduce((sum, program) => sum + program.capacities.length, 0);
   const programSources = [...new Map(
@@ -202,8 +229,30 @@ export default async function UniversityPage({ params: pendingParams }: { params
             description="رکورد بدون منبع رسمی فعال در این صفحه منتشر نمی‌شود."
           />
         ) : (
+          <>
+          <p><Link className="text-link" href={`/programs?q=${encodeURIComponent(university.title)}`}>این دانشگاه در ابزار انتخاب رشته ←</Link></p>
+          {booklet.length > 0 && (
+            <div className="responsive-table">
+              <table>
+                <thead><tr><th>کد رشته‌محل</th><th>مجموعه</th><th>گرایش</th><th>دوره</th><th>محل تحصیل</th><th>ظرفیت</th><th>نکته</th></tr></thead>
+                <tbody>
+                  {booklet.map(({ program, latest }) => (
+                    <tr key={program.id}>
+                      <td><Link href={`/programs/${encodeURIComponent(program.code)}`}>{latest.selectionCode ? toPersianDigits(latest.selectionCode) : "—"}</Link></td>
+                      <td>{examSetTitle(program.examSetCode)}</td>
+                      <td>{program.orientation}</td>
+                      <td>{periodLabel(program.period)}</td>
+                      <td>{program.city}{program.location && program.location !== program.city ? `، ${program.location}` : ""}</td>
+                      <td>{formatPersianNumber(latest.capacity)}</td>
+                      <td>{[program.gender && program.gender !== "ANY" ? GENDER_LABEL[program.gender] : "", ...noteItems(latest.notes).filter(isKeyNote)].filter(Boolean).join("، ") || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           <div className="program-grid">
-            {university.programs.map((program) => (
+            {university.programs.filter((program) => !program.examSetCode).map((program) => (
               <article className="catalog-card program-card" key={program.id}>
                 <div>
                   <div className="catalog-card-meta">
@@ -224,6 +273,7 @@ export default async function UniversityPage({ params: pendingParams }: { params
               </article>
             ))}
           </div>
+          </>
         )}
       </section>
 

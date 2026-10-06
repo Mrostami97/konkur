@@ -1,7 +1,9 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
-import { apiFetch } from "../../../lib/api";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { apiFetch, apiUpload } from "../../../lib/api";
+import { periodLabel } from "../../../lib/admissions";
+import { formatPersianNumber, toPersianDigits } from "../../../lib/format";
 import {
   AdminPageHeader,
   Alert,
@@ -17,7 +19,31 @@ import {
 } from "../../../components/ds";
 
 interface University { id: string; code: string; title: string; city: string }
-interface Program { id: string; code: string; title: string }
+interface Program {
+  id: string;
+  code: string;
+  title: string;
+  period?: string | null;
+  university?: { title: string };
+  capacities?: { examYear: number; selectionCode?: string | null }[];
+}
+
+interface ImportResult {
+  examYear: number;
+  rows: number;
+  universities: number;
+  programsCreated: number;
+  programsUpdated: number;
+  capacitiesRemoved: number;
+}
+
+/** How a program reads in a list: «کد · عنوان، دانشگاه، دوره». */
+function programName(program: Program) {
+  const code = program.capacities?.find((c) => c.selectionCode)?.selectionCode;
+  return [code ? toPersianDigits(code) : null, program.title, program.university?.title, periodLabel(program.period)].filter(Boolean).join(" · ");
+}
+
+const PROGRAM_ROWS = 50;
 interface OfficialSource {
   id: string;
   title: string;
@@ -57,6 +83,12 @@ export default function AdmissionsAdminPage() {
   const [capacityBusy, setCapacityBusy] = useState(false);
   const [capacityError, setCapacityError] = useState<string | null>(null);
   const [capacityDone, setCapacityDone] = useState<string | null>(null);
+
+  const [bookletFile, setBookletFile] = useState<File | null>(null);
+  const [importBusy, setImportBusy] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [programQuery, setProgramQuery] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -170,6 +202,27 @@ export default function AdmissionsAdminPage() {
     }
   }
 
+  async function importBooklet(event: FormEvent) {
+    event.preventDefault();
+    if (!bookletFile || !sourceId) return;
+    setImportBusy(true);
+    setImportError(null);
+    setImportResult(null);
+    try {
+      setImportResult(await apiUpload<ImportResult>("/admin/admissions/import", bookletFile, undefined, { sourceId }));
+      await load();
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : "ورود دفترچه ممکن نشد.");
+    } finally {
+      setImportBusy(false);
+    }
+  }
+
+  const matchingPrograms = useMemo(() => {
+    const needle = programQuery.trim();
+    return needle ? programs.filter((program) => programName(program).includes(needle) || program.code.includes(needle)) : programs;
+  }, [programs, programQuery]);
+
   const noSource = sources.length === 0;
 
   return (
@@ -199,6 +252,36 @@ export default function AdmissionsAdminPage() {
               ابتدا در بخش «منابع و مستندات» یک منبع با ردهٔ رسمی اولیه ثبت و فعال کنید.
             </Alert>
           )}
+        </Card>
+
+        <Card>
+          <h2 className="ds-card-title">ورود دفترچهٔ انتخاب رشته</h2>
+          <p className="ds-help">
+            فایل JSON دفترچهٔ یک سال (قالب admissions-booklet.v1) همهٔ دانشگاه‌ها، رشته‌محل‌ها و ظرفیت‌هایش را یک‌جا ثبت می‌کند و به منبع رسمی بالا استناد می‌دهد.
+            ورود دوبارهٔ همان سال، ظرفیت‌های آن سال را با فایل تازه جایگزین می‌کند؛ رشته‌محل‌ها و فهرست انتخاب دانشجوها سر جایشان می‌مانند.
+          </p>
+          <form onSubmit={importBooklet} className="ds-form">
+            <Field label="فایل دفترچه (JSON)" required>
+              {(props) => (
+                <Input
+                  {...props}
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={(event) => { setBookletFile(event.target.files?.[0] ?? null); setImportResult(null); setImportError(null); }}
+                  required
+                />
+              )}
+            </Field>
+            {importError && <Alert tone="danger">{importError}</Alert>}
+            {importResult && (
+              <Alert tone="success">
+                دفترچهٔ {toPersianDigits(importResult.examYear)} ثبت شد: {formatPersianNumber(importResult.rows)} کد رشته‌محل در {formatPersianNumber(importResult.universities)} دانشگاه و مؤسسه؛
+                {" "}{formatPersianNumber(importResult.programsCreated)} رشته‌محل تازه، {formatPersianNumber(importResult.programsUpdated)} به‌روزشده
+                {importResult.capacitiesRemoved > 0 ? `، و ${formatPersianNumber(importResult.capacitiesRemoved)} ظرفیتِ دیگر در فایل نبود و برداشته شد` : ""}.
+              </Alert>
+            )}
+            <div><Button type="submit" variant="primary" loading={importBusy} disabled={!sourceId || !bookletFile}>ورود دفترچه</Button></div>
+          </form>
         </Card>
 
         <Card>
@@ -310,7 +393,10 @@ export default function AdmissionsAdminPage() {
         </Card>
 
         <Card padded={false}>
-          <div className="ds-card-head"><h2 className="ds-card-title">رشته‌محل‌ها</h2></div>
+          <div className="ds-card-head">
+            <h2 className="ds-card-title">رشته‌محل‌ها ({formatPersianNumber(programs.length)})</h2>
+            <Input aria-label="جست‌وجوی رشته‌محل" placeholder="جست‌وجو: کد، دانشگاه یا گرایش" value={programQuery} onChange={(event) => setProgramQuery(event.target.value)} />
+          </div>
           <div className={`ds-card-body ${programs.length && !loading && !error ? "ds-card-body-flush" : ""}`}>
             <DataState
               loading={loading}
@@ -321,11 +407,11 @@ export default function AdmissionsAdminPage() {
               emptyDescription="با فرم بالا اولین رشته‌محل را اضافه کنید."
             >
               <TableWrap>
-                <thead><tr><th>عنوان</th><th>کد</th><th /></tr></thead>
+                <thead><tr><th>رشته‌محل</th><th>شناسه</th><th /></tr></thead>
                 <tbody>
-                  {programs.map((program) => (
+                  {matchingPrograms.slice(0, PROGRAM_ROWS).map((program) => (
                     <tr key={program.id}>
-                      <td>{program.title}</td>
+                      <td>{programName(program)}</td>
                       <td className="ds-code">{program.code}</td>
                       <td>
                         <Button
@@ -334,7 +420,7 @@ export default function AdmissionsAdminPage() {
                           onClick={() => {
                             setDeleteError(null);
                             setPendingDelete({
-                              label: program.title,
+                              label: programName(program),
                               path: `/admin/programs/${program.id}`,
                               note: "رشته‌محل و ظرفیت‌هایش پاک می‌شوند. اگر در فهرست انتخاب دانشجویی باشد، حذف انجام نمی‌شود.",
                             });
@@ -347,6 +433,11 @@ export default function AdmissionsAdminPage() {
                   ))}
                 </tbody>
               </TableWrap>
+              {matchingPrograms.length > PROGRAM_ROWS && (
+                <p className="ds-help ds-card-body">
+                  {formatPersianNumber(PROGRAM_ROWS)} مورد از {formatPersianNumber(matchingPrograms.length)} نمایش داده شده؛ برای یافتن بقیه جست‌وجو کنید.
+                </p>
+              )}
             </DataState>
           </div>
         </Card>
@@ -359,7 +450,7 @@ export default function AdmissionsAdminPage() {
                 <Select {...props} value={capacityProgramId} onChange={(event) => setCapacityProgramId(event.target.value)} required>
                   <option value="">رشته را انتخاب کنید</option>
                   {programs.map((program) => (
-                    <option key={program.id} value={program.id}>{program.title} ({program.code})</option>
+                    <option key={program.id} value={program.id}>{programName(program)}</option>
                   ))}
                 </Select>
               )}

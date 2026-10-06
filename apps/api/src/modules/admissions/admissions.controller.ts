@@ -1,5 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
-import { IsArray, IsUUID } from "class-validator";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { plainToInstance } from "class-transformer";
+import { IsArray, IsUUID, validate } from "class-validator";
+import { memoryStorage } from "multer";
 import { Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
@@ -10,6 +13,32 @@ import { CreateProgramDto } from "./dto/create-program.dto";
 import { CreateCapacityDto } from "./dto/create-capacity.dto";
 import { AddChoiceDto } from "./dto/choice-list.dto";
 import { ListProgramsDto } from "./dto/list-programs.dto";
+import { CatalogQueryDto, ImportBookletDto } from "./dto/import-booklet.dto";
+
+class ImportBookletFormDto {
+  @IsUUID()
+  sourceId!: string;
+}
+
+/** Reads an uploaded "admissions-booklet.v1" JSON file, with the same validation a JSON body gets. */
+async function readBooklet(file: Express.Multer.File | undefined) {
+  if (!file) throw new BadRequestException("فایل JSON دفترچه لازم است (فیلد file).");
+  let raw: unknown;
+  try {
+    raw = JSON.parse(file.buffer.toString("utf8").replace(/^\uFEFF/, ""));
+  } catch {
+    throw new BadRequestException("فایل، JSON معتبر نیست.");
+  }
+  const dto = plainToInstance(ImportBookletDto, raw);
+  const errors = await validate(dto, { whitelist: true, forbidNonWhitelisted: true });
+  if (errors.length) {
+    const first = errors[0];
+    const row = first.property === "rows" ? first.children?.[0] : undefined;
+    const detail = row ? `ردیف ${Number(row.property) + 1}: ${JSON.stringify(row.children?.[0]?.constraints ?? row.constraints)}` : JSON.stringify(first.constraints);
+    throw new BadRequestException(`فایل دفترچه معتبر نیست — ${first.property}، ${detail}`);
+  }
+  return dto;
+}
 
 class ReorderChoicesDto {
   @IsArray()
@@ -34,6 +63,12 @@ export class AdmissionsPublicController {
   @Get("programs")
   listPrograms(@Query() query: ListProgramsDto) {
     return this.admissions.listPrograms(query);
+  }
+
+  /** Everything the field-selection tool filters, for one booklet year. */
+  @Get("admissions/catalog")
+  catalog(@Query() query: CatalogQueryDto) {
+    return this.admissions.catalog(query);
   }
 
   @Get("programs/code/:code")
@@ -61,6 +96,12 @@ export class AdmissionsAdminController {
   @Post("programs")
   createProgram(@Body() dto: CreateProgramDto) {
     return this.admissions.createProgram(dto);
+  }
+
+  @Post("admissions/import")
+  @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } }))
+  async importBooklet(@UploadedFile() file: Express.Multer.File | undefined, @Body() form: ImportBookletFormDto) {
+    return this.admissions.importBooklet(await readBooklet(file), form.sourceId);
   }
 
   @Post("programs/:id/capacities")

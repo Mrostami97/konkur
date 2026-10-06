@@ -91,8 +91,15 @@ export interface UploadProgress {
  * cookie attached. XMLHttpRequest rather than fetch, because only it reports
  * upload progress: a large PDF on a slow line otherwise looks frozen.
  */
-export function apiUpload<T>(path: string, file: File, onProgress?: (progress: UploadProgress) => void): Promise<T> {
+export function apiUpload<T>(
+  path: string,
+  file: File,
+  onProgress?: (progress: UploadProgress) => void,
+  fields: Record<string, string> = {},
+): Promise<T> {
   const formData = new FormData();
+  // Text fields first: multer reads them before the file.
+  for (const [name, value] of Object.entries(fields)) formData.append(name, value);
   formData.append("file", file);
   return new Promise<T>((resolve, reject) => {
     const request = new XMLHttpRequest();

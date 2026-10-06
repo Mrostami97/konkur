@@ -46,13 +46,6 @@ type PublicResource = {
   reviewerProfile?: { slug: string } | null;
 };
 
-type PublicAdmissionsCatalogItem = {
-  code: string;
-  source?: {
-    checkedAt?: string | null;
-  } | null;
-};
-
 function escapeXml(value: string) {
   return value.replace(/[<>&'\"]/g, (character) => ({
     "<": "&lt;",
@@ -233,24 +226,17 @@ export async function reportCardSitemapEntries(): Promise<SitemapEntry[]> {
   return paths.map((path) => ({ loc: absoluteUrl(path) }));
 }
 
+/**
+ * The field-selection hub and finder only. Each booklet code and institution
+ * also has a page, but hundreds of near-identical pages are the programmatic
+ * SEO the owner has not approved yet (CLAUDE.md); those pages are noindex.
+ */
 export async function admissionsSitemapEntries(): Promise<SitemapCollection> {
-  const [universities, programs] = await Promise.all([
-    safeList<PublicAdmissionsCatalogItem>("/universities"),
-    safeList<PublicAdmissionsCatalogItem>("/programs"),
-  ]);
   return {
-    complete: universities !== null && programs !== null,
+    complete: true,
     entries: uniqueEntries([
       { loc: absoluteUrl("/admissions") },
       { loc: absoluteUrl("/programs") },
-      ...(universities ?? []).map((university) => ({
-        loc: absoluteUrl(`/universities/${encodeURIComponent(university.code)}`),
-        lastmod: asIso(university.source?.checkedAt),
-      })),
-      ...(programs ?? []).map((program) => ({
-        loc: absoluteUrl(`/programs/${encodeURIComponent(program.code)}`),
-        lastmod: asIso(program.source?.checkedAt),
-      })),
     ]),
   };
 }

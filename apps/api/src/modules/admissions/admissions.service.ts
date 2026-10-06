@@ -1,11 +1,21 @@
+import { createHash } from "node:crypto";
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { Degree, Prisma, TuitionType } from "@prisma/client";
+import { Degree, Prisma, ProgramGender, StudyPeriod, TuitionType } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AnalyticsService } from "../analytics/analytics.service";
 import { CreateUniversityDto } from "./dto/create-university.dto";
 import { CreateProgramDto } from "./dto/create-program.dto";
 import { CreateCapacityDto } from "./dto/create-capacity.dto";
+import { BookletRowDto, CatalogQueryDto, ImportBookletDto } from "./dto/import-booklet.dto";
 import { fa } from "../../common/persian-digits";
+
+/** Sanjesh's master's field-selection form takes at most this many codes. */
+export const MAX_CHOICES = 100;
+
+/** A short stable id for a natural key: program and university codes outlive one year's کد رشته‌محل. */
+function digest(parts: (string | number)[]) {
+  return createHash("sha1").update(parts.join("␟")).digest("hex").slice(0, 10);
+}
 
 export interface ProgramFilters {
   degree?: "master" | "phd";
@@ -107,6 +117,156 @@ export class AdmissionsService {
     });
   }
 
+  /**
+   * Loads one year's field-selection booklet. A row is one کد رشته‌محل; its
+   * program is identified across years by what it is (set, institution,
+   * campus, programme, period, gender, grant), not by the code, which Sanjesh
+   * renumbers every year. Re-importing the same year replaces that year's
+   * capacities for the imported exam sets, so a corrected file fixes them.
+   */
+  async importBooklet(dto: ImportBookletDto, sourceId: string) {
+    await this.requireOfficialSource(sourceId);
+    const codes = new Set<string>();
+    for (const row of dto.rows) {
+      if (codes.has(row.selectionCode)) throw new BadRequestException(`کد رشته‌محل ${row.selectionCode} دو بار آمده است.`);
+      codes.add(row.selectionCode);
+    }
+    const programCode = (row: BookletRowDto) =>
+      `${row.examSetCode}-${digest([dto.degree, row.examSetCode, row.coefficientGroup, row.university, row.location ?? "", row.program, row.period, row.gender, row.variant ?? ""])}`;
+    const byProgram = new Map<string, BookletRowDto[]>();
+    for (const row of dto.rows) byProgram.set(programCode(row), [...(byProgram.get(programCode(row)) ?? []), row]);
+    const twins = [...byProgram.values()].find((rows) => rows.length > 1);
+    if (twins) {
+      throw new BadRequestException(`کدهای ${twins.map((r) => r.selectionCode).join(" و ")} از هر نظر یکسان‌اند؛ یکی را با «توضیحات» یا محل تحصیل از دیگری جدا کنید.`);
+    }
+
+    const examSets = [...new Set(dto.rows.map((row) => row.examSetCode))];
+    return this.prisma.$transaction(async (tx) => {
+      const universityIds = new Map<string, string>();
+      for (const row of dto.rows) {
+        if (universityIds.has(row.university)) continue;
+        const code = `u-${digest([row.university])}`;
+        const university = await tx.university.upsert({
+          where: { code },
+          update: { title: row.university, city: row.universityCity, sourceId },
+          create: { code, title: row.university, city: row.universityCity, sourceId },
+          select: { id: true },
+        });
+        universityIds.set(row.university, university.id);
+      }
+
+      let created = 0;
+      const programIds: string[] = [];
+      for (const [code, [row]] of byProgram) {
+        const data = {
+          universityId: universityIds.get(row.university)!,
+          title: row.program,
+          degree: dto.degree as Degree,
+          field: row.field,
+          tuitionType: (row.period === "DAILY" ? "FREE" : "PAID") as TuitionType,
+          hasDormitory: row.hasDormitory,
+          examSetCode: row.examSetCode,
+          coefficientGroup: row.coefficientGroup,
+          orientation: row.orientation,
+          period: row.period as StudyPeriod,
+          location: row.location || null,
+          city: row.city,
+          gender: row.gender as ProgramGender,
+          sourceId,
+        };
+        const existing = await tx.program.findUnique({ where: { code }, select: { id: true } });
+        const program = existing
+          ? await tx.program.update({ where: { code }, data, select: { id: true } })
+          : await tx.program.create({ data: { ...data, code }, select: { id: true } });
+        if (!existing) created += 1;
+        programIds.push(program.id);
+
+        const terms: [string, number][] = [["term-1", row.capacityFirstTerm], ["term-2", row.capacitySecondTerm]];
+        for (const [quota, capacity] of terms) {
+          const where = { programId_examYear_quota: { programId: program.id, examYear: dto.examYear, quota } };
+          if (capacity === 0) {
+            await tx.capacity.deleteMany({ where: { programId: program.id, examYear: dto.examYear, quota } });
+            continue;
+          }
+          const fields = { capacity, selectionCode: row.selectionCode, notes: row.notes || null, bookletPage: row.bookletPage ?? null, sourceId };
+          await tx.capacity.upsert({ where, update: fields, create: { programId: program.id, examYear: dto.examYear, quota, ...fields } });
+        }
+      }
+
+      // Codes that left the booklet in a corrected file lose this year's capacity.
+      const removed = await tx.capacity.deleteMany({
+        where: {
+          examYear: dto.examYear,
+          programId: { notIn: programIds },
+          program: { degree: dto.degree as Degree, examSetCode: { in: examSets } },
+        },
+      });
+      return {
+        examYear: dto.examYear,
+        rows: dto.rows.length,
+        universities: universityIds.size,
+        programsCreated: created,
+        programsUpdated: programIds.length - created,
+        capacitiesRemoved: removed.count,
+      };
+    }, { timeout: 120_000, maxWait: 10_000 });
+  }
+
+  /**
+   * The field-selection tool's list: every officially sourced program with a
+   * capacity in the given (else the latest) year, compact enough to filter in
+   * the browser.
+   */
+  async catalog(query: CatalogQueryDto) {
+    const degree = (query.degree ?? "master").toUpperCase() as Degree;
+    const latest = await this.prisma.capacity.aggregate({
+      where: { source: { is: ACTIVE_OFFICIAL_SOURCE }, selectionCode: { not: null }, program: { degree } },
+      _max: { examYear: true },
+    });
+    const examYear = query.year ?? latest._max.examYear;
+    if (!examYear) return { examYear: null, source: null, programs: [] };
+    const programs = await this.prisma.program.findMany({
+      where: {
+        degree,
+        source: { is: ACTIVE_OFFICIAL_SOURCE },
+        university: { source: { is: ACTIVE_OFFICIAL_SOURCE } },
+        capacities: { some: { examYear, source: { is: ACTIVE_OFFICIAL_SOURCE } } },
+      },
+      select: {
+        id: true,
+        code: true,
+        title: true,
+        field: true,
+        examSetCode: true,
+        coefficientGroup: true,
+        orientation: true,
+        period: true,
+        tuitionType: true,
+        location: true,
+        city: true,
+        gender: true,
+        hasDormitory: true,
+        university: { select: { code: true, title: true } },
+        capacities: {
+          where: { examYear, source: { is: ACTIVE_OFFICIAL_SOURCE } },
+          select: { quota: true, capacity: true, selectionCode: true, notes: true, bookletPage: true, source: { select: PUBLIC_SOURCE_SELECT } },
+        },
+      },
+      orderBy: { code: "asc" },
+    });
+    return {
+      examYear,
+      source: programs.find((p) => p.capacities[0])?.capacities[0].source ?? null,
+      programs: programs.map(({ capacities, ...program }) => ({
+        ...program,
+        selectionCode: capacities.find((c) => c.selectionCode)?.selectionCode ?? null,
+        capacity: capacities.reduce((sum, c) => sum + c.capacity, 0),
+        notes: capacities.find((c) => c.notes)?.notes ?? null,
+        bookletPage: capacities.find((c) => c.bookletPage)?.bookletPage ?? null,
+      })),
+    };
+  }
+
   async listUniversities() {
     const universities = await this.prisma.university.findMany({
       where: { source: { is: ACTIVE_OFFICIAL_SOURCE } },
@@ -195,6 +355,11 @@ export class AdmissionsService {
   async addChoice(userId: string, programId: string) {
     await this.requirePublicProgram(programId);
     const list = await this.getOrCreateChoiceList(userId);
+    const already = await this.prisma.choiceListItem.findUnique({ where: { choiceListId_programId: { choiceListId: list.id, programId } } });
+    if (already) return already;
+    if ((await this.prisma.choiceListItem.count({ where: { choiceListId: list.id } })) >= MAX_CHOICES) {
+      throw new BadRequestException(`فرم انتخاب رشته حداکثر ${fa(MAX_CHOICES)} کد می‌گیرد؛ برای افزودن این کد، یکی از انتخاب‌ها را حذف کن.`);
+    }
     const maxPriority = await this.prisma.choiceListItem.aggregate({
       where: { choiceListId: list.id },
       _max: { priority: true },
@@ -241,7 +406,14 @@ export class AdmissionsService {
               university: { source: { is: ACTIVE_OFFICIAL_SOURCE } },
             },
           },
-          include: { program: { include: { university: true } } },
+          include: {
+            program: {
+              include: {
+                university: true,
+                capacities: { where: { source: { is: ACTIVE_OFFICIAL_SOURCE } }, orderBy: [{ examYear: "desc" }, { quota: "asc" }] },
+              },
+            },
+          },
           orderBy: { priority: "asc" },
         },
       },
@@ -306,6 +478,13 @@ export class AdmissionsService {
       field: program.field,
       tuitionType: program.tuitionType,
       hasDormitory: program.hasDormitory,
+      examSetCode: program.examSetCode,
+      coefficientGroup: program.coefficientGroup,
+      orientation: program.orientation,
+      period: program.period,
+      location: program.location,
+      city: program.city,
+      gender: program.gender,
       source: program.source,
       university: {
         id: program.university.id,
@@ -318,6 +497,9 @@ export class AdmissionsService {
         examYear: capacity.examYear,
         quota: capacity.quota,
         capacity: capacity.capacity,
+        selectionCode: capacity.selectionCode,
+        notes: capacity.notes,
+        bookletPage: capacity.bookletPage,
         source: capacity.source,
       })),
     };

@@ -15,6 +15,7 @@ import { StructuredData } from "../../../components/StructuredData";
 import { EmptyState, PageHeader, SectionHeader, StatCard } from "../../../components/ui";
 import { apiGetPublic } from "../../../lib/api";
 import { formatPersianNumber, toPersianDigits } from "../../../lib/format";
+import { GENDER_LABEL, examSetTitle, groupLabel, isKeyNote, noteItems, periodLabel, type ProgramGender } from "../../../lib/admissions";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
 
 interface PublicSource {
@@ -28,6 +29,9 @@ interface PublicCapacity {
   examYear: number;
   quota: string;
   capacity: number;
+  selectionCode?: string | null;
+  notes?: string | null;
+  bookletPage?: number | null;
   source: PublicSource;
 }
 
@@ -39,6 +43,13 @@ interface PublicProgram {
   field: string;
   tuitionType: string;
   hasDormitory: boolean;
+  examSetCode?: string | null;
+  coefficientGroup?: number | null;
+  orientation?: string | null;
+  period?: string | null;
+  location?: string | null;
+  city?: string | null;
+  gender?: ProgramGender;
   source: PublicSource;
   university: {
     id: string;
@@ -73,6 +84,8 @@ function quotaLabel(quota: string) {
     "region-2": "منطقهٔ دو",
     "region-3": "منطقهٔ سه",
     free: "آزاد",
+    "term-1": "نیمسال اول",
+    "term-2": "نیمسال دوم",
   } as Record<string, string>)[quota.toLocaleLowerCase("en-US")] ?? toPersianDigits(quota);
 }
 
@@ -120,8 +133,12 @@ export async function generateMetadata({ params: pendingParams }: { params: Prom
       title: `${program.title} در ${program.university.title}`,
       description: `اطلاعات و ظرفیت‌های منبع‌دار ${program.title}، مقطع ${degreeLabel(program.degree)} در ${program.university.title}.`,
       path: `/programs/${encodeURIComponent(program.code)}`,
+      noIndex: true,
     }),
-    robots: { index: true, follow: true },
+    // One page per کد رشته‌محل would be hundreds of near-identical pages; the
+    // owner has not approved programmatic SEO pages yet (CLAUDE.md), so only
+    // the finder at /programs is indexed.
+    robots: { index: false, follow: true },
   };
 }
 
@@ -134,6 +151,8 @@ export default async function ProgramPage({ params: pendingParams }: { params: P
   if (!result.program) notFound();
 
   const program = result.program;
+  const city = program.city ?? program.university.city;
+  const place = program.location && program.location !== city ? `${city}، ${program.location}` : city;
   const path = `/programs/${encodeURIComponent(program.code)}`;
   const breadcrumbs = [
     { name: "خانه", href: "/" },
@@ -209,9 +228,9 @@ export default async function ProgramPage({ params: pendingParams }: { params: P
       <StructuredData data={schemas} />
       <PublicBreadcrumbs items={breadcrumbs} />
       <PageHeader
-        eyebrow={`${degreeLabel(program.degree)} · ${fieldLabel(program.field)}`}
-        title={program.title}
-        description={`${program.university.title}، ${program.university.city}؛ اطلاعات این صفحه فقط از رکوردهای متصل به منبع رسمی فعال ساخته شده است.`}
+        eyebrow={`${degreeLabel(program.degree)} · ${program.examSetCode ? `${examSetTitle(program.examSetCode)} (${toPersianDigits(program.examSetCode)})` : fieldLabel(program.field)}`}
+        title={`${program.title}${program.period ? `، ${periodLabel(program.period)}` : ""}`}
+        description={`${program.university.title}، ${place}؛ اطلاعات این صفحه فقط از رکوردهای متصل به منبع رسمی فعال ساخته شده است.`}
         action={<AddChoiceButton programId={program.id} />}
       />
 
@@ -222,7 +241,7 @@ export default async function ProgramPage({ params: pendingParams }: { params: P
 
       <div className="stats-grid" aria-label="مشخصات رشته‌محل">
         <StatCard label="مقطع" value={degreeLabel(program.degree)} detail={fieldLabel(program.field)} />
-        <StatCard label="نوع دوره" value={tuitionLabel(program.tuitionType)} detail={program.hasDormitory ? "خوابگاه در دادهٔ این رکورد ثبت شده" : "وضعیت مثبت خوابگاه ثبت نشده"} tone="blue" />
+        <StatCard label="نوع دوره" value={program.period ? periodLabel(program.period) : tuitionLabel(program.tuitionType)} detail={program.hasDormitory ? "خوابگاه در دادهٔ این رکورد ثبت شده" : "وضعیت مثبت خوابگاه ثبت نشده"} tone="blue" />
         <StatCard label="رکورد ظرفیت" value={formatPersianNumber(program.capacities.length)} detail={years.length > 0 ? `سال‌های ${years.map(toPersianDigits).join("، ")}` : "هنوز ظرفیتی ثبت نشده"} tone="purple" />
       </div>
 
@@ -232,10 +251,13 @@ export default async function ProgramPage({ params: pendingParams }: { params: P
           <table>
             <tbody>
               <tr><th scope="row">دانشگاه</th><td><Link href={`/universities/${encodeURIComponent(program.university.code)}`}>{program.university.title}</Link></td></tr>
-              <tr><th scope="row">شهر</th><td>{program.university.city}</td></tr>
+              <tr><th scope="row">محل تحصیل</th><td>{place}</td></tr>
               <tr><th scope="row">مقطع</th><td>{degreeLabel(program.degree)}</td></tr>
-              <tr><th scope="row">رشته یا گرایش ثبت‌شده</th><td>{fieldLabel(program.field)}</td></tr>
-              <tr><th scope="row">نوع دوره</th><td>{tuitionLabel(program.tuitionType)}</td></tr>
+              {program.examSetCode && <tr><th scope="row">مجموعهٔ امتحانی</th><td>{examSetTitle(program.examSetCode)} ({toPersianDigits(program.examSetCode)})</td></tr>}
+              {program.coefficientGroup ? <tr><th scope="row">کد ضریب</th><td>{toPersianDigits(groupLabel(program.examSetCode, program.coefficientGroup))}</td></tr> : null}
+              <tr><th scope="row">گرایش</th><td>{program.orientation ?? fieldLabel(program.field)}</td></tr>
+              <tr><th scope="row">دوره</th><td>{program.period ? `${periodLabel(program.period)} (${tuitionLabel(program.tuitionType)})` : tuitionLabel(program.tuitionType)}</td></tr>
+              {program.gender && program.gender !== "ANY" && <tr><th scope="row">پذیرش</th><td>{GENDER_LABEL[program.gender]}</td></tr>}
               <tr><th scope="row">خوابگاه</th><td>{program.hasDormitory ? "در دادهٔ رسمی این رکورد ثبت شده" : "وضعیت مثبت در این رکورد ثبت نشده"}</td></tr>
             </tbody>
           </table>
@@ -252,17 +274,20 @@ export default async function ProgramPage({ params: pendingParams }: { params: P
         ) : (
           <div className="responsive-table">
             <table>
-              <thead><tr><th>سال آزمون</th><th>سهمیه یا دوره</th><th>ظرفیت</th><th>منبع رسمی</th></tr></thead>
+              <thead><tr><th>سال آزمون</th><th>کد رشته‌محل</th><th>نیمسال یا سهمیه</th><th>ظرفیت</th><th>توضیحات دفترچه</th><th>منبع رسمی</th></tr></thead>
               <tbody>
                 {program.capacities.map((capacity) => (
                   <tr key={`${capacity.examYear}-${capacity.quota}`}>
                     <td>{toPersianDigits(capacity.examYear)}</td>
+                    <td>{capacity.selectionCode ? toPersianDigits(capacity.selectionCode) : "—"}</td>
                     <td>{quotaLabel(capacity.quota)}</td>
                     <td>{formatPersianNumber(capacity.capacity)} نفر</td>
+                    <td>{noteItems(capacity.notes).map((note) => isKeyNote(note) ? <strong key={note}>{note}. </strong> : <span key={note}>{note}. </span>)}</td>
                     <td>
                       <a href={capacity.source.canonicalUrl} target="_blank" rel="noreferrer">
                         {capacity.source.publisher}
                       </a>
+                      {capacity.bookletPage ? `، صفحهٔ ${toPersianDigits(capacity.bookletPage)}` : ""}
                       {formatPublicDate(capacity.source.checkedAt) ? ` · بررسی ${formatPublicDate(capacity.source.checkedAt)}` : ""}
                     </td>
                   </tr>
@@ -278,7 +303,8 @@ export default async function ProgramPage({ params: pendingParams }: { params: P
         <div className="about-actions">
           <Link className="button button-secondary" href={`/report-cards?${reportCardQuery.toString()}`}>کارنامه‌های مرتبط</Link>
           <Link className="button button-secondary" href="/rank-estimate">تخمین بازه‌ای رتبه</Link>
-          <Link className="button button-secondary" href="/choices">مقایسهٔ انتخاب‌ها</Link>
+          <Link className="button button-secondary" href="/programs">ابزار انتخاب رشته</Link>
+          <Link className="button button-secondary" href="/choices">فهرست انتخاب‌های من</Link>
         </div>
       </section>
 

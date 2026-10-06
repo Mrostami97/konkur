@@ -1542,37 +1542,76 @@ model University {
 }
 
 model Program {
-  id           String           @id @default(uuid())
-  universityId String
-  university   University       @relation(fields: [universityId], references: [id], onDelete: Cascade)
-  code         String           @unique
-  title        String
-  degree       Degree
-  field        String
-  tuitionType  TuitionType
-  hasDormitory Boolean          @default(false)
-  sourceId     String?
-  source       ContentSource?   @relation("ProgramOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
-  capacities   Capacity[]
-  choiceItems  ChoiceListItem[]
-  createdAt    DateTime         @default(now())
+  id               String           @id @default(uuid())
+  universityId     String
+  university       University       @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  code             String           @unique
+  title            String
+  degree           Degree
+  field            String
+  tuitionType      TuitionType
+  hasDormitory     Boolean          @default(false)
+  /// Field-selection booklet facts. Null on programs entered by hand before
+  /// the booklet import existed.
+  /// The exam set (مجموعهٔ امتحانی) whose rank admits, e.g. "1277".
+  examSetCode      String?
+  /// The booklet's coefficient code (کد ضریب) within that set.
+  coefficientGroup Int?
+  /// The programme without the field's own name, e.g. «نرم‌افزار».
+  orientation      String?
+  period           StudyPeriod?
+  /// Study place when the booklet names one besides the institution, e.g. «پردیس فارابی قم».
+  location         String?
+  /// City of study (not necessarily the institution's main city).
+  city             String?
+  gender           ProgramGender    @default(ANY)
+  sourceId         String?
+  source           ContentSource?   @relation("ProgramOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
+  capacities       Capacity[]
+  choiceItems      ChoiceListItem[]
+  createdAt        DateTime         @default(now())
 
   @@index([degree, field])
+  @@index([examSetCode, period])
   @@index([sourceId])
   @@map("programs")
 }
 
+/// دورهٔ تحصیلی in Sanjesh's booklet; only DAILY is tuition-free.
+enum StudyPeriod {
+  DAILY
+  EVENING
+  SELF_FUNDED_CAMPUS
+  VIRTUAL
+  NON_PROFIT
+  VIRTUAL_NON_PROFIT
+  PAYAM_NOOR
+  VIRTUAL_PAYAM_NOOR
+}
+
+enum ProgramGender {
+  ANY
+  FEMALE
+  MALE
+}
+
 model Capacity {
-  id        String         @id @default(uuid())
-  programId String
-  program   Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
-  examYear  Int
-  quota     String
-  capacity  Int
-  sourceId  String?
-  source    ContentSource? @relation("CapacityOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
+  id            String         @id @default(uuid())
+  programId     String
+  program       Program        @relation(fields: [programId], references: [id], onDelete: Cascade)
+  examYear      Int
+  quota         String
+  capacity      Int
+  /// کد رشته‌محل in that year's booklet: what a candidate types into Sanjesh's form.
+  selectionCode String?
+  /// The booklet's «توضیحات» for that year, as printed.
+  notes         String?
+  bookletPage   Int?
+  sourceId      String?
+  source        ContentSource? @relation("CapacityOfficialSource", fields: [sourceId], references: [id], onDelete: Restrict)
 
   @@unique([programId, examYear, quota])
+  @@index([examYear, selectionCode])
   @@index([sourceId])
   @@map("capacities")
 }
