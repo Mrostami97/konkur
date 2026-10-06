@@ -8,9 +8,10 @@ import { VideoLicensePanel } from "../../../components/VideoLicensePanel";
 import { CourseProgressPanel } from "../../../components/CourseProgressPanel";
 import { StructuredData } from "../../../components/StructuredData";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
-import { Glyph, SubjectGlyph } from "../../../components/SubjectIcon";
+import { CourseArt } from "../../../components/CourseArt";
+import { Glyph } from "../../../components/SubjectIcon";
 import { courseFormat, courseShortTitle, findDirectCourseProduct, formatRial, type CatalogProduct, type CourseInstructor } from "../catalog";
-import { courseSubject, courseSubjectTitle, courseTone } from "../course-visual";
+import { coursePublishers, courseSubject, courseSubjectTitle, courseTone } from "../course-visual";
 import "../course.css";
 
 interface Lesson {
@@ -97,7 +98,7 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
   const path = `/courses/${course.slug}`;
   const lessons = course.modules.flatMap((module) => module.lessons);
   const materials = course.materials ?? [];
-  const instructors = course.instructors ?? [];
+  const publishers = coursePublishers(course);
   const subject = courseSubject(course);
   const subjectTitle = courseSubjectTitle(course);
   const firstLessonId = lessons[0]?.id;
@@ -153,28 +154,26 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
               {previewCount > 0 && <li className="cr-fact-free"><Glyph name="spark" />{toPersianDigits(previewCount)} درس نمونهٔ رایگان</li>}
               {materials.length > 0 && <li><Glyph name="book" />{toPersianDigits(materials.length)} جزوه</li>}
             </ul>
-            {instructors.length > 0 && (
-              <div className="cr-teachers">
-                {instructors.map((person) => (
-                  <Link key={person.slug} href={`/authors/${person.slug}`} className="cr-teacher">
-                    {person.avatarUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={person.avatarUrl} alt="" width={44} height={44} />
-                    ) : (
-                      <span className="cr-teacher-initial" aria-hidden="true">{person.displayName.slice(0, 1)}</span>
-                    )}
-                    <span>
-                      <small>مدرس</small>
-                      <strong>{person.displayName}</strong>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
+            <div className="cr-teachers">
+              {publishers.map((person) => (
+                <Link key={person.displayName} href={person.href} className="cr-teacher">
+                  {person.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={person.avatarUrl} alt="" width={44} height={44} />
+                  ) : (
+                    <span className="cr-teacher-initial" aria-hidden="true">{person.displayName.slice(0, 1)}</span>
+                  )}
+                  <span>
+                    <small>ناشر</small>
+                    <strong>{person.displayName}</strong>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
           <div className="cr-hero-art" aria-hidden="true">
             <span className="cr-hero-ring" />
-            {subject ? <SubjectGlyph slug={subject} className="cr-hero-glyph" /> : <Glyph name="book" className="cr-hero-glyph" />}
+            <CourseArt subject={subject} tests={courseFormat(course) === "حل تست"} avatar={publishers[0].avatarUrl} uid={`hero-${course.slug}`} className="cr-hero-drawing" />
           </div>
         </div>
       </header>
@@ -207,7 +206,7 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
                             <Link href={`/lessons/${lesson.id}`} className="cr-lesson">
                               <span className="cr-lesson-n tnum" aria-hidden="true">{toPersianDigits(lessonNumber)}</span>
                               <span className="cr-lesson-title">{lesson.title}</span>
-                              {lesson.isPreview && <span className="cr-free">نمونهٔ آزاد</span>}
+                              {lesson.isPreview && <span className="cr-free">نمونهٔ رایگان</span>}
                             </Link>
                           </li>
                         );

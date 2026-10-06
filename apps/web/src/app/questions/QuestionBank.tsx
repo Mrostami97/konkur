@@ -214,7 +214,7 @@ export function QuestionBank({ catalog, initialSubject = "" }: { catalog: Subjec
                         </span>
                       </span>
                       <span className="qb-access" data-free={question.isSample || undefined}>
-                        {question.isSample ? "نمونهٔ آزاد" : "قفل"}
+                        {question.isSample ? "نمونهٔ رایگان" : "قفل"}
                       </span>
                     </Link>
                   </li>

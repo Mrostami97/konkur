@@ -86,7 +86,7 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
             <div className="qv-meta">
               <span>{fieldLabel(question.examMajor)}</span>
               <span>کنکور {toPersianDigits(question.examYear)}</span>
-              <span>{question.isSample ? "نمونهٔ آزاد" : "بانک درس"}</span>
+              <span>{question.isSample ? "نمونهٔ رایگان" : "بانک درس"}</span>
             </div>
           )}
         </div>

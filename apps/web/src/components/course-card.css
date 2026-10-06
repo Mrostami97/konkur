@@ -29,7 +29,7 @@
   position: relative;
   display: grid;
   place-items: center;
-  height: 9.5rem;
+  height: 11rem;
   overflow: hidden;
   color: #fff;
   background:
@@ -63,6 +63,9 @@
   transition: transform var(--motion-slow) var(--ease);
 }
 .ccd:hover .ccd-glyph { transform: scale(1.08) rotate(-4deg); }
+.ccd-art { position: relative; transition: transform var(--motion-slow) var(--ease); }
+.ccd-art.ca { position: absolute; top: 2.3rem; left: 1rem; width: calc(100% - 2rem); height: calc(100% - 2.8rem); }
+.ccd:hover .ccd-art { transform: scale(1.04); }
 .ccd-format,
 .ccd-video {
   position: absolute;
@@ -108,10 +111,10 @@
 @media (prefers-reduced-motion: reduce) {
   .ccd, .ccd-glyph, .ccd-cta { transition: none; }
   .ccd:hover, .ccd:focus-within { transform: none; }
-  .ccd:hover .ccd-glyph { transform: none; }
+  .ccd:hover .ccd-glyph, .ccd:hover .ccd-art { transform: none; }
 }
 
 @media (max-width: 560px) {
-  .ccd-cover { height: 7.5rem; }
+  .ccd-cover { height: 9.5rem; }
   .ccd-glyph { width: 3.75rem; height: 3.75rem; }
 }

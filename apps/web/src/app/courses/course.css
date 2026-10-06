@@ -141,8 +141,10 @@
 .cr-teacher span { display: grid; line-height: 1.5; }
 .cr-teacher small { color: var(--on-ink-muted); font-size: var(--text-2xs); }
 .cr-teacher strong { font-size: var(--text-sm); }
-.cr-hero-art { position: relative; display: grid; place-items: center; width: clamp(9rem, 18vw, 13rem); aspect-ratio: 1; color: #fff; }
-.cr-hero-ring { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--c2) 55%, transparent), transparent 68%); }
+.cr-hero-art { position: relative; display: grid; place-items: center; width: clamp(15rem, 30vw, 22rem); aspect-ratio: 320 / 190; color: #fff; }
+.cr-hero-drawing.ca { position: relative; }
+.cr-hero-art .ca-badge { width: 8rem; }
+.cr-hero-ring { position: absolute; inset: -10%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--c2) 55%, transparent), transparent 68%); }
 .cr-hero-ring::before,
 .cr-hero-ring::after { position: absolute; inset: 12%; border: 1px dashed rgba(255, 255, 255, 0.28); border-radius: 50%; content: ""; animation: cr-turn 40s linear infinite; }
 .cr-hero-ring::after { inset: 0; border-style: solid; border-color: rgba(255, 255, 255, 0.1); animation-duration: 70s; animation-direction: reverse; }

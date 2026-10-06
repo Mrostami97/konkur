@@ -1,0 +1,25 @@
+/* CourseArt: the publisher inside a drawing of the subject. */
+
+.ca { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.18)); }
+
+/* No drawing for the subject yet: the photo with the subject's mark. */
+.ca-badge { position: relative; display: grid; place-items: center; width: 6.25rem; aspect-ratio: 1; }
+.ca-badge-photo { width: 100%; height: 100%; border: 4px solid #ffd166; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 8px rgba(255, 209, 102, 0.25), 0 10px 22px rgba(0, 0, 0, 0.22); }
+.ca-badge-mark {
+  position: absolute;
+  inset-block-end: -0.25rem;
+  inset-inline-start: -0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  color: #0c1b2e;
+  background: #ffd166;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+.ca-badge-mark svg { width: 1.35rem; height: 1.35rem; stroke-width: 2; }
+/* Without a photo the mark stands alone, large. */
+.ca-badge:not(:has(.ca-badge-photo)) .ca-badge-mark { position: static; width: 4.5rem; height: 4.5rem; }
+.ca-badge:not(:has(.ca-badge-photo)) .ca-badge-mark svg { width: 2.4rem; height: 2.4rem; }

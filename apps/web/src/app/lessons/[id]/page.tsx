@@ -113,7 +113,7 @@ export default function LessonPage({ params: pendingParams }: { params: Promise<
         {forbidden ? (
           <section className="ls-locked">
             <h2>دسترسی فعال این دوره پیدا نشد</h2>
-            <p>برای خواندن این درس، دسترسی دورهٔ آن لازم است. درس‌های نمونهٔ آزاد هر دوره برای همه باز است.</p>
+            <p>برای خواندن این درس، دسترسی دورهٔ آن لازم است. درس‌های نمونهٔ رایگان هر دوره برای همه باز است.</p>
             <Link className="ds-btn ds-btn-primary" href={course?.slug ? `/courses/${course.slug}` : "/courses"}>دیدن دوره</Link>
           </section>
         ) : (

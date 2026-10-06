@@ -1,6 +1,25 @@
+import { OWNER_NAME } from "../../components/OwnerByline";
 import { SUBJECT_GLYPH, SUBJECT_TONE } from "../../components/SubjectIcon";
 import { subjects } from "../../content/editorial";
-import type { CatalogCourse } from "./catalog";
+import type { CatalogCourse, CourseInstructor } from "./catalog";
+
+/** A course's publisher when none is set on it: the site's owner. */
+export const OWNER_PUBLISHER: CourseInstructor & { href: string } = {
+  slug: "",
+  displayName: OWNER_NAME,
+  avatarUrl: "/brand/mohammad-rostami-avatar.webp",
+  href: "/about",
+};
+
+/**
+ * Who publishes a course, for its cover and its page: the published teacher
+ * profiles set on it, or the owner, who publishes every course that has none
+ * (owner, 2026-10-06; courses by other publishers get their own profile).
+ */
+export function coursePublishers(course: Pick<CatalogCourse, "instructors">): (CourseInstructor & { href: string })[] {
+  const set = (course.instructors ?? []).map((person) => ({ ...person, href: `/authors/${person.slug}` }));
+  return set.length > 0 ? set : [OWNER_PUBLISHER];
+}
 
 /**
  * The subject a course teaches, for its glyph, colour and label: the linked
