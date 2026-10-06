@@ -45,10 +45,23 @@ export const LAM_ALEF = {
 };
 
 const persian = (s) => s.replace(/ي/g, "ی").replace(/ك/g, "ک").replace(/\s+/g, " ").trim();
+
+/** The booklet prints half-spaces (ورودی‌های، نرم‌افزار); text extraction turns them into spaces. */
+const HALF_SPACES = [
+  [/ (های|ها)(?![؀-ۿ])/g, "‌$1"],
+  [/(?<![؀-ۿ])می (شود|باشد)/g, "می‌$1"],
+  [/نرم افزار/g, "نرم‌افزار"],
+  [/(داده|قرآن) کاوی/g, "$1‌کاوی"],
+  [/جرم یابی/g, "جرم‌یابی"],
+  [/(رایانه|رشته) ای/g, "$1‌ای"],
+  [/بین رشته/g, "بین‌رشته"],
+  [/بین (المللی|الملل)/g, "بین‌$1"],
+];
+const halfSpaces = (s) => HALF_SPACES.reduce((t, [from, to]) => t.replace(from, to), s);
 // The booklet mixes Arabic ي/ك with Persian ی/ک, so words are matched after normalising.
 const LAM_ALEF_FIXES = new Map(Object.entries(LAM_ALEF).map(([broken, word]) => [persian(broken), word]));
 const LAM_ALEF_WORD = new RegExp(`(?<![\\u0600-\\u06FF])(${[...LAM_ALEF_FIXES.keys()].join("|")})(?![\\u0600-\\u06FF])`, "g");
-const fix = (s) => persian(s).replace(LAM_ALEF_WORD, (w) => LAM_ALEF_FIXES.get(w));
+const fix = (s) => halfSpaces(persian(s).replace(LAM_ALEF_WORD, (w) => LAM_ALEF_FIXES.get(w)));
 
 // Column limits on the 595-pt page, by the right edge of a text run (the
 // table is right-aligned); the code column is matched by its five digits.
