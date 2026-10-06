@@ -64,7 +64,7 @@ const FLOW: { icon: GlyphName; title: string; text: string }[] = [
 /** What every paid course comes with, as the course page lists it. */
 const INCLUDED: { icon: GlyphName; title: string; text: string }[] = [
   { icon: "play", title: "درس‌به‌درس، با ویدیو", text: "از مفهوم پایه تا تست کنکور، به ترتیب فصل." },
-  { icon: "target", title: "بانک سؤال همان درس", text: "با تهیهٔ دوره باز می‌شود؛ بدون هزینهٔ اضافه." },
+  { icon: "spark", title: "نمونهٔ رایگان", text: "چند درس هر دوره پیش از خرید برای همه آزاد است." },
   { icon: "book", title: "جزوه به نام خودت", text: "جزوه‌های دوره در پنلت، نسخه‌ای با نام و شمارهٔ خودت." },
   { icon: "flag", title: "ادامه از همان‌جا", text: "پیشرفتت ذخیره می‌شود و از آخرین درس ادامه می‌دهی." },
 ];
@@ -106,7 +106,7 @@ export default async function CoursesPage() {
           <h1>دوره‌های کامل، از پایه تا تست کنکور</h1>
           <p className="cl-lede">
             دوره‌ها دو نوع‌اند: <b>درس‌نامه</b> که مفهوم را از پایه می‌سازد، و <b>حل تست</b> که همان مفهوم را روی سؤال‌های کنکور
-            محک می‌زند. با خرید هر دوره، بانک سؤال همان درس هم باز می‌شود.
+            محک می‌زند.
           </p>
           {catalog && catalog.length > 0 && (
             <p className="cl-count">

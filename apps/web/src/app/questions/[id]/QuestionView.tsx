@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
-import { toPersianDigits } from "../../../lib/format";
+import { formatRial, toPersianDigits } from "../../../lib/format";
 import { ContentBlocks } from "../../../components/ContentBlocks";
+import { BuyButton } from "../../../components/BuyButton";
 import { DataState } from "../../../components/ds";
 import { fieldLabel } from "../../account/profile-options";
 
@@ -153,12 +154,12 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                 </article>
               ) : (
                 <section className="qv-locked">
-                  <h2>این سؤال با دسترسی بانک همین درس باز می‌شود</h2>
+                  <h2>این سؤال با بانک سؤال همین درس باز می‌شود</h2>
                   <p>
-                    متن، گزینه‌ها و راه‌حل برای حساب‌هایی نمایش داده می‌شود که بانک سؤال {title} را دارند. خرید دورهٔ هر
-                    درس، بانک سؤال همان درس را هم باز می‌کند؛ سؤال‌های نمونه برای همه آزادند.
+                    متن، گزینه‌ها و راه‌حل برای حساب‌هایی نمایش داده می‌شود که بانک سؤال {title} را تهیه کرده‌اند. بانک سؤال
+                    جدا از دوره‌ها فروخته می‌شود؛ سؤال‌های نمونه برای همه آزادند.
                   </p>
-                  <Link className="ds-btn ds-btn-primary" href="/courses">دوره‌ها و دسترسی بانک سؤال</Link>
+                  <BankOffer subjectCode={question.subjectCode} />
                 </section>
               )}
 
@@ -180,5 +181,55 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
         </DataState>
       </div>
     </main>
+  );
+}
+
+interface BankProduct {
+  id: string;
+  kind: string;
+  prices?: { amountRial: number }[];
+  questionBankGrants?: { subjectCode: string }[];
+}
+
+/**
+ * The bank product of one subject, sold on its own (owner, 2026-10-06): its
+ * price and a buy button when it is on sale, otherwise a note and the free
+ * sample questions of the subject.
+ */
+function BankOffer({ subjectCode }: { subjectCode: string }) {
+  const [product, setProduct] = useState<BankProduct | null | undefined>(undefined);
+
+  useEffect(() => {
+    apiFetch<BankProduct[]>("/products")
+      .then((products) =>
+        setProduct(
+          products.find(
+            (item) => item.kind === "QUESTION_BANK" && item.questionBankGrants?.some((grant) => grant.subjectCode === subjectCode) && item.prices?.length,
+          ) ?? null,
+        ),
+      )
+      .catch(() => setProduct(null));
+  }, [subjectCode]);
+
+  const samples = (
+    <Link className="ds-btn ds-btn-secondary" href={`/questions?subject=${encodeURIComponent(subjectCode)}`}>
+      سؤال‌های نمونهٔ این درس
+    </Link>
+  );
+  if (product === undefined) return null;
+  if (!product) {
+    return (
+      <>
+        <p className="qv-locked-soon">فروش بانک سؤال این درس به‌زودی باز می‌شود.</p>
+        {samples}
+      </>
+    );
+  }
+  return (
+    <>
+      <p className="qv-locked-price tnum">{formatRial(product.prices![0].amountRial)}</p>
+      <BuyButton productId={product.id} label="تهیهٔ بانک سؤال این درس" />
+      {samples}
+    </>
   );
 }

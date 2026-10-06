@@ -385,30 +385,36 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       .expect(200);
     expect(entitledCrossSubject.body.correctOption).toBeUndefined();
 
-    // --- Course-purchase-derived: a COURSE product carrying a bank grant
-    // for courseSubject: buying the course includes that subject's bank at
-    // no extra charge -----------------------------------------------------
+    // --- The bank is sold separately from courses (owner, 2026-10-06): a
+    // COURSE product cannot carry it, buying the course alone does not open
+    // it, and a course sold with its bank is a BUNDLE --------------------
     const courseRes = await request(app.getHttpServer())
       .post("/admin/courses")
       .set("Cookie", adminCookie)
-      .send({ slug: `bank-course-${suffix}`, title: "Course with bank", description: "d" })
+      .send({ slug: `bank-course-${suffix}`, title: "Course", description: "d" })
       .expect(201);
     await request(app.getHttpServer())
       .post(`/admin/courses/${courseRes.body.id}/publish`)
       .set("Cookie", adminCookie)
       .expect(201);
 
-    const courseProductRes = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post("/admin/products")
       .set("Cookie", adminCookie)
       .send({
-        slug: `bank-course-product-${suffix}`,
+        slug: `bank-course-product-refused-${suffix}`,
         title: "Course + bank",
         description: "d",
         kind: "COURSE",
         courseId: courseRes.body.id,
         questionBankSubjectCodes: [courseSubject],
       })
+      .expect(400);
+
+    const courseProductRes = await request(app.getHttpServer())
+      .post("/admin/products")
+      .set("Cookie", adminCookie)
+      .send({ slug: `bank-course-product-${suffix}`, title: "Course", description: "d", kind: "COURSE", courseId: courseRes.body.id })
       .expect(201);
     await request(app.getHttpServer())
       .post(`/admin/products/${courseProductRes.body.id}/prices`)
@@ -422,19 +428,44 @@ describe("Taxonomy + Question Bank (e2e)", () => {
       adminCookie,
       productId: courseProductRes.body.id,
     });
-
-    const courseStudentAnswer = await request(app.getHttpServer())
+    const courseOnlyAnswer = await request(app.getHttpServer())
       .get(`/questions/${lockedViaCourse.id}`)
       .set("Cookie", courseStudent.cookie)
       .expect(200);
-    expect(courseStudentAnswer.body.correctOption).toBe(2);
+    expect(courseOnlyAnswer.body.correctOption).toBeUndefined();
 
-    // The course purchase does not grant the unrelated bank-only subject.
-    const courseStudentOtherSubject = await request(app.getHttpServer())
-      .get(`/questions/${locked.id}`)
-      .set("Cookie", courseStudent.cookie)
+    const bundleRes = await request(app.getHttpServer())
+      .post("/admin/products")
+      .set("Cookie", adminCookie)
+      .send({
+        slug: `bank-course-bundle-${suffix}`,
+        title: "Course and its bank",
+        description: "d",
+        kind: "BUNDLE",
+        courseIds: [courseRes.body.id],
+        questionBankSubjectCodes: [courseSubject],
+      })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post(`/admin/products/${bundleRes.body.id}/prices`)
+      .set("Cookie", adminCookie)
+      .send({ amountRial: 150000 })
+      .expect(201);
+
+    const bundleStudent = await login();
+    await purchaseProduct(app, { buyerCookie: bundleStudent.cookie, adminCookie, productId: bundleRes.body.id });
+    const bundleAnswer = await request(app.getHttpServer())
+      .get(`/questions/${lockedViaCourse.id}`)
+      .set("Cookie", bundleStudent.cookie)
       .expect(200);
-    expect(courseStudentOtherSubject.body.correctOption).toBeUndefined();
+    expect(bundleAnswer.body.correctOption).toBe(2);
+
+    // The bundle does not grant the unrelated bank-only subject.
+    const bundleStudentOtherSubject = await request(app.getHttpServer())
+      .get(`/questions/${locked.id}`)
+      .set("Cookie", bundleStudent.cookie)
+      .expect(200);
+    expect(bundleStudentOtherSubject.body.correctOption).toBeUndefined();
   });
 
   it("denies anonymous media access to an artifact not (yet) part of any public content", async () => {

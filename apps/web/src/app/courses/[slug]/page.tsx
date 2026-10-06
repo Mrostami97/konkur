@@ -265,7 +265,6 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
                 )}
                 <ul className="cr-includes">
                   <li>همهٔ درس‌های دوره، به ترتیب فصل</li>
-                  <li>بانک سؤال همین درس، بدون هزینهٔ اضافه</li>
                   {materials.length > 0 && <li>{toPersianDigits(materials.length)} جزوهٔ دوره، برای مطالعه در پنل</li>}
                   <li>ثبت پیشرفت و ادامه از آخرین درس</li>
                 </ul>

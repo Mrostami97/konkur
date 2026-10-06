@@ -190,7 +190,7 @@ Current Product Completion must already respect these business rules:
 - public Subject/Topic/Guide pages show only a configurable sample of relevant questions;
 - full bank access is entitlement-controlled server-side;
 - Question Bank remains independently sellable;
-- purchasing a Course includes the related Question Bank access at no additional charge;
+- the Question Bank is sold separately: purchasing a Course does not include it, and a course sold with its bank is a BUNDLE (owner, 2026-10-06; supersedes the earlier course-includes-bank rule);
 - weak/base-deficient and strong students follow different planning paths;
 - self-reported level is not mastery;
 - mastery is assessment-evidence based;

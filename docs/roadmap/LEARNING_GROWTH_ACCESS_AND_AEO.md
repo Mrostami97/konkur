@@ -76,9 +76,11 @@ This preserves the separate value of the bank while increasing Course value.
 
 ---
 
-# 3. Course purchase → related bank access included
+# 3. Course purchase → related bank access included (superseded)
 
-Owner decision:
+> **Superseded by the owner on 2026-10-06:** the question bank is sold separately. Buying a course does **not** include its bank; a COURSE product grants its course only (the API refuses bank grants on it), and a course sold together with its bank is a BUNDLE. The rest of this section is kept as the record of the earlier decision.
+
+Earlier owner decision:
 
 **When a student purchases a course, the question bank associated with that course is included at no additional charge for the applicable access period.**
 
@@ -365,7 +367,7 @@ Public answer page
 → next recommended lesson/topic
 ```
 
-Course buyers already have full related-bank access, so CTA changes by state:
+The bank is sold separately from courses (owner, 2026-10-06), so CTA changes by state:
 
 ### Visitor
 “نمونه تست‌ها را ببین / بانک کامل را فعال کن / دوره را ببین”
@@ -534,7 +536,7 @@ Because these choices affect UI/admin/commerce, Claude should account for them d
 2. build a configurable public sample policy;
 3. ensure locked question data is never sent to unauthorized clients;
 4. add/administer Question Bank access grants;
-5. allow a Course product to include related Bank access;
+5. sell a course with its bank only as a BUNDLE (a COURSE product never carries Bank access; owner, 2026-10-06);
 6. show bundle/included benefits clearly in product/admin UI;
 7. make Account show active bank entitlements;
 8. adapt CTA based on entitlement state;
@@ -552,7 +554,7 @@ This direction is complete when:
 - public topic pages expose only configured samples;
 - unauthorized users cannot obtain locked question data from APIs/page payloads;
 - bank access can be sold independently;
-- relevant course purchase automatically includes related bank access;
+- a course purchase does not include bank access; course + bank is a BUNDLE (owner, 2026-10-06);
 - weak and strong students receive different plans;
 - self-report does not masquerade as mastery;
 - study time ramps gradually based on actual behavior;

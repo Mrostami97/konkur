@@ -57,14 +57,12 @@ export class CommerceService {
     const courseIds = [...new Set([...(dto.courseIds ?? []), ...(dto.courseId ? [dto.courseId] : [])])];
     const resourceIds = [...new Set(dto.resourceIds ?? [])];
     // Bank access is SUBJECT-scoped (owner decision): a grant unlocks the
-    // bank for one subject. A COURSE product may carry these alongside its
-    // course grant -- that is how "purchasing the course includes the bank"
-    // is expressed (explicit product configuration, not derived from lesson
-    // topics). A QUESTION_BANK product's own scope is exactly one subject,
-    // mirroring "COURSE grants exactly one course"; multi-subject bundling
-    // goes through BUNDLE like everything else.
+    // bank for one subject. The bank is sold separately from courses (owner,
+    // 2026-10-06): a COURSE product grants its course and nothing else, a
+    // QUESTION_BANK product exactly one subject, and a course sold together
+    // with its bank is a BUNDLE like any other combination.
     const bankSubjectCodes = [...new Set(dto.questionBankSubjectCodes ?? [])];
-    if (dto.kind === "COURSE" && (courseIds.length !== 1 || resourceIds.length > 0)) {
+    if (dto.kind === "COURSE" && (courseIds.length !== 1 || resourceIds.length > 0 || bankSubjectCodes.length > 0)) {
       throw new BadRequestException("COURSE products must grant exactly one course");
     }
     if (

@@ -48,7 +48,7 @@ interface Order {
 type ProductKind = "COURSE" | "RESOURCE" | "BUNDLE" | "QUESTION_BANK";
 
 const KINDS: { value: ProductKind; label: string; note: string }[] = [
-  { value: "COURSE", label: "دوره", note: "یک دوره را باز می‌کند؛ می‌توانید بانک سؤال درس‌های مرتبط را هم رایگان همراهش کنید." },
+  { value: "COURSE", label: "دوره", note: "فقط یک دوره را باز می‌کند. بانک سؤال جدا فروخته می‌شود؛ برای فروش دوره و بانک با هم، «بسته» بسازید." },
   { value: "QUESTION_BANK", label: "بانک سؤال", note: "فقط بانک سؤال یک درس را باز می‌کند و مستقل از دوره فروخته می‌شود." },
   { value: "RESOURCE", label: "منبع", note: "دسترسی به یک منبع آموزشی، مثلاً یک جزوهٔ PDF. منبع باید «پولی؛ با دسترسی فعال» و منتشرشده باشد." },
   { value: "BUNDLE", label: "بسته", note: "ترکیبی از چند مورد بالا." },
@@ -179,7 +179,7 @@ export default function CommerceAdminPage() {
           kind,
           ...(kind === "COURSE" && courseId ? { courseId } : {}),
           ...(kind === "RESOURCE" && resourceId ? { resourceIds: [resourceId] } : {}),
-          ...(subjectCodes.length ? { questionBankSubjectCodes: subjectCodes } : {}),
+          ...((kind === "QUESTION_BANK" || kind === "BUNDLE") && subjectCodes.length ? { questionBankSubjectCodes: subjectCodes } : {}),
         },
       });
       setSlug("");
@@ -299,12 +299,14 @@ export default function CommerceAdminPage() {
               </Field>
             )}
 
+            {/* The bank is sold on its own or inside a bundle, never with a course product. */}
+            {(kind === "QUESTION_BANK" || kind === "BUNDLE") && (
             <Field
-              label={kind === "QUESTION_BANK" ? "کد درسِ بانک" : "بانک سؤال همراه (اختیاری)"}
+              label={kind === "QUESTION_BANK" ? "کد درسِ بانک" : "بانک سؤال در این بسته (اختیاری)"}
               hint={
                 kind === "QUESTION_BANK"
                   ? "دسترسی بانک درس‌محور است؛ برای محصول بانک دقیقاً یک کد درس بدهید."
-                  : "کد درس‌هایی که با خرید این محصول بانک سؤالشان هم رایگان باز می‌شود. چند کد را با کاما جدا کنید."
+                  : "کد درس‌هایی که بانک سؤالشان جزو این بسته است. چند کد را با کاما جدا کنید."
               }
               required={kind === "QUESTION_BANK"}
             >
@@ -318,6 +320,7 @@ export default function CommerceAdminPage() {
                 />
               )}
             </Field>
+            )}
 
             {createError && <Alert tone="danger">{createError}</Alert>}
             {createNotice && <Alert tone="success">{createNotice}</Alert>}
