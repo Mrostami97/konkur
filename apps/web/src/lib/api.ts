@@ -29,10 +29,17 @@ export class ApiError extends Error {
 
 function errorFrom(status: number, statusText: string, body: unknown) {
   const record = body && typeof body === "object" ? (body as Record<string, unknown>) : undefined;
-  const message = record?.message ?? statusText;
+  const raw = record?.message ?? statusText;
+  const text = Array.isArray(raw) ? raw.join(", ") : String(raw);
+  // The API refuses writes from any page not on the site's own address
+  // (browser-origin.middleware.ts); say so in words a buyer can act on.
+  const message =
+    status === 403 && text === "untrusted request origin"
+      ? "این درخواست از نشانی دیگری آمده است. سایت را از kunkurcomputer.ir باز کن و دوباره امتحان کن."
+      : text;
   return new ApiError(
     status,
-    Array.isArray(message) ? message.join(", ") : String(message),
+    message,
     typeof record?.code === "string" ? record.code : undefined,
     record,
   );
