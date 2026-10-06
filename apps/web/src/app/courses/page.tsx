@@ -65,7 +65,7 @@ const FLOW: { icon: GlyphName; title: string; text: string }[] = [
 const INCLUDED: { icon: GlyphName; title: string; text: string }[] = [
   { icon: "play", title: "درس‌به‌درس، با ویدیو", text: "از مفهوم پایه تا تست کنکور، به ترتیب فصل." },
   { icon: "spark", title: "نمونهٔ رایگان", text: "چند درس هر دوره پیش از خرید برای همه آزاد است." },
-  { icon: "book", title: "جزوه به نام خودت", text: "جزوه‌های دوره در پنلت، نسخه‌ای با نام و شمارهٔ خودت." },
+  { icon: "book", title: "جزوه‌های دوره", text: "در پنلت باز می‌شوند؛ برای خواندن و دانلود." },
   { icon: "flag", title: "ادامه از همان‌جا", text: "پیشرفتت ذخیره می‌شود و از آخرین درس ادامه می‌دهی." },
 ];
 

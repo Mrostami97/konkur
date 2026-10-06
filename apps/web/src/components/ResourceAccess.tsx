@@ -105,7 +105,7 @@ export function ResourceAccess({ initial }: { initial: ResourceAccessState }) {
           <a className="button button-primary" href="#resource-content">شروع مطالعه ↓</a>
         ) : resource.canAccess && protectedFile ? (
           <>
-            <p>این جزوه در پنلت باز می‌شود؛ نسخه‌ای به نام خودت، با نام و شماره‌ات روی هر صفحه.</p>
+            <p>این جزوه در پنلت باز می‌شود.</p>
             <Link className="button button-primary" href={`/account/library/${resource.slug}`}>مطالعهٔ جزوه ←</Link>
           </>
         ) : resource.canAccess && resource.hostingMode !== "METADATA_ONLY" ? (

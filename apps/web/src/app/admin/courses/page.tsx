@@ -495,7 +495,7 @@ function CourseMaterials({ course, onChanged }: { course: Course; onChanged: () 
       <summary>جزوه‌های دوره — {toPersianDigits(attached.length)} جزوه</summary>
       <div className="ds-details-body ds-stack">
         <p className="ds-help">
-          خریدار دوره این جزوه‌ها را بدون خرید جداگانه در پنلش می‌خواند؛ هر نسخه با نام و شمارهٔ خودش. جزوه را اول در «منابع آموزشی» با فایل PDF و
+          خریدار دوره این جزوه‌ها را بدون خرید جداگانه در پنلش می‌خواند، بدون نام روی صفحه‌ها؛ فقط کسی که خود جزوه را جدا خریده نسخهٔ به‌نام می‌گیرد. جزوه را اول در «منابع آموزشی» با فایل PDF و
           سطح دسترسی «پولی؛ با دسترسی فعال» یا «رایگان؛ با حساب» منتشر کنید تا این‌جا قابل انتخاب باشد.
         </p>
         {error && <Alert tone="danger">{error}</Alert>}

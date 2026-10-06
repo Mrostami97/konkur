@@ -222,7 +222,7 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
           {materials.length > 0 && (
             <section className="cr-handouts" aria-labelledby="cr-handouts-title">
               <h2 id="cr-handouts-title">جزوه‌های دوره</h2>
-              <p className="cr-handouts-note">با تهیهٔ دوره، این جزوه‌ها هم در پنلت باز می‌شوند؛ نسخه‌ای به نام خودت، بدون هزینهٔ اضافه.</p>
+              <p className="cr-handouts-note">با تهیهٔ دوره، این جزوه‌ها هم در پنلت باز می‌شوند، بدون هزینهٔ اضافه.</p>
               <ul>
                 {materials.map((material) => (
                   <li key={material.slug}>

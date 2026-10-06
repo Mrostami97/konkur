@@ -337,18 +337,39 @@ describe("Sold handouts: upload, watermarked personal copies (e2e)", () => {
     const outsider = await login(randomPhone());
     await request(app.getHttpServer()).get(contentPath).set("Cookie", outsider).expect(403);
 
+    // A handout read through a course is the file as it is, not a stamped
+    // copy (owner, 2026-10-06): the course is the product, not the handout.
+    const courseBuyers: string[] = [];
     for (const productId of [courseProduct.body.id, bundle.body.id]) {
       const buyer = await login(randomPhone());
       await request(app.getHttpServer()).get(contentPath).set("Cookie", buyer).expect(403);
       await purchaseProduct(app, { buyerCookie: buyer, adminCookie, productId });
       const copy = await request(app.getHttpServer()).get(contentPath).set("Cookie", buyer).buffer(true).parse(binary).expect(200);
-      expect(copy.headers["content-type"]).toContain(SEALED_MIME);
-      expect((await PDFDocument.load(unseal(copy.body as Buffer))).getPageCount()).toBe(2);
+      expect(copy.headers["content-type"]).toContain("application/pdf");
+      expect(copy.headers["content-type"]).not.toContain(SEALED_MIME);
+      expect((await PDFDocument.load(copy.body as Buffer)).getPageCount()).toBe(2);
+      // The original has a version, so the reader's cache can keep it.
+      const version = copy.headers["x-content-version"];
+      expect(version).toEqual(expect.any(String));
+      await request(app.getHttpServer()).get(contentPath).set("Cookie", buyer).set("X-Have-Version", version).expect(204);
       const library = await request(app.getHttpServer()).get("/me/library").set("Cookie", buyer).expect(200);
       expect(library.body.resources).toEqual([
         expect.objectContaining({ slug: handout.slug, course: { slug: course.body.slug, title: "Test-solving course" } }),
       ]);
+      courseBuyers.push(buyer);
     }
+
+    // Buying the handout itself as well brings back the stamped copy.
+    const handoutProduct = await request(app.getHttpServer())
+      .post("/admin/products")
+      .set("Cookie", adminCookie)
+      .send({ slug: `handout-own-product-${suffix}`, title: "Handout", description: "Handout", kind: "RESOURCE", resourceIds: [handout.id] })
+      .expect(201);
+    await request(app.getHttpServer()).post(`/admin/products/${handoutProduct.body.id}/prices`).set("Cookie", adminCookie).send({ amountRial: 2_000_000 }).expect(201);
+    await purchaseProduct(app, { buyerCookie: courseBuyers[0], adminCookie, productId: handoutProduct.body.id });
+    const stamped = await request(app.getHttpServer()).get(contentPath).set("Cookie", courseBuyers[0]).buffer(true).parse(binary).expect(200);
+    expect(stamped.headers["content-type"]).toContain(SEALED_MIME);
+    expect((await PDFDocument.load(unseal(stamped.body as Buffer))).getPageCount()).toBe(2);
 
     // Taking the handout off the course takes it away from course buyers.
     await request(app.getHttpServer()).put(`/admin/courses/${course.body.id}/materials`).set("Cookie", adminCookie).send({ resourceIds: [] }).expect(200);

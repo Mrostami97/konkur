@@ -611,8 +611,17 @@ export class EditorialService {
       }
       // Anything that is not free to everyone is a sold or members-only
       // document: each reader gets their own copy, stamped with their name
-      // and number on every page, never the original file.
-      if (resource.sourceArtifact.mimeType === "application/pdf" && resource.accessMode !== AccessMode.PUBLIC && userId) {
+      // and number on every page, never the original file -- except a
+      // handout read through a course the reader holds, which is served as
+      // it is unless they also bought the handout itself (owner, 2026-10-06:
+      // the handout of a video course is not the product; a handout sold on
+      // its own is).
+      if (
+        resource.sourceArtifact.mimeType === "application/pdf" &&
+        resource.accessMode !== AccessMode.PUBLIC &&
+        userId &&
+        (await this.stampsFor(userId, resource.id))
+      ) {
         const copy = await this.personalCopy(resource.id, resource.sourceArtifact, userId, haveVersion);
         if (!copy.stream) return { type: "unchanged", version: copy.version };
         return {
@@ -624,8 +633,13 @@ export class EditorialService {
           sealed: true,
         };
       }
+      // The original file has a version too, so the reader's browser cache
+      // can keep a large handout instead of fetching it on every open.
+      const version = createHash("sha256").update(`original:${resource.sourceArtifact.checksum}`).digest("hex").slice(0, 24);
+      if (haveVersion === version) return { type: "unchanged", version };
       return {
         type: "stream",
+        version,
         stream: await this.storage.getObjectStream(resource.sourceArtifact.storageKey),
         mimeType: resource.sourceArtifact.mimeType,
         filename: resource.sourceArtifact.filename,
@@ -644,6 +658,12 @@ export class EditorialService {
       return { type: "json", value: { externalUrl: resource.externalUrl } };
     }
     return { type: "json", value: { contentBlocks: resource.contentBlocks } };
+  }
+
+  /** Whether this reader's copy of a non-public PDF is stamped with their name. */
+  private async stampsFor(userId: string, resourceId: string) {
+    if (await this.access.hasDirectResourceGrant(userId, resourceId)) return true;
+    return !(await this.access.hasResourceViaCourse(userId, resourceId));
   }
 
   /**

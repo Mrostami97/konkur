@@ -88,6 +88,23 @@ export class AccessService {
   }
 
   /**
+   * Whether the user bought this resource itself -- a product that grants it
+   * directly, sold on its own or inside a bundle -- as opposed to reading it
+   * as a handout of a course they hold. Only a resource bought as itself is
+   * stamped with the reader's name (owner, 2026-10-06): a handout that comes
+   * with a video course is served as it is.
+   */
+  async hasDirectResourceGrant(userId: string, resourceId: string, tx?: AccessTx): Promise<boolean> {
+    return this.hasActiveGrant(userId, { resourceGrants: { some: { resourceId } } }, tx);
+  }
+
+  /** Whether the user reads this resource as a handout of a course they hold. */
+  async hasResourceViaCourse(userId: string, resourceId: string, tx?: AccessTx): Promise<boolean> {
+    const withHandout = { materials: { some: { resourceId } } };
+    return this.hasActiveGrant(userId, { OR: [{ course: withHandout }, { courseGrants: { some: { course: withHandout } } }] }, tx);
+  }
+
+  /**
    * Question-bank access is SUBJECT-scoped (owner decision): a grant unlocks
    * the bank for one subject, not the whole bank and not per-topic. Reached
    * either through a standalone QUESTION_BANK product or through a Course
