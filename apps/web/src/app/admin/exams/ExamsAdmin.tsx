@@ -330,6 +330,10 @@ interface ExamYear {
  * questions in booklet order and the konkur's sections. Its report card
  * estimates the rank the same percentages earned that year.
  */
+/** The master's exams the bank holds, by code. */
+const EXAM_NAMES: Record<string, string> = { "1277": "مهندسی کامپیوتر", "1276": "فناوری اطلاعات" };
+const examName = (code: string) => EXAM_NAMES[code] ?? `کد ${toPersianDigits(Number(code))}`;
+
 function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {
   const [years, setYears] = useState<ExamYear[] | null>(null);
   const [selected, setSelected] = useState("");
@@ -337,6 +341,8 @@ function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [allBusy, setAllBusy] = useState(false);
+  const [confirmAll, setConfirmAll] = useState(false);
 
   useEffect(() => {
     apiFetch<ExamYear[]>("/admin/questions/review-summary")
@@ -369,6 +375,32 @@ function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {
     }
   }
 
+  /** Every year with reviewed questions at once; none is published by this. */
+  async function buildAll() {
+    setAllBusy(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const results = await apiFetch<{ examCode: string; examYear: number; status: "built" | "rebuilt" | "frozen"; questions: number }[]>(
+        "/admin/exams/simulators/all",
+        { method: "POST" },
+      );
+      const made = results.filter((row) => row.status !== "frozen");
+      const frozen = results.length - made.length;
+      setNotice(
+        `${toPersianDigits(made.length)} شبیه‌ساز ساخته یا به‌روز شد` +
+          (frozen ? `؛ ${toPersianDigits(frozen)} شبیه‌ساز شرکت‌کننده داشت و دست نخورد` : "") +
+          ". هیچ‌کدام منتشر نشده‌اند؛ زمان هر کدام یک‌ونیم دقیقه برای هر سؤال است و از فهرست پایین می‌توانی زمان را عوض کنی و منتشر کنی.",
+      );
+      onBuilt();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ساخت شبیه‌سازها ممکن نشد.");
+    } finally {
+      setAllBusy(false);
+      setConfirmAll(false);
+    }
+  }
+
   // Only reviewers and admins can read the review summary; others skip this card.
   if (years === null) return null;
   return (
@@ -398,7 +430,7 @@ function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {
                   <option value="">انتخاب سال</option>
                   {years.map((row) => (
                     <option key={`${row.examCode}-${row.examYear}`} value={`${row.examCode}-${row.examYear}`}>
-                      {toPersianDigits(row.examYear)} (کد {toPersianDigits(Number(row.examCode))}) · {toPersianDigits(row.GOLD + row.SILVER)} سؤال آماده
+                      {examName(row.examCode)} {toPersianDigits(row.examYear)} · {toPersianDigits(row.GOLD + row.SILVER)} سؤال آماده
                       {row.DRAFT > 0 ? ` · ${toPersianDigits(row.DRAFT)} در انتظار بازبینی` : ""}
                     </option>
                   ))}
@@ -416,13 +448,25 @@ function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {
           )}
           {error && <Alert tone="danger">{error}</Alert>}
           {notice && <Alert tone="success">{notice}</Alert>}
-          <div>
+          <div className="ds-row">
             <Button type="submit" variant="primary" loading={busy} disabled={!year || !minutes}>
               ساخت شبیه‌ساز
+            </Button>
+            <Button type="button" loading={allBusy} disabled={busy} onClick={() => setConfirmAll(true)}>
+              ساخت شبیه‌ساز همهٔ سال‌ها ({toPersianDigits(years.length)})
             </Button>
           </div>
         </form>
       )}
+      <ConfirmDialog
+        open={confirmAll}
+        title="ساخت شبیه‌ساز همهٔ سال‌ها؟"
+        description={`برای هر ${toPersianDigits(years.length)} کنکوری که سؤال بازبینی‌شده دارد شبیه‌ساز ساخته یا به‌روز می‌شود؛ شبیه‌سازی که شرکت‌کننده داشته دست نمی‌خورد. هیچ‌کدام منتشر نمی‌شود: شبیه‌ساز منتشرشده سؤال‌ها و کلیدش را به شرکت‌کننده نشان می‌دهد، پس انتشار هر کدام تصمیم جداست.`}
+        confirmLabel="بساز"
+        busy={allBusy}
+        onConfirm={() => void buildAll()}
+        onCancel={() => setConfirmAll(false)}
+      />
     </Card>
   );
 }

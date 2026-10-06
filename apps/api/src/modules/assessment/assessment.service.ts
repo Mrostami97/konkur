@@ -6,6 +6,12 @@ import { ProfileService } from "../identity/profile/profile.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { fa } from "../../common/persian-digits";
+
+/** The master's exams the bank holds, by code, as a simulator's title names them. */
+const EXAM_NAMES: Record<string, string> = {
+  "1277": "مهندسی کامپیوتر",
+  "1276": "فناوری اطلاعات (IT)",
+};
 import { isAcceptedAnswer } from "../ingestion/question-payload";
 import {
   Breakdown,
@@ -201,7 +207,7 @@ export class AssessmentService {
       throw new ConflictException("این شبیه‌ساز شرکت‌کننده داشته و سؤال‌هایش دیگر عوض نمی‌شود.");
     }
 
-    const title = `شبیه‌ساز کنکور ارشد مهندسی کامپیوتر ${fa(examYear)}`;
+    const title = `شبیه‌ساز کنکور ارشد ${EXAM_NAMES[examCode] ?? `کد ${fa(Number(examCode))}`} ${fa(examYear)}`;
     const description =
       inBooklet > questions.length
         ? `${fa(questions.length)} سؤال کنکور ${fa(examYear)} (کد ${fa(Number(examCode))}) به ترتیب دفترچه، با زمان‌بندی و نمرهٔ منفی واقعی. سؤال‌های درس‌هایی که از کنکور ۱۴۰۶ حذف شده‌اند و سؤال‌های بازبینی‌نشده در آن نیستند.`
@@ -266,6 +272,38 @@ export class AssessmentService {
       metadata: { examCode, examYear, questions: questions.length, inBooklet },
     });
     return { ...exam, questions: questions.length, inBooklet };
+  }
+
+  /**
+   * Builds the simulator of every exam year that has reviewed questions, in
+   * one go. A simulator somebody has sat stays as it is; one already built
+   * keeps the duration an operator set; a new one gets a minute and a half
+   * per question. None is published here: publishing stays a decision per
+   * exam, because a published simulator shows its questions and keys.
+   */
+  async createAllSimulators(actorId: string) {
+    const years = await this.prisma.question.groupBy({
+      by: ["examCode", "examYear"],
+      where: { examCode: { not: null }, retiredAt: null, qualityTier: { not: QuestionQuality.DRAFT } },
+      _count: { _all: true },
+      orderBy: [{ examCode: "asc" }, { examYear: "asc" }],
+    });
+    const results: { examCode: string; examYear: number; status: "built" | "rebuilt" | "frozen"; questions: number }[] = [];
+    for (const row of years) {
+      const examCode = row.examCode!;
+      const existing = await this.prisma.exam.findUnique({
+        where: { slug: `simulator-${examCode}-${row.examYear}` },
+        select: { durationMinutes: true, _count: { select: { attempts: true } } },
+      });
+      if (existing && existing._count.attempts > 0) {
+        results.push({ examCode, examYear: row.examYear, status: "frozen", questions: row._count._all });
+        continue;
+      }
+      const duration = existing?.durationMinutes ?? Math.max(10, Math.round((row._count._all * 1.5) / 5) * 5);
+      const built = await this.createSimulator(actorId, examCode, row.examYear, duration);
+      results.push({ examCode, examYear: row.examYear, status: existing ? "rebuilt" : "built", questions: built.questions });
+    }
+    return results;
   }
 
   listAllExams() {

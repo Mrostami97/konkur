@@ -193,4 +193,48 @@ describe("Exam simulator and report card (e2e)", () => {
   it("will not rebuild a simulator someone has sat", async () => {
     await http().post("/admin/exams/simulators").set("Cookie", adminCookie).send({ examCode, examYear: year, durationMinutes: 30 }).expect(409);
   });
+
+  it("builds every year's simulator at once, unpublished, naming the IT exam and leaving a sat one alone", async () => {
+    // Two reviewed IT (1276) questions of the same year.
+    const items = [1, 2].map((number) => ({
+      schema_version: "question.v2",
+      external_id: `sim-it-${year}-${number}-${Date.now()}`,
+      exam: { degree: "master", major: "information-technology", year, code: "1276" },
+      slot: { number },
+      subject_code: "english",
+      topic_codes: [],
+      stem_blocks: [{ type: "text", text: `IT question ${number}` }],
+      options: [1, 2, 3, 4].map((n) => ({ number: n, blocks: [{ type: "text", text: `option ${n}` }] })),
+      correct_option: 1,
+      solution_blocks: [],
+      review: { text_verified: true, key_verified: true },
+      provenance: { producer_type: "ocr", source_artifact: "simulator-e2e" },
+    }));
+    const zip = new AdmZip();
+    zip.addFile("payload.json", Buffer.from(JSON.stringify(items)));
+    const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "sim-it.zip").expect(201);
+    const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+    await http()
+      .post("/admin/import/items/review")
+      .set("Cookie", adminCookie)
+      .send({ itemIds: staged.body.map((row: { id: string }) => row.id), decision: "APPROVE" })
+      .expect(201);
+    await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+
+    await http().post("/admin/exams/simulators/all").set("Cookie", await student()).expect(403);
+    const results = await http().post("/admin/exams/simulators/all").set("Cookie", adminCookie).expect(201);
+    const mine = results.body.filter((row: { examYear: number }) => row.examYear === year);
+    expect(mine).toEqual(
+      expect.arrayContaining([
+        { examCode: "1276", examYear: year, status: "built", questions: 2 },
+        { examCode: "1277", examYear: year, status: "frozen", questions: 5 },
+      ]),
+    );
+
+    const exams = await http().get("/admin/exams").set("Cookie", adminCookie).expect(200);
+    const itSimulator = exams.body.find((exam: { slug: string }) => exam.slug === `simulator-1276-${year}`);
+    expect(itSimulator.title).toContain("فناوری اطلاعات");
+    expect(itSimulator.isPublished).toBe(false);
+    expect(itSimulator.durationMinutes).toBe(10);
+  });
 });

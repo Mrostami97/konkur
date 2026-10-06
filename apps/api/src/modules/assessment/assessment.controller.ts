@@ -93,6 +93,12 @@ export class AssessmentAdminController {
     return this.assessment.createExam(req.user!.id, dto);
   }
 
+  /** Build the simulator of every exam year with reviewed questions; none is published. */
+  @Post("simulators/all")
+  createAllSimulators(@Req() req: RequestWithUser) {
+    return this.assessment.createAllSimulators(req.user!.id);
+  }
+
   /** Build (or rebuild, while nobody has sat it) the simulator of one real exam year. */
   @Post("simulators")
   createSimulator(@Req() req: RequestWithUser, @Body() dto: CreateSimulatorDto) {
