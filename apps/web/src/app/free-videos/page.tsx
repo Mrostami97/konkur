@@ -15,6 +15,8 @@ interface Course {
   slug: string;
   title: string;
   subject?: { slug: string } | null;
+  previewCount?: number;
+  hasVideo?: boolean;
 }
 
 type LinkedVideo = FreeVideo & { externalUrl: string };
@@ -68,6 +70,9 @@ export default async function FreeVideosPage() {
       course: courseFor(catalogue, subject.slug, [subject.shortTitle, subject.title]),
     }))
     .filter((group) => group.videos.length > 0);
+  // Our own free lessons: the free samples of each published course.
+  const samples = catalogue.filter((course) => (course.previewCount ?? 0) > 0);
+  const sampleCount = samples.reduce((sum, course) => sum + (course.previewCount ?? 0), 0);
   const covered = new Set(list.flatMap((video) => video.subjectCodes));
   const uncovered = subjects.filter((subject) => !covered.has(subject.slug));
 
@@ -107,6 +112,13 @@ export default async function FreeVideosPage() {
             برای هر درسی که هنوز دورهٔ کنکوری‌اش را نداری، بهترین کلاس ضبط‌شدهٔ رایگان دانشگاهی را اینجا
             جمع کرده‌ایم. با آن پایه را بساز، بعد با تست و دورهٔ کنکوری جلو برو.
           </p>
+          {list.length === 0 && sampleCount > 0 && (
+            <div className="lp-facts">
+              <span><b>{toPersianDigits(sampleCount)}</b> جلسهٔ رایگان از دوره‌ها</span>
+              <span><b>{toPersianDigits(samples.length)}</b> دوره</span>
+              <span><b>۱۰۰٪</b> رایگان</span>
+            </div>
+          )}
           {list.length > 0 && (
             <div className="lp-facts">
               <span><b>{toPersianDigits(list.length)}</b> دورهٔ کامل رایگان</span>
@@ -118,13 +130,31 @@ export default async function FreeVideosPage() {
       </section>
 
       <div className="h-wrap lp-body">
+        {samples.length > 0 && (
+          <section className="lp-group" id="course-samples">
+            <header className="lp-group-head">
+              <span className="lp-group-icon h-t-teal"><SubjectGlyph slug="data-structures-algorithms" /></span>
+              <div>
+                <h2>جلسه‌های رایگان دوره‌های کنکور کامپیوتر</h2>
+                <p>از هر دوره چند جلسه بدون خرید باز است؛ همین‌جا در سایت ببین و بعد تصمیم بگیر.</p>
+              </div>
+            </header>
+            <div className="lp-chips">
+              {samples.map((course) => (
+                <Link href={`/courses/${course.slug}`} key={course.slug} className="h-chip-soft">
+                  {course.title} · {toPersianDigits(course.previewCount ?? 0)} جلسهٔ رایگان
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
         {videos === null ? (
           <div className="lp-empty">
             <h2>فهرست ویدیوها الان در دسترس نیست</h2>
             <p>چند دقیقهٔ دیگر دوباره سر بزن، یا تا آن موقع از صفحهٔ درس‌ها شروع کن.</p>
             <Link href="/subjects" className="h-btn h-btn-primary">دیدن درس‌ها</Link>
           </div>
-        ) : groups.length === 0 ? (
+        ) : groups.length === 0 ? (samples.length > 0 ? null : (
           <ComingSoon
             icon="spark"
             title="فهرست ویدیوهای رایگان به‌زودی"
@@ -135,7 +165,7 @@ export default async function FreeVideosPage() {
               { href: "/articles/study-plan-from-zero", label: "شروع از صفر" },
             ]}
           />
-        ) : (
+        )) : (
           <>
             <nav className="lp-jump" aria-label="پرش به درس">
               {groups.map(({ subject }) => (

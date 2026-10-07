@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ComingSoon } from "../../components/ComingSoon";
 import { Glyph } from "../../components/SubjectIcon";
 import { subjects } from "../../content/editorial";
@@ -86,6 +87,9 @@ export default async function ResultsPage({ searchParams: pendingSearchParams }:
   const all = rows ?? [];
   const year = first(searchParams.year);
   const subject = first(searchParams.subject);
+  // Until a student publishes their own result, the documented results (with
+  // the original scorecards) are what this page has to show.
+  if (rows !== null && all.length === 0 && !year && !subject) redirect("/evidence");
 
   const shown = all.filter(
     (row) => (!year || String(row.examYear) === year) && (!subject || row.subjectSlugs.includes(subject)),

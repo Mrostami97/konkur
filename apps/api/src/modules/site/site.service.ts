@@ -46,9 +46,13 @@ export class SiteService {
       this.prisma.course.count({ where: { isPublished: true, accessMode: AccessMode.ENTITLEMENT } }),
       this.prisma.question.count({ where: { retiredAt: null } }),
       this.prisma.exam.count({ where: { isPublished: true } }),
-      this.prisma.resource.count({
-        where: { kind: "VIDEO", hostingMode: "EXTERNAL_LINK", reviewStatus: ReviewStatus.PUBLISHED },
-      }),
+      // Free videos: curated external classes, and the free sample lessons of published courses.
+      Promise.all([
+        this.prisma.resource.count({
+          where: { kind: "VIDEO", hostingMode: "EXTERNAL_LINK", reviewStatus: ReviewStatus.PUBLISHED },
+        }),
+        this.prisma.lesson.count({ where: { isPreview: true, courseModule: { course: { isPublished: true } } } }),
+      ]).then(([external, samples]) => external + samples),
       this.prisma.resource.count({ where: { reviewStatus: ReviewStatus.PUBLISHED } }),
       this.prisma.consultationOffering.count({
         where: {

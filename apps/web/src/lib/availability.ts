@@ -33,7 +33,8 @@ export function comingSoonPaths(availability: Availability | null): Set<string> 
   if (!availability.consultations) soon.add("/consultations");
   if (availability.questions < MIN_QUESTIONS_FOR_BANK) soon.add("/questions");
   if (!availability.exams) soon.add("/exams");
-  if (!availability.results) soon.add("/results");
+  // /results always has something: with no student-submitted result yet it
+  // leads to the documented results on /evidence.
   if (!availability.reportCards) {
     soon.add("/report-cards");
     soon.add("/rank-estimate");

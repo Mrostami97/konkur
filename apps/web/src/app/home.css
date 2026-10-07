@@ -322,7 +322,13 @@
   box-shadow: 0 10px 22px -8px color-mix(in srgb, var(--node) 70%, transparent);
   animation: hx-node 5.4s ease-in-out infinite;
 }
-.hx-art-node svg { width: 48%; height: 48%; stroke-width: 2; }
+.hx-art-node svg { width: 48%; height: 48%; stroke-width: 2; transition: transform var(--motion-fast) var(--ease); }
+/* Each node is a link to a feature. */
+a.hx-art-node { z-index: 2; text-decoration: none; cursor: pointer; transition: scale var(--motion-fast) var(--ease); }
+a.hx-art-node:hover, a.hx-art-node:focus-visible { scale: 1.1; }
+a.hx-art-node:hover svg, a.hx-art-node:focus-visible svg { transform: rotate(-8deg); }
+a.hx-art-node:focus-visible { outline: 3px solid var(--ink-900); outline-offset: 3px; }
+a.hx-art-node:hover small, a.hx-art-node:focus-visible small { color: var(--ink-900); background: #fff; }
 .hx-art-node small {
   position: absolute;
   top: calc(100% + 0.35rem);
