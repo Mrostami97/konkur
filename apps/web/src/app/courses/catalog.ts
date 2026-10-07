@@ -28,7 +28,7 @@ export interface CatalogProduct {
   title: string;
   description: string;
   kind: "COURSE" | "RESOURCE" | "BUNDLE";
-  prices?: { amountRial: number }[];
+  prices?: { amountRial: number; compareAtRial?: number | null }[];
   courseGrants?: { course: { slug: string } }[];
   resourceGrants?: { resource: { slug: string } }[];
 }
@@ -41,6 +41,8 @@ export interface CourseCatalogItem {
   priceLabel: string;
   /** Whether priceLabel is an amount, rather than a state such as «به‌زودی». */
   hasPrice: boolean;
+  /** A sale: the price and the higher «before» price the admin set. */
+  sale?: { amountRial: number; compareAtRial: number };
   ctaLabel: string;
 }
 
@@ -74,6 +76,7 @@ export function buildCourseCatalog(
     const accessMode = course.accessMode ?? "ENTITLEMENT";
     const product = accessMode === "ENTITLEMENT" ? findDirectCourseProduct(products, course.slug) : null;
     const amountRial = product?.prices?.[0]?.amountRial;
+    const compareAtRial = product?.prices?.[0]?.compareAtRial;
 
     if (accessMode === "PUBLIC") {
       return {
@@ -110,6 +113,7 @@ export function buildCourseCatalog(
           ? "قیمت موقتاً در دسترس نیست"
           : "فروش به‌زودی",
       hasPrice: typeof amountRial === "number",
+      ...(typeof amountRial === "number" && compareAtRial && compareAtRial > amountRial ? { sale: { amountRial, compareAtRial } } : {}),
       ctaLabel: product ? "مشاهده و تهیهٔ دوره" : "مشاهدهٔ سرفصل‌ها",
     };
   });

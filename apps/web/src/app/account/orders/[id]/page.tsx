@@ -24,6 +24,7 @@ interface Order {
   id: string;
   status: OrderStatus;
   totalAmountRial: number;
+  discountRial: number;
   createdAt: string;
   items: { id: string; amountRial: number; product: { title: string; slug: string; kind: string } }[];
   payments: {
@@ -162,13 +163,21 @@ export default function OrderPaymentPage({ params: pendingParams }: { params: Pr
                 <Badge tone={PAYMENT_LABEL[payment.status].tone}>{PAYMENT_LABEL[payment.status].text}</Badge>
               </div>
               <p className="ds-stat-value" style={{ marginTop: "var(--sp-4)" }}>
-                {formatRial(order.totalAmountRial)}
+                {order.totalAmountRial === 0 && order.discountRial > 0 ? "رایگان" : formatRial(order.totalAmountRial)}
               </p>
+              {order.discountRial > 0 && (
+                <p className="ds-hint" style={{ margin: "var(--sp-1) 0 0" }}>
+                  قیمت <s>{formatRial(order.totalAmountRial + order.discountRial)}</s> · کد تخفیف {formatRial(order.discountRial)} کم کرد
+                </p>
+              )}
             </Card>
 
             {payment.status === "SUCCEEDED" && (
               <Alert tone="success">
-                پرداخت شما تأیید شد و دسترسی‌تان فعال است. می‌توانید از{" "}
+                {payment.provider === "discount"
+                  ? "کد تخفیف کل مبلغ را پوشاند و دسترسی‌تان همین حالا فعال شد."
+                  : "پرداخت شما تأیید شد و دسترسی‌تان فعال است."}{" "}
+                می‌توانید از{" "}
                 <Link href="/account" className="text-link">
                   حساب من
                 </Link>{" "}

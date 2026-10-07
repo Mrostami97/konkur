@@ -5,6 +5,7 @@ import { CourseArt } from "./CourseArt";
 import { formatDuration, toPersianDigits } from "../lib/format";
 import { Glyph } from "./SubjectIcon";
 import "./course-card.css";
+import { PriceTag } from "./PriceTag";
 
 /**
  * One course in the catalogue and on the homepage: a cover in the subject's
@@ -68,7 +69,9 @@ export function CourseCard({ item, headingLevel = 3 }: { item: CourseCatalogItem
         </p>
 
         <div className="ccd-foot">
-          <strong className={item.hasPrice ? "ccd-price tnum" : "ccd-price ccd-price-soon"}>{item.priceLabel}</strong>
+          <strong className={item.hasPrice ? "ccd-price tnum" : "ccd-price ccd-price-soon"}>
+            {item.sale ? <PriceTag amountRial={item.sale.amountRial} compareAtRial={item.sale.compareAtRial} /> : item.priceLabel}
+          </strong>
           <span className="ccd-cta" aria-hidden="true">
             {item.ctaLabel}
             <span className="ccd-arrow">←</span>

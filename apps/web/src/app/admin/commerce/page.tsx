@@ -34,7 +34,7 @@ interface Product {
   title: string;
   kind: ProductKind;
   isActive: boolean;
-  prices: { amountRial: number; isActive: boolean }[];
+  prices: { amountRial: number; compareAtRial: number | null; isActive: boolean }[];
   questionBankGrants?: { subjectCode: string }[];
 }
 
@@ -42,6 +42,7 @@ interface Order {
   id: string;
   status: string;
   totalAmountRial: number;
+  discountRial: number;
   user: { phone: string };
 }
 
@@ -101,6 +102,7 @@ export default function CommerceAdminPage() {
 
   const [priceProductId, setPriceProductId] = useState("");
   const [amountRial, setAmountRial] = useState("");
+  const [compareAtRial, setCompareAtRial] = useState("");
   const [pricing, setPricing] = useState(false);
   const [priceError, setPriceError] = useState<string | null>(null);
 
@@ -205,9 +207,10 @@ export default function CommerceAdminPage() {
     try {
       await apiFetch(`/admin/products/${priceProductId}/prices`, {
         method: "POST",
-        body: { amountRial: Number(amountRial) },
+        body: { amountRial: Number(amountRial), ...(compareAtRial.trim() ? { compareAtRial: Number(compareAtRial) } : {}) },
       });
       setAmountRial("");
+      setCompareAtRial("");
       await load();
     } catch (err) {
       setPriceError(err instanceof Error ? err.message : "ثبت قیمت ناموفق بود.");
@@ -331,7 +334,8 @@ export default function CommerceAdminPage() {
         <Card>
           <h2 className="ds-card-title">افزودن قیمت</h2>
           <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>
-            قیمت تازه، قیمت فعال قبلی همان محصول را جایگزین می‌کند.
+            قیمت تازه، قیمت فعال قبلی همان محصول را جایگزین می‌کند. برای حراج، «قیمت پیش از تخفیف» را هم بنویسید تا
+            روی کارت دوره خط‌خورده و با درصد تخفیف دیده شود. کد تخفیف در صفحهٔ «کدهای تخفیف» ساخته می‌شود.
           </p>
           <form onSubmit={addPrice} className="ds-form">
             <FieldRow>
@@ -346,6 +350,11 @@ export default function CommerceAdminPage() {
               <Field label="مبلغ (ریال)" required>
                 {(props) => (
                   <Input {...props} value={amountRial} onChange={(event) => setAmountRial(event.target.value)} inputMode="numeric" required />
+                )}
+              </Field>
+              <Field label="قیمت پیش از تخفیف (ریال)" hint="اختیاری؛ باید بیشتر از مبلغ فروش باشد">
+                {(props) => (
+                  <Input {...props} value={compareAtRial} onChange={(event) => setCompareAtRial(event.target.value)} inputMode="numeric" />
                 )}
               </Field>
             </FieldRow>
@@ -378,7 +387,12 @@ export default function CommerceAdminPage() {
                         <td><Badge tone="info">{kindLabel(product.kind)}</Badge></td>
                         <td>{banks.length ? banks.map((grant) => subjectName(grant.subjectCode)).join("، ") : "—"}</td>
                         <td className="ds-table-numeric">
-                          {price ? `${price.amountRial.toLocaleString("fa-IR")} ریال` : <span className="ds-hint" style={{ margin: 0 }}>بدون قیمت فعال</span>}
+                          {price ? (
+                            <>
+                              {price.compareAtRial ? <s className="ds-hint" style={{ margin: 0, marginInlineEnd: "var(--sp-2)" }}>{price.compareAtRial.toLocaleString("fa-IR")}</s> : null}
+                              {price.amountRial.toLocaleString("fa-IR")} ریال
+                            </>
+                          ) : <span className="ds-hint" style={{ margin: 0 }}>بدون قیمت فعال</span>}
                         </td>
                         <td>{product.isActive ? <Badge tone="success">فعال</Badge> : <Badge>غیرفعال</Badge>}</td>
                         <td>
@@ -473,7 +487,7 @@ export default function CommerceAdminPage() {
                   ) : undefined
                 }
               >
-                <thead><tr><th>کاربر</th><th>وضعیت</th><th>مبلغ</th></tr></thead>
+                <thead><tr><th>کاربر</th><th>وضعیت</th><th>مبلغ</th><th>تخفیف</th></tr></thead>
                 <tbody>
                   {visibleOrders.map((order) => {
                     const status = ORDER_STATUS[order.status];
@@ -482,6 +496,7 @@ export default function CommerceAdminPage() {
                         <td dir="ltr" style={{ textAlign: "right" }}>{toPersianDigits(order.user.phone)}</td>
                         <td>{status ? <Badge tone={status.tone}>{status.label}</Badge> : <Badge>{order.status}</Badge>}</td>
                         <td className="ds-table-numeric">{order.totalAmountRial.toLocaleString("fa-IR")} ریال</td>
+                        <td className="ds-table-numeric">{order.discountRial ? `${order.discountRial.toLocaleString("fa-IR")} ریال` : "—"}</td>
                       </tr>
                     );
                   })}

@@ -700,6 +700,7 @@ model Product {
   resourceGrants       ProductResourceGrant[]
   questionBankGrants   ProductQuestionBankGrant[]
   consultationOffering ConsultationOffering?
+  discountCodes        DiscountCodeProduct[]
   createdAt            DateTime                   @default(now())
   updatedAt            DateTime                   @updatedAt
 
@@ -752,13 +753,15 @@ model ProductQuestionBankGrant {
 }
 
 model Price {
-  id         String      @id @default(uuid())
-  productId  String
-  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  amountRial Int
-  isActive   Boolean     @default(true)
-  createdAt  DateTime    @default(now())
-  orderItems OrderItem[]
+  id            String      @id @default(uuid())
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  amountRial    Int
+  /// The price before a sale, shown struck through beside amountRial; null when there is no sale.
+  compareAtRial Int?
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  orderItems    OrderItem[]
 
   @@index([productId])
   @@map("prices")
@@ -772,18 +775,62 @@ enum OrderStatus {
 }
 
 model Order {
-  id              String      @id @default(uuid())
+  id              String        @id @default(uuid())
   userId          String
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status          OrderStatus @default(PENDING)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          OrderStatus   @default(PENDING)
+  /// What the buyer pays: the items' price minus discountRial.
   totalAmountRial Int
+  /// Taken off by a discount code; 0 without one.
+  discountRial    Int           @default(0)
+  discountCodeId  String?
+  discountCode    DiscountCode? @relation(fields: [discountCodeId], references: [id], onDelete: Restrict)
   items           OrderItem[]
   payments        Payment[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@index([userId])
+  @@index([discountCodeId])
   @@map("orders")
+}
+
+/// A code a buyer types at checkout for money off: a percentage or a fixed
+/// amount, on every product or only the listed ones, within an optional
+/// date window and usage limits. An order counts against the limits while it
+/// is open or paid; a cancelled one gives its use back.
+model DiscountCode {
+  id             String                @id @default(uuid())
+  /// Stored upper-case; matched without regard to case.
+  code           String                @unique
+  /// For the admin: what the code is for (a channel campaign, a friend).
+  note           String?
+  percentOff     Int?
+  amountOffRial  Int?
+  startsAt       DateTime?
+  endsAt         DateTime?
+  /// Total uses across all buyers; null for no limit.
+  maxRedemptions Int?
+  maxPerUser     Int                   @default(1)
+  isActive       Boolean               @default(true)
+  /// Empty means every product.
+  products       DiscountCodeProduct[]
+  orders         Order[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@map("discount_codes")
+}
+
+model DiscountCodeProduct {
+  discountCodeId String
+  discountCode   DiscountCode @relation(fields: [discountCodeId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([discountCodeId, productId])
+  @@index([productId])
+  @@map("discount_code_products")
 }
 
 model OrderItem {

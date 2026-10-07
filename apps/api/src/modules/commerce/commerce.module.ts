@@ -8,6 +8,7 @@ import {
   ProductsPublicController,
 } from "./commerce.controller";
 import { CommerceService } from "./commerce.service";
+import { DiscountCodesService } from "./discount-codes.service";
 
 /* The sandbox PaymentProvider that auto-succeeded every charge was deleted
  * with this change rather than left unused. Payment is card-to-card: money
@@ -18,7 +19,7 @@ import { CommerceService } from "./commerce.service";
 @Module({
   imports: [AuditModule, IdentityModule, LearningModule],
   controllers: [ProductsPublicController, CommerceStudentController, CommerceAdminController],
-  providers: [CommerceService],
+  providers: [CommerceService, DiscountCodesService],
   exports: [CommerceService],
 })
 export class CommerceModule {}

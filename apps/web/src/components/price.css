@@ -1,0 +1,52 @@
+/* A price with an optional struck «before» price and the share saved. */
+.price-tag { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; }
+.price-was { color: var(--muted); font-size: 0.72em; font-weight: var(--weight-regular, 400); text-decoration-thickness: 1.5px; }
+.price-off {
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  line-height: 1.6;
+}
+.price-now { color: inherit; }
+
+/* The discount-code row under a buy button. */
+.buy-code-toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  text-align: start;
+}
+.buy-code-toggle:hover { text-decoration: underline; }
+.buy-code-row { display: flex; gap: 0.5rem; }
+.buy-code-row .ds-input { flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: 0.04em; }
+.buy-quote {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px dashed var(--success);
+  border-radius: var(--radius-md, 10px);
+  background: var(--success-soft);
+  font-size: var(--text-sm);
+}
+.buy-quote-line { display: flex; justify-content: space-between; gap: 1rem; }
+.buy-quote-line b { font-weight: var(--weight-heavy); }
+.buy-quote-off { color: var(--success); font-weight: var(--weight-bold); }
+.buy-quote-total { padding-top: 0.3rem; border-top: 1px solid color-mix(in srgb, var(--success) 25%, transparent); font-size: var(--text-md); }
+.buy-quote-remove {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+.buy-quote-remove:hover { color: var(--danger); }

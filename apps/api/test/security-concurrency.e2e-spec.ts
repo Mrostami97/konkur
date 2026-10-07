@@ -8,6 +8,7 @@ import { AccessService } from "../src/modules/access/access.service";
 import { IdentityService } from "../src/modules/identity/identity.service";
 import { CommerceService, CARD_TRANSFER_PROVIDER } from "../src/modules/commerce/commerce.service";
 import { LearningService } from "../src/modules/learning/learning.service";
+import { DiscountCodesService } from "../src/modules/commerce/discount-codes.service";
 import { PaymentStatus } from "@prisma/client";
 
 describe("security concurrency on an explicitly isolated database", () => {
@@ -18,7 +19,7 @@ describe("security concurrency on an explicitly isolated database", () => {
   const planning = new PlanningService(db, {} as never, access);
   const consultations = new ConsultationsService(db, access, audit as never);
   const learning = new LearningService(db, audit as never, access, {} as never);
-  const commerce = new CommerceService(db, audit as never, learning);
+  const commerce = new CommerceService(db, audit as never, learning, new DiscountCodesService(db, audit as never));
   const prefix = `security-${randomUUID()}`;
   let userId: string;
   let formId: string;

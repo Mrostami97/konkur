@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { randomBytes } from "crypto";
-import { EntitlementGrantSource, OrderStatus, PaymentStatus, ProductKind } from "@prisma/client";
+import { EntitlementGrantSource, OrderStatus, PaymentStatus, Prisma, ProductKind } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { LearningService } from "../learning/learning.service";
@@ -8,10 +8,13 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { CreatePriceDto } from "./dto/create-price.dto";
 import { BankAccountDto } from "./dto/bank-account.dto";
 import { SubmitReceiptDto } from "./dto/submit-receipt.dto";
+import { DiscountCodesService, type DiscountQuote } from "./discount-codes.service";
 
 /** Recorded on Payment.provider so the card flow's rows stay distinguishable
  * from anything a future online gateway writes. */
 export const CARD_TRANSFER_PROVIDER = "card-transfer";
+/** An order a discount code made free: nothing to transfer, nothing to review. */
+export const FREE_BY_DISCOUNT_PROVIDER = "discount";
 
 @Injectable()
 export class CommerceService {
@@ -19,6 +22,7 @@ export class CommerceService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly learning: LearningService,
+    private readonly discounts: DiscountCodesService,
   ) {}
 
   // --- Admin catalog management ---------------------------------------------
@@ -117,8 +121,11 @@ export class CommerceService {
     const product = await this.prisma.product.findUnique({ where: { id: productId } });
     if (!product) throw new NotFoundException("product not found");
     // Only one active price at a time keeps "the" price for checkout unambiguous.
+    if (dto.compareAtRial !== undefined && dto.compareAtRial <= dto.amountRial) {
+      throw new BadRequestException("قیمت پیش از تخفیف باید بیشتر از قیمت فروش باشد.");
+    }
     await this.prisma.price.updateMany({ where: { productId, isActive: true }, data: { isActive: false } });
-    return this.prisma.price.create({ data: { productId, amountRial: dto.amountRial } });
+    return this.prisma.price.create({ data: { productId, amountRial: dto.amountRial, compareAtRial: dto.compareAtRial ?? null } });
   }
 
   async listAllProducts() {
@@ -186,7 +193,38 @@ export class CommerceService {
    * to charge a sandbox provider and grant access in the same transaction,
    * which is how an online gateway behaves and is exactly wrong for this.
    */
-  async checkout(userId: string, productId: string) {
+  async checkout(userId: string, productId: string, discountCode?: string) {
+    const price = await this.sellablePrice(productId);
+    const { referenceCode, order } = await this.prisma.$transaction(async (tx) => {
+      const discount = discountCode ? await this.discounts.quote(tx, { code: discountCode, productId, userId, priceRial: price.amountRial, lock: true }) : null;
+      const total = price.amountRial - (discount?.discountRial ?? 0);
+      if (discount && total === 0) return { referenceCode: null, order: await this.openFreeOrder(tx, userId, productId, price, discount) };
+      return this.openCardOrder(tx, userId, productId, price, discount, total);
+    }, { timeout: 20_000 });
+
+    await this.audit.log({
+      actorUserId: userId,
+      action: order.status === OrderStatus.PAID ? "order.free_by_discount" : "order.opened",
+      targetType: "Order",
+      targetId: order.id,
+      metadata: { productId, amountRial: order.totalAmountRial, discountRial: order.discountRial, referenceCode },
+    });
+
+    return this.prisma.order.findUniqueOrThrow({
+      where: { id: order.id },
+      include: { items: true, payments: { include: { bankAccount: true } } },
+    });
+  }
+
+  /** What the buyer would pay with this code, without opening an order. */
+  async quoteCheckout(userId: string, productId: string, discountCode: string) {
+    const price = await this.sellablePrice(productId);
+    const discount = await this.discounts.quote(this.prisma, { code: discountCode, productId, userId, priceRial: price.amountRial });
+    return { code: discount.code, subtotalRial: price.amountRial, discountRial: discount.discountRial, totalRial: price.amountRial - discount.discountRial };
+  }
+
+  /** The active price of a product that can be bought right now. */
+  private async sellablePrice(productId: string) {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
       include: {
@@ -214,12 +252,23 @@ export class CommerceService {
     ) {
       throw new NotFoundException("این محصول الان برای خرید باز نیست.");
     }
-    const price = product.prices[0];
+    return product.prices[0];
+  }
+
+  /** A card-transfer order: the buyer is shown a card, a reference code and the amount. */
+  private async openCardOrder(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    productId: string,
+    price: { id: string; amountRial: number },
+    discount: DiscountQuote | null,
+    total: number,
+  ) {
 
     // Without a destination card there is nowhere to send the money, so an
     // order would strand the buyer. Better to refuse than to take an order
     // nobody can pay.
-    const bankAccount = await this.prisma.bankAccount.findFirst({
+    const bankAccount = await tx.bankAccount.findFirst({
       where: { isActive: true },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
     });
@@ -228,44 +277,60 @@ export class CommerceService {
     }
 
     const referenceCode = await this.allocateReferenceCode();
-
-    const order = await this.prisma.$transaction(async (tx) => {
-      const created = await tx.order.create({
-        data: {
-          userId,
-          status: OrderStatus.PENDING,
-          totalAmountRial: price.amountRial,
-          items: {
-            create: [{ productId, priceId: price.id, quantity: 1, amountRial: price.amountRial }],
-          },
-        },
-      });
-      await tx.payment.create({
-        data: {
-          orderId: created.id,
-          provider: CARD_TRANSFER_PROVIDER,
-          providerRef: `card-${referenceCode}`,
-          status: PaymentStatus.PENDING,
-          amountRial: price.amountRial,
-          bankAccountId: bankAccount.id,
-          referenceCode,
-        },
-      });
-      return created;
+    const order = await tx.order.create({
+      data: {
+        userId,
+        status: OrderStatus.PENDING,
+        totalAmountRial: total,
+        discountRial: discount?.discountRial ?? 0,
+        discountCodeId: discount?.discountCodeId ?? null,
+        items: { create: [{ productId, priceId: price.id, quantity: 1, amountRial: price.amountRial }] },
+      },
     });
-
-    await this.audit.log({
-      actorUserId: userId,
-      action: "order.opened",
-      targetType: "Order",
-      targetId: order.id,
-      metadata: { productId, amountRial: price.amountRial, referenceCode },
+    await tx.payment.create({
+      data: {
+        orderId: order.id,
+        provider: CARD_TRANSFER_PROVIDER,
+        providerRef: `card-${referenceCode}`,
+        status: PaymentStatus.PENDING,
+        amountRial: total,
+        bankAccountId: bankAccount.id,
+        referenceCode,
+      },
     });
+    return { referenceCode, order };
+  }
 
-    return this.prisma.order.findUniqueOrThrow({
-      where: { id: order.id },
-      include: { items: true, payments: { include: { bankAccount: true } } },
+  /**
+   * A code that takes the whole price off: there is no money to check, so
+   * the order is paid on the spot and access is granted as a confirmed
+   * transfer would grant it.
+   */
+  private async openFreeOrder(tx: Prisma.TransactionClient, userId: string, productId: string, price: { id: string; amountRial: number }, discount: DiscountQuote) {
+    const order = await tx.order.create({
+      data: {
+        userId,
+        status: OrderStatus.PAID,
+        totalAmountRial: 0,
+        discountRial: discount.discountRial,
+        discountCodeId: discount.discountCodeId,
+        items: { create: [{ productId, priceId: price.id, quantity: 1, amountRial: price.amountRial }] },
+      },
     });
+    const now = new Date();
+    await tx.payment.create({
+      data: {
+        orderId: order.id,
+        provider: FREE_BY_DISCOUNT_PROVIDER,
+        providerRef: `discount-${order.id}`,
+        status: PaymentStatus.SUCCEEDED,
+        amountRial: 0,
+        paidAt: now,
+        reviewedAt: now,
+      },
+    });
+    await this.grantPurchase(tx, { userId, productId, orderId: order.id });
+    return order;
   }
 
   /**
@@ -406,15 +471,6 @@ export class CommerceService {
       const productId = payment.order.items[0]?.productId;
       if (!productId) throw new BadRequestException("this order has no items");
 
-      const product = await tx.product.findUnique({
-        where: { id: productId },
-        include: {
-          courseGrants: true,
-          consultationOffering: { select: { validUntil: true } },
-        },
-      });
-      if (!product) throw new NotFoundException("product not found");
-
       const now = new Date();
       await tx.payment.update({
         where: { id: paymentId },
@@ -432,34 +488,8 @@ export class CommerceService {
       });
       if (paidOrder.count !== 1) throw new BadRequestException("order changed; refresh before confirming");
 
-      const entitlement = await tx.entitlement.create({
-        data: {
-          userId: payment.order.userId,
-          productId,
-          grantedVia: EntitlementGrantSource.ORDER,
-          // A consultation package runs to a deadline -- the konkur date for
-          // the annual product. Carrying it onto the entitlement means expiry
-          // is evaluated by AccessService like every other entitlement,
-          // rather than by a rule that only consultations would know about.
-          endAt: product.consultationOffering?.validUntil ?? undefined,
-        },
-      });
-      for (const courseId of this.productCourseIds(product)) {
-        await this.learning.enrollFromEntitlement(payment.order.userId, courseId, tx);
-      }
-      await tx.outboxEvent.create({
-        data: {
-          eventType: "EntitlementActivated",
-          payload: {
-            userId: payment.order.userId,
-            productId,
-            entitlementId: entitlement.id,
-            orderId: payment.orderId,
-          },
-        },
-      });
-
-      return { orderId: payment.orderId, userId: payment.order.userId, productId, entitlementId: entitlement.id };
+      const entitlementId = await this.grantPurchase(tx, { userId: payment.order.userId, productId, orderId: payment.orderId });
+      return { orderId: payment.orderId, userId: payment.order.userId, productId, entitlementId };
     });
 
     await this.audit.log({
@@ -474,6 +504,34 @@ export class CommerceService {
       where: { id: paymentId },
       include: { order: { include: { items: true } } },
     });
+  }
+
+  /** What a paid order grants: the entitlement, course enrolments and the event others listen for. */
+  private async grantPurchase(tx: Prisma.TransactionClient, { userId, productId, orderId }: { userId: string; productId: string; orderId: string }) {
+    const product = await tx.product.findUnique({
+      where: { id: productId },
+      include: { courseGrants: true, consultationOffering: { select: { validUntil: true } } },
+    });
+    if (!product) throw new NotFoundException("product not found");
+    const entitlement = await tx.entitlement.create({
+      data: {
+        userId,
+        productId,
+        grantedVia: EntitlementGrantSource.ORDER,
+        // A consultation package runs to a deadline -- the konkur date for
+        // the annual product. Carrying it onto the entitlement means expiry
+        // is evaluated by AccessService like every other entitlement,
+        // rather than by a rule that only consultations would know about.
+        endAt: product.consultationOffering?.validUntil ?? undefined,
+      },
+    });
+    for (const courseId of this.productCourseIds(product)) {
+      await this.learning.enrollFromEntitlement(userId, courseId, tx);
+    }
+    await tx.outboxEvent.create({
+      data: { eventType: "EntitlementActivated", payload: { userId, productId, entitlementId: entitlement.id, orderId } },
+    });
+    return entitlement.id;
   }
 
   /** The transfer was not on the statement, or did not match. The buyer can

@@ -248,7 +248,7 @@ export class InstructorsService {
         },
         select: {
           amountRial: true,
-          order: { select: { createdAt: true, userId: true } },
+          order: { select: { createdAt: true, userId: true, totalAmountRial: true, discountRial: true } },
           product: {
             select: { id: true, courseId: true, courseGrants: { select: { courseId: true } } },
           },
@@ -269,7 +269,10 @@ export class InstructorsService {
       for (const grant of item.product.courseGrants) granted.add(grant.courseId);
       if (granted.size === 0) continue;
 
-      const perCourseRial = Math.floor(item.amountRial / granted.size);
+      // A discount code lowers what the buyer paid, and the share is of what was paid.
+      const listRial = item.order.totalAmountRial + item.order.discountRial;
+      const paidRial = listRial > 0 ? Math.floor((item.amountRial * item.order.totalAmountRial) / listRial) : 0;
+      const perCourseRial = Math.floor(paidRial / granted.size);
 
       for (const courseId of granted) {
         const course = byCourse.get(courseId);

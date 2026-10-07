@@ -4,13 +4,14 @@ import { notFound } from "next/navigation";
 import { apiGetPublic } from "../../../lib/api";
 import { formatDuration, isoDuration, toPersianDigits } from "../../../lib/format";
 import { BuyButton } from "../../../components/BuyButton";
+import { PriceTag } from "../../../components/PriceTag";
 import { VideoLicensePanel } from "../../../components/VideoLicensePanel";
 import { CourseProgressPanel } from "../../../components/CourseProgressPanel";
 import { StructuredData } from "../../../components/StructuredData";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
 import { CourseArt } from "../../../components/CourseArt";
 import { Glyph } from "../../../components/SubjectIcon";
-import { courseFormat, courseShortTitle, findDirectCourseProduct, formatRial, type CatalogProduct, type CourseInstructor } from "../catalog";
+import { courseFormat, courseShortTitle, findDirectCourseProduct, type CatalogProduct, type CourseInstructor } from "../catalog";
 import { coursePublishers, courseSubject, courseSubjectTitle, courseTone } from "../course-visual";
 import "../course.css";
 
@@ -250,7 +251,9 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
             {accessMode === "ENTITLEMENT" ? (
               <>
                 {purchasableProduct?.prices?.[0] && (
-                  <p className="cr-price tnum">{formatRial(purchasableProduct.prices[0].amountRial)}</p>
+                  <p className="cr-price">
+                    <PriceTag amountRial={purchasableProduct.prices[0].amountRial} compareAtRial={purchasableProduct.prices[0].compareAtRial} />
+                  </p>
                 )}
                 {productResult.unavailable ? (
                   <p className="cr-note">اطلاعات خرید موقتاً در دسترس نیست؛ کمی بعد دوباره سر بزن.</p>

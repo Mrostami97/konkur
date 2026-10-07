@@ -20,6 +20,12 @@ export function formatRial(amountRial: number): string {
   return `${amountRial.toLocaleString("fa-IR")} ریال`;
 }
 
+/** How much a sale takes off, rounded the way a shop sign rounds it. */
+export function percentOff(amountRial: number, compareAtRial?: number | null): number | null {
+  if (!compareAtRial || compareAtRial <= amountRial) return null;
+  return Math.round((1 - amountRial / compareAtRial) * 100) || null;
+}
+
 /** The same amount the way people say it: «۱۵ میلیون تومان», «۳۰۰ هزار تومان». */
 export function formatToman(amountRial: number): string {
   const toman = Math.round(amountRial / 10);

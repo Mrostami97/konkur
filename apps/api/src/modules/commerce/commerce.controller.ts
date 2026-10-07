@@ -11,6 +11,8 @@ import { GrantEntitlementDto, RevokeEntitlementDto } from "./dto/grant-entitleme
 import { GrantCourseDto, GrantQuestionBankDto, GrantResourceDto } from "./dto/grant-product-item.dto";
 import { RejectPaymentDto, SubmitReceiptDto } from "./dto/submit-receipt.dto";
 import { BankAccountDto } from "./dto/bank-account.dto";
+import { CreateDiscountCodeDto, QuoteDto, UpdateDiscountCodeDto } from "./dto/discount-code.dto";
+import { DiscountCodesService } from "./discount-codes.service";
 
 @Controller("products")
 export class ProductsPublicController {
@@ -34,7 +36,13 @@ export class CommerceStudentController {
 
   @Post("checkout")
   checkout(@Req() req: RequestWithUser, @Body() dto: CheckoutDto) {
-    return this.commerce.checkout(req.user!.id, dto.productId);
+    return this.commerce.checkout(req.user!.id, dto.productId, dto.discountCode);
+  }
+
+  /** The price with a discount code, before the buyer commits to it. */
+  @Post("checkout/quote")
+  quote(@Req() req: RequestWithUser, @Body() dto: QuoteDto) {
+    return this.commerce.quoteCheckout(req.user!.id, dto.productId, dto.discountCode);
   }
 
   @Get("me/orders")
@@ -68,7 +76,34 @@ export class CommerceStudentController {
 @Controller("admin")
 @UseGuards(SessionAuthGuard, RolesGuard)
 export class CommerceAdminController {
-  constructor(private readonly commerce: CommerceService) {}
+  constructor(
+    private readonly commerce: CommerceService,
+    private readonly discounts: DiscountCodesService,
+  ) {}
+
+  @Get("discount-codes")
+  @Roles(Role.ADMIN, Role.FINANCE)
+  listDiscountCodes() {
+    return this.discounts.list();
+  }
+
+  @Post("discount-codes")
+  @Roles(Role.ADMIN)
+  createDiscountCode(@Req() req: RequestWithUser, @Body() dto: CreateDiscountCodeDto) {
+    return this.discounts.create(req.user!.id, dto);
+  }
+
+  @Patch("discount-codes/:id")
+  @Roles(Role.ADMIN)
+  updateDiscountCode(@Param("id") id: string, @Req() req: RequestWithUser, @Body() dto: UpdateDiscountCodeDto) {
+    return this.discounts.update(req.user!.id, id, dto);
+  }
+
+  @Delete("discount-codes/:id")
+  @Roles(Role.ADMIN)
+  deleteDiscountCode(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.discounts.remove(req.user!.id, id);
+  }
 
   @Get("products")
   @Roles(Role.ADMIN, Role.FINANCE)
