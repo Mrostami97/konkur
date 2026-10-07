@@ -9,6 +9,7 @@ import { EXAM_SETS } from "../../lib/admissions";
 import { formatPersianNumber, toPersianDigits } from "../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../lib/seo";
 import { ChoiceFinder, type CatalogRow, type FinderFilters } from "./ChoiceFinder";
+import { ChoiceHeroArt } from "./ChoiceHeroArt";
 import "./admissions.css";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -72,7 +73,7 @@ export async function generateMetadata({ searchParams: pending }: { searchParams
   const year = catalog?.examYear ? toPersianDigits(catalog.examYear) : "";
   return {
     ...pageMetadata({
-      title: `ابزار انتخاب رشتهٔ ارشد کامپیوتر${year ? ` با ظرفیت‌های ${year}` : ""}`,
+      title: `انتخاب رشته کنکور کامپیوتر${year ? `؛ کدها و ظرفیت‌های ارشد ${year}` : ""}`,
       description: "همهٔ کدهای رشته‌محل ارشد مهندسی کامپیوتر، IT و علوم کامپیوتر از دفترچهٔ انتخاب رشته: فیلتر بر اساس گرایش، دوره، شهر و جنسیت، و ساختن فهرست انتخاب‌ها به ترتیب.",
       path: "/programs",
       noIndex,
@@ -122,7 +123,7 @@ export default async function ProgramsPage({ searchParams: pending }: { searchPa
           {
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "ابزار انتخاب رشتهٔ ارشد کامپیوتر",
+            name: "انتخاب رشته کنکور کامپیوتر",
             url: absoluteUrl("/programs"),
             applicationCategory: "EducationalApplication",
             operatingSystem: "Web",
@@ -132,24 +133,33 @@ export default async function ProgramsPage({ searchParams: pending }: { searchPa
         ]}
       />
       <header className="af-hero">
-        <div className="af-wrap">
-          <span className="af-eyebrow">انتخاب رشتهٔ ارشد</span>
-          <h1>ابزار انتخاب رشتهٔ ارشد کامپیوتر</h1>
-          {rows.length > 0 ? (
-            <>
-              <p>
-                {formatPersianNumber(rows.length)} کد رشته‌محل و {formatPersianNumber(totalSeats)} ظرفیت از دفترچهٔ انتخاب رشتهٔ {toPersianDigits(year)}.
-                گرایش، دوره و شهر را فیلتر کن، کدها را به فهرستت اضافه کن و به ترتیب دلخواه بچین.
-              </p>
-              <ul className="af-hero-facts">
-                <li><b>{formatPersianNumber(rows.length)}</b> کد رشته‌محل</li>
-                <li><b>{formatPersianNumber(new Set(rows.map((row) => row.university)).size)}</b> دانشگاه و مؤسسه</li>
-                <li><b>{formatPersianNumber(totalSeats)}</b> ظرفیت</li>
-              </ul>
-            </>
-          ) : (
-            <p>کدهای رشته‌محل هر سال با منبع رسمی سازمان سنجش اینجا می‌آیند.</p>
-          )}
+        <div className="af-wrap af-hero-grid">
+          <div className="af-hero-copy">
+            <span className="af-eyebrow">ارشد مهندسی کامپیوتر، IT و علوم کامپیوتر</span>
+            <h1>انتخاب رشته کنکور کامپیوتر</h1>
+            {rows.length > 0 ? (
+              <>
+                <p>
+                  همهٔ کدهای رشته‌محل دفترچهٔ {toPersianDigits(year)} در یک جا: گرایش، دوره و شهر را فیلتر کن،
+                  کدها را به فهرستت اضافه کن و به ترتیبی بچین که در فرم سنجش وارد می‌کنی.
+                </p>
+                <ul className="af-hero-facts">
+                  <li><b>{formatPersianNumber(rows.length)}</b> کد رشته‌محل</li>
+                  <li><b>{formatPersianNumber(new Set(rows.map((row) => row.university)).size)}</b> دانشگاه و مؤسسه</li>
+                  <li><b>{formatPersianNumber(totalSeats)}</b> ظرفیت</li>
+                </ul>
+                <div className="af-hero-actions">
+                  <a className="af-cta" href="#finder">پیدا کردن کدها</a>
+                  <Link className="af-cta af-cta-ghost" href="/choices">فهرست انتخاب‌های من</Link>
+                </div>
+              </>
+            ) : (
+              <p>کدهای رشته‌محل هر سال با منبع رسمی سازمان سنجش اینجا می‌آیند.</p>
+            )}
+          </div>
+          <div className="af-hero-art" aria-hidden={rows.length === 0 || undefined}>
+            <ChoiceHeroArt />
+          </div>
         </div>
       </header>
 

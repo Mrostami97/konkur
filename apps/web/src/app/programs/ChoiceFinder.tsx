@@ -117,6 +117,16 @@ export function ChoiceFinder({ rows, year, initial }: { rows: CatalogRow[]; year
   }, [inSet, group, orientation, periods, city, gender, deferredQuery, sort]);
 
   const seats = results.reduce((sum, row) => sum + row.capacity, 0);
+
+  // Quick picks: this set's biggest orientations, by seats.
+  const topOrientations = useMemo(() => {
+    const totals = new Map<string, number>();
+    for (const row of inSet) if (!group || row.group === Number(group)) totals.set(row.orientation, (totals.get(row.orientation) ?? 0) + row.capacity);
+    return [...totals].sort((a, b) => b[1] - a[1]).slice(0, 6);
+  }, [inSet, group]);
+
+  // Where the seats of the current results sit, by period.
+  const bySeat = PERIODS.map((p) => ({ ...p, seats: results.filter((row) => row.period === p.id).reduce((sum, row) => sum + row.capacity, 0) })).filter((p) => p.seats > 0);
   const filterCount = [group, orientation, periods.length ? "p" : "", city, gender, query].filter(Boolean).length;
   const chosen = choices.status === "ready" ? choices.ids : null;
 
@@ -154,7 +164,7 @@ export function ChoiceFinder({ rows, year, initial }: { rows: CatalogRow[]; year
   }
 
   return (
-    <section className="af-finder" aria-label="جست‌وجوی کد رشته‌محل">
+    <section className="af-finder" id="finder" aria-label="جست‌وجوی کد رشته‌محل">
       <div className="af-sets" role="tablist" aria-label="مجموعهٔ امتحانی">
         {sets.map((item) => (
           <button
@@ -174,6 +184,17 @@ export function ChoiceFinder({ rows, year, initial }: { rows: CatalogRow[]; year
           </button>
         ))}
       </div>
+
+      {topOrientations.length > 1 && (
+        <div className="af-picks" role="group" aria-label="گرایش‌های پرظرفیت">
+          {topOrientations.map(([name, total]) => (
+            <button key={name} type="button" aria-pressed={orientation === name} onClick={() => setOrientation(orientation === name ? "" : name)}>
+              <span>{name}</span>
+              <b>{formatPersianNumber(total)}</b>
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="af-filters">
         <label className="af-search">
@@ -233,15 +254,34 @@ export function ChoiceFinder({ rows, year, initial }: { rows: CatalogRow[]; year
           <b>{formatPersianNumber(results.length)}</b> کد رشته‌محل با <b>{formatPersianNumber(seats)}</b> ظرفیت
           {filterCount > 0 && <button type="button" onClick={reset}>پاک کردن فیلترها</button>}
         </p>
-        {choices.status === "ready" && (
-          <Link href="/choices" className="af-mine">
-            فهرست من: {toPersianDigits(choices.ids.size)} از {toPersianDigits(MAX_CHOICES)} ←
-          </Link>
-        )}
         {choices.status === "anonymous" && (
           <p className="af-login">برای ساختن فهرست انتخاب‌ها <Link href="/login?next=/programs">وارد حساب شو</Link>.</p>
         )}
       </div>
+      {seats > 0 && (
+        <div className="af-seatbar">
+          <div className="af-seatbar-track" role="group" aria-label="ظرفیت این نتیجه‌ها به تفکیک دوره">
+            {bySeat.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                data-period={p.id}
+                aria-pressed={periods.includes(p.id)}
+                style={{ flexGrow: p.seats }}
+                title={`${p.label}: ${formatPersianNumber(p.seats)} ظرفیت`}
+                onClick={() => togglePeriod(p.id)}
+              >
+                <span className="sr-only">{p.label}</span>
+              </button>
+            ))}
+          </div>
+          <ul className="af-seatbar-legend">
+            {bySeat.map((p) => (
+              <li key={p.id} data-period={p.id}>{p.label} <b>{formatPersianNumber(p.seats)}</b> <small>{toPersianDigits(Math.round((100 * p.seats) / seats))}٪</small></li>
+            ))}
+          </ul>
+        </div>
+      )}
       {message && <p className="af-error" role="alert">{message}</p>}
 
       {results.length === 0 ? (
@@ -254,10 +294,13 @@ export function ChoiceFinder({ rows, year, initial }: { rows: CatalogRow[]; year
           {results.slice(0, shown).map((row) => {
             const added = chosen?.has(row.id) ?? false;
             return (
-              <li key={row.id} className="af-row" data-chosen={added || undefined}>
+              <li key={row.id} className="af-row" data-chosen={added || undefined} data-period={row.period}>
+                <div className="af-stub">
+                  <small>کد رشته‌محل</small>
+                  <span className="af-code">{toPersianDigits(row.selectionCode)}</span>
+                </div>
                 <div className="af-row-main">
                   <div className="af-row-head">
-                    <span className="af-code" title="کد رشته‌محل">{toPersianDigits(row.selectionCode)}</span>
                     <Link href={`/universities/${encodeURIComponent(row.universityCode)}`} className="af-uni">{row.university}</Link>
                   </div>
                   <p className="af-place">
@@ -304,6 +347,19 @@ export function ChoiceFinder({ rows, year, initial }: { rows: CatalogRow[]; year
         </button>
       )}
       <p className="af-footnote">ظرفیت‌ها مال سال {toPersianDigits(year)} است.</p>
+
+      {choices.status === "ready" && choices.ids.size > 0 && (
+        <Link href="/choices" className="af-tray">
+          <svg viewBox="0 0 36 36" aria-hidden="true">
+            <circle cx="18" cy="18" r="15" />
+            <circle cx="18" cy="18" r="15" className="af-tray-fill" style={{ strokeDasharray: `${(94.2 * choices.ids.size) / MAX_CHOICES} 94.2` }} />
+          </svg>
+          <span>
+            <b>{toPersianDigits(choices.ids.size)}</b> از {toPersianDigits(MAX_CHOICES)} کد در فهرست من
+          </span>
+          <em>چیدن و کپی کدها ←</em>
+        </Link>
+      )}
     </section>
   );
 }
