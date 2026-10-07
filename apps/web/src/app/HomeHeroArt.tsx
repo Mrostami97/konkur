@@ -20,7 +20,7 @@ const NODES: { x: number; y: number; color: string; key: string; glyph: GlyphNam
   { x: 527, y: 199, color: "#086ef6", key: "bank", glyph: "list", label: "بانک سؤال", href: "/questions" },
   { x: 461, y: 466, color: "#09b90d", key: "rank", glyph: "target", label: "تخمین رتبه", href: "/rank-calculator/master-computer-engineering" },
   { x: 139, y: 466, color: "#ee0808", key: "programs", glyph: "compass", label: "انتخاب رشته", href: "/programs" },
-  { x: 73, y: 199, color: "#086ef6", key: "results", glyph: "trophy", label: "نتایج شاگردان", href: "/evidence" },
+  { x: 73, y: 199, color: "#086ef6", key: "exams", glyph: "pace", label: "آزمون", href: "/exams" },
 ];
 
 const W = 600;
