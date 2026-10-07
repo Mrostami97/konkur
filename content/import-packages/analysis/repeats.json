@@ -1,0 +1,722 @@
+[
+ {
+  "subject": "automata",
+  "similarity": 0.84,
+  "first": {
+   "id": "1277-1399-bnull-58",
+   "track": "ce",
+   "code": "1277",
+   "year": 1399,
+   "number": 58,
+   "subject": "automata",
+   "answer": 3,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1400-b1-51",
+   "track": "ce",
+   "code": "1277",
+   "year": 1400,
+   "number": 51,
+   "subject": "automata",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "computer-architecture",
+  "similarity": 0.835,
+  "first": {
+   "id": "1277-1402-b1-84",
+   "track": "ce",
+   "code": "1277",
+   "year": 1402,
+   "number": 84,
+   "subject": "computer-architecture",
+   "answer": 3,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1404-b1-86",
+   "track": "ce",
+   "code": "1277",
+   "year": 1404,
+   "number": 86,
+   "subject": "computer-architecture",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "computer-architecture",
+  "similarity": 0.88,
+  "first": {
+   "id": "1277-1402-b1-89",
+   "track": "ce",
+   "code": "1277",
+   "year": 1402,
+   "number": 89,
+   "subject": "computer-architecture",
+   "answer": 2,
+   "figures": 1
+  },
+  "second": {
+   "id": "1277-1404-b1-85",
+   "track": "ce",
+   "code": "1277",
+   "year": 1404,
+   "number": 85,
+   "subject": "computer-architecture",
+   "answer": 1,
+   "figures": 4
+  }
+ },
+ {
+  "subject": "computer-networks",
+  "similarity": 0.789,
+  "first": {
+   "id": "1276-1402-758F-50",
+   "track": "it",
+   "code": "1276",
+   "year": 1402,
+   "number": 50,
+   "subject": "computer-networks",
+   "answer": 3,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1402-b1-103",
+   "track": "ce",
+   "code": "1277",
+   "year": 1402,
+   "number": 103,
+   "subject": "computer-networks",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.678,
+  "first": {
+   "id": "1276-1389-3057A-50",
+   "track": "it",
+   "code": "1276",
+   "year": 1389,
+   "number": 50,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 1
+  },
+  "second": {
+   "id": "1277-1403-b1-64",
+   "track": "ce",
+   "code": "1277",
+   "year": 1403,
+   "number": 64,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.685,
+  "first": {
+   "id": "1276-1389-3057A-47",
+   "track": "it",
+   "code": "1276",
+   "year": 1389,
+   "number": 47,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1276-1390-351B-44",
+   "track": "it",
+   "code": "1276",
+   "year": 1390,
+   "number": 44,
+   "subject": "data-structures-algorithms",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.572,
+  "first": {
+   "id": "1277-1390-b2-35",
+   "track": "ce",
+   "code": "1277",
+   "year": 1390,
+   "number": 35,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1276-1405-254A-41",
+   "track": "it",
+   "code": "1276",
+   "year": 1405,
+   "number": 41,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.611,
+  "first": {
+   "id": "1277-1391-b2-113",
+   "track": "ce",
+   "code": "1277",
+   "year": 1391,
+   "number": 113,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1405-b1-57",
+   "track": "ce",
+   "code": "1277",
+   "year": 1405,
+   "number": 57,
+   "subject": "data-structures-algorithms",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.637,
+  "first": {
+   "id": "1276-1391-349A-47",
+   "track": "it",
+   "code": "1276",
+   "year": 1391,
+   "number": 47,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1276-1399-460E-48",
+   "track": "it",
+   "code": "1276",
+   "year": 1399,
+   "number": 48,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.857,
+  "first": {
+   "id": "1277-1394-b1-47",
+   "track": "ce",
+   "code": "1277",
+   "year": 1394,
+   "number": 47,
+   "subject": "data-structures-algorithms",
+   "answer": 1,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1399-bnull-96",
+   "track": "ce",
+   "code": "1277",
+   "year": 1399,
+   "number": 96,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.774,
+  "first": {
+   "id": "1277-1394-b1-49",
+   "track": "ce",
+   "code": "1277",
+   "year": 1394,
+   "number": 49,
+   "subject": "data-structures-algorithms",
+   "answer": 1,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1399-bnull-97",
+   "track": "ce",
+   "code": "1277",
+   "year": 1399,
+   "number": 97,
+   "subject": "data-structures-algorithms",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.795,
+  "first": {
+   "id": "1276-1394-351C-44",
+   "track": "it",
+   "code": "1276",
+   "year": 1394,
+   "number": 44,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1394-b1-51",
+   "track": "ce",
+   "code": "1277",
+   "year": 1394,
+   "number": 51,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.828,
+  "first": {
+   "id": "1277-1394-b2-98",
+   "track": "ce",
+   "code": "1277",
+   "year": 1394,
+   "number": 98,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1399-bnull-98",
+   "track": "ce",
+   "code": "1277",
+   "year": 1399,
+   "number": 98,
+   "subject": "data-structures-algorithms",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.859,
+  "first": {
+   "id": "1277-1394-b2-100",
+   "track": "ce",
+   "code": "1277",
+   "year": 1394,
+   "number": 100,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1399-bnull-95",
+   "track": "ce",
+   "code": "1277",
+   "year": 1399,
+   "number": 95,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "data-structures-algorithms",
+  "similarity": 0.625,
+  "first": {
+   "id": "1276-1400-658A-46",
+   "track": "it",
+   "code": "1276",
+   "year": 1400,
+   "number": 46,
+   "subject": "data-structures-algorithms",
+   "answer": 1,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1400-b1-68",
+   "track": "ce",
+   "code": "1277",
+   "year": 1400,
+   "number": 68,
+   "subject": "data-structures-algorithms",
+   "answer": 4,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "databases",
+  "similarity": 0.802,
+  "first": {
+   "id": "1276-1388-C-79",
+   "track": "it",
+   "code": "1276",
+   "year": 1388,
+   "number": 79,
+   "subject": "databases",
+   "answer": 1,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1404-b1-111",
+   "track": "ce",
+   "code": "1277",
+   "year": 1404,
+   "number": 111,
+   "subject": "databases",
+   "answer": 1,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "databases",
+  "similarity": 0.763,
+  "first": {
+   "id": "1277-1395-b2-119",
+   "track": "ce",
+   "code": "1277",
+   "year": 1395,
+   "number": 119,
+   "subject": "databases",
+   "answer": 4,
+   "figures": 0
+  },
+  "second": {
+   "id": "1276-1400-658A-82",
+   "track": "it",
+   "code": "1276",
+   "year": 1400,
+   "number": 82,
+   "subject": "databases",
+   "answer": 4,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "databases",
+  "similarity": 0.773,
+  "first": {
+   "id": "1276-1398-859A-84",
+   "track": "it",
+   "code": "1276",
+   "year": 1398,
+   "number": 84,
+   "subject": "databases",
+   "answer": 3,
+   "figures": 1
+  },
+  "second": {
+   "id": "1277-1399-bnull-149",
+   "track": "ce",
+   "code": "1277",
+   "year": 1399,
+   "number": 149,
+   "subject": "databases",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "digital-logic",
+  "similarity": 0.571,
+  "first": {
+   "id": "1277-1398-bnull-68",
+   "track": "ce",
+   "code": "1277",
+   "year": 1398,
+   "number": 68,
+   "subject": "digital-logic",
+   "answer": 3,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1400-b1-81",
+   "track": "ce",
+   "code": "1277",
+   "year": 1400,
+   "number": 81,
+   "subject": "digital-logic",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "digital-logic",
+  "similarity": 0.681,
+  "first": {
+   "id": "1277-1402-b1-82",
+   "track": "ce",
+   "code": "1277",
+   "year": 1402,
+   "number": 82,
+   "subject": "digital-logic",
+   "answer": 4,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1403-b1-80",
+   "track": "ce",
+   "code": "1277",
+   "year": 1403,
+   "number": 80,
+   "subject": "digital-logic",
+   "answer": 3,
+   "figures": 1
+  }
+ },
+ {
+  "subject": "english",
+  "similarity": 0.564,
+  "first": {
+   "id": "1276-1388-C-14",
+   "track": "it",
+   "code": "1276",
+   "year": 1388,
+   "number": 14,
+   "subject": "english",
+   "answer": 1,
+   "figures": 0
+  },
+  "second": {
+   "id": "1276-1390-351B-14",
+   "track": "it",
+   "code": "1276",
+   "year": 1390,
+   "number": 14,
+   "subject": "english",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "english",
+  "similarity": 0.779,
+  "first": {
+   "id": "1276-1400-658A-24",
+   "track": "it",
+   "code": "1276",
+   "year": 1400,
+   "number": 24,
+   "subject": "english",
+   "answer": 3,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1400-b1-28",
+   "track": "ce",
+   "code": "1277",
+   "year": 1400,
+   "number": 28,
+   "subject": "english",
+   "answer": 1,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "english",
+  "similarity": 0.62,
+  "first": {
+   "id": "1276-1404-457C-22",
+   "track": "it",
+   "code": "1276",
+   "year": 1404,
+   "number": 22,
+   "subject": "english",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1404-b1-21",
+   "track": "ce",
+   "code": "1277",
+   "year": 1404,
+   "number": 21,
+   "subject": "english",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "english",
+  "similarity": 0.69,
+  "first": {
+   "id": "1276-1404-457C-9",
+   "track": "it",
+   "code": "1276",
+   "year": 1404,
+   "number": 9,
+   "subject": "english",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1404-bundefined-9",
+   "track": "cs",
+   "code": "1277",
+   "year": 1404,
+   "number": 9,
+   "subject": "english",
+   "answer": 2,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "english",
+  "similarity": 0.695,
+  "first": {
+   "id": "1276-1405-254A-9",
+   "track": "it",
+   "code": "1276",
+   "year": 1405,
+   "number": 9,
+   "subject": "english",
+   "answer": 3,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1405-bundefined-9",
+   "track": "cs",
+   "code": "1277",
+   "year": 1405,
+   "number": 9,
+   "subject": "english",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "operating-systems",
+  "similarity": 0.628,
+  "first": {
+   "id": "1276-1392-350D-91",
+   "track": "it",
+   "code": "1276",
+   "year": 1392,
+   "number": 91,
+   "subject": "operating-systems",
+   "answer": 1,
+   "figures": 1
+  },
+  "second": {
+   "id": "1277-1392-b1-70",
+   "track": "ce",
+   "code": "1277",
+   "year": 1392,
+   "number": 70,
+   "subject": "operating-systems",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "operating-systems",
+  "similarity": 0.605,
+  "first": {
+   "id": "1276-1393-350A-89",
+   "track": "it",
+   "code": "1276",
+   "year": 1393,
+   "number": 89,
+   "subject": "operating-systems",
+   "answer": 4,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1394-b1-70",
+   "track": "ce",
+   "code": "1277",
+   "year": 1394,
+   "number": 70,
+   "subject": "operating-systems",
+   "answer": 1,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "operating-systems",
+  "similarity": 0.716,
+  "first": {
+   "id": "1276-1393-350A-93",
+   "track": "it",
+   "code": "1276",
+   "year": 1393,
+   "number": 93,
+   "subject": "operating-systems",
+   "answer": 4,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1394-b1-71",
+   "track": "ce",
+   "code": "1277",
+   "year": 1394,
+   "number": 71,
+   "subject": "operating-systems",
+   "answer": 4,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "operating-systems",
+  "similarity": 0.849,
+  "first": {
+   "id": "1276-1399-460E-94",
+   "track": "it",
+   "code": "1276",
+   "year": 1399,
+   "number": 94,
+   "subject": "operating-systems",
+   "answer": 4,
+   "figures": 0
+  },
+  "second": {
+   "id": "1276-1400-658A-96",
+   "track": "it",
+   "code": "1276",
+   "year": 1400,
+   "number": 96,
+   "subject": "operating-systems",
+   "answer": 3,
+   "figures": 0
+  }
+ },
+ {
+  "subject": "statistics",
+  "similarity": 0.592,
+  "first": {
+   "id": "1277-1401-b1-43",
+   "track": "ce",
+   "code": "1277",
+   "year": 1401,
+   "number": 43,
+   "subject": "statistics",
+   "answer": 2,
+   "figures": 0
+  },
+  "second": {
+   "id": "1277-1402-b1-38",
+   "track": "ce",
+   "code": "1277",
+   "year": 1402,
+   "number": 38,
+   "subject": "statistics",
+   "answer": 2,
+   "figures": 0
+  }
+ }
+]
