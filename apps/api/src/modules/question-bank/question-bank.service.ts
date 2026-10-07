@@ -180,6 +180,20 @@ export class QuestionBankService {
    * a permalink is not a way around the gate. Nothing is ever sent and then
    * hidden client-side.
    */
+  /**
+   * A subject's public samples, answer and solution included: the
+   * shop-window a subject page shows. Only questions an admin (or an import
+   * package) flagged as samples, newest exam first.
+   */
+  async samples(subjectCode: string, limit = 6): Promise<AnsweredQuestion[]> {
+    return this.prisma.question.findMany({
+      where: { ...STUDENT_VISIBLE, isSample: true, subjectCode },
+      select: ANSWERED_QUESTION_SELECT,
+      orderBy: [{ examYear: "desc" }, { examCode: "asc" }, { questionNumber: "asc" }],
+      take: Math.min(Math.max(limit, 1), 12),
+    });
+  }
+
   async getById(id: string, requester?: SessionUser): Promise<LockedQuestion | AnsweredQuestion> {
     // Matches `list`: a retired question is gone from the bank, and a stale
     // permalink must not be the one way back to it.

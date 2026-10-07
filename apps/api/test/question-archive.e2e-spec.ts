@@ -245,4 +245,35 @@ describe("Past-exam archive questions (question.v2)", () => {
     await importOne({ ...original, correct_option: 4 });
     expect((await http().get(`/admin/questions?q=${id}`).set("Cookie", adminCookie)).body.items[0]).toMatchObject({ keyVerified: false, qualityTier: "DRAFT" });
   });
+
+  it("publishes a package's sample with its solution, and keeps the flag until a package says otherwise", async () => {
+    const id = `archive-sample-${run}`;
+    const sampleSubject = `sample-subject-${run}`;
+    const checked = { text_verified: true, key_verified: true };
+    async function importOne(item: unknown) {
+      const zip = new AdmZip();
+      zip.addFile("payload.json", Buffer.from(JSON.stringify([item])));
+      const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "one.zip").expect(201);
+      const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+      await http().post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: [staged.body[0].id], decision: "APPROVE" }).expect(201);
+      await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+    }
+    const solution = [{ type: "text", text: "Worked solution." }];
+    const base = archiveQuestion(id, sampleSubject, 130, { review: checked });
+    await importOne({ ...base, solution_blocks: solution, sample: true });
+
+    const samples = await http().get("/questions/samples").query({ subjectCode: sampleSubject }).expect(200);
+    expect(samples.body).toHaveLength(1);
+    expect(samples.body[0]).toMatchObject({ externalId: id, correctOption: 2, solutionBlocks: solution, qualityTier: "GOLD", isSample: true });
+
+    // A rebuilt bank without the field leaves the panel's choice alone.
+    await importOne({ ...base, solution_blocks: solution });
+    expect((await http().get("/questions/samples").query({ subjectCode: sampleSubject })).body).toHaveLength(1);
+
+    // An explicit false takes it off the subject page.
+    await importOne({ ...base, solution_blocks: solution, sample: false });
+    expect((await http().get("/questions/samples").query({ subjectCode: sampleSubject })).body).toHaveLength(0);
+
+    await http().get("/questions/samples").expect(400);
+  });
 });

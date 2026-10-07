@@ -96,6 +96,9 @@ export async function questionRowFromPayload(
     assets: (payload.assets ?? []) as unknown as Prisma.InputJsonValue,
     source: (payload.source ?? null) as unknown as Prisma.InputJsonValue,
     provenance: payload.provenance as unknown as Prisma.InputJsonValue,
+    // A package may make a question its subject's public sample; without the
+    // field the flag stays as the panel set it.
+    ...(v2 && typeof v2.sample === "boolean" ? { isSample: v2.sample } : {}),
   };
 }
 

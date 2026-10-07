@@ -23,6 +23,7 @@ import {
   type Phase11SubjectSlug,
 } from "../../../content/phase11";
 import { apiGetPublic } from "../../../lib/api";
+import { loadSamples, SubjectSamples, type SampleQuestion } from "../../../components/samples/SubjectSamples";
 import { toPersianDigits } from "../../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
 
@@ -85,24 +86,28 @@ interface CatalogueCourse {
 }
 
 interface SubjectLearning {
+  slug: string;
   video: FreeLecture | null;
   course: CatalogueCourse | null;
+  /** Past konkur questions with worked solutions, flagged as this subject's public samples. */
+  samples: SampleQuestion[];
 }
 
 /** The free lecture and the paid course for a subject, for the "learn this"
  * block. Either lookup failing just leaves that card out. */
 async function loadLearning(slug: string): Promise<SubjectLearning> {
   const editorial = findSubject(slug);
-  const [videos, courses] = await Promise.all([
+  const [videos, courses, samples] = await Promise.all([
     apiGetPublic<FreeLecture[]>(`/resources?kind=VIDEO&subject=${encodeURIComponent(slug)}`).catch(() => null),
     apiGetPublic<CatalogueCourse[]>("/courses").catch(() => null),
+    loadSamples(slug),
   ]);
   const titles = editorial ? [editorial.shortTitle, editorial.title] : [];
   const course =
     (courses ?? []).find((item) => item.subject?.slug === slug) ??
     (courses ?? []).find((item) => titles.some((title) => item.title.includes(title))) ??
     null;
-  return { video: (videos ?? []).find((item) => item.externalUrl) ?? null, course };
+  return { slug, video: (videos ?? []).find((item) => item.externalUrl) ?? null, course, samples };
 }
 
 function lectureInstructor(title: string) {
@@ -122,6 +127,8 @@ const TOC = [
 function LearnBlock({ title, learning }: { title: string; learning: SubjectLearning }) {
   const publisher = learning.video?.sources?.[0]?.source?.publisher;
   return (
+    <>
+    <SubjectSamples subjectSlug={learning.slug} subjectTitle={title} samples={learning.samples} />
     <section id="learn" className="rd-block" aria-labelledby="learn-title">
       <div className="rd-block-head">
         <span className="eyebrow">یادگیری در کنکور کامپیوتر</span>
@@ -156,6 +163,7 @@ function LearnBlock({ title, learning }: { title: string; learning: SubjectLearn
         </Link>
       </div>
     </section>
+    </>
   );
 }
 

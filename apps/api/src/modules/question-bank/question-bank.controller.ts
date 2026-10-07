@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { QuestionQuality, Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
@@ -40,6 +40,13 @@ export class QuestionsPublicController {
       },
       req.user,
     );
+  }
+
+  /** A subject's public samples with their answers; declared before `:id` so it is not read as an id. */
+  @Get("samples")
+  samples(@Query("subjectCode") subjectCode: string, @Query("limit") limit?: string) {
+    if (!subjectCode) throw new BadRequestException("subjectCode is required");
+    return this.questionBank.samples(subjectCode, limit ? Number(limit) || 6 : 6);
   }
 
   @Get(":id")

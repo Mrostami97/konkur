@@ -43,7 +43,27 @@ const BULLET = /^[•▪◦]\s*/;
 const NUMBERED = /^([0-9۰-۹]+)[.)]\s*/;
 const toAsciiDigits = (value: string) => value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
 
+/** A ```fenced``` run of code inside a text block (questions quote programs). */
+const CODE_FENCE = /```[^\n]*\n([\s\S]*?)```/g;
+
 function renderText(text: string, key: number) {
+  if (text.includes("```")) {
+    const parts: JSX.Element[] = [];
+    let last = 0;
+    for (const match of text.matchAll(CODE_FENCE)) {
+      const before = text.slice(last, match.index);
+      if (before.trim()) parts.push(renderProse(before, parts.length));
+      parts.push(<pre key={parts.length} className="cb-code" dir="ltr"><code>{match[1].replace(/\s+$/, "")}</code></pre>);
+      last = (match.index ?? 0) + match[0].length;
+    }
+    const rest = text.slice(last);
+    if (rest.trim()) parts.push(renderProse(rest, parts.length));
+    if (parts.length) return <Fragment key={key}>{parts}</Fragment>;
+  }
+  return renderProse(text, key);
+}
+
+function renderProse(text: string, key: number) {
   const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
   if (lines.length <= 1) return <p key={key}><RichText text={text} /></p>;
   const kindOf = (line: string) => (BULLET.test(line) ? "ul" : NUMBERED.test(line) ? "ol" : "p");
@@ -150,7 +170,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
               <tr>
                 {headers.map((h, i) => (
                   <th key={i}>
-                    {h}
+                    <RichText text={String(h)} />
                   </th>
                 ))}
               </tr>
@@ -161,7 +181,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
               <tr key={rowIndex}>
                 {row.map((cell, cellIndex) => (
                   <td key={cellIndex}>
-                    {cell}
+                    <RichText text={String(cell)} />
                   </td>
                 ))}
               </tr>
@@ -211,4 +231,25 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
 
 export function ContentBlocks({ blocks, assets = [] }: { blocks: Block[]; assets?: Asset[] }) {
   return <div className="cb">{blocks.map((block, index) => renderBlock(block, index, assets))}</div>;
+}
+
+/**
+ * Short text (a test option) inline, with its formulas: no paragraph or
+ * wrapper elements, so it can sit inside a button. Anything that is not
+ * text or a formula falls back to the full block renderer.
+ */
+export function InlineBlocks({ blocks, assets = [] }: { blocks: Block[]; assets?: Asset[] }) {
+  if (blocks.some((block) => block.type !== "text" && block.type !== "latex")) return <ContentBlocks blocks={blocks} assets={assets} />;
+  return (
+    <>
+      {blocks.map((block, index) =>
+        block.type === "latex" ? (
+          // eslint-disable-next-line react/no-danger
+          <span key={index} className="cb-imath" dir="ltr" dangerouslySetInnerHTML={{ __html: renderLatex(String(block.latex ?? ""), false) }} />
+        ) : (
+          <RichText key={index} text={String(block.text ?? "").replace(/\s*\n\s*/g, " ")} />
+        ),
+      )}
+    </>
+  );
 }

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
 import { formatRial, toPersianDigits } from "../../../lib/format";
 import { ContentBlocks } from "../../../components/ContentBlocks";
+import { tidyQuestionBlocks } from "../../../lib/question-text";
 import { BuyButton } from "../../../components/BuyButton";
 import { DataState } from "../../../components/ds";
 import { fieldLabel } from "../../account/profile-options";
@@ -106,7 +107,7 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
               {question.stemBlocks && question.options ? (
                 <article className="qv-sheet" aria-label="متن سؤال">
                   <div className="qv-stem">
-                    <ContentBlocks blocks={question.stemBlocks} assets={question.assets} />
+                    <ContentBlocks blocks={tidyQuestionBlocks(question.stemBlocks)} assets={question.assets} />
                   </div>
                   <div className="qv-options" role="radiogroup" aria-label="گزینه‌ها">
                     {question.options.map((option) => {

@@ -18,6 +18,7 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { SAMPLES } from "./samples.mjs";
 
 const repo = fileURLToPath(new URL("../../../", import.meta.url));
 const AdmZip = createRequire(`${repo}apps/api/package.json`)("adm-zip");
@@ -201,6 +202,8 @@ const questions = (await readFile(bankFile, "utf8"))
 await mkdir(outDir, { recursive: true });
 const report = { generated_at: new Date().toISOString(), bank_modified_at: generatedAt, exams: {} };
 const seenIds = new Set();
+/** Samples found in the bank; any left over means a curated id no longer matches. */
+const usedSamples = new Set();
 /** Each exam-year's items and files, kept to pack the first-import bundles. */
 const built = [];
 
@@ -246,7 +249,18 @@ for (const examYear of examYears) {
     const crop = q.crop ? await imageAsset(q.crop, "source") : null;
     if (crop) addFile(crop);
 
-    const notes = [...q.notes, ...(q.initialKey ? ["کلید اولیه؛ کلید نهایی هنوز اعمال نشده"] : [])];
+    // A curated sample carries its worked solution, and must reach the key.
+    const curated = SAMPLES[externalId];
+    if (curated) {
+      if (curated.answer !== q.correct) throw new Error(`${externalId}: the solution reaches option ${curated.answer}, the key says ${q.correct}`);
+      if (!q.textVerified || !q.keyVerified || q.initialKey) throw new Error(`${externalId}: a sample needs a checked text and a final, checked key`);
+      usedSamples.add(externalId);
+    }
+    const notes = [
+      ...q.notes,
+      ...(q.initialKey ? ["کلید اولیه؛ کلید نهایی هنوز اعمال نشده"] : []),
+      ...(curated ? ["راه‌حل تشریحی: نوشتهٔ Claude و هم‌خوان با کلید؛ بازبینی مالک لازم است"] : []),
+    ];
     const passageKey = q.passageId ? String(q.passageId).replace(/[^A-Za-z0-9-]/g, "") : sha256(String(q.docId) + q.passage).slice(0, 12);
     const item = {
       schema_version: "question.v2",
@@ -254,14 +268,15 @@ for (const examYear of examYears) {
       exam: { degree: "master", major: q.major, year, code },
       slot: { ...(q.booklet ? { booklet: q.booklet } : {}), number: q.number, ...(q.section ? { section: q.section } : {}) },
       subject_code: SUBJECTS[q.subjectName],
-      topic_codes: [],
+      topic_codes: curated?.topics ?? [],
       ...(q.passage ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: [{ type: "text", text: q.passage }] } } : {}),
       stem_blocks: q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)],
       options: q.options.map((option) => ({ number: option.number, blocks: [{ type: "text", text: String(option.text).trim() }] })),
       correct_option: q.correct,
       ...(q.accepted.length > 1 && q.accepted.includes(q.correct) ? { accepted_options: q.accepted } : {}),
-      solution_blocks: [],
+      solution_blocks: curated?.solution ?? [],
       review: { text_verified: q.textVerified, key_verified: q.keyVerified, notes },
+      ...(curated ? { sample: true } : {}),
       assets,
       source: {
         ...(q.page ? { page: q.page } : {}),
@@ -332,6 +347,9 @@ for (const bundle of bundles) {
   console.log(`${name}: ${bundle.items.length} questions, ${bundle.files.size + 1} entries, ${(zip.toBuffer().length / 1048576).toFixed(1)} MB`);
 }
 
+const missingSamples = Object.keys(SAMPLES).filter((id) => !usedSamples.has(id));
+if (missingSamples.length && onlyYears.size === 0) throw new Error(`curated samples not in the bank: ${missingSamples.join(", ")}`);
+report.samples = usedSamples.size;
 await writeFile(path.join(outDir, "report.json"), JSON.stringify(report, null, 2));
 const totals = {};
 for (const [examYear, s] of Object.entries(report.exams)) {

@@ -1294,6 +1294,9 @@ ol.cb-list { list-style: persian; }
 .cb h2, .cb h3, .cb h4 { margin: 1.25rem 0 0.5rem; color: var(--ink); line-height: 1.5; }
 .cb-quote { margin: 1rem 0; padding: 0.25rem 1rem; border-inline-start: 3px solid var(--line-strong); color: var(--ink-700); }
 .cb-quote footer { margin-top: 0.35rem; color: var(--muted); font-size: var(--text-sm); }
+/* A program quoted in a question or lesson: left to right, monospaced, scrolls rather than wraps. */
+.cb-code { margin: 0.75rem 0; padding: 0.75rem 1rem; overflow-x: auto; border-radius: var(--radius-sm); background: var(--ink-900); color: #e6edf3; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; text-align: left; direction: ltr; }
+.cb-code code { font: inherit; white-space: pre; }
 .cb-figure { margin: 1rem 0; }
 .cb-figure img { display: block; max-width: 100%; height: auto; border-radius: var(--radius-md); }
 .cb-figure figcaption { margin-top: 0.4rem; color: var(--muted); font-size: var(--text-sm); }

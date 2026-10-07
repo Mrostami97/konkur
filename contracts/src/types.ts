@@ -157,6 +157,8 @@ export interface QuestionV2 {
   accepted_options?: (1 | 2 | 3 | 4)[];
   solution_blocks: QuestionBlock[];
   review: { text_verified: boolean; key_verified: boolean; notes?: string[] };
+  /** A public sample of its subject: key and solution shown to everyone. Absent leaves the panel's choice. */
+  sample?: boolean;
   assets?: Asset[];
   source?: { page?: number; question_number?: number; booklet?: number; archive_path?: string; crop_media_key?: string };
   provenance: Omit<Provenance, "producer_type"> & { producer_type: "external_ai" | "human" | "ocr" };
