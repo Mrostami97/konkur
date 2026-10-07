@@ -272,6 +272,11 @@
     radial-gradient(ellipse 40% 50% at 95% 10%, rgba(25, 194, 166, 0.1), transparent 70%),
     var(--surface);
 }
+/* The search suggestions hang below the hero: while they are open the hero
+   stops clipping, and it stacks above the next section, whose render-skipping
+   (content-visibility) would otherwise paint over them. */
+.hx-hero { z-index: 2; }
+.hx-hero:has(.hs-list) { overflow: visible; }
 .hx-hero::before {
   position: absolute;
   inset: 0;
