@@ -9,6 +9,15 @@ interface FooterSubject {
   title: string;
 }
 
+/**
+ * The eNamad trust seal, exactly as eNamad issued it. It is a government
+ * mark: the markup must not be altered, so it goes in as raw HTML rather
+ * than as JSX (which would rewrite referrerpolicy, style and the code
+ * attribute), and the logo must come from trustseal.enamad.ir, never a copy.
+ */
+const ENAMAD_SEAL =
+  "<a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=8034011&Code=D6ko9wgWRFm7gNOcrh1yVzcWr2aTpeAq'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=8034011&Code=D6ko9wgWRFm7gNOcrh1yVzcWr2aTpeAq' alt='' style='cursor:pointer' code='D6ko9wgWRFm7gNOcrh1yVzcWr2aTpeAq'></a>";
+
 const TRUST_LINKS = [
   { href: "/about", label: "دربارهٔ محمد رستمی" },
   { href: "/evidence", label: "مستندات تدریس و نتایج" },
@@ -56,6 +65,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
             <li><Glyph name="shield" /> هر عدد با منبع و تاریخ بازبینی</li>
             <li><Glyph name="trophy" /> نتیجهٔ شاگرد فقط با رضایت خودش</li>
           </ul>
+          <div className="ft-enamad" dangerouslySetInnerHTML={{ __html: ENAMAD_SEAL }} />
         </div>
 
         <nav className="ft-col" aria-label="یادگیری">
