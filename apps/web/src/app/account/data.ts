@@ -58,7 +58,9 @@ export interface MyAttempt {
   startedAt: string;
   deadlineAt: string;
   submittedAt: string | null;
-  exam: { id: string; slug: string; title: string; durationMinutes: number };
+  exam: { id: string; slug: string; title: string; durationMinutes: number; simulatesExamCode?: string | null; simulatesYear?: number | null };
+  /** Per-subject results of a graded attempt, for the rank estimate. */
+  subjects?: { subjectCode: string; questions: number; correct: number; wrong: number }[];
   score: {
     correctCount: number;
     wrongCount: number;

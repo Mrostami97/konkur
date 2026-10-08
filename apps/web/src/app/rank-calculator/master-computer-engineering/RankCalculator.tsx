@@ -4,19 +4,19 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import modelJson from "../../../content/rank-model-1277.json";
 import { formatPersianNumber, toEnglishDigits, toPersianDigits } from "../../../lib/format";
+import { AdmissionMatches } from "../../../components/AdmissionMatches";
 import {
   BOXES,
   CODE_LABELS,
   CODES,
   PERCENT_MIN,
   QUESTIONS_1405,
-  admissionFit,
+  admissionMatches,
   estimateCode,
   percentFromAnswers,
   rankWithMore,
   roundRank,
   yearsFor,
-  type AdmissionFit,
   type CodeEstimate,
   type CodeKey,
   type Quota,
@@ -32,13 +32,6 @@ interface Saved { quota: Quota; mode: Mode; percents: string[]; answers: AnswerR
 
 const emptyAnswers = (): AnswerRow[] => QUESTIONS_1405.map((count) => ({ correct: "", wrong: "", questions: String(count) }));
 const SAMPLE: Pick<Saved, "percents" | "gpa"> = { percents: ["56", "21", "30", "47", "42", "35"], gpa: "17.8" };
-
-const fitLabels: Record<AdmissionFit, string> = {
-  strong: "بهتر از بیشتر قبولی‌ها",
-  within: "در محدودهٔ قبولی‌ها",
-  edge: "نزدیک مرز قبولی",
-  far: "دور",
-};
 
 const fa = (value: number, digits = 0) => formatPersianNumber(value, { maximumFractionDigits: digits, minimumFractionDigits: 0 });
 const faRank = (rank: number) => fa(roundRank(rank));
@@ -143,16 +136,10 @@ export function RankCalculator() {
       .sort((a, b) => (a.next as number) - (b.next as number));
   }, [best, activeYear, gpaValue, values]);
 
-  const programs = useMemo(() => {
-    if (!current || quota !== "free") return [];
-    const byCode = new Map(current.codes.map((estimate) => [estimate.code, estimate]));
-    return model.admissions
-      .map((pair) => {
-        const estimate = byCode.get(String(pair.code) as CodeKey);
-        return estimate ? { pair, estimate, fit: admissionFit(pair, estimate.rank) } : null;
-      })
-      .filter((item): item is NonNullable<typeof item> => item !== null && item.fit !== "far");
-  }, [current, quota]);
+  const programs = useMemo(
+    () => (current && quota === "free" ? admissionMatches(model, current.codes) : []),
+    [current, quota],
+  );
 
   function setPercent(index: number, raw: string) {
     setPercents((prev) => prev.map((value, i) => (i === index ? typed(raw) : value)));
@@ -332,24 +319,12 @@ export function RankCalculator() {
               <div className="rc-block">
                 <h3>با این رتبه، کجا قبول شده‌اند؟</h3>
                 <p className="rc-block-lead">
-                  رتبه‌ات در کد هر رشته‌محل با رتبهٔ قبول‌شده‌های روزانهٔ سهمیهٔ آزاد ۱۴۰۰ تا ۱۴۰۴ در {toPersianDigits(model.admissions.length)} رشته‌محل پرطرفدار مقایسه شده است. روی هم رفته رتبهٔ قبولی رشته‌محل‌ها در این سال‌ها کم جابه‌جا شد؛ چیزی که از سالی به سال دیگر عوض می‌شود، رتبه‌ای است که درصدهای تو می‌گیرد. سال مرجع را عوض کن و ببین فهرست چطور تغییر می‌کند.
+                  رتبه‌ات در کد هر رشته‌محل با رتبهٔ قبول‌شده‌های سهمیهٔ آزاد ۱۴۰۰ تا ۱۴۰۴ در {toPersianDigits(model.admissions.length)} رشته‌محل (روزانه، شبانه و پردیس) مقایسه شده است. روی هم رفته رتبهٔ قبولی رشته‌محل‌ها در این سال‌ها کم جابه‌جا شد؛ چیزی که از سالی به سال دیگر عوض می‌شود، رتبه‌ای است که درصدهای تو می‌گیرد. سال مرجع را عوض کن و ببین فهرست چطور تغییر می‌کند.
                 </p>
                 {programs.length === 0 ? (
                   <p className="rc-empty-inline">رتبه‌ات در سال {toPersianDigits(activeYear.year)} از رتبه‌های قبولی این رشته‌محل‌ها عقب‌تر است. فهرست کامل رشته‌محل‌ها بیشتر از این‌هاست؛ در انتخاب‌رشته همهٔ آن‌ها را ببین.</p>
                 ) : (
-                  <ul className="rc-programs">
-                    {programs.map(({ pair, estimate, fit }) => (
-                      <li key={`${pair.program}-${pair.university}`} data-fit={fit}>
-                        <div>
-                          <strong>{pair.program} {pair.university}</strong>
-                          <span className="tnum">
-                            کد {toPersianDigits(pair.code)} · میانهٔ رتبهٔ قبولی‌ها {fa(pair.median)} · نیمهٔ وسط {fa(pair.p25)} تا {fa(pair.p75)}
-                          </span>
-                        </div>
-                        <em>{fitLabels[fit]}<small className="tnum"> · رتبهٔ تو {faRank(estimate.rank)}</small></em>
-                      </li>
-                    ))}
-                  </ul>
+                  <AdmissionMatches matches={programs} />
                 )}
                 <p className="rc-hint">
                   این رتبه‌ها از کارنامه‌هایی است که داوطلب‌ها منتشر کرده‌اند، پس مرز واقعی قبولی ممکن است عقب‌تر باشد. ظرفیت و رقابت هر سال فرق می‌کند.{" "}

@@ -6,7 +6,9 @@ import { ScoreTrend } from "../../../account/charts";
 import modelJson from "../../../../content/rank-model-1277.json";
 import { subjectName } from "../../../../content/subject-names";
 import { toPersianDigits } from "../../../../lib/format";
+import { AdmissionMatches } from "../../../../components/AdmissionMatches";
 import {
+  admissionMatches,
   BOXES,
   CODE_LABELS,
   CODES,
@@ -204,6 +206,19 @@ function RankEstimate({ report }: { report: CardReport }) {
               ) : null,
             )}
           </div>
+          {quota === "free" && (() => {
+            const matches = admissionMatches(model, estimates.filter((estimate): estimate is NonNullable<typeof estimate> => estimate !== null));
+            return (
+              <div className="rc-admissions">
+                <h3>با این رتبه، کجا قبول شده‌اند؟</h3>
+                {matches.length > 0 ? (
+                  <AdmissionMatches matches={matches} limit={10} />
+                ) : (
+                  <p className="rc-note">با این درصدها رتبه‌ات از رتبهٔ قبولی رشته‌محل‌هایی که کارنامه‌شان را داریم عقب‌تر است؛ فهرست کامل را در انتخاب رشته ببین.</p>
+                )}
+              </div>
+            );
+          })()}
           <p className="rc-note">
             درصد هر بخش فقط از سؤال‌های درس‌هایی حساب شده که در کنکور ۱۴۰۶ مانده‌اند. برای تخمین دقیق‌تر با درصدهای خودت،{" "}
             <Link href="/rank-calculator/master-computer-engineering">ماشین‌حساب رتبه</Link> را ببین.

@@ -1,0 +1,13 @@
+/* Programs a rank reaches: one row each, the fit in words on a tinted pill. */
+.am-list { display: grid; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-md); list-style: none; }
+.am-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.35rem 1rem; padding: 0.65rem 0.85rem; }
+.am-list li + li { border-top: 1px solid var(--line-soft); }
+.am-list li div { display: grid; gap: 0.1rem; }
+.am-list strong { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--ink); font-size: var(--text-sm); }
+.am-list span { color: var(--muted); font-size: var(--text-xs); }
+.am-list .am-period { padding: 0 0.45rem; border: 1px solid var(--line); border-radius: var(--radius-pill); color: var(--ink-700); font-size: var(--text-2xs); font-weight: var(--weight-semibold); }
+.am-list em { padding: 0.15rem 0.6rem; border-radius: var(--radius-pill); font-size: var(--text-xs); font-style: normal; font-weight: var(--weight-semibold); }
+.am-list em small { font-weight: var(--weight-regular); }
+.am-list [data-fit="strong"] em { color: var(--success); background: var(--success-soft); }
+.am-list [data-fit="within"] em { color: var(--accent-hover); background: var(--accent-soft); }
+.am-list [data-fit="edge"] em { color: var(--warning-ink); background: var(--warning-soft); }

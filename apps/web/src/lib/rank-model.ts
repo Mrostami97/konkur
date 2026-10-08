@@ -30,6 +30,8 @@ export interface AdmissionPair {
   p25: number;
   p75: number;
   highestRecent: number | null;
+  /** روزانه, شبانه, پردیس و خودگردان, ...; absent in models built before periods were kept. */
+  period?: string;
 }
 export interface RankModel {
   set: number;
@@ -142,6 +144,31 @@ export function admissionFit(pair: AdmissionPair, rank: number): AdmissionFit {
   if (rank <= pair.p75) return "within";
   if (rank <= Math.max(pair.p75, pair.highestRecent ?? 0)) return "edge";
   return "far";
+}
+
+export interface AdmissionMatch {
+  pair: AdmissionPair;
+  /** The estimated rank in this program's coefficient code. */
+  rank: number;
+  fit: AdmissionFit;
+}
+
+const FIT_ORDER: Record<AdmissionFit, number> = { strong: 0, within: 1, edge: 2, far: 3 };
+
+/**
+ * The programs whose admitted ranks a set of code estimates reaches: best fit
+ * first, then the more competitive program first. Programs out of reach are
+ * left out.
+ */
+export function admissionMatches(model: RankModel, estimates: readonly CodeEstimate[]): AdmissionMatch[] {
+  const byCode = new Map(estimates.map((estimate) => [estimate.code, estimate]));
+  return model.admissions
+    .map((pair) => {
+      const estimate = byCode.get(String(pair.code) as CodeKey);
+      return estimate ? { pair, rank: estimate.rank, fit: admissionFit(pair, estimate.rank) } : null;
+    })
+    .filter((match): match is AdmissionMatch => match !== null && match.fit !== "far")
+    .sort((a, b) => FIT_ORDER[a.fit] - FIT_ORDER[b.fit] || a.pair.median - b.pair.median);
 }
 
 /** Readable rounding: exact under 100, then to 5 and 10. */

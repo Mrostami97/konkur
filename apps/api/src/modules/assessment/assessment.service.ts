@@ -450,15 +450,20 @@ export class AssessmentService {
         startedAt: true,
         deadlineAt: true,
         submittedAt: true,
-        exam: { select: { id: true, slug: true, title: true, durationMinutes: true } },
+        exam: { select: { id: true, slug: true, title: true, durationMinutes: true, simulatesExamCode: true, simulatesYear: true } },
         score: {
-          select: { correctCount: true, wrongCount: true, unansweredCount: true, rawScore: true, percentCorrect: true },
+          select: { correctCount: true, wrongCount: true, unansweredCount: true, rawScore: true, percentCorrect: true, breakdown: true },
         },
       },
     });
     const graded = attempts.filter((attempt) => attempt.score);
     const populations = graded.length ? await this.populations([...new Set(graded.map((attempt) => attempt.exam.id))]) : new Map();
-    return attempts.map((attempt) => {
+    return attempts.map(({ score: fullScore, ...rest }) => {
+      // Per-subject results let the student panel estimate a rank from the
+      // latest result in every subject, across all the exams taken.
+      const subjects = ((fullScore?.breakdown as unknown as Breakdown | null)?.subjects ?? []).map(({ subjectCode, questions, correct, wrong }) => ({ subjectCode, questions, correct, wrong }));
+      const score = fullScore ? { correctCount: fullScore.correctCount, wrongCount: fullScore.wrongCount, unansweredCount: fullScore.unansweredCount, rawScore: fullScore.rawScore, percentCorrect: fullScore.percentCorrect } : null;
+      const attempt = { ...rest, score, subjects };
       if (!attempt.score) return { ...attempt, standing: null };
       const standing = standingOf(populations.get(attempt.exam.id) ?? [], userId, attempt.id, konkurPercent(attempt.score));
       return {

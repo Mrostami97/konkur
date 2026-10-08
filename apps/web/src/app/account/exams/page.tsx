@@ -8,8 +8,11 @@ import { konkurPercent, toPersianDigits } from "../../../lib/format";
 import { AccountShell } from "../AccountShell";
 import { ProgressRing, ScoreTrend } from "../charts";
 import { ATTEMPT_STATUS, faDate, type Mastery, type MyAttempt } from "../data";
+import { KonkurEstimateCard } from "../KonkurEstimateCard";
+import { useStudent } from "../student-context";
 
 export default function MyExamsPage() {
+  const { profile } = useStudent();
   const [attempts, setAttempts] = useState<MyAttempt[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [mastery, setMastery] = useState<Mastery[]>([]);
@@ -85,6 +88,8 @@ export default function MyExamsPage() {
               <div><span>در جریان</span><b>{toPersianDigits(inProgress.length)}</b></div>
             </div>
           </div>
+
+          <KonkurEstimateCard attempts={attempts} gpa={profile.gpa} />
 
           {scored.length >= 2 && (
             <section className="st-card">

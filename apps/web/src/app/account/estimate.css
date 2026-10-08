@@ -1,0 +1,34 @@
+/* The rank estimate card of the student panel. */
+.ke h3 { margin: 0 0 0.5rem; color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-bold); }
+.ke-sub { margin-top: 1.1rem !important; }
+
+.ke-boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+.ke-boxes li { display: grid; gap: 0.1rem; padding: 0.55rem 0.7rem; border: 1px solid var(--line-soft); border-radius: var(--radius-md); background: var(--paper); }
+.ke-boxes span { color: var(--muted); font-size: var(--text-2xs); line-height: 1.6; }
+.ke-boxes b { color: var(--ink); font-size: var(--text-md); font-weight: var(--weight-heavy); }
+.ke-boxes li[data-missing] { border-style: dashed; background: none; }
+.ke-boxes li[data-missing] b { color: var(--muted); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+
+.ke-missing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.85rem 1rem; border-radius: var(--radius-md); background: var(--surface-sunken); }
+.ke-missing p { max-width: 36rem; margin: 0; color: var(--ink-700); font-size: var(--text-sm); line-height: 1.9; }
+
+.ke-hero { display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch; }
+.ke-best { display: grid; align-content: center; gap: 0.1rem; min-width: 13rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md); color: var(--on-ink); background: var(--surface-ink); }
+.ke-best span { color: var(--on-ink-muted); font-size: var(--text-xs); }
+.ke-best strong { font-size: 2.1rem; font-weight: var(--weight-heavy); line-height: 1.2; }
+.ke-best small { color: var(--on-ink-muted); font-size: var(--text-2xs); }
+.ke-codes { flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.45rem; min-width: 15rem; }
+.ke-codes div { display: grid; align-content: center; gap: 0.05rem; padding: 0.5rem 0.75rem; border: 1px solid var(--line-soft); border-radius: var(--radius-md); }
+.ke-codes span { color: var(--muted); font-size: var(--text-2xs); }
+.ke-codes b { color: var(--ink); font-size: var(--text-md); font-weight: var(--weight-heavy); }
+.ke-codes [data-best] { border-color: var(--accent-line); background: var(--accent-soft); }
+
+.ke-history { margin-top: 1rem; }
+.ke-trend { display: block; width: 100%; max-width: 30rem; height: auto; overflow: visible; color: var(--accent); }
+.ke-trend-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; }
+.ke-trend-dot { fill: var(--surface); stroke: currentColor; stroke-width: 2.5; }
+.ke-trend-label { fill: var(--ink-700); font-size: 10px; font-weight: 700; font-family: var(--font-persian); }
+
+.ke-lever { margin: 1rem 0 0; padding: 0.7rem 0.9rem; border-inline-start: 3px solid var(--accent); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: var(--accent-soft); color: var(--ink-700); font-size: var(--text-sm); line-height: 1.9; }
+.ke-lever b { color: var(--ink); }
+.ke-note { margin: 0.8rem 0 0; color: var(--muted); font-size: var(--text-xs); line-height: 1.9; }

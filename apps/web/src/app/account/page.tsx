@@ -21,6 +21,7 @@ import {
 } from "./data";
 import { fieldLabel } from "./profile-options";
 import { useStudent } from "./student-context";
+import { KonkurEstimateCard } from "./KonkurEstimateCard";
 
 type Loaded<T> = { state: "loading" } | { state: "error" } | { state: "ready"; data: T };
 
@@ -264,6 +265,8 @@ export default function DashboardPage() {
               </div>
             )}
           </Panel>
+
+          {attempts.state === "ready" && <KonkurEstimateCard attempts={attempts.data} gpa={profile.gpa} compact />}
 
           {/* ------------------------------------------- continue learning */}
           <Panel title="ادامهٔ یادگیری" icon="play" action={<Link href="/account/courses" className="st-link">دوره‌های من ←</Link>}>

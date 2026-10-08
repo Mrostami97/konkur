@@ -3,8 +3,8 @@
 Writes apps/web/src/content/rank-model-1277.json: per (year, quota, code) a
 decreasing curve of ln(rank) on a 0.5-point grid of the GPA-shifted weighted
 average, the GPA shift per (year, quota), residual quantiles per rank band,
-accuracy measured out-of-fold, and admission ranks per university-program pair
-(free quota, daytime, >= 10 cards). No single card is written.
+accuracy measured out-of-fold, and admission ranks per university-program-period
+(free quota, >= 10 cards; see admission_pairs.py). No single card is written.
 """
 import sys, math, random, collections, csv, json, statistics
 sys.path.insert(0, "model")
@@ -67,19 +67,9 @@ for (y, q), m in sorted(full.items()):
         codes[str(c)] = dict(start=mdl["grid"][0], lnRank=[round(v, 3) for v in mdl["m"]])
     years.append(dict(year=y, quota=q, gpaShift=m["gamma"], cards=m["cards"], codes=codes))
 
-# Admissions: free quota, daytime, pairs with >= 10 cards; ranks in the pair's code.
-adm = collections.defaultdict(list)
-for r in csv.DictReader(open("out/admissions_parsed.csv", encoding="utf-8-sig")):
-    if r["quota"] != "free" or r["period"] != "روزانه" or not r["rank"] or not r["code"]: continue
-    adm[(r["program"], r["university"], int(r["code"]))].append((int(r["year"]), float(r["rank"])))
-admissions = []
-for (prog, uni, code), v in adm.items():
-    if len(v) < 10: continue
-    ranks = sorted(rk for _, rk in v); recent = [rk for yr, rk in v if yr >= 1403]
-    admissions.append(dict(program=prog, university=uni, code=code, cards=len(v),
-        median=round(statistics.median(ranks)), p25=round(quant(ranks, .25)), p75=round(quant(ranks, .75)),
-        highestRecent=round(max(recent)) if len(recent) >= 5 else None))
-admissions.sort(key=lambda a: a["median"])
+# Admissions: see admission_pairs.py (free quota, every period, >= 10 cards).
+from admission_pairs import pairs as admission_pairs
+admissions = admission_pairs("out/admissions_parsed.csv")
 
 model = dict(
     set=1277, generated="2026-09-27", gpaRef=GREF, step=0.5,
