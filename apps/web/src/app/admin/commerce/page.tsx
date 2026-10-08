@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { apiFetch } from "../../../lib/api";
+import { apiFetch, ApiError } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { subjectName } from "../../../content/subject-names";
 import {
@@ -69,14 +69,14 @@ const activePrice = (product: Product) => product.prices.find((price) => price.i
 
 /** The API's reasons for refusing a product, in Persian. */
 function productRefusal(err: unknown) {
-  const message = err instanceof Error ? err.message : "";
+  const message = err instanceof ApiError ? err.reason : err instanceof Error ? err.message : "";
   if (/slug already exists/i.test(message)) return "این نشانی یکتا (slug) را محصول دیگری دارد؛ نشانی دیگری بنویسید، مثلاً با پسوند -2.";
   if (/slug must be kebab-case/i.test(message)) return "نشانی یکتا فقط حروف کوچک لاتین، عدد و خط تیره است؛ مثلاً os-handout.";
   if (/COURSE products/i.test(message)) return "برای محصول «دوره»، دوره را انتخاب کنید.";
   if (/RESOURCE products/i.test(message)) return "برای محصول «منبع»، منبع (جزوه) را انتخاب کنید. فقط منبع‌های پولیِ منتشرشده در فهرست‌اند.";
   if (/QUESTION_BANK products/i.test(message)) return "برای محصول «بانک سؤال» دقیقاً یک کد درس بنویسید.";
   if (/BUNDLE products/i.test(message)) return "«بسته» باید دست‌کم دو چیز را باز کند: دوره، منبع یا بانک سؤال.";
-  return message || "ساخت محصول ناموفق بود.";
+  return err instanceof Error && err.message ? err.message : "ساخت محصول ناموفق بود.";
 }
 
 export default function CommerceAdminPage() {

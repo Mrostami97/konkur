@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { apiFetch } from "../../lib/api";
+import { apiFetch, ApiError } from "../../lib/api";
 import { useAvailability } from "../../lib/availability";
 import { TELEGRAM_URL } from "../../lib/site-nav";
 import "./login.css";
@@ -39,11 +39,29 @@ function afterLogin(roles: string[] = []) {
 
 type SignedIn = { user: { roles: string[] } };
 
-/** The API's validation messages are English; say the same thing in Persian. */
+/** The API's own reasons, which are written in English, said in Persian. */
+const REASONS: [RegExp, string][] = [
+  [/phone must be a valid phone number/i, "شمارهٔ موبایل را درست وارد کن؛ مثلاً ۰۹۱۲۳۴۵۶۷۸۹."],
+  [/invalid phone or password/i, "شمارهٔ موبایل یا رمز عبور درست نیست."],
+  [/invalid phone or code/i, "کد درست نیست؛ دوباره نگاهش کن یا کد تازه بگیر."],
+  [/code expired/i, "این کد منقضی شده است؛ کد تازه بگیر."],
+  [/too many attempts/i, "این کد چند بار اشتباه وارد شد؛ کد تازه بگیر."],
+  [/OTP login is not configured/i, "ورود با کد پیامکی فعلاً فعال نیست؛ با رمز عبور وارد شو."],
+  [/password/i, "رمز عبور را درست وارد کن."],
+  [/code/i, "کد ۶ رقمی را درست وارد کن."],
+];
+
+/**
+ * What went wrong, in Persian. A reason the page does not know and that is
+ * not already Persian falls back to the step's own sentence, so the visitor
+ * never reads a raw English message from the server.
+ */
 function friendly(err: unknown, fallback: string) {
-  const message = err instanceof Error ? err.message : "";
-  if (/phone must be a valid phone number/i.test(message)) return "شمارهٔ موبایل را درست وارد کن؛ مثلاً ۰۹۱۲۳۴۵۶۷۸۹.";
-  return message || fallback;
+  if (err instanceof ApiError && (err.status === 429 || err.status === 0)) return err.message;
+  const reason = err instanceof ApiError ? err.reason : err instanceof Error ? err.message : "";
+  const known = REASONS.find(([pattern]) => pattern.test(reason));
+  if (known) return known[1];
+  return /[\u0600-\u06FF]/.test(reason) ? reason : fallback;
 }
 
 export default function LoginPage() {
@@ -53,6 +71,7 @@ export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   // Only a definite "no" closes the code form; until the flags arrive, or if
@@ -131,7 +150,30 @@ export default function LoginPage() {
               </label>
               <label className="lg-field">
                 <span>رمز عبور</span>
-                <input type="password" autoComplete="current-password" dir="ltr" required value={password} onChange={(e) => setPassword(e.target.value)} />
+                <div className="lg-pass">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    dir="ltr"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="lg-pass-toggle"
+                    onClick={() => setShowPassword((shown) => !shown)}
+                    aria-label={showPassword ? "پنهان کردن رمز" : "نمایش رمز"}
+                    aria-pressed={showPassword}
+                    title={showPassword ? "پنهان کردن رمز" : "نمایش رمز"}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+                      <circle cx="12" cy="12" r="3" />
+                      {showPassword && <path d="M4 4l16 16" />}
+                    </svg>
+                  </button>
+                </div>
               </label>
               <button className="lg-submit" type="submit" disabled={loading}>{loading ? "در حال ورود…" : "ورود"}</button>
               <p className="lg-hint">ورود با رمز فعلاً برای کادر آموزشی است.</p>

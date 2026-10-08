@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { API_URL, apiFetch, apiUpload, uploadInPieces } from "../../../lib/api";
+import { API_URL, ApiError, apiFetch, apiUpload, uploadInPieces } from "../../../lib/api";
 import { formatDuration, toEnglishDigits, toPersianDigits } from "../../../lib/format";
 import {
   AdminPageHeader,
@@ -236,12 +236,13 @@ function VideoPicker({ block, onUploaded }: { block: DraftBlock; onUploaded: (vi
       onUploaded(await uploadInPieces<LessonVideo>("/admin/lesson-videos/uploads", file, setProgress));
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
+      const reason = err instanceof ApiError ? err.reason : message;
       setError(
-        /MOV/.test(message)
+        /MOV/.test(reason)
           ? "فایل MOV در مرورگرها درست پخش نمی‌شود؛ ویدیو را با فرمت MP4 (H.264) خروجی بگیرید و دوباره آپلود کنید."
-          : /MP4 or WebM/.test(message)
+          : /MP4 or WebM/.test(reason)
             ? "این فایل MP4 یا WebM نیست. ویدیو را با فرمت MP4 (H.264) خروجی بگیرید."
-            : /damaged|incomplete/.test(message)
+            : /damaged|incomplete/.test(reason)
               ? "فایل MP4 ناقص یا خراب است؛ دوباره از نرم‌افزار ویرایش خروجی بگیرید."
               : message
                 ? `آپلود ویدیو ناموفق بود: ${message}`

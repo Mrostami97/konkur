@@ -22,26 +22,73 @@ export class ApiError extends Error {
     public code?: string,
     /** The rest of the error body, for callers that need its details. */
     public details?: Record<string, unknown>,
+    /** The server's own wording, often English, for a page that matches on
+     * it. `message` is always Persian and is what a person reads. */
+    public reason: string = message,
   ) {
     super(message);
   }
+}
+
+const PERSIAN = /[\u0600-\u06FF]/;
+
+/** Reasons the API gives in English, as a person should read them. */
+const KNOWN_REASONS: [RegExp, string][] = [
+  [/untrusted request origin/i, "این درخواست از نشانی دیگری آمده است. سایت را از kunkurcomputer.ir باز کن و دوباره امتحان کن."],
+  [/no session|invalid or expired session/i, "نشست کاربری‌ات تمام شده است؛ دوباره وارد شو."],
+  [/student accounts cannot use staff routes|insufficient role|no roles configured/i, "به این بخش دسترسی نداری."],
+  [/invalid phone or password/i, "شمارهٔ موبایل یا رمز عبور درست نیست."],
+  [/invalid phone or code/i, "کد درست نیست؛ دوباره نگاهش کن یا کد تازه بگیر."],
+  [/code expired/i, "این کد منقضی شده است؛ کد تازه بگیر."],
+  [/too many attempts/i, "این کد چند بار اشتباه وارد شد؛ کد تازه بگیر."],
+  [/OTP login is not configured/i, "ورود با کد پیامکی فعلاً فعال نیست؛ با رمز عبور وارد شو."],
+  [/phone must be a valid phone number/i, "شمارهٔ موبایل را درست وارد کن؛ مثلاً ۰۹۱۲۳۴۵۶۷۸۹."],
+  [/too many requests|throttl/i, "چند بار پشت سر هم امتحان کردی؛ چند دقیقه صبر کن و دوباره امتحان کن."],
+  [/payload too large|file too large/i, "حجم فایل از سقف مجاز بیشتر است."],
+  [/slug already exists/i, "این نشانی (slug) را مورد دیگری دارد؛ نشانی دیگری بنویس."],
+  [/not found/i, "موردی که خواستی پیدا نشد؛ شاید حذف شده باشد."],
+  [/must be|should not be|must not be|must contain|must match|is not valid|invalid/i, "بعضی از اطلاعات واردشده درست نیست؛ فرم را بررسی کن و دوباره بفرست."],
+];
+
+/** When the reason is unknown, what the status alone says. */
+function statusMessage(status: number) {
+  if (status === 0) return "اتصال به سایت برقرار نشد؛ اینترنتت را بررسی کن و دوباره امتحان کن.";
+  if (status === 400 || status === 422) return "اطلاعات واردشده درست نیست؛ فرم را بررسی کن و دوباره بفرست.";
+  if (status === 401) return "اول وارد حسابت شو؛ اگر وارد بودی، نشستت تمام شده است.";
+  if (status === 403) return "به این بخش دسترسی نداری.";
+  if (status === 404) return "موردی که خواستی پیدا نشد.";
+  if (status === 409) return "این کار با وضعیت فعلی جور درنمی‌آید؛ صفحه را تازه کن و دوباره امتحان کن.";
+  if (status === 413) return "حجم فایل از سقف مجاز بیشتر است.";
+  if (status === 429) return "چند بار پشت سر هم امتحان کردی؛ چند دقیقه صبر کن و دوباره امتحان کن.";
+  if (status >= 500) return "سرور الان پاسخ نداد؛ کمی بعد دوباره امتحان کن.";
+  return "انجام این کار ممکن نشد؛ دوباره امتحان کن.";
+}
+
+/**
+ * Every error a person sees is Persian. The API writes its own messages in
+ * Persian where a person will read them; the rest (validation, guards, the
+ * framework's defaults) are English and are put into Persian here, so no
+ * page shows a raw server message.
+ */
+export function persianError(status: number, reason: string): string {
+  const text = reason.trim();
+  if (text && PERSIAN.test(text)) return text;
+  const known = KNOWN_REASONS.find(([pattern]) => pattern.test(text));
+  return known ? known[1] : statusMessage(status);
 }
 
 function errorFrom(status: number, statusText: string, body: unknown) {
   const record = body && typeof body === "object" ? (body as Record<string, unknown>) : undefined;
   const raw = record?.message ?? statusText;
   const text = Array.isArray(raw) ? raw.join(", ") : String(raw);
-  // The API refuses writes from any page not on the site's own address
-  // (browser-origin.middleware.ts); say so in words a buyer can act on.
-  const message =
-    status === 403 && text === "untrusted request origin"
-      ? "این درخواست از نشانی دیگری آمده است. سایت را از kunkurcomputer.ir باز کن و دوباره امتحان کن."
-      : text;
+  // A CDN error page arrives as HTML, not as a reason.
+  const reason = /^\s*</.test(text) ? statusText : text;
   return new ApiError(
     status,
-    message,
+    persianError(status, reason),
     typeof record?.code === "string" ? record.code : undefined,
     record,
+    reason,
   );
 }
 
@@ -59,7 +106,10 @@ async function parseBody(res: Response) {
 export async function apiGetPublic<T>(path: string): Promise<T | null> {
   const res = await fetch(`${INTERNAL_API_URL}${path}`, { cache: "no-store" });
   if (res.status === 404) return null;
-  if (!res.ok) throw new ApiError(res.status, await res.text());
+  if (!res.ok) {
+    const reason = await res.text();
+    throw new ApiError(res.status, persianError(res.status, reason), undefined, undefined, reason);
+  }
   return res.json();
 }
 
@@ -68,14 +118,20 @@ export async function apiFetch<T>(
   path: string,
   options: { method?: string; body?: unknown; keepalive?: boolean } = {},
 ): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    method: options.method ?? "GET",
-    credentials: "include",
-    // Lets a last report leave while the page is being closed.
-    keepalive: options.keepalive,
-    headers: options.body ? { "Content-Type": "application/json" } : undefined,
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method: options.method ?? "GET",
+      credentials: "include",
+      // Lets a last report leave while the page is being closed.
+      keepalive: options.keepalive,
+      headers: options.body ? { "Content-Type": "application/json" } : undefined,
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+  } catch (err) {
+    // No answer at all: offline, DNS, the connection cut.
+    throw new ApiError(0, statusMessage(0), undefined, undefined, err instanceof Error ? err.message : "network error");
+  }
   const body = await parseBody(res);
   if (!res.ok) throw errorFrom(res.status, res.statusText, body);
   return body as T;

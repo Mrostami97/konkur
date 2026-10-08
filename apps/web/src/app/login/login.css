@@ -35,6 +35,29 @@
 }
 .lg-field input::placeholder { color: var(--ink-300); }
 .lg-field input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(11, 122, 106, 0.16); }
+/* The password with its show/hide eye. The text runs left-to-right, so the
+ * eye sits on the right where the typed characters never reach. */
+.lg-pass { position: relative; }
+.lg-field .lg-pass input { padding-right: 3rem; }
+.lg-pass-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm, 8px);
+  color: var(--muted);
+  background: none;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.lg-pass-toggle:hover, .lg-pass-toggle[aria-pressed="true"] { color: var(--accent); }
+.lg-pass-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.lg-pass-toggle svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .lg-code { font-size: var(--text-xl) !important; font-weight: var(--weight-bold); letter-spacing: 0.5em !important; text-align: center !important; }
 
 .lg-submit { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 3rem; border: 0; border-radius: var(--radius-md); color: #fff; background: var(--accent); font: inherit; font-size: var(--text-base); font-weight: var(--weight-bold); text-decoration: none; cursor: pointer; transition: background-color var(--motion-fast) var(--ease); }
