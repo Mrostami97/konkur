@@ -1288,9 +1288,15 @@ a.ds-kpi:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .cb-list li::marker { color: var(--muted); }
 ol.cb-list { list-style: persian; }
 /* Formulas sit in the sentence (inline) or on their own centred line (display). */
-.cb-imath { display: inline-block; max-width: 100%; overflow-x: auto; vertical-align: middle; white-space: nowrap; unicode-bidi: isolate; }
-.cb-dmath { display: block; margin: 0.6rem 0; overflow-x: auto; text-align: center; white-space: normal; }
+/* An inline formula flows with its sentence and, when long, breaks after = or +
+ * as KaTeX allows. A scrolling box here would also scroll vertically -- CSS
+ * turns the other axis to auto -- and a fraction, taller than the line, then
+ * grew scrollbars. Only a display formula scrolls, and only sideways. */
+.cb-imath { unicode-bidi: isolate; }
+.cb-dmath { display: block; margin: 0.6rem 0; padding-block: 0.15em; overflow-x: auto; overflow-y: hidden; text-align: center; white-space: normal; }
 .cb-dmath .katex-display { margin: 0; }
+/* Persian digits in a formula: KaTeX's font has none, so the site's draws them. */
+.katex .katex-fa { font-family: var(--font-persian); font-style: normal; }
 :is(.at-opt-body, .rp-opt-body, .qv-opt-body) .cb-dmath { text-align: right; }
 .cb h2, .cb h3, .cb h4 { margin: 1.25rem 0 0.5rem; color: var(--ink); line-height: 1.5; }
 .cb-quote { margin: 1rem 0; padding: 0.25rem 1rem; border-inline-start: 3px solid var(--line-strong); color: var(--ink-700); }

@@ -1,7 +1,7 @@
-import katex from "katex";
 import { Fragment } from "react";
 import type { AnswerSheetRebuild, EvidenceRebuild, MessageRebuild, QuestionsRebuild, ScorecardRebuild, ScoreValue } from "../content/evidence-rebuilds";
 import { toPersianDigits } from "../lib/format";
+import { renderLatex } from "../lib/math-render";
 import "./evidence-rebuild.css";
 
 const fa = (value: number) => value.toLocaleString("fa-IR", { maximumFractionDigits: 2, useGrouping: false });
@@ -13,7 +13,7 @@ function RichText({ text }: { text: string }) {
     <>
       {parts.map((part, index) => {
         if (part.startsWith("$") && part.endsWith("$") && part.length > 2) {
-          const html = katex.renderToString(part.slice(1, -1), { throwOnError: false, output: "html" });
+          const html = renderLatex(part.slice(1, -1));
           return <bdi className="rb-math" dir="ltr" key={index} dangerouslySetInnerHTML={{ __html: html }} />;
         }
         return <Fragment key={index}>{part}</Fragment>;
