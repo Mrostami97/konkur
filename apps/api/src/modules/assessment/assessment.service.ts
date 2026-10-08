@@ -370,11 +370,17 @@ export class AssessmentService {
 
   // --- Public catalog -----------------------------------------------------
 
-  listPublishedExams() {
-    return this.prisma.exam.findMany({
+  /** The catalogue, with what a card shows: how many questions and which sections. */
+  async listPublishedExams() {
+    const exams = await this.prisma.exam.findMany({
       where: { isPublished: true },
       orderBy: { createdAt: "desc" },
+      include: {
+        sections: { orderBy: { order: "asc" }, select: { title: true } },
+        forms: { take: 1, orderBy: { createdAt: "asc" }, select: { _count: { select: { items: true } } } },
+      },
     });
+    return exams.map(({ forms, ...exam }) => ({ ...exam, itemCount: forms[0]?._count.items ?? exam.questionCount ?? null }));
   }
 
   async getExamBySlug(slug: string) {
@@ -792,6 +798,8 @@ export class AssessmentService {
       examTitle: attempt.exam.title,
       exam: { id: attempt.exam.id, simulatesExamCode: attempt.exam.simulatesExamCode, simulatesYear: attempt.exam.simulatesYear },
       status: attempt.status,
+      startedAt: attempt.startedAt,
+      deadlineAt: attempt.deadlineAt,
       submittedAt: attempt.submittedAt,
       score: attempt.score,
       sections,
@@ -818,6 +826,7 @@ export class AssessmentService {
           timeSpentMs: answer?.timeSpentMs ?? 0,
           flagged: answer?.flagged ?? false,
           changeCount: answer?.changeCount ?? 0,
+          answeredAt: answer?.selectedOption != null ? answer.answeredAt : null,
           crowdCorrectPercent: statsReady ? Math.round(((crowd.get(item.questionId) ?? 0) / entrants.length) * 100) : null,
         };
       }),

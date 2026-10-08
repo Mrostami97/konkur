@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
+import { ScoreTrend } from "../../../account/charts";
 import modelJson from "../../../../content/rank-model-1277.json";
 import { subjectName } from "../../../../content/subject-names";
 import { toPersianDigits } from "../../../../lib/format";
@@ -378,20 +379,26 @@ function GoldenMisses({ report, items, onJump }: { report: CardReport; items: Ca
 function Progress({ report }: { report: CardReport }) {
   const points = [...report.history].filter((row) => row.konkurPercent !== null).reverse();
   if (points.length < 2) return null;
-  const top = Math.max(10, ...points.map((row) => row.konkurPercent ?? 0));
+  const first = points[0].konkurPercent ?? 0;
+  const last = points[points.length - 1].konkurPercent ?? 0;
+  const change = Math.round(last - first);
   return (
     <section className="rc-block" aria-labelledby="rc-progress-title">
       <div className="rc-head">
         <h2 id="rc-progress-title">روند تو در آزمون‌های اخیر</h2>
+        <p>
+          {fa(points.length)} آزمون آخر، از قدیمی به جدید
+          {change !== 0 ? `؛ ${fa(Math.abs(change))} درصد ${change > 0 ? "بالاتر" : "پایین‌تر"} از اولین آزمون این فهرست.` : "."}
+        </p>
       </div>
-      <ol className="rc-trend">
-        {points.map((row) => (
-          <li key={row.attemptId} title={`${row.examTitle}: ${pct(row.konkurPercent ?? 0)}`}>
-            <span className="rc-trend-bar" style={{ height: `${Math.max(2, ((row.konkurPercent ?? 0) / top) * 100)}%` }} />
-            <small className="tnum">{toPersianDigits(Math.round(row.konkurPercent ?? 0))}٪</small>
-          </li>
-        ))}
-      </ol>
+      <div className="rx-trend">
+        <ScoreTrend points={points.map((row) => ({ value: Math.max(0, row.konkurPercent ?? 0), label: row.examTitle }))} />
+        <ol className="rx-trend-labels" aria-hidden="true">
+          {points.map((row) => (
+            <li key={row.attemptId} className="tnum">{toPersianDigits(Math.round(row.konkurPercent ?? 0))}٪</li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }
@@ -421,12 +428,24 @@ function NextSteps({ report }: { report: CardReport }) {
   );
 }
 
-export function ReportCard({ report, items, onJump }: { report: CardReport; items: CardItem[]; onJump: (index: number) => void }) {
+export function ReportCard({
+  report,
+  items,
+  onJump,
+  charts,
+}: {
+  report: CardReport;
+  items: CardItem[];
+  onJump: (index: number) => void;
+  /** The report's charts, placed after strengths and weaknesses. */
+  charts?: ReactNode;
+}) {
   return (
     <>
       {report.sections.length > 0 && <SectionsTable report={report} />}
       <RankEstimate report={report} />
       <Subjects report={report} />
+      {charts}
       <TimeAndStrategy report={report} items={items} onJump={onJump} />
       <GoldenMisses report={report} items={items} onJump={onJump} />
       <Progress report={report} />

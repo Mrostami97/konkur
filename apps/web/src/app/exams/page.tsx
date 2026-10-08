@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
 import { apiGetPublic } from "../../lib/api";
-import { StartExamButton } from "../../components/StartExamButton";
 import { ComingSoon } from "../../components/ComingSoon";
+import { ExamCatalog, type CatalogExam } from "./ExamCatalog";
+import "./exams.css";
 import { EmptyState } from "../../components/ui";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
 
-interface Exam {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  durationMinutes: number;
-}
-
 async function loadExams() {
   try {
-    return await apiGetPublic<Exam[]>("/exams");
+    return await apiGetPublic<CatalogExam[]>("/exams");
   } catch {
     return null;
   }
@@ -35,6 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ExamsPage() {
   const exams = await loadExams();
+  const questions = (exams ?? []).reduce((sum, exam) => sum + (exam.itemCount ?? 0), 0);
+  const years = new Set((exams ?? []).map((exam) => exam.simulatesYear).filter(Boolean)).size;
 
   return (
     <main className="pg">
@@ -43,6 +38,20 @@ export default async function ExamsPage() {
           <p className="pg-eyebrow">سنجش آمادگی</p>
           <h1>آزمون‌ها</h1>
           <p className="pg-lede">با آزمون‌های واقعی، آمادگی‌ات را بسنج و قدم بعدی را دقیق‌تر انتخاب کن.</p>
+          {exams && exams.length > 0 && (
+            <dl className="xc-hero-stats">
+              <div><dt>آزمون</dt><dd className="tnum">{toPersianDigits(exams.length)}</dd></div>
+              {questions > 0 && <div><dt>سؤال کنکور</dt><dd className="tnum">{toPersianDigits(questions)}</dd></div>}
+              {years > 0 && <div><dt>سال کنکور</dt><dd className="tnum">{toPersianDigits(years)}</dd></div>}
+            </dl>
+          )}
+          {exams && exams.length > 0 && (
+            <ul className="xc-promise">
+              <li>زمان‌دار، با همان ترتیب و بخش‌های دفترچه</li>
+              <li>کارنامه با درصد به روش کنکور، تراز و رتبه بین شرکت‌کننده‌ها</li>
+              <li>تحلیل زمان، سؤال‌های طلایی از دست‌رفته و راه‌حل هر سؤال</li>
+            </ul>
+          )}
         </div>
       </div>
 
@@ -64,20 +73,7 @@ export default async function ExamsPage() {
             ]}
           />
         ) : (
-          <div className="pg-grid pg-grid-wide">
-            {exams.map((exam) => (
-              <article className="pg-card" key={exam.id}>
-                <span className="pg-card-meta">
-                  آزمون شبیه‌ساز · {toPersianDigits(exam.durationMinutes)} دقیقه
-                </span>
-                <b>{exam.title}</b>
-                <small>{exam.description}</small>
-                <span className="pg-card-action">
-                  <StartExamButton examId={exam.id} />
-                </span>
-              </article>
-            ))}
-          </div>
+          <ExamCatalog exams={exams} />
         )}
       </section>
     </main>

@@ -8,7 +8,11 @@ import { ContentBlocks } from "../../../../components/ContentBlocks";
 import { DataState } from "../../../../components/ds";
 import { StandingPanel } from "./StandingPanel";
 import { ReportCard, type CardItem, type CardReport } from "./ReportCard";
+import { DifficultySwarm, ScoreDonut, TimeSwarm } from "./ReportCharts";
+import { PaceChart, type PacePoint } from "../ExamCoach";
+import "../coach.css";
 import "./report.css";
+import "./report-charts.css";
 
 interface Block { type: string; [key: string]: unknown }
 interface Option { number: number; blocks: Block[] }
@@ -30,12 +34,15 @@ interface ReportItem {
   timeSpentMs: number;
   changeCount: number;
   flagged: boolean;
+  answeredAt: string | null;
   crowdCorrectPercent: number | null;
 }
 
 interface Report extends CardReport {
   examTitle: string;
   submittedAt: string | null;
+  startedAt: string;
+  deadlineAt: string;
   status: string;
   score: {
     correctCount: number;
@@ -135,6 +142,49 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
   const total = counts.all;
   const share = (count: number) => `${total ? (count / total) * 100 : 0}%`;
 
+  /** The sitting replayed: when each final answer was given, against the clock. */
+  const pace = useMemo(() => {
+    if (!report?.startedAt || !report.deadlineAt) return null;
+    const start = Date.parse(report.startedAt);
+    const deadline = Date.parse(report.deadlineAt);
+    const end = Math.min(report.submittedAt ? Date.parse(report.submittedAt) : deadline, deadline);
+    const times = report.items
+      .filter((item) => item.selectedOption !== null && item.answeredAt)
+      .map((item) => Math.max(0, (Date.parse(item.answeredAt!) - start) / 1000))
+      .sort((a, b) => a - b);
+    if (times.length < 2) return null;
+    return {
+      trail: times.map((t, i) => [Math.round(t), i + 1] as PacePoint),
+      elapsed: Math.max(0, (end - start) / 1000),
+      duration: Math.max(1, (deadline - start) / 1000),
+      answered: times.length,
+    };
+  }, [report]);
+
+  const charts = report && (
+    <>
+      <TimeSwarm
+        items={cardItems}
+        durationMs={report.deadlineAt && report.startedAt ? Date.parse(report.deadlineAt) - Date.parse(report.startedAt) : 0}
+        onJump={jump}
+      />
+      <DifficultySwarm items={cardItems} onJump={jump} />
+      {pace && (
+        <section className="rc-block" aria-labelledby="rx-pace-title">
+          <div className="rc-head">
+            <h2 id="rx-pace-title">ریتم پاسخ‌دادن</h2>
+            <p>
+              هر پله یک پاسخ است، در لحظه‌ای که آخرین بار ثبتش کردی؛ خط‌چین ریتم یکنواختی است که با پایان وقت همهٔ سؤال‌ها را تمام می‌کند.
+            </p>
+          </div>
+          <div className="rx-pace">
+            <PaceChart trail={pace.trail} elapsed={pace.elapsed} duration={pace.duration} answered={pace.answered} total={total} nowLabel="ثبت آزمون" />
+          </div>
+        </section>
+      )}
+    </>
+  );
+
   return (
     <main className="rp">
       <header className="rp-top">
@@ -161,9 +211,12 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
               {/* ------------------------------------------------------ score */}
               <section className="rp-score" aria-labelledby="rp-score-title">
                 <div className="rp-lead">
-                  <h2 id="rp-score-title">درصد به روش کنکور</h2>
-                  <strong className="tnum">{percent(konkurPercent(report.score))}</strong>
-                  <p>هر پاسخ نادرست یک‌سوم یک پاسخ درست کم می‌کند؛ همان حسابی که سنجش می‌کند.</p>
+                  <ScoreDonut correct={counts.correct} wrong={counts.wrong} blank={counts.blank} percent={konkurPercent(report.score)} />
+                  <div className="rp-lead-text">
+                    <h2 id="rp-score-title">درصد به روش کنکور</h2>
+                    <strong className="tnum">{percent(konkurPercent(report.score))}</strong>
+                    <p>هر پاسخ نادرست یک‌سوم یک پاسخ درست کم می‌کند؛ همان حسابی که سنجش می‌کند.</p>
+                  </div>
                 </div>
                 <div className="rp-split">
                   <div className="rp-bar" role="img" aria-label={`${toPersianDigits(counts.correct)} درست، ${toPersianDigits(counts.wrong)} نادرست، ${toPersianDigits(counts.blank)} بی‌پاسخ`}>
@@ -182,7 +235,7 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
 
               {report.status === "SUBMITTED" && <StandingPanel attemptId={params.id} />}
 
-              <ReportCard report={report} items={cardItems} onJump={jump} />
+              <ReportCard report={report} items={cardItems} onJump={jump} charts={charts} />
 
               {/* ----------------------------------------------------- review */}
               <section className="rp-review" aria-labelledby="rp-review-title">

@@ -70,7 +70,22 @@ const IH = H - PAD.top - PAD.bottom;
  * every question answered as the clock runs out. Time runs right to left,
  * the way the page reads.
  */
-function PaceChart({ trail, elapsed, duration, answered, total }: { trail: PacePoint[]; elapsed: number; duration: number; answered: number; total: number }) {
+export function PaceChart({
+  trail,
+  elapsed,
+  duration,
+  answered,
+  total,
+  nowLabel = "اکنون",
+}: {
+  trail: PacePoint[];
+  elapsed: number;
+  duration: number;
+  answered: number;
+  total: number;
+  /** What the vertical marker stands for: «now» in the sitting, «submitted» in the report. */
+  nowLabel?: string;
+}) {
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const span = Math.max(duration, 1);
@@ -138,7 +153,7 @@ function PaceChart({ trail, elapsed, duration, answered, total }: { trail: PaceP
         <path className="ec-area" d={area} />
         <path className="ec-line" d={path} />
         <line className="ec-now" x1={x(elapsed)} x2={x(elapsed)} y1={PAD.top} y2={PAD.top + IH} />
-        <text className="ec-now-label" x={x(elapsed)} y={PAD.top - 5} textAnchor="middle">اکنون</text>
+        <text className="ec-now-label" x={x(elapsed)} y={PAD.top - 5} textAnchor="middle">{nowLabel}</text>
         {/* The gap between where the even pace would be and where the candidate is. */}
         <line
           className="ec-gap"

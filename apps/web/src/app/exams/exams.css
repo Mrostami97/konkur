@@ -1,0 +1,81 @@
+/* The exam catalogue: grouped by the exam a simulator stands in for, each
+ * card led by its konkur year, with the student's own last result when they
+ * are signed in. */
+
+.xc-hero-stats { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.25rem 0 0; }
+.xc-hero-stats div { display: grid; min-width: 6.5rem; padding: 0.65rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.xc-hero-stats dt { color: var(--muted); font-size: var(--text-xs); }
+.xc-hero-stats dd { margin: 0; color: var(--ink); font-size: var(--text-xl); font-weight: var(--weight-heavy); line-height: 1.3; }
+.xc-promise { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; margin: 1rem 0 0; padding: 0; list-style: none; color: var(--ink-700); font-size: var(--text-sm); }
+.xc-promise li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.xc-promise li::before { content: "✓"; color: var(--accent); font-weight: var(--weight-bold); }
+
+.xc { display: grid; gap: 2rem; }
+
+.xc-filter { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.xc-filter button {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  min-height: 2.4rem; padding: 0 0.95rem;
+  border: 1px solid var(--line-strong); border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--ink-700);
+  font: inherit; font-size: var(--text-sm); font-weight: var(--weight-semibold); cursor: pointer;
+}
+.xc-filter button span { padding: 0 0.45rem; border-radius: var(--radius-pill); background: var(--surface-sunken); color: var(--muted); font-size: var(--text-xs); }
+.xc-filter button[aria-selected="true"] { border-color: var(--ink); color: #fff; background: var(--ink); }
+.xc-filter button[aria-selected="true"] span { background: rgba(255, 255, 255, 0.16); color: #fff; }
+
+/* Each exam family has its own accent, used only for the year badge and rule. */
+.xc-group { --xc-tone: var(--accent); }
+.xc-group[data-track="1276"] { --xc-tone: #2563eb; }
+.xc-group[data-track="1209"] { --xc-tone: #7c3aed; }
+.xc-group[data-track="other"] { --xc-tone: var(--ink-700); }
+.xc-group-head { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.9rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--xc-tone); }
+.xc-group-head h2 { margin: 0; color: var(--ink); font-size: var(--text-lg); font-weight: var(--weight-heavy); }
+.xc-group-head span { color: var(--muted); font-size: var(--text-xs); }
+
+.xc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1rem; }
+
+.xc-card {
+  display: flex; flex-direction: column; gap: 0.9rem;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition: border-color var(--motion-fast) var(--ease), box-shadow var(--motion-fast) var(--ease), transform var(--motion-fast) var(--ease);
+}
+.xc-card:hover { border-color: color-mix(in srgb, var(--xc-tone) 45%, var(--line)); box-shadow: var(--elev-2); transform: translateY(-1px); }
+
+.xc-card-top { display: flex; gap: 0.85rem; align-items: flex-start; }
+.xc-year {
+  display: grid; place-content: center; justify-items: center; flex: none;
+  width: 4.1rem; height: 4.1rem;
+  border-radius: var(--radius-md);
+  color: #fff; background: var(--xc-tone);
+}
+.xc-year small { font-size: var(--text-2xs); opacity: 0.85; line-height: 1.2; }
+.xc-year b { font-size: 1.2rem; font-weight: var(--weight-heavy); line-height: 1.2; }
+.xc-year-topic b { font-size: var(--text-sm); }
+.xc-card-title { min-width: 0; }
+.xc-card-title h3 { margin: 0; color: var(--ink); font-size: var(--text-base); font-weight: var(--weight-bold); line-height: 1.6; }
+.xc-card-title p { display: -webkit-box; margin: 0.2rem 0 0; overflow: hidden; color: var(--muted); font-size: var(--text-xs); line-height: 1.8; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+
+.xc-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border: 1px solid var(--line-soft); border-radius: var(--radius-md); background: var(--paper); }
+.xc-facts div { display: grid; justify-items: center; padding: 0.45rem 0.25rem; }
+.xc-facts div + div { border-inline-start: 1px solid var(--line-soft); }
+.xc-facts dt { color: var(--muted); font-size: var(--text-2xs); }
+.xc-facts dd { margin: 0; color: var(--ink); font-size: var(--text-md); font-weight: var(--weight-heavy); }
+
+.xc-sections { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; list-style: none; }
+.xc-sections li { padding: 0.15rem 0.55rem; border-radius: var(--radius-pill); background: var(--surface-sunken); color: var(--ink-700); font-size: var(--text-2xs); }
+
+.xc-foot { display: grid; gap: 0.6rem; margin-top: auto; }
+.xc-foot .start-exam, .xc-foot > .button { width: 100%; }
+.xc-foot .start-exam .button { width: 100%; }
+.xc-mine { display: grid; gap: 0.3rem; color: var(--muted); font-size: var(--text-xs); text-decoration: none; }
+.xc-mine b { color: var(--ink); }
+.xc-mine:hover { color: var(--accent); }
+.xc-mine-meter { display: block; height: 5px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.xc-mine-meter span { display: block; height: 100%; border-radius: inherit; background: var(--xc-tone); }
+
+@media (prefers-reduced-motion: reduce) {
+  .xc-card, .xc-card:hover { transition: none; transform: none; }
+}

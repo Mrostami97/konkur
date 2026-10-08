@@ -1,0 +1,71 @@
+/* Report charts: the score ring, the two question swarms, the pace replay
+ * and the trend. Outcome colours are the report's own (success / danger /
+ * a neutral for blank), and every lane and count also carries its word. */
+
+/* ------------------------------------------------------------ score ring */
+.rp-lead { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 1.25rem; }
+.rp-lead-text { display: grid; gap: 0.2rem; }
+.rx-donut { position: relative; width: 8.5rem; height: 8.5rem; margin: 0; }
+.rx-donut svg { width: 100%; height: 100%; transform: rotate(-90deg) scaleY(-1); }
+.rx-donut circle { fill: none; stroke-width: 11; }
+.rx-donut-track { stroke: rgba(255, 255, 255, 0.12); }
+.rx-donut-seg { stroke-linecap: butt; }
+.rx-donut-seg[data-outcome="correct"] { stroke: var(--success); }
+.rx-donut-seg[data-outcome="wrong"] { stroke: var(--danger); }
+.rx-donut-seg[data-outcome="blank"] { stroke: rgba(255, 255, 255, 0.35); }
+.rx-donut figcaption { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; }
+.rx-donut figcaption strong { color: var(--on-ink); font-size: 1.35rem; font-weight: var(--weight-heavy); line-height: 1.2; }
+.rx-donut figcaption span { color: var(--on-ink-muted); font-size: var(--text-2xs); }
+/* The ring carries the number; the big figure beside it would repeat it. */
+.rp-lead-text strong { display: none; }
+
+/* ---------------------------------------------------------------- swarms */
+.rx-swarm { margin: 0.25rem 0 0; }
+/* Geometry is laid out explicitly right-to-left; text anchors must not flip. */
+.rx-swarm svg { display: block; width: 100%; height: auto; overflow: visible; direction: ltr; }
+.rx-lane-rule { stroke: var(--line-soft); stroke-width: 1; }
+.rx-tick { stroke: var(--line-soft); stroke-width: 1; stroke-dasharray: 2 4; }
+.rx-axis { fill: var(--muted); font-size: 11px; font-family: var(--font-persian); }
+.rx-lane-label { font-size: 12px; font-weight: 700; font-family: var(--font-persian); }
+.rx-lane-label[data-outcome="correct"] { fill: var(--success); }
+.rx-lane-label[data-outcome="wrong"] { fill: var(--danger); }
+.rx-lane-label[data-outcome="blank"] { fill: var(--muted); }
+.rx-ref { stroke: var(--ink-400); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.rx-ref-label { fill: var(--ink-700); font-size: 10.5px; font-weight: 600; font-family: var(--font-persian); }
+.rx-band { fill: var(--warning-soft); stroke: var(--warning-line); stroke-width: 1; stroke-dasharray: 4 3; }
+.rx-band-label { fill: var(--warning); font-size: 10.5px; font-weight: 700; font-family: var(--font-persian); }
+
+.rx-dot { stroke: var(--surface); stroke-width: 2; cursor: pointer; transition: r var(--motion-fast) var(--ease); }
+.rx-dot[data-outcome="correct"] { fill: var(--success); }
+.rx-dot[data-outcome="wrong"] { fill: var(--danger); }
+.rx-dot[data-outcome="blank"] { fill: var(--surface); stroke: var(--ink-400); stroke-width: 1.75; }
+.rx-dot[data-hover] { r: 8; }
+.rx-dot:focus-visible { outline: none; r: 8; stroke: var(--ink); stroke-width: 2.5; }
+
+.rx-readout { min-height: 1.6rem; margin-top: 0.4rem; color: var(--muted); font-size: var(--text-xs); }
+.rx-readout b { color: var(--ink); }
+.rx-readout small { color: var(--muted); }
+.rx-readout [data-outcome="correct"] { color: var(--success); font-weight: 700; }
+.rx-readout [data-outcome="wrong"] { color: var(--danger); font-weight: 700; }
+.rx-readout [data-outcome="blank"] { color: var(--ink-700); font-weight: 700; }
+
+/* -------------------------------------------------------- pace replay */
+.rx-pace { max-width: 36rem; }
+.rx-pace .ec-axis, .rx-pace .ec-now-label { font-size: 8px; }
+
+/* ----------------------------------------------------------------- trend */
+.rx-trend { color: var(--accent); }
+.rx-trend .st-trend { display: block; width: 100%; height: 9rem; overflow: visible; }
+.rx-trend .st-trend-grid { stroke: var(--line-soft); stroke-width: 1; }
+.rx-trend .st-trend-dot { fill: var(--surface); stroke: currentColor; stroke-width: 2.5; }
+.rx-trend-labels { display: flex; justify-content: space-between; margin: 0.35rem 0 0; padding: 0 0.25rem; list-style: none; color: var(--ink-700); font-size: var(--text-xs); font-weight: 700; direction: ltr; }
+
+@media (max-width: 720px) {
+  .rp-lead { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .rx-axis, .rx-ref-label, .rx-band-label { font-size: 17px; }
+  .rx-lane-label { font-size: 19px; }
+}
+
+@media print {
+  .rx-readout { display: none; }
+}
