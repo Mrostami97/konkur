@@ -554,6 +554,9 @@ export class AssessmentService {
         selectedOption: answer?.selectedOption ?? null,
         flagged: answer?.flagged ?? false,
         timeSpentMs: answer?.timeSpentMs ?? 0,
+        // When the answer now on the sheet was given: the exam page draws
+        // the candidate's pace from it.
+        answeredAt: answer?.selectedOption != null ? answer.answeredAt : null,
       };
     });
 

@@ -1,0 +1,132 @@
+/* The exam's side panel: pace verdict, question map / time analysis tabs,
+ * and the ring of time left around the clock.
+ *
+ * Marks follow the site's palette: the candidate's own data in the accent,
+ * the reference (even pace, a question's share) in recessive ink, and only
+ * a question past twice its share in the warning colour -- always with its
+ * number spelled out beside the chart. */
+
+/* ----------------------------------------------------------- clock ring */
+.at-clock { display: flex; align-items: center; gap: 0.55rem; }
+.at-clock-text { display: grid; justify-items: center; }
+.at-ring { width: 2.1rem; height: 2.1rem; flex: none; transform: rotate(-90deg) scaleY(-1); }
+.at-ring circle { fill: none; stroke-width: 4; }
+.at-ring-track { stroke: var(--surface-sunken); }
+.at-ring-fill { stroke: var(--accent); stroke-linecap: round; transition: stroke-dasharray 1s linear; }
+.at-clock[data-stage="1"] .at-ring-fill { stroke: var(--warning); }
+.at-clock[data-stage="2"] .at-ring-fill { stroke: var(--danger); }
+
+/* -------------------------------------------------------- side panel */
+.at-side { max-height: calc(100vh - 6.5rem); overflow-y: auto; scrollbar-width: thin; }
+
+.ec-summary {
+  display: flex; align-items: flex-start; gap: 0.6rem;
+  margin-top: 0.85rem; padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line-soft); border-radius: var(--radius-md);
+  background: var(--paper);
+}
+.ec-summary strong { display: block; color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-bold); }
+.ec-summary small { display: block; margin-top: 0.15rem; color: var(--muted); font-size: var(--text-2xs); line-height: 1.7; }
+.ec-summary-icon {
+  display: grid; place-items: center; flex: none;
+  width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  font-size: 0.7rem; color: #fff; background: var(--ink-400);
+}
+.ec-summary[data-tone="ahead"] { border-color: color-mix(in srgb, var(--success) 35%, transparent); background: var(--success-soft); }
+.ec-summary[data-tone="ahead"] .ec-summary-icon { background: var(--success); }
+.ec-summary[data-tone="behind"] { border-color: var(--warning-line); background: var(--warning-soft); }
+.ec-summary[data-tone="behind"] .ec-summary-icon { background: var(--warning); }
+
+.at-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; margin-bottom: 0.85rem; padding: 0.25rem; border-radius: var(--radius-md); background: var(--surface-sunken); }
+.at-tabs button {
+  min-height: 2.1rem; border: 0; border-radius: calc(var(--radius-md) - 2px);
+  background: none; color: var(--muted);
+  font: inherit; font-size: var(--text-xs); font-weight: var(--weight-semibold); cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease), color var(--motion-fast) var(--ease);
+}
+.at-tabs button[aria-selected="true"] { color: var(--ink); background: var(--surface); box-shadow: var(--elev-1); }
+.at-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ------------------------------------------------------------ blocks */
+.ec { display: grid; gap: 1rem; }
+.ec-block h3 { margin: 0 0 0.45rem; color: var(--ink-700); font-size: var(--text-xs); font-weight: var(--weight-bold); }
+
+.ec-key { display: flex; flex-wrap: wrap; gap: 0.25rem 0.8rem; margin: 0.35rem 0 0; color: var(--muted); font-size: var(--text-2xs); }
+.ec-key span { display: inline-flex; align-items: center; gap: 0.3rem; }
+.ec-key i { display: inline-block; flex: none; }
+.ec-key-line { width: 0.9rem; height: 2px; border-radius: 2px; background: var(--accent); }
+.ec-key-ideal { width: 0.9rem; border-top: 2px dashed var(--ink-400); }
+.ec-key-bar { width: 0.45rem; height: 0.7rem; border-radius: 2px 2px 0 0; background: var(--accent); }
+.ec-key-expected { width: 0.55rem; height: 0.55rem; border: 1.5px solid var(--ink-400); border-radius: 50%; }
+.ec-key-budget { width: 0.9rem; border-top: 1.5px dashed var(--ink-400); }
+.ec-key-heavy { width: 0.45rem; height: 0.7rem; border-radius: 2px 2px 0 0; background: var(--warning); }
+
+/* -------------------------------------------------------- pace chart */
+.ec-chart { position: relative; margin: 0; }
+/* SVG text anchors flip under the page's RTL; the geometry here is laid out
+ * explicitly (the exam starts on the right), so the drawing itself is LTR. */
+.ec-chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; direction: ltr; }
+.ec-grid { stroke: var(--line-soft); stroke-width: 1; }
+.ec-axis { fill: var(--muted); font-size: 9.5px; font-family: var(--font-persian); }
+.ec-now-label { fill: var(--ink-700); font-size: 9.5px; font-weight: 700; font-family: var(--font-persian); }
+.ec-gap { stroke: var(--success); stroke-width: 3; stroke-linecap: round; opacity: 0.55; }
+.ec-gap[data-behind] { stroke: var(--warning); }
+.ec-expected { fill: var(--surface); stroke: var(--ink-400); stroke-width: 1.5; }
+.ec-ideal { stroke: var(--ink-400); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.ec-area { fill: var(--accent); opacity: 0.1; }
+.ec-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.ec-now { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.35; }
+.ec-dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.ec-hover line { stroke: var(--ink); stroke-width: 1; opacity: 0.4; }
+.ec-hover circle { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.ec-tip {
+  position: absolute; top: -0.3rem; z-index: 2;
+  display: grid; gap: 0.05rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--surface); box-shadow: var(--elev-2);
+  color: var(--muted); font-size: var(--text-2xs); white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.ec-tip b { color: var(--ink); font-weight: var(--weight-bold); }
+
+/* --------------------------------------------------- time per question */
+.ec-bars {
+  position: relative;
+  display: flex; align-items: flex-end;
+  height: 4.5rem; padding-bottom: 1px;
+  border-bottom: 1px solid var(--line);
+}
+.ec-budget { position: absolute; inset-inline: 0; height: 0; border-top: 1.5px dashed var(--ink-400); pointer-events: none; }
+.ec-bar {
+  display: flex; align-items: flex-end; justify-content: center;
+  height: 100%; min-width: 0; padding: 0 1px;
+  border: 0; background: none; cursor: pointer;
+}
+.ec-bar span { display: block; width: 100%; max-width: 0.7rem; border-radius: 2px 2px 0 0; background: var(--accent); opacity: 0.75; transition: height var(--motion-base) var(--ease), opacity var(--motion-fast) var(--ease); }
+.ec-bar:hover span, .ec-bar:focus-visible span { opacity: 1; }
+.ec-bar[data-heavy] span { background: var(--warning); opacity: 1; }
+.ec-bar[data-current] span { outline: 1.5px solid var(--ink); outline-offset: 1px; }
+.ec-bar:focus-visible { outline: none; }
+.ec-bars-note { min-height: 1.5em; margin: 0.4rem 0 0; color: var(--muted); font-size: var(--text-2xs); }
+.ec-bars-note b { color: var(--ink); font-weight: var(--weight-bold); }
+
+/* ------------------------------------------------------- by section */
+.ec-sections { display: grid; gap: 0.6rem; }
+.ec-sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; color: var(--ink-700); font-size: var(--text-xs); }
+.ec-sec-head span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ec-sec-head b { color: var(--ink); font-weight: var(--weight-bold); font-variant-numeric: tabular-nums; }
+.ec-sec-head small { color: var(--muted); font-weight: var(--weight-medium); }
+.ec-sec-track { display: block; height: 6px; margin-top: 0.3rem; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.ec-sec-track span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width var(--motion-base) var(--ease); }
+.ec-sec-time { display: block; margin-top: 0.2rem; color: var(--muted); font-size: var(--text-2xs); }
+
+@media (max-width: 900px) {
+  .at-side { max-height: 78vh; }
+  .at-ring { width: 1.8rem; height: 1.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .at-ring-fill, .ec-bar span, .ec-sec-track span { transition: none; }
+}

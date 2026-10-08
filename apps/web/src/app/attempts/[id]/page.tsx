@@ -6,7 +6,9 @@ import { apiFetch, ApiError } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { ContentBlocks } from "../../../components/ContentBlocks";
 import { Alert, Button, ConfirmDialog, DataState } from "../../../components/ds";
+import { ExamCoach, PaceSummary, type CoachItem, type PacePoint } from "./ExamCoach";
 import "./attempt.css";
+import "./coach.css";
 
 interface Block { type: string; [key: string]: unknown }
 interface Option { number: number; blocks: Block[] }
@@ -26,6 +28,10 @@ interface Item {
     assets: { media_key: string; checksum: string }[];
   };
   selectedOption: number | null;
+  /** Time already recorded for this question, from earlier on this attempt. */
+  timeSpentMs?: number;
+  /** When the answer now chosen was given. */
+  answeredAt?: string | null;
 }
 
 interface AttemptState {
@@ -33,6 +39,8 @@ interface AttemptState {
   examTitle: string;
   status: "IN_PROGRESS" | "SUBMITTED" | "EXPIRED";
   remainingSeconds: number;
+  startedAt: string;
+  deadlineAt: string;
   sections: { id: string; title: string; order: number }[];
   items: Item[];
 }
@@ -91,6 +99,9 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
   const unsaved = useRef(new Map<string, number | null>());
   const currentQuestion = useRef<string | null>(null);
   const [online, setOnline] = useState(true);
+  /** Seconds on each question in this tab, on top of what the server recorded. */
+  const [liveSpent, setLiveSpent] = useState<Record<string, number>>({});
+  const [sideTab, setSideTab] = useState<"map" | "time">("map");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -191,7 +202,9 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
       const now = Date.now();
       const id = currentQuestion.current;
       if (id && document.visibilityState === "visible") {
-        pendingTime.current.set(id, (pendingTime.current.get(id) ?? 0) + Math.min(now - last, 5_000));
+        const step = Math.min(now - last, 5_000);
+        pendingTime.current.set(id, (pendingTime.current.get(id) ?? 0) + step);
+        setLiveSpent((previous) => ({ ...previous, [id]: (previous[id] ?? 0) + step / 1000 }));
       }
       last = now;
     }, 1_000);
@@ -246,7 +259,9 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
           ? {
               ...previous,
               items: previous.items.map((item) =>
-                item.questionId === questionId ? { ...item, selectedOption: option } : item,
+                item.questionId === questionId
+                  ? { ...item, selectedOption: option, answeredAt: option === null ? null : new Date().toISOString() }
+                  : item,
               ),
             }
           : previous,
@@ -350,6 +365,31 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
     [attempt],
   );
   const total = attempt?.items.length ?? 0;
+  const duration = attempt ? Math.max(1, Math.round((Date.parse(attempt.deadlineAt) - Date.parse(attempt.startedAt)) / 1000)) : 0;
+  const elapsed = Math.max(0, duration - remaining);
+  /** The pace so far: each answer now on the sheet at the moment it was given. */
+  const trail: PacePoint[] = useMemo(() => {
+    if (!attempt) return [];
+    const start = Date.parse(attempt.startedAt);
+    const times = attempt.items
+      .filter((item) => item.selectedOption !== null && item.answeredAt)
+      .map((item) => Math.max(0, (Date.parse(item.answeredAt!) - start) / 1000))
+      .sort((a, b) => a - b);
+    return times.map((t, i) => [Math.round(t), i + 1] as PacePoint);
+  }, [attempt]);
+
+  const coachItems: CoachItem[] = useMemo(
+    () =>
+      (attempt?.items ?? []).map((item, index) => ({
+        index,
+        sectionId: item.sectionId,
+        subjectCode: item.question.subjectCode,
+        answered: item.selectedOption !== null,
+        flagged: flagged.has(item.questionId),
+        spent: (item.timeSpentMs ?? 0) / 1000 + (liveSpent[item.questionId] ?? 0),
+      })),
+    [attempt, flagged, liveSpent],
+  );
   const unanswered = total - answered;
   const flaggedCount = flagged.size;
   const failedSaves = Object.values(saveState).filter((state) => state === "failed").length;
@@ -377,11 +417,29 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
           ×
         </button>
       </div>
+      <PaceSummary elapsed={elapsed} duration={duration} answered={answered} total={total} remaining={remaining} />
       <dl className="at-counts">
         <div><dt>پاسخ‌داده</dt><dd>{toPersianDigits(answered)}</dd></div>
         <div><dt>بی‌پاسخ</dt><dd>{toPersianDigits(unanswered)}</dd></div>
         <div><dt>علامت‌دار</dt><dd>{toPersianDigits(flaggedCount)}</dd></div>
       </dl>
+      <div className="at-tabs" role="tablist" aria-label="نمای کناری">
+        <button type="button" role="tab" aria-selected={sideTab === "map"} onClick={() => setSideTab("map")}>نقشهٔ سؤال‌ها</button>
+        <button type="button" role="tab" aria-selected={sideTab === "time"} onClick={() => setSideTab("time")}>تحلیل زمان</button>
+      </div>
+      {sideTab === "time" ? (
+        <ExamCoach
+          items={coachItems}
+          sections={attempt.sections}
+          trail={trail}
+          elapsed={elapsed}
+          duration={duration}
+          remaining={remaining}
+          current={current}
+          onGo={goTo}
+        />
+      ) : (
+      <>
       <div className="at-grid">
         {attempt.items.map((item, index) => {
           const done = item.selectedOption !== null;
@@ -417,6 +475,8 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
         <span><kbd>F</kbd> علامت برای مرور</span>
         <span><kbd>N</kbd> / <kbd>P</kbd> سؤال بعد و قبل</span>
       </div>
+      </>
+      )}
     </div>
   );
 
@@ -438,8 +498,21 @@ export default function AttemptPage({ params: pendingParams }: { params: Promise
               </span>
             </div>
             <div className="at-clock" data-stage={stage || undefined}>
-              <span>زمان باقی‌مانده</span>
-              <strong className="tnum">{formatTime(remaining)}</strong>
+              <svg className="at-ring" viewBox="0 0 36 36" aria-hidden="true">
+                <circle className="at-ring-track" cx="18" cy="18" r="15" />
+                <circle
+                  className="at-ring-fill"
+                  cx="18"
+                  cy="18"
+                  r="15"
+                  pathLength={100}
+                  strokeDasharray={`${duration ? (remaining / duration) * 100 : 0} 100`}
+                />
+              </svg>
+              <span className="at-clock-text">
+                <span>زمان باقی‌مانده</span>
+                <strong className="tnum">{formatTime(remaining)}</strong>
+              </span>
             </div>
             <Button variant="primary" onClick={() => setConfirming(true)} className="at-finish">
               پایان آزمون
