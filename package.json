@@ -23,7 +23,8 @@
       "external-editor>tmp": "0.2.7",
       "proxy-addr@2": "2.0.8",
       "source-map-js@1": "1.2.2",
-      "@istanbuljs/load-nyc-config>js-yaml": "4.3.2"
+      "@istanbuljs/load-nyc-config>js-yaml": "4.3.2",
+      "handlebars@4": "4.7.10"
     },
     "patchedDependencies": {
       "braces@3.0.3": "patches/braces@3.0.3.patch"
