@@ -1315,7 +1315,7 @@ ol.cb-list { list-style: persian; }
 .cb-table th, .cb-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line-soft); text-align: start; }
 .cb-table th { color: var(--ink-700); background: var(--surface-sunken); font-weight: var(--weight-semibold); }
 .cb-table tr:last-child td { border-bottom: 0; }
-.cb-math { margin: 0.75rem 0; overflow-x: auto; text-align: center; }
+.cb-math { margin: 0.75rem 0; padding-block: 0.15em; overflow-x: auto; overflow-y: hidden; text-align: center; }
 /* Inside an answer option the formula is the answer itself: it sits at the
    reading start beside its number, not centred like a display equation. */
 :is(.at-opt-body, .rp-opt-body, .qv-opt-body) .cb-math { margin: 0; text-align: right; }

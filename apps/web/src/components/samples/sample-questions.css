@@ -16,7 +16,7 @@
 .sq-options button:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
 .sq-options button:disabled { cursor: default; }
 .sq-num { display: grid; flex: none; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--surface-sunken); color: var(--ink-700); font-size: var(--text-sm); font-weight: var(--weight-bold); }
-.sq-opt { min-width: 0; overflow-x: auto; line-height: 1.9; }
+.sq-opt { min-width: 0; overflow-x: auto; overflow-y: hidden; line-height: 1.9; }
 .sq-options button[data-state="right"] { border-color: var(--success); background: var(--success-soft); color: var(--ink-900); }
 .sq-options button[data-state="right"] .sq-num { background: var(--success); color: #fff; }
 .sq-options button[data-state="wrong"] { border-color: var(--danger); background: var(--danger-soft); }
