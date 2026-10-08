@@ -6,11 +6,12 @@
 //   node build.mjs <bank-root> <out-dir> [year ...]
 //
 // <bank-root> is the folder whose `outputs/unified_question_bank/active_questions.jsonl`
-// holds both master's banks -- computer engineering (1277, exam_track "ce")
-// and IT (1276, exam_track "it") -- and whose image paths the bank records
-// (e.g. C:\Users\Error\Documents\Codex\2026-10-03\new-chat). The two tracks
-// were built separately and store a few fields under different names; each
-// record is read into one shape first. Nothing here touches the database:
+// holds the master's banks -- computer engineering (1277, exam_track "ce"),
+// IT (1276, "it") and computer science (1209, "cs") -- and whose image paths
+// the bank records (e.g. C:\Users\Error\Documents\Codex\2026-10-03\new-chat).
+// The tracks were built separately and store a few fields under different
+// names; each record is read into one shape first. A track missing from
+// TRACKS (the PhD bank, for now) is reported and left out. Nothing here touches the database:
 // the zips go through import review.
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
@@ -36,6 +37,9 @@ const BANK = "outputs/unified_question_bank/active_questions.jsonl";
 const TRACKS = {
   ce: { code: "1277", major: "computer-engineering" },
   it: { code: "1276", major: "information-technology" },
+  // Only the three CS subjects the owner reviewed are in the active bank:
+  // data structures and algorithms, theory of computation, computer basics.
+  cs: { code: "1209", major: "computer-science" },
 };
 
 /** The bank's own subject names → the site's subject codes. A subject is
@@ -60,6 +64,16 @@ const SUBJECTS = {
   "ریاضیات گسسته": "discrete-math",
   "نظریه زبان‌ها و ماشین‌ها": "automata",
   "شبکه‌های کامپیوتری": "computer-networks",
+  // Computer science (1209) names the same subjects its own way.
+  "ساختمان داده‌ها و الگوریتم‌ها": "data-structures-algorithms",
+  "ساختمان داده و الگوریتم": "data-structures-algorithms",
+  "ساختمان داده‌ها و طراحی الگوریتم‌ها": "data-structures-algorithms",
+  "طراحی الگوریتم‌ها": "data-structures-algorithms",
+  "نظریه اتوماتا و زبان‌ها": "automata",
+  "نظریهٔ اتوماتا و زبان‌ها": "automata",
+  "مبانی نظریه محاسبه": "automata",
+  "مبانی نظریهٔ محاسبه": "automata",
+  "مبانی کامپیوتر": "programming-fundamentals",
 };
 
 /** Text compared with the original page image. */
@@ -90,10 +104,15 @@ function sha256(buffer) {
   return createHash("sha256").update(buffer).digest("hex");
 }
 
-/** The two tracks' records in one shape. */
+/** Crops of one kind among a CS record's source assets. */
+const assetsOf = (record, kind) => (record.source_assets ?? []).filter((asset) => asset.kind === kind && asset.path).map((asset) => asset.path);
+
+/** The tracks' records in one shape. */
 function normalise(record) {
   const track = TRACKS[record.exam_track];
-  const it = record.exam_track === "it";
+  const cs = record.exam_track === "cs";
+  // IT and CS share one layout; CE has its own.
+  const it = record.exam_track === "it" || cs;
   // IT keeps the key as a number, or a list for several accepted answers and
   // an empty list for a deleted question; CE keeps a number plus accepted_options.
   const rawAnswer = record.answer;
@@ -104,20 +123,41 @@ function normalise(record) {
       : [rawAnswer];
   const accepted = [...new Set(listed)].filter((n) => [1, 2, 3, 4].includes(n));
   const correct = Array.isArray(rawAnswer) ? accepted[0] : rawAnswer;
-  const figures = it ? [record.source_figure_crop, record.source_table_crop].filter(Boolean) : record.figure_paths ?? [];
+  const stem = String((it ? record.stem : record.stem_text) ?? "").trim();
+  // CS keeps figures, tables and code as crops beside the question. Code is
+  // usually typed into the stem as a fenced block; where it is not, the
+  // original crop is shown, since OCR of code is not to be trusted.
+  const figures = cs
+    ? [...assetsOf(record, "original_figure_crop"), ...assetsOf(record, "original_table_crop"), ...(/```/.test(stem) ? [] : assetsOf(record, "original_code_crop"))]
+    : it
+      ? [record.source_figure_crop, record.source_table_crop].filter(Boolean)
+      : record.figure_paths ?? [];
   const stage = String(record.answer_stage ?? "");
+  // CS records say which key they come from: «initial», «final», or a stage
+  // the source does not print. Only a printed initial key is called one.
+  const initialKey = cs ? stage === "initial" : Boolean(record.answer_finality_review_pending) || INITIAL_STAGES.has(stage);
+  const stageNote =
+    cs && !initialKey && stage !== "final"
+      ? stage === "publisher_claimed_final_without_printed_stage_header"
+        ? "ناشر کلید را نهایی خوانده، ولی عنوان «نهایی» روی آن چاپ نشده"
+        : "مرحلهٔ کلید (اولیه یا نهایی) در منبع مشخص نیست"
+      : null;
   return {
     track: record.exam_track,
-    code: track?.code ?? String(record.exam_code ?? ""),
-    major: track?.major ?? "computer-engineering",
+    code: track?.code ?? "",
+    major: track?.major ?? "",
     year: record.year,
     booklet: Number.isInteger(record.booklet_number) && record.booklet_number > 0 ? record.booklet_number : undefined,
     bookletLabel: it ? String(record.booklet_code ?? "b0").replace(/[^A-Za-z0-9]/g, "") || "b0" : `b${record.booklet_number ?? 0}`,
     number: record.question_number,
     section: record.subject,
     subjectName: record.subject_specific,
-    stem: String((it ? record.stem : record.stem_text) ?? "").trim(),
+    stem,
     options: record.options ?? [],
+    // A CS option drawn in the booklet (a tree, a circuit) comes as a crop.
+    optionImages: new Map((record.options ?? []).filter((option) => option.source_image).map((option) => [option.number, option.source_image])),
+    // A note or figure the booklet prints once for several questions.
+    contextCrops: cs ? assetsOf(record, "original_shared_context_crop") : [],
     correct,
     accepted,
     deleted: Boolean(record.answer_deleted) || (Array.isArray(rawAnswer) && rawAnswer.length === 0),
@@ -125,8 +165,8 @@ function normalise(record) {
     keyVerified: KEY_CHECKED.has(record.answer_key_status),
     // Only stages that say the answer comes from an initial key; a key
     // "without a printed initial or final heading" is not one.
-    initialKey: Boolean(record.answer_finality_review_pending) || INITIAL_STAGES.has(stage),
-    notes: [record.content_review_status, record.answer_key_status, stage].filter(Boolean),
+    initialKey,
+    notes: [record.content_review_status, record.answer_key_status, stage, stageNote].filter(Boolean),
     crop: it ? record.source_question_crop : record.question_source_crop?.path,
     figures,
     passage: String(record.shared_context_ocr ?? "").trim(),
@@ -179,7 +219,7 @@ function stemBlocks(text, figureKeys) {
 }
 
 function skipReason(q) {
-  if (!q.code) return "رشته یا کد کنکور ثبت نشده";
+  if (!q.code) return `رشتهٔ «${q.track}» در این مبدل تعریف نشده`;
   if (!q.subjectName) return "درس جزئی ثبت نشده";
   if (!SUBJECTS[q.subjectName]) return `درس «${q.subjectName}» در کنکور ۱۴۰۶ نیست`;
   if (q.options.length !== 4 || q.options.some((option) => !String(option.text ?? "").trim())) return "ساختار گزینه‌ها کامل نیست";
@@ -248,6 +288,22 @@ for (const examYear of examYears) {
     }
     const crop = q.crop ? await imageAsset(q.crop, "source") : null;
     if (crop) addFile(crop);
+    const optionKeys = new Map();
+    for (const [number, image] of q.optionImages) {
+      const asset = await imageAsset(image, `opt${number}`);
+      if (asset) {
+        addFile(asset);
+        optionKeys.set(number, asset.asset.media_key);
+      }
+    }
+    const contextKeys = [];
+    for (const [index, image] of q.contextCrops.entries()) {
+      const asset = await imageAsset(image, `ctx${index + 1}`);
+      if (asset) {
+        addFile(asset);
+        contextKeys.push(asset.asset.media_key);
+      }
+    }
 
     // A curated sample carries its worked solution, and must reach the key.
     const curated = SAMPLES[externalId];
@@ -261,7 +317,15 @@ for (const examYear of examYears) {
       ...(q.initialKey ? ["کلید اولیه؛ کلید نهایی هنوز اعمال نشده"] : []),
       ...(curated ? ["راه‌حل تشریحی: نوشتهٔ Claude و هم‌خوان با کلید؛ بازبینی مالک لازم است"] : []),
     ];
-    const passageKey = q.passageId ? String(q.passageId).replace(/[^A-Za-z0-9-]/g, "") : sha256(String(q.docId) + q.passage).slice(0, 12);
+    const passageKey = q.passageId
+      ? String(q.passageId).replace(/[^A-Za-z0-9-]/g, "")
+      : sha256(String(q.docId) + q.passage + q.contextCrops.join("|")).slice(0, 12);
+    // A shared note printed as a crop is the passage: its image is carried by
+    // every question that refers to it, under the same media key.
+    const passageBlocks = [
+      ...(q.passage ? [{ type: "text", text: q.passage }] : []),
+      ...contextKeys.map((key) => ({ type: "image", media_key: key })),
+    ];
     const item = {
       schema_version: "question.v2",
       external_id: externalId,
@@ -269,9 +333,15 @@ for (const examYear of examYears) {
       slot: { ...(q.booklet ? { booklet: q.booklet } : {}), number: q.number, ...(q.section ? { section: q.section } : {}) },
       subject_code: SUBJECTS[q.subjectName],
       topic_codes: curated?.topics ?? [],
-      ...(q.passage ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: [{ type: "text", text: q.passage }] } } : {}),
+      ...(passageBlocks.length ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: passageBlocks } } : {}),
       stem_blocks: q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)],
-      options: q.options.map((option) => ({ number: option.number, blocks: [{ type: "text", text: String(option.text).trim() }] })),
+      options: q.options.map((option) => ({
+        number: option.number,
+        blocks: [
+          { type: "text", text: String(option.text).trim() },
+          ...(optionKeys.has(option.number) ? [{ type: "image", media_key: optionKeys.get(option.number) }] : []),
+        ],
+      })),
       correct_option: q.correct,
       ...(q.accepted.length > 1 && q.accepted.includes(q.correct) ? { accepted_options: q.accepted } : {}),
       solution_blocks: curated?.solution ?? [],

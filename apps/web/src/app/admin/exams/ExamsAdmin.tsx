@@ -331,7 +331,7 @@ interface ExamYear {
  * estimates the rank the same percentages earned that year.
  */
 /** The master's exams the bank holds, by code. */
-const EXAM_NAMES: Record<string, string> = { "1277": "مهندسی کامپیوتر", "1276": "فناوری اطلاعات" };
+const EXAM_NAMES: Record<string, string> = { "1277": "مهندسی کامپیوتر", "1276": "فناوری اطلاعات", "1209": "علوم کامپیوتر" };
 const examName = (code: string) => EXAM_NAMES[code] ?? `کد ${toPersianDigits(Number(code))}`;
 
 function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {

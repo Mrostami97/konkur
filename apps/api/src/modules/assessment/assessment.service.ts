@@ -11,6 +11,7 @@ import { fa } from "../../common/persian-digits";
 const EXAM_NAMES: Record<string, string> = {
   "1277": "مهندسی کامپیوتر",
   "1276": "فناوری اطلاعات (IT)",
+  "1209": "علوم کامپیوتر",
 };
 import { isAcceptedAnswer } from "../ingestion/question-payload";
 import {
