@@ -7,6 +7,7 @@ import modelJson from "../../../../content/rank-model-1277.json";
 import { subjectName } from "../../../../content/subject-names";
 import { toPersianDigits } from "../../../../lib/format";
 import { AdmissionMatches } from "../../../../components/AdmissionMatches";
+import { boxesFrom } from "../../../../lib/konkur-estimate";
 import {
   admissionMatches,
   BOXES,
@@ -159,7 +160,14 @@ function SectionsTable({ report }: { report: CardReport }) {
  */
 function RankEstimate({ report }: { report: CardReport }) {
   const [quota, setQuota] = useState<Quota>("free");
-  const percents = BOXES.map((box) => report.sections.find((section) => section.rankBox === box.key)?.percent);
+  // A simulator of a past year has the six boxes as sections; a 1406-style
+  // exam has three sections, so its subjects are put back into the boxes.
+  const fromSections = BOXES.map((box) => report.sections.find((section) => section.rankBox === box.key)?.percent);
+  const fromSubjects = useMemo(
+    () => boxesFrom([{ attemptId: "", at: new Date(0).toISOString(), examTitle: "", subjects: report.subjects }]).map((box) => box.percent ?? undefined),
+    [report.subjects],
+  );
+  const percents = fromSections.every((value) => typeof value === "number") ? fromSections : fromSubjects;
   const complete = percents.every((value): value is number => typeof value === "number");
   const years = yearsFor(model, quota);
   const year = years.find((row) => row.year === report.exam.simulatesYear) ?? years[years.length - 1];

@@ -6,6 +6,7 @@ import { ProfileService } from "../identity/profile/profile.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { fa } from "../../common/persian-digits";
+import { blueprint1406, MOCK_TRACK_NAMES, mockDuration, pick, type Candidate, type MockSection, type MockTrack } from "./mock-1406";
 
 /** The master's exams the bank holds, by code, as a simulator's title names them. */
 const EXAM_NAMES: Record<string, string> = {
@@ -273,6 +274,90 @@ export class AssessmentService {
       metadata: { examCode, examYear, questions: questions.length, inBooklet },
     });
     return { ...exam, questions: questions.length, inBooklet };
+  }
+
+  /**
+   * A 1406-style mock exam drawn from the bank (see mock-1406.ts): numbered
+   * per track, unpublished, preferring questions no earlier mock of the
+   * track used. Every question must have a checked key -- a mock is graded.
+   */
+  async createMock1406(actorId: string, track: MockTrack) {
+    const reviewed = { retiredAt: null, keyVerified: true, examDegree: "MASTER" as const, qualityTier: { not: QuestionQuality.DRAFT } };
+    const counts = await this.prisma.question.groupBy({ by: ["subjectCode"], where: reviewed, _count: { _all: true } });
+    const supply = new Map(counts.map((row) => [row.subjectCode, row._count._all]));
+
+    let sections: MockSection[];
+    if (track === "1209") {
+      // Computer science keeps its own structure: the latest CS exam's subjects and counts.
+      const latest = await this.prisma.question.findFirst({ where: { ...reviewed, examCode: "1209" }, orderBy: { examYear: "desc" }, select: { examYear: true } });
+      if (!latest) throw new BadRequestException("بانک هنوز سؤال بازبینی‌شدهٔ علوم کامپیوتر ندارد.");
+      const bySubject = await this.prisma.question.groupBy({ by: ["subjectCode"], where: { ...reviewed, examCode: "1209", examYear: latest.examYear }, _count: { _all: true } });
+      sections = [{ title: "دروس تخصصی", rankBox: "specialised", coefficient: 1, subjects: bySubject.map((row) => ({ code: row.subjectCode, count: row._count._all })) }];
+    } else {
+      sections = blueprint1406(track, (code) => (supply.get(code) ?? 0) > 0);
+    }
+
+    const previous = await this.prisma.exam.findMany({ where: { slug: { startsWith: `mock-1406-${track}-` } }, select: { slug: true, forms: { select: { items: { select: { questionId: true } } } } } });
+    const used = new Set(previous.flatMap((exam) => exam.forms.flatMap((form) => form.items.map((item) => item.questionId))));
+    const number = previous.reduce((max, exam) => Math.max(max, Number(exam.slug.split("-").pop()) || 0), 0) + 1;
+
+    const chosen: { section: MockSection; questions: Candidate[] }[] = [];
+    const short: string[] = [];
+    for (const section of sections) {
+      const questions: Candidate[] = [];
+      for (const subject of section.subjects) {
+        const candidates = await this.prisma.question.findMany({
+          where: { ...reviewed, subjectCode: subject.code },
+          select: { id: true, subjectCode: true, passageId: true, examYear: true },
+        });
+        const picked = pick(candidates, subject.count, used);
+        if (picked.length < subject.count) short.push(`${subject.code}: ${picked.length}/${subject.count}`);
+        questions.push(...picked);
+      }
+      if (questions.length) chosen.push({ section, questions });
+    }
+    const total = chosen.reduce((sum, row) => sum + row.questions.length, 0);
+    if (total === 0) throw new BadRequestException("بانک برای این آزمون سؤال بازبینی‌شده ندارد.");
+
+    const name = MOCK_TRACK_NAMES[track];
+    const missingMath = track === "1277" && !(supply.get("linear-algebra") ?? 0);
+    const description = [
+      `آزمون جامع به سبک کنکور ارشد ${name} ۱۴۰۶: ${fa(total)} سؤال از کنکورهای سال‌های قبل، با همان درس‌ها و ضرایب ۱۴۰۶ و نمرهٔ منفی.`,
+      track !== "1209" ? "از هر درس بخش تخصصی ۱۰ سؤال." : "",
+      missingMath ? "جبر خطی هنوز سؤال ندارد و ریاضیات از گسسته و آمار است." : "",
+    ].filter(Boolean).join(" ");
+
+    const exam = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.exam.create({
+        data: {
+          slug: `mock-1406-${track}-${number}`,
+          title: `آزمون جامع ۱۴۰۶ ارشد ${name} · شمارهٔ ${fa(number)}`,
+          description,
+          mode: ExamMode.STATIC,
+          durationMinutes: mockDuration(total),
+          simulatesExamCode: track,
+          simulatesYear: 1406,
+          createdBy: actorId,
+        },
+      });
+      const form = await tx.examForm.create({ data: { examId: created.id } });
+      let order = 0;
+      for (const [index, row] of chosen.entries()) {
+        const section = await tx.examSection.create({
+          data: { examId: created.id, order: index, title: row.section.title, rankBox: row.section.rankBox, coefficient: row.section.coefficient },
+        });
+        // Subjects in the section's order; within a subject, as picked.
+        const subjectOrder = row.section.subjects.map((subject) => subject.code);
+        const ordered = [...row.questions].sort((a, b) => subjectOrder.indexOf(a.subjectCode) - subjectOrder.indexOf(b.subjectCode));
+        await tx.examItem.createMany({
+          data: ordered.map((question) => ({ examFormId: form.id, questionId: question.id, order: order++, sectionId: section.id })),
+        });
+      }
+      return created;
+    });
+
+    await this.audit.log({ actorUserId: actorId, action: "exam.mock_1406_created", targetType: "Exam", targetId: exam.id, metadata: { track, questions: total, short } });
+    return { ...exam, questions: total, short };
   }
 
   /**

@@ -471,6 +471,68 @@ function SimulatorBuilder({ onBuilt }: { onBuilt: () => void }) {
   );
 }
 
+/**
+ * A 1406-style exam drawn from the bank: language and mathematics as in
+ * 1405, ten questions from each specialised subject (computer science keeps
+ * its own structure), questions no earlier mock of the track used first.
+ */
+function MockBuilder({ onBuilt }: { onBuilt: () => void }) {
+  const [track, setTrack] = useState<"1277" | "1276" | "1209">("1277");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  async function build(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const built = await apiFetch<{ title: string; questions: number; durationMinutes: number; short: string[] }>("/admin/exams/mock-1406", {
+        method: "POST",
+        body: { track },
+      });
+      setNotice(
+        `«${built.title}» با ${toPersianDigits(built.questions)} سؤال و ${toPersianDigits(built.durationMinutes)} دقیقه ساخته شد` +
+          (built.short.length ? `؛ بانک برای بعضی درس‌ها سؤال کافی نداشت (${built.short.map((row) => toPersianDigits(row)).join("، ")})` : "") +
+          ". از فهرست پایین مرورش کن و منتشرش کن.",
+      );
+      onBuilt();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ساخت آزمون ممکن نشد.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card>
+      <h2 className="ds-card-title">آزمون جامع به سبک کنکور ۱۴۰۶</h2>
+      <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)", marginBottom: "var(--sp-4)" }}>
+        از بانک، با درس‌ها و ضرایب ۱۴۰۶: زبان ۲۵ سؤال و ریاضیات ۲۰ سؤال مثل ۱۴۰۵، و از هر درس بخش تخصصی ۱۰ سؤال. علوم کامپیوتر ساختار
+        سال‌های قبلش را دارد. هر بار یک آزمون تازه با شمارهٔ بعدی ساخته می‌شود و اول سؤال‌هایی می‌آیند که در آزمون‌های جامع قبلی نبوده‌اند.
+        آزمون منتشرنشده ساخته می‌شود.
+      </p>
+      <form className="ds-form" onSubmit={build}>
+        <Field label="رشته" required>
+          {(props) => (
+            <Select {...props} value={track} onChange={(event) => setTrack(event.target.value as "1277" | "1276" | "1209")}>
+              <option value="1277">ارشد مهندسی کامپیوتر (۱۲۷۷)</option>
+              <option value="1276">ارشد فناوری اطلاعات (۱۲۷۶)</option>
+              <option value="1209">ارشد علوم کامپیوتر (۱۲۰۹)</option>
+            </Select>
+          )}
+        </Field>
+        {error && <Alert tone="danger">{error}</Alert>}
+        {notice && <Alert tone="success">{notice}</Alert>}
+        <div>
+          <Button type="submit" variant="primary" loading={busy}>ساخت آزمون جامع تازه</Button>
+        </div>
+      </form>
+    </Card>
+  );
+}
+
 export function ExamsAdmin({ subjects }: { subjects: SubjectOption[] }) {
   const subjectTitle = useMemo(() => {
     const names = new Map(subjects.map((subject) => [subject.code, subject.title]));
@@ -584,6 +646,7 @@ export function ExamsAdmin({ subjects }: { subjects: SubjectOption[] }) {
       />
 
       <div className="ds-stack-lg">
+        <MockBuilder onBuilt={() => void load()} />
         <SimulatorBuilder onBuilt={() => void load()} />
         <Card>
           <h2 className="ds-card-title">آزمون تازه</h2>

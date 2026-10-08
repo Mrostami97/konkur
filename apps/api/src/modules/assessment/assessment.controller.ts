@@ -9,6 +9,7 @@ import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { SaveAnswerDto } from "./dto/save-answer.dto";
 import { ActivityDto } from "./dto/activity.dto";
 import { CreateSimulatorDto } from "./dto/create-simulator.dto";
+import { CreateMockDto } from "./dto/create-mock.dto";
 
 @Controller("exams")
 export class ExamsPublicController {
@@ -97,6 +98,12 @@ export class AssessmentAdminController {
   @Post("simulators/all")
   createAllSimulators(@Req() req: RequestWithUser) {
     return this.assessment.createAllSimulators(req.user!.id);
+  }
+
+  /** A new 1406-style mock of one track, drawn from the bank; unpublished. */
+  @Post("mock-1406")
+  createMock1406(@Req() req: RequestWithUser, @Body() dto: CreateMockDto) {
+    return this.assessment.createMock1406(req.user!.id, dto.track);
   }
 
   /** Build (or rebuild, while nobody has sat it) the simulator of one real exam year. */
