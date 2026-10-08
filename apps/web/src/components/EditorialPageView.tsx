@@ -9,6 +9,7 @@ import { ReadingHero } from "./reading/ReadingHero";
 import { ReadingProgress } from "./reading/ReadingProgress";
 import { OWNER_NAME, OwnerPhoto } from "./OwnerByline";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
+import { RichText } from "./ContentBlocks";
 
 /**
  * The answer-first line. A page without a written quick answer used to fall
@@ -110,7 +111,7 @@ export function EditorialPageView({
 
           <div className="answer-first">
             <strong>پاسخ سریع</strong>
-            <p>{quickAnswer(page)}</p>
+            <p><RichText text={quickAnswer(page)} /></p>
           </div>
 
           <div className="editorial-body">

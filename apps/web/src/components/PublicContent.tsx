@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ContentBlocks } from "./ContentBlocks";
+import { ContentBlocks, RichText } from "./ContentBlocks";
 import { StructuredData } from "./StructuredData";
 import { EmptyState } from "./ui";
 import { NextSteps, readingNextSteps } from "./reading/NextSteps";
@@ -388,7 +388,7 @@ export function PublicArticleView({
           {article.quickAnswer && (
             <aside className="answer-first" aria-labelledby="quick-answer-title">
               <strong id="quick-answer-title">پاسخ سریع</strong>
-              <p>{article.quickAnswer}</p>
+              <p><RichText text={article.quickAnswer} /></p>
             </aside>
           )}
 
@@ -447,7 +447,7 @@ export function PublicArticleView({
             <div className="rd-toc">
               <strong>در این صفحه</strong>
               <nav aria-label="فهرست مطالب">
-                {sections.map((section) => <a key={section.id} href={`#${section.id}`}>{section.title}</a>)}
+                {sections.map((section) => <a key={section.id} href={`#${section.id}`}><RichText text={section.title} /></a>)}
               </nav>
             </div>
           )}

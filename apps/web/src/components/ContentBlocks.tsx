@@ -14,8 +14,10 @@ function mediaUrl(assets: Asset[], mediaKey: string): string | null {
   return `${API_URL}/media/${asset.checksum.replace("sha256:", "")}`;
 }
 
-/** Text with inline ($...$) and display ($$...$$) formulas typeset in place. */
-function RichText({ text }: { text: string }) {
+/** Text with inline ($...$) and display ($...$) formulas typeset in place.
+ * Exported for the plain-text fields an article also has, such as its quick
+ * answer, which would otherwise print the dollar signs and the LaTeX. */
+export function RichText({ text }: { text: string }) {
   return (
     <>
       {splitMath(text).map((segment, index) =>
@@ -105,7 +107,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
     case "heading": {
       const level = typeof block.level === "number" ? block.level : 2;
       const Tag = (`h${Math.min(Math.max(level, 1), 6)}` as unknown) as keyof JSX.IntrinsicElements;
-      return <Tag key={index}>{String(block.text ?? "")}</Tag>;
+      return <Tag key={index}><RichText text={String(block.text ?? "")} /></Tag>;
     }
     case "text":
       return renderText(String(block.text ?? ""), index);

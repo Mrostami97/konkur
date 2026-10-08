@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AdminGuard } from "../../../../../components/AdminGuard";
-import { ContentBlocks } from "../../../../../components/ContentBlocks";
+import { ContentBlocks, RichText } from "../../../../../components/ContentBlocks";
 import { PageHeader } from "../../../../../components/ui";
 import { apiFetch } from "../../../../../lib/api";
 
@@ -88,7 +88,7 @@ export function ArticlePreviewClient({ articleId }: { articleId: string }) {
               فقط برای کنترل کارکنان نمایش داده می‌شود.
             </p>
           </div>
-          {quickAnswer && <div className="answer-first"><strong>پاسخ کوتاه</strong><p>{quickAnswer}</p></div>}
+          {quickAnswer && <div className="answer-first"><strong>پاسخ کوتاه</strong><p><RichText text={quickAnswer} /></p></div>}
           <article className="editorial-body">
             {blocks.length ? <ContentBlocks blocks={blocks} /> : <p className="muted-copy">این نسخه بلوک محتوایی قابل نمایش ندارد.</p>}
           </article>
