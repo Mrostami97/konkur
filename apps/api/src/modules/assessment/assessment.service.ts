@@ -6,7 +6,7 @@ import { ProfileService } from "../identity/profile/profile.service";
 import { CreateExamDto } from "./dto/create-exam.dto";
 import { AddExamItemDto } from "./dto/add-exam-item.dto";
 import { fa } from "../../common/persian-digits";
-import { blueprint1406, MOCK_TRACK_NAMES, mockDuration, pick, type Candidate, type MockSection, type MockTrack } from "./mock-1406";
+import { blueprint1406, MOCK_TRACK_NAMES, mockDuration, OFF_SYLLABUS, pick, type Candidate, type MockSection, type MockTrack } from "./mock-1406";
 
 /** The master's exams the bank holds, by code, as a simulator's title names them. */
 const EXAM_NAMES: Record<string, string> = {
@@ -306,10 +306,15 @@ export class AssessmentService {
     for (const section of sections) {
       const questions: Candidate[] = [];
       for (const subject of section.subjects) {
-        const candidates = await this.prisma.question.findMany({
+        const rows = await this.prisma.question.findMany({
           where: { ...reviewed, subjectCode: subject.code },
-          select: { id: true, subjectCode: true, passageId: true, examYear: true },
+          select: { id: true, subjectCode: true, passageId: true, examYear: true, stemBlocks: true, options: true },
         });
+        // 1406 practises what 1406 examines: a topic the syllabus dropped stays out.
+        const off = OFF_SYLLABUS[subject.code];
+        const candidates: Candidate[] = rows
+          .filter((row) => !off || !off.test(JSON.stringify([row.stemBlocks, row.options])))
+          .map(({ id, subjectCode, passageId, examYear }) => ({ id, subjectCode, passageId, examYear }));
         const picked = pick(candidates, subject.count, used);
         if (picked.length < subject.count) short.push(`${subject.code}: ${picked.length}/${subject.count}`);
         questions.push(...picked);

@@ -84,6 +84,20 @@ export function blueprint1406(track: "1277" | "1276", available: (code: string) 
   ];
 }
 
+/**
+ * Topics a subject's 1406 syllabus dropped, found by keyword in a question's
+ * stem and options. Questions are not tagged by topic yet, so this is the
+ * floor, not the whole syllabus: data structures and algorithms lost greedy
+ * algorithms (Huffman), dynamic programming, NP-completeness, minimum
+ * spanning trees, all-pairs shortest paths, flows, backtracking and
+ * branch-and-bound, string matching, AVL and B-trees, binomial and Fibonacci
+ * heaps (editorial.ts syllabusBySubject, official 1406 post).
+ */
+export const OFF_SYLLABUS: Record<string, RegExp> = {
+  "data-structures-algorithms":
+    /برنامه[‌ ]?ریزی پویا|حریصانه|\bgreedy\b|dynamic programming|\bNP\b|درخت پوشای (کمینه|مینیمم)|\bMST\b|کراسکال|\bkruskal\b|پریم|\bprim\b|فلوید|\bfloyd\b|شار (بیشینه|ماکزیمم)|max[- ]?flow|عقب[‌ ]?گرد|backtrack|شاخه و کران|branch and bound|\bAVL\b|B-tree|درخت B\b|هرم (دوجمله|فیبوناچی)|binomial heap|fibonacci heap|تطابق رشته|\bKMP\b|کوله[‌ ]?پشتی|knapsack|ضرب زنجیره|matrix chain|زیردنبالهٔ? مشترک|\bLCS\b|هافمن|\bhuffman\b/i,
+};
+
 /** Minutes for a mock: the 1405 pace of about 1.2 minutes a question, to the next five. */
 export function mockDuration(questions: number) {
   return Math.max(10, Math.ceil((questions * 1.2) / 5) * 5);
