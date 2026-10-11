@@ -29,7 +29,8 @@ export type IconName =
   | "clock"
   | "check"
   | "trophy"
-  | "percent";
+  | "percent"
+  | "backup";
 
 const PATHS: Record<IconName, JSX.Element> = {
   article: <path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6" />,
@@ -52,6 +53,7 @@ const PATHS: Record<IconName, JSX.Element> = {
   clock: <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18M12 7.5V12l3 2" />,
   check: <path d="M20 6 9.5 16.5 4 11" />,
   percent: <path d="M19 5 5 19M7.5 9.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5M16.5 19.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />,
+  backup: <path d="M3 4h18v4H3zM5 8v12h14V8M10 12h4" />,
   trophy: <path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7" />,
 };
 

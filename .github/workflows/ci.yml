@@ -347,7 +347,7 @@ jobs:
         run: |
           set -euo pipefail
           docker run --rm --entrypoint sh konkurcom-360-api:latest -ec \
-            'test "$(id -u)" -ne 0 && test -f dist/main.js && test -f dist/bootstrap-admin.js && test -x node_modules/.bin/prisma && test -f scripts/check-production-config.mjs && probe="$(mktemp /tmp/security-runtime-XXXXXX)" && rm -- "$probe"'
+            'test "$(id -u)" -ne 0 && test -f dist/main.js && test -f dist/bootstrap-admin.js && test -x node_modules/.bin/prisma && test -f scripts/check-production-config.mjs && "$PG_DUMP_BIN" --version | grep -q " 16." && probe="$(mktemp /tmp/security-runtime-XXXXXX)" && rm -- "$probe"'
           docker run --rm --entrypoint sh konkurcom-360-web:latest -ec \
             'test "$(id -u)" -ne 0 && test -f apps/web/server.js && test -d apps/web/.next/static && test -d apps/web/public && probe="$(mktemp /tmp/security-runtime-XXXXXX)" && rm -- "$probe" && mkdir -p apps/web/.next/cache && probe="$(mktemp apps/web/.next/cache/security-runtime-XXXXXX)" && rm -- "$probe"'
 

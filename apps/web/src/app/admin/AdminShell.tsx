@@ -58,6 +58,7 @@ const NAV_GROUPS: { title: string; links: NavLink[] }[] = [
     title: "سامانه",
     links: [
       { href: "/admin/users", label: "کاربران و نقش‌ها", icon: "students", roles: ["ADMIN"] },
+      { href: "/admin/backup", label: "پشتیبان‌گیری کامل", icon: "backup", roles: ["ADMIN"] },
     ],
   },
 ];

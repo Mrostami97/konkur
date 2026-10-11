@@ -205,6 +205,14 @@ ops/backup.sh                       # writes ops/backups/konkurcom-<timestamp>-<
 ops/restore.sh ops/backups/konkurcom-<timestamp>-<id>.sql.gz
 ```
 
+An ADMIN can also download a full backup from the panel (`/admin/backup`,
+`GET /admin/backup`): one `.tar` with `database.sql.gz` (pg_dump 16 from the
+API image, restorable with `restore.sh`), every object of the media bucket
+under `media/`, a README and `manifest.json`. One backup runs at a time, the
+dump is staged in the API container's `/tmp` and removed afterwards, and
+each download is audit-logged as `backup.downloaded`. Server `.env` secrets
+are not included. Restore the media with `mc mirror media/ <alias>/konkurcom-media`.
+
 `restore.sh` terminates other open connections to `konkurcom` before dropping
 it (a running API process holding a Prisma connection will otherwise make
 `DROP DATABASE` fail with "database is being accessed by other users").

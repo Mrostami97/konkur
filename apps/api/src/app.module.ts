@@ -22,6 +22,7 @@ import { CrmModule } from "./modules/crm/crm.module";
 import { InstructorsModule } from "./modules/instructors/instructors.module";
 import { AchievementsModule } from "./modules/achievements/achievements.module";
 import { SiteModule } from "./modules/site/site.module";
+import { BackupModule } from "./modules/backup/backup.module";
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { SiteModule } from "./modules/site/site.module";
     InstructorsModule,
     AchievementsModule,
     SiteModule,
+    BackupModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ClientThrottlerGuard }],
 })

@@ -69,6 +69,15 @@ export class ObjectStorageService implements OnModuleInit {
     await this.client.removeObject(this.bucket, key);
   }
 
+  /** Every object in the bucket, for a full backup. */
+  async listAll(): Promise<{ key: string; size: number; lastModified: Date }[]> {
+    const objects: { key: string; size: number; lastModified: Date }[] = [];
+    for await (const item of this.client.listObjects(this.bucket, "", true)) {
+      if (item.name) objects.push({ key: item.name, size: item.size, lastModified: item.lastModified });
+    }
+    return objects;
+  }
+
   /** Files are proxied by the API after its access check; callers never
    * receive an object-storage URL or key. (Signed storage URLs were used
    * once, but production storage is not reachable from outside the server.) */
