@@ -51,7 +51,7 @@ export function EditorialPageView({
   const reviewerIsOwner = page.reviewer === OWNER_NAME;
   const reviewPending = page.reviewer === "در انتظار بازبینی انسانی";
   const publishedAt = editorialDateIso(page.publishedAt);
-  const modifiedAt = reviewPending ? undefined : articleModifiedTime(publishedAt, editorialDateIso(page.reviewedAt));
+  const modifiedAt = reviewPending ? undefined : articleModifiedTime(publishedAt, page.reviewedAtIso ?? editorialDateIso(page.reviewedAt));
 
   return (
     <main className="rd-page">

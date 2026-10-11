@@ -4,6 +4,7 @@ import { formatPublicDate, type PublicArticleRecord } from "../../components/Pub
 import { guides as legacyGuides } from "../../content/editorial";
 import { phase12EditorialPages } from "../../content/phase12";
 import { apiGetPublic } from "../../lib/api";
+import { loadGuideReviews, withReview } from "../../lib/guide-reviews";
 import { isMergedGuide, withoutMergedGuides } from "../../lib/merged-pages";
 import { pageMetadata } from "../../lib/seo";
 
@@ -27,7 +28,10 @@ export default async function GuidesPage() {
   }
   const apiGuides = published.filter((item) => item.contentType === "GUIDE" && !isMergedGuide(item.slug));
   const publishedSlugs = new Set(published.map((guide) => guide.slug));
-  const staticOnly = withoutMergedGuides([...legacyGuides, ...phase12EditorialPages]).filter((guide) => !publishedSlugs.has(guide.slug));
+  const reviews = await loadGuideReviews();
+  const staticOnly = withoutMergedGuides([...legacyGuides, ...phase12EditorialPages])
+    .filter((guide) => !publishedSlugs.has(guide.slug))
+    .map((guide) => withReview(guide, reviews.get(guide.slug)));
 
   return (
     <main className="pg">

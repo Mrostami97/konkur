@@ -29,6 +29,8 @@ export interface EditorialPage {
   reviewer: string;
   publishedAt: string;
   reviewedAt: string;
+  /** Set when the owner signed the guide off in the panel (lib/guide-reviews.ts). */
+  reviewedAtIso?: string;
   readingMinutes: number;
   featured?: boolean;
   sections: EditorialSection[];

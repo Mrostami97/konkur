@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { EmptyState, PageHeader, SectionHeader } from "../../../components/ui";
+import { EmptyState, SectionHeader } from "../../../components/ui";
+import { AdminPageHeader, Badge, Button } from "../../../components/ds";
 import { apiFetch } from "../../../lib/api";
 
 type ReviewStatus = "DRAFT" | "IN_REVIEW" | "PUBLISHED" | "REJECTED";
@@ -71,6 +72,9 @@ interface Article {
   authorProfileId: string | null;
   reviewStatus: ReviewStatus;
   version: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
   sources: SourceLink[];
   latestRevision: ContentVersion | null;
 }
@@ -134,6 +138,28 @@ const STATUS_LABELS: Record<ReviewStatus, string> = {
   PUBLISHED: "منتشرشده",
   REJECTED: "نیازمند اصلاح",
 };
+
+const STATUS_TONES: Record<ReviewStatus, "neutral" | "info" | "success" | "danger"> = {
+  DRAFT: "neutral",
+  IN_REVIEW: "info",
+  PUBLISHED: "success",
+  REJECTED: "danger",
+};
+
+type SortKey = "updated" | "oldest" | "published" | "title" | "status";
+
+const SORT_LABELS: Record<SortKey, string> = {
+  updated: "آخرین تغییر",
+  oldest: "قدیمی‌ترین",
+  published: "تاریخ انتشار",
+  title: "عنوان (الفبا)",
+  status: "وضعیت (منتظر بررسی اول)",
+};
+
+const STATUS_ORDER: Record<ReviewStatus, number> = { IN_REVIEW: 0, REJECTED: 1, DRAFT: 2, PUBLISHED: 3 };
+
+const shortDate = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleDateString("fa-IR", { year: "numeric", month: "short", day: "numeric", timeZone: "Asia/Tehran" }) : "—";
 
 const CONTENT_TYPE_LABELS: Record<ContentType, string> = {
   ARTICLE: "مقاله",
@@ -213,6 +239,11 @@ function ArticlesAdmin() {
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<ReviewStatus | "ALL">("ALL");
+  const [typeFilter, setTypeFilter] = useState<ContentType | "ALL">("ALL");
+  const [sort, setSort] = useState<SortKey>("updated");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -237,6 +268,37 @@ function ArticlesAdmin() {
     void load();
   }, [load]);
 
+  const counts = useMemo(() => {
+    const result: Record<ReviewStatus | "ALL", number> = { ALL: articles.length, DRAFT: 0, IN_REVIEW: 0, PUBLISHED: 0, REJECTED: 0 };
+    for (const article of articles) result[effectiveRevisionStatus(article)] += 1;
+    return result;
+  }, [articles]);
+
+  const visible = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    const rows = articles.filter((article) => {
+      const display = articleDisplay(article);
+      if (statusFilter !== "ALL" && effectiveRevisionStatus(article) !== statusFilter) return false;
+      if (typeFilter !== "ALL" && display.contentType !== typeFilter) return false;
+      return !needle || display.title.toLowerCase().includes(needle) || article.slug.includes(needle);
+    });
+    const time = (value: string | null) => (value ? Date.parse(value) : 0);
+    return rows.sort((a, b) => {
+      switch (sort) {
+        case "oldest":
+          return time(a.createdAt) - time(b.createdAt);
+        case "published":
+          return time(b.publishedAt) - time(a.publishedAt);
+        case "title":
+          return articleDisplay(a).title.localeCompare(articleDisplay(b).title, "fa");
+        case "status":
+          return STATUS_ORDER[effectiveRevisionStatus(a)] - STATUS_ORDER[effectiveRevisionStatus(b)] || time(b.updatedAt) - time(a.updatedAt);
+        default:
+          return time(b.updatedAt) - time(a.updatedAt);
+      }
+    });
+  }, [articles, query, statusFilter, typeFilter, sort]);
+
   const availableSources = useMemo(
     () => sources.filter((source) => !source.archivedAt && source.externalId),
     [sources],
@@ -247,6 +309,7 @@ function ArticlesAdmin() {
   }
 
   function resetEditor() {
+    setEditorOpen(false);
     setForm({ ...EMPTY_FORM, degrees: [...EMPTY_FORM.degrees], sources: [{ ...EMPTY_SOURCE }] });
     setEditing(null);
     setError(null);
@@ -414,6 +477,8 @@ function ArticlesAdmin() {
       setError("این نسخه با قرارداد قدیمی ذخیره شده است؛ ابتدا برای مقالهٔ منتشرشده نسخهٔ جدید بسازید.");
       return;
     }
+    setEditorOpen(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const taxonomy = asRecord(payload.taxonomy);
     const seo = asRecord(payload.seo);
     const validity = asRecord(payload.validity);
@@ -508,19 +573,27 @@ function ArticlesAdmin() {
 
   return (
     <>
-      <PageHeader
-        eyebrow="تحریریهٔ نسخه‌دار"
-        title="مدیریت مقاله‌های article.v2"
-        description="متن، سئو، طبقه‌بندی، اعتبار زمانی و منبع را یک‌جا ثبت کنید. انتشار فقط از مسیر ارسال، بازبینی و تأیید انجام می‌شود."
-        action={<Link className="ds-btn ds-btn-secondary" href="/admin">بازگشت به پنل</Link>}
+      <AdminPageHeader
+        title="مقاله‌ها"
+        description="هر مقاله اول پیش‌نویس است، برای بررسی فرستاده می‌شود و بعد از تأیید منتشر می‌شود. مقاله‌های آماده را از «ورود داده» بارگذاری کن."
+        action={
+          <div style={{ display: "flex", gap: "var(--sp-2)", flexWrap: "wrap" }}>
+            <Link className="ds-btn ds-btn-secondary" href="/admin/import">ورود داده</Link>
+            {!editorOpen && <Button variant="primary" onClick={() => { resetEditor(); setEditorOpen(true); }}>نوشتن مقالهٔ تازه</Button>}
+          </div>
+        }
       />
 
+      {!editorOpen && error && <p className="form-error" role="alert">{error}</p>}
+      {!editorOpen && notice && <p className="success-message" role="status">{notice}</p>}
+
+      {editorOpen && (
       <form className="field-grid" onSubmit={saveArticle}>
         <section className="surface-card">
           <SectionHeader
             title={editing ? "ویرایش نسخهٔ تحریریه" : "پیش‌نویس جدید"}
             description={editing ? "تغییرها فقط روی نسخهٔ در حال ویرایش ذخیره می‌شوند." : "شناسهٔ مسیر پس از ایجاد تغییر نمی‌کند."}
-            action={editing ? <button className="ds-btn ds-btn-secondary" type="button" onClick={resetEditor}>انصراف</button> : undefined}
+            action={<button className="ds-btn ds-btn-secondary" type="button" onClick={resetEditor}>بستن</button>}
           />
           <div className="field-grid field-grid-two">
             <label className="field-group">
@@ -661,74 +734,104 @@ function ArticlesAdmin() {
           {busyKey === "editor" ? "در حال ذخیره…" : editing ? "ذخیرهٔ نسخه" : "ایجاد پیش‌نویس"}
         </button>
       </form>
+      )}
 
-      <section style={{ marginTop: "3rem" }}>
-        <SectionHeader title="صف انتشار" description="وضعیت نسخهٔ عمومی و آخرین نسخهٔ تحریریه جداگانه نمایش داده می‌شوند." />
+      <section style={{ marginTop: editorOpen ? "var(--sp-8)" : 0 }}>
+        <div className="ds-card" style={{ padding: "var(--sp-3) var(--sp-4)", display: "grid", gap: "var(--sp-3)" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--sp-2)" }}>
+            {(["ALL", "IN_REVIEW", "REJECTED", "DRAFT", "PUBLISHED"] as const).map((value) => (
+              <Button key={value} size="sm" variant={statusFilter === value ? "primary" : "secondary"} onClick={() => setStatusFilter(value)}>
+                {value === "ALL" ? "همه" : STATUS_LABELS[value]} ({counts[value].toLocaleString("fa-IR")})
+              </Button>
+            ))}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--sp-2)" }}>
+            <input className="ds-input" type="search" placeholder="جست‌وجو در عنوان یا آدرس" value={query} onChange={(event) => setQuery(event.target.value)} aria-label="جست‌وجو" />
+            <select className="ds-select" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value as ContentType | "ALL")} aria-label="نوع">
+              <option value="ALL">همهٔ انواع</option>
+              {Object.entries(CONTENT_TYPE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+            <select className="ds-select" value={sort} onChange={(event) => setSort(event.target.value as SortKey)} aria-label="مرتب‌سازی">
+              {Object.entries(SORT_LABELS).map(([value, label]) => <option key={value} value={value}>مرتب‌سازی: {label}</option>)}
+            </select>
+          </div>
+        </div>
+
         {loading ? (
           <p className="loading-state">در حال بارگذاری مقاله‌ها…</p>
         ) : articles.length === 0 ? (
-          <EmptyState title="هنوز مقاله‌ای ثبت نشده است" description="اولین article.v2 را از فرم بالا بسازید." />
+          <EmptyState title="هنوز مقاله‌ای ثبت نشده است" description="مقاله‌ها را از «ورود داده» بارگذاری کن یا «نوشتن مقالهٔ تازه» را بزن." />
+        ) : visible.length === 0 ? (
+          <EmptyState title="مقاله‌ای با این فیلترها پیدا نشد" description="فیلتر یا جست‌وجو را تغییر بده." />
         ) : (
-          <div className="field-grid">
-            {articles.map((article) => {
-              const display = articleDisplay(article);
-              const revision = article.latestRevision;
-              const status = effectiveRevisionStatus(article);
-              const isLegacy = revision?.schemaVersion !== "article.v2";
-              return (
-                <article className="surface-card" key={article.id}>
-                  <div className="section-heading">
-                    <div>
-                      <span className="eyebrow">{CONTENT_TYPE_LABELS[display.contentType as ContentType] ?? display.contentType}</span>
-                      <h2>{display.title}</h2>
-                      <p dir="ltr">/{article.slug}</p>
-                    </div>
-                    <div style={{ textAlign: "left" }}>
-                      <strong>{STATUS_LABELS[status]}</strong>
-                      <p>نسخهٔ تحریریه: {revision?.version.toLocaleString("fa-IR") ?? "—"}</p>
-                      {article.reviewStatus === "PUBLISHED" && status !== "PUBLISHED" && <small>نسخهٔ عمومی همچنان منتشر است</small>}
-                    </div>
-                  </div>
-
-                  {revision?.reviewNote && <p className="form-error">یادداشت بازبین: {revision.reviewNote}</p>}
-                  {isLegacy && <p className="muted-copy">این رکورد با قرارداد قدیمی ثبت شده و برای ویرایش باید به نسخهٔ جدید منتقل شود.</p>}
-
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    <Link className="ds-btn ds-btn-secondary" href={`/admin/articles/${article.id}/preview`}>پیش‌نمایش کارکنان</Link>
-                    {article.reviewStatus === "PUBLISHED" && status === "PUBLISHED" && (
-                      <button className="ds-btn ds-btn-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void beginRevision(article)}>
-                        {busyKey === `revise-${article.id}` ? "در حال ساخت…" : "ساخت نسخهٔ جدید"}
-                      </button>
-                    )}
-                    {revision && !isLegacy && (status === "DRAFT" || status === "REJECTED") && (
-                      <button className="ds-btn ds-btn-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void transition(article, "submit")}>ارسال برای بررسی</button>
-                    )}
-                    {revision && !isLegacy && (status === "DRAFT" || status === "REJECTED") && (
-                      <button className="ds-btn ds-btn-secondary" type="button" onClick={() => populateEditor(article, revision)}>ویرایش نسخه</button>
-                    )}
-                    {revision && status === "IN_REVIEW" && (
-                      <>
-                        <button className="ds-btn ds-btn-primary" type="button" disabled={Boolean(busyKey)} onClick={() => void transition(article, "approve")}>تأیید</button>
-                        <button className="ds-btn ds-btn-danger" type="button" onClick={() => setRejectingId(article.id)}>رد با دلیل</button>
-                      </>
-                    )}
-                  </div>
-
-                  {rejectingId === article.id && (
-                    <div className="field-grid" style={{ marginTop: "1rem" }}>
-                      <label className="field-group">
-                        <span>دلیل اصلاح</span>
-                        <input className="ds-input" value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} />
-                      </label>
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <button className="ds-btn ds-btn-danger" type="button" onClick={() => void transition(article, "reject")}>ثبت رد</button>
-                        <button className="ds-btn ds-btn-secondary" type="button" onClick={() => { setRejectingId(null); setRejectionReason(""); }}>انصراف</button>
-                      </div>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
+          <div className="ds-table-wrap" style={{ marginTop: "var(--sp-3)" }}>
+            <table className="ds-table">
+              <thead>
+                <tr>
+                  <th>عنوان</th>
+                  <th>نوع</th>
+                  <th>وضعیت</th>
+                  <th>آخرین تغییر</th>
+                  <th>انتشار</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {visible.map((article) => {
+                  const display = articleDisplay(article);
+                  const revision = article.latestRevision;
+                  const status = effectiveRevisionStatus(article);
+                  const isLegacy = revision?.schemaVersion !== "article.v2";
+                  return (
+                    <tr key={article.id}>
+                      <td style={{ minWidth: 240 }}>
+                        <Link href={`/admin/articles/${article.id}/preview`}><strong>{display.title}</strong></Link>
+                        <div className="ds-subtitle" dir="ltr" style={{ textAlign: "right" }}>/{article.slug}</div>
+                        {revision?.reviewNote && <div className="form-error">یادداشت بازبین: {revision.reviewNote}</div>}
+                        {rejectingId === article.id && (
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--sp-2)", marginTop: "var(--sp-2)" }}>
+                            <input className="ds-input" style={{ flex: "1 1 200px" }} placeholder="دلیل اصلاح" value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} />
+                            <Button size="sm" variant="danger" onClick={() => void transition(article, "reject")}>ثبت رد</Button>
+                            <Button size="sm" variant="ghost" onClick={() => { setRejectingId(null); setRejectionReason(""); }}>انصراف</Button>
+                          </div>
+                        )}
+                      </td>
+                      <td>{CONTENT_TYPE_LABELS[display.contentType as ContentType] ?? display.contentType}</td>
+                      <td>
+                        <Badge tone={STATUS_TONES[status]}>{STATUS_LABELS[status]}</Badge>
+                        {article.reviewStatus === "PUBLISHED" && status !== "PUBLISHED" && <div className="ds-subtitle">نسخهٔ قبلی منتشر است</div>}
+                      </td>
+                      <td style={{ whiteSpace: "nowrap" }}>{shortDate(article.updatedAt)}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{shortDate(article.publishedAt)}</td>
+                      <td>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--sp-1)", justifyContent: "flex-end" }}>
+                          {revision && status === "IN_REVIEW" && (
+                            <>
+                              <Button size="sm" variant="primary" disabled={Boolean(busyKey)} onClick={() => void transition(article, "approve")}>تأیید و انتشار</Button>
+                              <Button size="sm" variant="ghost" onClick={() => setRejectingId(article.id)}>رد</Button>
+                            </>
+                          )}
+                          {revision && !isLegacy && (status === "DRAFT" || status === "REJECTED") && (
+                            <>
+                              <Button size="sm" variant="primary" disabled={Boolean(busyKey)} onClick={() => void transition(article, "submit")}>ارسال برای بررسی</Button>
+                              <Button size="sm" variant="secondary" onClick={() => populateEditor(article, revision)}>ویرایش</Button>
+                            </>
+                          )}
+                          {article.reviewStatus === "PUBLISHED" && status === "PUBLISHED" && (
+                            <>
+                              <a className="ds-btn ds-btn-ghost ds-btn-sm" href={`/${display.contentType === "GUIDE" ? "guides" : "articles"}/${article.slug}`} target="_blank" rel="noreferrer">مشاهده</a>
+                              <Button size="sm" variant="secondary" disabled={Boolean(busyKey)} onClick={() => void beginRevision(article)}>
+                                {busyKey === `revise-${article.id}` ? "در حال ساخت…" : "نسخهٔ جدید"}
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </section>

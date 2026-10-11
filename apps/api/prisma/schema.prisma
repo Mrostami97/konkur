@@ -1838,6 +1838,17 @@ model SpotPlayerLicense {
   @@map("spot_player_licenses")
 }
 
+/// The owner signing off a guide whose text lives in the site code (static
+/// guides). Until a guide has one it names no reviewer.
+model GuideReview {
+  slug         String   @id
+  reviewerId   String?
+  reviewerName String
+  reviewedAt   DateTime @default(now())
+
+  @@map("guide_reviews")
+}
+
 /// The one SpotPlayer licence the owner issues a student by hand (owner,
 /// 2026-10-11: no API issuance). One key can cover every course the student
 /// has, so it belongs to the student, not to a course.

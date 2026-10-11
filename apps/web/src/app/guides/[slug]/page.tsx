@@ -14,6 +14,7 @@ import {
   phase12EditorialPages,
 } from "../../../content/phase12";
 import { apiGetPublic } from "../../../lib/api";
+import { loadGuideReviews, withReview } from "../../../lib/guide-reviews";
 import { canonicalHref, isMergedGuide, withoutMergedGuides } from "../../../lib/merged-pages";
 import { pageMetadata } from "../../../lib/seo";
 import { relatedTaxonomyItems } from "../../../lib/related-taxonomy";
@@ -79,7 +80,8 @@ export default async function GuidePage({ params: pendingParams }: { params: Pro
     const view = <PublicArticleView article={result.article} related={await relatedTaxonomy(result.article)} />;
     return phase12 ? <div data-phase12="verified-guide">{view}</div> : view;
   }
-  const staticGuide = findEditorialPage(params.slug) ?? findPhase12EditorialPage(params.slug);
+  const baseGuide = findEditorialPage(params.slug) ?? findPhase12EditorialPage(params.slug);
+  const staticGuide = baseGuide && withReview(baseGuide, (await loadGuideReviews()).get(baseGuide.slug));
   if (!staticGuide || ![...guides, ...phase12EditorialPages].some((item) => item.slug === params.slug)) {
     if (result.unavailable) throw new Error("Public content service is unavailable");
     notFound();

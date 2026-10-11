@@ -13,6 +13,7 @@ import {
   ReportCardsPublicController,
 } from "./content-discovery.controller";
 import { ContentDiscoveryService } from "./content-discovery.service";
+import { GuideReviewsAdminController, GuideReviewsPublicController } from "./guide-review.controller";
 
 @Module({
   imports: [AuditModule, IdentityModule, IngestionModule, AccessModule],
@@ -24,6 +25,8 @@ import { ContentDiscoveryService } from "./content-discovery.service";
     ContentDiscoveryController,
     ContributorsPublicController,
     ReportCardsPublicController,
+    GuideReviewsPublicController,
+    GuideReviewsAdminController,
   ],
   providers: [ContentService, EditorialService, ContentDiscoveryService],
   exports: [ContentService, EditorialService, ContentDiscoveryService],
