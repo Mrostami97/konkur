@@ -18,6 +18,12 @@
       "to": "/articles/change-major-to-computer",
       "approvedAt": "2026-09-24",
       "reason": "Same topic as the article: switching into a computer master's"
+    },
+    {
+      "from": "/guides/official-notices-and-corrections",
+      "to": "/guides/registration-calendar-1406",
+      "approvedAt": "2026-10-11",
+      "reason": "Owner: generic checklist page that read as machine-written; removed, its readers sent to the 1406 calendar"
     }
   ]
 }

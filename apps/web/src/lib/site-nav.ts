@@ -91,7 +91,6 @@ export const GUIDES_MENU: NavMenu = {
         { href: "/guides/master-exam-changes-1406", label: "تغییرات کنکور ۱۴۰۶" },
         { href: "/guides/historical-budget-computer-engineering", label: "بودجه‌بندی سال‌های قبل" },
         { href: "/guides/booklets-and-answer-keys", label: "دفترچه و کلید آزمون" },
-        { href: "/guides/official-notices-and-corrections", label: "اطلاعیه‌ها و اصلاحیه‌ها" },
       ],
     },
   ],

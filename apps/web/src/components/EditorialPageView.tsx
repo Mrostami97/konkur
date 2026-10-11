@@ -104,7 +104,7 @@ export function EditorialPageView({
             <aside className="official-disclaimer editorial-disclaimer">
               <strong>اعتبار اطلاعات ۱۴۰۶</strong>
               <p>{reviewPending
-                ? "بازبینی انسانی این راهنما هنوز تأیید نشده است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است."
+                ? "برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است."
                 : `این راهنما در ${page.reviewedAt} بازبینی شده است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است.`}</p>
             </aside>
           )}
@@ -156,7 +156,7 @@ export function EditorialPageView({
               <strong>
                 نویسنده: {authorIsOwner ? <Link href="/about">{page.author}</Link> : page.author}
                 {reviewPending
-                  ? " · بازبینی انسانی: در انتظار تأیید"
+                  ? null
                   : <> · بازبین: {reviewerIsOwner ? <Link href="/about">{page.reviewer}</Link> : page.reviewer}</>}
               </strong>
               <p>منابع این مطلب در پایین صفحه آمده‌اند. روش کار را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.</p>

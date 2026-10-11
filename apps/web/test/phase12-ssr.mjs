@@ -49,7 +49,7 @@ for (const page of pages) {
   assert.match(result.body, /پاسخ سریع/, `${route} must render its answer-first block`);
   assert.match(result.body, /منابع و اعتبارسنجی/, `${route} must render sources`);
   assert.match(result.body, /تاریخ ثبت/, `${route} must show the date recorded for the unreviewed fallback`);
-  assert.match(result.body, /بازبینی انسانی: در انتظار تأیید/, `${route} must disclose its pending review`);
+  assert.doesNotMatch(result.body, / · بازبین: /, `${route} must not claim a reviewer before one has reviewed it`);
   const schemas = [...result.body.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
     .flatMap(match => { const value = JSON.parse(match[1]); return Array.isArray(value) ? value : [value]; });
   const articleSchema = schemas.find(item => item["@type"] === "Article");

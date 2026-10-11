@@ -285,7 +285,7 @@ try {
   assert.equal(pendingArticle?.author?.["@type"], "Organization", "editorial attribution must not invent a personal author");
   assert.equal(pendingArticle.author.name, "تحریریه کنکور کامپیوتر");
   assert.ok(!("dateModified" in pendingArticle), "a pending human review must not become a modification date");
-  assert.match(visibleMarkup(pendingHtml), /بازبینی انسانی: در انتظار تأیید/, "pending human review must be visible");
+  assert.doesNotMatch(visibleMarkup(pendingHtml), / · بازبین: /, "a pending guide must not name a reviewer");
   assert.doesNotMatch(visibleMarkup(pendingHtml), /تهیه و بازبینی:/, "a pending guide must not claim the owner already reviewed it");
 
   const ownerHtml = await (await fetch(`${baseUrl}/guides/master-computer-engineering-1406`)).text();
