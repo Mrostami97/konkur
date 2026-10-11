@@ -47,6 +47,7 @@ const NAV_GROUPS: { title: string; links: NavLink[] }[] = [
       { href: "/admin/payments", label: "پرداخت‌های کارت‌به‌کارت", icon: "money", roles: ["ADMIN", "FINANCE"] },
       { href: "/admin/commerce", label: "فروش و دسترسی‌ها", icon: "commerce", roles: ["ADMIN", "FINANCE"] },
       { href: "/admin/discounts", label: "کدهای تخفیف", icon: "percent", roles: ["ADMIN", "FINANCE"] },
+      { href: "/admin/video-licenses", label: "لایسنس‌های اسپات‌پلیر", icon: "course", roles: ["ADMIN"] },
       { href: "/admin/instructors", label: "مدرسان و سهم درآمد", icon: "instructor", roles: ["ADMIN", "FINANCE"] },
       { href: "/admin/consultations", label: "مشاوره", icon: "consult", roles: ["ADMIN", "FINANCE"] },
       { href: "/admin/crm", label: "CRM و رشد", icon: "crm", roles: ["ADMIN", "MENTOR"] },

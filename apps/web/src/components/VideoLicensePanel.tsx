@@ -4,32 +4,30 @@ import { useCallback, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../lib/api";
 import { Alert, Button, Card } from "./ds";
 
-interface VideoStatus {
-  hasVideo: boolean;
-  integrationConfigured: boolean;
-}
-
 interface License {
   licenseKey: string;
   downloadUrl: string;
   issuedAt: string;
 }
 
+interface VideoStatus {
+  hasVideo: boolean;
+  hasAccess: boolean;
+  request: { status: "PENDING" | "DONE"; requestedAt: string } | null;
+  license: License | null;
+}
+
 /**
- * The SpotPlayer licence for a course the student has bought.
- *
- * Issuance is deliberately a button rather than something that happens on
- * page load: every licence is a seat, and a course page opened out of
- * curiosity should not spend one. Once issued, the same key comes back on
- * every later visit.
+ * The SpotPlayer licence for a course the student has bought. The owner
+ * issues licences by hand: the student asks here, the request reaches the
+ * admin panel, and once the owner records the key it shows here. One key can
+ * cover all the student's courses.
  */
 export function VideoLicensePanel({ courseId }: { courseId: string }) {
   const [status, setStatus] = useState<VideoStatus | null>(null);
-  const [license, setLicense] = useState<License | null>(null);
   const [checking, setChecking] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [locked, setLocked] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const check = useCallback(async () => {
@@ -53,19 +51,16 @@ export function VideoLicensePanel({ courseId }: { courseId: string }) {
     setBusy(true);
     setError(null);
     try {
-      setLicense(await apiFetch<License>(`/courses/${courseId}/video-license`, { method: "POST", body: {} }));
+      setStatus(await apiFetch<VideoStatus>(`/courses/${courseId}/video-license`, { method: "POST", body: {} }));
     } catch (err) {
-      if (err instanceof ApiError && err.status === 403) {
-        setLocked(true);
-      } else {
-        setError(err instanceof Error ? err.message : "دریافت لایسنس ممکن نشد.");
-      }
+      setError(err instanceof ApiError && err.status === 403 ? "برای دریافت لایسنس ویدیو، ابتدا باید این دوره را تهیه کنید." : err instanceof Error ? err.message : "ثبت درخواست ممکن نشد.");
     } finally {
       setBusy(false);
     }
   }
 
   async function copyKey() {
+    const license = status?.license;
     if (!license) return;
     try {
       await navigator.clipboard.writeText(license.licenseKey);
@@ -77,6 +72,7 @@ export function VideoLicensePanel({ courseId }: { courseId: string }) {
   }
 
   if (checking || !status?.hasVideo) return null;
+  const license = status.license;
 
   return (
     <Card>
@@ -89,14 +85,7 @@ export function VideoLicensePanel({ courseId }: { courseId: string }) {
         لایسنس به نام شماست و روی ویدیو واترمارک می‌خورد، پس آن را با کسی به اشتراک نگذارید.
       </p>
 
-      {!status.integrationConfigured ? (
-        <div style={{ marginTop: "var(--sp-4)" }}>
-          <Alert tone="warning">
-            پخش ویدیو هنوز روی سایت فعال نشده است. اگر این دوره را خریده‌اید، برای دریافت لایسنس با پشتیبانی
-            تماس بگیرید.
-          </Alert>
-        </div>
-      ) : locked ? (
+      {!status.hasAccess ? (
         <div style={{ marginTop: "var(--sp-4)" }}>
           <Alert tone="info">برای دریافت لایسنس ویدیو، ابتدا باید این دوره را تهیه کنید.</Alert>
         </div>
@@ -117,12 +106,19 @@ export function VideoLicensePanel({ courseId }: { courseId: string }) {
             </a>
           </div>
         </div>
+      ) : status.request?.status === "PENDING" ? (
+        <div style={{ marginTop: "var(--sp-4)" }}>
+          <Alert tone="info">
+            درخواست لایسنس شما ثبت شد. لایسنس به‌زودی صادر می‌شود و همین‌جا نمایش داده می‌شود. اگر از قبل لایسنس
+            اسپات‌پلیر از ما دارید، همان لایسنس برای این دوره هم فعال می‌شود.
+          </Alert>
+        </div>
       ) : (
         <div className="ds-stack" style={{ marginTop: "var(--sp-4)" }}>
           {error && <Alert tone="danger">{error}</Alert>}
           <div>
             <Button variant="primary" loading={busy} onClick={() => void issue()}>
-              دریافت لایسنس ویدیو
+              درخواست لایسنس ویدیو
             </Button>
           </div>
         </div>

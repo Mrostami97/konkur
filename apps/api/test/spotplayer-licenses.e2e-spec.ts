@@ -6,11 +6,6 @@ import request from "supertest";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
-import {
-  SPOTPLAYER_CLIENT,
-  type SpotPlayerClient,
-  type SpotPlayerLicenseRequest,
-} from "../src/modules/learning/spotplayer.client";
 import { seed, SEED_ADMIN_PHONE } from "../src/seed";
 import { purchaseProduct } from "./helpers/purchase";
 
@@ -21,34 +16,14 @@ class CapturingOtpProvider implements OtpProvider {
   }
 }
 
-/**
- * Stands in for SpotPlayer's HTTP API in tests only.
- *
- * The production module registers no stub on purpose -- one that invented a
- * key would hand a paying student something that opens nothing. Here it is
- * the point: it counts calls, so the tests can prove a licence is issued once
- * and reused rather than spending a seat per page load.
- */
-class RecordingSpotPlayerClient implements SpotPlayerClient {
-  readonly configured = true;
-  public calls: SpotPlayerLicenseRequest[] = [];
-
-  async createLicense(request: SpotPlayerLicenseRequest) {
-    this.calls.push(request);
-    const n = this.calls.length;
-    return { licenseId: `lic-${n}`, key: `KEY-${n}`, url: `/license/download/lic-${n}` };
-  }
-}
-
 function randomPhone(): string {
   return `+9892${Math.floor(1_000_000 + Math.random() * 8_999_999)}`;
 }
 
-describe("SpotPlayer video licences (e2e)", () => {
+describe("SpotPlayer video licences, issued by hand (e2e)", () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let otpProvider: CapturingOtpProvider;
-  let spotPlayer: RecordingSpotPlayerClient;
 
   let adminCookie: string;
   let buyerCookie: string;
@@ -70,13 +45,10 @@ describe("SpotPlayer video licences (e2e)", () => {
 
   beforeAll(async () => {
     otpProvider = new CapturingOtpProvider();
-    spotPlayer = new RecordingSpotPlayerClient();
 
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(OTP_PROVIDER)
       .useValue(otpProvider)
-      .overrideProvider(SPOTPLAYER_CLIENT)
-      .useValue(spotPlayer)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -125,82 +97,60 @@ describe("SpotPlayer video licences (e2e)", () => {
     await app.close();
   });
 
-  it("refuses a licence to someone who has not bought the course", async () => {
-    await request(app.getHttpServer())
-      .post(`/courses/${videoCourseId}/video-license`)
-      .set("Cookie", outsiderCookie)
-      .expect(403);
-
+  it("refuses a request from someone who has not bought the course", async () => {
+    await request(app.getHttpServer()).post(`/courses/${videoCourseId}/video-license`).set("Cookie", outsiderCookie).expect(403);
     await request(app.getHttpServer()).post(`/courses/${videoCourseId}/video-license`).expect(401);
-
-    // Nothing was requested from SpotPlayer for a refused caller: a seat is
-    // spent per licence, so an unauthorised request must not cost one.
-    expect(spotPlayer.calls).toHaveLength(0);
+    const status = await request(app.getHttpServer()).get(`/courses/${videoCourseId}/video`).set("Cookie", outsiderCookie).expect(200);
+    expect(status.body).toMatchObject({ hasVideo: true, hasAccess: false, license: null });
+    expect(await prisma.videoLicenseRequest.count({ where: { courseId: videoCourseId } })).toBe(0);
   });
 
-  it("says a course has no video rather than issuing an empty licence", async () => {
-    const status = await request(app.getHttpServer())
-      .get(`/courses/${plainCourseId}/video`)
-      .set("Cookie", buyerCookie)
-      .expect(200);
+  it("says a course has no video rather than taking a request", async () => {
+    const status = await request(app.getHttpServer()).get(`/courses/${plainCourseId}/video`).set("Cookie", buyerCookie).expect(200);
     expect(status.body.hasVideo).toBe(false);
-
-    await request(app.getHttpServer())
-      .post(`/courses/${plainCourseId}/video-license`)
-      .set("Cookie", buyerCookie)
-      .expect(404);
-    expect(spotPlayer.calls).toHaveLength(0);
+    await request(app.getHttpServer()).post(`/courses/${plainCourseId}/video-license`).set("Cookie", buyerCookie).expect(404);
   });
 
-  it("issues one licence after purchase and reuses it on every later ask", async () => {
+  it("puts a buyer's request in the panel, and shows the key once the owner records it", async () => {
     await purchaseProduct(app, { buyerCookie, adminCookie, productId: videoProductId });
 
-    const first = await request(app.getHttpServer())
-      .post(`/courses/${videoCourseId}/video-license`)
-      .set("Cookie", buyerCookie)
-      .expect(201);
+    const asked = await request(app.getHttpServer()).post(`/courses/${videoCourseId}/video-license`).set("Cookie", buyerCookie).expect(201);
+    expect(asked.body).toMatchObject({ hasAccess: true, request: { status: "PENDING" }, license: null });
+    // Asking twice is still one request.
+    await request(app.getHttpServer()).post(`/courses/${videoCourseId}/video-license`).set("Cookie", buyerCookie).expect(201);
 
-    expect(first.body.licenseKey).toBe("KEY-1");
-    // SpotPlayer returns a relative path; the student needs something they
-    // can actually open.
-    expect(first.body.downloadUrl).toBe("https://panel.spotplayer.ir/license/download/lic-1");
-    expect(spotPlayer.calls).toHaveLength(1);
-    // The watermark is what traces a leaked recording back to a person.
-    expect(spotPlayer.calls[0].watermark).toBe(buyerPhone);
-    expect(spotPlayer.calls[0].courseIds).toEqual([`sp-${suffix}`]);
+    const pending = await request(app.getHttpServer()).get("/admin/video-licenses").set("Cookie", adminCookie).expect(200);
+    const row = pending.body.find((entry: { user: { phone: string } }) => entry.user.phone === buyerPhone);
+    expect(row.requests).toHaveLength(1);
+    expect(row.licenseKey).toBeNull();
 
-    const second = await request(app.getHttpServer())
-      .post(`/courses/${videoCourseId}/video-license`)
-      .set("Cookie", buyerCookie)
-      .expect(201);
+    // Students never see the queue or record keys.
+    await request(app.getHttpServer()).get("/admin/video-licenses").set("Cookie", buyerCookie).expect(403);
+    await request(app.getHttpServer()).post(`/admin/video-licenses/${row.user.id}`).set("Cookie", buyerCookie).send({ licenseKey: "x" }).expect(403);
 
-    expect(second.body.licenseKey).toBe("KEY-1");
-    // A second seat was not spent.
-    expect(spotPlayer.calls).toHaveLength(1);
+    const issued = await request(app.getHttpServer()).post(`/admin/video-licenses/${row.user.id}`).set("Cookie", adminCookie).send({ licenseKey: " KEY-ALL-COURSES " }).expect(201);
+    expect(issued.body).toMatchObject({ licenseKey: "KEY-ALL-COURSES", closedRequests: 1 });
+
+    const status = await request(app.getHttpServer()).get(`/courses/${videoCourseId}/video`).set("Cookie", buyerCookie).expect(200);
+    expect(status.body.request.status).toBe("DONE");
+    expect(status.body.license.licenseKey).toBe("KEY-ALL-COURSES");
+
+    const after = await request(app.getHttpServer()).get("/admin/video-licenses").set("Cookie", adminCookie).expect(200);
+    expect(after.body.some((entry: { user: { phone: string } }) => entry.user.phone === buyerPhone)).toBe(false);
+    const done = await request(app.getHttpServer()).get("/admin/video-licenses?status=DONE").set("Cookie", adminCookie).expect(200);
+    expect(done.body.find((entry: { user: { phone: string } }) => entry.user.phone === buyerPhone).licenseKey).toBe("KEY-ALL-COURSES");
   });
 
-  it("stops handing out a stored licence once access is revoked", async () => {
-    const entitlement = await prisma.entitlement.findFirstOrThrow({
-      where: { productId: videoProductId },
-      orderBy: { createdAt: "desc" },
-    });
+  it("stops showing the key once access is revoked", async () => {
+    const entitlement = await prisma.entitlement.findFirstOrThrow({ where: { productId: videoProductId }, orderBy: { createdAt: "desc" } });
     await request(app.getHttpServer())
       .post(`/admin/entitlements/${entitlement.id}/revoke`)
       .set("Cookie", adminCookie)
       .send({ reason: "test revocation" })
       .expect(201);
-
-    // The row still exists, but entitlement is rechecked on every request,
-    // so a licence already issued is not a permanent key to the course.
-    const stored = await prisma.spotPlayerLicense.findUnique({
-      where: { userId_courseId: { userId: (await prisma.user.findUniqueOrThrow({ where: { phone: buyerPhone } })).id, courseId: videoCourseId } },
-    });
-    expect(stored).not.toBeNull();
-
-    await request(app.getHttpServer())
-      .post(`/courses/${videoCourseId}/video-license`)
-      .set("Cookie", buyerCookie)
-      .expect(403);
+    const status = await request(app.getHttpServer()).get(`/courses/${videoCourseId}/video`).set("Cookie", buyerCookie).expect(200);
+    expect(status.body).toMatchObject({ hasAccess: false, license: null });
+    await request(app.getHttpServer()).post(`/courses/${videoCourseId}/video-license`).set("Cookie", buyerCookie).expect(403);
   });
 
   it("lets an operator attach a SpotPlayer course id to an existing course", async () => {

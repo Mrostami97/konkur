@@ -7,26 +7,18 @@ import {
   CoursesPublicController,
   LearningAdminController,
   LearningStudentController,
+  VideoLicenseAdminController,
 } from "./learning.controller";
 import { LearningService } from "./learning.service";
 import { SpotPlayerService } from "./spotplayer.service";
 import { VideoUploadService } from "./video-upload.service";
-import { HttpSpotPlayerClient, SPOTPLAYER_CLIENT } from "./spotplayer.client";
 
 @Module({
   imports: [AuditModule, IdentityModule, AccessModule, IngestionModule],
-  controllers: [CoursesPublicController, LearningStudentController, LearningAdminController],
-  providers: [
-    LearningService,
-    SpotPlayerService,
-    VideoUploadService,
-    // Only the real client is registered. There is deliberately no stub that
-    // invents a licence key: it would hand a paying student a key that opens
-    // nothing, and they would find out after paying. With no API key set,
-    // this one reports `configured: false` and refuses, which the UI shows as
-    // "video is not set up yet".
-    { provide: SPOTPLAYER_CLIENT, useClass: HttpSpotPlayerClient },
-  ],
+  controllers: [CoursesPublicController, LearningStudentController, LearningAdminController, VideoLicenseAdminController],
+  // SpotPlayer licences are issued by the owner by hand since 2026-10-11;
+  // spotplayer.client.ts (the API client) stays for if that changes.
+  providers: [LearningService, SpotPlayerService, VideoUploadService],
   exports: [LearningService, SpotPlayerService],
 })
 export class LearningModule {}

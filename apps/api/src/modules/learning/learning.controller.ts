@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage, memoryStorage } from "multer";
 import { tmpdir } from "os";
-import { Role } from "@prisma/client";
+import { Role, VideoLicenseRequestStatus } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { RolesGuard } from "../identity/guards/roles.guard";
 import { Roles } from "../identity/guards/roles.decorator";
@@ -14,6 +14,7 @@ import { CreateLessonDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { SpotPlayerService } from "./spotplayer.service";
 import { VIDEO_CHUNK_BYTES, VideoUploadService } from "./video-upload.service";
 import { StartVideoUploadDto } from "./dto/start-video-upload.dto";
+import { IssueVideoLicenseDto, VideoLicenseListQuery } from "./dto/video-license.dto";
 
 @Controller("courses")
 export class CoursesPublicController {
@@ -67,20 +68,37 @@ export class LearningStudentController {
     return this.learning.completeLesson(req.user!.id, id);
   }
 
-  /** Whether this course has video and whether the integration is switched
-   * on. Readable without a licence so the course page can say which it is. */
+  /** Whether this course has video, and this student's request and licence
+   * for it. The key is shown only while the student has access. */
   @Get("courses/:courseId/video")
   @UseGuards(SessionAuthGuard)
-  videoStatus(@Param("courseId") courseId: string) {
-    return this.spotPlayer.videoStatus(courseId);
+  videoStatus(@Param("courseId") courseId: string, @Req() req: RequestWithUser) {
+    return this.spotPlayer.videoStatus(req.user!.id, courseId);
   }
 
-  /** The student's own SpotPlayer licence, issued on first ask. Entitlement
-   * is rechecked every time, not only at issuance. */
+  /** Asks the owner for a licence to this course's videos. */
   @Post("courses/:courseId/video-license")
   @UseGuards(SessionAuthGuard)
   videoLicense(@Param("courseId") courseId: string, @Req() req: RequestWithUser) {
-    return this.spotPlayer.getOrIssueLicense(req.user!.id, courseId);
+    return this.spotPlayer.requestLicense(req.user!.id, courseId);
+  }
+}
+
+/** SpotPlayer licence requests, handled by hand. ADMIN only. */
+@Controller("admin/video-licenses")
+@UseGuards(SessionAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
+export class VideoLicenseAdminController {
+  constructor(private readonly spotPlayer: SpotPlayerService) {}
+
+  @Get()
+  list(@Query() query: VideoLicenseListQuery) {
+    return this.spotPlayer.listRequests((query.status ?? "PENDING") as VideoLicenseRequestStatus);
+  }
+
+  @Post(":userId")
+  issue(@Param("userId") userId: string, @Body() dto: IssueVideoLicenseDto, @Req() req: RequestWithUser) {
+    return this.spotPlayer.issue(req.user!.id, userId, dto.licenseKey);
   }
 }
 
