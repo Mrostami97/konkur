@@ -8,7 +8,9 @@ const severityLevels = ["info", "low", "moderate", "high", "critical"];
 const advisoryPattern = /^GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/;
 const guards = new Set(["unused-file-type", "unused-sse", "unused-minio-decoder", "unused-stream-json-filters"]);
 const storageFile = "apps/api/src/modules/ingestion/object-storage.service.ts";
-const storageMethods = new Set(["bucketExists", "makeBucket", "putObject", "fPutObject", "getPartialObject", "statObject", "removeObject", "getObject"]);
+// listObjects (full backup) was reviewed against 8.0.7: it builds its query with its own uriEscape and
+// parses XML with fast-xml-parser, so neither query-string decoding nor stream-json is reached.
+const storageMethods = new Set(["bucketExists", "makeBucket", "putObject", "fPutObject", "getPartialObject", "statObject", "removeObject", "getObject", "listObjects"]);
 const reviewedNestPackages = new Set(["@nestjs/common@10.4.22", "@nestjs/core@10.4.22", "@nestjs/platform-express@10.4.22", "@nestjs/schedule@4.1.2", "@nestjs/throttler@6.5.0", "@nestjs/testing@10.4.22"]);
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 
