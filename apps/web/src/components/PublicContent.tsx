@@ -12,6 +12,7 @@ import { findSubject } from "../content/editorial";
 import { faqPageSchema } from "../lib/faq-schema";
 import { absoluteUrl, articleModifiedTime, personReference } from "../lib/seo";
 import { toPersianDigits } from "../lib/format";
+import { isLessonNote, LESSON_NOTES_LABEL, LESSON_NOTES_PATH } from "../lib/lesson-notes";
 
 export type PublicContentBlock = { type: string; [key: string]: unknown };
 export type PublicAsset = { media_key: string; checksum: string };
@@ -303,8 +304,9 @@ export function PublicArticleView({
   related?: RelatedPublicItem[];
 }) {
   const path = publicArticlePath(article);
-  const collectionName = article.contentType === "GUIDE" ? "راهنماها" : "مقاله‌ها";
-  const collectionPath = article.contentType === "GUIDE" ? "/guides" : "/articles";
+  const lessonNote = isLessonNote(article);
+  const collectionName = article.contentType === "GUIDE" ? "راهنماها" : lessonNote ? LESSON_NOTES_LABEL : "مقاله‌ها";
+  const collectionPath = article.contentType === "GUIDE" ? "/guides" : lessonNote ? LESSON_NOTES_PATH : "/articles";
   const { intro, sections } = splitPublicContentBlocks(Array.isArray(article.contentBlocks) ? article.contentBlocks : []);
   const publishedAt = formatPublicDate(article.publishedAt);
   const reviewedAt = formatPublicDate(article.reviewedAt ?? article.sourceValidatedAt ?? article.updatedAt);

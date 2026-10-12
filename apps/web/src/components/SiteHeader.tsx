@@ -187,6 +187,7 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
             <b suppressHydrationWarning>{toPersianDigits(phd)}</b> روز تا دکتری
           </p>
           <nav className="hd-strip-links" aria-label="پیوندهای سریع">
+            <Link href="/lesson-notes">درس‌نامه‌ها</Link>
             <Link href="/results">نتایج شاگردان{soon.has("/results") && <span className="soon-pill">به‌زودی</span>}</Link>
             <Link href="/free-videos">ویدیوی رایگان{soon.has("/free-videos") && <span className="soon-pill">به‌زودی</span>}</Link>
             <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">کانال تلگرام @kunkurcomputer</a>

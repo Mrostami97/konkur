@@ -118,7 +118,7 @@ export default async function HomePage() {
     .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""))
     .map((article) => ({
       href: publicArticlePath(article),
-      kind: SHELVES.find((shelf) => shelf.key === shelvesOf(article.taxonomyTags, article.subjectCodes)[0])?.label ?? contentTypeLabel(article.contentType),
+      kind: SHELVES.find((shelf) => shelf.key === shelvesOf(article.taxonomyTags)[0])?.label ?? contentTypeLabel(article.contentType),
       title: article.title,
       summary: article.summary,
       date: article.publishedAt ? formatPublicDate(article.publishedAt) : null,

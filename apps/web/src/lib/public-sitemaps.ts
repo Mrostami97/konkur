@@ -5,6 +5,7 @@ import { isMergedGuide, withoutMergedGuides } from "./merged-pages";
 import { apiGetPublic } from "./api";
 import type { Availability } from "./availability";
 import { absoluteUrl, articleModifiedTime } from "./seo";
+import { isLessonNote, LESSON_NOTES_PATH } from "./lesson-notes";
 
 type SitemapEntry = {
   loc: string;
@@ -19,6 +20,7 @@ export type SitemapCollection = {
 type PublicArticle = {
   slug: string;
   contentType?: string | null;
+  taxonomyTags?: string[];
   publishedAt?: string | null;
   reviewedAt?: string | null;
   updatedAt?: string | null;
@@ -108,6 +110,7 @@ export async function articleSitemapEntries(): Promise<SitemapCollection> {
   const authors = published.flatMap((article) => [article.authorProfile?.slug, article.reviewerProfile?.slug]).filter((slug): slug is string => Boolean(slug));
   return { complete: loaded !== null, entries: uniqueEntries([
     { loc: absoluteUrl("/articles") },
+    ...(published.some(isLessonNote) ? [{ loc: absoluteUrl(LESSON_NOTES_PATH) }] : []),
     ...articles.filter((article) => !publishedTypes.has(article.slug) || publishedTypes.get(article.slug) !== "GUIDE").map((article) => ({
       loc: absoluteUrl(`/articles/${article.slug}`),
       lastmod: articleModifiedTime(editorialDateIso(article.publishedAt), editorialDateIso(article.reviewedAt)) ?? asIso(editorialDateIso(article.publishedAt)),

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Glyph } from "../../components/SubjectIcon";
 import { toPersianDigits } from "../../lib/format";
 import { SHELVES } from "./shelves";
@@ -58,7 +58,7 @@ function ArticleCard({ row, lead = false }: { row: ArticleRow; lead?: boolean })
  * the newest article leading when nothing is filtered. Every card is in the
  * server-rendered page; filtering only hides some, so crawlers see them all.
  */
-export function ArticlesExplorer({ rows }: { rows: ArticleRow[] }) {
+export function ArticlesExplorer({ rows, notice }: { rows: ArticleRow[]; notice?: ReactNode }) {
   const [shelf, setShelf] = useState("all");
   const [query, setQuery] = useState("");
 
@@ -104,6 +104,8 @@ export function ArticlesExplorer({ rows }: { rows: ArticleRow[] }) {
           ))}
         </div>
       </div>
+
+      {notice}
 
       {(shelf !== "all" || needle) && (
         <p className="al-result" role="status">

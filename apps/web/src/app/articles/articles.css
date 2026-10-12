@@ -157,6 +157,12 @@
 .al-card-lead .al-card-meta { border-top-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); }
 .al-card-lead .al-card-time { color: #fff; }
 
+/* A pointer to the lesson notes, which have their own page. */
+.al-notes-link { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; margin-top: 1.5rem; padding: 0.95rem 1.2rem; border: 1px solid color-mix(in srgb, var(--tone-teal) 30%, var(--line)); border-radius: var(--radius-lg); color: var(--ink-700); background: var(--tone-teal-soft); font-size: var(--text-sm); line-height: 1.9; text-decoration: none; }
+.al-notes-link strong { color: var(--ink); }
+.al-notes-link:hover { color: var(--ink); border-color: var(--tone-teal); }
+.al-notes-cta { flex: none; color: var(--tone-teal); font-weight: var(--weight-bold); }
+
 .al-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17.5rem), 1fr)); gap: 1.1rem; margin-top: 1.1rem; }
 .al-result + .al-grid { margin-top: 1rem; }
 

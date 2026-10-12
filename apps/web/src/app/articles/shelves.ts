@@ -1,4 +1,5 @@
 import type { GlyphName } from "../../components/SubjectIcon";
+import { LESSON_NOTE_TAGS } from "../../lib/lesson-notes";
 
 /**
  * The shelves of the article library, by what a candidate came for. An
@@ -17,10 +18,10 @@ export interface Shelf {
 export const SHELVES: Shelf[] = [
   {
     key: "lessons",
-    label: "درس‌ها و درس‌نامه",
+    label: "درس‌نامه",
     icon: "book",
     tone: "teal",
-    tags: ["درس‌نامه", "ریاضی", "زبان", "سیستم عامل", "نظریه زبان‌ها و ماشین‌ها", "تحلیل الگوریتم", "زبان منظم", "تست‌زنی"],
+    tags: LESSON_NOTE_TAGS,
   },
   {
     key: "plan",
@@ -53,8 +54,7 @@ export const SHELVES: Shelf[] = [
 ];
 
 /** The shelves an article sits on, most specific first. */
-export function shelvesOf(tags: string[], subjectCodes: string[] = []): string[] {
+export function shelvesOf(tags: string[]): string[] {
   const keys = SHELVES.filter((shelf) => tags.some((tag) => shelf.tags.includes(tag))).map((shelf) => shelf.key);
-  if (subjectCodes.length > 0 && !keys.includes("lessons")) keys.unshift("lessons");
   return keys.length > 0 ? keys : ["plan"];
 }

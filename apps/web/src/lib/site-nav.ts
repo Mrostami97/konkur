@@ -39,6 +39,7 @@ export const LEARN_MENU: NavMenu = {
       title: "یادگیری",
       links: [
         { href: "/courses", label: "دوره‌های کامل", hint: "کلاس درس‌به‌درس تا تست کنکور", glyph: "play" },
+        { href: "/lesson-notes", label: "درس‌نامه‌ها", hint: "مبحث‌به‌مبحث، با تست کنکور و پاسخ", glyph: "book" },
         { href: "/free-videos", label: "ویدیوی رایگان هر درس", hint: "کلاس ضبط‌شدهٔ دانشگاه‌های برتر", glyph: "spark" },
         { href: "/resources", label: "منابع مطالعه", hint: "جزوه، کتاب و منبع بازبینی‌شده", glyph: "book" },
       ],
