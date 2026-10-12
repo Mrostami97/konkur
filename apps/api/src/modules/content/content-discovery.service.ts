@@ -3,6 +3,7 @@ import { Degree, ReviewStatus } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ContentSearchQueryDto, PublicReportCardsQueryDto } from "./dto/content-discovery.dto";
 import { firstArticlePublishedAt, newestPublicationFirst, publishedArticleHistoryDates } from "./article-publication-dates";
+import { searchVariants } from "./search-synonyms";
 
 type SearchResultType = "ARTICLE" | "RESOURCE" | "SUBJECT" | "TOPIC" | "CONTRIBUTOR";
 
@@ -98,6 +99,8 @@ export class ContentDiscoveryService {
 
   async search(query: ContentSearchQueryDto) {
     const normalizedQuery = normalizePersianSearchText(query.q);
+    // "dijkstra" also finds «دایکسترا», «هرم» also finds heap: one meaning, several names.
+    const variants = searchVariants(normalizedQuery, normalizePersianSearchText);
     const [articles, resources, subjects, topics, contributors] = await Promise.all([
       this.prisma.article.findMany({
         where: { reviewStatus: ReviewStatus.PUBLISHED },
@@ -208,7 +211,7 @@ export class ContentDiscoveryService {
     ];
 
     const ranked = candidates
-      .map((candidate) => ({ ...candidate, score: this.searchScore(candidate, normalizedQuery) }))
+      .map((candidate) => ({ ...candidate, score: Math.max(...variants.map((variant, index) => this.searchScore(candidate, variant) * (index === 0 ? 1 : 0.9))) }))
       .filter((candidate) => candidate.score > 0)
       .sort((left, right) => this.compareRanked(left, right));
     const total = ranked.length;

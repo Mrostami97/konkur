@@ -327,7 +327,7 @@ function CanonicalSubjectPage({ subject, learning }: { subject: PublicSubjectDet
       <LearnBlock title={subject.title} learning={learning} />
       <RelatedContentGrid
         title="آموزش و محتوای مرتبط"
-        description="فقط دوره، مقاله و منبع منتشرشده‌ای که به این درس متصل است."
+        description="دوره‌ها، مقاله‌ها و منابعی که برای همین درس آماده کرده‌ایم."
         items={toRelatedItems(subject)}
       />
     </>

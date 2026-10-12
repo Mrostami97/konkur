@@ -161,14 +161,14 @@ export default async function ResourcesPage({ searchParams: pendingSearchParams 
       )}
       {hasFilters && visibleResources.length === 0 && !unavailable && !subject && (
         <EmptyState
-          title="منبع منتشرشده‌ای با این فیلترها پیدا نشد"
+          title="با این فیلترها منبعی پیدا نکردیم"
           description="فیلترها را ساده‌تر کن؛ نتیجهٔ خالی با لینک یا محتوای تأییدنشده پر نمی‌شود."
           action={<Link className="button button-secondary" href="/resources">پاک‌کردن فیلترها</Link>}
         />
       )}
       {subject && visibleResources.length === 0 && !unavailable && (
         <EmptyState
-          title={`هنوز منبع منتشرشده‌ای برای ${subject.shortTitle} ثبت نشده است`}
+          title={`هنوز منبعی برای ${subject.shortTitle} نگذاشته‌ایم`}
           description="این نتیجه عمداً خالی است؛ منابع پس از ثبت منبع، وضعیت حقوق استفاده و بازبینی نمایش داده می‌شوند."
           action={<a className="button button-secondary" href="https://t.me/kunkurcomputer" target="_blank" rel="noreferrer">دیدن آرشیو @kunkurcomputer</a>}
         />

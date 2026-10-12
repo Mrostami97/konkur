@@ -153,9 +153,9 @@ export default async function SearchPage({ searchParams: pendingSearchParams }: 
   return (
     <main className="page-container">
       <PageHeader
-        eyebrow="جست‌وجوی فارسی"
-        title="یک عبارت؛ همهٔ مسیرهای مرتبط"
-        description="ی و ک عربی، نیم‌فاصله و فاصله‌های اضافی یکسان‌سازی می‌شوند و نتیجهٔ عنوان دقیق، بالاتر از تطبیق متن قرار می‌گیرد."
+        eyebrow="جست‌وجو"
+        title="دنبال چه می‌گردی؟"
+        description="نام درس، مبحث یا الگوریتم را بنویس؛ فارسی یا انگلیسی فرقی نمی‌کند (مثلاً دایکسترا یا dijkstra)."
       />
       <form className="surface-card" action="/search" method="get" role="search">
         <label className="field-label" htmlFor="site-search">عنوان درس، مبحث، راهنما یا منبع</label>
@@ -170,7 +170,7 @@ export default async function SearchPage({ searchParams: pendingSearchParams }: 
       ) : unavailable && visibleItems.length === 0 ? (
         <PublicServiceError label="جست‌وجو" />
       ) : visibleItems.length === 0 ? (
-        <EmptyState title="نتیجه‌ای پیدا نشد" description={`برای «${query}» محتوای منتشرشده‌ای پیدا نشد؛ عبارت کوتاه‌تر یا نام درس را امتحان کنید.`} />
+        <EmptyState title="نتیجه‌ای پیدا نشد" description={`برای «${query}» چیزی پیدا نکردیم؛ کلمهٔ کوتاه‌تر یا نام درس را امتحان کن.`} />
       ) : (
         <section aria-labelledby="search-results-title">
           {unavailable && <aside className="official-disclaimer"><strong>نتایج پایه</strong><p>سرویس جست‌وجو در دسترس نیست؛ نتایج از صفحات عمومیِ موجود در خود سایت پیدا شده‌اند.</p></aside>}

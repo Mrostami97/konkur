@@ -96,8 +96,7 @@ export default async function ArticlesPage() {
         <div className="al-wrap al-offline">
           <div className="ds-alert ds-alert-warning">
             <span>
-              <strong>نسخهٔ آفلاین.</strong> سرویس محتوا در دسترس نیست؛ مطالب پایهٔ سایت نمایش داده
-              می‌شوند و ممکن است تازه‌ترین ویرایش تحریریه هنوز در دسترس نباشد.
+              <strong>بخشی از مطالب الان باز نمی‌شود.</strong> فعلاً مطالب اصلی را می‌بینی؛ چند دقیقهٔ دیگر دوباره سر بزن.
             </span>
           </div>
         </div>

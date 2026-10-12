@@ -217,7 +217,7 @@ export default async function AuthorPage({ params: pendingParams }: { params: Pr
           <div className="section-heading">
             <div>
               <h2 id="author-courses">دوره‌هایی که تدریس می‌کند</h2>
-              <p>دوره‌های منتشرشده‌ای که این مدرس، مدرس آن‌هاست.</p>
+              <p>دوره‌هایی که این مدرس درس می‌دهد.</p>
             </div>
             <a href="/consultations">رزرو مشاوره ←</a>
           </div>

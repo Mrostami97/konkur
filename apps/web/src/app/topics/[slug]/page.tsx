@@ -129,11 +129,11 @@ export default async function TopicPage({ params: pendingParams }: { params: Pro
 
       <RelatedContentGrid
         title="یادگیری و تمرین مرتبط"
-        description="فقط محتوای منتشرشده‌ای که در سامانه به این مبحث متصل شده است."
+        description="مطالبی که برای همین مبحث نوشته‌ایم."
         items={relatedItems(topic)}
       />
       {relatedItems(topic).length === 0 && (
-        <div className="empty-state"><strong>هنوز محتوای منتشرشده‌ای به این مبحث متصل نشده است.</strong></div>
+        <div className="empty-state"><strong>هنوز برای این مبحث مطلبی ننوشته‌ایم.</strong></div>
       )}
     </main>
   );
