@@ -26,7 +26,9 @@ export class CrmService {
   async processOutbox() {
     const events = await this.prisma.outboxEvent.findMany({
       where: { eventType: "UserOnboarded", publishedAt: null },
-      take: 50,
+      // Oldest first, so a burst of sign-ups cannot leave an early one waiting.
+      orderBy: { createdAt: "asc" },
+      take: 200,
     });
     for (const event of events) {
       const payload = event.payload as { userId: string; source?: string; campaignCode?: string };
