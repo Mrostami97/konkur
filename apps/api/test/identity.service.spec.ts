@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import { Role } from "@prisma/client";
 import { ServiceUnavailableException, UnauthorizedException } from "@nestjs/common";
 import { IdentityService } from "../src/modules/identity/identity.service";
@@ -37,10 +38,10 @@ function buildFakePrisma() {
           .filter((u) => phones.includes(u.phone))
           .map((u) => (include?.roles ? { ...u, roles: userRoles.filter((r) => r.userId === u.id) } : u));
       }),
-      create: jest.fn(async ({ data }: any) => {
+      create: jest.fn(async ({ data, include }: any) => {
         const user = { id: nextId(), ...data };
         users.set(user.id, user);
-        return user;
+        return include?.roles ? { ...user, roles: userRoles.filter((r) => r.userId === user.id) } : user;
       }),
       update: jest.fn(async ({ where, data }: any) => {
         const user = users.get(where.id);
@@ -163,7 +164,8 @@ describe("IdentityService", () => {
     await service.requestOtp(phone);
     const code = sentCodes[0];
     const { user } = await service.verifyOtp(phone, code, {});
-    expect(user.phone).toBe(phone);
+    // Stored in one form, 0912..., whatever was typed.
+    expect(user.phone).toBe(canonicalPhone(phone));
     expect(user.roles).toContain(Role.STUDENT);
     expect(prisma._debug.sessions).toHaveLength(1);
   });
@@ -197,7 +199,7 @@ describe("IdentityService", () => {
     user.passwordHash = await hashPassword("123");
 
     const { user: sessionUser } = await service.loginWithPassword(phone, "123", {});
-    expect(sessionUser.phone).toBe(phone);
+    expect(sessionUser.phone).toBe(canonicalPhone(phone));
     expect(prisma._debug.sessions).toHaveLength(1);
     expect((audit.log as jest.Mock).mock.calls.at(-1)?.[0].metadata).toEqual({ method: "password" });
   });
