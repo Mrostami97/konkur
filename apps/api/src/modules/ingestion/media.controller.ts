@@ -145,7 +145,7 @@ export class MediaController {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
 
-    const range = parseRange(req.headers.range, total);
+    const range = capRange(parseRange(req.headers.range, total));
     if (range === "unsatisfiable") {
       res.status(416).setHeader("Content-Range", `bytes */${total}`);
       res.end();
@@ -165,6 +165,19 @@ export class MediaController {
     stream.on("error", () => res.destroy());
     stream.pipe(res);
   }
+}
+
+/**
+ * The most one ranged response carries. The CDN in front of the site refuses
+ * responses of about 100 MB and more (it answers 402 with its own page), and
+ * a browser starting a video asks for "bytes=0-", the whole file. A shorter
+ * 206 is valid HTTP: the player simply asks for the next piece.
+ */
+export const MAX_RANGE_BYTES = 8 * 1024 * 1024;
+
+export function capRange<T extends { start: number; end: number } | "unsatisfiable" | null>(range: T): T {
+  if (!range || range === "unsatisfiable") return range;
+  return { start: range.start, end: Math.min(range.end, range.start + MAX_RANGE_BYTES - 1) } as T;
 }
 
 /**
