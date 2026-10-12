@@ -73,12 +73,17 @@ describe("Account separation: admin, staff, student, instructor (e2e)", () => {
     }
   });
 
-  it("refuses role sets that mix the main admin, students and staff", async () => {
+  it("lets an administrator hold every role, and keeps other students apart from staff", async () => {
     const person = await signUp();
     const put = (roles: Role[]) =>
       request(app.getHttpServer()).put(`/admin/users/${person.id}/roles`).set("Cookie", adminCookie).send({ roles });
 
-    expect((await put([Role.ADMIN, Role.AUTHOR])).status).toBe(400);
+    // The administrator may be everything at once (owner, 2026-10-12)...
+    const everything = await put([Role.ADMIN, Role.STUDENT, Role.AUTHOR, Role.REVIEWER, Role.MENTOR, Role.FINANCE]);
+    expect(everything.status).toBe(200);
+    expect(everything.body.roles).toHaveLength(6);
+    // ...and still reaches staff routes while also a student.
+    await request(app.getHttpServer()).get("/admin/resources").set("Cookie", person.cookie).expect(200);
     expect((await put([Role.STUDENT, Role.AUTHOR])).status).toBe(400);
     const staff = await put([Role.AUTHOR, Role.REVIEWER]);
     expect(staff.status).toBe(200);

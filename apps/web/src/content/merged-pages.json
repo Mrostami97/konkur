@@ -30,6 +30,12 @@
       "to": "/guides/exam-time-management",
       "approvedAt": "2026-10-12",
       "reason": "A guide, not an article: /articles/ already redirects there; links point straight at the guide"
+    },
+    {
+      "from": "/authors/mohammad",
+      "to": "/authors/mohammad-rostami",
+      "approvedAt": "2026-10-12",
+      "reason": "Owner: one profile; the duplicate author profile was merged into mohammad-rostami"
     }
   ]
 }

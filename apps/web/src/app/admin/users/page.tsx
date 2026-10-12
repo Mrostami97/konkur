@@ -46,14 +46,15 @@ interface AdminUser {
 const joined = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", month: "long", day: "numeric" });
 
 /**
- * Accounts are kept apart (the API enforces the same): the main administrator
- * holds «مدیر» alone, a student holds «دانشجو» alone, and the staff roles may
- * be combined with each other. Ticking one kind clears the others.
+ * Which roles go together (the API enforces the same): an administrator may
+ * hold every role at once; anyone else is either a student or staff, and the
+ * staff roles combine. Ticking a role that does not fit clears the others.
  */
 function nextRoles(current: Role[], role: Role, on: boolean): Role[] {
   if (!on) return current.filter((item) => item !== role);
-  if (role === "ADMIN" || role === "STUDENT") return [role];
-  return [...current.filter((item) => item !== "ADMIN" && item !== "STUDENT"), role];
+  if (role === "ADMIN" || current.includes("ADMIN")) return [...new Set([...current, role])];
+  if (role === "STUDENT") return [role];
+  return [...current.filter((item) => item !== "STUDENT"), role];
 }
 
 /** Every mobile number in one form, 0935…, however it was stored. */
@@ -64,7 +65,7 @@ function displayPhone(phone: string) {
 
 /** An account left from before roles were kept apart: both a student and staff. */
 function isMixed(roles: Role[]) {
-  return roles.includes("STUDENT") && roles.length > 1;
+  return roles.includes("STUDENT") && roles.length > 1 && !roles.includes("ADMIN");
 }
 
 function RolePicker({ value, onChange }: { value: Role[]; onChange: (roles: Role[]) => void }) {

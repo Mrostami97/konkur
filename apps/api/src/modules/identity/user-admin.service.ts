@@ -112,7 +112,7 @@ export class UserAdminService {
     roles = [...new Set(roles)];
     const problem = roleSetProblem(roles);
     if (problem) throw new BadRequestException(problem);
-    if (roles.includes(Role.STUDENT)) {
+    if (roles.includes(Role.STUDENT) && !roles.includes(Role.ADMIN)) {
       const instructor = await this.prisma.contributorProfile.findUnique({ where: { userId }, select: { displayName: true } });
       if (instructor) {
         throw new BadRequestException(`این حساب به پروفایل مدرس «${instructor.displayName}» وصل است و دانشجو نمی‌شود.`);

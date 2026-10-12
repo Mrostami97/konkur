@@ -31,7 +31,8 @@ export class RolesGuard implements CanActivate {
     // A student is never staff (see account-roles.ts): an account that still
     // carries STUDENT next to a staff role -- from before roles were kept
     // apart -- is refused until an administrator settles which it is.
-    if (userRoles.includes(Role.STUDENT) && !required.includes(Role.STUDENT)) {
+    // The administrator may also be a student of his own site (account-roles.ts).
+    if (userRoles.includes(Role.STUDENT) && !userRoles.includes(Role.ADMIN) && !required.includes(Role.STUDENT)) {
       throw new ForbiddenException("student accounts cannot use staff routes");
     }
     const allowed = required.some((role) => userRoles.includes(role));
