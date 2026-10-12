@@ -18,12 +18,23 @@ function mediaUrl(assets: Asset[], mediaKey: string): string | null {
 /** Text with inline ($...$) and display ($...$) formulas typeset in place.
  * Exported for the plain-text fields an article also has, such as its quick
  * answer, which would otherwise print the dollar signs and the LaTeX. */
+/**
+ * Digits in running Persian text read in Persian, like the formulas: "O(1)"
+ * and "بخش 7.2" become "O(۱)" and "بخش ۷٫۲". A number glued to Latin letters
+ * (IPv4, SHA-256, 2n) stays as written, since it is part of a name or term.
+ */
+function persianTextDigits(value: string) {
+  return value.replace(/(?<![A-Za-z0-9_])(?<![A-Za-z]-)[0-9]+(?:\.[0-9]+)?(?![A-Za-z0-9_])/g, (number) =>
+    number.replace(/[0-9]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]).replace(".", "٫"),
+  );
+}
+
 export function RichText({ text }: { text: string }) {
   return (
     <>
       {splitMath(text).map((segment, index) =>
         segment.kind === "text" ? (
-          segment.value
+          persianTextDigits(segment.value)
         ) : (
           <span
             key={index}
