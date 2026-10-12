@@ -42,7 +42,7 @@ isolatedDatabaseSuite("OTP concurrency on explicitly isolated Postgres", () => {
     await service.requestOtp(value);
     const user = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(value) } });
     if (!createdUserIds.includes(user.id)) createdUserIds.push(user.id);
-    return { userId: user.id, code: deliveries.get(value)!.at(-1)! };
+    return { userId: user.id, code: deliveries.get(canonicalPhone(value))!.at(-1)! };
   }
 
   it("issues only one session for twenty simultaneous uses of one valid code", async () => {
@@ -73,7 +73,7 @@ isolatedDatabaseSuite("OTP concurrency on explicitly isolated Postgres", () => {
     // Delivery happens after commit and may finish out of order. Select the
     // code for the actual pending row, rather than relying on delivery order.
     const pending = await prisma.otpCode.findFirstOrThrow({ where: { userId, consumedAt: null } });
-    const currentCode = deliveries.get(value)!.find((code) => createHash("sha256").update(code).digest("hex") === pending.codeHash);
+    const currentCode = deliveries.get(canonicalPhone(value))!.find((code) => createHash("sha256").update(code).digest("hex") === pending.codeHash);
     expect(currentCode).toBeDefined();
     await service.verifyOtp(value, currentCode!, {});
     await expect(service.verifyOtp(value, oldCode, {})).rejects.toThrow("invalid phone or code");
