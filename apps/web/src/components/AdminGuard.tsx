@@ -29,7 +29,8 @@ export function AdminGuard({ children }: { children: ReactNode }) {
       .then((res) => {
         const staff = res.user.roles.some((r) => STAFF_ROLES.includes(r));
         // A student is never staff; the API refuses such an account too.
-        if (res.user.roles.includes("STUDENT")) {
+        // An administrator may also be a student (owner, 2026-10-12); anyone else with both is held back.
+        if (res.user.roles.includes("STUDENT") && !res.user.roles.includes("ADMIN")) {
           setState(staff ? "mixed" : "denied");
         } else if (staff) {
           setRoles(res.user.roles);
