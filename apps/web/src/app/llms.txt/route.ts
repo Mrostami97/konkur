@@ -1,4 +1,7 @@
-import { articles, guides, subjects } from "../../content/editorial";
+import { articles as allArticles, guides, subjects } from "../../content/editorial";
+import { withoutMergedArticles } from "../../lib/merged-pages";
+
+const articles = withoutMergedArticles(allArticles);
 import { phase12EditorialPages } from "../../content/phase12";
 import { withoutMergedGuides } from "../../lib/merged-pages";
 import { apiGetPublic } from "../../lib/api";

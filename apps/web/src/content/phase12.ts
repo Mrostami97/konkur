@@ -61,6 +61,7 @@ export interface Phase12Page {
   readonly readingMinutes: number;
   readonly quickAnswer: string;
   readonly sections: readonly EditorialSection[];
+  readonly faq?: readonly { readonly question: string; readonly answer: string }[];
   readonly sourceIds: readonly string[];
   readonly internalLinks: readonly Phase12InternalLink[];
   readonly historicalData?: readonly Phase12HistoricalRecord[];
@@ -108,6 +109,7 @@ export function phase12PageToEditorial(page: Phase12Page): EditorialPage {
     reviewedAt,
     readingMinutes: page.readingMinutes,
     sections: page.sections.map((section) => ({ ...section })),
+    ...(page.faq?.length ? { faq: page.faq.map((item) => ({ ...item })) } : {}),
     sources: resolveSources(page),
   };
 }

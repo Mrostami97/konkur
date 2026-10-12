@@ -36,6 +36,30 @@
       "to": "/authors/mohammad-rostami",
       "approvedAt": "2026-10-12",
       "reason": "Owner: one profile; the duplicate author profile was merged into mohammad-rostami"
+    },
+    {
+      "from": "/articles/computer-exam-changes-1406",
+      "to": "/guides/master-exam-changes-1406",
+      "approvedAt": "2026-10-13",
+      "reason": "Owner (merge thin duplicates for SEO): Same topic as the guide: 1406 exam changes; its content (urgent steps, old tables, PhD) merged into the guide"
+    },
+    {
+      "from": "/articles/active-review-system",
+      "to": "/guides/active-review",
+      "approvedAt": "2026-10-13",
+      "reason": "Owner (merge thin duplicates for SEO): Same topic as the guide: active review; its review cycle merged into the guide"
+    },
+    {
+      "from": "/articles/official-exam-updates-checklist",
+      "to": "/guides/registration-calendar-1406",
+      "approvedAt": "2026-10-13",
+      "reason": "Owner (merge thin duplicates for SEO): A generic checklist like the removed official-notices guide; readers sent to the 1406 calendar"
+    },
+    {
+      "from": "/articles/telegram-learning-archive",
+      "to": "/free-videos",
+      "approvedAt": "2026-10-13",
+      "reason": "Owner (merge thin duplicates for SEO): Owner rule: no Telegram archive pages; free class sessions are now on the site"
     }
   ]
 }

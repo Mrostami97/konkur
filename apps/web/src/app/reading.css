@@ -165,6 +165,13 @@
   outline: 1px solid var(--rd-line);
 }
 .rd-page .editorial-body > section { scroll-margin-top: 9rem; }
+/* Common questions: one question per card, under the numbered sections. */
+.rd-page .editorial-faq > div { margin-top: 0.85rem; padding: 1rem 1.15rem; border-radius: var(--radius-lg); background: var(--rd-soft); }
+.rd-page .editorial-faq h3 { margin: 0 0 0.4rem; color: var(--ink); font-size: 1.02rem; font-weight: 800; line-height: 1.8; }
+.rd-page .editorial-faq p { margin: 0; }
+.rd-page .editorial-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; margin: 0.25rem 0 0; font-size: 0.92rem; }
+.rd-page .editorial-links span { color: var(--ink-500); font-weight: 700; }
+.rd-page .editorial-links a { padding: 0.2rem 0.75rem; border-radius: var(--radius-pill); background: var(--rd-wash); color: var(--rd-accent); font-weight: 700; text-decoration: none; }
 .rd-page .editorial-body > section + section { margin-top: 2.25rem; padding-top: 2.25rem; border-top: 1px dashed var(--rd-line); }
 .rd-page .editorial-body h2 {
   counter-increment: rd-section;

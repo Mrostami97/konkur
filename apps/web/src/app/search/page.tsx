@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicServiceError } from "../../components/PublicContent";
 import { EmptyState, PageHeader } from "../../components/ui";
-import { articles, findSubject, guides, subjects } from "../../content/editorial";
+import { articles as allArticles, findSubject, guides, subjects } from "../../content/editorial";
+import { withoutMergedArticles } from "../../lib/merged-pages";
+
+const articles = withoutMergedArticles(allArticles);
 import { phase11SubjectContent, type Phase11SubjectSlug } from "../../content/phase11";
 import { phase12EditorialPages } from "../../content/phase12";
 import { withoutMergedGuides } from "../../lib/merged-pages";

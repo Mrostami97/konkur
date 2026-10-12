@@ -10,6 +10,8 @@ import { ReadingProgress } from "./reading/ReadingProgress";
 import { OWNER_NAME, OwnerPhoto } from "./OwnerByline";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "./SubjectIcon";
 import { RichText } from "./ContentBlocks";
+import { faqSchemaFromPairs } from "../lib/faq-schema";
+import { canonicalHref } from "../lib/merged-pages";
 
 /**
  * The answer-first line. A page without a written quick answer used to fall
@@ -52,6 +54,8 @@ export function EditorialPageView({
   const reviewPending = page.reviewer === "در انتظار بازبینی انسانی";
   const publishedAt = editorialDateIso(page.publishedAt);
   const modifiedAt = reviewPending ? undefined : articleModifiedTime(publishedAt, page.reviewedAtIso ?? editorialDateIso(page.reviewedAt));
+  const faq = page.faq ?? [];
+  const faqSchema = faqSchemaFromPairs(faq, absoluteUrl(path));
 
   return (
     <main className="rd-page">
@@ -78,6 +82,7 @@ export function EditorialPageView({
             "@type": "BreadcrumbList",
             itemListElement: breadcrumbs.map((item, index) => ({ "@type": "ListItem", position: index + 1, ...item })),
           },
+          ...(faqSchema ? [faqSchema] : []),
         ]}
       />
 
@@ -124,8 +129,25 @@ export function EditorialPageView({
                   <div className="responsive-table"><table><thead><tr>{section.table.headers.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{section.table.rows.map((row) => <tr key={row.join("-")}>{row.map((cell) => <td key={cell}>{cell}</td>)}</tr>)}</tbody></table></div>
                 )}
                 {section.note && <aside className="editorial-note"><strong>نکتهٔ مهم</strong><p>{section.note}</p></aside>}
+                {section.links && section.links.length > 0 && (
+                  <p className="editorial-links">
+                    <span>بیشتر بخوان:</span>
+                    {section.links.map((link) => <Link key={link.href} href={canonicalHref(link.href)}>{link.label}</Link>)}
+                  </p>
+                )}
               </section>
             ))}
+            {faq.length > 0 && (
+              <section id="faq" className="editorial-faq">
+                <h2>پرسش‌های رایج</h2>
+                {faq.map((item) => (
+                  <div key={item.question}>
+                    <h3>{item.question}</h3>
+                    <p>{item.answer}</p>
+                  </div>
+                ))}
+              </section>
+            )}
           </div>
 
           {relatedSubjects.length > 0 && (
@@ -184,7 +206,7 @@ export function EditorialPageView({
         <aside className="rd-aside" aria-label="راهنمای صفحه">
           <div className="rd-toc">
             <strong>در این صفحه</strong>
-            <nav aria-label="فهرست مطالب">{page.sections.map((section, index) => <a key={section.title} href={`#section-${index + 1}`}>{section.title}</a>)}</nav>
+            <nav aria-label="فهرست مطالب">{page.sections.map((section, index) => <a key={section.title} href={`#section-${index + 1}`}>{section.title}</a>)}{faq.length > 0 && <a href="#faq">پرسش‌های رایج</a>}</nav>
           </div>
           <div className="rd-side-cta">
             <strong>آپدیت‌های کنکور را از دست نده</strong>

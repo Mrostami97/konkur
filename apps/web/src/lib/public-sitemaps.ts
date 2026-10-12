@@ -1,7 +1,7 @@
 import { articles, editorialDateIso, guides, subjects } from "../content/editorial";
 import { phase11DateIso, phase11SubjectContent, type Phase11SubjectSlug } from "../content/phase11";
 import { phase12EditorialPages } from "../content/phase12";
-import { isMergedGuide, withoutMergedGuides } from "./merged-pages";
+import { isMergedGuide, withoutMergedArticles, withoutMergedGuides } from "./merged-pages";
 import { apiGetPublic } from "./api";
 import type { Availability } from "./availability";
 import { absoluteUrl, articleModifiedTime } from "./seo";
@@ -111,7 +111,7 @@ export async function articleSitemapEntries(): Promise<SitemapCollection> {
   return { complete: loaded !== null, entries: uniqueEntries([
     { loc: absoluteUrl("/articles") },
     ...(published.some(isLessonNote) ? [{ loc: absoluteUrl(LESSON_NOTES_PATH) }] : []),
-    ...articles.filter((article) => !publishedTypes.has(article.slug) || publishedTypes.get(article.slug) !== "GUIDE").map((article) => ({
+    ...withoutMergedArticles(articles).filter((article) => !publishedTypes.has(article.slug) || publishedTypes.get(article.slug) !== "GUIDE").map((article) => ({
       loc: absoluteUrl(`/articles/${article.slug}`),
       lastmod: articleModifiedTime(editorialDateIso(article.publishedAt), editorialDateIso(article.reviewedAt)) ?? asIso(editorialDateIso(article.publishedAt)),
     })),

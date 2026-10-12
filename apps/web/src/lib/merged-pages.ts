@@ -16,6 +16,15 @@ export function isMergedGuide(slug: string): boolean {
   return targets.has(`/guides/${slug}`);
 }
 
+export function isMergedArticle(slug: string): boolean {
+  return targets.has(`/articles/${slug}`);
+}
+
+/** Drops static articles that were merged into another page. */
+export function withoutMergedArticles<T extends { slug: string }>(items: readonly T[]): T[] {
+  return items.filter((item) => !isMergedArticle(item.slug));
+}
+
 /** Drops guides that were merged into another page. */
 export function withoutMergedGuides<T extends { slug: string }>(items: readonly T[]): T[] {
   return items.filter((item) => !isMergedGuide(item.slug));

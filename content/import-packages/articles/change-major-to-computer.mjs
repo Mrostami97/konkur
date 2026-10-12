@@ -161,7 +161,7 @@ export default {
         { label: "دوره‌ها", href: "/courses" },
         { label: "ویدیوهای رایگان", href: "/free-videos" },
         { label: "مشاوره برای انتخاب مجموعه و برنامه", href: "/consultations" },
-        { label: "تغییرات کنکور کامپیوتر ۱۴۰۶", href: "/articles/computer-exam-changes-1406" },
+        { label: "تغییرات کنکور کامپیوتر ۱۴۰۶", href: "/guides/master-exam-changes-1406" },
         { label: "برنامهٔ مطالعه از صفر", href: "/articles/study-plan-from-zero" },
       ],
     },

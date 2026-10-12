@@ -37,7 +37,11 @@ export function extractFaqPairs(blocks: readonly Block[]): FaqPair[] {
 
 /** FAQPage schema, or null when the page has fewer than two answered questions. */
 export function faqPageSchema(blocks: readonly Block[], pageUrl: string): Record<string, unknown> | null {
-  const pairs = extractFaqPairs(blocks);
+  return faqSchemaFromPairs(extractFaqPairs(blocks), pageUrl);
+}
+
+/** FAQPage schema from question/answer pairs the page shows as they are. */
+export function faqSchemaFromPairs(pairs: readonly FaqPair[], pageUrl: string): Record<string, unknown> | null {
   if (pairs.length < 2) return null;
   return {
     "@context": "https://schema.org",

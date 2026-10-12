@@ -8,7 +8,10 @@ import {
   type RelatedPublicItem,
 } from "../../../components/PublicContent";
 import { apiGetPublic } from "../../../lib/api";
-import { articles, findEditorialPage } from "../../../content/editorial";
+import { articles as allArticles, findEditorialPage } from "../../../content/editorial";
+import { withoutMergedArticles } from "../../../lib/merged-pages";
+
+const articles = withoutMergedArticles(allArticles);
 import { pageMetadata } from "../../../lib/seo";
 import { relatedTaxonomyItems } from "../../../lib/related-taxonomy";
 

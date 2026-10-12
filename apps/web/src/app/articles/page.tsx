@@ -3,7 +3,10 @@ import {
   formatPublicDate,
   type PublicArticleRecord,
 } from "../../components/PublicContent";
-import { articles as legacyArticles } from "../../content/editorial";
+import { articles as allLegacyArticles } from "../../content/editorial";
+import { withoutMergedArticles } from "../../lib/merged-pages";
+
+const legacyArticles = withoutMergedArticles(allLegacyArticles);
 import { apiGetPublic } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";

@@ -17,6 +17,7 @@ import { ReadingProgress } from "../../../components/reading/ReadingProgress";
 import { StructuredData } from "../../../components/StructuredData";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "../../../components/SubjectIcon";
 import { articles, findSubject, guides, subjects, type SubjectPage as EditorialSubject } from "../../../content/editorial";
+import { withoutMergedArticles } from "../../../lib/merged-pages";
 import {
   phase11SubjectContent,
   type Phase11SubjectContent,
@@ -377,7 +378,7 @@ function LegacySubjectPage({ slug, apiUnavailable, learning }: { slug: string; a
   const phase11 = getPhase11Content(slug);
   if (!phase11) notFound();
   const prerequisites = subject.prerequisites.map(findSubject).filter(Boolean);
-  const related = [...guides, ...articles].filter((page) => page.relatedSubjects?.includes(subject.slug)).slice(0, 4);
+  const related = [...guides, ...withoutMergedArticles(articles)].filter((page) => page.relatedSubjects?.includes(subject.slug)).slice(0, 4);
   const path = `/subjects/${subject.slug}`;
   const breadcrumbs = [
     { name: "خانه", item: absoluteUrl("/") },
