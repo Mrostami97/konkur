@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api";
 import { useAvailability } from "../../lib/availability";
+import { linkTelegramAccount } from "../../components/TelegramBridge";
 import { TELEGRAM_URL } from "../../lib/site-nav";
 import "./login.css";
 
@@ -98,6 +99,7 @@ export default function LoginPage() {
     setError(null);
     try {
       const signedIn = await apiFetch<SignedIn>("/auth/otp/verify", { method: "POST", body: { phone: cleanPhone(phone), code } });
+      await linkTelegramAccount();
       router.push(afterLogin(signedIn.user.roles));
     } catch (err) {
       setError(friendly(err, "کد درست نیست یا منقضی شده است."));
@@ -112,6 +114,7 @@ export default function LoginPage() {
     setError(null);
     try {
       const signedIn = await apiFetch<SignedIn>("/auth/password/login", { method: "POST", body: { phone: cleanPhone(phone), password } });
+      await linkTelegramAccount();
       router.push(afterLogin(signedIn.user.roles));
     } catch (err) {
       setError(friendly(err, "ورود با رمز عبور انجام نشد."));

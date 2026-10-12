@@ -2,13 +2,16 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../lib/api";
 
-interface TelegramWebApp {
+export interface TelegramWebApp {
+  initData: string;
+  initDataUnsafe?: { user?: { first_name?: string } };
   ready(): void;
   expand(): void;
   colorScheme?: "light" | "dark";
   setHeaderColor?(color: string): void;
-  setBackgroundColor?(color: string): void;
+  HapticFeedback?: { impactOccurred(style: "light" | "medium"): void };
   BackButton: { show(): void; hide(): void; onClick(handler: () => void): void; offClick(handler: () => void): void };
 }
 
@@ -19,10 +22,12 @@ declare global {
 }
 
 const FLAG = "kk-telegram";
+const SIGNED_IN = "kk-telegram-session";
 const SCRIPT = "https://telegram.org/js/telegram-web-app.js";
 const HOME = "/tg";
 
-function insideTelegram() {
+/** Whether this page runs inside the Telegram mini app (remembered for the tab). */
+export function insideTelegram() {
   if (typeof window === "undefined") return false;
   try {
     if (window.location.hash.includes("tgWebAppData") || window.location.search.includes("tgWebAppStartParam")) {
@@ -36,7 +41,9 @@ function insideTelegram() {
 
 let loading: Promise<TelegramWebApp | null> | null = null;
 
-function loadWebApp(): Promise<TelegramWebApp | null> {
+/** Telegram's WebApp object; null outside Telegram or when its script cannot load. */
+export function loadWebApp(): Promise<TelegramWebApp | null> {
+  if (typeof window === "undefined" || !insideTelegram()) return Promise.resolve(null);
   if (window.Telegram?.WebApp) return Promise.resolve(window.Telegram.WebApp);
   loading ??= new Promise((resolve) => {
     const script = document.createElement("script");
@@ -51,9 +58,25 @@ function loadWebApp(): Promise<TelegramWebApp | null> {
 }
 
 /**
- * When the site is opened as the Telegram mini app: full height, Telegram's
- * own back button instead of the site footer and tab bar, and the header
- * colour matched. Outside Telegram it does nothing and loads nothing.
+ * After a normal sign-in inside the mini app, links the account to this
+ * Telegram account so the next launch signs in by itself. Silent outside
+ * Telegram and on any failure.
+ */
+export async function linkTelegramAccount() {
+  const webApp = await loadWebApp();
+  if (!webApp?.initData) return;
+  try {
+    await apiFetch("/auth/telegram/link", { method: "POST", body: { initData: webApp.initData } });
+  } catch {
+    // Linking is a convenience; signing in already worked.
+  }
+}
+
+/**
+ * When the site is opened as the Telegram mini app: full height, signed in
+ * automatically once the Telegram account is linked, Telegram's back button
+ * instead of the site footer and tab bar. Outside Telegram it does nothing
+ * and loads nothing.
  */
 export function TelegramBridge() {
   const pathname = usePathname() ?? "/";
@@ -63,14 +86,31 @@ export function TelegramBridge() {
   useEffect(() => {
     if (!insideTelegram()) return;
     document.documentElement.dataset.tg = "1";
-    void loadWebApp().then((webApp) => {
+    void loadWebApp().then(async (webApp) => {
       if (!webApp) return;
       webApp.ready();
       webApp.expand();
       webApp.setHeaderColor?.("bg_color");
       setApp(webApp);
+      let tried = false;
+      try {
+        tried = sessionStorage.getItem(SIGNED_IN) === "1";
+        sessionStorage.setItem(SIGNED_IN, "1");
+      } catch {
+        // No storage: try once per page load instead.
+      }
+      if (tried || !webApp.initData) return;
+      try {
+        const result = await apiFetch<{ linked: boolean }>("/auth/telegram/session", { method: "POST", body: { initData: webApp.initData } });
+        if (result.linked) {
+          window.dispatchEvent(new Event("kk-signed-in"));
+          router.refresh();
+        }
+      } catch {
+        // Not linked or Telegram data refused: the visitor signs in normally.
+      }
     });
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!app) return;

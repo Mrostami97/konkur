@@ -6,6 +6,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { ConsoleOtpProvider, OTP_PROVIDER, OtpProvider } from "./otp-provider";
 import { verifyPassword } from "./password-hasher";
 import { canonicalPhone, phoneVariants } from "./phone";
+import { verifyTelegramInitData } from "./telegram-init-data";
 
 const OTP_TTL_MINUTES = Number(process.env.OTP_TTL_MINUTES ?? 5);
 const OTP_MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS ?? 5);
@@ -174,7 +175,7 @@ export class IdentityService {
   private async issueSession(
     user: { id: string; phone: string; roles: { role: Role }[] },
     ctx: AuthContext,
-    method: "otp" | "password",
+    method: "otp" | "password" | "telegram",
     tx?: Prisma.TransactionClient,
   ): Promise<{ token: string; user: SessionUser }> {
     const rawToken = randomBytes(32).toString("hex");
@@ -201,6 +202,54 @@ export class IdentityService {
       token: rawToken,
       user: { id: user.id, phone: user.phone, roles: user.roles.map((r) => r.role) },
     };
+  }
+
+  /** Whether the Telegram mini app sign-in is switched on (the bot token is set). */
+  get telegramConfigured() {
+    return Boolean(process.env.TELEGRAM_BOT_TOKEN);
+  }
+
+  private telegramUser(initData: string) {
+    const user = verifyTelegramInitData(initData, process.env.TELEGRAM_BOT_TOKEN ?? "");
+    if (!user) throw new UnauthorizedException("invalid telegram data");
+    return user;
+  }
+
+  /**
+   * Signs in the site account linked to this Telegram account, or returns
+   * null when none is linked yet (the mini app then asks for a normal
+   * sign-in once, and links it).
+   */
+  async loginWithTelegram(initData: string, ctx: AuthContext): Promise<{ token: string; user: SessionUser } | null> {
+    const telegram = this.telegramUser(initData);
+    const link = await this.prisma.telegramAccount.findUnique({
+      where: { telegramId: telegram.id },
+      include: { user: { include: { roles: true } } },
+    });
+    if (!link) return null;
+    await this.prisma.telegramAccount.update({
+      where: { telegramId: telegram.id },
+      data: { lastSeenAt: new Date(), username: telegram.username, firstName: telegram.firstName },
+    });
+    return this.issueSession(link.user, ctx, "telegram");
+  }
+
+  /**
+   * Links the signed-in person's account to the Telegram account the mini app
+   * runs in. Both sides are proven: the session for the site, the signature
+   * for Telegram. A Telegram account moves to the latest account it signed in
+   * to; an account keeps one Telegram account.
+   */
+  async linkTelegram(userId: string, initData: string) {
+    const telegram = this.telegramUser(initData);
+    await this.prisma.$transaction(async (tx) => {
+      await tx.telegramAccount.deleteMany({ where: { OR: [{ telegramId: telegram.id }, { userId }] } });
+      await tx.telegramAccount.create({
+        data: { telegramId: telegram.id, userId, username: telegram.username, firstName: telegram.firstName },
+      });
+      await this.audit.log({ actorUserId: userId, action: "auth.telegram_linked", targetType: "User", targetId: userId }, tx);
+    });
+    return { linked: true };
   }
 
   async logout(rawToken: string): Promise<void> {

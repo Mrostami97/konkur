@@ -46,6 +46,7 @@ model User {
   consultationBookings ConsultationBooking[] @relation("ConsultationStudent")
   spotPlayerLicenses   SpotPlayerLicense[]
   videoLicense         StudentVideoLicense?
+  telegramAccount      TelegramAccount?
   videoLicenseRequests VideoLicenseRequest[]
   coachPlans           CoachPlan[]           @relation("CoachPlanStudent")
   weeklyReports        WeeklyReport[]        @relation("WeeklyReportStudent")
@@ -1836,6 +1837,21 @@ model SpotPlayerLicense {
   @@unique([userId, courseId])
   @@index([courseId])
   @@map("spot_player_licenses")
+}
+
+/// A Telegram account linked to a site account, so the Telegram mini app
+/// signs its owner in by itself. Linked once, after a normal sign-in inside
+/// the mini app; the signed init data from Telegram proves the Telegram side.
+model TelegramAccount {
+  telegramId String   @id
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  username   String?
+  firstName  String?
+  linkedAt   DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  @@map("telegram_accounts")
 }
 
 /// The owner signing off a guide whose text lives in the site code (static

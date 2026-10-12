@@ -13,6 +13,7 @@ import { Throttle } from "@nestjs/throttler";
 import { RequestOtpDto } from "./dto/request-otp.dto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 import { PasswordLoginDto } from "./dto/password-login.dto";
+import { TelegramInitDataDto } from "./dto/telegram.dto";
 import { IdentityService } from "./identity.service";
 import { SessionAuthGuard, RequestWithUser } from "./guards/session-auth.guard";
 import { OptionalSessionAuthGuard } from "./guards/optional-session-auth.guard";
@@ -58,6 +59,36 @@ export class IdentityController {
       maxAge: SESSION_TTL_HOURS * 3_600_000,
     });
     return { user };
+  }
+
+  /**
+   * The Telegram mini app's automatic sign-in: Telegram's signed init data for
+   * a Telegram account linked to a site account. Answers { linked: false }
+   * when none is linked yet.
+   */
+  @Post("telegram/session")
+  @HttpCode(200)
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
+  async telegramSession(
+    @Body() dto: TelegramInitDataDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    if (!this.identity.telegramConfigured) return { linked: false, configured: false };
+    const session = await this.identity.loginWithTelegram(dto.initData, { userAgent: req.headers["user-agent"], ip: req.ip });
+    if (!session) return { linked: false, configured: true };
+    res.cookie(SESSION_COOKIE, session.token, { ...SESSION_COOKIE_SECURITY, maxAge: SESSION_TTL_HOURS * 3_600_000 });
+    return { linked: true, configured: true, user: session.user };
+  }
+
+  /** Links the signed-in account to the Telegram account the mini app runs in. */
+  @Post("telegram/link")
+  @HttpCode(200)
+  @UseGuards(SessionAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  async telegramLink(@Body() dto: TelegramInitDataDto, @Req() req: RequestWithUser) {
+    if (!this.identity.telegramConfigured) return { linked: false };
+    return this.identity.linkTelegram(req.user!.id, dto.initData);
   }
 
   /**
