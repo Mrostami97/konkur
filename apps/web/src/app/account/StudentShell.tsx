@@ -84,11 +84,14 @@ export function StudentShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    const me = apiFetch<StudentSession>("/auth/me");
     Promise.all([
-      apiFetch<StudentSession>("/auth/me"),
+      me,
       apiFetch<StudentProfile>("/me/profile"),
-      // 403 here just means "not an instructor", which is the common case.
-      apiFetch<unknown>("/me/instructor").then(() => true).catch(() => false),
+      // Only someone with the instructor role has an instructor panel to link to.
+      me
+        .then((session) => (session.user.roles.includes("INSTRUCTOR") ? apiFetch<unknown>("/me/instructor").then(() => true) : false))
+        .catch(() => false),
       // Any consultation bought, so the weekly report shows in the menu.
       apiFetch<unknown[]>("/me/consultations/access").then((rows) => rows.length > 0).catch(() => false),
     ])

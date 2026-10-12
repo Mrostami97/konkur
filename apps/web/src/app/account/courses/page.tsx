@@ -39,6 +39,18 @@ export default function MyCoursesPage() {
   }, []);
 
   const bySlug = new Map(progress.map((item) => [item.course.slug, item]));
+  // Enrolled courses, then any other course this person can study (a gift,
+  // a bundle, staff access): the dashboard shows those too, so this page must.
+  const enrolledSlugs = new Set((enrollments ?? []).map((enrollment) => enrollment.course.slug));
+  const rows =
+    enrollments === null
+      ? null
+      : [
+          ...enrollments.map((enrollment) => ({ key: enrollment.id, ...enrollment.course, enrolledAt: enrollment.enrolledAt as string | null })),
+          ...progress
+            .filter((item) => !enrolledSlugs.has(item.course.slug))
+            .map((item) => ({ key: item.course.slug, slug: item.course.slug, title: item.course.title, description: "", enrolledAt: null as string | null })),
+        ];
   const now = Date.now();
   const activeAccess = entitlements.filter(
     (item) => !item.revokedAt && (!item.endAt || new Date(item.endAt).getTime() > now),
@@ -52,11 +64,11 @@ export default function MyCoursesPage() {
     >
       {failed ? (
         <p className="st-alert st-alert-danger">فهرست دوره‌ها الان بارگذاری نشد. صفحه را دوباره باز کن.</p>
-      ) : enrollments === null ? (
+      ) : rows === null ? (
         <div className="st-course-grid" aria-busy="true">
           {Array.from({ length: 3 }, (_, index) => <div className="st-skel st-skel-card-lg" key={index} />)}
         </div>
-      ) : enrollments.length === 0 ? (
+      ) : rows.length === 0 ? (
         <div className="st-card">
           <div className="st-empty st-empty-lg">
             <span className="st-empty-icon"><Glyph name="play" /></span>
@@ -70,20 +82,20 @@ export default function MyCoursesPage() {
         </div>
       ) : (
         <div className="st-course-grid">
-          {enrollments.map((enrollment, index) => {
-            const item = bySlug.get(enrollment.course.slug);
+          {rows.map((course, index) => {
+            const item = bySlug.get(course.slug);
             const tone = TONES[index % TONES.length];
             return (
-              <article className="st-course-card" key={enrollment.id}>
+              <article className="st-course-card" key={course.key}>
                 <div className={`st-course-cover st-cover-${tone}`}>
                   <Glyph name="play" />
                   <ProgressRing percent={item?.progressPercent ?? 0} size={70} stroke={7} tone="light" />
                 </div>
                 <div className="st-course-body">
                   <h2>
-                    <Link href={`/courses/${enrollment.course.slug}`}>{enrollment.course.title}</Link>
+                    <Link href={`/courses/${course.slug}`}>{course.title}</Link>
                   </h2>
-                  <p>{enrollment.course.description}</p>
+                  {course.description && <p>{course.description}</p>}
                   <div className="st-course-meta">
                     <span>
                       <Glyph name="list" />
@@ -91,10 +103,12 @@ export default function MyCoursesPage() {
                         ? `${toPersianDigits(item.completedLessons)} از ${toPersianDigits(item.totalLessons)} درس`
                         : "هنوز شروع نشده"}
                     </span>
-                    <span>
-                      <Glyph name="calendar" />
-                      ثبت‌نام: {faDate(enrollment.enrolledAt)}
-                    </span>
+                    {course.enrolledAt && (
+                      <span>
+                        <Glyph name="calendar" />
+                        ثبت‌نام: {faDate(course.enrolledAt)}
+                      </span>
+                    )}
                   </div>
                   <div className="st-course-actions">
                     {item?.resumeLesson ? (
@@ -102,7 +116,7 @@ export default function MyCoursesPage() {
                         ادامه: {item.resumeLesson.title}
                       </Link>
                     ) : (
-                      <Link href={`/courses/${enrollment.course.slug}`} className="st-btn st-btn-primary st-btn-sm">
+                      <Link href={`/courses/${course.slug}`} className="st-btn st-btn-primary st-btn-sm">
                         {item ? "مرور دوره" : "شروع دوره"}
                       </Link>
                     )}
