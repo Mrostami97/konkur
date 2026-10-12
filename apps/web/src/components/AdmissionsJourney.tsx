@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const steps = [
-  { key: "evidence", number: "۱", title: "دیدن کارنامه‌ها", description: "نمونه‌های رضایت‌دار و محدودیت داده را ببین.", href: "/report-cards" },
-  { key: "estimate", number: "۲", title: "تخمین بازه‌ای رتبه", description: "درصدهای خودت را با کارنامه‌های واقعی سال‌های قبل مقایسه کن.", href: "/rank-calculator/master-computer-engineering" },
-  { key: "programs", number: "۳", title: "جست‌وجوی دانشگاه", description: "فقط برنامه‌های متصل به منبع رسمی را بررسی کن.", href: "/programs" },
-  { key: "choices", number: "۴", title: "چینش انتخاب‌ها", description: "گزینه‌ها را مقایسه و اولویت‌بندی کن.", href: "/choices" },
+  { key: "evidence", number: "۱", title: "دیدن کارنامه‌ها", description: "ببین داوطلب‌های سال‌های قبل با چه درصدی کجا قبول شدند.", href: "/report-cards" },
+  { key: "estimate", number: "۲", title: "تخمین رتبه", description: "درصدهای خودت را با کارنامه‌های واقعی سال‌های قبل مقایسه کن.", href: "/rank-calculator/master-computer-engineering" },
+  { key: "programs", number: "۳", title: "جست‌وجوی دانشگاه", description: "ظرفیت و رشته‌محل‌های هر دانشگاه را از دفترچهٔ رسمی ببین.", href: "/programs" },
+  { key: "choices", number: "۴", title: "چینش انتخاب‌ها", description: "رشته‌محل‌ها را به ترتیب علاقه و شانس قبولی بچین.", href: "/choices" },
 ] as const;
 
 export function AdmissionsJourney({ current }: { current?: typeof steps[number]["key"] }) {
@@ -12,9 +12,9 @@ export function AdmissionsJourney({ current }: { current?: typeof steps[number][
     <section aria-labelledby="admissions-journey-title">
       <div className="section-heading">
         <div>
-          <span className="eyebrow">مسیر تصمیم</span>
-          <h2 id="admissions-journey-title">از سند تا انتخاب؛ بدون پرش</h2>
-          <p>هر مرحله خروجی مرحلهٔ قبل را دقیق‌تر می‌کند؛ هیچ درصد یا رتبه‌ای تضمین قبولی نیست.</p>
+          <span className="eyebrow">قدم‌به‌قدم</span>
+          <h2 id="admissions-journey-title">از کارنامه تا فرم انتخاب رشته</h2>
+          <p>این چهار قدم را به ترتیب برو تا انتخاب‌هایت حساب‌شده باشد. یادت باشد هیچ تخمینی تضمین قبولی نیست.</p>
         </div>
       </div>
       <div className="content-grid-wide admissions-grid">

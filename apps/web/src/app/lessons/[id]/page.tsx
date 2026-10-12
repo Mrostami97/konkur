@@ -49,6 +49,7 @@ export default function LessonPage({ params: pendingParams }: { params: Promise<
       try {
         const data = await apiFetch<Lesson>(`/lessons/${params.id}`);
         setLesson(data);
+        document.title = `${data.title} | کنکور کامپیوتر`;
         setCompleted(Boolean(data.completedAt ?? data.progress?.completedAt));
         const slug = data.courseModule?.course?.slug;
         if (slug) {

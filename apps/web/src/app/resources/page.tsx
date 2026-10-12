@@ -78,10 +78,10 @@ export default async function ResourcesPage({ searchParams: pendingSearchParams 
     <main className="page-container">
       <PageHeader
         eyebrow="کتابخانهٔ منابع"
-        title={subject ? `منابع ${subject.shortTitle}` : "از یک لینک پراکنده تا یک مسیر قابل استفاده"}
+        title={subject ? `منابع ${subject.shortTitle}` : "جزوه‌ها و منابع کنکور کامپیوتر"}
         description={subject
-          ? `منابع منتشرشده و بررسی‌شدهٔ متصل به درس ${subject.title}؛ نتیجهٔ خالی با دادهٔ ساختگی پر نمی‌شود.`
-          : "منابع منتشرشده با نوع، سطح دسترسی، تاریخ بررسی و سند منبع نمایش داده می‌شوند؛ لینک اصلی محتوای مجاز نیز حفظ می‌شود."}
+          ? `جزوه‌ها و منابعی که برای ${subject.title} پیشنهاد می‌کنیم.`
+          : "جزوه‌ها، حل تست‌ها و منابعی که خودمان خوانده‌ایم و به دردت می‌خورند؛ هر کدام با این‌که رایگان است یا نه."}
         action={subject ? <Link className="button button-secondary" href="/resources">همهٔ منابع ←</Link> : undefined}
       />
       {unavailable && (
@@ -91,8 +91,8 @@ export default async function ResourcesPage({ searchParams: pendingSearchParams 
         <div className="section-heading">
           <div>
             <span className="eyebrow">فیلتر دقیق</span>
-            <h2 id="resource-filters-title">منبع مناسب همین مسیر را پیدا کن</h2>
-            <p>فیلترها مستقیماً روی رکوردهای منتشرشده اعمال می‌شوند و پیش‌نویس‌ها در نتیجه ظاهر نمی‌شوند.</p>
+            <h2 id="resource-filters-title">منبع درس‌ات را پیدا کن</h2>
+            <p>درس و نوع منبع را انتخاب کن.</p>
           </div>
         </div>
         <form action="/resources" method="get" className="field-grid field-grid-two">
@@ -145,7 +145,7 @@ export default async function ResourcesPage({ searchParams: pendingSearchParams 
       </section>
       {visibleResources.length > 0 && (
         <section aria-labelledby="published-resources-title">
-          <div className="section-heading"><div><span className="eyebrow">منتشرشده در سایت</span><h2 id="published-resources-title">منابع بررسی‌شده</h2><p>جزئیات هر منبع فقط از رکورد عمومی و تأییدشده خوانده می‌شود.</p></div></div>
+          <div className="section-heading"><div><span className="eyebrow">منابع</span><h2 id="published-resources-title">همهٔ منابع</h2><p>روی هر منبع بزن تا جزئیات و دریافتش را ببینی.</p></div></div>
           <div className="resource-grid">
             {visibleResources.map((resource) => (
               <Link className="resource-card" href={`/resources/${resource.slug}`} key={resource.slug}>

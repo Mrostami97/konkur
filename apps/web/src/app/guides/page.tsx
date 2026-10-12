@@ -37,9 +37,9 @@ export default async function GuidesPage() {
     <main className="pg">
       <div className="pg-hero-wrap">
         <div className="pg-shell pg-hero">
-          <p className="pg-eyebrow">راهنمای منبع‌دار</p>
+          <p className="pg-eyebrow">راهنماها</p>
           <h1>از انتخاب مسیر تا برنامهٔ هفته و روز آزمون</h1>
-          <p className="pg-lede">راهنماهای اجرایی مطالعه و صفحات رسمی ۱۴۰۶، با پاسخ کوتاه، تاریخ ثبت یا بررسی، منبع و قدم بعدی روشن.</p>
+          <p className="pg-lede">از برنامهٔ مطالعه و مرور تا دروس، ضرایب و تقویم کنکور ۱۴۰۶؛ هر راهنما اول جواب کوتاه را می‌دهد، بعد جزئیات را.</p>
         </div>
       </div>
 
