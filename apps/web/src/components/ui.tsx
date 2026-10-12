@@ -1,3 +1,4 @@
+import { toPersianDigits } from "../lib/format";
 import type { ReactNode } from "react";
 
 export function PageHeader({
@@ -49,7 +50,7 @@ export function ProgressBar({ value, label }: { value: number; label?: string })
   const safeValue = Math.min(100, Math.max(0, value));
   return (
     <div className="progress-block">
-      {label && <div className="progress-label"><span>{label}</span><strong>{safeValue}٪</strong></div>}
+      {label && <div className="progress-label"><span>{label}</span><strong>{toPersianDigits(safeValue)}٪</strong></div>}
       <div className="progress-track progress-track-light"><span style={{ width: `${safeValue}%` }} /></div>
     </div>
   );

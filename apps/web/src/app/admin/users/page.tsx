@@ -56,6 +56,12 @@ function nextRoles(current: Role[], role: Role, on: boolean): Role[] {
   return [...current.filter((item) => item !== "ADMIN" && item !== "STUDENT"), role];
 }
 
+/** Every mobile number in one form, 0935…, however it was stored. */
+function displayPhone(phone: string) {
+  const tail = /9[0-9]{9}$/.exec(phone.replace(/[^0-9]/g, ""));
+  return tail ? `0${tail[0]}` : phone;
+}
+
 /** An account left from before roles were kept apart: both a student and staff. */
 function isMixed(roles: Role[]) {
   return roles.includes("STUDENT") && roles.length > 1;
@@ -218,7 +224,7 @@ export default function AdminUsersPage() {
     }
   }
 
-  const nameOf = (user: AdminUser) => user.name ?? toPersianDigits(user.phone);
+  const nameOf = (user: AdminUser) => user.name ?? toPersianDigits(displayPhone(user.phone));
 
   return (
     <>
@@ -282,7 +288,7 @@ export default function AdminUsersPage() {
                       <td>
                         <strong>{user.name ?? "بی‌نام"}</strong>
                         <div dir="ltr" style={{ color: "var(--muted)", fontSize: "var(--text-sm)", textAlign: "right" }}>
-                          {toPersianDigits(user.phone)}
+                          {toPersianDigits(displayPhone(user.phone))}
                         </div>
                       </td>
                       <td>

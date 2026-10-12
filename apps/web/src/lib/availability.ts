@@ -30,15 +30,13 @@ export function comingSoonPaths(availability: Availability | null): Set<string> 
   if (!availability.freeVideos) soon.add("/free-videos");
   if (!availability.resources) soon.add("/resources");
   if (!availability.instructors) soon.add("/instructors");
-  if (!availability.consultations) soon.add("/consultations");
+  // /consultations always shows its plans and prices, and /report-cards and
+  // /rank-estimate always have the aggregated report-card data, so neither
+  // is "coming soon" even before a bookable slot or a consented card exists.
   if (availability.questions < MIN_QUESTIONS_FOR_BANK) soon.add("/questions");
   if (!availability.exams) soon.add("/exams");
   // /results always has something: with no student-submitted result yet it
   // leads to the documented results on /evidence.
-  if (!availability.reportCards) {
-    soon.add("/report-cards");
-    soon.add("/rank-estimate");
-  }
   if (!availability.programs) {
     soon.add("/programs");
     soon.add("/choices");

@@ -24,6 +24,12 @@
       "to": "/guides/registration-calendar-1406",
       "approvedAt": "2026-10-11",
       "reason": "Owner: generic checklist page that read as machine-written; removed, its readers sent to the 1406 calendar"
+    },
+    {
+      "from": "/articles/exam-time-management",
+      "to": "/guides/exam-time-management",
+      "approvedAt": "2026-10-12",
+      "reason": "A guide, not an article: /articles/ already redirects there; links point straight at the guide"
     }
   ]
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
-import { formatRial } from "../../../lib/format";
+import { formatRial, toPersianDigits } from "../../../lib/format";
 import { AccountShell } from "../AccountShell";
 import { Badge, Button, Card, DataState, TableWrap } from "../../../components/ds";
 
@@ -57,7 +57,7 @@ export default function MyOrdersPage() {
     <AccountShell
       title="سفارش‌های من"
       subtitle="پرداخت کارت‌به‌کارت است؛ سفارشی که رسیدش ثبت و تأیید نشده باشد هنوز دسترسی نمی‌دهد."
-      chips={unpaid > 0 ? <span className="st-chip">{unpaid} سفارش در انتظار پرداخت</span> : undefined}
+      chips={unpaid > 0 ? <span className="st-chip">{toPersianDigits(unpaid)} سفارش در انتظار پرداخت</span> : undefined}
     >
       <Card padded={false}>
         <div style={{ padding: orders.length && !loading && !error ? 0 : "var(--sp-4)" }}>

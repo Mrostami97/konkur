@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
-import { formatPersianNumber, formatRial } from "../../../lib/format";
+import { formatPersianNumber, formatRial, toPersianDigits } from "../../../lib/format";
 import {
   AdminPageHeader,
   Alert,
@@ -71,7 +71,7 @@ function formatDateTime(iso: string) {
 }
 
 function groupCard(cardNumber: string) {
-  return cardNumber.replace(/(\d{4})(?=\d)/g, "-$1").replace(/^-/, "");
+  return toPersianDigits((cardNumber.replace(/\D/g, "").match(/.{1,4}/g) ?? []).join("-"));
 }
 
 export default function AdminPaymentsPage() {

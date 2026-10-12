@@ -97,8 +97,8 @@ export default function ImportAdminPage() {
         <Card>
           <h2 className="ds-card-title">بارگذاری بستهٔ تازه</h2>
           <p className="ds-subtitle" style={{ marginTop: "var(--sp-2)" }}>
-            یک فایل zip شامل <code className="ds-code">payload.json</code> مطابق یکی از قراردادهای
-            article.v1، report-card.v1 یا question.v1، به‌همراه رسانه‌های مرتبط.
+            فایل zip مقاله، کارنامه یا بانک سؤال را این‌جا بارگذاری کن (مقاله: article.v2، سؤال: question.v2،
+            کارنامه: report-card.v1). تصویرها و فایل‌های هر بسته داخل همان zip هستند.
           </p>
 
           <div className="ds-form">

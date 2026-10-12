@@ -130,7 +130,7 @@ export default function MyExamsPage() {
                         <small className="st-exam-rank">
                           {attempt.standing.rank !== null
                             ? `رتبهٔ ${toPersianDigits(attempt.standing.rank)} از ${toPersianDigits(attempt.standing.participants)} نفر${attempt.standing.isOfficial ? "" : " (شرکت دوباره)"}`
-                            : `${toPersianDigits(attempt.standing.participants)} شرکت‌کننده؛ رتبه از ۵ نفر به بالا`}
+                            : `تا اینجا ${toPersianDigits(attempt.standing.participants)} نفر شرکت کرده‌اند؛ رتبه وقتی دست‌کم ۵ نفر شرکت کنند نشان داده می‌شود`}
                         </small>
                       )}
                     </div>

@@ -4,6 +4,7 @@ import { API_URL } from "../lib/api";
 import { splitMath } from "../lib/math-text";
 import { renderLatex } from "../lib/math-render";
 import { VideoPlayer } from "./video/VideoPlayer";
+import { canonicalHref } from "../lib/merged-pages";
 
 type Block = { type: string; [key: string]: unknown };
 type Asset = { media_key: string; checksum: string };
@@ -219,7 +220,7 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
           <ul>
             {items.map((item) => (
               <li key={`${item.href}-${item.label}`}>
-                <Link className="text-link" href={item.href}>{item.label}</Link>
+                <Link className="text-link" href={canonicalHref(item.href)}>{item.label}</Link>
               </li>
             ))}
           </ul>

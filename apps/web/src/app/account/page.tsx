@@ -247,7 +247,7 @@ export default function DashboardPage() {
                     <>
                       <small>شرکت‌کننده‌ها</small>
                       <b>{toPersianDigits(latest.standing.participants)}</b>
-                      <small>رتبه از ۵ نفر به بالا</small>
+                      <small>رتبه وقتی دست‌کم ۵ نفر شرکت کنند نشان داده می‌شود</small>
                     </>
                   )}
                 </div>

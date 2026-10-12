@@ -10,3 +10,10 @@ export function phoneVariants(phone: string): string[] {
   const tail = mobileTail(phone);
   return tail ? [`0${tail}`, `+98${tail}`, `98${tail}`, `0098${tail}`, tail] : [phone];
 }
+
+/** How a mobile number is stored: 0 and the ten digits, whatever was typed.
+ * Anything that is not an Iranian mobile number is kept as typed. */
+export function canonicalPhone(phone: string): string {
+  const tail = mobileTail(phone);
+  return tail ? `0${tail}` : phone;
+}

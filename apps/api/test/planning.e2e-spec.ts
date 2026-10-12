@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import "reflect-metadata";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -182,7 +183,7 @@ describe("Planning / Study OS (e2e)", () => {
       .set("Cookie", studentCookie)
       .send({ reasonCode: "MANUAL_REQUEST" })
       .expect(201);
-    const student = await prisma.user.findUniqueOrThrow({ where: { phone } });
+    const student = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(phone) } });
 
     const planning = app.get(PlanningService);
     const buildSpy = jest
@@ -627,7 +628,7 @@ describe("Planning / Study OS (e2e)", () => {
         selfReportedLevel: "INTERMEDIATE",
       })
       .expect(200);
-    const student = await prisma.user.findUniqueOrThrow({ where: { phone } });
+    const student = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(phone) } });
     const goal = await prisma.goal.findUniqueOrThrow({ where: { userId: student.id } });
     const stamp = `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
     await prisma.studySession.createMany({

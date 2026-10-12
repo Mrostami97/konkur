@@ -5,7 +5,7 @@ import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ConsoleOtpProvider, OTP_PROVIDER, OtpProvider } from "./otp-provider";
 import { verifyPassword } from "./password-hasher";
-import { phoneVariants } from "./phone";
+import { canonicalPhone, phoneVariants } from "./phone";
 
 const OTP_TTL_MINUTES = Number(process.env.OTP_TTL_MINUTES ?? 5);
 const OTP_MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS ?? 5);
@@ -30,6 +30,16 @@ export interface SessionUser {
   roles: Role[];
 }
 
+/**
+ * The account a mobile number signs in to. Older sign-ins stored the number
+ * as typed, so one person may have several rows; the staff account wins, then
+ * the oldest, so nobody is quietly moved to a fresh empty student account.
+ */
+async function accountFor(tx: Prisma.TransactionClient, phone: string) {
+  const users = await tx.user.findMany({ where: { phone: { in: phoneVariants(phone) } }, include: { roles: true }, orderBy: { createdAt: "asc" } });
+  return users.find((user) => user.roles.some((role) => role.role !== Role.STUDENT)) ?? users[0] ?? null;
+}
+
 @Injectable()
 export class IdentityService {
   constructor(
@@ -44,15 +54,17 @@ export class IdentityService {
     }
   }
 
-  async requestOtp(phone: string, attribution?: { source?: string; campaignCode?: string }): Promise<void> {
+  async requestOtp(typed: string, attribution?: { source?: string; campaignCode?: string }): Promise<void> {
     this.assertOtpAvailable();
+    // 0935..., 935... and +98935... are one person: one account, stored as 0935...
+    const phone = canonicalPhone(typed);
     const code = generateOtpCode();
     await this.prisma.$transaction(async (tx) => {
       // Issuance and verification use the same lock, including first registration.
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`otp:${phone}`}))`;
-      let user = await tx.user.findUnique({ where: { phone } });
+      let user = await accountFor(tx, phone);
       if (!user) {
-        user = await tx.user.create({ data: { phone } });
+        user = await tx.user.create({ data: { phone }, include: { roles: true } });
         await tx.userRole.create({ data: { userId: user.id, role: Role.STUDENT } });
         await tx.outboxEvent.create({
           data: {
@@ -89,11 +101,12 @@ export class IdentityService {
     await this.otpProvider.send(phone, code);
   }
 
-  async verifyOtp(phone: string, code: string, ctx: AuthContext): Promise<{ token: string; user: SessionUser }> {
+  async verifyOtp(typed: string, code: string, ctx: AuthContext): Promise<{ token: string; user: SessionUser }> {
     this.assertOtpAvailable();
+    const phone = canonicalPhone(typed);
     const result = await this.prisma.$transaction(async (tx) => {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`otp:${phone}`}))`;
-      const user = await tx.user.findUnique({ where: { phone }, include: { roles: true } });
+      const user = await accountFor(tx, phone);
       if (!user) return { ok: false as const, reason: "invalid phone or code" };
       const otp = await tx.otpCode.findFirst({
         where: { userId: user.id, consumedAt: null },

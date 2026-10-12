@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import "reflect-metadata";
 import { createHash, randomUUID } from "crypto";
 import { PrismaClient } from "@prisma/client";
@@ -39,7 +40,7 @@ isolatedDatabaseSuite("OTP concurrency on explicitly isolated Postgres", () => {
 
   async function issue(value: string) {
     await service.requestOtp(value);
-    const user = await prisma.user.findUniqueOrThrow({ where: { phone: value } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(value) } });
     if (!createdUserIds.includes(user.id)) createdUserIds.push(user.id);
     return { userId: user.id, code: deliveries.get(value)!.at(-1)! };
   }

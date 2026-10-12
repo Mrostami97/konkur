@@ -33,6 +33,7 @@ const stubs = {
   "../lib/api": { API_URL: "" },
   "../lib/math-text": mathModule.exports,
   "./video/VideoPlayer": { VideoPlayer: (props) => React.createElement("video", { src: props.src }) },
+  "../lib/merged-pages": { canonicalHref: (href) => href },
 };
 const mod = { exports: {} };
 new Function("module", "exports", "require", js)(mod, mod.exports, (id) => stubs[id] ?? require(id));

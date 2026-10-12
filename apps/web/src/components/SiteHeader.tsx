@@ -182,9 +182,9 @@ export function SiteHeader({ subjects }: { subjects: NavSubject[] }) {
         <div className="hd-strip-inner">
           <p suppressHydrationWarning>
             <span className="hd-strip-dot" aria-hidden />
-            <b>{toPersianDigits(master)}</b> روز تا کنکور ارشد ۱۴۰۶
+            <b suppressHydrationWarning>{toPersianDigits(master)}</b> روز تا کنکور ارشد ۱۴۰۶
             <span className="hd-strip-sep" aria-hidden>·</span>
-            <b>{toPersianDigits(phd)}</b> روز تا دکتری
+            <b suppressHydrationWarning>{toPersianDigits(phd)}</b> روز تا دکتری
           </p>
           <nav className="hd-strip-links" aria-label="پیوندهای سریع">
             <Link href="/results">نتایج شاگردان{soon.has("/results") && <span className="soon-pill">به‌زودی</span>}</Link>

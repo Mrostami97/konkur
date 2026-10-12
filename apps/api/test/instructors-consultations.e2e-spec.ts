@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import "reflect-metadata";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -73,7 +74,7 @@ describe("Instructors + paid consultations (e2e)", () => {
     // An instructor is a ContributorProfile linked to a real account.
     const instructorPhone = randomPhone();
     instructorCookie = await login(instructorPhone);
-    const instructorUser = await prisma.user.findUniqueOrThrow({ where: { phone: instructorPhone } });
+    const instructorUser = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(instructorPhone) } });
 
     instructorSlug = `taghavi-${suffix}`;
     const profile = await prisma.contributorProfile.create({

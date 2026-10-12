@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import "reflect-metadata";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -59,7 +60,7 @@ describe("Account separation: admin, staff, student, instructor (e2e)", () => {
   async function signUp() {
     const phone = randomPhone();
     const cookie = await login(phone);
-    const user = await prisma.user.findUniqueOrThrow({ where: { phone } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(phone) } });
     return { cookie, id: user.id };
   }
 

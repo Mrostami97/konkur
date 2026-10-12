@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import "reflect-metadata";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -56,7 +57,7 @@ describe("Annual consultation plan (e2e)", () => {
   async function signUp() {
     const phone = `0917${Math.floor(1_000_000 + Math.random() * 8_999_999)}`;
     const cookie = await login(phone);
-    const user = await prisma.user.findUniqueOrThrow({ where: { phone } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(phone) } });
     return { cookie, id: user.id };
   }
 

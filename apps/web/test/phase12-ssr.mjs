@@ -7,7 +7,7 @@ const corpus = JSON.parse(await readFile(new URL("../src/content/phase12-corpus.
 const allPages = [...corpus.planningPages, ...corpus.officialPages];
 // Owner-approved merges (src/content/merged-pages.json): these guides now 301 to
 // their article twin and leave every discovery surface.
-const merged = JSON.parse(await readFile(new URL("../src/content/merged-pages.json", import.meta.url), "utf8")).redirects;
+const merged = JSON.parse(await readFile(new URL("../src/content/merged-pages.json", import.meta.url), "utf8")).redirects.filter((entry) => entry.from.startsWith("/guides/"));
 const mergedTarget = new Map(merged.map((entry) => [entry.from, entry.to]));
 const canonicalHref = (href) => mergedTarget.get(href) ?? href;
 const pages = allPages.filter((page) => !mergedTarget.has(`/guides/${page.slug}`));

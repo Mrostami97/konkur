@@ -39,7 +39,7 @@ export function StandingPanel({ attemptId }: { attemptId: string }) {
             <>
               <span>شرکت‌کننده‌ها تا الان</span>
               <strong>{toPersianDigits(standing.participants)}</strong>
-              <small>رتبه از {toPersianDigits(standing.minimumForRank)} نفر به بالا نمایش داده می‌شود</small>
+              <small>رتبه وقتی دست‌کم {toPersianDigits(standing.minimumForRank)} نفر شرکت کنند نشان داده می‌شود</small>
             </>
           )}
         </div>

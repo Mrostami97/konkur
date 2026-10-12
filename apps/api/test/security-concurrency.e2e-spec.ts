@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import "reflect-metadata";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../src/prisma/prisma.service";
@@ -250,7 +251,7 @@ describe("security concurrency on an explicitly isolated database", () => {
     await identity.requestOtp(phone);
     const wrong = sent[2] === "000000" ? "000001" : "000000";
     await Promise.allSettled(Array.from({ length: 10 }, () => identity.verifyOtp(phone, wrong, {})));
-    const user = await db.user.findUniqueOrThrow({ where: { phone } });
+    const user = await db.user.findUniqueOrThrow({ where: { phone: canonicalPhone(phone) } });
     const pending = await db.otpCode.findFirstOrThrow({ where: { userId: user.id, consumedAt: null } });
     expect(pending.attempts).toBe(5);
     expect(await db.session.count({ where: { userId: user.id } })).toBe(1);

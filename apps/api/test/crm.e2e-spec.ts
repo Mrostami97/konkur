@@ -1,3 +1,4 @@
+import { canonicalPhone } from "../src/modules/identity/phone";
 import "reflect-metadata";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -90,7 +91,7 @@ describe("CRM + growth loop (e2e)", () => {
     // The outbox consumer polls every 5s; wait for it rather than assert instantly.
     let lead = null;
     for (let i = 0; i < 15; i++) {
-      const user = await prisma.user.findUnique({ where: { phone } });
+      const user = await prisma.user.findUnique({ where: { phone: canonicalPhone(phone) } });
       lead = user ? await prisma.lead.findUnique({ where: { userId: user.id } }) : null;
       if (lead) break;
       await sleep(1000);
@@ -111,7 +112,7 @@ describe("CRM + growth loop (e2e)", () => {
   it("recomputes lead stage from real activity, and supports cases/interactions", async () => {
     const phone = randomPhone();
     await login(phone);
-    const user = await prisma.user.findUniqueOrThrow({ where: { phone } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(phone) } });
 
     let lead = null;
     for (let i = 0; i < 15; i++) {
