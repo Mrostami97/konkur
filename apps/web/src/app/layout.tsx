@@ -6,6 +6,7 @@ import { PublicChrome } from "../components/PublicChrome";
 import { ActivityToasts } from "../components/ActivityToasts";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { TelegramBridge } from "../components/TelegramBridge";
 import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 import { StructuredData } from "../components/StructuredData";
 import { subjects } from "../content/editorial";
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ActivityToasts />
         </PublicChrome>
         <ServiceWorkerRegistration />
+        <TelegramBridge />
       </body>
     </html>
   );

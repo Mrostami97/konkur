@@ -1353,3 +1353,10 @@ ol.cb-list { list-style: persian; }
 .act-toast-close:hover { color: var(--ink); background: var(--surface-sunken); }
 @media (max-width: 860px) { .act-toast { bottom: calc(4.6rem + env(safe-area-inset-bottom)); } }
 @media (prefers-reduced-motion: reduce) { .act-toast { animation: none; } }
+
+/* Inside Telegram the app has its own frame: no site strip, footer or tab bar. */
+html[data-tg] .hd-strip,
+html[data-tg] .ft,
+html[data-tg] .mobile-nav {
+  display: none;
+}

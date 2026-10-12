@@ -3,6 +3,7 @@ import { absoluteUrl, SITE_URL } from "../lib/seo";
 
 const privatePaths = [
   "/admin",
+  "/tg",
   "/account",
   "/today",
   "/attempts",

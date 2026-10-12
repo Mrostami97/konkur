@@ -1,0 +1,92 @@
+.tg-home {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--sp-5) 16px var(--sp-8);
+  display: grid;
+  gap: var(--sp-5);
+}
+
+.tg-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.tg-hero img {
+  border-radius: 14px;
+}
+
+.tg-hero h1 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.tg-hero p {
+  margin: 2px 0 0;
+  color: var(--ink-500);
+  font-size: var(--text-sm);
+}
+
+.tg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.tg-tile {
+  display: grid;
+  gap: 4px;
+  padding: var(--sp-4);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.tg-tile:active {
+  transform: scale(0.98);
+}
+
+.tg-tile:hover {
+  border-color: var(--accent);
+}
+
+.tg-tile-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-block-end: 4px;
+}
+
+.tg-tile-icon svg {
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.tg-tile strong {
+  font-size: var(--text-md, 1rem);
+}
+
+.tg-tile small {
+  color: var(--ink-500);
+  font-size: var(--text-xs, 0.8rem);
+  line-height: 1.6;
+}
+
+.tg-foot {
+  margin: 0;
+  text-align: center;
+  color: var(--ink-500);
+  font-size: var(--text-sm);
+}
+
+.tg-foot a {
+  margin-inline-start: 6px;
+  font-weight: 700;
+}
