@@ -10,6 +10,12 @@ const nextConfig = {
   // output because creating pnpm trace symlinks requires Developer Mode.
   output: process.env.NEXT_OUTPUT_MODE === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
+  // Crawlers get the whole <head> before the body: Next otherwise streams a
+  // slow page's title, description and canonical after </head> for Googlebot
+  // (it renders JavaScript), which plain-HTML readers miss. Next's own list,
+  // plus Googlebot and the other search and preview bots Iranian readers use.
+  htmlLimitedBots:
+    /Googlebot|[w-]+-Google|Google-[w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight|TelegramBot|PetalBot|SeznamBot|zarebin|gerdoo/i,
   images: {
     // Resized copies are kept a week rather than Next's default minute: on a
     // slow link every revalidation is another round trip. Images whose

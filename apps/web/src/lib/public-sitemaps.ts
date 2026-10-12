@@ -198,12 +198,13 @@ export async function resultsSitemapEntries(): Promise<SitemapEntry[]> {
  * their feature has nothing published, keyed by the availability count that
  * decides it. Like the results page, each is listed only while it has content,
  * and an unreachable API leaves them out (the pages are noindex then too).
+ * /consultations is not one: it always shows its plans and prices, even
+ * before a bookable slot exists.
  */
 const LISTING_COUNTS: Record<string, keyof Availability> = {
   "/courses": "courses",
   "/exams": "exams",
   "/instructors": "instructors",
-  "/consultations": "consultations",
   "/report-cards": "reportCards",
 };
 
