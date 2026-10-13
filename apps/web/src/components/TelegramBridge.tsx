@@ -3,10 +3,11 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../lib/api";
+import { startParamPath } from "../lib/telegram-links";
 
 export interface TelegramWebApp {
   initData: string;
-  initDataUnsafe?: { user?: { first_name?: string } };
+  initDataUnsafe?: { user?: { first_name?: string }; start_param?: string };
   ready(): void;
   expand(): void;
   colorScheme?: "light" | "dark";
@@ -23,8 +24,27 @@ declare global {
 
 const FLAG = "kk-telegram";
 const SIGNED_IN = "kk-telegram-session";
+const STARTED = "kk-telegram-started";
 const SCRIPT = "https://telegram.org/js/telegram-web-app.js";
 const HOME = "/tg";
+
+/**
+ * The page a deep link (`t.me/<bot>?startapp=…`) asked for, once per launch:
+ * after it has been opened, coming back to /tg shows the home.
+ */
+function startPage(webApp: TelegramWebApp | null): string | null {
+  if (window.location.pathname !== HOME) return null;
+  const param = new URLSearchParams(window.location.search).get("tgWebAppStartParam") ?? webApp?.initDataUnsafe?.start_param;
+  const path = startParamPath(param);
+  if (!path) return null;
+  try {
+    if (sessionStorage.getItem(STARTED) === param) return null;
+    sessionStorage.setItem(STARTED, param ?? "");
+  } catch {
+    // No storage: the link still opens its page.
+  }
+  return path;
+}
 
 /** Whether this page runs inside the Telegram mini app (remembered for the tab). */
 export function insideTelegram() {
@@ -87,6 +107,10 @@ export function TelegramBridge() {
     if (!insideTelegram()) return;
     document.documentElement.dataset.tg = "1";
     void loadWebApp().then(async (webApp) => {
+      // Only after Telegram's script has read its launch data from the address
+      // (or failed to load), since moving on drops that data from the address.
+      const start = startPage(webApp);
+      if (start) router.replace(start);
       if (!webApp) return;
       webApp.ready();
       webApp.expand();
