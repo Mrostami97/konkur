@@ -1,3 +1,5 @@
+> Done on 2026-10-13 at the owner's request: all ten were revised, published and checked on the public site.
+
 # Hand edits in the admin panel (2026-10-13)
 
 These ten lesson notes carry academic sources that were added in the admin panel, so
