@@ -9,6 +9,8 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const STATS = JSON.parse(readFileSync(fileURLToPath(new URL("../analysis/bank_stats.json", import.meta.url)), "utf8"));
+/** Initial vs final keys, for the years the bank holds both (analysis/keys.mjs). */
+const KEYS = JSON.parse(readFileSync(fileURLToPath(new URL("../analysis/keys.json", import.meta.url)), "utf8"));
 const FA = "۰۱۲۳۴۵۶۷۸۹";
 const fa = (v) => String(v).replace(/\d/g, (d) => FA[d]).replace(/\./g, "٫");
 const one = (v) => fa((Math.round(v * 10) / 10).toFixed(1)).replace(/٫۰$/, "");
@@ -340,14 +342,30 @@ export function specialQuestionsArticle() {
   blocks.push(h2("کلیدهای اولیه"));
   const initial = (track) => TRACKS[track].years.filter((y) => STATS[track][y].initialKey > 0).map((y) => `${fa(y)}${STATS[track][y].initialKey < STATS[track][y].total ? ` (${fa(STATS[track][y].initialKey)} سؤال)` : ""}`);
   blocks.push(text(`برای ارشد IT سال‌های ${initial("it").join("، ")} و ارشد مهندسی کامپیوتر سال‌های ${initial("ce").join("، ")}، کلیدی که در دست داریم کلید اولیه است، نه نهایی. پس فهرست این سال‌ها ممکن است با کلید نهایی تغییر کند؛ با پیدا شدن کلید نهایی این صفحه به‌روز می‌شود.`));
+  // From the initial key to the final key: the years the bank holds both.
+  const changes = KEYS.changes.filter((c) => c.track === "ce");
+  const kindOf = (c) => (c.deleted ? "حذف شد" : c.final.length > 1 ? "گزینهٔ دیگری هم درست اعلام شد" : c.final[0] !== c.initial ? "پاسخ عوض شد" : "همان پاسخ، با تأثیر مثبت");
+  const byKind = (k) => changes.filter((c) => kindOf(c) === k).length;
+  const years = [...new Set(changes.map((c) => c.year))];
+  const perYear = years.map((y) => `${fa(changes.filter((c) => c.year === y).length)} سؤال از ${fa(total("ce", y))} سؤال در ${fa(y)}`);
+  blocks.push(h2("از کلید اولیه تا کلید نهایی چه چیزی عوض می‌شود؟"));
+  blocks.push(text(`برای ارشد مهندسی کامپیوتر ${years.map(fa).join(" و ")} هر دو کلید را داریم و می‌شود دید اعتراض‌ها و بازبینی سنجش چه چیزی را عوض کرد: ${perYear.join(" و ")} بین دو کلید تغییر کرد. فقط در ${fa(byKind("پاسخ عوض شد"))} سؤال پاسخ درست کاملاً عوض شد؛ ${fa(byKind("حذف شد"))} سؤال حذف شد، در ${fa(byKind("گزینهٔ دیگری هم درست اعلام شد"))} سؤال گزینهٔ دیگری هم درست اعلام شد و ${fa(byKind("همان پاسخ، با تأثیر مثبت"))} سؤال با همان پاسخ «تأثیر مثبت» گرفت.`));
+  blocks.push({
+    type: "table",
+    headers: ["سال", "سؤال", "درس", "کلید اولیه", "کلید نهایی", "چه شد"],
+    rows: changes.map((c) => [fa(c.year), fa(c.n), c.subject, fa(c.initial), c.deleted ? "حذف" : c.final.map(fa).join(" و "), kindOf(c) + (c.positive && kindOf(c) !== "همان پاسخ، با تأثیر مثبت" ? " (با تأثیر مثبت)" : "")]),
+  });
+  blocks.push(text("یعنی اگر بعد از آزمون با کلید اولیه درصدت را حساب کنی، در این دو سال فقط چند سؤال جابه‌جا شد؛ ولی همین چند سؤال در رتبه‌های نزدیک به هم اثر دارد. اگر مطمئنی کلید اولیهٔ سؤالی غلط است، در مهلت اعتراض با دلیل روشن اعتراض بده."));
   blocks.push(h2("در شبیه‌سازهای سایت"));
   blocks.push(text("در شبیه‌ساز کنکور هر سال در کنکور کامپیوتر، سؤال‌های حذف‌شده نیستند و برای سؤال‌های چندکلیدی هر پاسخ درست اعلام‌شده، درست حساب می‌شود؛ پس درصد شبیه‌ساز با همان قاعدهٔ کلید نهایی حساب می‌شود."));
   blocks.push(h2("پرسش‌های پرتکرار"));
   blocks.push(h3("اگر سؤالی حذف شده باشد، درصد چطور حساب می‌شود؟"));
   blocks.push(text("سؤال حذف‌شده از تعداد تست آن درس کم می‌شود و درصد بر تعداد باقی‌مانده حساب می‌شود؛ برای همین تعداد تست حساب‌شدهٔ یک درس گاهی یکی کمتر از دفترچه است."));
+  blocks.push(h3("اعتراض به کلید اولیه فایده دارد؟"));
+  blocks.push(text(`گاهی بله. در ارشد مهندسی کامپیوتر ${years.map(fa).join(" و ")}، ${fa(changes.length)} سؤال بین کلید اولیه و نهایی تغییر کرد که در ${fa(byKind("پاسخ عوض شد"))} مورد پاسخ درست کاملاً عوض شد. اعتراضی که دلیل و منبع روشن داشته باشد بررسی می‌شود.`));
   blocks.push(h3("کلید نهایی کنکورهای قبل را کجا ببینم؟"));
   blocks.push(text("کلیدها روی درگاه سازمان سنجش منتشر می‌شوند. در بانک سؤال کنکور کامپیوتر کلید هر سؤال کنار خودش است و این وضعیت‌ها روی همان سؤال هم نوشته می‌شود."));
-  blocks.push({ type: "link_group", items: PRACTICE_LINKS.filter((l) => l.href !== `/articles/${slug}`).concat([{ label: "بودجه‌بندی ارشد مهندسی کامپیوتر", href: "/articles/master-computer-engineering-question-budget" }, { label: "بودجه‌بندی ارشد IT", href: "/articles/master-it-question-budget" }]) });
+  blocks.push({ type: "link_group", items: PRACTICE_LINKS.filter((l) => l.href !== `/articles/${slug}`).concat([{ label: "کلید کنکور ارشد کامپیوتر و IT ۱۴۰۰ تا ۱۴۰۵", href: "/articles/master-computer-answer-keys" }, { label: "بودجه‌بندی ارشد مهندسی کامپیوتر", href: "/articles/master-computer-engineering-question-budget" }, { label: "بودجه‌بندی ارشد IT", href: "/articles/master-it-question-budget" }]) });
 
   return {
     schema_version: "article.v2",
