@@ -34,6 +34,7 @@ const fixture = createServer((request, response) => {
   let data;
   let status = 200;
   if (url.pathname === "/articles") { data = [record(), record("GUIDE")]; if (!articlesAvailable) status = 503; }
+  else if (url.pathname === "/article-kinds") data = [{ slug: "dependency-smoke", contentType: "ARTICLE" }, { slug: "dependency-guide", contentType: "GUIDE" }];
   else if (url.pathname === "/articles/dependency-smoke") data = record();
   else if (url.pathname === "/articles/dependency-guide") data = record("GUIDE");
   else if (url.pathname === "/courses") data = [course];
@@ -104,9 +105,9 @@ try {
 
   const redirected = await read("/articles/dependency-guide", { redirect: "manual" });
   assert.equal(redirected.response.status, 308);
-  // On the page's first (uncached) render Next sends the Location header twice,
-  // identically; browsers accept that, and fetch joins the two with ", ".
-  assert.deepEqual([...new Set((redirected.response.headers.get("location") ?? "").split(",").map((part) => part.trim()))], ["/guides/dependency-guide"]);
+  // Sent by middleware.ts with a single Location header (a redirect from inside
+  // a cached page repeats the header, which Chrome turns into a broken address).
+  assert.equal(redirected.response.headers.get("location"), "/guides/dependency-guide");
   checks++;
   const guide = await read("/guides/dependency-guide");
   assert.equal(guide.response.status, 200);

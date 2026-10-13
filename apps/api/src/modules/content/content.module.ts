@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { AuditModule } from "../audit/audit.module";
 import { IdentityModule } from "../identity/identity.module";
 import { AccessModule } from "../access/access.module";
-import { ArticlesAdminController, ArticlesPublicController } from "./content.controller";
+import { ArticleKindsPublicController, ArticlesAdminController, ArticlesPublicController } from "./content.controller";
 import { ContentService } from "./content.service";
 import { IngestionModule } from "../ingestion/ingestion.module";
 import { EditorialAdminController, ResourcesPublicController } from "./editorial.controller";
@@ -19,6 +19,7 @@ import { GuideReviewsAdminController, GuideReviewsPublicController } from "./gui
   imports: [AuditModule, IdentityModule, IngestionModule, AccessModule],
   controllers: [
     ArticlesPublicController,
+    ArticleKindsPublicController,
     ArticlesAdminController,
     ResourcesPublicController,
     EditorialAdminController,

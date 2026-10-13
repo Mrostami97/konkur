@@ -22,6 +22,21 @@ export class ArticlesPublicController {
   }
 }
 
+/**
+ * Slug and type of every published article, a few kilobytes: lets the web
+ * app send /articles/<guide> to /guides/<guide> before its page cache, without
+ * loading the whole articles list.
+ */
+@Controller("article-kinds")
+export class ArticleKindsPublicController {
+  constructor(private readonly content: ContentService) {}
+
+  @Get()
+  list() {
+    return this.content.publishedKinds();
+  }
+}
+
 @Controller("admin/articles")
 @UseGuards(SessionAuthGuard, RolesGuard)
 export class ArticlesAdminController {

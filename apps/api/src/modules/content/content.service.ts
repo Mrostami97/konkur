@@ -269,6 +269,11 @@ export class ContentService {
     return updated;
   }
 
+  /** Slug and content type of each published article (see ArticleKindsPublicController). */
+  async publishedKinds() {
+    return this.prisma.article.findMany({ where: { reviewStatus: ReviewStatus.PUBLISHED }, select: { slug: true, contentType: true }, orderBy: { slug: "asc" } });
+  }
+
   async listPublished() {
     const articles = await this.prisma.article.findMany({ where: { reviewStatus: ReviewStatus.PUBLISHED }, orderBy: { publishedAt: "desc" }, include: publicArticleInclude });
     const history = await publishedArticleHistoryDates(this.prisma, articles.map((article) => article.id));

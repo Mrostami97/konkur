@@ -115,6 +115,15 @@ function visibleMarkup(html) {
 const api = createServer((request, response) => {
   const path = new URL(request.url ?? "/", "http://localhost").pathname;
   response.setHeader("content-type", "application/json; charset=utf-8");
+  if (path === "/article-kinds") {
+    response.end(JSON.stringify([
+      { slug: "mock-article", contentType: "ARTICLE" },
+      { slug: "mock-guide", contentType: "GUIDE" },
+      { slug: "mock-reviewed-before-publish", contentType: "ARTICLE" },
+      { slug: "mock-reviewed-after-publish", contentType: "ARTICLE" },
+    ]));
+    return;
+  }
   if (path === "/articles/mock-guide") {
     response.end(JSON.stringify(article("mock-guide", "GUIDE")));
     return;

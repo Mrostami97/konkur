@@ -81,7 +81,8 @@ export default async function GuidePage({ params: pendingParams }: { params: Pro
   const result = await loadGuide(params.slug);
   const phase12 = findPhase12Page(params.slug);
   if (result.article) {
-    if (result.article.contentType !== "GUIDE") permanentRedirect(`/articles/${result.article.slug}`);
+    // An article reached here is redirected to /articles by middleware.ts; if
+    // that list was stale, the page still shows it, with its own canonical.
     const view = <PublicArticleView article={result.article} related={await relatedTaxonomy(result.article)} />;
     return phase12 ? <div data-phase12="verified-guide">{view}</div> : view;
   }

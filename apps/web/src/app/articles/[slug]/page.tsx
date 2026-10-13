@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { EditorialPageView } from "../../../components/EditorialPageView";
 import {
   PublicArticleView,
@@ -74,7 +74,8 @@ export default async function ArticlePage({ params: pendingParams }: { params: P
   const params = await pendingParams;
   const result = await loadArticle(params.slug);
   if (result.article) {
-    if (result.article.contentType === "GUIDE") permanentRedirect(`/guides/${result.article.slug}`);
+    // A guide reached here is redirected to /guides by middleware.ts; if that
+    // list was stale, the page still shows it, with /guides as its canonical.
     return <PublicArticleView article={result.article} related={await relatedTaxonomy(result.article)} />;
   }
   const legacy = findEditorialPage(params.slug);
