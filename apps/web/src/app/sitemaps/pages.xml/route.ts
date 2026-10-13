@@ -5,6 +5,7 @@ const publicPages = [
   "/",
   "/about",
   "/admissions",
+  "/budget",
   "/consultations",
   "/corrections",
   "/courses",

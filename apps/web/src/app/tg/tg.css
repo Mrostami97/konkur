@@ -240,3 +240,12 @@
   :root:not([data-theme="light"]) .tg-tone-blue { background: rgba(59, 130, 246, 0.18); color: #93c5fd; }
   :root:not([data-theme="light"]) .tg-tone-rose { background: rgba(244, 63, 94, 0.16); color: #fda4af; }
 }
+
+/* «برای کنکور ۱۴۰۶»: the most useful pages, one swipe wide. */
+.tg-featured { margin-top: 1rem; }
+.tg-featured h2 { margin: 0 0 0.55rem; color: var(--ink); font-size: 1rem; font-weight: 800; }
+.tg-featured-row { display: flex; gap: 0.6rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.25rem; scrollbar-width: none; }
+.tg-featured-row::-webkit-scrollbar { display: none; }
+.tg-featured-card { flex: 0 0 min(70%, 15rem); scroll-snap-align: start; display: grid; gap: 0.25rem; padding: 0.85rem 0.95rem; border-radius: 16px; color: #fff; background: linear-gradient(150deg, #0b7a6a, #0c1b2e); text-decoration: none; }
+.tg-featured-card strong { font-size: 0.98rem; }
+.tg-featured-card small { color: rgba(255, 255, 255, 0.82); font-size: 0.78rem; line-height: 1.7; }

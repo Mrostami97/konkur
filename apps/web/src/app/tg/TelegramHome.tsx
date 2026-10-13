@@ -9,6 +9,12 @@ import { EXAM_DATES, daysUntil } from "../../lib/exam-dates";
 import { toPersianDigits } from "../../lib/format";
 import type { MyAttempt } from "../account/data";
 
+export interface FeaturedItem {
+  href: string;
+  title: string;
+  note: string;
+}
+
 export interface FreshItem {
   href: string;
   title: string;
@@ -37,7 +43,7 @@ function greeting() {
 }
 
 /** The mini app's home: who you are, how long is left, where you stopped, and the site one tap away. */
-export function TelegramHome({ fresh }: { fresh: FreshItem[] }) {
+export function TelegramHome({ fresh, featured = [] }: { fresh: FreshItem[]; featured?: FeaturedItem[] }) {
   const [name, setName] = useState<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [days, setDays] = useState<{ master: number; phd: number } | null>(null);
@@ -122,6 +128,20 @@ export function TelegramHome({ fresh }: { fresh: FreshItem[] }) {
             </Link>
           )}
           <Link href="/account" className="tg-panel-link">پنل من</Link>
+        </section>
+      )}
+
+      {featured.length > 0 && (
+        <section className="tg-featured" aria-labelledby="tg-featured-title">
+          <h2 id="tg-featured-title">برای کنکور ۱۴۰۶</h2>
+          <div className="tg-featured-row">
+            {featured.map((item) => (
+              <Link key={item.href} href={item.href} className="tg-featured-card">
+                <strong>{item.title}</strong>
+                <small>{item.note}</small>
+              </Link>
+            ))}
+          </div>
         </section>
       )}
 
