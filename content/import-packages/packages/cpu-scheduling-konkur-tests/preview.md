@@ -121,6 +121,7 @@ $P_5: r=2$ و $e=2$
 
 - [درس‌نامهٔ زمان‌بندی پردازنده](/articles/cpu-scheduling)
 - [بن‌بست و الگوریتم بانکدار](/articles/deadlock-bankers-algorithm)
+- [تست‌های بن‌بست و بانکدار](/articles/deadlock-konkur-tests)
 - [همگام‌سازی فرایندها](/articles/process-synchronization)
 - [سیستم‌های عامل در کنکور: تعداد تست هر سال](/articles/operating-systems-questions-per-year)
 - [بانک سؤال سیستم‌های عامل](/questions?subject=operating-systems)

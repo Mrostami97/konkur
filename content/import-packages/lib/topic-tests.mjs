@@ -14,7 +14,7 @@ const TRACK = { ce: "مهندسی کامپیوتر", it: "فناوری اطلا�
 export const sourceOf = (track, year, n) => `کنکور ارشد ${TRACK[track]} ${fa(year)}، سؤال ${fa(n)}`;
 
 /**
- * spec: { slug, title, summary, quick, seo, intro, methods: string[], tests: [{ track, year, n, method, stem, options, answer, solution }],
+ * spec: { slug, title, summary, quick, seo, intro, methods: string[], tests: [{ track, year, n, method, stem, tables?, options, answer, solution }],
  *         after?: blocks[], faq: [{ q, a }], links, tags, subjectCodes, subjectName, lessonHref? }
  */
 export function topicTestsArticle(spec) {
@@ -33,6 +33,10 @@ export function topicTestsArticle(spec) {
     blocks.push(h2(`تست ${fa(i + 1)}: ${t.method}`));
     blocks.push(text(`${sourceOf(t.track, t.year, t.n)}.`));
     blocks.push(text(t.stem));
+    for (const tb of t.tables ?? []) {
+      if (tb.caption) blocks.push(text(tb.caption));
+      blocks.push({ type: "table", headers: tb.headers, rows: tb.rows });
+    }
     blocks.push(text(t.options.map((o, k) => `${fa(k + 1)}) ${o}`).join("\n")));
     blocks.push(text(`پاسخ: گزینهٔ ${fa(t.answer)}. ${t.solution}`));
   });

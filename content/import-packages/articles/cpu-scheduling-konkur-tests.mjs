@@ -87,6 +87,7 @@ $P_5: r=2$ و $e=2$
   links: [
     { label: "درس‌نامهٔ زمان‌بندی پردازنده", href: "/articles/cpu-scheduling" },
     { label: "بن‌بست و الگوریتم بانکدار", href: "/articles/deadlock-bankers-algorithm" },
+    { label: "تست‌های بن‌بست و بانکدار", href: "/articles/deadlock-konkur-tests" },
     { label: "همگام‌سازی فرایندها", href: "/articles/process-synchronization" },
     { label: "سیستم‌های عامل در کنکور: تعداد تست هر سال", href: "/articles/operating-systems-questions-per-year" },
     { label: "بانک سؤال سیستم‌های عامل", href: "/questions?subject=operating-systems" },

@@ -209,6 +209,10 @@
             "href": "/articles/deadlock-bankers-algorithm"
           },
           {
+            "label": "تست‌های بن‌بست و بانکدار",
+            "href": "/articles/deadlock-konkur-tests"
+          },
+          {
             "label": "همگام‌سازی فرایندها",
             "href": "/articles/process-synchronization"
           },
