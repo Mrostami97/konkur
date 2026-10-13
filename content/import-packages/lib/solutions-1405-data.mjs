@@ -7,7 +7,8 @@
 // numbers, options in another order). The final key deleted q65, q82, q102
 // (and q105, not covered: networks left the exam), gave q33 a positive effect
 // and accepted two options for q86 («۳,۴» in 135B; in 135A the two readings
-// of the question give options 2 and 3, i.e. ۱۳ and ۱۱).
+// of the question give options 2 and 3, i.e. ۱۳ and ۱۱; mapping confirmed by the
+// owner on 2026-10-13).
 //
 // `accepted`: the options the final key accepts when it is more than one.
 //

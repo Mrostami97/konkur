@@ -14,6 +14,12 @@ Fix these in the bank; articles built here already use the image's text.
 | doc-0d6b4ac841e02bf1-q-0075 | CE 1405 q75, last option | ends with «مجموعه دروس تخصصی ۳ (مدار منطقی، …):» | that line is the next section heading, not part of the question |
 | it-1388-C-q0096 | IT 1388 q96, stem | «(با کوانتوم زمانی q=1 و NP-LCFS» | «(با کوانتوم زمانی q=1) و NP-LCFS» (closing parenthesis) |
 
+## Key errors (the bank's key misses a final-key change)
+
+| Question id | Exam | Bank | Final key |
+|---|---|---|---|
+| doc-0d6b4ac841e02bf1-q-0086 | CE 1405 q86 | option 2 only | options 2 and 3 (۱۳ and ۱۱) — the final key (booklet 135B) marks «۳,۴»; mapped to 135A by the two readings of the question, confirmed by the owner 2026-10-13 |
+
 ## Labels added to options (not in the booklet)
 
 | Question id | Exam | Bank says | Image says |
