@@ -24,6 +24,11 @@ first-import bundles:
   1100 px wide. Bundles stay under 25 MB and 1000 entries: the import page
   sends a file in one request, and the CDN has cut single uploads much past 40 MB.
 
+Questions checked word for word for an article come from `verified.mjs` instead of
+the bank, with their passages, worked solutions and sample flags. The 1405
+computer-engineering exam is built only from those (81 questions; the three the
+final key deleted stay out).
+
 The zips are not committed: they hold the booklet images. Upload each bundle at
 `/admin/import`, approve and publish; then «ساخت شبیه‌ساز همهٔ سال‌ها» in
 «آزمون‌ها» builds every year's simulator, unpublished.

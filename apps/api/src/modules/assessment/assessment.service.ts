@@ -213,7 +213,7 @@ export class AssessmentService {
     const description =
       inBooklet > questions.length
         ? `${fa(questions.length)} سؤال کنکور ${fa(examYear)} (کد ${fa(Number(examCode))}) به ترتیب دفترچه، با زمان‌بندی و نمرهٔ منفی واقعی. سؤال‌های درس‌هایی که از کنکور ۱۴۰۶ حذف شده‌اند و سؤال‌های بازبینی‌نشده در آن نیستند.`
-        : `همهٔ ${fa(questions.length)} سؤال کنکور ${fa(examYear)} (کد ${fa(Number(examCode))}) به ترتیب دفترچه، با زمان‌بندی و نمرهٔ منفی واقعی.`;
+        : `${fa(questions.length)} سؤال کنکور ${fa(examYear)} (کد ${fa(Number(examCode))}) در درس‌هایی که در کنکور ۱۴۰۶ هم هست، به ترتیب دفترچه، با زمان‌بندی و نمرهٔ منفی واقعی. سؤال‌هایی که کلید نهایی حذف کرد در آن نیستند.`;
 
     const exam = await this.prisma.$transaction(async (tx) => {
       if (existing) await tx.exam.delete({ where: { id: existing.id } });

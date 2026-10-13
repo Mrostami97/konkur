@@ -26,6 +26,8 @@ const AdmZip = createRequire(`${repo}apps/api/package.json`)("adm-zip");
 const sharp = createRequire(`${repo}apps/web/package.json`)("sharp");
 const { validateQuestion } = createRequire(`${repo}apps/api/package.json`)("@konkurcom/contracts");
 
+import { VERIFIED, VERIFIED_ONLY } from "./verified.mjs";
+
 const [bankRoot, outDir, ...yearArgs] = process.argv.slice(2);
 if (!bankRoot || !outDir) {
   console.error("usage: node build.mjs <bank-root> <out-dir> [year ...]");
@@ -256,8 +258,33 @@ for (const examYear of examYears) {
   const files = new Map();
   const summary = { records: 0, imported: 0, checked: 0, unchecked: 0, initial_key: 0, skipped: {} };
 
-  for (const q of questions.filter((item) => item.code === code && item.year === year)) {
+  for (const record of questions.filter((item) => item.code === code && item.year === year)) {
     summary.records += 1;
+    // A question checked word for word for an article replaces the bank's record (verified.mjs).
+    const verified = VERIFIED.get(`kunkurcomputer-q-${code}-${year}-${record.bookletLabel}-${String(record.number).padStart(3, "0")}`);
+    if (VERIFIED_ONLY.has(examYear) && !verified) {
+      const key = "این سال فقط با سؤال‌های تطبیق‌داده‌شده ساخته می‌شود";
+      summary.skipped[key] = (summary.skipped[key] ?? 0) + 1;
+      continue;
+    }
+    const q = verified
+      ? {
+          ...record,
+          stem: verified.stem,
+          options: verified.options.map((option, index) => ({ number: index + 1, text: option })),
+          optionImages: new Map(),
+          figures: [],
+          contextCrops: [],
+          passage: "",
+          correct: verified.correct,
+          accepted: verified.accepted,
+          deleted: false,
+          textVerified: true,
+          keyVerified: true,
+          initialKey: false,
+          notes: ["متن، گزینه‌ها و کلید کلمه‌به‌کلمه با دفترچهٔ 135A و کلید نهایی تطبیق داده شده (مقالهٔ حل تشریحی ۱۴۰۵)"],
+        }
+      : record;
     const reason = skipReason(q);
     if (reason) {
       summary.skipped[reason] = (summary.skipped[reason] ?? 0) + 1;
@@ -306,8 +333,12 @@ for (const examYear of examYears) {
     }
 
     // A curated sample carries its worked solution, and must reach the key.
-    const curated = SAMPLES[externalId];
-    if (curated) {
+    // A verified question brings its own solution (and its own sample flag).
+    if (verified && SAMPLES[externalId]) usedSamples.add(externalId);
+    const curated = verified
+      ? { solution: verified.solution, topics: SAMPLES[externalId]?.topics, sample: verified.sample }
+      : SAMPLES[externalId] && { ...SAMPLES[externalId], sample: true };
+    if (curated && !verified) {
       if (curated.answer !== q.correct) throw new Error(`${externalId}: the solution reaches option ${curated.answer}, the key says ${q.correct}`);
       if (!q.textVerified || !q.keyVerified || q.initialKey) throw new Error(`${externalId}: a sample needs a checked text and a final, checked key`);
       usedSamples.add(externalId);
@@ -315,7 +346,7 @@ for (const examYear of examYears) {
     const notes = [
       ...q.notes,
       ...(q.initialKey ? ["کلید اولیه؛ کلید نهایی هنوز اعمال نشده"] : []),
-      ...(curated ? ["راه‌حل تشریحی: نوشتهٔ Claude و هم‌خوان با کلید؛ بازبینی مالک لازم است"] : []),
+      ...(curated?.solution?.length ? ["راه‌حل تشریحی: نوشتهٔ Claude و هم‌خوان با کلید؛ بازبینی مالک لازم است"] : []),
     ];
     const passageKey = q.passageId
       ? String(q.passageId).replace(/[^A-Za-z0-9-]/g, "")
@@ -333,8 +364,12 @@ for (const examYear of examYears) {
       slot: { ...(q.booklet ? { booklet: q.booklet } : {}), number: q.number, ...(q.section ? { section: q.section } : {}) },
       subject_code: SUBJECTS[q.subjectName],
       topic_codes: curated?.topics ?? [],
-      ...(passageBlocks.length ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: passageBlocks } } : {}),
-      stem_blocks: q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)],
+      ...(verified?.passage
+        ? { passage: verified.passage }
+        : passageBlocks.length ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: passageBlocks } } : {}),
+      stem_blocks: verified
+        ? [{ type: "text", text: q.stem }, ...(verified.useCrop && crop ? [{ type: "image", media_key: crop.asset.media_key }] : [])]
+        : q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)],
       options: q.options.map((option) => ({
         number: option.number,
         blocks: [
@@ -346,7 +381,7 @@ for (const examYear of examYears) {
       ...(q.accepted.length > 1 && q.accepted.includes(q.correct) ? { accepted_options: q.accepted } : {}),
       solution_blocks: curated?.solution ?? [],
       review: { text_verified: q.textVerified, key_verified: q.keyVerified, notes },
-      ...(curated ? { sample: true } : {}),
+      ...(curated?.sample ? { sample: true } : {}),
       assets,
       source: {
         ...(q.page ? { page: q.page } : {}),
