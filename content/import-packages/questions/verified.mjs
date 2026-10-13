@@ -6,12 +6,13 @@
 // a subject still in the 1406 exam, from lib/solutions-1405-data.mjs. The bank
 // lacks the reading passages of that year, prints a few stems with errors
 // (bank-corrections.md) and keeps q76's options as unlabelled figures; this
-// text has none of those problems. A question whose figure matters shows the
-// booklet crop of the whole question beside its text, as the articles do.
+// text has none of those problems. A question's drawing is an image cut from
+// the booklet without its text and its tables are typed out, as in the articles.
 //
 // SAMPLE_1405: the public samples of each subject (three per subject), shown
 // on the subject pages. These questions are public in the 1405 solutions
 // article anyway.
+import { FIGURES } from "../analysis/question_figures.mjs";
 import { PASSAGES, QUESTIONS } from "../lib/solutions-1405-data.mjs";
 
 const text = (t) => ({ type: "text", text: t });
@@ -38,7 +39,10 @@ export const VERIFIED = new Map(
       options: q.options,
       correct: q.answer,
       accepted: q.accepted ?? [q.answer],
-      useCrop: Boolean(q.image),
+      // Drawings cut from the booklet without the question's text (relative to
+      // the bank root); tables typed out.
+      figures: (FIGURES[1405][q.n] ?? []).map((spec, k) => ({ path: `outputs/1405/site_assets/figures/q${String(q.n).padStart(3, "0")}-${k + 1}.png`, caption: spec.caption })),
+      table: q.table,
       passage: passageOf(q.n),
       solution: [...paragraphs(q.solution), ...(q.note ? [text(q.note)] : [])],
       sample: SAMPLE_1405.has(q.n),

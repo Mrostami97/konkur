@@ -189,9 +189,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q101",
-        "alt": "سؤال ۱۰۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۱۰۱ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q101-fig1",
+        "alt": "شکل سؤال ۱۰۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -297,10 +296,10 @@
     ],
     "assets": [
       {
-        "media_key": "konkur1405-q101",
-        "filename": "konkur1405-q101.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:72e1ac40f73a3a5a8923114a5c3415a6c829a40fbd51cb952d3196bda1b90cc7"
+        "media_key": "konkur1405-q101-fig1",
+        "filename": "konkur1405-q101-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:60b80a57900f9515e8304429a1e1da21d2748770e63ac2aa04b2e201b2e3b64d"
       }
     ],
     "taxonomy": {

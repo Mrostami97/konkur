@@ -69,9 +69,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q046",
-        "alt": "سؤال ۴۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۴۶ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q046-fig1",
+        "alt": "شکل سؤال ۴۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -240,10 +239,10 @@
     ],
     "assets": [
       {
-        "media_key": "konkur1405-q046",
-        "filename": "konkur1405-q046.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:910c435d25953d8a25a3104ac1a863c5b40a82d3a9ff12bd01aa31dd239d039f"
+        "media_key": "konkur1405-q046-fig1",
+        "filename": "konkur1405-q046-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:96f77a84b28820dcdc6e88511753859a7daeca3c2330f8d28dbda0bad9049400"
       }
     ],
     "taxonomy": {

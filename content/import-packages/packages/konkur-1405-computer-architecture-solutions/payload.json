@@ -86,14 +86,8 @@
         "text": "کدام گزینه ارتباط بین Microarchitecture، ISA و System Architecture را به‌درستی در سامانه‌های کامپیوتری براساس سطوح انتزاع نشان می‌دهد؟"
       },
       {
-        "type": "image",
-        "media_key": "konkur1405-q083",
-        "alt": "سؤال ۸۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۳ در دفترچهٔ 135A"
-      },
-      {
         "type": "text",
-        "text": "۱) شکل ۱\n۲) شکل ۲\n۳) شکل ۳\n۴) شکل ۴"
+        "text": "۱) از بالا به پایین: Software / ISA / Microarchitecture / System Architecture / Hardware\n۲) از بالا به پایین: Software / ISA / Microarchitecture / Hardware / System Architecture\n۳) از بالا به پایین: ISA / Software / Microarchitecture / System Architecture / Hardware\n۴) از بالا به پایین: Software / ISA / System Architecture / Microarchitecture / Hardware"
       },
       {
         "type": "text",
@@ -101,7 +95,7 @@
       },
       {
         "type": "text",
-        "text": "از بالا به پایین: نرم‌افزار، بعد ISA که مرز نرم‌افزار و سخت‌افزار است و نرم‌افزار فقط آن را می‌بیند، بعد ریزمعماری که ISA را پیاده می‌کند، بعد معماری سیستم (چیدمان پردازنده، حافظه، گذرگاه‌ها و ورودی/خروجی) و پایین‌تر از همه سخت‌افزار. این ترتیب شکل ۱ است."
+        "text": "از بالا به پایین: نرم‌افزار، بعد ISA که مرز نرم‌افزار و سخت‌افزار است و نرم‌افزار فقط آن را می‌بیند، بعد ریزمعماری که ISA را پیاده می‌کند، بعد معماری سیستم (چیدمان پردازنده، حافظه، گذرگاه‌ها و ورودی/خروجی) و پایین‌تر از همه سخت‌افزار. این ترتیب گزینهٔ ۱ است."
       },
       {
         "type": "heading",
@@ -219,9 +213,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q089",
-        "alt": "سؤال ۸۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۹ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q089-fig1",
+        "alt": "شکل سؤال ۸۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -306,16 +299,10 @@
     ],
     "assets": [
       {
-        "media_key": "konkur1405-q083",
-        "filename": "konkur1405-q083.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:ceb155b10a3e24ad5d044fcea19d26efa40e9e1552c42d6314b7d3a433dcc363"
-      },
-      {
-        "media_key": "konkur1405-q089",
-        "filename": "konkur1405-q089.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:97ca2ff072f5d47507832a2b44df45978c3456d9e904ea6a6741447a3baf88fd"
+        "media_key": "konkur1405-q089-fig1",
+        "filename": "konkur1405-q089-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:400d91946176baa0615010b7907db06327c492f508b249b05bc81a8a366d2ec7"
       }
     ],
     "taxonomy": {

@@ -123,9 +123,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q085",
-        "alt": "سؤال ۸۵ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۵ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q085-fig1",
+        "alt": "شکل سؤال ۸۵ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -171,9 +170,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q087",
-        "alt": "سؤال ۸۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۷ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q087-fig1",
+        "alt": "شکل سؤال ۸۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -300,16 +298,16 @@
     ],
     "assets": [
       {
-        "media_key": "konkur1404-q085",
-        "filename": "konkur1404-q085.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:6c5cdddcdab2f4d8c28e542f45c18cebcdadaa24937cebd88030173dbe006038"
+        "media_key": "konkur1404-q085-fig1",
+        "filename": "konkur1404-q085-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:4a3bd7a40970fc526b0c5e3bcd2c094d5d9cb6a00af4ebf2c74c13b2265bc8dc"
       },
       {
-        "media_key": "konkur1404-q087",
-        "filename": "konkur1404-q087.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:fb01182e676a54ae4d82ce44bda8539f2a32bb0e5d0f6406791d6da187990c68"
+        "media_key": "konkur1404-q087-fig1",
+        "filename": "konkur1404-q087-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:d5d6ae364b391dd8ae17e6e6ff4d7d8a0142b45a8380a808f2f4bcad9ec48b9d"
       }
     ],
     "taxonomy": {

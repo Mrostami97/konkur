@@ -1734,9 +1734,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q046",
-        "alt": "سؤال ۴۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۴۶ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q046-fig1",
+        "alt": "شکل سؤال ۴۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -2279,10 +2278,89 @@
         "text": "کدام‌یک از نمودارهای حالت، متناظر با ساده‌شدهٔ جدول حالت زیر است؟"
       },
       {
+        "type": "table",
+        "headers": [
+          "حالت فعلی",
+          "حالت بعدی (x=0)",
+          "حالت بعدی (x=1)",
+          "خروجی (x=0)",
+          "خروجی (x=1)"
+        ],
+        "rows": [
+          [
+            "a",
+            "f",
+            "e",
+            "1",
+            "0"
+          ],
+          [
+            "b",
+            "f",
+            "e",
+            "1",
+            "0"
+          ],
+          [
+            "c",
+            "b",
+            "c",
+            "1",
+            "0"
+          ],
+          [
+            "d",
+            "f",
+            "g",
+            "1",
+            "0"
+          ],
+          [
+            "e",
+            "a",
+            "e",
+            "0",
+            "1"
+          ],
+          [
+            "f",
+            "f",
+            "e",
+            "0",
+            "1"
+          ],
+          [
+            "g",
+            "b",
+            "g",
+            "0",
+            "1"
+          ]
+        ]
+      },
+      {
         "type": "image",
-        "media_key": "konkur1405-q076",
-        "alt": "سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۷۶ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q076-fig1",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۱"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1405-q076-fig2",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۲"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1405-q076-fig3",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۳"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1405-q076-fig4",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۴"
       },
       {
         "type": "text",
@@ -2349,9 +2427,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q079",
-        "alt": "سؤال ۷۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۷۹ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q079-fig1",
+        "alt": "شکل سؤال ۷۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -2376,9 +2453,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q080",
-        "alt": "سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۰ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q080-fig1",
+        "alt": "شکل سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -2403,9 +2479,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q081",
-        "alt": "سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۱ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q081-fig1",
+        "alt": "شکل سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -2430,9 +2505,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q082",
-        "alt": "سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۲ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q082-fig1",
+        "alt": "شکل سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -2461,14 +2535,8 @@
         "text": "کدام گزینه ارتباط بین Microarchitecture، ISA و System Architecture را به‌درستی در سامانه‌های کامپیوتری براساس سطوح انتزاع نشان می‌دهد؟"
       },
       {
-        "type": "image",
-        "media_key": "konkur1405-q083",
-        "alt": "سؤال ۸۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۳ در دفترچهٔ 135A"
-      },
-      {
         "type": "text",
-        "text": "۱) شکل ۱\n۲) شکل ۲\n۳) شکل ۳\n۴) شکل ۴"
+        "text": "۱) از بالا به پایین: Software / ISA / Microarchitecture / System Architecture / Hardware\n۲) از بالا به پایین: Software / ISA / Microarchitecture / Hardware / System Architecture\n۳) از بالا به پایین: ISA / Software / Microarchitecture / System Architecture / Hardware\n۴) از بالا به پایین: Software / ISA / System Architecture / Microarchitecture / Hardware"
       },
       {
         "type": "text",
@@ -2476,7 +2544,7 @@
       },
       {
         "type": "text",
-        "text": "از بالا به پایین: نرم‌افزار، بعد ISA که مرز نرم‌افزار و سخت‌افزار است و نرم‌افزار فقط آن را می‌بیند، بعد ریزمعماری که ISA را پیاده می‌کند، بعد معماری سیستم (چیدمان پردازنده، حافظه، گذرگاه‌ها و ورودی/خروجی) و پایین‌تر از همه سخت‌افزار. این ترتیب شکل ۱ است."
+        "text": "از بالا به پایین: نرم‌افزار، بعد ISA که مرز نرم‌افزار و سخت‌افزار است و نرم‌افزار فقط آن را می‌بیند، بعد ریزمعماری که ISA را پیاده می‌کند، بعد معماری سیستم (چیدمان پردازنده، حافظه، گذرگاه‌ها و ورودی/خروجی) و پایین‌تر از همه سخت‌افزار. این ترتیب گزینهٔ ۱ است."
       },
       {
         "type": "heading",
@@ -2594,9 +2662,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q089",
-        "alt": "سؤال ۸۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۹ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q089-fig1",
+        "alt": "شکل سؤال ۸۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -2731,9 +2798,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q101",
-        "alt": "سؤال ۱۰۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۱۰۱ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q101-fig1",
+        "alt": "شکل سؤال ۱۰۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -2882,58 +2948,70 @@
         "checksum": "sha256:480e58834547311971a440cbc0847f893b233abe85d43daf7a078a8c7ede3b00"
       },
       {
-        "media_key": "konkur1405-q046",
-        "filename": "konkur1405-q046.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:910c435d25953d8a25a3104ac1a863c5b40a82d3a9ff12bd01aa31dd239d039f"
+        "media_key": "konkur1405-q046-fig1",
+        "filename": "konkur1405-q046-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:96f77a84b28820dcdc6e88511753859a7daeca3c2330f8d28dbda0bad9049400"
       },
       {
-        "media_key": "konkur1405-q076",
-        "filename": "konkur1405-q076.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:a179274f87e3577ab640e8419c93bed33d27a2c6d864bbe5b7b4c194700b8eec"
+        "media_key": "konkur1405-q076-fig1",
+        "filename": "konkur1405-q076-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:f58741dbdf2cb034a0bd5861d5aff4eda084f2650bce7bab7511da5ffef1536a"
       },
       {
-        "media_key": "konkur1405-q079",
-        "filename": "konkur1405-q079.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:fe6458999036f4686bdd201d2b111b9fcdf5075014ec4c00b4740870ce500e45"
+        "media_key": "konkur1405-q076-fig2",
+        "filename": "konkur1405-q076-fig2.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:23e53d0dc28415ae0384a08a6f7a624a76a330434d52027c1e6e27b1f4d2a61f"
       },
       {
-        "media_key": "konkur1405-q080",
-        "filename": "konkur1405-q080.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:e8b1704fe5ae0532e3b349bb1f26ebab2187455aaa4e3d863a00ef5720fa5427"
+        "media_key": "konkur1405-q076-fig3",
+        "filename": "konkur1405-q076-fig3.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:d718879ba374347bcde1433925fe5bb42de09509a23a0df8bdf382c4e8570215"
       },
       {
-        "media_key": "konkur1405-q081",
-        "filename": "konkur1405-q081.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:1a4e69c0eeb55b1a7a459f2df716ad4ddd047f588091cc554a4245998ea711e7"
+        "media_key": "konkur1405-q076-fig4",
+        "filename": "konkur1405-q076-fig4.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:023fcc1a972cf21cf215fe58f8751e066b0609345791ac39e1908babc847cfea"
       },
       {
-        "media_key": "konkur1405-q082",
-        "filename": "konkur1405-q082.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:0ac7d468631cb662eda299fb49840061525546d9d53c7102bcd53365eeb8acc8"
+        "media_key": "konkur1405-q079-fig1",
+        "filename": "konkur1405-q079-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:2815f1e7bb4cca2e1cab2a043a50415ac296ac76f4a39462f421d07262c5c33b"
       },
       {
-        "media_key": "konkur1405-q083",
-        "filename": "konkur1405-q083.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:ceb155b10a3e24ad5d044fcea19d26efa40e9e1552c42d6314b7d3a433dcc363"
+        "media_key": "konkur1405-q080-fig1",
+        "filename": "konkur1405-q080-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:bdf8a17cab847e8b050888413a9efb3e6c09055187c498ba5fb9dec59ab77b89"
       },
       {
-        "media_key": "konkur1405-q089",
-        "filename": "konkur1405-q089.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:97ca2ff072f5d47507832a2b44df45978c3456d9e904ea6a6741447a3baf88fd"
+        "media_key": "konkur1405-q081-fig1",
+        "filename": "konkur1405-q081-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:655c606cfc2223151cbd17b5e57d8d16762427bc616629ae6ea4dea70e10b70d"
       },
       {
-        "media_key": "konkur1405-q101",
-        "filename": "konkur1405-q101.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:72e1ac40f73a3a5a8923114a5c3415a6c829a40fbd51cb952d3196bda1b90cc7"
+        "media_key": "konkur1405-q082-fig1",
+        "filename": "konkur1405-q082-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:aa9f7171d81fdd78360c3db122267ab02fae87cd688fca50c6f5040fe82a59bd"
+      },
+      {
+        "media_key": "konkur1405-q089-fig1",
+        "filename": "konkur1405-q089-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:400d91946176baa0615010b7907db06327c492f508b249b05bc81a8a366d2ec7"
+      },
+      {
+        "media_key": "konkur1405-q101-fig1",
+        "filename": "konkur1405-q101-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:60b80a57900f9515e8304429a1e1da21d2748770e63ac2aa04b2e201b2e3b64d"
       }
     ],
     "taxonomy": {

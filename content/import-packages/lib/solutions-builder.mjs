@@ -2,15 +2,14 @@
 // exam» family: one full article with every solved question (the hub) and one
 // article per subject still in the 1406 exam. Each year supplies its data
 // (lib/solutions-YYYY-data.mjs) and its own sentences (lib/solutions-YYYY.mjs).
-// Questions that need their figure carry the booklet crop as an asset; image
-// files stay in the owner's bank folder and are added to the import zip by
+// A question's drawing is an image cut from the booklet without its text
+// (analysis/question_figures.mjs) and its tables are typed out; image files stay in the owner's bank folder and are added to the import zip by
 // bundle.mjs (via packages/<slug>/assets.json).
 import { createHash } from "node:crypto";
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
+import { FIGURES, figureFile } from "../analysis/question_figures.mjs";
 
-const BANK = process.env.KONKUR_BANK_ROOT ?? "C:/Users/Error/Documents/Codex/2026-10-03/new-chat";
-const CROPS = path.join(BANK, "outputs/content_review/source_crops");
 const ALL_KEYS = JSON.parse(readFileSync(new URL("../analysis/keys.json", import.meta.url), "utf8")).ce;
 const FA = "۰۱۲۳۴۵۶۷۸۹";
 export const fa = (v) => String(v).replace(/\d/g, (d) => FA[d]);
@@ -50,12 +49,12 @@ const in1406 = (key) =>
         : "بله، در بستهٔ تخصصی مجموعهٔ ۱۲۷۷ با ضریب ۴.";
 
 /**
- * cfg: { year, data: {QUESTIONS, SUBJECTS, PASSAGES, BOOKLET, DROPPED, DOC},
+ * cfg: { year, data: {QUESTIONS, SUBJECTS, PASSAGES, BOOKLET, DROPPED},
  *   keySheets(): [{ mediaKey, file, alt, caption }], text: {...year's sentences} }
  */
 export function makeSolutions(cfg) {
   const { year, data, text: T } = cfg;
-  const { QUESTIONS, SUBJECTS, PASSAGES, BOOKLET, DROPPED, DOC } = data;
+  const { QUESTIONS, SUBJECTS, PASSAGES, BOOKLET, DROPPED } = data;
   const Y = fa(year);
   const KEYS = ALL_KEYS[year];
   const HUB = `konkur-${year}-computer-engineering-solutions`;
@@ -86,13 +85,6 @@ export function makeSolutions(cfg) {
     };
   }
 
-  /** The booklet crop of question n as an article asset (and its file for the zip). */
-  function cropAsset(n) {
-    const prefix = `${DOC}-q-${String(n).padStart(4, "0")}-question-`;
-    const file = readdirSync(CROPS).find((f) => f.startsWith(prefix));
-    if (!file) throw new Error(`no crop for q${n}`);
-    return fileAsset(`konkur${year}-q${String(n).padStart(3, "0")}`, path.join(CROPS, file));
-  }
 
   function answerLine(q) {
     if (q.deleted) return `در کلید نهایی حذف شد (در کلید اولیه گزینهٔ ${fa(q.initial)} بود).`;
@@ -110,11 +102,14 @@ export function makeSolutions(cfg) {
     }
     blocks.push(heading(level, `سؤال ${fa(q.n)}`));
     blocks.push(text(q.stem));
-    if (q.image) {
-      const { asset, file } = cropAsset(q.n);
+    // A table is typed out; only a drawing goes in as an image, cut from the
+    // booklet without the question's text (analysis/question_figures.mjs).
+    if (q.table) blocks.push({ type: "table", ...q.table });
+    for (const [k, spec] of (FIGURES[year]?.[q.n] ?? []).entries()) {
+      const { asset, file } = fileAsset(`konkur${year}-q${String(q.n).padStart(3, "0")}-fig${k + 1}`, figureFile(year, q.n, k));
       out.assets.push(asset);
       out.files[asset.filename] = file;
-      blocks.push({ type: "image", media_key: asset.media_key, alt: `سؤال ${fa(q.n)} کنکور ارشد مهندسی کامپیوتر ${Y} در دفترچه`, caption: `سؤال ${fa(q.n)} در دفترچهٔ ${BOOKLET}` });
+      blocks.push({ type: "image", media_key: asset.media_key, alt: `شکل سؤال ${fa(q.n)} کنکور ارشد مهندسی کامپیوتر ${Y}`, ...(spec.caption ? { caption: spec.caption } : {}) });
     }
     blocks.push(text(q.options.map((o, i) => `${fa(i + 1)}) ${o}`).join("\n")));
     blocks.push(text(answerLine(q)));

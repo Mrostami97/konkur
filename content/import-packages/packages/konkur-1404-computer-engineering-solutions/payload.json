@@ -1656,9 +1656,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q043",
-        "alt": "سؤال ۴۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۴۳ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q043-fig1",
+        "alt": "شکل سؤال ۴۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2118,9 +2117,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q069",
-        "alt": "سؤال ۶۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۶۹ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q069-fig1",
+        "alt": "شکل سؤال ۶۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2208,9 +2206,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q073",
-        "alt": "سؤال ۷۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۷۳ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q073-fig1",
+        "alt": "شکل سؤال ۷۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2234,10 +2231,49 @@
         "text": "در مسئلهٔ جستجوی زیر، دو تابع هیوریستیک h1 و h2 مفروض است. کدام مورد، ویژگی‌های این دو تابع را نشان می‌دهد؟ (قابل قبول = Admissible، سازگار = Consistent)"
       },
       {
+        "type": "table",
+        "headers": [
+          "گره",
+          "h1",
+          "h2"
+        ],
+        "rows": [
+          [
+            "S",
+            "5",
+            "5"
+          ],
+          [
+            "A",
+            "3",
+            "6"
+          ],
+          [
+            "B",
+            "3",
+            "3"
+          ],
+          [
+            "C",
+            "1",
+            "3"
+          ],
+          [
+            "D",
+            "1",
+            "6"
+          ],
+          [
+            "G",
+            "0",
+            "0"
+          ]
+        ]
+      },
+      {
         "type": "image",
-        "media_key": "konkur1404-q074",
-        "alt": "سؤال ۷۴ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۷۴ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q074-fig1",
+        "alt": "شکل سؤال ۷۴ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2309,9 +2345,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q077",
-        "alt": "سؤال ۷۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۷۷ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q077-fig1",
+        "alt": "شکل سؤال ۷۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2335,10 +2370,72 @@
         "text": "اگر در جدول حالت زیر، حالت‌های معادل را حذف کنیم، چند حالت باقی می‌ماند؟"
       },
       {
-        "type": "image",
-        "media_key": "konkur1404-q078",
-        "alt": "سؤال ۷۸ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۷۸ در دفترچهٔ 335C"
+        "type": "table",
+        "headers": [
+          "حالت فعلی",
+          "حالت بعدی (x=0)",
+          "حالت بعدی (x=1)",
+          "خروجی (x=0)",
+          "خروجی (x=1)"
+        ],
+        "rows": [
+          [
+            "a",
+            "f",
+            "b",
+            "0",
+            "0"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "0",
+            "0"
+          ],
+          [
+            "c",
+            "f",
+            "e",
+            "0",
+            "0"
+          ],
+          [
+            "d",
+            "g",
+            "a",
+            "1",
+            "0"
+          ],
+          [
+            "e",
+            "d",
+            "c",
+            "0",
+            "0"
+          ],
+          [
+            "f",
+            "f",
+            "b",
+            "1",
+            "1"
+          ],
+          [
+            "g",
+            "g",
+            "h",
+            "0",
+            "1"
+          ],
+          [
+            "h",
+            "g",
+            "a",
+            "1",
+            "0"
+          ]
+        ]
       },
       {
         "type": "text",
@@ -2384,9 +2481,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q080",
-        "alt": "سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۰ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q080-fig1",
+        "alt": "شکل سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2411,9 +2507,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q081",
-        "alt": "سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۱ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q081-fig1",
+        "alt": "شکل سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2438,9 +2533,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q082",
-        "alt": "سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۲ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q082-fig1",
+        "alt": "شکل سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2512,9 +2606,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q085",
-        "alt": "سؤال ۸۵ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۵ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q085-fig1",
+        "alt": "شکل سؤال ۸۵ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2560,9 +2653,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q087",
-        "alt": "سؤال ۸۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۷ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q087-fig1",
+        "alt": "شکل سؤال ۸۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -2874,70 +2966,64 @@
         "checksum": "sha256:2278baf17b6721603fd9a48244bd88c5594dec3a0b5d15f38e9460da416dea44"
       },
       {
-        "media_key": "konkur1404-q043",
-        "filename": "konkur1404-q043.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:4673dd84dd7f0bb21dae6969dd553e99b79ac629ac15d7ad8fdca84e168f0941"
+        "media_key": "konkur1404-q043-fig1",
+        "filename": "konkur1404-q043-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:c39584edfb6b8203f5de397313cbdb65d51d7e36193dd476f6707ee6378a5cf7"
       },
       {
-        "media_key": "konkur1404-q069",
-        "filename": "konkur1404-q069.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:db2dab8e45a969b9f28e97e0b3e7891037a8cc823e8e10849f9650bceaff1dcc"
+        "media_key": "konkur1404-q069-fig1",
+        "filename": "konkur1404-q069-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:37a6c36542be68b039974dc73744218d3c8259c3ec637f89b0cd3f5a916c8023"
       },
       {
-        "media_key": "konkur1404-q073",
-        "filename": "konkur1404-q073.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:ea43dcbdb7045da2ebcc7b8e0448f5bde68f55e19014af1561f676c881246f26"
+        "media_key": "konkur1404-q073-fig1",
+        "filename": "konkur1404-q073-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:a8c2e7c5a933ae218c02a89038cc4e60fd9f84a6eac08526fae04416289a45e9"
       },
       {
-        "media_key": "konkur1404-q074",
-        "filename": "konkur1404-q074.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:4ee66f93bc0aef058262fa412e77925ccabfcea4e9a7e4de237c325519a48bd5"
+        "media_key": "konkur1404-q074-fig1",
+        "filename": "konkur1404-q074-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:e6153e93e25c34eefa0752b5d570cc0eca06b4c579348d6f9291b057cad2fba5"
       },
       {
-        "media_key": "konkur1404-q077",
-        "filename": "konkur1404-q077.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:3b0a430f084a9405698746667cb64e1963dd848296843e4ff069209d1da1b88a"
+        "media_key": "konkur1404-q077-fig1",
+        "filename": "konkur1404-q077-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:fac013b3e43c1ec7ec6c493cf17a3e3f2bf92c2c97a06ec6157e29b1e4e713e4"
       },
       {
-        "media_key": "konkur1404-q078",
-        "filename": "konkur1404-q078.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:4fba28cbaa892b6e85252896841527f4f35594045899581c3b20fcd561ccb20c"
+        "media_key": "konkur1404-q080-fig1",
+        "filename": "konkur1404-q080-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:952efdfde1ec7a25c33823642fbb054800a2ebcb92a97dcdd0649492378371fb"
       },
       {
-        "media_key": "konkur1404-q080",
-        "filename": "konkur1404-q080.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:95d07e8a40b0732d39b64eb29610999abdc89258abd71333b32f3d87ce3b45b2"
+        "media_key": "konkur1404-q081-fig1",
+        "filename": "konkur1404-q081-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:d542386ce91c93f20bf4611e264605ca02c5bad3331196425a9b44e475b24993"
       },
       {
-        "media_key": "konkur1404-q081",
-        "filename": "konkur1404-q081.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:3c597d40537c9eb73d30c6cbb62ece0cd84b12df22616e402b4bdf3fce1ddc17"
+        "media_key": "konkur1404-q082-fig1",
+        "filename": "konkur1404-q082-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:1113c4c3bd0cbb000c5dea2529cb51d5046a7b73f8c96638ad392c514715d728"
       },
       {
-        "media_key": "konkur1404-q082",
-        "filename": "konkur1404-q082.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:36fe86288b8ddd9bf89c57282230aec1b98a2cc6956182c298173e16d0df6f89"
+        "media_key": "konkur1404-q085-fig1",
+        "filename": "konkur1404-q085-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:4a3bd7a40970fc526b0c5e3bcd2c094d5d9cb6a00af4ebf2c74c13b2265bc8dc"
       },
       {
-        "media_key": "konkur1404-q085",
-        "filename": "konkur1404-q085.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:6c5cdddcdab2f4d8c28e542f45c18cebcdadaa24937cebd88030173dbe006038"
-      },
-      {
-        "media_key": "konkur1404-q087",
-        "filename": "konkur1404-q087.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:fb01182e676a54ae4d82ce44bda8539f2a32bb0e5d0f6406791d6da187990c68"
+        "media_key": "konkur1404-q087-fig1",
+        "filename": "konkur1404-q087-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:d5d6ae364b391dd8ae17e6e6ff4d7d8a0142b45a8380a808f2f4bcad9ec48b9d"
       }
     ],
     "taxonomy": {

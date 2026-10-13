@@ -83,10 +83,89 @@
         "text": "کدام‌یک از نمودارهای حالت، متناظر با ساده‌شدهٔ جدول حالت زیر است؟"
       },
       {
+        "type": "table",
+        "headers": [
+          "حالت فعلی",
+          "حالت بعدی (x=0)",
+          "حالت بعدی (x=1)",
+          "خروجی (x=0)",
+          "خروجی (x=1)"
+        ],
+        "rows": [
+          [
+            "a",
+            "f",
+            "e",
+            "1",
+            "0"
+          ],
+          [
+            "b",
+            "f",
+            "e",
+            "1",
+            "0"
+          ],
+          [
+            "c",
+            "b",
+            "c",
+            "1",
+            "0"
+          ],
+          [
+            "d",
+            "f",
+            "g",
+            "1",
+            "0"
+          ],
+          [
+            "e",
+            "a",
+            "e",
+            "0",
+            "1"
+          ],
+          [
+            "f",
+            "f",
+            "e",
+            "0",
+            "1"
+          ],
+          [
+            "g",
+            "b",
+            "g",
+            "0",
+            "1"
+          ]
+        ]
+      },
+      {
         "type": "image",
-        "media_key": "konkur1405-q076",
-        "alt": "سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۷۶ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q076-fig1",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۱"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1405-q076-fig2",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۲"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1405-q076-fig3",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۳"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1405-q076-fig4",
+        "alt": "شکل سؤال ۷۶ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵",
+        "caption": "نمودار ۴"
       },
       {
         "type": "text",
@@ -153,9 +232,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q079",
-        "alt": "سؤال ۷۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۷۹ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q079-fig1",
+        "alt": "شکل سؤال ۷۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -180,9 +258,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q080",
-        "alt": "سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۰ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q080-fig1",
+        "alt": "شکل سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -207,9 +284,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q081",
-        "alt": "سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۱ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q081-fig1",
+        "alt": "شکل سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -234,9 +310,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1405-q082",
-        "alt": "سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵ در دفترچه",
-        "caption": "سؤال ۸۲ در دفترچهٔ 135A"
+        "media_key": "konkur1405-q082-fig1",
+        "alt": "شکل سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۵"
       },
       {
         "type": "text",
@@ -321,34 +396,52 @@
     ],
     "assets": [
       {
-        "media_key": "konkur1405-q076",
-        "filename": "konkur1405-q076.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:a179274f87e3577ab640e8419c93bed33d27a2c6d864bbe5b7b4c194700b8eec"
+        "media_key": "konkur1405-q076-fig1",
+        "filename": "konkur1405-q076-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:f58741dbdf2cb034a0bd5861d5aff4eda084f2650bce7bab7511da5ffef1536a"
       },
       {
-        "media_key": "konkur1405-q079",
-        "filename": "konkur1405-q079.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:fe6458999036f4686bdd201d2b111b9fcdf5075014ec4c00b4740870ce500e45"
+        "media_key": "konkur1405-q076-fig2",
+        "filename": "konkur1405-q076-fig2.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:23e53d0dc28415ae0384a08a6f7a624a76a330434d52027c1e6e27b1f4d2a61f"
       },
       {
-        "media_key": "konkur1405-q080",
-        "filename": "konkur1405-q080.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:e8b1704fe5ae0532e3b349bb1f26ebab2187455aaa4e3d863a00ef5720fa5427"
+        "media_key": "konkur1405-q076-fig3",
+        "filename": "konkur1405-q076-fig3.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:d718879ba374347bcde1433925fe5bb42de09509a23a0df8bdf382c4e8570215"
       },
       {
-        "media_key": "konkur1405-q081",
-        "filename": "konkur1405-q081.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:1a4e69c0eeb55b1a7a459f2df716ad4ddd047f588091cc554a4245998ea711e7"
+        "media_key": "konkur1405-q076-fig4",
+        "filename": "konkur1405-q076-fig4.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:023fcc1a972cf21cf215fe58f8751e066b0609345791ac39e1908babc847cfea"
       },
       {
-        "media_key": "konkur1405-q082",
-        "filename": "konkur1405-q082.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:0ac7d468631cb662eda299fb49840061525546d9d53c7102bcd53365eeb8acc8"
+        "media_key": "konkur1405-q079-fig1",
+        "filename": "konkur1405-q079-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:2815f1e7bb4cca2e1cab2a043a50415ac296ac76f4a39462f421d07262c5c33b"
+      },
+      {
+        "media_key": "konkur1405-q080-fig1",
+        "filename": "konkur1405-q080-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:bdf8a17cab847e8b050888413a9efb3e6c09055187c498ba5fb9dec59ab77b89"
+      },
+      {
+        "media_key": "konkur1405-q081-fig1",
+        "filename": "konkur1405-q081-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:655c606cfc2223151cbd17b5e57d8d16762427bc616629ae6ea4dea70e10b70d"
+      },
+      {
+        "media_key": "konkur1405-q082-fig1",
+        "filename": "konkur1405-q082-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:aa9f7171d81fdd78360c3db122267ab02fae87cd688fca50c6f5040fe82a59bd"
       }
     ],
     "taxonomy": {

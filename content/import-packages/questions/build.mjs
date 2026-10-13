@@ -332,6 +332,16 @@ for (const examYear of examYears) {
       }
     }
 
+    // A verified question's drawings, cut from the booklet without its text.
+    const verifiedFigures = [];
+    for (const [k, figure] of (verified?.figures ?? []).entries()) {
+      const image = await imageAsset(figure.path, `fig${k + 1}`);
+      if (!image) throw new Error(`${externalId}: missing figure ${figure.path} (run analysis/question_figures.mjs)`);
+      addFile(image);
+      // question.v2 images take no caption; the label goes above the drawing.
+      if (figure.caption) verifiedFigures.push({ type: "text", text: figure.caption });
+      verifiedFigures.push({ type: "image", media_key: image.asset.media_key });
+    }
     // A curated sample carries its worked solution, and must reach the key.
     // A verified question brings its own solution (and its own sample flag).
     if (verified && SAMPLES[externalId]) usedSamples.add(externalId);
@@ -368,7 +378,7 @@ for (const examYear of examYears) {
         ? { passage: verified.passage }
         : passageBlocks.length ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: passageBlocks } } : {}),
       stem_blocks: verified
-        ? [{ type: "text", text: q.stem }, ...(verified.useCrop && crop ? [{ type: "image", media_key: crop.asset.media_key }] : [])]
+        ? [{ type: "text", text: q.stem }, ...(verified.table ? [{ type: "table", ...verified.table }] : []), ...verifiedFigures]
         : q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)],
       options: q.options.map((option) => ({
         number: option.number,

@@ -138,9 +138,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q043",
-        "alt": "سؤال ۴۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۴۳ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q043-fig1",
+        "alt": "شکل سؤال ۴۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -267,10 +266,10 @@
     ],
     "assets": [
       {
-        "media_key": "konkur1404-q043",
-        "filename": "konkur1404-q043.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:4673dd84dd7f0bb21dae6969dd553e99b79ac629ac15d7ad8fdca84e168f0941"
+        "media_key": "konkur1404-q043-fig1",
+        "filename": "konkur1404-q043-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:c39584edfb6b8203f5de397313cbdb65d51d7e36193dd476f6707ee6378a5cf7"
       }
     ],
     "taxonomy": {

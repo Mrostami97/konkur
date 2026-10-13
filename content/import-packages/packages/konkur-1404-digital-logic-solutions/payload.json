@@ -102,9 +102,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q077",
-        "alt": "سؤال ۷۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۷۷ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q077-fig1",
+        "alt": "شکل سؤال ۷۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -128,10 +127,72 @@
         "text": "اگر در جدول حالت زیر، حالت‌های معادل را حذف کنیم، چند حالت باقی می‌ماند؟"
       },
       {
-        "type": "image",
-        "media_key": "konkur1404-q078",
-        "alt": "سؤال ۷۸ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۷۸ در دفترچهٔ 335C"
+        "type": "table",
+        "headers": [
+          "حالت فعلی",
+          "حالت بعدی (x=0)",
+          "حالت بعدی (x=1)",
+          "خروجی (x=0)",
+          "خروجی (x=1)"
+        ],
+        "rows": [
+          [
+            "a",
+            "f",
+            "b",
+            "0",
+            "0"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "0",
+            "0"
+          ],
+          [
+            "c",
+            "f",
+            "e",
+            "0",
+            "0"
+          ],
+          [
+            "d",
+            "g",
+            "a",
+            "1",
+            "0"
+          ],
+          [
+            "e",
+            "d",
+            "c",
+            "0",
+            "0"
+          ],
+          [
+            "f",
+            "f",
+            "b",
+            "1",
+            "1"
+          ],
+          [
+            "g",
+            "g",
+            "h",
+            "0",
+            "1"
+          ],
+          [
+            "h",
+            "g",
+            "a",
+            "1",
+            "0"
+          ]
+        ]
       },
       {
         "type": "text",
@@ -177,9 +238,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q080",
-        "alt": "سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۰ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q080-fig1",
+        "alt": "شکل سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -204,9 +264,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q081",
-        "alt": "سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۱ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q081-fig1",
+        "alt": "شکل سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -231,9 +290,8 @@
       },
       {
         "type": "image",
-        "media_key": "konkur1404-q082",
-        "alt": "سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
-        "caption": "سؤال ۸۲ در دفترچهٔ 335C"
+        "media_key": "konkur1404-q082-fig1",
+        "alt": "شکل سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴"
       },
       {
         "type": "text",
@@ -318,34 +376,28 @@
     ],
     "assets": [
       {
-        "media_key": "konkur1404-q077",
-        "filename": "konkur1404-q077.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:3b0a430f084a9405698746667cb64e1963dd848296843e4ff069209d1da1b88a"
+        "media_key": "konkur1404-q077-fig1",
+        "filename": "konkur1404-q077-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:fac013b3e43c1ec7ec6c493cf17a3e3f2bf92c2c97a06ec6157e29b1e4e713e4"
       },
       {
-        "media_key": "konkur1404-q078",
-        "filename": "konkur1404-q078.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:4fba28cbaa892b6e85252896841527f4f35594045899581c3b20fcd561ccb20c"
+        "media_key": "konkur1404-q080-fig1",
+        "filename": "konkur1404-q080-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:952efdfde1ec7a25c33823642fbb054800a2ebcb92a97dcdd0649492378371fb"
       },
       {
-        "media_key": "konkur1404-q080",
-        "filename": "konkur1404-q080.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:95d07e8a40b0732d39b64eb29610999abdc89258abd71333b32f3d87ce3b45b2"
+        "media_key": "konkur1404-q081-fig1",
+        "filename": "konkur1404-q081-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:d542386ce91c93f20bf4611e264605ca02c5bad3331196425a9b44e475b24993"
       },
       {
-        "media_key": "konkur1404-q081",
-        "filename": "konkur1404-q081.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:3c597d40537c9eb73d30c6cbb62ece0cd84b12df22616e402b4bdf3fce1ddc17"
-      },
-      {
-        "media_key": "konkur1404-q082",
-        "filename": "konkur1404-q082.jpg",
-        "mime_type": "image/jpeg",
-        "checksum": "sha256:36fe86288b8ddd9bf89c57282230aec1b98a2cc6956182c298173e16d0df6f89"
+        "media_key": "konkur1404-q082-fig1",
+        "filename": "konkur1404-q082-fig1.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:1113c4c3bd0cbb000c5dea2529cb51d5046a7b73f8c96638ad392c514715d728"
       }
     ],
     "taxonomy": {
