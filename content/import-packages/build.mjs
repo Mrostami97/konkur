@@ -26,7 +26,8 @@ const { validateArticleV2 } = require(`${repo}contracts/dist/validators.js`);
 const drafts = JSON.parse(await (await import("node:fs/promises")).readFile(`${repo}apps/api/src/seed-data/editorial-drafts.json`, "utf8")).articles;
 const slugs = process.argv.slice(2);
 for (const slug of slugs) {
-  const article = applyUpgrade(slug, withLiveOverride(slug, (await import(pathToFileURL(`articles/${slug}.mjs`).href)).default));
+  const mod = await import(pathToFileURL(`articles/${slug}.mjs`).href);
+  const article = applyUpgrade(slug, withLiveOverride(slug, mod.default));
   // A package that replaces a live article must keep its type and slug: the public
   // URL is /articles/ or /guides/ + slug, and moving it needs the owner's approval.
   const existing = drafts.find((d) => d.external_id === article.external_id);
@@ -44,6 +45,8 @@ for (const slug of slugs) {
   const dir = `packages/${slug}`;
   await mkdir(dir, { recursive: true });
   await writeFile(`${dir}/payload.json`, JSON.stringify([article], null, 2));
+  // Image assets: zip-root filename -> local file, picked up by bundle.mjs.
+  if (mod.files && Object.keys(mod.files).length) await writeFile(`${dir}/assets.json`, JSON.stringify(mod.files, null, 1));
 
   const lines = [`# ${article.title}`, "", `> **پاسخ سریع:** ${article.quick_answer}`, "", `_${article.summary}_`, ""];
   for (const b of article.content_blocks) {
@@ -51,6 +54,7 @@ for (const slug of slugs) {
     else if (b.type === "text") lines.push(b.text, "");
     else if (b.type === "quote") lines.push(`> ${b.text}`, `> — ${b.cite}`, "");
     else if (b.type === "table") lines.push(`| ${b.headers.join(" | ")} |`, `|${b.headers.map(() => "---").join("|")}|`, ...b.rows.map((r) => `| ${r.join(" | ")} |`), "");
+    else if (b.type === "image") lines.push(`![${b.alt ?? ""}](${b.media_key})`, "");
     else if (b.type === "link_group") lines.push(...b.items.map((i) => `- [${i.label}](${i.href})`), "");
   }
   const words = lines.join(" ").split(/\s+/).filter(Boolean).length;

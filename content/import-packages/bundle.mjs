@@ -16,6 +16,7 @@ if (!out || !out.endsWith(".zip") || slugs.length === 0) {
 }
 
 const items = [];
+const assetFiles = {};
 for (const slug of slugs) {
   // An article edited on the site whose sources could not be matched to an external id
   // (see sync-live.mjs) would lose those sources if re-imported: leave it out.
@@ -26,6 +27,8 @@ for (const slug of slugs) {
   }
   const payload = JSON.parse(await readFile(`packages/${slug}/payload.json`, "utf8"));
   items.push(...(Array.isArray(payload) ? payload : [payload]));
+  const af = `packages/${slug}/assets.json`;
+  if ((await import("node:fs")).existsSync(af)) Object.assign(assetFiles, JSON.parse(await readFile(af, "utf8")));
 }
 
 // One import job must not hold two versions of the same article or two
@@ -42,5 +45,6 @@ if (versions.size !== 1) throw new Error(`mixed schema versions: ${[...versions]
 
 const zip = new AdmZip();
 zip.addFile("payload.json", Buffer.from(JSON.stringify(items, null, 2), "utf8"));
+for (const [name, file] of Object.entries(assetFiles)) zip.addFile(name, await readFile(file));
 zip.writeZip(out);
-console.log(`${out}: ${items.length} items (${[...versions][0]})`);
+console.log(`${out}: ${items.length} items (${[...versions][0]})${Object.keys(assetFiles).length ? `, ${Object.keys(assetFiles).length} images` : ""}`);
