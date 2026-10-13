@@ -1,6 +1,7 @@
 import { yearArticle } from "../lib/year.mjs";
+import { withYearHub } from "../lib/year-hub.mjs";
 
-export default yearArticle({
+export default withYearHub(1402, yearArticle({
   "year": 1402,
   "slug": "exam-1402-analysis",
   "tag": "۱۴۰۲",
@@ -28,4 +29,4 @@ export default yearArticle({
       ]
     ]
   }
-});
+}));

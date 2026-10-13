@@ -1,3 +1,4 @@
+import { withYearHub } from "../lib/year-hub.mjs";
 // Data article: the 1404 master's exam (computer engineering, set 1277) read
 // through 482 free-quota report cards, against 1403 (356 cards). Data:
 // analysis/years_1400_1405.py (tier B, aggregates only). Needed averages from
@@ -9,7 +10,7 @@ const text = (t) => ({ type: "text", text: t });
 const h2 = (t) => ({ type: "heading", level: 2, text: t });
 const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
-export default {
+export default withYearHub(1404, {
   schema_version: "article.v2",
   external_id: "kunkurcomputer-data-exam-1404-analysis",
   content_type: "article",
@@ -161,4 +162,4 @@ export default {
     source_artifact: "content/import-packages/articles/exam-1404-analysis.mjs",
   },
   review_status: "draft",
-};
+});

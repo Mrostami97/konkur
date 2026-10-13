@@ -1,3 +1,4 @@
+import { withYearHub } from "../lib/year-hub.mjs";
 // New data article: the 1405 master's exam (computer engineering 1277, with a
 // short IT 1276 section) read through its report cards, against 1403–1404, and
 // what it means for 1406. Data: analysis/exam_1405.py (tier B, aggregates
@@ -11,7 +12,7 @@ const text = (t) => ({ type: "text", text: t });
 const h2 = (t) => ({ type: "heading", level: 2, text: t });
 const h3 = (t) => ({ type: "heading", level: 3, text: t });
 
-export default {
+export default withYearHub(1405, {
   schema_version: "article.v2",
   external_id: "kunkurcomputer-data-exam-1405-analysis",
   content_type: "article",
@@ -206,4 +207,4 @@ export default {
     source_artifact: "content/import-packages/articles/exam-1405-analysis.mjs",
   },
   review_status: "draft",
-};
+});
