@@ -56,6 +56,18 @@ describe("invalid fixtures", () => {
     expect(result.errors.join(" ")).toMatch(/pattern/);
   });
 
+  it("accepts an article.v2 answer-key block and rejects an option outside 1-5", () => {
+    const fixture = load(validDir, "article-v2.json");
+    fixture.content_blocks.push({
+      type: "answer_key",
+      caption: "key",
+      groups: [{ title: "English", items: [{ n: 1, answer: [2] }, { n: 2, answer: [], mark: "deleted" }, { n: 3, answer: [2, 3], mark: "multi" }] }],
+    });
+    expect(validateArticleV2(fixture).valid).toBe(true);
+    fixture.content_blocks.at(-1).groups[0].items[0].answer = [7];
+    expect(validateArticleV2(fixture).valid).toBe(false);
+  });
+
   it("rejects report-card-contains-pii.json (unknown field)", () => {
     const result = validateReportCard(load(invalidDir, "report-card-contains-pii.json"));
     expect(result.valid).toBe(false);

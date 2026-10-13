@@ -223,6 +223,8 @@ export function PublicServiceError({ label = "محتوا" }: { label?: string })
 export interface ContentSection {
   id: string;
   title: string;
+  /** 2 for a main section; deeper headings stay out of the page's contents list. */
+  level: number;
   blocks: PublicContentBlock[];
 }
 
@@ -239,6 +241,7 @@ export function splitPublicContentBlocks(blocks: PublicContentBlock[]) {
       current = {
         id: `section-${sections.length + 1}`,
         title: String(block.text ?? `بخش ${toPersianDigits(sections.length + 1)}`),
+        level: Number(block.level),
         blocks: [block],
       };
       sections.push(current);
@@ -449,7 +452,7 @@ export function PublicArticleView({
             <div className="rd-toc">
               <strong>در این صفحه</strong>
               <nav aria-label="فهرست مطالب">
-                {sections.map((section) => <a key={section.id} href={`#${section.id}`}><RichText text={section.title} /></a>)}
+                {sections.filter((section) => section.level <= 2).map((section) => <a key={section.id} href={`#${section.id}`}><RichText text={section.title} /></a>)}
               </nav>
             </div>
           )}

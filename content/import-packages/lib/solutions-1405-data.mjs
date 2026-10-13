@@ -2,10 +2,14 @@
 // booklet 135A, for the subjects that remain in the 1406 exam. Stems and
 // options were checked against the booklet pages and crops (2026-10-13);
 // differences from the bank are logged in bank-corrections.md (q44 option 2,
-// q58 floor sign, q75 stray section heading). Keys: the bank's 1405 key; the
-// initial and final keys agree on every answer, except that the final key
-// deleted q65, q82, q102 (and q105, not covered: networks left the exam) and
-// gave q33 a positive effect.
+// q58 floor sign, q75 stray section heading). Keys: the initial key of 135A
+// (Sanjesh) and the final key, published for booklet 135B (same question
+// numbers, options in another order). The final key deleted q65, q82, q102
+// (and q105, not covered: networks left the exam), gave q33 a positive effect
+// and accepted two options for q86 («۳,۴» in 135B; in 135A the two readings
+// of the question give options 2 and 3, i.e. ۱۳ and ۱۱).
+//
+// `accepted`: the options the final key accepts when it is more than one.
 //
 // `image`: the booklet crop of the whole question, shipped as an asset for the
 // questions that need their figure.
@@ -231,7 +235,7 @@ export const QUESTIONS = [
   Q(85, "architecture", 2, "کدام مورد درخصوص روش‌های I/O درست است؟", ["در روش DMA (Direct Memory Access) پردازندهٔ اصلی به‌صورت واسط دستگاه I/O و حافظه جهت تبادل داده استفاده می‌شود.", "در روش Interrupted I/O پردازندهٔ اصلی درگیر مرحلهٔ «وارسی آماده بودن دستگاه I/O برای تبادل داده» نمی‌شود اما درگیر مرحلهٔ «تبادل داده» می‌شود.", "در روش Programmed I/O فقط در داخل برنامه‌ها و توسط کاربران و برنامه‌سازان کاربردی قابل استفاده است.", "روش Interrupted I/O کندترین روش I/O است."],
     "در ورودی/خروجی وقفه‌ای، دستگاه با وقفه خبر می‌دهد که آماده است، پس پردازنده دیگر وارسی (polling) نمی‌کند، ولی جابه‌جایی داده را هنوز خودش انجام می‌دهد. در DMA پردازنده واسط نیست (گزینهٔ ۱ غلط)، Programmed I/O محدود به برنامه‌های کاربر نیست (۳ غلط) و کندترین روش Programmed I/O با انتظار فعال است، نه وقفه‌ای (۴ غلط)."),
   Q(86, "architecture", 2, "در یک پردازندهٔ پایپ‌لاین پنج‌مرحله‌ای شامل واکشی دستور (IF)، واکشی عملوندها (ID)، اجرا در ALU (EX)، مراجعه به حافظه (DM) و ذخیرهٔ نتایج در ثبات مقصد (WB) مطابق جدول زیر دستوراتی اجرا می‌شوند. با فرض این‌که پردازنده هیچ‌گونه امکان رفع مخاطرات (Hazard) وابستگی به‌صورت نرم‌افزاری و یا forwarding نداشته و صرفاً اضافه کردن تأخیر (stall) امکان‌پذیر باشد، تعداد پالس‌های ساعت مورد نیاز برای اجرای این دستورات چقدر است؟ (هر مرحله در یک پالس ساعت انجام می‌شود، LD و STR دستورات خواندن و نوشتن حافظه هستند.)\nLD X0, 10(X1)\nADD X2, X1, X0\nSTR 20(X1), X2", ["۱۵", "۱۳", "۱۱", "۱۰"],
-    String.raw`ADD به X0 نیاز دارد که LD در WB می‌نویسد، و STR به X2 که ADD در WB می‌نویسد. بدون forwarding، و با این فرض که نوشتن و خواندن ثبات در یک پالس انجام نمی‌شود (ID دستور بعدی پالس بعد از WB دستور قبلی است): LD: ۱ تا ۵. ADD: IF در ۲، ID در ۶، EX ۷، DM ۸، WB ۹. STR: ID در ۱۰، EX ۱۱، DM ۱۲، WB ۱۳. جمع: ۱۳ پالس. (اگر فرض شود ثبات در نیمهٔ اول پالس نوشته و در نیمهٔ دوم خوانده می‌شود، جواب ۱۱ می‌شد؛ کلید سنجش ۱۳ است.)`),
+    String.raw`ADD به X0 نیاز دارد که LD در WB می‌نویسد، و STR به X2 که ADD در WB می‌نویسد. بدون forwarding، و با این فرض که نوشتن و خواندن ثبات در یک پالس انجام نمی‌شود (ID دستور بعدی پالس بعد از WB دستور قبلی است): LD: ۱ تا ۵. ADD: IF در ۲، ID در ۶، EX ۷، DM ۸، WB ۹. STR: ID در ۱۰، EX ۱۱، DM ۱۲، WB ۱۳. جمع: ۱۳ پالس.\nاما صورت سؤال نگفته ثبات کی نوشته و کی خوانده می‌شود. اگر مثل بیشتر کتاب‌ها فرض کنیم WB در نیمهٔ اول پالس می‌نویسد و ID در نیمهٔ دوم همان پالس می‌خواند، هر وابستگی یک پالس کمتر صبر می‌کند و جواب ۱۱ می‌شود. کلید اولیه فقط ۱۳ را درست می‌دانست؛ کلید نهایی سؤال را دوکلیدی کرد و هر دو برداشت پذیرفته شد.`, { accepted: [2, 3] }),
   Q(87, "architecture", 4, "کدام مورد درخصوص معماری حافظه درست است؟", ["روش برگ‌برگ‌سازی (interleaving) تأثیری در پهنای باند و تحمل‌پذیری اشکال حافظه ندارد.", "در یک حافظهٔ برگ‌برگ‌شده براساس بیت‌های پرارزش (high-order interleaving) پهنای باند حافظه افزایش می‌یابد.", "یک حافظهٔ برگ‌برگ‌شده براساس بیت‌های کم‌ارزش (low-order interleaving) تحمل‌پذیر اشکال است.", String.raw`برگ‌برگ‌سازی (interleaving) یک حافظه با حجم $2^M$ واحد به کمک پیمانه‌های حافظهٔ $2^m$ واحدی می‌تواند به $\binom{M}{M-m}$ روش مختلف صورت گیرد.`],
     String.raw`با $2^{M-m}$ پیمانه، باید $M-m$ بیت از $M$ بیت آدرس را برای انتخاب پیمانه برداریم: $\binom{M}{M-m}$ روش. برگ‌برگ‌سازی کم‌ارزش پهنای باند را بالا می‌برد ولی تحمل‌پذیر اشکال نیست (خرابی یک پیمانه همهٔ بلوک‌ها را خراب می‌کند)؛ برگ‌برگ‌سازی پرارزش برعکس، پهنای باند دسترسی‌های پشت سر هم را بالا نمی‌برد ولی خرابی یک پیمانه فقط یک بخش حافظه را از دست می‌برد.`),
   Q(88, "architecture", 3, "در یک پردازنده با ظرفیت حافظهٔ ۱GB از حافظهٔ نهان انجمنی ۴-way استفاده شده که ظرفیت آن ۲۵۶ kB است. اگر اندازهٔ هر بلوک حافظهٔ نهان ۳۲ بایت باشد، به‌ترتیب، هر کدام از فیلدهای byte offset، index و Tag چند بیت هستند؟", ["(۵، ۱۲ و ۱۳)", "(۷، ۹ و ۱۴)", "(۵، ۱۱ و ۱۴)", "(۵، ۱۳ و ۱۲)"],

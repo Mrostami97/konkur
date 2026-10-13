@@ -114,6 +114,88 @@ function renderProse(text: string, key: number) {
   );
 }
 
+type KeyMark = "deleted" | "positive" | "multi" | "initial";
+type KeyItem = { n: number; answer: number[]; mark?: KeyMark; note?: string };
+const faDigits = (value: number | string) => String(value).replace(/[0-9]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
+const KEY_MARKS: Record<KeyMark, { badge: string; legend: string }> = {
+  deleted: { badge: "حذف", legend: "در کلید نهایی حذف شد؛ برای هیچ‌کس حساب نشد" },
+  multi: { badge: "دوکلیدی", legend: "بیش از یک گزینه درست اعلام شد" },
+  positive: { badge: "تأثیر مثبت", legend: "پاسخ فقط به نفع داوطلب حساب شد" },
+  initial: { badge: "اولیه", legend: "پاسخ از کلید اولیه" },
+};
+
+function keyItems(value: unknown): KeyItem[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((raw) => {
+    if (!raw || typeof raw !== "object") return [];
+    const item = raw as { n?: unknown; answer?: unknown; mark?: unknown; note?: unknown };
+    if (typeof item.n !== "number") return [];
+    const answer = Array.isArray(item.answer) ? item.answer.filter((o): o is number => typeof o === "number") : [];
+    const mark = typeof item.mark === "string" && item.mark in KEY_MARKS ? (item.mark as KeyMark) : undefined;
+    return [{ n: item.n, answer, mark, note: typeof item.note === "string" ? item.note : undefined }];
+  });
+}
+
+/**
+ * A whole answer key drawn like the answer sheet itself: four bubbles per
+ * question, the accepted ones filled, and the final key's changes named on
+ * the cell instead of in a footnote.
+ */
+function AnswerKey({ block }: { block: Block }) {
+  const groups = (Array.isArray(block.groups) ? block.groups : []).map((raw) => {
+    const group = (raw ?? {}) as { title?: unknown; items?: unknown };
+    return { title: typeof group.title === "string" ? group.title : null, items: keyItems(group.items) };
+  }).filter((group) => group.items.length > 0);
+  if (groups.length === 0) return null;
+  const used = (Object.keys(KEY_MARKS) as KeyMark[]).filter((mark) => groups.some((group) => group.items.some((item) => item.mark === mark)));
+  const options = Math.max(4, ...groups.flatMap((group) => group.items.flatMap((item) => item.answer)));
+  const caption = typeof block.caption === "string" ? block.caption : null;
+  return (
+    <figure className="cb-key">
+      {groups.map((group, groupIndex) => (
+        <div key={groupIndex} className="cb-key-group">
+          {group.title && (
+            <p className="cb-key-title">
+              <RichText text={group.title} />
+              <span>{faDigits(group.items[0].n)} تا {faDigits(group.items[group.items.length - 1].n)}</span>
+            </p>
+          )}
+          <ol className="cb-key-grid">
+            {group.items.map((item) => {
+              const label = item.mark === "deleted"
+                ? `سؤال ${faDigits(item.n)}: حذف شد`
+                : `سؤال ${faDigits(item.n)}: گزینهٔ ${item.answer.map(faDigits).join(" و ")}${item.mark ? `، ${KEY_MARKS[item.mark].badge}` : ""}`;
+              return (
+                <li key={item.n} className="cb-key-cell" data-mark={item.mark} aria-label={label} title={item.note ?? label}>
+                  <b className="cb-key-n">{faDigits(item.n)}</b>
+                  <span className="cb-key-bubbles" aria-hidden="true">
+                    {Array.from({ length: options }, (_, i) => i + 1).map((option) => (
+                      <i key={option} data-on={item.mark !== "deleted" && item.answer.includes(option) ? "" : undefined}>{faDigits(option)}</i>
+                    ))}
+                  </span>
+                  {item.mark && <em className="cb-key-badge" aria-hidden="true">{KEY_MARKS[item.mark].badge}</em>}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      ))}
+      {(used.length > 0 || caption) && (
+        <figcaption>
+          {used.length > 0 && (
+            <ul className="cb-key-legend">
+              {used.map((mark) => (
+                <li key={mark} data-mark={mark}><em>{KEY_MARKS[mark].badge}</em> {KEY_MARKS[mark].legend}</li>
+              ))}
+            </ul>
+          )}
+          {caption && <RichText text={caption} />}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 function renderBlock(block: Block, index: number, assets: Asset[]) {
   switch (block.type) {
     case "heading": {
@@ -205,6 +287,8 @@ function renderBlock(block: Block, index: number, assets: Asset[]) {
         </div>
       );
     }
+    case "answer_key":
+      return <AnswerKey key={index} block={block} />;
     case "latex":
       return (
         <div

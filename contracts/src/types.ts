@@ -62,6 +62,19 @@ export interface ArticleLinkGroupBlock {
   items: { label: string; href: string }[];
 }
 
+/**
+ * A whole answer key drawn as an answer sheet: per question the accepted
+ * options (empty when deleted) and how the final key treated it.
+ */
+export interface ArticleAnswerKeyBlock {
+  type: "answer_key";
+  caption?: string;
+  groups: {
+    title?: string;
+    items: { n: number; answer: number[]; mark?: "deleted" | "positive" | "multi" | "initial"; note?: string }[];
+  }[];
+}
+
 export interface ArticleV2 {
   schema_version: "article.v2";
   external_id: string;
@@ -70,7 +83,7 @@ export interface ArticleV2 {
   slug: string;
   summary: string;
   quick_answer: string;
-  content_blocks: (ArticleBlock | ArticleLinkGroupBlock)[];
+  content_blocks: (ArticleBlock | ArticleLinkGroupBlock | ArticleAnswerKeyBlock)[];
   taxonomy: {
     major: string[];
     tags?: string[];

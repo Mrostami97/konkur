@@ -198,7 +198,7 @@
 }
 .rd-page .editorial-body p { margin: 0 0 1rem; color: var(--ink-800); font-size: 1.02rem; line-height: 2.15; }
 .rd-page .editorial-body ul { display: grid; gap: 0.6rem; margin: 0.5rem 0 1rem; padding: 0; list-style: none; }
-.rd-page .editorial-body li {
+.rd-page .editorial-body li:not(.cb-key li) {
   position: relative;
   padding: 0.7rem 1rem;
   padding-inline-start: 2.6rem;
@@ -208,7 +208,7 @@
   font-size: 0.96rem;
   line-height: 1.9;
 }
-.rd-page .editorial-body li::before {
+.rd-page .editorial-body li:not(.cb-key li)::before {
   content: "";
   position: absolute;
   inset-inline-start: 0.9rem;
@@ -218,7 +218,7 @@
   border-radius: 50%;
   background: var(--rd-accent-2);
 }
-.rd-page .editorial-body li::after {
+.rd-page .editorial-body li:not(.cb-key li)::after {
   content: "";
   position: absolute;
   inset-inline-start: 1.22rem;

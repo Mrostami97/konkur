@@ -79,3 +79,19 @@ assert.equal(realRenderer.renderLatex(deepFormula).includes("<img"), false, "rea
 assert.ok(realRenderer.renderLatex("x^2+1").includes("katex"), "valid formulas retain real KaTeX rendering");
 
 console.log("ContentBlocks: text layout, valid math and escaped exception fallbacks verified.");
+
+// An answer key is drawn as an answer sheet: filled bubbles for accepted options, the final key's changes named.
+{
+  const html = renderToStaticMarkup(React.createElement(mod.exports.ContentBlocks, { blocks: [{
+    type: "answer_key",
+    caption: "کلید ۱۴۰۵",
+    groups: [{ title: "معماری", items: [{ n: 85, answer: [3] }, { n: 86, answer: [2, 3], mark: "multi" }, { n: 82, answer: [], mark: "deleted" }] }],
+  }] }));
+  assert.match(html, /<figure class="cb-key">/);
+  assert.equal((html.match(/data-on=""/g) ?? []).length, 3, "one bubble for 85, two for 86, none for the deleted 82");
+  assert.match(html, /aria-label="سؤال ۸۶: گزینهٔ ۲ و ۳، دوکلیدی"/);
+  assert.match(html, /aria-label="سؤال ۸۲: حذف شد"/);
+  assert.match(html, /۸۵ تا ۸۲|۸۵<\/b>/);
+  assert.match(html, /دوکلیدی<\/em> بیش از یک گزینه/);
+  assert.ok(!/تأثیر مثبت<\/em>/.test(html), "the legend lists only marks the key uses");
+}
