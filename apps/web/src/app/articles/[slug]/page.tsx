@@ -24,7 +24,7 @@ interface TaxonomyEntry {
 // Rendered on a page's first request and then served from cache for
 // PUBLIC_PAGE_REVALIDATE seconds. Nothing is prerendered at build (the image is
 // built without the API); the empty list is what makes the route cacheable.
-export const revalidate = 300;
+export const revalidate = 60;
 export function generateStaticParams() {
   return [];
 }

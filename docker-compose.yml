@@ -81,6 +81,8 @@ services:
       SMSIR_CODE_PARAMETER: ${SMSIR_CODE_PARAMETER:-CODE}
       # The Telegram bot behind the mini app; it signs the mini app's automatic sign-in. Set only in the server .env.
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      # After an edit, drops the web app's cached public pages (internal network only).
+      WEB_INTERNAL_URL: http://web:3000
 
   web:
     build:

@@ -92,6 +92,12 @@ server {
         return 308 /api/;
     }
 
+    # The API's internal calls to the web app (e.g. /internal/revalidate) come
+    # over the Docker network, never from the internet.
+    location ^~ /internal/ {
+        return 404;
+    }
+
     location ^~ /api/ {
         # Admins upload import zips, PDF notes and sample-lesson videos (up to
         # 300 MB, checked again by the API); nginx refuses bodies over

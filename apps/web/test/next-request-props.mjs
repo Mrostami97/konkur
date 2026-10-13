@@ -83,19 +83,30 @@ try {
     await delay(250);
   }
   assert.ok(ready, "isolated Next production server must become ready");
+  // Public pages are cached between runs of the same build; start from a clean cache.
+  assert.equal((await read("/internal/revalidate", { method: "POST" })).response.status, 200);
 
   const article = await read("/articles/dependency-smoke");
   assert.equal(article.response.status, 200);
   assert.match(article.body, /نمونهٔ آزمایش مهاجرت/);
   metadata(article.body, "/articles/dependency-smoke");
+  // Public article pages are cached (served again without a render), and an
+  // edit shows at once because the API drops the cache after it.
+  assert.ok(article.response.headers.get("x-nextjs-cache"), "public article pages must be served from Next's page cache");
   title = "عنوان جدید آزمایش محلی";
+  const fromOutside = await read("/internal/revalidate", { method: "POST", headers: { "X-Forwarded-For": "203.0.113.7" } });
+  assert.equal(fromOutside.response.status, 404, "a request through the proxy must not drop the cache");
+  const dropped = await read("/internal/revalidate", { method: "POST" });
+  assert.equal(dropped.response.status, 200);
   const refreshed = await read("/articles/dependency-smoke");
-  assert.match(refreshed.body, /عنوان جدید آزمایش محلی/, "public no-store reads must observe updated API content");
+  assert.match(refreshed.body, /عنوان جدید آزمایش محلی/, "an edit must show as soon as the API drops the cache");
   checks++;
 
   const redirected = await read("/articles/dependency-guide", { redirect: "manual" });
   assert.equal(redirected.response.status, 308);
-  assert.equal(redirected.response.headers.get("location"), "/guides/dependency-guide");
+  // On the page's first (uncached) render Next sends the Location header twice,
+  // identically; browsers accept that, and fetch joins the two with ", ".
+  assert.deepEqual([...new Set((redirected.response.headers.get("location") ?? "").split(",").map((part) => part.trim()))], ["/guides/dependency-guide"]);
   checks++;
   const guide = await read("/guides/dependency-guide");
   assert.equal(guide.response.status, 200);

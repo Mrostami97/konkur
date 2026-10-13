@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
+import { schedulePublicCacheRefresh, touchesPublicContent } from "./public-cache";
 
 export interface AuditEntry {
   actorUserId?: string | null;
@@ -25,5 +26,8 @@ export class AuditService {
         metadata: entry.metadata ?? undefined,
       },
     });
+    // Every change to public content is audited, so this one place keeps the
+    // web app's cached article and guide pages fresh.
+    if (touchesPublicContent(entry.action)) schedulePublicCacheRefresh();
   }
 }
