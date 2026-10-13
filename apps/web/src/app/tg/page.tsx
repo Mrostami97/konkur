@@ -13,6 +13,7 @@ export const metadata: Metadata = { ...PRIVATE_PAGE_METADATA, title: { absolute:
  */
 const FEATURED: (FeaturedItem & { slug?: string })[] = [
   { href: "/articles/konkur-1405-computer-engineering-solutions", slug: "konkur-1405-computer-engineering-solutions", title: "پاسخ تشریحی ۱۴۰۵", note: "حل همهٔ درس‌های ۱۴۰۶، سؤال به سؤال" },
+  { href: "/articles/konkur-1404-computer-engineering-solutions", slug: "konkur-1404-computer-engineering-solutions", title: "پاسخ تشریحی ۱۴۰۴", note: "۸۴ تست ۱۴۰۴، با نکتهٔ تستی هر سؤال" },
   { href: "/budget", title: "بودجه‌بندی هوشمند", note: "هر درس چند تست، و رتبه کجا ساخته می‌شود" },
   { href: "/articles/master-computer-answer-keys", slug: "master-computer-answer-keys", title: "کلید کنکورها", note: "پاسخ همهٔ سؤال‌های ۱۴۰۰ تا ۱۴۰۵" },
   { href: "/lesson-notes", title: "درس‌نامه‌ها", note: "مبحث‌به‌مبحث، با تست کنکور" },

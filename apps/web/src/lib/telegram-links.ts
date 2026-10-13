@@ -13,11 +13,12 @@
 export const START_PARAM_PAGES: Record<string, string> = {
   budget: "/budget",
   solutions1405: "/articles/konkur-1405-computer-engineering-solutions",
+  solutions1404: "/articles/konkur-1404-computer-engineering-solutions",
   keys: "/articles/master-computer-answer-keys",
   notes: "/lesson-notes",
   bank: "/questions",
   exams: "/exams",
-  rank: "/rank-estimate",
+  rank: "/rank-calculator/master-computer-engineering",
   choices: "/choices",
   courses: "/courses",
   videos: "/free-videos",

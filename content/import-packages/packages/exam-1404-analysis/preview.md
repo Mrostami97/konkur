@@ -29,6 +29,7 @@ _کلید و تعداد تست هر درس کنکور ارشد مهندسی کا
 | شبکه‌های کامپیوتری | ۶ | کنار رفت |
 | پایگاه داده | ۷ | کنار رفت |
 
+- [حل تشریحی سؤالات ۱۴۰۴](/articles/konkur-1404-computer-engineering-solutions)
 - [کلید همهٔ سال‌ها در یک صفحه](/articles/master-computer-answer-keys)
 - [بودجه‌بندی هوشمند ۱۴۰۶](/budget)
 - [تخمین رتبه با درصدهای خودت](/rank-calculator/master-computer-engineering)

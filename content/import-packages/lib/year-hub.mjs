@@ -17,6 +17,8 @@ const h2 = (t) => ({ type: "heading", level: 2, text: t });
 /** Subjects of the 1406 exam of set 1277, as bank_stats names them. */
 const IN_1406 = new Set(["زبان", "آمار و احتمال مهندسی", "ریاضیات گسسته", "نظریه زبان‌ها و ماشین‌ها", "داده‌ساختارها و الگوریتم‌ها", "هوش مصنوعی", "مدار منطقی", "معماری کامپیوتر", "سیستم‌های عامل"]);
 const YEARS = [1400, 1401, 1402, 1403, 1404, 1405];
+/** Years whose worked solutions are published (lib/solutions-YYYY.mjs). */
+const SOLVED = [1404, 1405];
 
 function hubBlocks(year) {
   const stats = BANK[year];
@@ -31,7 +33,7 @@ function hubBlocks(year) {
     rows: rows.map(([name, n]) => [name, fa(n), IN_1406.has(name) ? "هست" : "کنار رفت"]),
   });
   const items = [
-    ...(year === 1405 ? [{ label: "حل تشریحی سؤالات ۱۴۰۵", href: "/articles/konkur-1405-computer-engineering-solutions" }] : []),
+    ...(SOLVED.includes(year) ? [{ label: `حل تشریحی سؤالات ${fa(year)}`, href: `/articles/konkur-${year}-computer-engineering-solutions` }] : []),
     { label: "کلید همهٔ سال‌ها در یک صفحه", href: "/articles/master-computer-answer-keys" },
     { label: "بودجه‌بندی هوشمند ۱۴۰۶", href: "/budget" },
     { label: "تخمین رتبه با درصدهای خودت", href: "/rank-calculator/master-computer-engineering" },

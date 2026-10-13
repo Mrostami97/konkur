@@ -1,0 +1,2987 @@
+[
+  {
+    "schema_version": "article.v2",
+    "external_id": "kunkurcomputer-solutions-konkur-1404-computer-engineering-solutions",
+    "content_type": "article",
+    "title": "حل تشریحی سؤالات کنکور ارشد مهندسی کامپیوتر ۱۴۰۴",
+    "slug": "konkur-1404-computer-engineering-solutions",
+    "summary": "همهٔ ۸۴ تست کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در درس‌هایی که در ۱۴۰۶ هم هستند، یک‌جا و سؤال به سؤال حل شده؛ با کلید کامل به شکل پاسخ‌برگ، تصویر کلید سنجش و نکتهٔ تستی هر سؤال.",
+    "quick_answer": "حل تشریحی کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ برای همهٔ درس‌هایی که در ۱۴۰۶ مانده‌اند (زبان، آمار، گسسته، نظریه، داده‌ساختار و الگوریتم، هوش، مدار منطقی، معماری و سیستم عامل) در همین صفحه آمده است؛ ۸۴ سؤال، با کلید سنجش برای دفترچهٔ 335C.",
+    "content_blocks": [
+      {
+        "type": "text",
+        "text": "همهٔ تست‌های کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ (مجموعهٔ ۱۲۷۷) که درسشان در کنکور ۱۴۰۶ هم هست، این‌جا یک‌جا و سؤال به سؤال حل شده‌اند: ۸۴ سؤال از ۹ درس، از زبان تا سیستم عامل. صورت هر سؤال کلمه‌به‌کلمه با دفترچه مقایسه شده و هر جا سؤال بیش از یک برداشت داشته، هر دو را کنار همان سؤال گفته‌ایم."
+      },
+      {
+        "type": "text",
+        "text": "اگر حوصلهٔ یک صفحهٔ بلند را نداری، هر درس صفحهٔ جدای خودش را هم دارد (پیوندها پایین همین بخش). و یک توصیه: کنکور ۱۴۰۴ کنار ۱۴۰۵ نزدیک‌ترین تمرین به کنکور ۱۴۰۶ است؛ اول خودت با زمان حلش کن، بعد سراغ حل‌ها بیا."
+      },
+      {
+        "type": "link_group",
+        "items": [
+          {
+            "label": "فقط زبان عمومی و تخصصی",
+            "href": "/articles/konkur-1404-english-solutions"
+          },
+          {
+            "label": "فقط آمار و احتمال مهندسی",
+            "href": "/articles/konkur-1404-statistics-solutions"
+          },
+          {
+            "label": "فقط ریاضیات گسسته",
+            "href": "/articles/konkur-1404-discrete-math-solutions"
+          },
+          {
+            "label": "فقط نظریه زبان‌ها و ماشین‌ها",
+            "href": "/articles/konkur-1404-automata-solutions"
+          },
+          {
+            "label": "فقط داده‌ساختارها و الگوریتم‌ها",
+            "href": "/articles/konkur-1404-data-structures-algorithms-solutions"
+          },
+          {
+            "label": "فقط هوش مصنوعی",
+            "href": "/articles/konkur-1404-artificial-intelligence-solutions"
+          },
+          {
+            "label": "فقط مدارهای منطقی",
+            "href": "/articles/konkur-1404-digital-logic-solutions"
+          },
+          {
+            "label": "فقط معماری کامپیوتر",
+            "href": "/articles/konkur-1404-computer-architecture-solutions"
+          },
+          {
+            "label": "فقط سیستم‌های عامل",
+            "href": "/articles/konkur-1404-operating-systems-solutions"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "کلید ۱۴۰۴ در یک نگاه"
+      },
+      {
+        "type": "text",
+        "text": "هر خانه یک سؤال است و گزینهٔ درستش پر شده؛ درست مثل پاسخ‌برگ خودت. کلید هر ۱۱۵ سؤال آمده، حتی درس‌هایی که از ۱۴۰۶ کنار رفته‌اند."
+      },
+      {
+        "type": "answer_key",
+        "caption": "گزینه‌ها مطابق دفترچهٔ 335C.",
+        "groups": [
+          {
+            "title": "زبان عمومی و تخصصی",
+            "items": [
+              {
+                "n": 1,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 2,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 3,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 4,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 5,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 6,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 7,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 8,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 9,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 10,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 11,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 12,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 13,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 14,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 15,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 16,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 17,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 18,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 19,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 20,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 21,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 22,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 23,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 24,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 25,
+                "answer": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "title": "ریاضی عمومی ۱ و ۲ (در ۱۴۰۶ نیست)",
+            "items": [
+              {
+                "n": 26,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 27,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 28,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 29,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 30,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 31,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 32,
+                "answer": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "title": "آمار و احتمال مهندسی",
+            "items": [
+              {
+                "n": 33,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 34,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 35,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 36,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 37,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 38,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 39,
+                "answer": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "title": "ریاضیات گسسته",
+            "items": [
+              {
+                "n": 40,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 41,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 42,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 43,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 44,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 45,
+                "answer": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "title": "نظریه زبان‌ها و ماشین‌ها",
+            "items": [
+              {
+                "n": 46,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 47,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 48,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 49,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 50,
+                "answer": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "title": "سیگنال‌ها و سیستم‌ها (در ۱۴۰۶ نیست)",
+            "items": [
+              {
+                "n": 51,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 52,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 53,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 54,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 55,
+                "answer": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "title": "داده‌ساختارها و الگوریتم‌ها",
+            "items": [
+              {
+                "n": 56,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 57,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 58,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 59,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 60,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 61,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 62,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 63,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 64,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 65,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 66,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 67,
+                "answer": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "title": "هوش مصنوعی",
+            "items": [
+              {
+                "n": 68,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 69,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 70,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 71,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 72,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 73,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 74,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 75,
+                "answer": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "title": "مدارهای منطقی",
+            "items": [
+              {
+                "n": 76,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 77,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 78,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 79,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 80,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 81,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 82,
+                "answer": [
+                  4
+                ]
+              }
+            ]
+          },
+          {
+            "title": "معماری کامپیوتر",
+            "items": [
+              {
+                "n": 83,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 84,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 85,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 86,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 87,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 88,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 89,
+                "answer": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "title": "الکترونیک دیجیتال (در ۱۴۰۶ نیست)",
+            "items": [
+              {
+                "n": 90,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 91,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 92,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 93,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 94,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 95,
+                "answer": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "title": "سیستم‌های عامل",
+            "items": [
+              {
+                "n": 96,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 97,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 98,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 99,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 100,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 101,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 102,
+                "answer": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "title": "شبکه‌های کامپیوتری (در ۱۴۰۶ نیست)",
+            "items": [
+              {
+                "n": 103,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 104,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 105,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 106,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 107,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 108,
+                "answer": [
+                  4
+                ]
+              }
+            ]
+          },
+          {
+            "title": "پایگاه داده‌ها (در ۱۴۰۶ نیست)",
+            "items": [
+              {
+                "n": 109,
+                "answer": [
+                  4
+                ]
+              },
+              {
+                "n": 110,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 111,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 112,
+                "answer": [
+                  2
+                ]
+              },
+              {
+                "n": 113,
+                "answer": [
+                  1
+                ]
+              },
+              {
+                "n": 114,
+                "answer": [
+                  3
+                ]
+              },
+              {
+                "n": 115,
+                "answer": [
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "تصویر کلید ۱۴۰۴"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-key-335c",
+        "alt": "کلید کنکور ارشد مهندسی کامپیوتر ۱۴۰۴، دفترچهٔ 335C",
+        "caption": "کلید سنجش برای دفترچهٔ 335C (دروس اختصاصی، مجموعهٔ ۱۲۷۷). شمارهٔ گزینه‌های همین صفحه با این دفترچه است."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "زبان عمومی و تخصصی: سؤال‌های ۱ تا ۲۵"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱"
+      },
+      {
+        "type": "text",
+        "text": "One theory holds that humans became highly ………… because evolution selected those of our forefathers who were especially good at solving problems."
+      },
+      {
+        "type": "text",
+        "text": "۱) successive\n۲) concerned\n۳) passionate\n۴) intelligent"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "کلید جمله آخر آن است: تکامل نیاکانی را برگزید که در «حل مسئله» خوب بودند؛ نتیجه‌اش انسانِ بسیار «باهوش» است. intelligent یعنی باهوش؛ successive (پی‌درپی)، concerned (نگران) و passionate (پرشور) با حل مسئله ربطی ندارند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۲"
+      },
+      {
+        "type": "text",
+        "text": "Is it true that the greenhouse …………, the feared heating of the earth's atmosphere by burning coal and oil, is just another false alarm?"
+      },
+      {
+        "type": "text",
+        "text": "۱) effect\n۲) energy\n۳) force\n۴) warmth"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "«greenhouse effect» (اثر گلخانه‌ای) یک ترکیب ثابت است و بدل بعد از آن (گرم شدن جو زمین با سوزاندن زغال و نفت) دقیقاً تعریف همین اثر است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳"
+      },
+      {
+        "type": "text",
+        "text": "In most people, the charitable and ………… motives operate in some reasonable kind of balance."
+      },
+      {
+        "type": "text",
+        "text": "۱) obvious\n۲) high\n۳) selfish\n۴) prime"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "جمله از «تعادل» میان دو انگیزه حرف می‌زند، پس جای خالی باید نقطهٔ مقابل charitable (نیکوکارانه) باشد: selfish یعنی خودخواهانه."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴"
+      },
+      {
+        "type": "text",
+        "text": "Whatever the immediate ………… of the Nigerian-led intervention, West African diplomats said the long-term impact of recent events in Sierra Leone would be disastrous."
+      },
+      {
+        "type": "text",
+        "text": "۱) reciprocity\n۲) outcome\n۳) reversal\n۴) meditation"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "«immediate …» در برابر «long-term impact» آمده است: نتیجهٔ فوری در مقابل اثر بلندمدت. outcome یعنی نتیجه؛ reciprocity (معامله به مثل)، reversal (وارونگی) و meditation (تأمل) معنا را نمی‌سازند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۵"
+      },
+      {
+        "type": "text",
+        "text": "The last thing I would wish to do is to ………… a sense of ill will, deception or animosity in an otherwise idyllic environment."
+      },
+      {
+        "type": "text",
+        "text": "۱) postpone\n۲) accuse\n۳) foster\n۴) divest"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "«آخرین کاری که می‌خواهم بکنم این است که حس بدخواهی و دشمنی را … کنم» یعنی نمی‌خواهم آن را پرورش دهم و دامن بزنم: foster. accuse مفعولِ «حس» نمی‌گیرد و postpone (به تعویق انداختن) و divest (سلب کردن) معنا ندارند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶"
+      },
+      {
+        "type": "text",
+        "text": "While the movie offers unsurpassed action, ………… script makes this the least of the three \"Die Hards.\""
+      },
+      {
+        "type": "text",
+        "text": "۱) an auspicious\n۲) a stirring\n۳) an edifying\n۴) a feeble"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "While تضاد می‌سازد: اکشن بی‌نظیر است، ولی فیلمنامه باعث شده این فیلم ضعیف‌ترین «جان‌سخت» باشد. پس فیلمنامه «ضعیف» است: a feeble. سه گزینهٔ دیگر (فرخنده، هیجان‌انگیز، آموزنده) مثبت‌اند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷"
+      },
+      {
+        "type": "text",
+        "text": "Relations between Communist China and the Soviet Union have unfortunately begun to ………… again after a period of relative restraint in their ideological quarrel. We can only hope that common sense prevails again."
+      },
+      {
+        "type": "text",
+        "text": "۱) ameliorate\n۲) deteriorate\n۳) solemnize\n۴) petrify"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "unfortunately و «امیدواریم عقل سلیم دوباره غالب شود» نشان می‌دهد روابط دوباره «بدتر» شده است: deteriorate. ameliorate درست برعکس، یعنی بهتر شدن است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "متن Cloze Test (سؤال‌های ۸ تا ۱۰)"
+      },
+      {
+        "type": "quote",
+        "text": "Before the 1970s, the Olympic Games were officially limited to competitors with amateur status, but in the 1980s, many events ……(8) to professional athletes. Currently, the Games are open to all, even the top professional athletes in basketball and football. The ancient Olympic Games included several of the sports ……(9) of the Summer Games program, which at times has included events in as many as 32 different sports. In 1924, the Winter Games were sanctioned for winter sports. ……(10) regarded as the world's foremost sports competition."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸"
+      },
+      {
+        "type": "text",
+        "text": "Choose the best option for blank (8) in the passage above."
+      },
+      {
+        "type": "text",
+        "text": "۱) to be opened\n۲) that were opening\n۳) were opened\n۴) opening"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "جمله بعد از but فعل اصلی ندارد: «many events … to professional athletes». رویدادها را «باز کردند»، پس مجهول گذشته لازم است: were opened. گزینه‌های ۱ و ۴ فعل اصلی نیستند و ۲ معلوم است و جمله را ناقص می‌گذارد."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۹"
+      },
+      {
+        "type": "text",
+        "text": "Choose the best option for blank (9) in the passage above."
+      },
+      {
+        "type": "text",
+        "text": "۱) that are now part\n۲) which now being part\n۳) now are parts\n۴) had now been parts"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "جای خالی صفت «the sports» است: ورزش‌هایی که «اکنون بخشی از» برنامهٔ بازی‌های تابستانی‌اند. جملهٔ موصولی کامل: that are now part. گزینهٔ ۲ فعل ندارد، ۳ بدون موصول جمله را می‌شکند و زمان ۴ (ماضی بعید) با now نمی‌خواند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۰"
+      },
+      {
+        "type": "text",
+        "text": "Choose the best option for blank (10) in the passage above."
+      },
+      {
+        "type": "text",
+        "text": "۱) The Olympic Games came to have been\n۲) The Olympic Games have come to be\n۳) The fact is the Olympic Games to be\n۴) That the Olympic Games have been"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "جمله با «regarded as» ادامه پیدا می‌کند و فاعل و فعل کامل می‌خواهد: «بازی‌های المپیک (به‌مرور) به‌عنوان مهم‌ترین رقابت ورزشی جهان شناخته شده‌اند» یعنی have come to be regarded. گزینهٔ ۴ با That جمله را به یک بند وابستهٔ بی‌فعل تبدیل می‌کند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Passage 1 (سؤال‌های ۱۱ تا ۱۵)"
+      },
+      {
+        "type": "quote",
+        "text": "The emergence of computers and the Internet is among the most technological advances that has happened in the twentieth century. Individuals have gained greater access to information of all sorts, and the gap that exists between technology and human intellect is getting thinner. As societies utilize the technology in various fields, some new ethical concerns have arisen. Extensive use of the technology has also made possible potentially unethical activities such as violation of individual privacy and other illegal forays into private network spaces. Not all network users are honest individuals, and not all of them adhere to ethical standards of moral behavior."
+      },
+      {
+        "type": "quote",
+        "text": "Some computer users keep a large amount of their personal information on their computer systems or on the network spaces in social media. The use of social media is on the rise. As a result of this, hackers and other intruders have a greater opportunity to access private data, and use them for unlawful purposes. These concerns contributed to the rise of a field known as computer ethics which deals with the procedures, values and practices that govern the process of consuming computing technology and its related disciplines in a way that does not damage or violate the moral values and beliefs of any individual, organization or society."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۱"
+      },
+      {
+        "type": "text",
+        "text": "The underlined word “utilize” in paragraph 1 is closest in meaning to ………… ."
+      },
+      {
+        "type": "text",
+        "text": "۱) produce\n۲) improve\n۳) employ\n۴) analyze"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "utilize یعنی به کار بردن و استفاده کردن؛ هم‌معنی آن employ است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۲"
+      },
+      {
+        "type": "text",
+        "text": "The underlined word “them” in paragraph 1 refers to ………… ."
+      },
+      {
+        "type": "text",
+        "text": "۱) standards\n۲) network spaces\n۳) activities\n۴) network users"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "«Not all network users are honest individuals, and not all of them adhere to ethical standards»: آن‌ها همان کاربران شبکه‌اند که بعضی‌شان به اصول اخلاقی پایبند نیستند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۳"
+      },
+      {
+        "type": "text",
+        "text": "According to paragraph 1, the appearance of the computer technology and the internet in the 20th century ………… ."
+      },
+      {
+        "type": "text",
+        "text": "۱) fully closed the gap that once existed between technology and human intellect\n۲) in a way resulted in some new questions about their ethical dimensions\n۳) increased the gap between ethical and unethical usage of data\n۴) prevented any opportunity of unethical usage of private data"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "پاراگراف می‌گوید با استفادهٔ جامعه از این فناوری «نگرانی‌های اخلاقی تازه‌ای» پیدا شد؛ یعنی گزینهٔ ۲. گزینهٔ ۱ اغراق است (متن می‌گوید فاصله «کمتر» می‌شود، نه اینکه کاملاً بسته شد) و ۴ برعکس متن است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۴"
+      },
+      {
+        "type": "text",
+        "text": "All of the following words are mentioned in the passage EXCEPT ………… ."
+      },
+      {
+        "type": "text",
+        "text": "۱) unlawful\n۲) moral\n۳) cutting-edge\n۴) honest"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "unlawful (unlawful purposes)، moral (moral behavior و moral values) و honest (honest individuals) در متن هست؛ cutting-edge نیامده است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۵"
+      },
+      {
+        "type": "text",
+        "text": "According to the passage, which of the following statements is true?"
+      },
+      {
+        "type": "text",
+        "text": "۱) Computer ethics was in part developed as a response to the threat posed by hackers and other intruders who do not follow ethical standards.\n۲) Extensive use of the technology has decreased the risk of potentially unethical activities such as violation of individual privacy.\n۳) Hackers utilize computer ethics as an opportunity to employ computing technology and its related disciplines to their own advantage.\n۴) Computer ethics concerns the practices that govern the production of computer units in a way that does not damage the best interest either of corporations or of consumers."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "پاراگراف دوم: هکرها و نفوذگرها فرصت بیشتری برای دسترسی به داده‌ها پیدا کردند و «این نگرانی‌ها به پیدایش» اخلاق کامپیوتر کمک کرد؛ یعنی گزینهٔ ۱. گزینهٔ ۲ برعکس متن است و ۴ به‌جای «مصرف» فناوری از «تولید» حرف می‌زند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Passage 2 (سؤال‌های ۱۶ تا ۲۰)"
+      },
+      {
+        "type": "quote",
+        "text": "The first “computers” were ancient tools that were used to do addition, subtraction, multiplication, and division. Some early examples of this would be the ancient Chinese invention known as the abacus. These older tools were in a sense computers because they did what modern computers do: take information and turn it into logical operations. Logical operations are instructions that someone gives a computer and tells it what to do. Older tools still required humans to do things to make them work. But modern computers use power and can be programmed to do things automatically."
+      },
+      {
+        "type": "quote",
+        "text": "The first computer, as we would think of one today, was created in 1823 by a man named Charles Babbage in England. Charles Babbage invented all the parts that are now used for a modern computer. He called the machine he was working on the “Difference Engine” but unfortunately he never finished it. Ten years later, another man named George Scheutz read about the “Difference Engine” and was excited about what Babbage had been working on. Together with his son Edward, Scheutz began to work on a smaller version. Twenty years later, by 1853, the father and son had constructed a machine that could process 15-digit numbers and calculate fourth-order differences. This was very advanced programming for a machine at that time. Their machine won a gold medal at the Exhibition of Paris in 1855, and later they sold it to the Dudley Observatory in Albany, New York. The Dudley Observatory later used it to calculate the path to the planet Mars."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۶"
+      },
+      {
+        "type": "text",
+        "text": "The underlined word “required” in paragraph 1 is closest in meaning to ………… ."
+      },
+      {
+        "type": "text",
+        "text": "۱) acted up\n۲) assisted\n۳) empowered\n۴) relied on"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "«Older tools still required humans to do things to make them work»: ابزارهای قدیمی برای کار کردن هنوز به انسان «نیاز داشتند و وابسته بودند»؛ نزدیک‌ترین گزینه relied on است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۷"
+      },
+      {
+        "type": "text",
+        "text": "The invention known as the abacus was probably a ………… ."
+      },
+      {
+        "type": "text",
+        "text": "۱) device\n۲) formula\n۳) game\n۴) sub-discipline"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "متن چرتکه را نمونه‌ای از «ابزارهای باستانی» برای جمع و تفریق و ضرب و تقسیم می‌داند؛ پس یک وسیله (device) بوده است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۸"
+      },
+      {
+        "type": "text",
+        "text": "According to paragraph 1, ………… ."
+      },
+      {
+        "type": "text",
+        "text": "۱) the Chinese were the first people to discover mathematical laws\n۲) early computers were able to do simple mathematical operations\n۳) unlike older tools, modern computers do not require logical operations\n۴) logical operations refer to a unique approach to manufacturing computers"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "جملهٔ اول پاراگراف: نخستین «کامپیوترها» ابزارهایی برای جمع و تفریق و ضرب و تقسیم بودند؛ یعنی عملیات ساده ریاضی. گزینهٔ ۱ در متن نیست و ۳ و ۴ با تعریف متن از عملیات منطقی نمی‌خوانند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۹"
+      },
+      {
+        "type": "text",
+        "text": "According to paragraph 2, which of the following statements is true?"
+      },
+      {
+        "type": "text",
+        "text": "۱) George Scheutz coined the term “Difference Engine” in 1853.\n۲) George Scheutz’s machine was used for astronomical calculations.\n۳) Babbage invented the first modern computer at the beginning of the 18th century.\n۴) Babbage won the gold medal at the Exhibition of Paris for his “Difference Engine.”"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "رصدخانهٔ دادلی ماشین شویتز را خرید و با آن مسیر سیارهٔ مریخ را حساب کرد؛ یعنی محاسبات نجومی. نام «Difference Engine» را بابیج گذاشت، ماشین او در ۱۸۲۳ (قرن نوزدهم) بود و مدال طلا را ماشین شویتز گرفت."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۲۰"
+      },
+      {
+        "type": "text",
+        "text": "The passage provides sufficient information to answer which of the following questions?\nI. In which country was the first computer as we think of it produced?\nII. In what sense were older tools similar to computers?\nIII. How long is the distance to the planet Mars?"
+      },
+      {
+        "type": "text",
+        "text": "۱) Only I\n۲) Only II\n۳) I and III\n۴) I and II"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "I: انگلستان (بابیج). II: ابزارهای قدیمی هم اطلاعات را می‌گرفتند و به عملیات منطقی تبدیل می‌کردند. III: متن فقط می‌گوید مسیر مریخ حساب شد، نه فاصله‌اش. پس I و II."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Passage 3 (سؤال‌های ۲۱ تا ۲۵)"
+      },
+      {
+        "type": "quote",
+        "text": "Quantum computation is a field of much interest and activity. Much of the interest was stimulated by Shor’s discovery that there is a quantum computation algorithm for the integer factoring problem that is more efficient than any known classical algorithm. [1] This result has stimulated much work that represents steps in the long-term goal of physical construction of quantum computers. This includes work on quantum error-correction codes and physical models of quantum gates, quantum Hall systems, and nuclear magnetic resonance to carry out parallel quantum computation."
+      },
+      {
+        "type": "quote",
+        "text": "The optimism about reaching the long-term goal that is implicit in this work is tempered by the work of Landauer. [2] As a critic, Landauer correctly points out the enormous obstacles in the path of construction of efficient quantum computers. These include effects of environmental noise with respect to which quantum computers are exquisitely sensitive, errors in constructing the Hamiltonian, and errors in constructing the initial state. As Landauer notes, these errors can cause unwanted reflections of the computational process that reduce the amplitude of the transmitted component that represents the completed computation. Work in which potential barriers causing reflection are introduced intentionally where the potential distribution is ‘deterministically disordered’, suggests that in some cases, these problems may be less severe than otherwise thought."
+      },
+      {
+        "type": "quote",
+        "text": "Building quantum computers is incredibly difficult. Many candidate qubit systems exist on the scale of single atoms, and the physicists, engineers, and materials scientists who are trying to execute quantum operations on these systems constantly deal with two competing requirements. [3] First, qubits need to be protected from the environment because it can destroy the delicate quantum states needed for computation. The longer a qubit survives in its desired state the longer its “coherence time.” From this perspective, isolation is prized. Second, however, for algorithm execution qubits need to be entangled, shuffled around physical architectures, and controllable on demand. The better these operations can be carried out the higher their “fidelity.” [4]"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۲۱"
+      },
+      {
+        "type": "text",
+        "text": "Which of the following techniques is used in paragraph 1?"
+      },
+      {
+        "type": "text",
+        "text": "۱) Definition\n۲) Statistics\n۳) Cause and effect\n۴) Rhetorical question"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "پاراگراف اول زنجیرهٔ علت و معلول است: کشف شور «باعث» علاقه شد و این نتیجه «باعث» کارهای زیادی در ساخت کامپیوتر کوانتومی شد (stimulated دو بار آمده است)."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۲۲"
+      },
+      {
+        "type": "text",
+        "text": "According to paragraph 2, which of the following is true about Landauer?"
+      },
+      {
+        "type": "text",
+        "text": "۱) His ideas ultimately led to solutions for many of the problems of quantum computation.\n۲) His work highlighted the challenges facing the construction of efficient quantum computers.\n۳) He later admitted that the challenges facing quantum computation were negligible.\n۴) He drew attention to the impossibility of constructing quantum computers."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "لنداور «موانع بزرگ» ساخت کامپیوتر کوانتومی کارآمد را نشان داد؛ گزینهٔ ۲. او نگفت ساختش «ناممکن» است (گزینهٔ ۴ اغراق است) و راه‌حل‌ها را هم کار دیگران پیشنهاد کرد."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۲۳"
+      },
+      {
+        "type": "text",
+        "text": "What does paragraph 3 mainly discuss?"
+      },
+      {
+        "type": "text",
+        "text": "۱) The difficulty of constructing quantum computers\n۲) Competing models of computation using quantum technology\n۳) The last challenge to overcome in building quantum computers\n۴) Qubit efficiency and a ground-breaking solution to its optimum realization"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "پاراگراف با «Building quantum computers is incredibly difficult» شروع می‌شود و دو نیاز متضاد (جداسازی و تعامل کیوبیت‌ها) را توضیح می‌دهد؛ موضوع اصلی همان دشواری ساخت است. «competing» در متن صفت نیازهاست، نه مدل‌های محاسبه."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۲۴"
+      },
+      {
+        "type": "text",
+        "text": "According to the passage, which of the following statements is true?"
+      },
+      {
+        "type": "text",
+        "text": "۱) Quantum computers are particularly versatile because qubits are highly robust and efficient in diverse environmental conditions.\n۲) Shor's ideas about different computational methods were highly influential in the development of early traditional computers.\n۳) In quantum computers, qubits must be rearranged across physical architectures, and controllable as needed for algorithms to work.\n۴) Landauer was a computer manufacturer who identified many problems in the field, and his ideas paved the way for transition from classical to quantum computation."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "«for algorithm execution qubits need to be entangled, shuffled around physical architectures, and controllable on demand» همان گزینهٔ ۳ است. گزینهٔ ۱ برعکس متن است (کیوبیت‌ها به محیط بسیار حساس‌اند)."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۲۵"
+      },
+      {
+        "type": "text",
+        "text": "In which position marked by [1], [2], [3] or [4], can the following sentence best be inserted in the passage?\nBalancing the required isolation and interaction is difficult, but after decades of research a few systems are emerging as top candidates for large-scale quantum information processing."
+      },
+      {
+        "type": "text",
+        "text": "۱) [4]\n۲) [3]\n۳) [2]\n۴) [1]"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "جمله از «ایجاد تعادل میان جداسازی و تعامل» حرف می‌زند؛ پس باید بعد از توضیح هر دو نیاز بیاید، یعنی آخر پاراگراف سوم: جایگاه [4] که گزینهٔ ۱ است. در [3] هنوز این دو نیاز معرفی نشده‌اند."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "آمار و احتمال مهندسی: سؤال‌های ۳۳ تا ۳۹"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳۳"
+      },
+      {
+        "type": "text",
+        "text": "اطلاعات زیر، برای یک مجموعه داده حاصل شده است. چه تعداد نقاط دورافتاده در این مجموعه است؟\nنقاط کمتر از چارک اول: ۷، ۹، ۱۰ — چارک اول: ۱۵/۵ — میانه: ۲۰ — چارک سوم: ۲۱/۵ — نقاط بزرگ‌تر از چارک سوم: ۲۸، ۳۰، ۳۱"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۰\n۲) ۱\n۳) ۲\n۴) ۳"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "دامنهٔ میان‌چارکی $IQR=Q_3-Q_1=21.5-15.5=6$ است. با قاعدهٔ معمول $1.5\\times IQR=9$، مرزها می‌شوند $15.5-9=6.5$ و $21.5+9=30.5$.\nاز نقاط پایین، ۷ و ۹ و ۱۰ همه بالای $6.5$ هستند؛ از نقاط بالا فقط ۳۱ از $30.5$ بزرگ‌تر است. پس یک نقطهٔ دورافتاده داریم: گزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳۴"
+      },
+      {
+        "type": "text",
+        "text": "یک فروشگاه سه برند مختلف A، B و C از یک کالا را می‌فروشد. تابع احتمال خرید هریک از برندها در جدول زیر آمده است. احتمال این‌که دو مشتری برند C را خریداری کنند و احتمال این‌که دقیقاً یکی از آنها برند C را خریداری کند، به‌ترتیب کدام است؟\nبرند A: ۰/۱۵ — برند B: ۰/۶۵ — برند C: ۰/۲"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۰/۰۴ و ۰/۳۲\n۲) ۰/۰۴ و ۰/۱۶\n۳) ۰/۴ و ۰/۳۲\n۴) ۰/۴ و ۰/۱۶"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "خرید دو مشتری مستقل است و هر کدام با احتمال $0.2$ برند C را می‌خرد. هر دو: $0.2^2=0.04$. دقیقاً یکی: دو حالت (اولی بخرد و دومی نه، یا برعکس)، پس $2\\times0.2\\times0.8=0.32$. گزینهٔ ۱.\nدام تستی گزینهٔ ۲: فقط یکی از دو حالت را حساب کرده است ($0.2\\times0.8=0.16$)."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳۵"
+      },
+      {
+        "type": "text",
+        "text": "یک سیستم امنیتی کامپیوتری با احتمال ۰/۰۲ حملات غیرواقعی را واقعی و با احتمال ۰/۰۱ حملات واقعی را غیرواقعی تشخیص می‌دهد. اگر ۰/۱٪ از کل درخواست‌های ورودی، حملات واقعی باشند، احتمال این‌که حملهٔ تشخیص‌داده‌شده واقعی باشد، کدام است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۰/۰۰۱\n۲) ۰/۰۲۳\n۳) ۰/۰۴۷\n۴) ۰/۰۵۶"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "قضیهٔ بیز. احتمال پیشین حملهٔ واقعی $P(R)=0.001$ است (۰/۱ درصد). سیستم حملهٔ واقعی را با احتمال $1-0.01=0.99$ درست تشخیص می‌دهد و درخواست سالم را با احتمال $0.02$ به‌اشتباه حمله می‌داند.\n$P(D)=0.001\\times0.99+0.999\\times0.02=0.00099+0.01998=0.02097$\n$P(R\\mid D)=\\dfrac{0.00099}{0.02097}\\approx0.047$؛ گزینهٔ ۳.\nنکته: با اینکه سیستم ۹۹٪ دقیق است، کمتر از ۵٪ هشدارهایش واقعی‌اند، چون حمله‌های واقعی بسیار نادرند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳۶"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید $X_1$ و $X_2$ متغیرهای تصادفی مستقل و دارای توزیع نمایی با میانگین ۴ باشند. اگر $Y=\\max(X_1,X_2)$ آنگاه $E(Y)$ کدام است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۲\n۲) ۴\n۳) ۶\n۴) ۱۲"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "کمینهٔ دو نمایی مستقل با نرخ $\\lambda=\\frac14$ نمایی با نرخ $2\\lambda$ است، پس $E(\\min)=\\frac42=2$. چون $\\max+\\min=X_1+X_2$، داریم $E(\\max)=4+4-2=6$؛ گزینهٔ ۳.\nراه دیگر با بی‌حافظگی: تا اولین رخداد به‌طور متوسط ۲ صبر می‌کنیم و بعد دیگری به‌طور متوسط ۴ دیگر طول می‌کشد: $2+4=6$."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳۷"
+      },
+      {
+        "type": "text",
+        "text": "یک شرکت نرم‌افزاری، زمان پردازش یک الگوریتم را اندازه‌گیری می‌کند. در یک نمونهٔ ۳۶ تایی، میانگین زمان پردازش $\\bar x=72$ میلی‌ثانیه و انحراف معیار $s=8$ میلی‌ثانیه است. فاصلهٔ اطمینان ۹۵٪ برای میانگین واقعی زمان پردازش کدام است؟ (عدد جدول را ۱/۹۶ درنظر بگیرید.)"
+      },
+      {
+        "type": "text",
+        "text": "۱) (۶۹/۴۹ و ۷۳/۵۳)\n۲) (۷۰/۴۷ و ۷۳/۵۳)\n۳) (۷۱/۴۸ و ۷۲/۵۲)\n۴) (۶۹/۳۹ و ۷۴/۶۱)"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "نمونه بزرگ است و از تقریب نرمال استفاده می‌کنیم: $\\bar x\\pm z\\,\\frac{s}{\\sqrt n}=72\\pm1.96\\times\\frac86=72\\pm2.61$، یعنی $(69.39,\\ 74.61)$؛ گزینهٔ ۴.\nفاصله باید دور ۷۲ متقارن باشد؛ گزینه‌های ۱ و ۲ متقارن نیستند و همین کافی است تا کنار بروند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳۸"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید متغیر تصادفی X دارای توزیع زیر باشد. می‌خواهیم آزمون $H_0:\\theta=5$ را در مقابل $H_1:\\theta=2$ انجام دهیم. اگر $x<0.3$ مشاهده شود، فرض $H_0$ رد می‌شود. خطای نوع اول و توان آزمون به‌ترتیب کدام هستند؟\n$f_X(x)=\\theta x^{\\theta-1},\\quad 0<x<1,\\quad \\theta>0$"
+      },
+      {
+        "type": "text",
+        "text": "۱) $(0.3)^5$ و $(0.3)^2$\n۲) $1-(0.3)^5$ و $(0.3)^2$\n۳) $(0.3)^5$ و $1-(0.3)^2$\n۴) $1-(0.3)^5$ و $1-(0.3)^2$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "تابع توزیع تجمعی $F(x)=x^\\theta$ است. خطای نوع اول احتمال رد $H_0$ وقتی درست است: $P(X<0.3\\mid\\theta=5)=0.3^5$. توان آزمون احتمال رد $H_0$ وقتی $H_1$ درست است: $P(X<0.3\\mid\\theta=2)=0.3^2$. گزینهٔ ۱."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۳۹"
+      },
+      {
+        "type": "text",
+        "text": "یک تیم مهندسی قصد دارد زمان تکمیل پروژه‌ای را با استفاده از یک مدل رگرسیون پیش‌بینی کند. مدل رگرسیونی زیر برازش داده شده است.\n$y=120-4x_1+0.05x_2-8x_3$\nکه در آن، y زمان تکمیل پروژه (برحسب روز)، $x_1$ تعداد اعضای تیم، $x_2$ خطوط کد (برحسب هزار خط) و $x_3$ تجربهٔ تیم (برحسب سال) است. کدام مورد درخصوص هر ضریب با فرض ثابت بودن سایر ضرایب، درست نیست؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) با افزایش هر سال تجربهٔ تیم، زمان تکمیل پروژه ۸ روز کاهش می‌یابد.\n۲) افزایش ۱۰۰۰ خط کد به پروژه، زمان تکمیل پروژه را تغییر نمی‌دهد.\n۳) افزایش یک واحد در تعداد اعضای تیم، زمان پروژه را ۴ روز کاهش می‌دهد.\n۴) افزایش ۶۰۰۰۰ خط کد به پروژه، زمان تکمیل پروژه را ۳ روز افزایش می‌دهد."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "هر ضریب، تغییر y به‌ازای یک واحد افزایش همان متغیر است. $x_2$ برحسب هزار خط است، پس ۱۰۰۰ خط یعنی یک واحد و زمان را $0.05$ روز زیاد می‌کند؛ کم است ولی صفر نیست. پس گزینهٔ ۲ نادرست است.\nبقیه درست‌اند: ۸ روز کمتر برای هر سال تجربه، ۴ روز کمتر برای هر عضو بیشتر، و ۶۰۰۰۰ خط یعنی ۶۰ واحد: $60\\times0.05=3$ روز بیشتر."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "ریاضیات گسسته: سؤال‌های ۴۰ تا ۴۵"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۰"
+      },
+      {
+        "type": "text",
+        "text": "در قطعه‌برنامهٔ زیر، دستور x++ چند بار اجرا می‌شود؟\n```c\nx = 0;\nfor(i = 1; i <= n; i++)\n    for(j = 1; j <= i; j++)\n        for(k = 1; k <= j; k++)\n            for(t = 1; t <= k; t++)\n                x++;\n```"
+      },
+      {
+        "type": "text",
+        "text": "۱) $\\binom{n+2}{3}$\n۲) $\\binom{n+4}{3}$\n۳) $\\binom{n+3}{4}$\n۴) $\\sum_{i=1}^{n}\\sum_{j=1}^{i}\\sum_{k=1}^{j}\\sum_{t=1}^{k}x$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "هر بار اجرای x++ یعنی یک چهارتایی $(i,j,k,t)$ با $n\\ge i\\ge j\\ge k\\ge t\\ge1$. پس باید چهار عدد از ۱ تا n را «با تکرار» و بدون توجه به ترتیب برداریم (ترتیب نزولی خودش یکتاست).\nتعداد انتخاب ۴ عضو با تکرار از n عضو: $\\binom{n+4-1}{4}=\\binom{n+3}{4}$؛ گزینهٔ ۳.\nآزمایش سریع: برای $n=1$ دستور یک بار اجرا می‌شود و $\\binom44=1$؛ گزینهٔ ۱ هم ۱ می‌دهد، ولی برای $n=2$ شمارش مستقیم ۵ است و فقط $\\binom54=5$ درست درمی‌آید."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۱"
+      },
+      {
+        "type": "text",
+        "text": "در یک شبکهٔ کامپیوتری ۷ نود (گره) داریم و می‌خواهیم ۱۲ بستهٔ داده را بین این نودها توزیع کنیم به‌طوری‌که هر نود، حداقل ۱ بستهٔ داده دریافت کند، چند روش مختلف برای توزیع بسته‌ها به نودها وجود دارد؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $\\binom{11}{5}$\n۲) $\\binom{12}{5}$\n۳) $\\binom{12}{7}$\n۴) $\\binom{18}{7}$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "گزینه‌ها نشان می‌دهند بسته‌ها یکسان فرض شده‌اند و فقط تعداد بستهٔ هر نود مهم است: جواب‌های صحیح $x_1+\\dots+x_7=12$ با $x_i\\ge1$.\nروش ستاره و میله: ۱۲ بسته در یک ردیف ۱۱ فاصله دارند و باید ۶ جداکننده در این فاصله‌ها بگذاریم: $\\binom{11}{6}=\\binom{11}{5}$؛ گزینهٔ ۱.\nاگر نودی می‌توانست هیچ بسته‌ای نگیرد، جواب $\\binom{12+6}{6}=\\binom{18}{6}$ می‌شد؛ گزینهٔ ۴ ($\\binom{18}{7}$) حتی آن هم نیست."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۲"
+      },
+      {
+        "type": "text",
+        "text": "نقیض گزارهٔ زیر چیست؟\nاگر آن ترک شیرازی به‌دست آرد دل ما را\nبه خال هندویش بخشم سمرقند و بخارا را"
+      },
+      {
+        "type": "text",
+        "text": "۱) ترک شیرازی دل ما را به‌دست می‌آورد و به خال هندویش سمرقند و بخارا را نمی‌بخشم.\n۲) ترک شیرازی دل ما را به‌دست می‌آورد و به خال هندویش سمرقند یا بخارا را نمی‌بخشم.\n۳) اگر به خال هندوی ترک شیرازی سمرقند و بخارا را ببخشم آنگاه دل ما را به‌دست می‌آورد.\n۴) ترک شیرازی دل ما را به‌دست نمی‌آورد و به خال هندویش سمرقند و بخارا را نمی‌بخشم."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "گزاره به شکل $p\\to(q\\wedge r)$ است: $p$ «ترک شیرازی دل ما را به‌دست آورد»، $q$ «سمرقند را می‌بخشم» و $r$ «بخارا را می‌بخشم».\nنقیض شرطی: $\\neg(p\\to s)\\equiv p\\wedge\\neg s$، و با قانون دمورگان $\\neg(q\\wedge r)\\equiv\\neg q\\vee\\neg r$. پس نقیض: «دل ما را به‌دست می‌آورد و سمرقند **یا** بخارا را نمی‌بخشم»؛ گزینهٔ ۲.\nدام تستی گزینهٔ ۱: «سمرقند و بخارا را نمی‌بخشم» یعنی هیچ‌کدام را نمی‌بخشد، که قوی‌تر از نقیض است. گزینهٔ ۳ عکس گزاره است و نقیض نیست."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۳"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید $A=\\{1,2,3,4,5\\}$ و R یک رابطه روی A باشد که با گراف جهت‌دار زیر نشان داده شده است. کدام مورد درخصوص R صحیح است؟\n(چنانچه یالی از گره i به گره j وجود داشته باشد، i با j رابطهٔ R دارد.)"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q043",
+        "alt": "سؤال ۴۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۴۳ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) R خاصیت پاد تقارنی دارد.\n۲) R یک رابطهٔ هم‌ارزی است.\n۳) R یک رابطهٔ ترتیب است.\n۴) R خاصیت تعدی ندارد."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "در شکل هر پنج گره حلقه دارند، پس R بازتابی است. هر یال یک یال برگشتی هم دارد ($1\\leftrightarrow2$، $1\\leftrightarrow3$، $2\\leftrightarrow3$ و $4\\leftrightarrow5$)، پس متقارن است.\nگره‌ها دو دسته‌اند: $\\{1,2,3\\}$ که هر دو عضوش با هم رابطه دارند، و $\\{4,5\\}$ که آن هم کامل است؛ بین دو دسته یالی نیست. چنین رابطه‌ای تعدی هم دارد. پس R هم‌ارزی است با دو کلاس $\\{1,2,3\\}$ و $\\{4,5\\}$؛ گزینهٔ ۲.\nپادتقارنی نیست (۱ با ۲ و ۲ با ۱ رابطه دارند ولی $1\\ne2$) و به همین دلیل رابطهٔ ترتیب هم نیست."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۴"
+      },
+      {
+        "type": "text",
+        "text": "اگر $f(x)$ تابع مولد معمولی دنبالهٔ $\\{n!\\}$ باشد، تابع مولد معمولی دنبالهٔ $\\{n(n!)\\}$ کدام است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $x\\int f(x)$\n۲) $xf(x)$\n۳) $\\dfrac{f(x)}{x}$\n۴) $xf'(x)$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "$f(x)=\\sum_{n\\ge0} n!\\,x^n$. با مشتق‌گیری $f'(x)=\\sum n\\cdot n!\\,x^{n-1}$ و با ضرب در x: $xf'(x)=\\sum n\\cdot n!\\,x^n$، یعنی همان تابع مولد $\\{n(n!)\\}$؛ گزینهٔ ۴.\nقاعدهٔ کلی: اگر $f$ تابع مولد $\\{a_n\\}$ باشد، $xf'(x)$ تابع مولد $\\{na_n\\}$ است. گزینهٔ ۲ ($xf(x)$) فقط دنباله را یک خانه جابه‌جا می‌کند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۵"
+      },
+      {
+        "type": "text",
+        "text": "جواب رابطهٔ بازگشتی روبه‌رو، کدام است؟\n$a_n=na_{n-1}+n!,\\quad a_1=1$"
+      },
+      {
+        "type": "text",
+        "text": "۱) $n(n!)$\n۲) $n$\n۳) $n^2-1+2^{n-1}$\n۴) $n!\\,2^{n-1}$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "دو طرف را بر $n!$ تقسیم می‌کنیم و $b_n=\\frac{a_n}{n!}$ می‌گیریم: $b_n=b_{n-1}+1$ با $b_1=1$. پس $b_n=n$ و $a_n=n\\cdot n!$؛ گزینهٔ ۱.\nآزمایش: $a_2=2\\cdot1+2=4=2\\cdot2!$ و $a_3=3\\cdot4+6=18=3\\cdot3!$."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "نظریه زبان‌ها و ماشین‌ها: سؤال‌های ۴۶ تا ۵۰"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۶"
+      },
+      {
+        "type": "text",
+        "text": "کدام‌یک از زبان‌های زیر، منظم است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $L=\\{a^nb^mc^nd^{2n}\\mid 3n+m>5,\\ n,m,k,t>0\\}$\n۲) $L=\\{a^nb^tc^kd^t\\mid n+2t+k>5,\\ n,m,k,t>0\\}$\n۳) $L=\\{a^nb^mc^kd^t\\mid n+m+k+t>5,\\ n,m,k,t>0\\}$\n۴) $L=\\{a^nb^mc^kd^m\\mid n+2m+k>5,\\ n,m,k,t>0\\}$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "در گزینهٔ ۳ چهار توان به هم ربطی ندارند و شرط $n+m+k+t>5$ فقط می‌گوید طول رشته از ۵ بیشتر است. یعنی $L=a^+b^+c^+d^+$ منهای چند رشتهٔ کوتاه؛ یک زبان منظم منهای تعداد متناهی رشته منظم می‌ماند. گزینهٔ ۳.\nبقیه باید تعداد دو حرف را برابر نگه دارند: در ۱ تعداد a و c (و d دو برابر آن)، در ۲ تعداد b و d، و در ۴ تعداد b و d. برای هر کدام با لم تزریق (یا با اشتراک با یک زبان منظم مثل $ab^*cd^*$ در گزینهٔ ۲ که $\\{ab^tcd^t\\}$ را می‌دهد) نامنظم بودن دیده می‌شود."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۷"
+      },
+      {
+        "type": "text",
+        "text": "زبان کدام‌یک از عبارت‌های منظم زیر، با بقیه فرق دارد؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $(0+\\varepsilon)(1+10)^*$\n۲) $(0+\\varepsilon)(11+10)^*$\n۳) $(1+01)^*(0+\\varepsilon)$\n۴) $(0+\\varepsilon)(11^*0)^*1^*$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "گزینه‌های ۱، ۳ و ۴ هر سه «همهٔ رشته‌هایی که 00 ندارند» را می‌سازند:\n• در ۱ هر صفرِ بعد از اولین نماد، درست بعد از یک ۱ می‌آید ($1$ یا $10$).\n• در ۳ هر صفر (جز شاید آخرین نماد) درست قبل از یک ۱ است ($1$ یا $01$).\n• در ۴ هر بلوک $11^*0$ صفر را بعد از دست‌کم یک ۱ می‌گذارد.\nگزینهٔ ۲ فرق دارد: بعد از صفر اختیاری، فقط بلوک‌های دوحرفی می‌آیند، پس رشتهٔ «1» (که 00 ندارد) در آن نیست. گزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۸"
+      },
+      {
+        "type": "text",
+        "text": "درخصوص گرامر مستقل از متن زیر، کدام مورد درست است؟\n$S\\to A0\\mid S1\\mid 1$\n$A\\to 1S\\mid 1A\\mid 0$"
+      },
+      {
+        "type": "text",
+        "text": "۱) گرامر در تولید رشتهٔ 1111 ابهام دارد.\n۲) گرامر در تولید رشتهٔ 1101 ابهام دارد.\n۳) گرامر در تولید رشتهٔ 1110 ابهام دارد.\n۴) این گرامر مبهم نیست."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "رشتهٔ 1110 با 0 تمام می‌شود، پس از $S\\to A0$ می‌آید و A باید 111 را بسازد. A دو راه دارد:\n• $A\\Rightarrow 1A\\Rightarrow 11S\\Rightarrow 111$\n• $A\\Rightarrow 1S\\Rightarrow 1S1\\Rightarrow 111$\nدو درخت تجزیهٔ متفاوت برای یک رشته، یعنی ابهام؛ گزینهٔ ۳.\n1111 فقط با زنجیرهٔ $S\\to S1$ ساخته می‌شود (هر قاعدهٔ دیگر یک 0 می‌آورد) و یکتاست. در 1101 هم بخش 110 فقط از $S\\to A0$ و $A\\Rightarrow1S\\Rightarrow11$ می‌آید، چون A به‌تنهایی «1» نمی‌سازد."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۴۹"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنیم $L_1$، $L_2$ و $L_3$ سه زبان مستقل از متن دلخواه باشند. آنگاه کدام مورد زیر درست است؟ (منظور از $L'$ متمم مجموعهٔ L است.)"
+      },
+      {
+        "type": "text",
+        "text": "۱) زبان $L_1\\cdot(L_2\\cup L_3)$ حتماً مستقل از متن است.\n۲) زبان $L_1\\cdot(L_2\\cup L_3)$ حتماً مستقل از متن نیست.\n۳) زبان $L_1'\\cdot(L_2\\cup L_3)$ حتماً مستقل از متن است.\n۴) زبان $L_1'\\cdot(L_2\\cup L_3)$ حتماً مستقل از متن نیست."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "زبان‌های مستقل از متن تحت اجتماع و الحاق بسته‌اند: $L_2\\cup L_3$ مستقل از متن است و الحاقش با $L_1$ هم. گزینهٔ ۱.\nتحت متمم بسته نیستند، پس $L_1'$ ممکن است مستقل از متن باشد یا نباشد؛ برای همین هیچ‌کدام از دو «حتماً» در گزینه‌های ۳ و ۴ درست نیست (مثلاً اگر $L_1$ منظم باشد، $L_1'$ هم منظم است و حاصل مستقل از متن می‌شود)."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۵۰"
+      },
+      {
+        "type": "text",
+        "text": "کدام‌یک از مسائل زیر، در مورد یک اتوماتون پشته‌ای غیرقطعی (NPDA) دلخواه به‌نام M، تصمیم‌پذیر (decidable) است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) زبان اتوماتون M، توسط یک گرامر مستقل از متن نامبهم تشخیص داده می‌شود.\n۲) زبان اتوماتون M، برابر زبان یک گرامر مستقل از متن دلخواه است.\n۳) زبان اتوماتون M، دارای بی‌نهایت رشته است.\n۴) زبان اتوماتون M، برابر $\\Sigma^*$ است."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "از M یک گرامر مستقل از متن می‌سازیم، آن را ساده می‌کنیم (حذف متغیرهای بی‌فایده، قواعد λ و واحد) و گراف وابستگی متغیرها را می‌کشیم: زبان نامتناهی است اگر و تنها اگر این گراف دور داشته باشد. پس متناهی یا نامتناهی بودن تصمیم‌پذیر است؛ گزینهٔ ۳.\nبقیه تصمیم‌ناپذیرند: ذاتاً مبهم بودن زبان (۱)، هم‌ارزی دو زبان مستقل از متن (۲) و برابری با $\\Sigma^*$ (۴)."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "داده‌ساختارها و الگوریتم‌ها: سؤال‌های ۵۶ تا ۶۷"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۵۶"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید $T(x)=2T\\left(\\frac x2\\right)+\\frac89T\\left(\\frac{3x}4\\right)+\\theta\\left(\\frac{x^2}{\\log x}\\right)$. در این صورت کدام مورد درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $T(x)=\\theta(x^2\\log x)$\n۲) $T(x)=\\theta\\left(\\dfrac{x^2}{\\log x}\\right)$\n۳) $T(x)=\\theta(x^2\\log(\\log x))$\n۴) $T(x)=\\theta(2\\log x-\\log(\\log x))$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "دو زیرمسئله اندازه‌های متفاوت دارند، پس قضیهٔ اصلی کار نمی‌کند و سراغ قضیهٔ آکرا–بازی می‌رویم. p را طوری پیدا می‌کنیم که $2\\left(\\frac12\\right)^p+\\frac89\\left(\\frac34\\right)^p=1$؛ با $p=2$: $\\frac12+\\frac89\\cdot\\frac9{16}=\\frac12+\\frac12=1$.\n$T(x)=\\Theta\\left(x^p\\left(1+\\int_1^x\\frac{g(u)}{u^{p+1}}du\\right)\\right)$ با $g(u)=\\frac{u^2}{\\log u}$؛ انتگرال $\\int\\frac{du}{u\\log u}=\\Theta(\\log\\log x)$ است.\nپس $T(x)=\\Theta(x^2\\log\\log x)$؛ گزینهٔ ۳.\nنکتهٔ تستی: اگر جملهٔ آخر $x^2$ بود جواب $x^2\\log x$ می‌شد؛ تقسیم بر $\\log x$ یک $\\log$ را به $\\log\\log$ تبدیل می‌کند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۵۷"
+      },
+      {
+        "type": "text",
+        "text": "دنبالهٔ A[1..n] یک دنبالهٔ دوآهنگی (Bitonic) است، بدین معنی که هرگاه عناصر دنباله را به‌ترتیب دور یک دایره بنشانیم، یک عنصر یافت می‌شود که دنبالهٔ عناصر بعدی ابتدا صعودی و سپس نزولی هستند. بهترین زمان برای مرتب‌سازی یک دنبالهٔ دوآهنگی، کدام مورد است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $O(n\\log n)$\n۲) $O(n\\sqrt n)$\n۳) $O(n^2)$\n۴) $O(n)$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "کوچک‌ترین عنصر را با یک پیمایش $O(n)$ پیدا می‌کنیم و دنباله را دور دایره از آنجا می‌خوانیم؛ حالا دنباله اول صعودی و بعد نزولی است. بخش نزولی را برعکس می‌خوانیم و دو دنبالهٔ مرتب داریم که با یک ادغام $O(n)$ یکی می‌شوند. کل کار $O(n)$؛ گزینهٔ ۴.\nاز $O(n)$ هم کمتر نمی‌شود، چون هر عنصر دست‌کم یک بار باید خوانده شود."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۵۸"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید می‌خواهیم تمام زیردنباله‌های یک دنبالهٔ داده‌شده را با استفاده از روش عقب‌گرد بررسی کنیم. اگر طول دنباله n باشد، پیچیدگی زمانی این روش چیست؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $O(2^n)$\n۲) $O(n^2)$\n۳) $O(n!)$\n۴) $O(\\log n)$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "هر زیردنباله با یک تصمیم «بردار یا نبردار» برای هر عنصر مشخص می‌شود؛ درخت عقب‌گرد دودویی و n سطحی است و $2^n$ برگ دارد. گزینهٔ ۱.\n$O(n!)$ مال جایگشت‌هاست، نه زیردنباله‌ها."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۵۹"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید مسئله‌ای به نام انتخاب پروژه‌های با بیشترین سود (Maximum Profit Project Selection) داریم. در این مسئله، تعدادی پروژه وجود دارد که در آن پروژهٔ i دارای سود Pi و مدت‌زمان di است. تنها تعداد مشخصی از پروژه‌ها را می‌توان به‌طور هم‌زمان انجام داد و کل مدت‌زمان انجام پروژه‌ها نباید از T بیشتر شود. هدف این است که بیشترین سود ممکن را از بین پروژه‌های انتخاب‌شده به‌دست آوریم. می‌خواهیم از الگوریتم شاخه و حد (Branch and Bound) برای حل این مسئله استفاده کنیم. کدام‌یک از روش‌های زیر، مناسب‌ترین روش برای تعیین حد بالا (Upper Bound) در هر گره است تا به‌سرعت شاخه‌های غیرممکن یا کم‌بازده حذف شوند؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) استفاده از میانگین سود پروژه‌های باقی‌مانده و افزودن آن به سود فعلی در گره فعلی به‌عنوان حد بالا\n۲) استفاده از بیشترین سود پروژه‌های باقی‌مانده و افزودن آن به سود فعلی در گره فعلی به‌عنوان حد بالا\n۳) استفاده از مجموع سود تمامی پروژه‌های باقی‌مانده و افزودن آن به سود فعلی در گره فعلی به‌عنوان حد بالا\n۴) انتخاب پروژه‌ها به‌صورت حریصانه، براساس بیشترین نسبت سود به مدت‌زمان و افزودن آنها تا زمانی که زمان کل از T فراتر نرود و سپس در نظر گرفتن نتیجه به‌عنوان حد بالا"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "این همان کولهٔ صفر و یک است: «وزن» مدت‌زمان است و «ارزش» سود. حد بالای استاندارد در شاخه و حد، جواب کولهٔ کسری است: پروژه‌ها را به ترتیب نسبت سود به زمان برمی‌داریم تا ظرفیت T پر شود (و از آخری کسری برمی‌داریم). این حد هم معتبر است (از جواب بهینه کمتر نیست) و هم تنگ است؛ گزینهٔ ۴.\nگزینهٔ ۳ هم معتبر است ولی آن‌قدر گشاد است که تقریباً هیچ شاخه‌ای را حذف نمی‌کند. گزینه‌های ۱ و ۲ ممکن است از جواب بهینه کمتر شوند و شاخهٔ درست را به‌اشتباه حذف کنند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۰"
+      },
+      {
+        "type": "text",
+        "text": "در الگوریتم مرتب‌سازی Insertion Sort، اگر برای جستجوی مکان مناسب عنصر جاری به‌جای جستجوی خطی از جستجوی دودویی استفاده کنیم، کدام مورد زیر درخصوص پیچیدگی زمانی آن در بدترین حالت درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) به $O(n\\log n)$ کاهش می‌یابد.\n۲) همچنان $O(n^2)$ باقی می‌ماند.\n۳) به $O(\\log n)$ کاهش می‌یابد.\n۴) به $O(n)$ کاهش می‌یابد."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "جستجوی دودویی تعداد «مقایسه‌ها» را به $O(n\\log n)$ می‌رساند، ولی جا باز کردن برای عنصر هنوز جابه‌جا کردن همهٔ عناصر بزرگ‌تر است. در بدترین حالت (آرایهٔ نزولی) مجموع جابه‌جایی‌ها $1+2+\\dots+(n-1)=\\Theta(n^2)$ است. گزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۱"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید می‌خواهید از میان دنباله‌ای از اعداد صحیح غیرمنفی تعدادی را انتخاب کنید به‌گونه‌ای که به بیشترین مجموع دست یابید، با این شرط که نمی‌توانید دو عنصر متوالی را انتخاب کنید. به‌عبارت‌دیگر، هر عددی که انتخاب می‌شود، عدد بعد از آن در دنباله نمی‌تواند انتخاب شود. کدام مورد، مناسب‌ترین روش با کمترین پیچیدگی زمانی برای حل این مسئله است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) استفاده از الگوریتم بازگشتی به همراه حافظه‌گذاری (Memorization) برای ذخیرهٔ نتایج زیرمسئله‌ها و جلوگیری از محاسبهٔ مجدد آنها\n۲) استفاده از الگوریتم پویا (Dynamic Programming) که به‌صورت تکراری مقدار بهینه را از سمت چپ به راست محاسبه می‌کند.\n۳) استفاده از الگوریتم تقسیم و حل (Divide and Conquer) برای تقسیم مسئله به زیرمسئله‌های کوچک‌تر\n۴) استفاده از الگوریتم جستجوی کامل (Brute Force) که تمام ترکیب‌های ممکن را بررسی می‌کند."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "رابطهٔ پویا: $best[i]=\\max(best[i-1],\\ best[i-2]+a_i)$. محاسبهٔ تکراری از چپ به راست $O(n)$ زمان می‌برد و فقط دو مقدار آخر را نگه می‌دارد، یعنی حافظهٔ $O(1)$. گزینهٔ ۲.\nحافظه‌گذاری بازگشتی (۱) هم $O(n)$ است ولی حافظهٔ $O(n)$ و پشتهٔ بازگشت به عمق n دارد، پس «مناسب‌ترین» نیست. جستجوی کامل نمایی است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۲"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید برای حل مسئلهٔ پوشش حداکثر (maximum Coverage)، از الگوریتم حریصانه استفاده می‌کنید که مجموعه‌ای از عناصر را با کمترین هزینهٔ ممکن پوشش دهد. چرا این الگوریتم نمی‌تواند جواب بهینه را تضمین کند؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) الگوریتم حریصانه همیشه انتخاب محلی بهینه دارد، اما ممکن است در سطح کلان بهترین نباشد.\n۲) مسئلهٔ پوشش حداکثر یک مسئلهٔ NP- کامل است و نیاز به حل دقیق دارد.\n۳) تمام راه‌حل‌های ممکن را بررسی نمی‌کند.\n۴) پیچیدگی زمانی آن بالا است."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "الگوریتم حریصانه در هر قدم مجموعه‌ای را برمی‌دارد که بیشترین عنصر تازه را پوشش می‌دهد، و این انتخاب‌های محلی لزوماً به بهترین ترکیب کلی نمی‌رسند؛ گزینهٔ ۱. (برای همین فقط ضریب تقریب $1-\\frac1e$ را تضمین می‌کند.)\nگزینهٔ ۲ علت نیست: سختی مسئله توضیح نمی‌دهد چرا «این» الگوریتم اشتباه می‌کند. حریصانه سریع است، پس گزینهٔ ۴ هم نادرست است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۳"
+      },
+      {
+        "type": "text",
+        "text": "چند گزاره از گزاره‌های زیر درست است؟\n– هر الگوریتم قطعی که n کلید متمایز را فقط با مقایسهٔ کلیدها مرتب‌سازی می‌کند، باید در بدترین حالت حداقل $\\lceil\\log(n!)\\rceil$ مقایسهٔ کلیدها را انجام دهد.\n– اگر m تعداد برگ‌ها در یک درخت دودویی و d عمق آن باشد آنگاه $d\\ge\\lceil\\log m\\rceil$.\n– الگوریتم مرتب‌سازی شمارشی یک الگوریتم مبتنی بر مقایسه است که در بدترین وضعیت از مرتبهٔ O(n) است."
+      },
+      {
+        "type": "text",
+        "text": "۱) صفر\n۲) ۱\n۳) ۲\n۴) ۳"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "گزارهٔ دوم درست است: درخت دودویی با عمق d حداکثر $2^d$ برگ دارد، پس $m\\le2^d$ و $d\\ge\\lceil\\log m\\rceil$.\nگزارهٔ اول از همین نتیجه می‌شود: درخت تصمیم هر مرتب‌سازی مقایسه‌ای دست‌کم $n!$ برگ دارد، پس عمقش دست‌کم $\\lceil\\log(n!)\\rceil$ است.\nگزارهٔ سوم نادرست است: مرتب‌سازی شمارشی اصلاً مقایسه نمی‌کند و زمانش $O(n+k)$ است. دو گزارهٔ درست؛ گزینهٔ ۳."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۴"
+      },
+      {
+        "type": "text",
+        "text": "هر الگوریتم قطعی که بتواند بزرگ‌ترین کلید دوم (دومین بزرگ‌ترین کلید) را در هر ورودی ممکن، تنها با مقایسهٔ کلیدها بیابد، باید در بدترین حالت، حداقل چند مقایسه انجام دهد؟ (تعداد عناصر برابر n است.)"
+      },
+      {
+        "type": "text",
+        "text": "۱) $n+\\lceil\\log n\\rceil-1$\n۲) $n+\\lceil\\log n\\rceil-2$\n۳) $n+\\lceil\\log n\\rceil+2$\n۴) $2n+\\lceil\\log n\\rceil$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "روش تورنمنت: بزرگ‌ترین با $n-1$ مقایسه پیدا می‌شود. دومین بزرگ‌ترین فقط به برنده باخته، پس میان حداکثر $\\lceil\\log n\\rceil$ عنصری است که مستقیم با برنده بازی کرده‌اند؛ بیشینهٔ آنها با $\\lceil\\log n\\rceil-1$ مقایسهٔ دیگر پیدا می‌شود. جمع: $n+\\lceil\\log n\\rceil-2$؛ گزینهٔ ۲.\nاین کران پایین هم هست (قضیهٔ کیسلیتسین)، پس هیچ الگوریتمی در بدترین حالت با مقایسهٔ کمتر نمی‌تواند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۵"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید یک ساختار دادهٔ جدید به نام لیست اولویت‌دار پویا (Dynamic Priority List) دارید. این ساختار داده از لیستی از گره‌ها تشکیل شده است که هر گره دارای یک مقدار کلید و یک اولویت است. عمل‌های زیر، بر روی این ساختار داده تعریف شده‌اند:\n– insert(x, p): افزودن یک عنصر با کلید x و اولویت p به لیست\n– Delete Max(): حذف گره‌ای که دارای بیشترین اولویت است. اگر چند گره دارای اولویت یکسان باشند، اولین گره از سمت چپ حذف می‌شود.\n– Find Median(): یافتن مقدار میانه از بین تمامی کلیدهای موجود در لیست\n– Increase Priority(x, k): افزایش اولویت عنصر با کلید x به اندازهٔ k\nهر کدام از این عملیات باید در کمترین پیچیدگی زمانی ممکن انجام شوند. حال، کدام‌یک از روش‌های زیر مناسب‌ترین ساختار دادهٔ ترکیبی برای پیاده‌سازی لیست اولویت‌دار پویا است، به‌گونه‌ای که همهٔ عملیات با پیچیدگی بهینه انجام شوند؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) استفاده از یک پشته و یک صف به‌صورت هم‌زمان برای مدیریت ترتیب ورود و خروج عناصر و اولویت آنها\n۲) ترکیب یک درخت فیبوناچی (Fibonacci Heap) و یک لیست پیوندی ساده برای مدیریت عناصر و اولویت‌ها\n۳) ترکیب یک هرم دوتایی (Double-ended Heap) برای مدیریت اولویت‌ها و یک ساختار دادهٔ مرتب برای دسترسی سریع به میانه\n۴) ترکیب یک درخت جستجوی دودویی متوازن (Balanced Binary Search Tree) برای ذخیرهٔ اولویت‌ها و یک جدول درهم‌سازی (Hash Table) برای دسترسی سریع به عناصر"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "سه نیاز داریم: پیدا کردن عنصر با کلیدش (برای Increase Priority)، بیشینه با قاعدهٔ «اولین از چپ» برای اولویت‌های برابر، و میانه.\n• جدول درهم‌سازی عنصر x را در $O(1)$ پیدا می‌کند.\n• درخت جستجوی متوازن (مثلاً با کلید مرکب «اولویت، ترتیب ورود») بیشینه را در $O(\\log n)$ حذف می‌کند و افزایش اولویت را با حذف و درج دوباره در $O(\\log n)$ انجام می‌دهد. اگر اندازهٔ زیردرخت‌ها را هم نگه داریم، k‌امین عنصر و در نتیجه میانه در $O(\\log n)$ پیدا می‌شود.\nپس گزینهٔ ۴ همه را لگاریتمی می‌کند. لیست پیوندی گزینهٔ ۲ پیدا کردن عنصر و میانه را خطی می‌کند، و پشته و صف (۱) هیچ‌کدام را پشتیبانی نمی‌کنند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۶"
+      },
+      {
+        "type": "text",
+        "text": "در دو الگوریتم مرتب‌سازی سریع (Quick Sort) و مرتب‌سازی ادغامی (Merge Sort)، تعداد مقایسه‌ها و جابه‌جایی‌ها متفاوت است. کدام گزارهٔ زیر، دربارهٔ این تفاوت‌ها درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) همواره، تعداد مقایسه‌ها در هر دو الگوریتم برابر است، اما مرتب‌سازی سریع، تعداد جابه‌جایی‌های بیشتری دارد.\n۲) همواره، مرتب‌سازی ادغامی، تعداد مقایسه‌های کمتری نسبت به مرتب‌سازی سریع دارد و تعداد جابه‌جایی‌های آن نیز کمتر است.\n۳) در حالت میانگین، مرتب‌سازی سریع، تعداد مقایسه‌های بیشتری نسبت به مرتب‌سازی ادغامی دارد و تعداد جابه‌جایی‌های آن کمتر است.\n۴) در حالت میانگین، مرتب‌سازی سریع، تعداد مقایسه‌های برابری با مرتب‌سازی ادغامی دارد، اما مقدار جابه‌جایی‌های آن بیشتر است."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "در حالت میانگین مرتب‌سازی سریع حدود $2n\\ln n\\approx1.39\\,n\\log_2 n$ مقایسه می‌کند و مرتب‌سازی ادغامی حدود $n\\log_2 n$؛ پس سریع مقایسهٔ بیشتری دارد. در عوض سریع درجا کار می‌کند و فقط عناصری را که سمت اشتباه محورند جابه‌جا می‌کند، در حالی که ادغامی در هر سطح همهٔ عناصر را به آرایهٔ کمکی می‌برد و برمی‌گرداند. گزینهٔ ۳.\n«همواره» در گزینه‌های ۱ و ۲ نادرست است، چون مثلاً روی ورودی مرتب رفتار سریع کاملاً عوض می‌شود."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۷"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید یک لیست پیوندی یک‌طرفه از n گره داریم و شما می‌خواهید گره‌ای را که در موقعیت $\\frac34n$ قرار گرفته پیدا کنید اما مقدار n را نمی‌دانیم. فرض کنید n مضربی از ۴ است. کدام‌یک از گزینه‌ها ما را به نتیجه نمی‌رساند؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) ابتدا طول لیست را به‌طور کامل محاسبه کنید، سپس به اندازهٔ $\\frac{3n}4$ از ابتدا به جلو حرکت کنید تا گره موردنظر را پیدا کنید.\n۲) با دو اشاره‌گر که یکی از ابتدا با سرعت سه گره و یکی از انتها (پس از پیدا کردن گره انتهایی) با سرعت یک گره حرکت کنند و در لحظهٔ رسیدن به هم، نتیجه حاصل خواهد شد.\n۳) ابتدا طول لیست را به‌طور کامل محاسبه کنید، از دو اشاره‌گر استفاده کنید. یکی را در ابتدای لیست و دیگری را در گره $\\frac n4$ تنظیم کنید. با سرعت یک گره حرکت کنید تا گره جلوتر به انتها برسد تا به هدف برسیم.\n۴) با دو اشاره‌گر که یکی با سرعت یک گره و دیگری به سرعت دو گره حرکت می‌کند، به نیمه می‌رسیم. یک گره جلو برویم و اشاره‌گر دوم که به انتها رسیده را مجدد برابر اشاره‌گر اول قرار خواهیم داد تا مجدد عمل انجام شود و نتیجه حاصل شود."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "در لیست یک‌طرفه هر گره فقط به گره بعدی اشاره می‌کند؛ اشاره‌گری که از انتها «به عقب» برود ممکن نیست. پس گزینهٔ ۲ اجرا نمی‌شود (حساب سرعت‌ها درست است: سه گره در برابر یک گره در $\\frac34n$ به هم می‌رسند، ولی حرکت برگشتی وجود ندارد). گزینهٔ ۲.\nبقیه کار می‌کنند: ۱ و ۳ با دانستن طول، و ۴ با دو بار روش اشاره‌گر کند و تند (اول نیمه، بعد نیمهٔ نیمهٔ دوم یعنی $\\frac34n$)."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "هوش مصنوعی: سؤال‌های ۶۸ تا ۷۵"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۸"
+      },
+      {
+        "type": "text",
+        "text": "کدام گزاره درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) مرتبهٔ زمانی الگوریتم Iterative Deepening Search به‌دلیل تکرارهای متعدد، بیشتر از BFS است.\n۲) مرتبهٔ زمانی الگوریتم Iterative Deepening Search به‌دلیل تکرارهای متعدد، بیشتر از DFS است.\n۳) مرتبهٔ مصرف حافظهٔ الگوریتم Iterative Deepening Search مانند BFS است، اما برخلاف BFS، جستجو با این الگوریتم کامل است.\n۴) مرتبهٔ مصرف حافظهٔ الگوریتم Iterative Deepening Search مانند DFS است، اما برخلاف DFS، جستجو با این الگوریتم کامل است."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "IDS در هر دور یک DFS با محدودیت عمق است، پس فقط مسیر جاری و برادرهایش را نگه می‌دارد: حافظهٔ $O(bd)$ مثل DFS. چون عمق را یکی‌یکی زیاد می‌کند، اگر جوابی در عمق متناهی باشد پیدایش می‌کند، یعنی کامل است (DFS در درخت نامتناهی ممکن است گم شود). گزینهٔ ۴.\nتکرار سطوح بالا مرتبهٔ زمانی را عوض نمی‌کند: زمان IDS همان $O(b^d)$ مثل BFS است، چون بیشتر گره‌ها در سطح آخرند. پس گزینه‌های ۱ و ۲ نادرست‌اند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۶۹"
+      },
+      {
+        "type": "text",
+        "text": "درخت جستجوی زیر را درنظر بگیرید. در جستجوی خصمانه (رقابتی) با هرس آلفا بتا در این درخت، برخی از شاخه‌ها هرس خواهند شد. مقادیر گره‌های ۴ و ۱۵ در چه بازه‌ای قابل تغییر هستند، به‌گونه‌ای که شاخه‌های هرس‌شده هیچ تغییری نکنند و همچنان همان شاخه‌ها هرس شوند؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q069",
+        "alt": "سؤال ۶۹ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۶۹ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) گره ۴ بازهٔ $(-\\infty,10]$ و گره ۱۵ بازهٔ $(10,20]$\n۲) گره ۴ بازهٔ $(-\\infty,10]$ و گره ۱۵ بازهٔ $(10,\\infty)$\n۳) گره ۴ بازهٔ $(3,10]$ و گره ۱۵ بازهٔ $(10,\\infty)$\n۴) گره ۴ بازهٔ $(3,10]$ و گره ۱۵ بازهٔ $(10,20]$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "ریشه MAX است و فرزندانش برگ ۱۰ و دو گره MIN؛ زیر هر MIN دو گره MAX. اجرای آلفا–بتا از چپ:\n• بعد از برگ ۱۰، در ریشه $\\alpha=10$.\n• MIN چپ: گره MAX اول (۴، ۳، ۲) مقدار ۴ می‌گیرد (چون $\\beta=\\infty$ است، داخلش هرسی نیست). حالا MIN چپ $\\le4\\le\\alpha$ است، پس گره MAX دوم (۷، ۱) هرس می‌شود.\n• MIN راست: گره MAX اول (۱۵، ۶) مقدار ۱۵ می‌گیرد و $\\beta=15$. در گره MAX دوم، برگ ۲۰ از $\\beta$ بیشتر است، پس برگ ۲۳ هرس می‌شود.\nبازه‌ها: برای اینکه (۷، ۱) باز هم هرس شود، مقدار MAX اول باید $\\le10$ بماند: $\\max(x,3,2)\\le10$ یعنی $x\\in(-\\infty,10]$. برای گره ۱۵: مقدار $\\max(y,6)$ باید از ۱۰ بیشتر باشد (وگرنه کل زیردرخت راست هرس می‌شود) و از ۲۰ بیشتر نباشد (وگرنه ۲۰ دیگر از $\\beta$ بیشتر نیست و ۲۳ بررسی می‌شود): $y\\in(10,20]$. گزینهٔ ۱."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۰"
+      },
+      {
+        "type": "text",
+        "text": "جملهٔ زیر را در منطق گزاره‌ای درنظر بگیرید. کدام مورد درست است؟ (بدیهی = همیشه درست = Tautology) (رزولوشن = Resolution)\n$[(A\\Rightarrow C)\\vee(B\\Rightarrow C)]\\Rightarrow[(A\\vee B)\\Rightarrow C]$"
+      },
+      {
+        "type": "text",
+        "text": "۱) با استفاده از روش رزولوشن در کنار استفاده از جدول درستی (Truth Table)، می‌توان بدیهی بودن جمله را نشان داد.\n۲) با استفاده از روش رزولوشن، نمی‌توان راجع به بدیهی بودن/ نبودن این جمله نتیجه‌ای گرفت.\n۳) با استفاده از روش رزولوشن، می‌توان بدیهی نبودن این جمله را نشان داد.\n۴) با استفاده از روش رزولوشن، می‌توان بدیهی بودن این جمله را نشان داد."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "جمله بدیهی نیست: با $A=T$، $B=F$، $C=F$ مقدم درست است ($B\\Rightarrow C$ درست است) ولی تالی نادرست ($A\\vee B$ درست و C نادرست).\nدر منطق گزاره‌ای رزولوشن روی نقیض جمله همیشه تمام می‌شود (تعداد بندهای ممکن متناهی است). اگر به بند تهی نرسیم، نقیض ارضاپذیر است، یعنی جمله بدیهی نیست. پس رزولوشن بدیهی نبودن را نشان می‌دهد؛ گزینهٔ ۳."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۱"
+      },
+      {
+        "type": "text",
+        "text": "کدام گزاره درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) اگر تابع هیوریستیک h سازگار (Consistent) باشد، آنگاه مقادیر f(n) در مسیر بهینه از ریشه تا هدف غیرنزولی است و در سایر مسیرها ممکن است صعودی یا نزولی باشد.\n۲) با فرض نامنفی بودن مقادیر توابع هیوریستیک، زمان اجرای حاصل از تابع هیوریستیک صفر $(h(n)=0)$ در الگوریتم $A^*$، از هیچ تابع هیوریستیک دیگری کمتر نیست.\n۳) اگر تابع هیوریستیک h سازگار (Consistent) باشد، هم جستجوی درختی و هم جستجوی گرافی $A^*$ بهینه خواهد بود.\n۴) اگر تابع هیوریستیک h قابل قبول (Admissible) باشد، جستجوی گرافی $A^*$ بهینه خواهد بود."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "هر هیوریستیک سازگار قابل قبول هم هست، پس جستجوی درختی A* بهینه است؛ و سازگاری تضمین می‌کند وقتی گرهی برای اولین بار باز می‌شود بهترین مسیرش پیدا شده، پس جستجوی گرافی هم بهینه است. گزینهٔ ۳.\nگزینهٔ ۱: با h سازگار، f در «هر» مسیری غیرنزولی است، نه فقط مسیر بهینه. گزینهٔ ۴: قابل قبول بودن برای جستجوی گرافی (بدون باز کردن دوبارهٔ گره‌ها) کافی نیست. گزینهٔ ۲: یک هیوریستیک بد (مثلاً غیرقابل قبول یا گمراه‌کننده) می‌تواند از $h=0$ هم کندتر باشد."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۲"
+      },
+      {
+        "type": "text",
+        "text": "از دو الگوریتم تپه‌نوردی استاندارد و پرتو محلی (local beam search)، برای حل یک مسئله استفاده می‌کنیم. کدام مورد درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) درصورتی‌که الگوریتم تپه‌نوردی به جواب بهینهٔ سراسری برسد و حالت اولیهٔ الگوریتم تپه‌نوردی یکی از k جواب اولیهٔ الگوریتم پرتو محلی باشد، الگوریتم پرتو محلی نیز حتماً به بهینهٔ سراسری خواهد رسید.\n۲) درصورتی‌که الگوریتم پرتو محلی به جواب بهینهٔ سراسری برسد و حالت اولیهٔ الگوریتم تپه‌نوردی یکی از k جواب اولیهٔ الگوریتم پرتو محلی باشد، الگوریتم تپه‌نوردی نیز حتماً به بهینهٔ سراسری خواهد رسید.\n۳) هر دو الگوریتم ممکن است در بهینهٔ محلی (local) گیر کنند.\n۴) موارد ۱ و ۳"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "هر دو فقط به همسایه‌های بهتر می‌روند، پس هر دو ممکن است در بهینهٔ محلی گیر کنند؛ گزینهٔ ۳.\nپرتو محلی k اجرای مستقل تپه‌نوردی نیست: در هر قدم از میان همهٔ جانشین‌های k حالت، k تای بهتر را نگه می‌دارد. ممکن است جانشین‌های مسیری که تپه‌نوردی را به جواب می‌رساند کنار گذاشته شوند، پس گزینهٔ ۱ «حتماً» ندارد. برعکسش (۲) هم درست نیست، چون ممکن است پرتو از حالت دیگری به جواب رسیده باشد."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۳"
+      },
+      {
+        "type": "text",
+        "text": "در مسئلهٔ CSP زیر (مسئلهٔ رنگ‌آمیزی نقشه)، خانه‌های E و D با رنگ‌های زرد = D، قرمز = E رنگ شده‌اند. کدام گزاره درست است؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q073",
+        "alt": "سؤال ۷۳ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۷۳ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) با استفاده از هیوریستیک Degree، متغیر A یا B یا C به‌عنوان متغیر بعدی انتخاب خواهد شد (بدون ترجیح یکی بر دیگری).\n۲) با استفاده از هیوریستیک MRV، متغیر B یا C به‌عنوان متغیر بعدی انتخاب خواهد شد (بدون ترجیح یکی بر دیگری).\n۳) با استفاده از هیوریستیک Degree، متغیر A به‌عنوان متغیر بعدی انتخاب خواهد شد.\n۴) با استفاده از هیوریستیک LCV، متغیر A به‌عنوان متغیر بعدی انتخاب خواهد شد."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "هیوریستیک Degree متغیری را برمی‌گزیند که با بیشترین تعداد «متغیر رنگ‌نشده» محدودیت دارد. متغیرهای باقی‌مانده A، B و C هستند و در نقشه هر سه با هم همسایه‌اند: A با B و C، B با A و C، C با A و B. هر کدام دو همسایهٔ رنگ‌نشده دارند، پس تساوی است؛ گزینهٔ ۱. (اگر همسایه‌های رنگ‌شده را هم بشماریم A بیشتر است، ولی Degree فقط محدودیت با متغیرهای باقی‌مانده را می‌شمارد.)\nMRV متغیر با کمترین مقدار مجاز را می‌خواهد: A هم با زرد (D) و هم با قرمز (E) همسایه است و کمترین گزینه را دارد، پس MRV سراغ A می‌رود نه B یا C. LCV دربارهٔ ترتیب «مقدارها»ست، نه انتخاب متغیر."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۴"
+      },
+      {
+        "type": "text",
+        "text": "در مسئلهٔ جستجوی زیر، دو تابع هیوریستیک h1 و h2 مفروض است. کدام مورد، ویژگی‌های این دو تابع را نشان می‌دهد؟ (قابل قبول = Admissible، سازگار = Consistent)"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q074",
+        "alt": "سؤال ۷۴ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۷۴ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) h1 قابل قبول است، اما سازگار نیست.\n۲) h2 قابل قبول است، اما سازگار نیست.\n۳) h1 قابل قبول نیست، اما سازگار است.\n۴) h2 هم قابل قبول و هم سازگار است."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "هزینه‌های واقعی تا هدف: $h^*(S)=6$ (از B)، $h^*(A)=6$، $h^*(B)=4$، $h^*(D)=2+4=6$ و $h^*(C)=3+6=9$ (یال‌ها جهت ندارند).\nh2 قابل قبول است: $5\\le6$، $6\\le6$، $3\\le4$، $3\\le9$ و $6\\le6$. ولی سازگار نیست: روی یال D–B باید $h_2(D)\\le c(D,B)+h_2(B)$ باشد، یعنی $6\\le2+3=5$ که برقرار نیست. گزینهٔ ۲.\nh1 هم قابل قبول است و هم سازگار (همهٔ یال‌ها شرط را دارند، مثلاً $h_1(S)=5\\le2+h_1(B)=5$)، پس گزینه‌های ۱ و ۳ نادرست‌اند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۵"
+      },
+      {
+        "type": "text",
+        "text": "یک مسئلهٔ ارضای محدودیت‌ها (CSP) با چهار متغیر W، Z، Y و X تعریف شده است. دامنهٔ مقادیر هر متغیر، به‌صورت زیر است:\n$D(X)=\\{1,2,3\\},\\ D(Y)=\\{1,2,3,4\\},\\ D(Z)=\\{1,2,3\\},\\ D(W)=\\{2,3\\}$\nمحدودیت‌های مسئله، عبارتند از:\n– $X\\ne Y$\n– $Z=W$\n– $X+W\\le4$\n– $Z\\ne3$\nپس از اعمال الگوریتم حذف مقادیر ناسازگار (Arc Consistency)، کدام مورد زیر، دامنه‌های به‌روزرسانی‌شده را نشان می‌دهد؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) $D(X)=\\{1,2\\},\\ D(Y)=\\{1,2,3\\},\\ D(Z)=\\{2\\},\\ D(W)=\\{2\\}$\n۲) $D(X)=\\{1,2\\},\\ D(Y)=\\{1,2,3,4\\},\\ D(Z)=\\{2\\},\\ D(W)=\\{2\\}$\n۳) $D(X)=\\{1,2,3\\},\\ D(Y)=\\{1,2,3,4\\},\\ D(Z)=\\{2\\},\\ D(W)=\\{2\\}$\n۴) $D(X)=\\{1,2,3\\},\\ D(Y)=\\{2,3,4\\},\\ D(Z)=\\{1,2\\},\\ D(W)=\\{2\\}$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "• $Z\\ne3$: $D(Z)=\\{1,2\\}$.\n• $Z=W$: W فقط مقداری می‌ماند که در Z هم باشد: $D(W)=\\{2\\}$؛ و در نتیجه Z هم فقط ۲ پشتیبان دارد: $D(Z)=\\{2\\}$.\n• $X+W\\le4$ با $W=2$: $X\\le2$، پس $D(X)=\\{1,2\\}$.\n• $X\\ne Y$: هر مقدار Y با یکی از دو مقدار X متفاوت است، پس چیزی از Y حذف نمی‌شود: $D(Y)=\\{1,2,3,4\\}$.\nگزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "مدارهای منطقی: سؤال‌های ۷۶ تا ۸۲"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۶"
+      },
+      {
+        "type": "text",
+        "text": "اگر فقط دروازه‌های NAND دو ورودی در دسترس داشته باشیم، برای پیاده‌سازی تابع AB+CD+EF+GH چند دروازه نیاز است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۱۰\n۲) ۹\n۳) ۸\n۴) ۷"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "سطح اول: چهار NAND که $\\overline{AB}$، $\\overline{CD}$، $\\overline{EF}$ و $\\overline{GH}$ را می‌سازند (۴ گیت).\nبا یک NAND دیگر $\\overline{\\overline{AB}\\cdot\\overline{CD}}=AB+CD$ ساخته می‌شود، و همین‌طور $EF+GH$ (۲ گیت). برای OR کردن این دو با NAND باید اول معکوسشان کنیم (۲ گیت NAND به‌عنوان NOT) و بعد یک NAND آخر: $\\overline{\\overline{(AB+CD)}\\cdot\\overline{(EF+GH)}}$.\nجمع: $4+2+2+1=9$؛ گزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۷"
+      },
+      {
+        "type": "text",
+        "text": "در مدار زیر، ورودی A در لحظهٔ صفر از مقدار یک به مقدار صفر تغییر می‌کند. تأخیر گیت‌ها درون آنها نوشته شده و فرض می‌کنیم فلیپ‌فلاپ که با لبهٔ بالارونده پالس ساعت کار می‌کند، هیچ تأخیری ندارد. اگر خروجی Z در ابتدا صفر باشد، در چه زمانی یک می‌شود؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q077",
+        "alt": "سؤال ۷۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۷۷ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۱۰\n۲) ۱۵\n۳) ۳۰\n۴) ۳۵"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "پیش از صفر: $A=1$ و $C=1$، پس $Y=1$ و $W=1$؛ و چون $Z=0$، ورودی D (که $\\overline Z$ است) برابر ۱ است.\n• $Y=A\\cdot C$ با تأخیر ۵: در $t=5$ صفر می‌شود، پس W (OR با تأخیر ۵) در $t=10$ صفر می‌شود. این لبهٔ پایین‌رونده است و فلیپ‌فلاپ کاری نمی‌کند.\n• $\\overline A$ با تأخیر ۲۰ در $t=20$ یک می‌شود، $X=\\overline A\\cdot B$ در $t=25$ و W در $t=30$ دوباره یک می‌شود.\nاین اولین لبهٔ بالارونده است و $D=1$ را به Z می‌برد: $Z=1$ در $t=30$؛ گزینهٔ ۳."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۸"
+      },
+      {
+        "type": "text",
+        "text": "اگر در جدول حالت زیر، حالت‌های معادل را حذف کنیم، چند حالت باقی می‌ماند؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q078",
+        "alt": "سؤال ۷۸ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۷۸ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۴\n۲) ۵\n۳) ۶\n۴) ۷"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "گام ۱، دسته‌بندی با خروجی‌ها (x=0، x=1): $\\{a,b,c,e\\}$ با (0,0)، $\\{d,h\\}$ با (1,0)، $\\{f\\}$ با (1,1) و $\\{g\\}$ با (0,1).\nگام ۲، حالت بعدی‌ها: a به (f، b) و c به (f، e) می‌روند؛ b و e هر دو به (d، c). پس $\\{a,b,c,e\\}$ به $\\{a,c\\}$ و $\\{b,e\\}$ می‌شکند. d و h هر دو به (g، a) می‌روند و معادل‌اند.\nگام ۳: a و c به (f، b) و (f، e) می‌روند و b و e در یک دسته‌اند، پس دسته‌ها پایدارند: $\\{a,c\\}$، $\\{b,e\\}$، $\\{d,h\\}$، $\\{f\\}$ و $\\{g\\}$؛ یعنی ۵ حالت. گزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۷۹"
+      },
+      {
+        "type": "text",
+        "text": "کمترین تعداد گیت AND که مخاطرهٔ پنهان در تابع زیر (که به‌صورت مجموع حاصل‌ضرب‌ها پیاده‌سازی می‌شود) را از بین می‌برد، چند عدد است؟\n$F(a,b,c,d,e)=bc'e'+a'cd'e+bcd'e+a'b'c'd+ab'de$"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۲\n۲) ۱\n۳) ۴\n۴) ۳"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "مخاطرهٔ ایستای ۱ وقتی است که دو جملهٔ مجاور فقط در یک متغیر با هم تفاوت متمم دارند و جملهٔ اجماع (consensus) آنها در تابع نیست. جفت‌ها را بررسی می‌کنیم:\n• $bc'e'$ و $a'b'c'd$ (روی b): اجماع $a'c'de'$؛ هیچ جمله‌ای آن را نمی‌پوشاند.\n• $a'b'c'd$ و $ab'de$ (روی a): اجماع $b'c'de$؛ پوشانده نشده.\n• بقیهٔ جفت‌ها یا متغیر متمم ندارند یا اجماعشان صفر می‌شود (مثلاً $bc'e'$ و $bcd'e$ هم در c و هم در e متمم‌اند).\nپس دو جملهٔ AND اضافه لازم است: $a'c'de'$ و $b'c'de$؛ گزینهٔ ۱."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۰"
+      },
+      {
+        "type": "text",
+        "text": "مدار زیر، چه تابعی را پیاده‌سازی می‌کند؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q080",
+        "alt": "سؤال ۸۰ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۸۰ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) XNOR\n۲) XOR\n۳) NAND\n۴) NOR"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "مالتی‌پلکسر اول با انتخاب b: ورودی ۰ آن «1» و ورودی ۱ آن «0» است، پس خروجی‌اش $\\overline b$ است.\nمالتی‌پلکسر دوم با انتخاب a: ورودی ۰ آن $\\overline b$ و ورودی ۱ آن «0» است، پس $out=\\overline a\\,\\overline b=\\overline{a+b}$، یعنی NOR؛ گزینهٔ ۴."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۱"
+      },
+      {
+        "type": "text",
+        "text": "فرکانس نوسان نوسانگر حلقه‌ای زیر، چند مگاهرتز است؟ (فرض کنید تأخیر هر معکوس‌کننده، ۵ نانوثانیه (5 ns) است.)"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q081",
+        "alt": "سؤال ۸۱ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۸۱ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۵\n۲) ۱۰\n۳) ۲۰\n۴) ۴۰"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "حلقه پنج معکوس‌کننده دارد. یک تغییر سطح، حلقه را در $5\\times5=25$ نانوثانیه دور می‌زند و خروجی را برمی‌گرداند؛ یک دورهٔ کامل (یک بار بالا و یک بار پایین) دو دور حلقه است: $T=2\\times5\\times5=50\\ \\text{ns}$.\nفرکانس: $f=\\frac1{50\\ \\text{ns}}=20\\ \\text{MHz}$؛ گزینهٔ ۳."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۲"
+      },
+      {
+        "type": "text",
+        "text": "کدام مورد، خروجی مدار زیر را به‌صورت حاصل‌ضرب ماکسترم‌ها به‌نحو درست نشان می‌دهد؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q082",
+        "alt": "سؤال ۸۲ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۸۲ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۰, ۲, ۵, ۶, ۹, ۱۰, ۱۳, ۱۵\n۲) ۰, ۲, ۵, ۶, ۹, ۱۱, ۱۲, ۱۵\n۳) ۱, ۳, ۵, ۷, ۹, ۱۰, ۱۳, ۱۵\n۴) ۱, ۳, ۴, ۷, ۸, ۱۱, ۱۲, ۱۴"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "با $C_{in}=1$: $Sum=\\overline{a\\oplus b}$ و $C_{out}=a+b$. خروجی XOR: $Sum\\oplus C_{out}=\\overline{ab}$ (فقط وقتی $a=b=1$ صفر است).\nورودی‌های مالتی‌پلکسر (با انتخاب $c\\,d$): ۰: $\\overline{C_{out}}=\\overline{a+b}$؛ ۱: $C_{out}=a+b$؛ ۲: $\\overline{ab}$؛ ۳: معکوس XOR، یعنی $ab$.\nمینترم‌ها (abcd): از ورودی ۰ فقط 0؛ از ۱: 5، 9 و 13؛ از ۲: 2، 6 و 10؛ از ۳: فقط 15. پس $f=\\sum m(0,2,5,6,9,10,13,15)$ و ماکسترم‌ها بقیه‌اند: $\\prod M(1,3,4,7,8,11,12,14)$؛ گزینهٔ ۴.\nدام تستی: گزینهٔ ۱ همان فهرست مینترم‌هاست، نه ماکسترم‌ها."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "معماری کامپیوتر: سؤال‌های ۸۳ تا ۸۹"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۳"
+      },
+      {
+        "type": "text",
+        "text": "در یک کامپیوتر دارای ۱۶ ثبات عام‌منظوره و گذرگاه آدرس ۱۰ بیتی، قالب دستورالعمل‌ها ۲۴ بیتی است. چنانچه ۲۵۶ دستور تک‌آدرسی از نوع حافظه‌ای مستقیم و ۱۰۲۴ دستور تک‌آدرسی ثباتی مستقیم و غیرمستقیم باشد، حداکثر چند دستور دوآدرسی که یکی آدرس حافظه و دیگری ثبات باشد، می‌توان داشت؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۵۱۲\n۲) ۱۰۰۷\n۳) ۱۰۲۴\n۴) ۱۰۶۴"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "کد عملیاتی گسترش‌پذیر: کل فضای کد $2^{24}$ است. آدرس حافظه ۱۰ بیت و شمارهٔ ثبات ۴ بیت است.\n• هر دستور دوآدرسی (حافظه + ثبات) $2^{10+4}=2^{14}$ کد مصرف می‌کند.\n• ۲۵۶ دستور تک‌آدرسی حافظه‌ای: $256\\times2^{10}=2^{18}$ کد، یعنی معادل $2^4=16$ دستور دوآدرسی.\n• ۱۰۲۴ دستور تک‌آدرسی ثباتی: $1024\\times2^4=2^{14}$ کد، یعنی معادل یک دستور دوآدرسی.\nپس $x\\cdot2^{14}+2^{18}+2^{14}\\le2^{24}$ و $x\\le1024-16-1=1007$؛ گزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۴"
+      },
+      {
+        "type": "text",
+        "text": "فرض کنید که در یک پردازنده برای اجرای پایپ‌لاین دستورات از پنج مرحلهٔ واکشی دستور (IF)، به‌دست آوردن عملوندها (ID)، اجرا در ALU (EX)، مراجعه به حافظه (DM) و نوشتن نتایج در ثبات مقصد (WB) استفاده می‌شود و هیچ‌گونه امکان رفع وابستگی (hazard) به‌صورت نرم‌افزاری و یا forwarding وجود نداشته باشد. هر مرحله در یک پالس ساعت انجام می‌شود. درصورت وجود وابستگی، به کمک اضافه کردن تأخیر (Stall) رفع می‌شود. برای اجرای دستورات زیر، به چند پالس ساعت نیاز است؟ (عملیات ثباتی در دستورات، از راست به چپ است.)\n```\nADD R1, R2, R3\nSUB R4, R1, R2\nAND R5, R2, R1\n```"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۸\n۲) ۹\n۳) ۱۰\n۴) ۱۱"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "«از راست به چپ» یعنی مقصد اولین ثبات است: ADD در R1 می‌نویسد و SUB و AND هر دو R1 را می‌خوانند.\nADD: IF۱، ID۲، EX۳، DM۴، WB۵. SUB باید R1 را بعد از WB دستور ADD بخواند؛ با این فرض که خواندن ثبات پالس بعد از نوشتن است، ID آن در پالس ۶ است: EX۷، DM۸، WB۹. AND پشت SUB منتظر می‌ماند: ID۷، EX۸، DM۹، WB۱۰. جمع: ۱۰ پالس؛ گزینهٔ ۳.\nاگر فرض کنیم ثبات در نیمهٔ اول پالس نوشته و در نیمهٔ دوم خوانده می‌شود، ID دستور SUB در پالس ۵ می‌افتد و جواب ۹ می‌شد؛ کلید این آزمون فرض اول را گرفته است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۵"
+      },
+      {
+        "type": "text",
+        "text": "شکل زیر جزء iام یک واحد حسابی (Arithmetic Unit) n بیتی است که عملکرد آن با خطوط $S_1S_0$ براساس ورودی‌های n بیتی A و B و تک‌بیت $C_{in}$ کنترل می‌شود. $FA_i$ یک تمام‌افزا (Full adder) است. اگر $S_1=1$، کدام حالت مربوط به عملکرد این واحد حسابی است؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q085",
+        "alt": "سؤال ۸۵ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۸۵ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) $S_0C_{in}=00:\\ A-1$؛ $01:\\ A$؛ $10:\\ A-B-1$؛ $11:\\ A-B$\n۲) $S_0C_{in}=00:\\ A-1$؛ $01:\\ A$؛ $10:\\ A-B-1$؛ $11:\\ A-B+1$\n۳) $S_0C_{in}=00:\\ A$؛ $01:\\ A-1$؛ $10:\\ A-B-1$؛ $11:\\ A-B$\n۴) $S_0C_{in}=00:\\ A$؛ $01:\\ A+1$؛ $10:\\ A-B$؛ $11:\\ A-B+1$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "ورودی دوم جمع‌کننده از مالتی‌پلکسر می‌آید: ۰ → $b_i$، ۱ → 0، ۲ → 1، ۳ → $\\overline{b_i}$. با $S_1=1$ فقط ورودی‌های ۲ و ۳ انتخاب می‌شوند.\n• $S_0=0$: همهٔ بیت‌ها ۱ است، یعنی عدد $-1$ در مکمل دو: $F=A-1+C_{in}$؛ با $C_{in}=0$ می‌شود $A-1$ و با $C_{in}=1$ می‌شود $A$.\n• $S_0=1$: $\\overline B$ که برابر $-B-1$ است: $F=A-B-1+C_{in}$؛ یعنی $A-B-1$ و $A-B$.\nگزینهٔ ۱."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۶"
+      },
+      {
+        "type": "text",
+        "text": "در یک سامانهٔ پردازشی، ۴۰٪ زمان برای دسترسی به حافظهٔ RAM و ۳۰٪ زمان برای دسترسی به هارددیسک صرف می‌شود. اگر سرعت دسترسی به حافظهٔ RAM و دیسک را به‌ترتیب دو و سه برابر کنیم، تسریع چقدر می‌شود؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۱/۳۳\n۲) ۱/۵\n۳) ۱/۶۶\n۴) ۲/۵"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "قانون آمدال: زمان جدید $=0.3+\\frac{0.4}{2}+\\frac{0.3}{3}=0.3+0.2+0.1=0.6$ زمان قبلی است. تسریع $\\frac1{0.6}\\approx1.66$؛ گزینهٔ ۳."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۷"
+      },
+      {
+        "type": "text",
+        "text": "کد معادل با معماری زیر، در زبان RTL چیست؟"
+      },
+      {
+        "type": "image",
+        "media_key": "konkur1404-q087",
+        "alt": "سؤال ۸۷ کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در دفترچه",
+        "caption": "سؤال ۸۷ در دفترچهٔ 335C"
+      },
+      {
+        "type": "text",
+        "text": "۱) $CLK:\\ R2\\leftarrow R1$\n۲) $CLK:\\ R1\\leftarrow R2$\n۳) $P:\\ R1\\leftarrow R2$\n۴) $P:\\ R2\\leftarrow R1$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "خروجی n بیتی R1 به ورودی R2 وصل است و سیگنال P از مدار کنترل به ورودی Load ثبات R2 می‌رود. پس در لبهٔ ساعت، اگر P یک باشد، محتوای R1 در R2 بار می‌شود: $P:\\ R2\\leftarrow R1$؛ گزینهٔ ۴.\nدر RTL شرط کنترلی (P) نوشته می‌شود، نه خود ساعت؛ ساعت در همهٔ انتقال‌ها مشترک است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۸"
+      },
+      {
+        "type": "text",
+        "text": "حافظهٔ نهان مجموعه‌انجمنی ۲ تایی که اندازهٔ هر مجموعه ۲ بلوک و اندازهٔ هر بلوک ۴ کلمه و از الگوریتم جایگزینی LRU بهره می‌برد، مفروض است. چنانچه اندازهٔ حافظهٔ نهان ۱۶ کلمه باشد، نرخ موفقیت پس از انجام درخواست‌های کلمات زیر، به‌ترتیب از چپ به راست چیست؟\n$21-51-8-76-30-10-08-77-79-78-23-20-18-76-8-30-31-11-9-22$"
+      },
+      {
+        "type": "text",
+        "text": "۱) $\\frac{12}{20}$\n۲) $\\frac{11}{20}$\n۳) $\\frac{10}{20}$\n۴) $\\frac9{20}$"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "۱۶ کلمه با بلوک ۴ کلمه‌ای یعنی ۴ بلوک، و در هر مجموعه ۲ بلوک یعنی ۲ مجموعه. شمارهٔ بلوک $\\lfloor w/4\\rfloor$ و مجموعه زوج یا فرد بودن آن است.\nبلوک‌ها به ترتیب: ۵، ۱۲، ۲، ۱۹، ۷، ۲، ۲، ۱۹، ۱۹، ۱۹، ۵، ۵، ۴، ۱۹، ۲، ۷، ۷، ۲، ۲، ۵.\n• مجموعهٔ زوج: ۱۲ (عدم برخورد)، ۲ (عدم)، ۲، ۲ (برخورد)، ۴ (عدم؛ ۱۲ بیرون می‌رود)، ۲، ۲، ۲ (برخورد). ۵ برخورد.\n• مجموعهٔ فرد: ۵، ۱۹، ۷ (هر سه عدم؛ ۵ بیرون می‌رود)، ۱۹، ۱۹، ۱۹ (برخورد)، ۵ (عدم؛ ۷ بیرون)، ۵، ۱۹ (برخورد)، ۷ (عدم؛ ۵ بیرون)، ۷ (برخورد)، ۵ (عدم). ۶ برخورد.\nجمع: $5+6=11$ برخورد از ۲۰؛ گزینهٔ ۲."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۸۹"
+      },
+      {
+        "type": "text",
+        "text": "تکه‌کد زیر، مربوط به کدام معماری است؟\n```\nPush A\npush B\nAdd\nPop C\n```"
+      },
+      {
+        "type": "text",
+        "text": "۱) مبتنی بر پشته\n۲) مبتنی بر انباشتگر\n۳) مبتنی بر ثبات ـ حافظه\n۴) مبتنی بر ثبات ـ ثبات / بارگذاری ـ ذخیره‌سازی"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "دستور Add هیچ عملوندی ندارد: دو عنصر بالای پشته را برمی‌دارد و حاصل را روی پشته می‌گذارد؛ Push و Pop هم داده را بین حافظه و پشته جابه‌جا می‌کنند. این ماشین صفرآدرسی، یعنی معماری مبتنی بر پشته است؛ گزینهٔ ۱.\nدر معماری انباشتگر همین کار به شکل Load A، Add B، Store C نوشته می‌شد."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "سیستم‌های عامل: سؤال‌های ۹۶ تا ۱۰۲"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۹۶"
+      },
+      {
+        "type": "text",
+        "text": "هدف اصلی از مکانیزم حالت دوگانه (Dual Mode)، حفاظت از کدام مورد است و در کجا پیاده‌سازی شده است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) امنیت سیستم در برابر فرایندهای هک‌شده ـ پردازنده\n۲) سایر فرایندها در برابر فرایند مخرب ـ سیستم عامل\n۳) منابع سیستم در برابر عملکرد مخرب فرایندها ـ پردازنده\n۴) سیستم عامل در برابر عملکرد مخرب فرایندها ـ سیستم عامل"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۳."
+      },
+      {
+        "type": "text",
+        "text": "حالت دوگانه (کاربر و هسته) با یک بیت حالت در «سخت‌افزار پردازنده» پیاده می‌شود: دستورهای ممتاز (ورودی/خروجی، تنظیم تایمر، دسترسی به جدول صفحه و...) فقط در حالت هسته اجرا می‌شوند. هدفش این است که هیچ فرایندی نتواند مستقیم به منابع سیستم دست بزند و کار خرابی بکند؛ گزینهٔ ۳.\nسیستم عامل از این سازوکار «استفاده» می‌کند، ولی جایی که پیاده شده پردازنده است؛ برای همین گزینه‌های ۲ و ۴ نادرست‌اند."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۹۷"
+      },
+      {
+        "type": "text",
+        "text": "چهار فرایند مشابه نیاز به ۲۰ms پردازش دارند که اجرای آنها به‌صورت ۵ms پردازش و ۵ms انتظار برای تکمیل IO است. اگر سربار تعویض زمینه صفر باشد، اجرای دسته‌ای (batch) این فرایندها روی یک پردازندهٔ دوهسته‌ای (dual core) چند ms طول می‌کشد؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۸۰\n۲) ۵۰\n۳) ۴۰\n۴) ۲۵"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "هر فرایند ۲۰ میلی‌ثانیه پردازش دارد، یعنی چهار نوبت «۵ پردازش + ۵ انتظار IO»: $4\\times(5+5)=40$ میلی‌ثانیه.\nدر اجرای دسته‌ای، هسته هنگام انتظار IO سراغ فرایند دیگری نمی‌رود؛ هر فرایند تا آخر اجرا می‌شود و بعد نوبت بعدی است. هر هسته دو فرایند را پشت سر هم اجرا می‌کند: $2\\times40=80$ میلی‌ثانیه؛ گزینهٔ ۱.\nاگر چندبرنامگی داشتیم، هر هسته در زمان IO یک فرایند، فرایند دیگرش را اجرا می‌کرد و زمان کمتر می‌شد؛ همین تفاوت دسته‌ای و چندبرنامگی است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۹۸"
+      },
+      {
+        "type": "text",
+        "text": "کدام مورد، درخصوص هم‌روندی (concurrency) درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) هم‌روندی، لازمهٔ داشتن چندبرنامگی است.\n۲) چندوظیفگی (multitasking)، یک نوع هم‌روندی است.\n۳) چندبرنامگی (multiprogramming)، همان هم‌روندی است.\n۴) چندریسمانی (multithreading)، یک نوع هم‌روندی است."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "هم‌روندی یعنی چند کار در بازه‌های زمانی هم‌پوشان پیش بروند. چندریسمانی دقیقاً همین را درون یک برنامه می‌سازد: چند ریسمان که هم‌زمان (یا یک‌درمیان روی یک هسته) جلو می‌روند. کلید سنجش گزینهٔ ۴ است.\nگزینهٔ ۳ نادرست است: چندبرنامگی یکی از راه‌های ایجاد هم‌روندی است، نه خود آن. گزینهٔ ۱ برعکس است: چندبرنامگی هم‌روندی می‌سازد، نه اینکه به آن نیاز داشته باشد.\nگزینهٔ ۲ هم از نظر بسیاری از کتاب‌ها قابل دفاع است، چون چندوظیفگی هم کارها را هم‌روند اجرا می‌کند؛ کلید آن را نپذیرفته است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۹۹"
+      },
+      {
+        "type": "text",
+        "text": "در یک سیستم عامل ۳ فرایند در حافظه بارگذاری شده است. فرایند اول دارای ۲ ریسمان هسته‌ای، فرایند دوم دارای یک ریسمان هسته و ۲ ریسمان کاربری و فرایند سوم دارای ۲ ریسمان سطح کاربری است. در هستهٔ این سیستم عامل، چند ریسمان برای این سه فرایند وجود دارد؟ (نگاشت چند به یک حالت پیش‌فرض است.)"
+      },
+      {
+        "type": "text",
+        "text": "۱) ۸\n۲) ۶\n۳) ۵\n۴) ۴"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۴."
+      },
+      {
+        "type": "text",
+        "text": "هسته فقط ریسمان‌های هسته را می‌بیند. با نگاشت چند به یک، همهٔ ریسمان‌های کاربری یک فرایند روی یک ریسمان هسته سوار می‌شوند.\n• فرایند اول: ۲ ریسمان هسته.\n• فرایند دوم: ریسمان‌های کاربری‌اش روی همان یک ریسمان هسته‌اش نگاشت می‌شوند: ۱.\n• فرایند سوم: دو ریسمان کاربری روی یک ریسمان هسته: ۱.\nجمع: $2+1+1=4$؛ گزینهٔ ۴."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۰۰"
+      },
+      {
+        "type": "text",
+        "text": "مانیتور (monitor) در همگام‌سازی ریسمان‌ها به چه مفهومی است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) یک مکانیزم همگام‌سازی سطح بالا است که دو ساختار دادهٔ مجزا برای انحصار متقابل و متغیرهای شرطی تعریف می‌کند.\n۲) یک مکانیزم انحصار متقابل است که بر استفاده از دستورات سخت‌افزاری و انتظار فعال (busy wating) تأکید دارد.\n۳) یک مکانیزم همگام‌سازی سطح بالا است که انحصار متقابل و متغیرهای شرطی را در یک ساختار داده ادغام می‌کند.\n۴) یک ریسمان خاص برای پایش و نظارت وضعیت همگامی سایر ریسمان‌ها است."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۱."
+      },
+      {
+        "type": "text",
+        "text": "مانیتور یک سازوکار سطح بالای زبان برنامه‌نویسی است: فقط یک ریسمان در هر لحظه داخل آن است (انحصار متقابل) و ریسمان‌ها با متغیرهای شرطی (wait و signal) منتظر شرط‌ها می‌مانند. در پیاده‌سازی کتاب سیلبرشاتس، این دو کار با ساختارهای جدا انجام می‌شود: یک صف ورود برای انحصار متقابل و برای هر متغیر شرطی یک صف جدا. کلید سنجش با همین دید گزینهٔ ۱ است.\nگزینهٔ ۳ هم توصیف رایجی از مانیتور است (همه‌چیز در یک ساختار کپسوله می‌شود) و از نظر ما قابل دفاع است؛ کلید آن را نپذیرفته است. گزینهٔ ۲ توصیف قفل چرخشی (spinlock) است و گزینهٔ ۴ اصلاً مانیتور همگام‌سازی نیست."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۰۱"
+      },
+      {
+        "type": "text",
+        "text": "کدام روش زمان‌بندی، از نوع تقدم اکید و غیرقبضه‌ای (non preemptive) است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) کوتاه‌ترین کار (Shortest Job First)\n۲) صف (FIFO)\n۳) نوبتی چرخشی (Round Robin)\n۴) نرخ یکنواخت (Rate Monotonic)"
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "FIFO همیشه به ترتیب ورود و بی‌چون‌وچرا (تقدم اکید) اجرا می‌کند و هیچ فرایندی را وسط کار کنار نمی‌گذارد؛ گزینهٔ ۲.\nنوبتی چرخشی با کوانتوم زمانی قبضه می‌کند، نرخ یکنواخت زمان‌بندی اولویت‌دار قبضه‌ای سیستم‌های بی‌درنگ است، و کوتاه‌ترین کار هم نسخهٔ قبضه‌ای دارد (SRTF) و ترتیبش به پیش‌بینی طول کار بستگی دارد، نه تقدم ثابت."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "سؤال ۱۰۲"
+      },
+      {
+        "type": "text",
+        "text": "کدام مورد درست است؟"
+      },
+      {
+        "type": "text",
+        "text": "۱) اگر در یک سیستم، بهره‌وری پردازنده ۱۵٪ و دیسک ۹۷٪ باشد این سیستم قطعاً دچار کوبیدگی (thrashing) شده است.\n۲) زمانی‌که یک فرایند درحال اجرای یک تابع بازگشتی است، مجموعهٔ کاری (working set) می‌تواند بدون تغییر بماند.\n۳) روش مدیریت حافظه سگمنت کردن (Segmentation)، ممکن است دچار کوبیدگی (thrashing) شود.\n۴) روش LFU (least frequently used) می‌تواند دچار بدرفتاری بیلیدی (Belady Anomality) شود."
+      },
+      {
+        "type": "text",
+        "text": "پاسخ: گزینهٔ ۲."
+      },
+      {
+        "type": "text",
+        "text": "تابع بازگشتی بارها همان کد و همان صفحه‌های پشته را لمس می‌کند؛ اگر عمق بازگشت در همان صفحه‌ها جا شود، مجموعهٔ صفحه‌هایی که در پنجرهٔ اخیر ارجاع شده‌اند ثابت می‌ماند. «می‌تواند» این را ممکن می‌داند، نه حتمی؛ گزینهٔ ۲.\n• ۱: بهره‌وری پایین پردازنده و بالای دیسک نشانهٔ کوبیدگی است، ولی «قطعاً» نیست؛ یک بار کاری سنگین ورودی/خروجی هم همین را می‌سازد.\n• ۳: کوبیدگی پدیدهٔ حافظهٔ مجازی صفحه‌بندی‌شده است؛ قطعه‌بندی تنها صفحه‌خطا و رفت‌وبرگشت صفحه ندارد.\n• ۴: LFU با شمارش همهٔ ارجاع‌ها یک الگوریتم پشته‌ای است (اولویت صفحه‌ها به تعداد قاب‌ها بستگی ندارد) و بدرفتاری بیلیدی ندارد؛ این بدرفتاری مال FIFO است."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "سؤال‌هایی که با دقت بیشتری باید خواند"
+      },
+      {
+        "type": "text",
+        "text": "• سؤال ۳۵ (آمار): درصد حمله‌های واقعی در دفترچه ۰/۱٪ است؛ اگر جایی ۰/۰۱٪ دیدی اشتباه تایپی است و با آن جواب ۰/۰۴۷ درنمی‌آید.\n• سؤال ۳۹ (آمار): گزینهٔ ۴ «۶۰۰۰۰ خط» است، نه ۶۰۰۰؛ با عدد درست، این گزینه درست است و فقط گزینهٔ ۲ نادرست می‌ماند.\n• سؤال ۸۴ (معماری): جواب ۱۰ با این فرض است که ثبات پالس بعد از WB خوانده می‌شود؛ با فرض خواندن و نوشتن در یک پالس جواب ۹ می‌شد.\n• سؤال‌های ۹۸ و ۱۰۰ (سیستم عامل): در هر دو یک گزینهٔ دیگر هم قابل دفاع است (چندوظیفگی در ۹۸، و «ادغام در یک ساختار» در ۱۰۰). برداشت کلید و برداشت دیگر در حل آمده است."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "درس‌هایی که در ۱۴۰۶ نیستند"
+      },
+      {
+        "type": "text",
+        "text": "ریاضی عمومی ۱ و ۲ (۲۶ تا ۳۲)، سیگنال‌ها و سیستم‌ها (۵۱ تا ۵۵)، الکترونیک دیجیتال (۹۰ تا ۹۵)، شبکه‌های کامپیوتری (۱۰۳ تا ۱۰۸)، پایگاه داده‌ها (۱۰۹ تا ۱۱۵) از مواد امتحانی ۱۴۰۶ مجموعهٔ ۱۲۷۷ کنار رفته‌اند؛ برای همین حلشان را نیاورده‌ایم و فقط کلیدشان در جدول بالا هست."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "پرسش‌های رایج"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "کلید کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ کجاست؟"
+      },
+      {
+        "type": "text",
+        "text": "کلید هر ۱۱۵ سؤال به شکل پاسخ‌برگ بالای همین صفحه و تصویر کلید سنجش هم زیر آن آمده است. گزینه‌ها مطابق دفترچهٔ 335C است."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "کنکور ۱۴۰۴ چند سؤال از درس‌های ۱۴۰۶ داشت؟"
+      },
+      {
+        "type": "text",
+        "text": "۸۴ سؤال از ۱۱۵ سؤال: زبان ۲۵، آمار ۷، گسسته ۶، نظریه ۵، داده‌ساختار و الگوریتم ۱۲، هوش ۸، مدار منطقی ۷، معماری ۷ و سیستم عامل ۷."
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "بهتر است حل‌ها را کی بخوانم؟"
+      },
+      {
+        "type": "text",
+        "text": "اول سؤال‌های هر درس را خودت با زمان حل کن و پاسخت را بنویس، بعد حل را بخوان. حل خواندن بدون تلاش قبلی، حس فهمیدن می‌دهد ولی در جلسهٔ آزمون کمک زیادی نمی‌کند."
+      },
+      {
+        "type": "link_group",
+        "items": [
+          {
+            "label": "حل تشریحی سؤالات کنکور ۱۴۰۵",
+            "href": "/articles/konkur-1405-computer-engineering-solutions"
+          },
+          {
+            "label": "کلید کنکور ارشد کامپیوتر ۱۴۰۰ تا ۱۴۰۵",
+            "href": "/articles/master-computer-answer-keys"
+          },
+          {
+            "label": "کنکور ۱۴۰۴: تعداد تست هر درس و درصد هر رتبه",
+            "href": "/articles/exam-1404-analysis"
+          },
+          {
+            "label": "بودجه‌بندی هوشمند ۱۴۰۶",
+            "href": "/budget"
+          },
+          {
+            "label": "درس‌نامه‌ها",
+            "href": "/lesson-notes"
+          }
+        ]
+      }
+    ],
+    "seo": {
+      "title": "حل تشریحی سؤالات کنکور ارشد کامپیوتر ۱۴۰۴",
+      "description": "حل تشریحی همهٔ سؤال‌های کنکور ارشد مهندسی کامپیوتر ۱۴۰۴ در یک صفحه، با کلید به شکل پاسخ‌برگ، تصویر کلید و نکتهٔ تستی هر سؤال."
+    },
+    "sources": [
+      {
+        "source_external_id": "editorial-source-bd8f7cb1262dd65dec24",
+        "relation": "SUPPORTS",
+        "locator": "دفترچهٔ سؤال و کلید کنکور کارشناسی ارشد مهندسی کامپیوتر (۱۲۷۷) ۱۴۰۴، دفترچهٔ 335C",
+        "claim": "صورت، گزینه‌ها و کلید سؤال‌ها",
+        "order": 0
+      },
+      {
+        "source_external_id": "editorial-source-08110ffe99548a591190",
+        "relation": "SUPPORTS",
+        "locator": "بانک سؤال کنکور کامپیوتر؛ متن هر سؤال با تصویر دفترچه مقایسه شده است",
+        "claim": "کلید سنجش برای دفترچهٔ 335C",
+        "order": 1
+      }
+    ],
+    "assets": [
+      {
+        "media_key": "konkur1404-key-335c",
+        "filename": "konkur1404-key-335c.png",
+        "mime_type": "image/png",
+        "checksum": "sha256:2278baf17b6721603fd9a48244bd88c5594dec3a0b5d15f38e9460da416dea44"
+      },
+      {
+        "media_key": "konkur1404-q043",
+        "filename": "konkur1404-q043.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:4673dd84dd7f0bb21dae6969dd553e99b79ac629ac15d7ad8fdca84e168f0941"
+      },
+      {
+        "media_key": "konkur1404-q069",
+        "filename": "konkur1404-q069.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:db2dab8e45a969b9f28e97e0b3e7891037a8cc823e8e10849f9650bceaff1dcc"
+      },
+      {
+        "media_key": "konkur1404-q073",
+        "filename": "konkur1404-q073.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:ea43dcbdb7045da2ebcc7b8e0448f5bde68f55e19014af1561f676c881246f26"
+      },
+      {
+        "media_key": "konkur1404-q074",
+        "filename": "konkur1404-q074.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:4ee66f93bc0aef058262fa412e77925ccabfcea4e9a7e4de237c325519a48bd5"
+      },
+      {
+        "media_key": "konkur1404-q077",
+        "filename": "konkur1404-q077.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:3b0a430f084a9405698746667cb64e1963dd848296843e4ff069209d1da1b88a"
+      },
+      {
+        "media_key": "konkur1404-q078",
+        "filename": "konkur1404-q078.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:4fba28cbaa892b6e85252896841527f4f35594045899581c3b20fcd561ccb20c"
+      },
+      {
+        "media_key": "konkur1404-q080",
+        "filename": "konkur1404-q080.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:95d07e8a40b0732d39b64eb29610999abdc89258abd71333b32f3d87ce3b45b2"
+      },
+      {
+        "media_key": "konkur1404-q081",
+        "filename": "konkur1404-q081.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:3c597d40537c9eb73d30c6cbb62ece0cd84b12df22616e402b4bdf3fce1ddc17"
+      },
+      {
+        "media_key": "konkur1404-q082",
+        "filename": "konkur1404-q082.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:36fe86288b8ddd9bf89c57282230aec1b98a2cc6956182c298173e16d0df6f89"
+      },
+      {
+        "media_key": "konkur1404-q085",
+        "filename": "konkur1404-q085.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:6c5cdddcdab2f4d8c28e542f45c18cebcdadaa24937cebd88030173dbe006038"
+      },
+      {
+        "media_key": "konkur1404-q087",
+        "filename": "konkur1404-q087.jpg",
+        "mime_type": "image/jpeg",
+        "checksum": "sha256:fb01182e676a54ae4d82ce44bda8539f2a32bb0e5d0f6406791d6da187990c68"
+      }
+    ],
+    "taxonomy": {
+      "major": [
+        "کامپیوتر و IT"
+      ],
+      "tags": [
+        "کلید",
+        "پاسخ تشریحی",
+        "کنکور ۱۴۰۴",
+        "حل تست"
+      ],
+      "degrees": [
+        "master"
+      ],
+      "fields": [
+        "کامپیوتر و IT"
+      ],
+      "subject_codes": [
+        "english",
+        "statistics",
+        "discrete-math",
+        "automata",
+        "data-structures-algorithms",
+        "artificial-intelligence",
+        "digital-logic",
+        "computer-architecture",
+        "operating-systems"
+      ],
+      "topic_codes": []
+    },
+    "validity": {
+      "exam_year": 1406,
+      "time_sensitive": false,
+      "source_checked_at": "2026-10-14T00:00:00.000Z"
+    },
+    "editorial": {
+      "author_slug": "mohammad-rostami"
+    },
+    "provenance": {
+      "producer_type": "external_ai",
+      "producer_name": "حل تشریحی با Claude؛ متن هر سؤال با تصویر دفترچه مقایسه و هر پاسخ مستقل حل شده است — نیازمند بازبینی و تأیید محمد رستمی",
+      "source_artifact": "content/import-packages/articles/konkur-1404-computer-engineering-solutions.mjs"
+    },
+    "review_status": "draft"
+  }
+]

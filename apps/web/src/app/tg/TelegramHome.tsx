@@ -24,7 +24,7 @@ export interface FreshItem {
 const TILES: { href: string; title: string; note: string; glyph: GlyphName; tone: string }[] = [
   { href: "/questions", title: "بانک سؤال", note: "تست‌های کنکورهای قبل با پاسخ تشریحی", glyph: "list", tone: "teal" },
   { href: "/exams", title: "آزمون‌ها", note: "شبیه‌ساز کنکور با کارنامه و رتبه", glyph: "pace", tone: "violet" },
-  { href: "/rank-estimate", title: "تخمین رتبه", note: "با درصدهایت رتبه‌ات را ببین", glyph: "curve", tone: "amber" },
+  { href: "/rank-calculator/master-computer-engineering", title: "تخمین رتبه", note: "با درصدهایت رتبه‌ات را ببین", glyph: "curve", tone: "amber" },
   { href: "/choices", title: "انتخاب رشته", note: "ظرفیت‌ها و رشته‌محل‌ها", glyph: "building", tone: "blue" },
   { href: "/courses", title: "دوره‌ها", note: "کلاس‌های درس‌به‌درس", glyph: "play", tone: "rose" },
   { href: "/free-videos", title: "ویدیوی رایگان", note: "جلسه‌های نمونهٔ دوره‌ها", glyph: "spark", tone: "teal" },
