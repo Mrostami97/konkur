@@ -8,9 +8,9 @@ export interface GuideReview {
 }
 
 /** The owner's sign-offs on static guides; none when the API cannot be reached. */
-export async function loadGuideReviews(): Promise<Map<string, GuideReview>> {
+export async function loadGuideReviews(options: { revalidate?: number } = {}): Promise<Map<string, GuideReview>> {
   try {
-    const reviews = await apiGetPublic<GuideReview[]>("/guide-reviews");
+    const reviews = await apiGetPublic<GuideReview[]>("/guide-reviews", options);
     return new Map((reviews ?? []).map((review) => [review.slug, review]));
   } catch {
     return new Map();

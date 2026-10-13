@@ -13,7 +13,7 @@ import {
   findPhase12Page,
   phase12EditorialPages,
 } from "../../../content/phase12";
-import { apiGetPublic } from "../../../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../../../lib/api";
 import { loadGuideReviews, withReview } from "../../../lib/guide-reviews";
 import { canonicalHref, isMergedGuide, withoutMergedGuides } from "../../../lib/merged-pages";
 import { pageMetadata } from "../../../lib/seo";
@@ -25,13 +25,18 @@ interface TaxonomyEntry {
   title: string;
 }
 
+// Rendered on a page's first request and then served from cache for
+// PUBLIC_PAGE_REVALIDATE seconds. Nothing is prerendered at build (the image is
+// built without the API); the empty list is what makes the route cacheable.
+export const revalidate = 300;
 export function generateStaticParams() {
-  return withoutMergedGuides([...guides, ...phase12EditorialPages]).map(({ slug }) => ({ slug }));
+  return [];
 }
+const cached = { revalidate: PUBLIC_PAGE_REVALIDATE };
 
 async function loadGuide(slug: string) {
   try {
-    return { article: await apiGetPublic<PublicArticleRecord>(`/articles/${encodeURIComponent(slug)}`), unavailable: false };
+    return { article: await apiGetPublic<PublicArticleRecord>(`/articles/${encodeURIComponent(slug)}`, cached), unavailable: false };
   } catch {
     return { article: null, unavailable: true };
   }
@@ -60,8 +65,8 @@ export async function generateMetadata({ params: pendingParams }: { params: Prom
 async function relatedTaxonomy(article: PublicArticleRecord): Promise<RelatedPublicItem[]> {
   try {
     const [subjects, topics] = await Promise.all([
-      apiGetPublic<TaxonomyEntry[]>("/subjects"),
-      apiGetPublic<TaxonomyEntry[]>("/topics"),
+      apiGetPublic<TaxonomyEntry[]>("/subjects", cached),
+      apiGetPublic<TaxonomyEntry[]>("/topics", cached),
     ]);
     return relatedTaxonomyItems(article, subjects ?? [], topics ?? []);
   } catch {
@@ -81,7 +86,7 @@ export default async function GuidePage({ params: pendingParams }: { params: Pro
     return phase12 ? <div data-phase12="verified-guide">{view}</div> : view;
   }
   const baseGuide = findEditorialPage(params.slug) ?? findPhase12EditorialPage(params.slug);
-  const staticGuide = baseGuide && withReview(baseGuide, (await loadGuideReviews()).get(baseGuide.slug));
+  const staticGuide = baseGuide && withReview(baseGuide, (await loadGuideReviews(cached)).get(baseGuide.slug));
   if (!staticGuide || ![...guides, ...phase12EditorialPages].some((item) => item.slug === params.slug)) {
     if (result.unavailable) throw new Error("Public content service is unavailable");
     notFound();

@@ -102,9 +102,23 @@ async function parseBody(res: Response) {
   }
 }
 
-/** Server-side fetch for public, unauthenticated pages (SSR/SEO). */
-export async function apiGetPublic<T>(path: string): Promise<T | null> {
-  const res = await fetch(`${INTERNAL_API_URL}${path}`, { cache: "no-store" });
+/**
+ * How long a public article or guide page is served from cache before it is
+ * rendered again (seconds). The page is cached on its first request, never at
+ * build time (the image is built without the API), so search engines and the
+ * CDN get a ready page instead of a fresh render each time.
+ */
+export const PUBLIC_PAGE_REVALIDATE = 300;
+
+/**
+ * Server-side fetch for public, unauthenticated pages (SSR/SEO). Uncached by
+ * default; `revalidate` lets a page whose every fetch is public be cached.
+ */
+export async function apiGetPublic<T>(path: string, options: { revalidate?: number } = {}): Promise<T | null> {
+  const res = await fetch(
+    `${INTERNAL_API_URL}${path}`,
+    options.revalidate ? { next: { revalidate: options.revalidate } } : { cache: "no-store" },
+  );
   if (res.status === 404) return null;
   if (!res.ok) {
     const reason = await res.text();

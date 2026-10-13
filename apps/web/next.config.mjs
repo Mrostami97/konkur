@@ -10,6 +10,10 @@ const nextConfig = {
   // output because creating pnpm trace symlinks requires Developer Mode.
   output: process.env.NEXT_OUTPUT_MODE === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
+  // Cached public pages (articles, guides) may be served stale for at most an
+  // hour while they are re-rendered; Next's default is a year, which a CDN that
+  // honours stale-while-revalidate could keep serving after an edit.
+  expireTime: 3600,
   // Crawlers get the whole <head> before the body: Next otherwise streams a
   // slow page's title, description and canonical after </head> for Googlebot
   // (it renders JavaScript), which plain-HTML readers miss. Next's own list,
