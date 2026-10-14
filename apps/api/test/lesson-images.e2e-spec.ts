@@ -163,11 +163,18 @@ describe("Lesson images (e2e)", () => {
   });
 
   it("sets a course cover that is public once the course is published, and removes it", async () => {
+    // A course of its own: the one above is already published.
+    const created = await request(app.getHttpServer())
+      .post("/admin/courses")
+      .set("Cookie", adminCookie)
+      .send({ slug: `course-cover-${Date.now()}`, title: "Course cover", description: "e2e", accessMode: "ENTITLEMENT" })
+      .expect(201);
+    const coverCourseId = created.body.id as string;
     const cover = Buffer.concat([TINY_PNG, Buffer.from(randomUUID())]);
     const coverUpload = (cookie: string) =>
-      request(app.getHttpServer()).post(`/admin/courses/${courseId}/cover`).set("Cookie", cookie).attach("file", cover, { filename: "cover.png", contentType: "image/png" });
+      request(app.getHttpServer()).post(`/admin/courses/${coverCourseId}/cover`).set("Cookie", cookie).attach("file", cover, { filename: "cover.png", contentType: "image/png" });
     await coverUpload(studentCookie).expect(403);
-    await request(app.getHttpServer()).post(`/admin/courses/${courseId}/cover`).set("Cookie", adminCookie)
+    await request(app.getHttpServer()).post(`/admin/courses/${coverCourseId}/cover`).set("Cookie", adminCookie)
       .attach("file", Buffer.from("not an image"), { filename: "cover.png", contentType: "image/png" }).expect(400);
     const set = await coverUpload(adminCookie).expect(201);
     const coverUrl = set.body.coverUrl as string;
@@ -177,18 +184,18 @@ describe("Lesson images (e2e)", () => {
     await request(app.getHttpServer()).get(coverUrl).expect(404);
     await request(app.getHttpServer()).get(coverUrl).set("Cookie", adminCookie).expect(200);
     const listed = await request(app.getHttpServer()).get("/admin/courses").set("Cookie", adminCookie).expect(200);
-    expect(listed.body.find((row: { id: string }) => row.id === courseId).coverUrl).toBe(coverUrl);
+    expect(listed.body.find((row: { id: string }) => row.id === coverCourseId).coverUrl).toBe(coverUrl);
 
     // Published: anyone, cached, and on the catalogue.
-    await request(app.getHttpServer()).post(`/admin/courses/${courseId}/publish`).set("Cookie", adminCookie).expect(201);
+    await request(app.getHttpServer()).post(`/admin/courses/${coverCourseId}/publish`).set("Cookie", adminCookie).expect(201);
     const served = await request(app.getHttpServer()).get(coverUrl).buffer(true).parse(binary).expect(200);
     expect(served.headers["cache-control"]).toBe("public, max-age=86400");
     expect((served.body as Buffer).equals(cover)).toBe(true);
     const catalogue = await request(app.getHttpServer()).get("/courses").expect(200);
-    expect(catalogue.body.find((row: { id: string }) => row.id === courseId).coverUrl).toBe(coverUrl);
+    expect(catalogue.body.find((row: { id: string }) => row.id === coverCourseId).coverUrl).toBe(coverUrl);
 
-    await request(app.getHttpServer()).delete(`/admin/courses/${courseId}/cover`).set("Cookie", adminCookie).expect(200);
+    await request(app.getHttpServer()).delete(`/admin/courses/${coverCourseId}/cover`).set("Cookie", adminCookie).expect(200);
     await request(app.getHttpServer()).get(coverUrl).expect(404);
-    await request(app.getHttpServer()).post(`/admin/courses/${courseId}/unpublish`).set("Cookie", adminCookie).expect(201);
+    await request(app.getHttpServer()).post(`/admin/courses/${coverCourseId}/unpublish`).set("Cookie", adminCookie).expect(201);
   });
 });
