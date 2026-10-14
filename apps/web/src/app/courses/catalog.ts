@@ -20,6 +20,8 @@ export interface CatalogCourse {
   /** Total length in minutes, set by the admin. */
   durationMinutes?: number | null;
   hasVideo?: boolean;
+  /** The uploaded cover image (a /media path), or null for the plain cover. */
+  coverUrl?: string | null;
 }
 
 export interface CatalogProduct {

@@ -9,7 +9,7 @@ import { VideoLicensePanel } from "../../../components/VideoLicensePanel";
 import { CourseProgressPanel } from "../../../components/CourseProgressPanel";
 import { StructuredData } from "../../../components/StructuredData";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
-import { CourseArt } from "../../../components/CourseArt";
+import { CourseCover } from "../../../components/CourseCover";
 import { Glyph } from "../../../components/SubjectIcon";
 import { courseFormat, courseShortTitle, findDirectCourseProduct, type CatalogProduct, type CourseInstructor } from "../catalog";
 import { coursePublishers, courseSubject, courseSubjectTitle, courseTone } from "../course-visual";
@@ -38,6 +38,7 @@ interface Course {
   subject?: { code: string; title: string } | null;
   instructors?: CourseInstructor[];
   durationMinutes?: number | null;
+  coverUrl?: string | null;
   modules: CourseModule[];
   /** Handouts that come with the course; read in the student panel. */
   materials?: { slug: string; title: string; summary: string }[];
@@ -175,9 +176,8 @@ export default async function CoursePage({ params: pendingParams }: { params: Pr
               ))}
             </div>
           </div>
-          <div className="cr-hero-art" aria-hidden="true">
-            <span className="cr-hero-ring" />
-            <CourseArt subject={subject} tests={courseFormat(course) === "حل تست"} avatar={publishers[0].avatarUrl} uid={`hero-${course.slug}`} className="cr-hero-drawing" />
+          <div className="cr-hero-art" data-plain={course.coverUrl ? undefined : ""} aria-hidden="true">
+            <CourseCover coverUrl={course.coverUrl} subject={subject} label={subjectTitle ?? courseShortTitle(course.title)} />
           </div>
         </div>
       </header>

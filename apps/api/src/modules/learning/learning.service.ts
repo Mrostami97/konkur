@@ -51,6 +51,11 @@ function sniffImageType(buffer: Buffer): "image/png" | "image/jpeg" | "image/web
   return null;
 }
 
+/** Where a course's cover is served, or null when it has none. */
+function coverUrlOf(artifact: { checksum: string } | null): string | null {
+  return artifact ? `/media/${artifact.checksum.replace("sha256:", "")}` : null;
+}
+
 @Injectable()
 export class LearningService {
   constructor(
@@ -412,6 +417,7 @@ export class LearningService {
         updatedAt: true,
         spotPlayerCourseId: true,
         durationMinutes: true,
+        coverArtifact: { select: { checksum: true } },
         subject: { select: { code: true, title: true } },
         instructors: {
           where: { contributorProfile: { isPublished: true } },
@@ -422,8 +428,9 @@ export class LearningService {
       },
     });
 
-    return courses.map(({ spotPlayerCourseId, instructors, modules, ...course }) => ({
+    return courses.map(({ spotPlayerCourseId, instructors, modules, coverArtifact, ...course }) => ({
       ...course,
+      coverUrl: coverUrlOf(coverArtifact),
       instructors: instructors.map((row) => row.contributorProfile),
       moduleCount: modules.length,
       lessonCount: modules.reduce((sum, row) => sum + row._count.lessons, 0),
@@ -460,6 +467,7 @@ export class LearningService {
         createdAt: true,
         updatedAt: true,
         durationMinutes: true,
+        coverArtifact: { select: { checksum: true } },
         subject: { select: { code: true, title: true } },
         // Published teacher profiles only, as on the catalogue.
         instructors: {
@@ -486,9 +494,10 @@ export class LearningService {
       },
     });
     if (!course || !course.isPublished) throw new NotFoundException("course not found");
-    const { materials, instructors, ...rest } = course;
+    const { materials, instructors, coverArtifact, ...rest } = course;
     return {
       ...rest,
+      coverUrl: coverUrlOf(coverArtifact),
       instructors: instructors.map((row) => row.contributorProfile),
       materials: materials.map((row) => row.resource),
     };
@@ -541,9 +550,10 @@ export class LearningService {
   }
 
   async listAllCourses() {
-    return this.prisma.course.findMany({
+    const courses = await this.prisma.course.findMany({
       orderBy: { createdAt: "desc" },
       include: {
+        coverArtifact: { select: { checksum: true } },
         materials: {
           orderBy: { position: "asc" },
           select: { resource: { select: { id: true, slug: true, title: true, reviewStatus: true, accessMode: true, hostingMode: true } } },
@@ -559,6 +569,57 @@ export class LearningService {
         },
       },
     });
+    return courses.map(({ coverArtifact, ...course }) => ({ ...course, coverUrl: coverUrlOf(coverArtifact) }));
+  }
+
+  /**
+   * Sets a course's cover image (PNG, JPEG or WebP, up to 5 MB), stored once
+   * by content hash like a lesson image. A published course's cover is then
+   * public at /media/<hash>; the previous file stays stored, unlinked.
+   */
+  async setCourseCover(actorId: string, courseId: string, file: Express.Multer.File | undefined) {
+    if (!file) throw new BadRequestException("no file uploaded");
+    if (file.size > MAX_LESSON_IMAGE_BYTES) throw new BadRequestException("image must be 5 MB or smaller");
+    const sniffed = sniffImageType(file.buffer);
+    if (!sniffed || sniffed !== file.mimetype) throw new BadRequestException("image must be a PNG, JPEG or WebP file");
+    const course = await this.prisma.course.findUnique({ where: { id: courseId }, select: { id: true } });
+    if (!course) throw new NotFoundException("course not found");
+
+    const digest = createHash("sha256").update(file.buffer).digest("hex");
+    const checksum = `sha256:${digest}`;
+    const extension = sniffed === "image/png" ? "png" : sniffed === "image/webp" ? "webp" : "jpg";
+    const key = `${digest}/course-cover.${extension}`;
+    if (!(await this.storage.objectExists(key))) {
+      await this.storage.putObject(key, file.buffer, sniffed);
+    }
+    const artifact = await this.prisma.sourceArtifact.upsert({
+      where: { checksum },
+      update: {},
+      create: { checksum, filename: `course-cover.${extension}`, mimeType: sniffed, size: file.size, storageKey: key },
+    });
+    await this.prisma.course.update({ where: { id: courseId }, data: { coverArtifactId: artifact.id } });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "course.cover_updated",
+      targetType: "Course",
+      targetId: courseId,
+      metadata: { sourceArtifactId: artifact.id },
+    });
+    return { coverUrl: coverUrlOf(artifact) };
+  }
+
+  async removeCourseCover(actorId: string, courseId: string) {
+    const course = await this.prisma.course.findUnique({ where: { id: courseId }, select: { coverArtifactId: true } });
+    if (!course) throw new NotFoundException("course not found");
+    await this.prisma.course.update({ where: { id: courseId }, data: { coverArtifactId: null } });
+    await this.audit.log({
+      actorUserId: actorId,
+      action: "course.cover_removed",
+      targetType: "Course",
+      targetId: courseId,
+      metadata: { previousSourceArtifactId: course.coverArtifactId },
+    });
+    return { coverUrl: null };
   }
 
   // --- Enrollment (created synchronously when Commerce grants a course

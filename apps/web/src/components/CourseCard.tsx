@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { courseFormat, courseShortTitle, type CourseCatalogItem } from "../app/courses/catalog";
 import { coursePublishers, courseSubject, courseSubjectTitle, courseTone } from "../app/courses/course-visual";
-import { CourseArt } from "./CourseArt";
+import { CourseCover } from "./CourseCover";
 import { formatDuration, toPersianDigits } from "../lib/format";
 import { Glyph } from "./SubjectIcon";
 import "./course-card.css";
 import { PriceTag } from "./PriceTag";
 
 /**
- * One course in the catalogue and on the homepage: a cover in the subject's
- * colour with its publisher set inside a drawing of the subject, what kind
- * of course it is, how much is inside, who publishes it, and the price. The whole card is one link (the title's).
+ * One course in the catalogue and on the homepage: its cover (an uploaded
+ * image, or a plain one in the subject's colour), what kind of course it is,
+ * how much is inside, who publishes it, and the price. The whole card is one
+ * link (the title's).
  */
 export function CourseCard({ item, headingLevel = 3 }: { item: CourseCatalogItem; headingLevel?: 2 | 3 }) {
   const { course } = item;
@@ -29,7 +30,7 @@ export function CourseCard({ item, headingLevel = 3 }: { item: CourseCatalogItem
     <article className="ccd" data-tone={courseTone(course)} data-format={format === "حل تست" ? "tests" : "lessons"}>
       <div className="ccd-cover" aria-hidden="true">
         <span className="ccd-grid" />
-        <CourseArt subject={subject} tests={format === "حل تست"} avatar={publishers[0].avatarUrl} uid={course.slug} className="ccd-art" />
+        <CourseCover coverUrl={course.coverUrl} subject={subject} label={subjectTitle ?? courseShortTitle(course.title)} />
         <span className="ccd-format">
           <Glyph name={format === "حل تست" ? "target" : "book"} className="ccd-format-icon" />
           {format}

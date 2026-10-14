@@ -1,0 +1,25 @@
+/* CourseCover: an uploaded image, or a plain cover in the subject's colour. */
+
+.cc-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--motion-slow) var(--ease); }
+
+.cc-plain { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 1.1rem 1.3rem; overflow: hidden; color: #fff; }
+/* The subject's mark, large and faint, leaning out of the far corner. */
+.cc-mark {
+  position: absolute;
+  inset-block-end: -1.6rem;
+  inset-inline-end: -1rem;
+  width: 58%;
+  max-width: 11rem;
+  height: auto;
+  aspect-ratio: 1;
+  opacity: 0.2;
+  stroke-width: 1.15;
+  transform: rotate(-10deg);
+  transition: transform var(--motion-slow) var(--ease), opacity var(--motion-slow) var(--ease);
+  --glyph-wash: 0.4;
+}
+.cc-name { position: relative; max-width: 72%; font-size: clamp(1.15rem, 2.2vw, 1.55rem); font-weight: var(--weight-heavy); line-height: 1.45; text-wrap: balance; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.16); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-photo, .cc-mark { transition: none; }
+}

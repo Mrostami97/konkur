@@ -126,6 +126,20 @@ export class LearningAdminController {
     return this.learning.updateCourse(req.user!.id, id, dto);
   }
 
+  /** The course's cover image, shown on its card and page. */
+  @Post("courses/:id/cover")
+  @Roles(Role.ADMIN)
+  @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
+  setCover(@Param("id") id: string, @Req() req: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
+    return this.learning.setCourseCover(req.user!.id, id, file);
+  }
+
+  @Delete("courses/:id/cover")
+  @Roles(Role.ADMIN)
+  removeCover(@Param("id") id: string, @Req() req: RequestWithUser) {
+    return this.learning.removeCourseCover(req.user!.id, id);
+  }
+
   @Post("courses/:id/publish")
   publish(@Param("id") id: string, @Req() req: RequestWithUser) {
     return this.learning.publishCourse(id, req.user!.id);

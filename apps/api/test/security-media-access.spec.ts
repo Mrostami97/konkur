@@ -22,6 +22,7 @@ function fixture() {
     question: { findMany: jest.fn().mockResolvedValue([]) },
     lesson: { findMany: jest.fn().mockResolvedValue([]) },
     attempt: { findFirst: jest.fn().mockResolvedValue(null) },
+    course: { findFirst: jest.fn().mockResolvedValue(null) },
   };
   const storage = { getObjectStream: jest.fn().mockImplementation(async () => Readable.from([Buffer.from("TEST")])), getRangeStream: jest.fn().mockImplementation(async () => Readable.from([Buffer.from("ES")])) };
   const access = { accessibleQuestionBankSubjects: jest.fn().mockResolvedValue(new Set()), hasActiveCourseAccess: jest.fn().mockResolvedValue(false) };
@@ -133,6 +134,18 @@ describe("Media authorization and active-content defenses", () => {
     await published.controller.redirectToMedia(checksum, { headers: {} } as RequestWithUser, published.response);
     const withdrawn = fixture(); withdrawn.artifact.storageKey = "digest/achievement.png";
     await withdrawn.controller.redirectToMedia(checksum, { user: { ...student, roles: [Role.ADMIN] }, headers: {} } as RequestWithUser, withdrawn.response);
+  });
+
+  it("serves a published course's cover to anyone, cached, and an unpublished one to staff only", async () => {
+    const published = fixture(); published.artifact.storageKey = "digest/course-cover.png"; published.artifact.mimeType = "image/png";
+    published.prisma.course.findFirst.mockResolvedValue({ id: "course" });
+    await published.controller.redirectToMedia(checksum, { headers: {} } as RequestWithUser, published.response);
+    expect(published.prisma.course.findFirst).toHaveBeenCalledWith({ where: { coverArtifactId: "artifact", isPublished: true }, select: { id: true } });
+    expect(published.response.setHeader).toHaveBeenCalledWith("Cache-Control", "public, max-age=86400");
+    const unpublished = fixture(); unpublished.artifact.storageKey = "digest/course-cover.png"; unpublished.artifact.mimeType = "image/png";
+    await expect(unpublished.controller.redirectToMedia(checksum, { user: student, headers: {} } as RequestWithUser, unpublished.response)).rejects.toBeInstanceOf(NotFoundException);
+    await unpublished.controller.redirectToMedia(checksum, { user: { ...student, roles: [Role.ADMIN] }, headers: {} } as RequestWithUser, unpublished.response);
+    expect(unpublished.response.setHeader).toHaveBeenCalledWith("Cache-Control", "private, no-store");
   });
 
   it("retains byte ranges after permission checks and rejects invalid identifiers before a lookup", async () => {

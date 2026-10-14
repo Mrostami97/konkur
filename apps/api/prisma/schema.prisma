@@ -482,6 +482,10 @@ model Course {
   /// The course's total length in minutes (its videos), set by the admin and
   /// shown on its card and page. Null when not stated.
   durationMinutes      Int?
+  /// The cover image shown on the course card and page (uploaded by the
+  /// admin). Null means the card draws a plain cover in the subject colour.
+  coverArtifactId      String?
+  coverArtifact        SourceArtifact?       @relation("CourseCover", fields: [coverArtifactId], references: [id], onDelete: SetNull)
   spotPlayerLicenses   SpotPlayerLicense[]
   videoLicenseRequests VideoLicenseRequest[]
   achievements         StudentAchievement[]
@@ -489,6 +493,7 @@ model Course {
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
 
+  @@index([coverArtifactId])
   @@map("courses")
 }
 
@@ -1137,6 +1142,7 @@ model SourceArtifact {
   createdAt         DateTime             @default(now())
   resources         Resource[]
   achievementPhotos StudentAchievement[]
+  courseCovers      Course[]             @relation("CourseCover")
 
   @@map("source_artifacts")
 }

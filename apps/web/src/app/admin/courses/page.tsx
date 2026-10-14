@@ -25,6 +25,7 @@ interface Course {
   description?: string;
   spotPlayerCourseId?: string | null;
   durationMinutes?: number | null;
+  coverUrl?: string | null;
   isPublished: boolean;
   modules?: ModuleWithLessons[];
   materials?: { resource: Handout }[];
@@ -573,6 +574,65 @@ function CourseMaterials({ course, onChanged }: { course: Course; onChanged: () 
   );
 }
 
+/**
+ * The course's cover image, as the catalogue card and the course page show
+ * it (16:9). Uploading replaces it at once; without one the site draws a
+ * plain cover in the subject's colour.
+ */
+function CourseCoverField({ course, onChanged }: { course: Course; onChanged: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function run(task: () => Promise<unknown>) {
+    setBusy(true);
+    setError(null);
+    try {
+      await task();
+      onChanged();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ذخیرهٔ تصویر جلد ناموفق بود.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="ac-cover">
+      {course.coverUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="ac-cover-thumb" src={`${API_URL}${course.coverUrl}`} alt={`جلد «${course.title}»`} />
+      ) : (
+        <span className="ac-cover-thumb ac-cover-empty">بدون جلد</span>
+      )}
+      <div className="ds-stack-sm">
+        <div className="ds-row">
+          <label className={`ds-btn ds-btn-secondary ds-btn-sm ds-file${busy ? " is-busy" : ""}`}>
+            <input
+              type="file"
+              className="sr-only"
+              accept="image/png,image/jpeg,image/webp"
+              disabled={busy}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = "";
+                if (file) void run(() => apiUpload(`/admin/courses/${course.id}/cover`, file));
+              }}
+            />
+            {busy ? "در حال آپلود…" : course.coverUrl ? "تعویض جلد" : "آپلود تصویر جلد"}
+          </label>
+          {course.coverUrl && (
+            <Button size="sm" variant="ghost" disabled={busy} onClick={() => void run(() => apiFetch(`/admin/courses/${course.id}/cover`, { method: "DELETE" }))}>
+              حذف جلد
+            </Button>
+          )}
+        </div>
+        <span className="ds-hint" style={{ margin: 0 }}>افقی ۱۶:۹، مثلاً ۱۲۸۰×۷۲۰ پیکسل؛ PNG، JPG یا WebP تا ۵ مگابایت.</span>
+        {error && <Alert tone="danger">{error}</Alert>}
+      </div>
+    </div>
+  );
+}
+
 /** A destructive or state-changing step waiting for the operator's yes. */
 type Pending = { title: string; description: string; confirmLabel: string; run: () => Promise<unknown> } | null;
 
@@ -966,6 +1026,7 @@ export default function CoursesAdminPage() {
                         )}
                       </div>
                     </div>
+                    <CourseCoverField course={course} onChanged={load} />
                     {expanded === course.id && <CourseEditor course={course} onChanged={load} />}
                   </div>
                 ))}

@@ -24,12 +24,13 @@
 .ccd:hover,
 .ccd:focus-within { transform: translateY(-3px); border-color: color-mix(in srgb, var(--c2) 45%, var(--line)); box-shadow: var(--elev-3); }
 
-/* Cover: a gradient in the subject's colour, a faint grid, and its mark. */
+/* Cover: the uploaded image, or a gradient in the subject's colour with a
+   faint grid under the plain cover (CourseCover). */
 .ccd-cover {
   position: relative;
   display: grid;
   place-items: center;
-  height: 11rem;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   color: #fff;
   background:
@@ -54,18 +55,8 @@
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.16) 3px, transparent 3.6px);
   background-size: 18px 18px;
 }
-.ccd-glyph {
-  position: relative;
-  width: 4.5rem;
-  height: 4.5rem;
-  stroke-width: 1.3;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
-  transition: transform var(--motion-slow) var(--ease);
-}
-.ccd:hover .ccd-glyph { transform: scale(1.08) rotate(-4deg); }
-.ccd-art { position: relative; transition: transform var(--motion-slow) var(--ease); }
-.ccd-art.ca { position: absolute; top: 2.3rem; left: 1rem; width: calc(100% - 2rem); height: calc(100% - 2.8rem); }
-.ccd:hover .ccd-art { transform: scale(1.04); }
+.ccd:hover .cc-photo { transform: scale(1.03); }
+.ccd:hover .cc-mark { opacity: 0.28; transform: rotate(-4deg) scale(1.04); }
 .ccd-format,
 .ccd-video {
   position: absolute;
@@ -109,12 +100,8 @@
 .ccd:hover .ccd-cta { gap: 0.5rem; }
 
 @media (prefers-reduced-motion: reduce) {
-  .ccd, .ccd-glyph, .ccd-cta { transition: none; }
+  .ccd, .ccd-cta { transition: none; }
   .ccd:hover, .ccd:focus-within { transform: none; }
-  .ccd:hover .ccd-glyph, .ccd:hover .ccd-art { transform: none; }
+  .ccd:hover .cc-photo, .ccd:hover .cc-mark { transform: none; }
 }
 
-@media (max-width: 560px) {
-  .ccd-cover { height: 9.5rem; }
-  .ccd-glyph { width: 3.75rem; height: 3.75rem; }
-}

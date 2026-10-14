@@ -1424,3 +1424,8 @@ html[data-tg] .mobile-nav {
 [data-tone="violet"] { --grad: var(--grad-violet); }
 [data-tone="rose"] { --grad: var(--grad-rose); }
 [data-tone="amber"] { --grad: var(--grad-amber); }
+
+/* Admin: a course's cover, a 16:9 thumbnail beside its upload button. */
+.ac-cover { display: flex; align-items: center; gap: var(--sp-4); margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 1px dashed var(--line); }
+.ac-cover-thumb { flex: none; width: 8.5rem; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-sunken); object-fit: cover; }
+.ac-cover-empty { display: grid; place-items: center; border-style: dashed; color: var(--muted); font-size: var(--text-xs); }

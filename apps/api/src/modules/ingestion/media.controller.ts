@@ -83,6 +83,14 @@ export class MediaController {
       return;
     }
 
+    // A published course's cover is public, like the card it sits on, and is
+    // cached: every catalogue visitor loads it, and its address is its hash.
+    // An unpublished course's cover falls through to the staff-only rule.
+    if (await this.prisma.course.findFirst({ where: { coverArtifactId: artifact.id, isPublished: true }, select: { id: true } })) {
+      await this.send(artifact, req, res, "public, max-age=86400");
+      return;
+    }
+
     // Staff may inspect unpublished uploads, but a student's session is not
     // permission to read a paid lesson, a locked bank or an orphaned file.
     const roles = req.user?.roles ?? [];
@@ -136,12 +144,14 @@ export class MediaController {
    *
    * Do not cache a permission-bearing response: access, publication and
    * photo consent can change even though the file's checksum stays the same.
+   * Only a file that is public by nature (a published course's cover) passes
+   * a cacheable `cacheControl`.
    */
-  private async send(artifact: { storageKey: string; mimeType: string; size: number }, req: RequestWithUser, res: Response) {
+  private async send(artifact: { storageKey: string; mimeType: string; size: number }, req: RequestWithUser, res: Response, cacheControl = "private, no-store") {
     const total = artifact.size;
     res.setHeader("Content-Type", artifact.mimeType);
     res.setHeader("Accept-Ranges", "bytes");
-    res.setHeader("Cache-Control", "private, no-store");
+    res.setHeader("Cache-Control", cacheControl);
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
 
