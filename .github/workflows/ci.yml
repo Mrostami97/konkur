@@ -364,24 +364,6 @@ jobs:
             exit 1
           fi
 
-      # Diagnostic: does the production (standalone) web image serve a public
-      # article from its page cache on the second request? Uses the live API.
-      - name: Page cache in the production web image (diagnostic)
-        continue-on-error: true
-        run: |
-          set -u
-          docker run -d --name isr-probe -p 3299:3000 -e INTERNAL_API_URL=https://kunkurcomputer.ir/api konkurcom-360-web:latest
-          sleep 5
-          for path in /articles/exam-1403-analysis /articles/exam-1403-analysis /articles/exam-1403-analysis /guides/phd-computer-science-1406 /guides/phd-computer-science-1406; do
-            echo "== $path"
-            curl -s -o /dev/null -D - "http://127.0.0.1:3299$path" | grep -iE '^(HTTP|x-nextjs-cache|cache-control|location)' || true
-          done
-          echo "== cache files"
-          docker exec isr-probe sh -c 'ls -la apps/web/.next/server/app/articles 2>&1 | head; ls -la apps/web/.next/cache 2>&1; cat apps/web/.next/cache/fetch-cache/tags-manifest.json 2>&1 | head -c 400' || true
-          echo "== logs"
-          docker logs isr-probe 2>&1 | tail -40
-          docker rm -f isr-probe >/dev/null
-
       # Exercise the exact bootstrap volume and nginx entrypoint path used on
       # the server. This catches regressions where a command override bypasses
       # nginx's template renderer and silently serves the stock welcome page.
