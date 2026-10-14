@@ -61,8 +61,12 @@ export class VideoUploadService {
     return meta;
   }
 
+  /** Written aside and renamed into place: a status read while the record is
+   * being rewritten would otherwise find it empty and answer "not found". */
   private async writeMeta(meta: UploadMeta) {
-    await fs.writeFile(this.metaPath(meta.id), JSON.stringify(meta));
+    const temp = `${this.metaPath(meta.id)}.${randomUUID()}.tmp`;
+    await fs.writeFile(temp, JSON.stringify(meta));
+    await fs.rename(temp, this.metaPath(meta.id));
   }
 
   /** Clears uploads left unfinished for a day, with their partial files. */
