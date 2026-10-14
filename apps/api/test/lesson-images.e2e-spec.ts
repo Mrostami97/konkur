@@ -171,7 +171,7 @@ describe("Lesson images (e2e)", () => {
       .attach("file", Buffer.from("not an image"), { filename: "cover.png", contentType: "image/png" }).expect(400);
     const set = await coverUpload(adminCookie).expect(201);
     const coverUrl = set.body.coverUrl as string;
-    expect(coverUrl).toMatch(/^/media/[a-f0-9]{64}$/);
+    expect(coverUrl).toMatch(/^\/media\/[a-f0-9]{64}$/);
 
     // Unpublished: staff only.
     await request(app.getHttpServer()).get(coverUrl).expect(404);
