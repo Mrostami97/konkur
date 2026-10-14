@@ -261,7 +261,7 @@
 }
 .st-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; }
 .st-card-head h2 { display: flex; align-items: center; gap: 0.6rem; margin: 0; font-size: 1rem; font-weight: 800; }
-.st-card-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink-700); }
+.st-card-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--radius-sm); color: #fff; background: var(--grad); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 16px -10px rgba(12, 27, 46, 0.6); --glyph-wash: 0.3; }
 .st-card-icon svg { width: 1.1rem; height: 1.1rem; }
 .st-card-caption { color: var(--st-muted); font-size: 0.78rem; }
 .st-card-note { margin: 0.9rem 0 0; color: var(--st-muted); font-size: 0.8rem; line-height: 1.8; }
@@ -286,7 +286,7 @@
 
 .st-empty { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 1.25rem 0.5rem; text-align: center; }
 .st-empty-lg { padding: 2.5rem 1rem; }
-.st-empty-icon { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; margin-bottom: 0.3rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-sunken); color: var(--ink-700); }
+.st-empty-icon { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; margin-bottom: 0.3rem; border: 1px solid var(--accent-line); border-radius: var(--radius-md); background: var(--accent-soft); color: var(--accent); }
 .st-empty-icon svg { width: 1.5rem; height: 1.5rem; }
 .st-empty strong { font-size: 0.95rem; }
 .st-empty p { max-width: 26rem; margin: 0 0 0.5rem; color: var(--st-muted); font-size: 0.84rem; line-height: 1.8; }

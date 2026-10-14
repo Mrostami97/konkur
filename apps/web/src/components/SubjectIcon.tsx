@@ -18,7 +18,7 @@ const GLYPHS: Record<string, ReactNode> = {
   graph: <><circle cx="6" cy="7" r="2" /><circle cx="18" cy="7" r="2" /><circle cx="12" cy="18" r="2" /><path d="M8 7h8M7.1 8.8 11 16.2M16.9 8.8 13 16.2" /></>,
   hub: <><circle cx="12" cy="12" r="2.4" /><circle cx="12" cy="4" r="1.8" /><circle cx="4.5" cy="18" r="1.8" /><circle cx="19.5" cy="18" r="1.8" /><path d="M12 5.8v3.8M10.2 13.6 6 16.6M13.8 13.6 18 16.6" /></>,
   curve: <><path d="M3 18c4 0 5-11 9-11s5 11 9 11" /><path d="M3 21h18" /></>,
-  gate: <><path d="M6 6h5a6 6 0 0 1 0 12H6z" /><path d="M2 9h4M2 15h4M17 12h5" /></>,
+  gate: <><path className="duo" d="M6 6h5a6 6 0 0 1 0 12H6z" /><path d="M2 9h4M2 15h4M17 12h5" /></>,
   automaton: <><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /><path d="M12 2v4M18.4 12h3.6" /></>,
   // A finite automaton: start arrow, a state with a self-loop, a transition,
   // and an accepting state drawn as a double circle.
@@ -26,24 +26,24 @@ const GLYPHS: Record<string, ReactNode> = {
   // An operating system: a terminal window with a prompt.
   terminal: <><rect x="2.5" y="4" width="19" height="16" rx="2.5" /><path d="M2.5 8.2h19" /><path d="m6.8 11.6 2.8 2.2-2.8 2.2M12 16.4h5" /></>,
   // Logic and architecture: a chip with an AND gate on it.
-  logicChip: <><rect x="5.5" y="5.5" width="13" height="13" rx="2" /><path d="M9 2.5v3M15 2.5v3M9 18.5v3M15 18.5v3M2.5 9h3M2.5 15h3M18.5 9h3M18.5 15h3" /><path d="M9.2 9.3h2.6a2.7 2.7 0 0 1 0 5.4H9.2z" /></>,
+  logicChip: <><rect x="5.5" y="5.5" width="13" height="13" rx="2" /><path d="M9 2.5v3M15 2.5v3M9 18.5v3M15 18.5v3M2.5 9h3M2.5 15h3M18.5 9h3M18.5 15h3" /><path className="duo" d="M9.2 9.3h2.6a2.7 2.7 0 0 1 0 5.4H9.2z" /></>,
   glyph: <><path d="M4 19 9 5l5 14M5.8 15h6.4" /><path d="M17 10v9M17 10c2.5 0 3.5 1.4 3.5 3s-1 3-3.5 3" /></>,
   neural: <><circle cx="5" cy="7" r="1.8" /><circle cx="5" cy="17" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="7" r="1.8" /><circle cx="19" cy="17" r="1.8" /><path d="M6.6 8.1 10.5 10.8M6.6 15.9 10.5 13.2M13.5 10.8 17.4 8.1M13.5 13.2 17.4 15.9" /></>,
-  layers: <><path d="M12 3 3 7.5 12 12l9-4.5z" /><path d="m3 12.5 9 4.5 9-4.5" /><path d="m3 17 9 4.5 9-4.5" /></>,
+  layers: <><path className="duo" d="M12 3 3 7.5 12 12l9-4.5z" /><path d="m3 12.5 9 4.5 9-4.5" /><path d="m3 17 9 4.5 9-4.5" /></>,
   flow: <><rect x="3" y="4" width="7" height="5" rx="1.4" /><rect x="14" y="15" width="7" height="5" rx="1.4" /><path d="M6.5 9v5.5a2 2 0 0 0 2 2H14" /></>,
-  compass: <><circle cx="12" cy="12" r="9" /><path d="m15 9-2 5-5 2 2-5z" /></>,
+  compass: <><circle cx="12" cy="12" r="9" /><path className="duo" d="m15 9-2 5-5 2 2-5z" /></>,
   pace: <><circle cx="12" cy="13" r="8" /><path d="M12 13V8.5M9.5 2h5" /></>,
-  flag: <><path d="M5 21V4M5 4h13l-2.5 4L18 12H5" /></>,
-  play: <><circle cx="12" cy="12" r="9" /><path d="m10 8.5 5.5 3.5-5.5 3.5z" /></>,
-  trophy: <><path d="M8 4h8v5a4 4 0 0 1-8 0z" /><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7" /></>,
+  flag: <><path d="M5 21V4" /><path className="duo" d="M5 4h13l-2.5 4L18 12H5" /></>,
+  play: <><circle cx="12" cy="12" r="9" /><path className="duo" d="m10 8.5 5.5 3.5-5.5 3.5z" /></>,
+  trophy: <><path className="duo" d="M8 4h8v5a4 4 0 0 1-8 0z" /><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7" /></>,
   target: <><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="4.5" /><circle cx="12" cy="12" r="1" /></>,
   list: <><path d="M9 6h11M9 12h11M9 18h11" /><circle cx="4.5" cy="6" r="1.2" /><circle cx="4.5" cy="12" r="1.2" /><circle cx="4.5" cy="18" r="1.2" /></>,
   calendar: <><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M3.5 10h17M8 3v4M16 3v4" /></>,
-  building: <><path d="M4 20V9l8-5 8 5v11" /><path d="M9 20v-5h6v5M3 20h18" /></>,
-  chat: <><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1-4.2A8 8 0 1 1 20 12z" /></>,
-  book: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" /><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5" /></>,
+  building: <><path className="duo" d="M4 20V9l8-5 8 5v11" /><path d="M9 20v-5h6v5M3 20h18" /></>,
+  chat: <><path className="duo" d="M20 12a8 8 0 0 1-11.8 7L4 20l1-4.2A8 8 0 1 1 20 12z" /></>,
+  book: <><path className="duo" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" /><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5" /></>,
   spark: <><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6" /></>,
-  shield: <><path d="M12 3 5 6v6c0 4.2 3 7.6 7 9 4-1.4 7-4.8 7-9V6z" /><path d="m9 12 2.2 2.2L15.5 10" /></>,
+  shield: <><path className="duo" d="M12 3 5 6v6c0 4.2 3 7.6 7 9 4-1.4 7-4.8 7-9V6z" /><path d="m9 12 2.2 2.2L15.5 10" /></>,
 };
 
 export type GlyphName = keyof typeof GLYPHS;
@@ -97,7 +97,7 @@ export const SUBJECT_TONE: Record<string, "violet" | "teal" | "blue" | "amber" |
 export function Glyph({ name, className }: { name: GlyphName; className?: string }) {
   return (
     <svg
-      className={className}
+      className={className ? `glyph ${className}` : "glyph"}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
