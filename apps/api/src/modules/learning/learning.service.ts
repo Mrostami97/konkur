@@ -11,6 +11,7 @@ import { CreateCourseDto } from "./dto/create-course.dto";
 import { CreateModuleDto } from "./dto/create-module.dto";
 import { CreateLessonDto, LessonAssetDto, UpdateLessonDto } from "./dto/create-lesson.dto";
 import { fa } from "../../common/persian-digits";
+import { sniffImageType } from "../../common/image-type";
 import { faststartMp4 } from "./mp4-faststart";
 
 type Tx = PrismaService | Prisma.TransactionClient;
@@ -39,16 +40,6 @@ async function sha256OfFile(path: string): Promise<string> {
   const hash = createHash("sha256");
   for await (const chunk of createReadStream(path)) hash.update(chunk as Buffer);
   return hash.digest("hex");
-}
-
-/** The declared type is the browser's guess from the file name; the leading
- * bytes are what the file actually is. Both must agree before it is stored
- * and later served to students as an image. */
-function sniffImageType(buffer: Buffer): "image/png" | "image/jpeg" | "image/webp" | null {
-  if (buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return "image/png";
-  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return "image/jpeg";
-  if (buffer.length >= 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP") return "image/webp";
-  return null;
 }
 
 /** Where a course's cover is served, or null when it has none. */

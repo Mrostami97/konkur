@@ -23,6 +23,9 @@ import {
   ValidateNested,
 } from "class-validator";
 
+/** A photo address: a full https URL, or a path on this site (/brand/…, /api/media/…); empty means none. */
+const AVATAR_URL = /^(https?:\/\/\S+|\/[^\s/]\S*)?$/;
+
 export class SourceLinkDto {
   @IsUUID()
   sourceId!: string;
@@ -108,13 +111,15 @@ export class UpdateContentSourceDto {
 
 export class CreateContributorDto {
   @IsOptional() @IsUUID() userId?: string;
+  /** The account to link, by its mobile number (any common format). */
+  @IsOptional() @IsString() userPhone?: string;
   @IsOptional() @IsEnum(ContributorKind) kind?: ContributorKind;
   @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/) slug!: string;
   @IsString() @MinLength(1) displayName!: string;
   @IsOptional() @IsString() roleTitle?: string;
   @IsOptional() @IsString() shortBio?: string;
   @IsOptional() @IsArray() bioBlocks?: unknown[];
-  @IsOptional() @IsUrl({ require_tld: false }) avatarUrl?: string;
+  @IsOptional() @Matches(AVATAR_URL) avatarUrl?: string;
   @IsOptional() @IsUrl({ require_tld: false }) thesisUrl?: string;
   @IsOptional() @IsArray() @IsUrl({ require_tld: false }, { each: true }) sameAs?: string[];
   @IsOptional() @IsBoolean() isPublished?: boolean;
@@ -122,12 +127,15 @@ export class CreateContributorDto {
 
 export class UpdateContributorDto {
   @IsOptional() @IsUUID() userId?: string;
+  /** The account to link, by its mobile number; an empty string unlinks it. */
+  @IsOptional() @IsString() userPhone?: string;
   @IsOptional() @IsEnum(ContributorKind) kind?: ContributorKind;
   @IsOptional() @IsString() @MinLength(1) displayName?: string;
   @IsOptional() @IsString() roleTitle?: string;
   @IsOptional() @IsString() shortBio?: string;
   @IsOptional() @IsArray() bioBlocks?: unknown[];
-  @IsOptional() @IsUrl({ require_tld: false }) avatarUrl?: string;
+  /** An empty string removes the photo. */
+  @IsOptional() @Matches(AVATAR_URL) avatarUrl?: string;
   @IsOptional() @IsUrl({ require_tld: false }) thesisUrl?: string;
   @IsOptional() @IsArray() @IsUrl({ require_tld: false }, { each: true }) sameAs?: string[];
   @IsOptional() @IsBoolean() isPublished?: boolean;

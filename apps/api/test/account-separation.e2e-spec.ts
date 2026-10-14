@@ -110,6 +110,36 @@ describe("Account separation: admin, staff, student, instructor (e2e)", () => {
     await request(app.getHttpServer()).get("/admin/resources").set("Cookie", legacy.cookie).expect(200);
   });
 
+  it("links a teacher's account by mobile number, typed any way, and unlinks it", async () => {
+    const phone = randomPhone();
+    await login(phone);
+    const user = await prisma.user.findUniqueOrThrow({ where: { phone: canonicalPhone(phone) } });
+    // Stored as 09…; typed the international way.
+    const typed = `+98 ${phone.slice(1)}`;
+    await request(app.getHttpServer())
+      .post("/admin/contributors")
+      .set("Cookie", adminCookie)
+      .send({ userPhone: "09000000000", slug: `nobody-${suffix}`, displayName: "Nobody" })
+      .expect(400);
+    const created = await request(app.getHttpServer())
+      .post("/admin/contributors")
+      .set("Cookie", adminCookie)
+      .send({ userPhone: typed, slug: `phone-teacher-${suffix}`, displayName: "Phone teacher", avatarUrl: "/brand/teacher.webp" })
+      .expect(201);
+    expect(created.body.userId).toBe(user.id);
+    expect(created.body.avatarUrl).toBe("/brand/teacher.webp");
+    const listed = await request(app.getHttpServer()).get("/admin/contributors").set("Cookie", adminCookie).expect(200);
+    expect(listed.body.find((row: { id: string }) => row.id === created.body.id).userPhone).toBe(user.phone);
+
+    const unlinked = await request(app.getHttpServer())
+      .patch(`/admin/contributors/${created.body.id}`)
+      .set("Cookie", adminCookie)
+      .send({ userPhone: "", avatarUrl: "" })
+      .expect(200);
+    expect(unlinked.body.userId).toBeNull();
+    expect(unlinked.body.avatarUrl).toBeNull();
+  });
+
   it("makes a linked instructor no longer a student; the main admin may also teach", async () => {
     const teacher = await signUp();
     await request(app.getHttpServer())

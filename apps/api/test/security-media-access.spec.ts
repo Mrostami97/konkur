@@ -23,6 +23,7 @@ function fixture() {
     lesson: { findMany: jest.fn().mockResolvedValue([]) },
     attempt: { findFirst: jest.fn().mockResolvedValue(null) },
     course: { findFirst: jest.fn().mockResolvedValue(null) },
+    contributorProfile: { findFirst: jest.fn().mockResolvedValue(null) },
   };
   const storage = { getObjectStream: jest.fn().mockImplementation(async () => Readable.from([Buffer.from("TEST")])), getRangeStream: jest.fn().mockImplementation(async () => Readable.from([Buffer.from("ES")])) };
   const access = { accessibleQuestionBankSubjects: jest.fn().mockResolvedValue(new Set()), hasActiveCourseAccess: jest.fn().mockResolvedValue(false) };
@@ -146,6 +147,16 @@ describe("Media authorization and active-content defenses", () => {
     await expect(unpublished.controller.redirectToMedia(checksum, { user: student, headers: {} } as RequestWithUser, unpublished.response)).rejects.toBeInstanceOf(NotFoundException);
     await unpublished.controller.redirectToMedia(checksum, { user: { ...student, roles: [Role.ADMIN] }, headers: {} } as RequestWithUser, unpublished.response);
     expect(unpublished.response.setHeader).toHaveBeenCalledWith("Cache-Control", "private, no-store");
+  });
+
+  it("serves a published teacher's photo to anyone, matched by the address the profile keeps", async () => {
+    const f = fixture(); f.artifact.storageKey = "digest/contributor-avatar.jpg"; f.artifact.mimeType = "image/jpeg";
+    f.prisma.contributorProfile.findFirst.mockResolvedValue({ id: "teacher" });
+    await f.controller.redirectToMedia(checksum, { headers: {} } as RequestWithUser, f.response);
+    expect(f.prisma.contributorProfile.findFirst).toHaveBeenCalledWith({ where: { isPublished: true, avatarUrl: { endsWith: `/media/${checksum}` } }, select: { id: true } });
+    expect(f.response.setHeader).toHaveBeenCalledWith("Cache-Control", "public, max-age=86400");
+    const hidden = fixture(); hidden.artifact.storageKey = "digest/contributor-avatar.jpg"; hidden.artifact.mimeType = "image/jpeg";
+    await expect(hidden.controller.redirectToMedia(checksum, { headers: {} } as RequestWithUser, hidden.response)).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it("retains byte ranges after permission checks and rejects invalid identifiers before a lookup", async () => {

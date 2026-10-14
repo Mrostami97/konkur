@@ -24,6 +24,8 @@ import { ARTICLE_BLOCK_TYPES, LESSON_BLOCK_TYPES, assertValidContentBlocks } fro
 import { AuditService } from "../audit/audit.service";
 import { ObjectStorageService } from "../ingestion/object-storage.service";
 import { AccessService } from "../access/access.service";
+import { phoneVariants } from "../identity/phone";
+import { sniffImageType } from "../../common/image-type";
 import { inspectPdf, SEALED_MIME, sealStream, watermarkPdf } from "./pdf-watermark";
 import {
   CreateContentSourceDto,
@@ -165,8 +167,56 @@ export class EditorialService {
     return source;
   }
 
-  listContributors() {
-    return this.prisma.contributorProfile.findMany({ orderBy: { updatedAt: "desc" } });
+  /** Every profile; for an admin also the linked account's mobile number, so
+   * they see whose account it is (authors and reviewers do not get it). */
+  async listContributors(withPhone = false) {
+    const profiles = await this.prisma.contributorProfile.findMany({
+      orderBy: { updatedAt: "desc" },
+      include: { user: { select: { phone: true } } },
+    });
+    return profiles.map(({ user, ...profile }) => (withPhone ? { ...profile, userPhone: user?.phone ?? null } : profile));
+  }
+
+  /**
+   * The account a mobile number belongs to, whichever way it was typed or
+   * stored. The teacher must have signed in once with it, which creates the
+   * account; otherwise the admin is told so.
+   */
+  private async userIdByPhone(phone: string): Promise<string> {
+    const user = await this.prisma.user.findFirst({ where: { phone: { in: phoneVariants(phone.trim()) } }, select: { id: true } });
+    if (!user) throw new BadRequestException("حسابی با این شماره پیدا نشد؛ مدرس باید یک بار با همین شماره وارد سایت شود.");
+    return user.id;
+  }
+
+  /** userPhone (when given) resolved to userId; an empty avatarUrl stored as none. */
+  private async contributorData<T extends { userId?: string | null; userPhone?: string; avatarUrl?: string | null }>(dto: T) {
+    const { userPhone, ...data } = dto;
+    if (userPhone !== undefined) data.userId = userPhone.trim() ? await this.userIdByPhone(userPhone) : null;
+    if (data.avatarUrl === "") data.avatarUrl = null;
+    return data;
+  }
+
+  /**
+   * Stores a teacher's photo and returns its address. The profile keeps the
+   * address in avatarUrl; the photo is public once the profile is published.
+   */
+  async uploadContributorAvatar(actorId: string, file: Express.Multer.File | undefined) {
+    if (!file) throw new BadRequestException("no file uploaded");
+    if (file.size > 5 * 1024 * 1024) throw new BadRequestException("photo must be 5 MB or smaller");
+    const sniffed = sniffImageType(file.buffer);
+    if (!sniffed || sniffed !== file.mimetype) throw new BadRequestException("photo must be a PNG, JPEG or WebP file");
+    const digest = createHash("sha256").update(file.buffer).digest("hex");
+    const checksum = `sha256:${digest}`;
+    const extension = sniffed === "image/png" ? "png" : sniffed === "image/webp" ? "webp" : "jpg";
+    const key = `${digest}/contributor-avatar.${extension}`;
+    if (!(await this.storage.objectExists(key))) await this.storage.putObject(key, file.buffer, sniffed);
+    const artifact = await this.prisma.sourceArtifact.upsert({
+      where: { checksum },
+      update: {},
+      create: { checksum, filename: `contributor-avatar.${extension}`, mimeType: sniffed, size: file.size, storageKey: key },
+    });
+    await this.audit.log({ actorUserId: actorId, action: "contributor.avatar_uploaded", targetType: "SourceArtifact", targetId: artifact.id });
+    return { path: `/media/${digest}` };
   }
 
   /**
@@ -191,11 +241,12 @@ export class EditorialService {
   }
 
   async createContributor(actorId: string, dto: CreateContributorDto) {
-    await this.prepareInstructorAccount(actorId, dto.userId);
+    const data = await this.contributorData(dto);
+    await this.prepareInstructorAccount(actorId, data.userId);
     const profile = await this.prisma.contributorProfile.create({
       data: {
-        ...dto,
-        bioBlocks: (dto.bioBlocks ?? []) as Prisma.InputJsonValue,
+        ...data,
+        bioBlocks: (data.bioBlocks ?? []) as Prisma.InputJsonValue,
       },
     });
     await this.audit.log({ actorUserId: actorId, action: "contributor.created", targetType: "ContributorProfile", targetId: profile.id });
@@ -205,12 +256,13 @@ export class EditorialService {
   async updateContributor(id: string, actorId: string, dto: UpdateContributorDto) {
     const existing = await this.prisma.contributorProfile.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException("contributor not found");
-    if (dto.userId && dto.userId !== existing.userId) await this.prepareInstructorAccount(actorId, dto.userId);
+    const data = await this.contributorData(dto);
+    if (data.userId && data.userId !== existing.userId) await this.prepareInstructorAccount(actorId, data.userId);
     const profile = await this.prisma.contributorProfile.update({
       where: { id },
       data: {
-        ...dto,
-        bioBlocks: dto.bioBlocks ? (dto.bioBlocks as Prisma.InputJsonValue) : undefined,
+        ...data,
+        bioBlocks: data.bioBlocks ? (data.bioBlocks as Prisma.InputJsonValue) : undefined,
       },
     });
     await this.audit.log({ actorUserId: actorId, action: "contributor.updated", targetType: "ContributorProfile", targetId: id });

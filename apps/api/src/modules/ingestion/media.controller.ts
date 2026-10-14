@@ -86,7 +86,12 @@ export class MediaController {
     // A published course's cover is public, like the card it sits on, and is
     // cached: every catalogue visitor loads it, and its address is its hash.
     // An unpublished course's cover falls through to the staff-only rule.
-    if (await this.prisma.course.findFirst({ where: { coverArtifactId: artifact.id, isPublished: true }, select: { id: true } })) {
+    // The same for a published teacher's photo (its profile keeps the address).
+    const [cover, avatar] = await Promise.all([
+      this.prisma.course.findFirst({ where: { coverArtifactId: artifact.id, isPublished: true }, select: { id: true } }),
+      this.prisma.contributorProfile.findFirst({ where: { isPublished: true, avatarUrl: { endsWith: `/media/${checksum}` } }, select: { id: true } }),
+    ]);
+    if (cover || avatar) {
       await this.send(artifact, req, res, "public, max-age=86400");
       return;
     }

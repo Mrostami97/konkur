@@ -92,8 +92,16 @@ export class EditorialAdminController {
 
   @Get("contributors")
   @Roles(Role.AUTHOR, Role.REVIEWER, Role.ADMIN)
-  contributors() {
-    return this.editorial.listContributors();
+  contributors(@Req() request: RequestWithUser) {
+    return this.editorial.listContributors(request.user!.roles.includes(Role.ADMIN));
+  }
+
+  /** A teacher's photo; the response is the address to put in avatarUrl. */
+  @Post("contributor-avatars")
+  @Roles(Role.ADMIN)
+  @UseInterceptors(FileInterceptor("file", { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
+  uploadContributorAvatar(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File | undefined) {
+    return this.editorial.uploadContributorAvatar(request.user!.id, file);
   }
 
   @Post("contributors")
