@@ -47,9 +47,7 @@ export async function middleware(request: NextRequest) {
   const home = type === "GUIDE" ? "guides" : type ? "articles" : null;
   if (!home || home === section) return NextResponse.next();
   // A relative Location, as before (app/internal/section-redirect).
-  const target = new URL("/internal/section-redirect", request.url);
-  target.searchParams.set("to", `/${home}/${encodeURIComponent(slug)}`);
-  return NextResponse.rewrite(target);
+  return NextResponse.rewrite(new URL(`/internal/section-redirect/${home}/${encodeURIComponent(slug)}`, request.url));
 }
 
 export const config = {
