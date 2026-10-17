@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const SITE_NAME = "کنکور کامپیوتر";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://kunkurcomputer.ir").replace(/\/$/, "");
-export const SITE_DESCRIPTION = "مرجع فارسی کنکور ارشد و دکتری مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر؛ راهنما، منابع، برنامه‌ریزی، کارنامه و تحلیل.";
+export const SITE_DESCRIPTION = "کنکور ارشد و دکتری مهندسی کامپیوتر، فناوری اطلاعات و علوم کامپیوتر؛ راهنما، منابع، برنامه‌ریزی، کارنامه‌ها و تحلیل آزمون‌ها.";
 export const PRIVATE_PAGE_METADATA: Metadata = { robots: { index: false, follow: false } };
 
 export function absoluteUrl(path = "/") {
