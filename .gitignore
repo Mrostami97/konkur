@@ -12,3 +12,6 @@ apps/api/prisma/dev.db
 .pnpm-store/
 ops/backups/
 apps/web/public/pdfjs/
+
+# The exam builder route is app code, not build output.
+!apps/web/src/app/questions/build/
