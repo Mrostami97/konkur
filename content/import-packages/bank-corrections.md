@@ -151,3 +151,4 @@ Left without a key, and why:
 | kunkurcomputer-q-1209-1396-265A-197 | CS 1396 q197 | 1 (10 or 18) | in 6,8,4,10,18,23,22,11 everything left of 10 is smaller and everything right is larger, but 11 sits right of 18, so 18 cannot have been the pivot: option 3 |
 
 Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`text-fixes.mjs`).
+| kunkurcomputer-q-1209-1393-370E-101 (and its repeat q191) | CS 1393 q101 | 4 (O(n³)) | the k-core is found by repeatedly deleting a vertex of degree < k: degrees in O(n²) from the matrix, each deletion updates its n neighbours, so O(n²) in all — option 2 |
