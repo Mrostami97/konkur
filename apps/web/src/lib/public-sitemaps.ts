@@ -6,6 +6,7 @@ import { apiGetPublic } from "./api";
 import type { Availability } from "./availability";
 import { absoluteUrl, articleModifiedTime } from "./seo";
 import { isLessonNote, LESSON_NOTES_PATH } from "./lesson-notes";
+import { SYLLABUS } from "./syllabus";
 
 type SitemapEntry = {
   loc: string;
@@ -138,6 +139,9 @@ export async function subjectSitemapEntries(): Promise<SitemapCollection> {
       };
     }),
     ...published.map((subject) => ({ loc: absoluteUrl(`/subjects/${subject.slug}`), lastmod: asIso(subject.updatedAt) })),
+    // The chapter-by-chapter bank: chapters, counts and free samples are public; locked questions are not.
+    { loc: absoluteUrl("/questions/subjects") },
+    ...subjects.filter((subject) => SYLLABUS[subject.slug]).map((subject) => ({ loc: absoluteUrl(`/questions/subjects/${subject.slug}`) })),
   ]) };
 }
 
