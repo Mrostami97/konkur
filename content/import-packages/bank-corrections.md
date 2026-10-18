@@ -59,6 +59,7 @@ not reach the key).
 | Question id | Exam | Key | Why |
 |---|---|---|---|
 | kunkurcomputer-q-1209-1389-3077-058 | CS 1389 q58 | 4 (`o(ln n)`) | `T(n)=H_n=Θ(ln n)`, so `T(n)∈o(ln n)` is false and only option 2 (`o(n)`) holds |
+| kunkurcomputer-q-1209-1387-b0-087 | CS 1387 q87 | 1 (۲۲) | BSTs on five keys: 6 have 3 levels, 20 have 4 and 16 have 5 (6+20+16=42=C₅); «depth 4 with the root on level 1» gives 20, which is not an option |
 
 ## Questions whose figure, code or language is missing (2026-10-18)
 
