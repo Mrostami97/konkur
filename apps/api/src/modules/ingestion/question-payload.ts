@@ -1,5 +1,7 @@
 import type { QuestionV1, QuestionV2 } from "@konkurcom/contracts";
-import { Prisma, QuestionQuality } from "@prisma/client";
+import { Prisma, QuestionKeyState, QuestionQuality } from "@prisma/client";
+
+const KEY_STATE = { normal: QuestionKeyState.NORMAL, deleted: QuestionKeyState.DELETED, positive_effect: QuestionKeyState.POSITIVE_EFFECT } as const;
 
 /**
  * GOLD: text and key checked against the booklet, and a worked solution.
@@ -77,6 +79,7 @@ export async function questionRowFromPayload(
         passageId,
         // Only worth storing when the key accepts more than the one option.
         acceptedOptions,
+        keyState: KEY_STATE[v2.key_state ?? "normal"],
       }
     : {};
   return {
@@ -94,7 +97,8 @@ export async function questionRowFromPayload(
     keyVerified,
     qualityTier: qualityTierOf({ textVerified, keyVerified, solutionBlocks: payload.solution_blocks }),
     assets: (payload.assets ?? []) as unknown as Prisma.InputJsonValue,
-    source: (payload.source ?? null) as unknown as Prisma.InputJsonValue,
+    // The tagger's own chapter and description travel with the source record.
+    source: (v2?.labels ? { ...(payload.source ?? {}), labels: v2.labels } : (payload.source ?? null)) as unknown as Prisma.InputJsonValue,
     provenance: payload.provenance as unknown as Prisma.InputJsonValue,
     // A package may make a question its subject's public sample; without the
     // field the flag stays as the panel set it.
@@ -102,8 +106,13 @@ export async function questionRowFromPayload(
   };
 }
 
-/** Whether `selected` earns the mark: the stored key, or any option the final key also accepts. */
-export function isAcceptedAnswer(question: { correctOption: number; acceptedOptions?: number[] | null }, selected: number | null | undefined) {
+/** Whether `selected` earns the mark: the stored key, or any option the final key also accepts.
+ * A question the final key deleted earns nothing for anyone. */
+export function isAcceptedAnswer(
+  question: { correctOption: number; acceptedOptions?: number[] | null; keyState?: QuestionKeyState },
+  selected: number | null | undefined,
+) {
   if (selected === null || selected === undefined) return false;
+  if (question.keyState === QuestionKeyState.DELETED) return false;
   return selected === question.correctOption || (question.acceptedOptions ?? []).includes(selected);
 }

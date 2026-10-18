@@ -973,6 +973,16 @@ enum QuestionQuality {
   DRAFT
 }
 
+/// How the final key scores a question. DELETED: the exam board removed it --
+/// no mark either way and not counted (correctOption keeps the earlier key,
+/// for reference). POSITIVE_EFFECT: a right answer scores, a wrong one costs
+/// nothing.
+enum QuestionKeyState {
+  NORMAL
+  DELETED
+  POSITIVE_EFFECT
+}
+
 /// Text shared by several questions -- the reading passage of the English
 /// section -- stored once and shown above each of its questions.
 model QuestionPassage {
@@ -1008,6 +1018,7 @@ model Question {
   // Every option the final key accepts. Empty means just correctOption; the
   // exam board sometimes accepts two after an objection.
   acceptedOptions Int[]            @default([])
+  keyState        QuestionKeyState @default(NORMAL)
   solutionBlocks  Json
   textVerified    Boolean          @default(true)
   keyVerified     Boolean          @default(true)

@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { AttemptStatus, ExamMode, Prisma, QuestionQuality } from "@prisma/client";
+import { AttemptStatus, ExamMode, Prisma, QuestionKeyState, QuestionQuality } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { ProfileService } from "../identity/profile/profile.service";
@@ -771,7 +771,7 @@ export class AssessmentService {
       const finalizedAttempt = await tx.attempt.findUniqueOrThrow({ where: { id: attemptId } });
       const items = await tx.examItem.findMany({
         where: { examFormId: finalizedAttempt.examFormId },
-        include: { question: { select: { correctOption: true, acceptedOptions: true, subjectCode: true } } },
+        include: { question: { select: { correctOption: true, acceptedOptions: true, keyState: true, subjectCode: true } } },
       });
       const answers = await tx.answer.findMany({ where: { attemptId } });
       const answerByQuestion = new Map(answers.map((a) => [a.questionId, a.selectedOption]));
@@ -783,7 +783,15 @@ export class AssessmentService {
           questionId: item.questionId,
           sectionId: item.sectionId,
           subjectCode: item.question.subjectCode,
-          outcome: selected == null ? "blank" : isAcceptedAnswer(item.question, selected) ? "correct" : "wrong",
+          outcome:
+            item.question.keyState === QuestionKeyState.DELETED
+              ? "void"
+              : selected == null
+                ? "blank"
+                : isAcceptedAnswer(item.question, selected)
+                  ? "correct"
+                  : "wrong",
+          penalized: item.question.keyState !== QuestionKeyState.POSITIVE_EFFECT,
           timeSpentMs: timeByQuestion.get(item.questionId) ?? 0,
         };
       });
@@ -793,7 +801,9 @@ export class AssessmentService {
       let wrongCount = 0;
       let unansweredCount = 0;
       let rawScore = 0;
-      for (const item of items) {
+      // A question the final key deleted is out of the exam: no mark, no count.
+      const scored = items.filter((item) => item.question.keyState !== QuestionKeyState.DELETED);
+      for (const item of scored) {
         const selected = answerByQuestion.get(item.questionId);
         if (selected == null) {
           unansweredCount += 1;
@@ -804,7 +814,7 @@ export class AssessmentService {
           wrongCount += 1;
         }
       }
-      const percentCorrect = items.length > 0 ? (correctCount / items.length) * 100 : 0;
+      const percentCorrect = scored.length > 0 ? (correctCount / scored.length) * 100 : 0;
 
       return tx.score.create({
         data: {

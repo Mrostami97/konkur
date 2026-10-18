@@ -102,4 +102,15 @@ describe("invalid fixtures", () => {
     delete item.review;
     expect(validateQuestion(item).valid).toBe(false);
   });
+
+  it("accepts a deleted question with the tagger's labels and an authored key source, and nothing outside the lists", () => {
+    const item = load(validDir, "question-v2.json") as Record<string, unknown>;
+    item.key_state = "deleted";
+    item.labels = { chapter: "درخت‌ها", topic: "پیمایش پس‌ترتیب" };
+    item.source = { question_number: 5, key_source: "authored" };
+    expect(validateQuestion(item).valid).toBe(true);
+    expect(validateQuestion({ ...item, key_state: "cancelled" }).valid).toBe(false);
+    expect(validateQuestion({ ...item, labels: { chapter: "x", extra: "y" } }).valid).toBe(false);
+    expect(validateQuestion({ ...item, source: { key_source: "guessed" } }).valid).toBe(false);
+  });
 });

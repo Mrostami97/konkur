@@ -52,6 +52,20 @@ describe("report card arithmetic", () => {
     expect(result.sections[0]).toMatchObject({ sectionId: null, title: "کل آزمون", percent: 50 });
   });
 
+  it("leaves a deleted question out of every total and charges nothing for a wrong positive-effect answer", () => {
+    const result = breakdownOf(
+      [
+        item("q1", null, "automata", "correct"),
+        item("q2", null, "automata", "void"),
+        { ...item("q3", null, "automata", "wrong"), penalized: false },
+      ],
+      [],
+    );
+    // Two questions count; one right, one wrong without the penalty: 1/2 = 50%.
+    expect(result.sections[0]).toMatchObject({ questions: 2, correct: 1, wrong: 1, blank: 0, percent: 50 });
+    expect(result.subjects[0]).toMatchObject({ questions: 2, percent: 50 });
+  });
+
   it("gives a standard score only with enough participants and some spread", () => {
     const population = [40, 50, 60, 70, 80];
     expect(tarazOf(60, population, 5)).toBe(5000);

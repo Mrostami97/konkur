@@ -151,6 +151,14 @@
         "crop_media_key": {
           "type": "string",
           "minLength": 1
+        },
+        "key_source": {
+          "type": "string",
+          "enum": [
+            "official",
+            "authored"
+          ],
+          "description": "Where the answer comes from: the exam board's key, or our own answer where no official key is available (shown to students as such)."
         }
       }
     },
@@ -171,6 +179,15 @@
           4
         ]
       }
+    },
+    "key_state": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "deleted",
+        "positive_effect"
+      ],
+      "description": "How the final key scores this question: normal; deleted (the board removed it -- no mark either way, correct_option is then only the key it had before, kept for reference); positive_effect (a right answer scores, a wrong one costs nothing)."
     },
     "slot": {
       "type": "object",
@@ -238,6 +255,21 @@
     },
     "sample": {
       "type": "boolean"
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The tagger's own words for where the question sits, shown beside the syllabus topic: the chapter and a one-line description of what the question asks.",
+      "properties": {
+        "chapter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "topic": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   },
   "$defs": {

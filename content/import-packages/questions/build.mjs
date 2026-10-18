@@ -27,14 +27,25 @@ const sharp = createRequire(`${repo}apps/web/package.json`)("sharp");
 const { validateQuestion } = createRequire(`${repo}apps/api/package.json`)("@konkurcom/contracts");
 
 import { VERIFIED, VERIFIED_ONLY } from "./verified.mjs";
+import { isOutside1406, subjectOf, topicOf } from "./taxonomy-1406.mjs";
 
-const [bankRoot, outDir, ...yearArgs] = process.argv.slice(2);
+const [bankRoot, outDir, ...restArgs] = process.argv.slice(2);
 if (!bankRoot || !outDir) {
-  console.error("usage: node build.mjs <bank-root> <out-dir> [year ...]");
+  console.error("usage: node build.mjs <bank-root> <out-dir> [--tagged] [year ...]");
   process.exit(1);
 }
-const onlyYears = new Set(yearArgs.map(Number));
-const BANK = "outputs/unified_question_bank/active_questions.jsonl";
+// --tagged: only the questions the owner has tagged with a chapter and topic
+// (chapter_topics.json), taken from the whole bank -- active, set-aside and
+// supplement records alike -- placed on the 1406 syllabus tree
+// (taxonomy-1406.mjs). Nothing tagged is left out: a question the final key
+// deleted comes in marked as deleted, and one without an official key comes
+// with our own reviewed answer, marked as ours (owner, 2026-10-18).
+const TAGGED = restArgs.includes("--tagged");
+const onlyYears = new Set(restArgs.filter((arg) => arg !== "--tagged").map(Number));
+const BANK = TAGGED ? "outputs/unified_question_bank/questions.jsonl" : "outputs/unified_question_bank/active_questions.jsonl";
+const TAGS = TAGGED
+  ? new Map(JSON.parse(await readFile(path.join(bankRoot, "outputs/unified_question_bank/chapter_topics.json"), "utf8")).questions.map((tag) => [tag.question_id, tag]))
+  : new Map();
 
 const TRACKS = {
   ce: { code: "1277", major: "computer-engineering" },
@@ -42,7 +53,19 @@ const TRACKS = {
   // Only the three CS subjects the owner reviewed are in the active bank:
   // data structures and algorithms, theory of computation, computer basics.
   cs: { code: "1209", major: "computer-science" },
+  // The PhD booklets print their code in the subject name, e.g. «(کد ۲۳۵۵)».
+  phd: { code: null, major: null, degree: "phd" },
 };
+
+const latinDigits = (text) => String(text).replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
+
+/** A PhD record's exam code and major, from its printed subject name. */
+function phdExam(record) {
+  const code = latinDigits(String(record.exam_subject ?? "")).match(/(\d{4})/)?.[1] ?? "";
+  const subject = String(record.exam_subject ?? "");
+  const major = /فناوری اطلاعات/.test(subject) ? "information-technology" : /علوم کامپیوتر/.test(subject) ? "computer-science" : "computer-engineering";
+  return { code, major };
+}
 
 /** The bank's own subject names → the site's subject codes. A subject is
  * imported when it is in the 1406 master's exam of either track (1276 or
@@ -125,7 +148,8 @@ function normalise(record) {
       : [rawAnswer];
   const accepted = [...new Set(listed)].filter((n) => [1, 2, 3, 4].includes(n));
   const correct = Array.isArray(rawAnswer) ? accepted[0] : rawAnswer;
-  const stem = String((it ? record.stem : record.stem_text) ?? "").trim();
+  // A supplement record keeps its text under `stem` whatever its track.
+  const stem = String((it ? record.stem : (record.stem_text ?? record.stem)) ?? "").trim();
   // CS keeps figures, tables and code as crops beside the question. Code is
   // usually typed into the stem as a fenced block; where it is not, the
   // original crop is shown, since OCR of code is not to be trusted.
@@ -144,10 +168,22 @@ function normalise(record) {
         ? "ناشر کلید را نهایی خوانده، ولی عنوان «نهایی» روی آن چاپ نشده"
         : "مرحلهٔ کلید (اولیه یا نهایی) در منبع مشخص نیست"
       : null;
+  // The key: the board's when the bank matched one; otherwise our own answer,
+  // written and independently reviewed (authored_solution), marked as ours.
+  const official = [1, 2, 3, 4].includes(correct);
+  const authored = record.authored_solution?.status === "independently_reviewed" ? record.authored_solution : null;
+  const authoredOptions = (authored?.accepted_options ?? authored?.proposed_options ?? []).filter((n) => [1, 2, 3, 4].includes(n));
+  const phd = record.exam_track === "phd" ? phdExam(record) : null;
   return {
     track: record.exam_track,
-    code: track?.code ?? "",
-    major: track?.major ?? "",
+    questionId: record.question_id,
+    degree: track?.degree ?? "master",
+    code: phd ? phd.code : (track?.code ?? ""),
+    major: phd ? phd.major : (track?.major ?? ""),
+    keySource: official ? "official" : authoredOptions.length ? "authored" : null,
+    authoredExplanation: authored?.explanation_fa ? String(authored.explanation_fa).trim() : "",
+    authoredOptions,
+    positiveEffect: Boolean(record.answer_positive_effect),
     year: record.year,
     booklet: Number.isInteger(record.booklet_number) && record.booklet_number > 0 ? record.booklet_number : undefined,
     bookletLabel: it ? String(record.booklet_code ?? "b0").replace(/[^A-Za-z0-9]/g, "") || "b0" : `b${record.booklet_number ?? 0}`,
@@ -157,13 +193,22 @@ function normalise(record) {
     stem,
     options: record.options ?? [],
     // A CS option drawn in the booklet (a tree, a circuit) comes as a crop.
-    optionImages: new Map((record.options ?? []).filter((option) => option.source_image).map((option) => [option.number, option.source_image])),
+    // Some records keep the drawing under display_blocks instead.
+    optionImages: new Map(
+      (record.options ?? [])
+        .map((option) => [option.number, option.source_image ?? option.display_blocks?.find((block) => block.type === "image" && block.path)?.path])
+        .filter(([, image]) => image),
+    ),
     // A note or figure the booklet prints once for several questions.
     contextCrops: cs ? assetsOf(record, "original_shared_context_crop") : [],
     correct,
     accepted,
     deleted: Boolean(record.answer_deleted) || (Array.isArray(rawAnswer) && rawAnswer.length === 0),
-    textVerified: TEXT_CHECKED.has(record.content_review_status),
+    // A later word-by-word check against the source image (source_transcription)
+    // counts too, unless the source itself is marked ambiguous.
+    textVerified:
+      TEXT_CHECKED.has(record.content_review_status) ||
+      (record.source_transcription?.visually_reviewed === true && !/ambigu/i.test(String(record.content_review_status ?? ""))),
     keyVerified: KEY_CHECKED.has(record.answer_key_status),
     // Only stages that say the answer comes from an initial key; a key
     // "without a printed initial or final heading" is not one.
@@ -222,6 +267,13 @@ function stemBlocks(text, figureKeys) {
 
 function skipReason(q) {
   if (!q.code) return `رشتهٔ «${q.track}» در این مبدل تعریف نشده`;
+  if (q.subjectCode) {
+    // A tagged question: its subject comes from the tag; deleted and keyless ones still come in.
+    // An option drawn in the booklet (a tree, a circuit) is its image.
+    if (q.options.length !== 4 || q.options.some((option) => !String(option.text ?? "").trim() && !q.optionImages.has(option.number))) return "ساختار گزینه‌ها کامل نیست";
+    if (!q.stem && !q.passage) return "متن سؤال خالی است";
+    return null;
+  }
   if (!q.subjectName) return "درس جزئی ثبت نشده";
   if (!SUBJECTS[q.subjectName]) return `درس «${q.subjectName}» در کنکور ۱۴۰۶ نیست`;
   if (q.options.length !== 4 || q.options.some((option) => !String(option.text ?? "").trim())) return "ساختار گزینه‌ها کامل نیست";
@@ -238,7 +290,25 @@ const generatedAt = (await stat(bankFile)).mtime.toISOString();
 const questions = (await readFile(bankFile, "utf8"))
   .split("\n")
   .filter((line) => line.trim())
-  .map((line) => normalise(JSON.parse(line)))
+  .map((line) => JSON.parse(line))
+  .filter((record) => !TAGGED || TAGS.has(record.question_id))
+  .map((record) => {
+    const q = normalise(record);
+    if (!TAGGED) return q;
+    const tag = TAGS.get(record.question_id);
+    const subjectCode = subjectOf(tag.course, tag.chapter);
+    if (!subjectCode) throw new Error(`${record.question_id}: no subject for course «${tag.course}» (taxonomy-1406.mjs)`);
+    const topic = isOutside1406(subjectCode) ? null : topicOf(subjectCode, tag.chapter, tag.topic);
+    // Without an official key, our reviewed answer is the key.
+    const keyed = q.keySource === "official" ? q : q.keySource === "authored" ? { ...q, correct: q.authoredOptions[0], accepted: q.authoredOptions, keyVerified: true } : q;
+    return {
+      ...keyed,
+      subjectCode,
+      topicCodes: topic ? [topic] : [],
+      labels: { ...(tag.chapter ? { chapter: tag.chapter } : {}), ...(tag.topic ? { topic: tag.topic } : {}) },
+      outside1406: isOutside1406(subjectCode),
+    };
+  })
   .filter((q) => onlyYears.size === 0 || onlyYears.has(q.year));
 
 await mkdir(outDir, { recursive: true });
@@ -262,7 +332,7 @@ for (const examYear of examYears) {
     summary.records += 1;
     // A question checked word for word for an article replaces the bank's record (verified.mjs).
     const verified = VERIFIED.get(`kunkurcomputer-q-${code}-${year}-${record.bookletLabel}-${String(record.number).padStart(3, "0")}`);
-    if (VERIFIED_ONLY.has(examYear) && !verified) {
+    if (VERIFIED_ONLY.has(examYear) && !verified && !TAGGED) {
       const key = "این سال فقط با سؤال‌های تطبیق‌داده‌شده ساخته می‌شود";
       summary.skipped[key] = (summary.skipped[key] ?? 0) + 1;
       continue;
@@ -290,6 +360,9 @@ for (const examYear of examYears) {
       summary.skipped[reason] = (summary.skipped[reason] ?? 0) + 1;
       continue;
     }
+    // A tagged question with no key at all (neither the board's nor ours yet)
+    // still comes in, held in the review queue until it is solved.
+    const keyless = TAGGED && ![1, 2, 3, 4].includes(q.correct) && !q.deleted;
     // 1389 held two sessions that both numbered from 1; the second session's
     // questions keep the base id plus their source document.
     let externalId = `kunkurcomputer-q-${code}-${year}-${q.bookletLabel}-${String(q.number).padStart(3, "0")}`;
@@ -313,7 +386,8 @@ for (const examYear of examYears) {
         figureKeys.set(path.basename(figure), image.asset.media_key);
       }
     }
-    const crop = q.crop ? await imageAsset(q.crop, "source") : null;
+    // The booklet crop is not shown to students (owner, 2026-10-18); a tagged build leaves it out.
+    const crop = q.crop && !TAGGED ? await imageAsset(q.crop, "source") : null;
     if (crop) addFile(crop);
     const optionKeys = new Map();
     for (const [number, image] of q.optionImages) {
@@ -357,6 +431,9 @@ for (const examYear of examYears) {
       ...q.notes,
       ...(q.initialKey ? ["کلید اولیه؛ کلید نهایی هنوز اعمال نشده"] : []),
       ...(curated?.solution?.length ? ["راه‌حل تشریحی: نوشتهٔ Claude و هم‌خوان با کلید؛ بازبینی مالک لازم است"] : []),
+      ...(q.keySource === "authored" ? ["کلید رسمی در دسترس نیست؛ پاسخ تألیفی با بازبینی مستقل جای کلید است"] : []),
+      ...(keyless ? ["کلید ندارد؛ تا حل‌شدن در صف بازبینی می‌ماند (گزینهٔ ۱ فقط جای خالی است)"] : []),
+      ...(q.deleted ? ["در کلید نهایی حذف شده"] : []),
     ];
     const passageKey = q.passageId
       ? String(q.passageId).replace(/[^A-Za-z0-9-]/g, "")
@@ -370,10 +447,10 @@ for (const examYear of examYears) {
     const item = {
       schema_version: "question.v2",
       external_id: externalId,
-      exam: { degree: "master", major: q.major, year, code },
+      exam: { degree: q.degree ?? "master", major: q.major, year, code },
       slot: { ...(q.booklet ? { booklet: q.booklet } : {}), number: q.number, ...(q.section ? { section: q.section } : {}) },
-      subject_code: SUBJECTS[q.subjectName],
-      topic_codes: curated?.topics ?? [],
+      subject_code: q.subjectCode ?? SUBJECTS[q.subjectName],
+      topic_codes: curated?.topics ?? q.topicCodes ?? [],
       ...(verified?.passage
         ? { passage: verified.passage }
         : passageBlocks.length ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: passageBlocks } } : {}),
@@ -383,14 +460,17 @@ for (const examYear of examYears) {
       options: q.options.map((option) => ({
         number: option.number,
         blocks: [
-          { type: "text", text: String(option.text).trim() },
+          ...(String(option.text ?? "").trim() ? [{ type: "text", text: String(option.text).trim() }] : []),
           ...(optionKeys.has(option.number) ? [{ type: "image", media_key: optionKeys.get(option.number) }] : []),
         ],
       })),
-      correct_option: q.correct,
+      // A deleted or keyless question keeps 1 as a placeholder: the key state says it is not a key.
+      correct_option: [1, 2, 3, 4].includes(q.correct) ? q.correct : 1,
       ...(q.accepted.length > 1 && q.accepted.includes(q.correct) ? { accepted_options: q.accepted } : {}),
-      solution_blocks: curated?.solution ?? [],
-      review: { text_verified: q.textVerified, key_verified: q.keyVerified, notes },
+      ...(q.deleted ? { key_state: "deleted" } : q.positiveEffect ? { key_state: "positive_effect" } : {}),
+      solution_blocks: curated?.solution ?? (q.authoredExplanation ? [{ type: "text", text: q.authoredExplanation }] : []),
+      review: { text_verified: q.textVerified, key_verified: keyless ? false : q.keyVerified, notes },
+      ...(q.labels && Object.keys(q.labels).length ? { labels: q.labels } : {}),
       ...(curated?.sample ? { sample: true } : {}),
       assets,
       source: {
@@ -399,11 +479,12 @@ for (const examYear of examYears) {
         ...(q.booklet ? { booklet: q.booklet } : {}),
         archive_path: q.archivePath,
         ...(crop ? { crop_media_key: "source" } : {}),
+        ...(q.keySource ? { key_source: q.keySource } : {}),
       },
       provenance: {
         producer_type: "ocr",
         producer_name: "mistral-ocr-latest + owner review",
-        source_artifact: q.archivePath,
+        source_artifact: q.archivePath ?? `bank:${q.questionId}`,
         generated_at: generatedAt,
       },
     };
@@ -463,7 +544,7 @@ for (const bundle of bundles) {
 }
 
 const missingSamples = Object.keys(SAMPLES).filter((id) => !usedSamples.has(id));
-if (missingSamples.length && onlyYears.size === 0) throw new Error(`curated samples not in the bank: ${missingSamples.join(", ")}`);
+if (missingSamples.length && onlyYears.size === 0 && !TAGGED) throw new Error(`curated samples not in the bank: ${missingSamples.join(", ")}`);
 report.samples = usedSamples.size;
 await writeFile(path.join(outDir, "report.json"), JSON.stringify(report, null, 2));
 const totals = {};

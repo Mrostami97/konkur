@@ -38,7 +38,10 @@ export interface GradedItem {
   questionId: string;
   sectionId: string | null;
   subjectCode: string;
-  outcome: "correct" | "wrong" | "blank";
+  /** "void": the final key deleted the question; it counts for nothing and is left out of every total. */
+  outcome: "correct" | "wrong" | "blank" | "void";
+  /** False for a question the key scores with positive effect only: a wrong answer costs nothing. */
+  penalized?: boolean;
   timeSpentMs: number;
 }
 
@@ -79,16 +82,19 @@ export interface Breakdown {
   timeSpentMs: number;
 }
 
-function tally<T extends { outcome: GradedItem["outcome"]; timeSpentMs: number }>(items: T[]) {
+function tally<T extends { outcome: GradedItem["outcome"]; penalized?: boolean; timeSpentMs: number }>(all: T[]) {
+  // A deleted question is out of the exam, as the board scores it.
+  const items = all.filter((item) => item.outcome !== "void");
   const correct = items.filter((item) => item.outcome === "correct").length;
   const wrong = items.filter((item) => item.outcome === "wrong").length;
+  const penalizedWrong = items.filter((item) => item.outcome === "wrong" && item.penalized !== false).length;
   const blank = items.length - correct - wrong;
   return {
     questions: items.length,
     correct,
     wrong,
     blank,
-    percent: konkurPercentOf(correct, wrong, items.length),
+    percent: konkurPercentOf(correct, penalizedWrong, items.length),
     timeSpentMs: items.reduce((sum, item) => sum + item.timeSpentMs, 0),
   };
 }

@@ -168,11 +168,16 @@ export interface QuestionV2 {
   options: QuestionOption[];
   correct_option: 1 | 2 | 3 | 4;
   accepted_options?: (1 | 2 | 3 | 4)[];
+  /** How the final key scores it; absent means normal. A deleted question keeps
+   * its earlier key in correct_option for reference only. */
+  key_state?: "normal" | "deleted" | "positive_effect";
   solution_blocks: QuestionBlock[];
   review: { text_verified: boolean; key_verified: boolean; notes?: string[] };
+  /** The tagger's own chapter and one-line description, beside the syllabus topic. */
+  labels?: { chapter?: string; topic?: string };
   /** A public sample of its subject: key and solution shown to everyone. Absent leaves the panel's choice. */
   sample?: boolean;
   assets?: Asset[];
-  source?: { page?: number; question_number?: number; booklet?: number; archive_path?: string; crop_media_key?: string };
+  source?: { page?: number; question_number?: number; booklet?: number; archive_path?: string; crop_media_key?: string; key_source?: "official" | "authored" };
   provenance: Omit<Provenance, "producer_type"> & { producer_type: "external_ai" | "human" | "ocr" };
 }
