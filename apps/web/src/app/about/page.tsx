@@ -215,6 +215,16 @@ export default function AboutPage() {
         {" · "}
         <Link className="text-link" href="/editorial-policy">روش تولید محتوا</Link>
       </p>
+      {/* The icon sets' licences ask for credit (Solar: CC BY 4.0; Fluent Emoji: MIT). */}
+      <p className="about-footnote" style={{ fontSize: "var(--text-xs)", color: "var(--muted)", textAlign: "center" }}>
+        آیکون‌ها:{" "}
+        <a className="text-link" href="https://www.figma.com/community/file/1166831539721848736" target="_blank" rel="noreferrer">Solar</a>
+        {" "}از 480 Design (
+        <a className="text-link" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>
+        ) و{" "}
+        <a className="text-link" href="https://github.com/microsoft/fluentui-emoji" target="_blank" rel="noreferrer">Fluent Emoji</a>
+        {" "}از Microsoft (MIT).
+      </p>
     </main>
   );
 }

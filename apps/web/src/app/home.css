@@ -371,10 +371,12 @@ a.hx-art-node:hover small, a.hx-art-node:focus-visible small { color: var(--ink-
 .hx-step { position: relative; display: flex; flex-direction: column; gap: 0.6rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--surface); transition: transform var(--motion-base) var(--ease), box-shadow var(--motion-base) var(--ease); }
 .hx-step:hover { transform: translateY(-3px); box-shadow: var(--elev-3); }
 .hx-step-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem; }
-.hx-step-icon { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: var(--radius-lg); color: #fff; background: linear-gradient(135deg, #0b7a6a, #19c2a6); box-shadow: 0 10px 20px -12px rgba(11, 122, 106, 0.9); }
-.hx-step:nth-child(2) .hx-step-icon { background: linear-gradient(135deg, #1d4f8f, #3d8bf2); box-shadow: 0 10px 20px -12px rgba(29, 79, 143, 0.9); }
-.hx-step:nth-child(3) .hx-step-icon { background: linear-gradient(135deg, #8a4f06, #e3a33a); box-shadow: 0 10px 20px -12px rgba(138, 79, 6, 0.9); }
-.hx-step-icon svg { width: 1.5rem; height: 1.5rem; }
+/* A 3D picture (Icon3D) on a soft tile in the step's colour. */
+.hx-step-icon { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: var(--radius-xl); background: var(--tone-teal-soft); }
+.hx-step:nth-child(2) .hx-step-icon { background: var(--tone-blue-soft); }
+.hx-step:nth-child(3) .hx-step-icon { background: var(--tone-amber-soft); }
+.hx-step-icon .icon3d { width: 3.1rem; height: 3.1rem; filter: drop-shadow(0 6px 8px rgba(12, 27, 46, 0.18)); transition: transform var(--motion-base) var(--ease); }
+.hx-step:hover .hx-step-icon .icon3d { transform: translateY(-3px) rotate(-4deg); }
 .hx-step-n { color: var(--line-strong); font-size: var(--text-3xl); font-weight: var(--weight-heavy); line-height: 1; font-variant-numeric: tabular-nums; }
 .hx-step h3 { margin: 0; color: var(--ink); font-size: var(--text-lg); font-weight: var(--weight-heavy); }
 .hx-step p { margin: 0; color: var(--muted); font-size: var(--text-base); line-height: 1.9; }

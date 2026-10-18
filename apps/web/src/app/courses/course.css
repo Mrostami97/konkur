@@ -34,11 +34,8 @@
 .cl-flow { position: relative; display: grid; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
 .cl-flow::before { position: absolute; inset-block: 1.4rem; inset-inline-start: 1.55rem; border-inline-start: 2px dashed rgba(255, 255, 255, 0.22); content: ""; }
 .cl-flow li { position: relative; display: flex; align-items: center; gap: 0.8rem; min-width: 17rem; padding: 0.55rem 1rem 0.55rem 0.55rem; padding-inline: 0.55rem 1.1rem; border: 1px solid var(--line-ink); border-radius: var(--radius-pill); background: rgba(255, 255, 255, 0.06); backdrop-filter: blur(6px); }
-.cl-flow-icon { display: grid; flex: none; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: 50%; color: var(--ink-900); background: var(--accent-on-ink); }
-.cl-flow li:nth-child(2) .cl-flow-icon { background: #7fb2f5; }
-.cl-flow li:nth-child(3) .cl-flow-icon { background: #b9a6ec; }
-.cl-flow li:nth-child(4) .cl-flow-icon { background: #f0c46e; }
-.cl-flow-icon svg { width: 1.1rem; height: 1.1rem; stroke-width: 2; }
+.cl-flow-icon { display: grid; flex: none; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgba(255, 255, 255, 0.92); box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.6); }
+.cl-flow-icon .icon3d { width: 1.9rem; height: 1.9rem; }
 .cl-flow li > span:last-child { display: grid; line-height: 1.55; }
 .cl-flow strong { color: #fff; font-size: var(--text-sm); }
 .cl-flow small { color: var(--on-ink-muted); font-size: var(--text-xs); }
@@ -64,11 +61,13 @@
 .cl-included h2 { margin: 0 0 1.5rem; color: var(--ink); font-size: clamp(1.35rem, 2.6vw, 1.75rem); font-weight: var(--weight-heavy); text-align: center; }
 .cl-included ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
 .cl-included li { display: grid; justify-items: center; gap: 0.4rem; padding: 1.25rem 1rem; border-radius: var(--radius-lg); background: var(--paper); text-align: center; }
-.cl-included-icon { display: grid; place-items: center; width: 3.25rem; height: 3.25rem; margin-bottom: 0.3rem; border-radius: var(--radius-lg); color: #fff; background: var(--grad); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 16px -10px rgba(12, 27, 46, 0.6); --glyph-wash: 0.3; }
-.cl-included li:nth-child(2) .cl-included-icon { --grad: var(--grad-amber); }
-.cl-included li:nth-child(3) .cl-included-icon { --grad: var(--grad-blue); }
-.cl-included li:nth-child(4) .cl-included-icon { --grad: var(--grad-violet); }
-.cl-included-icon svg { width: 1.5rem; height: 1.5rem; }
+/* A 3D picture (Icon3D) on a soft tile. */
+.cl-included-icon { display: grid; place-items: center; width: 4.25rem; height: 4.25rem; margin-bottom: 0.3rem; border-radius: var(--radius-xl); background: var(--tone-teal-soft); }
+.cl-included li:nth-child(2) .cl-included-icon { background: var(--tone-amber-soft); }
+.cl-included li:nth-child(3) .cl-included-icon { background: var(--tone-blue-soft); }
+.cl-included li:nth-child(4) .cl-included-icon { background: var(--tone-violet-soft); }
+.cl-included-icon .icon3d { width: 3.2rem; height: 3.2rem; filter: drop-shadow(0 6px 8px rgba(12, 27, 46, 0.18)); transition: transform var(--motion-base) var(--ease); }
+.cl-included li:hover .icon3d { transform: translateY(-3px) rotate(-4deg); }
 .cl-included strong { color: var(--ink); font-size: var(--text-md); }
 .cl-included p { margin: 0; color: var(--muted); font-size: var(--text-sm); line-height: 1.8; }
 
@@ -185,7 +184,7 @@
 .cr-handouts ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
 .cr-handout { display: flex; align-items: flex-start; gap: 0.75rem; height: 100%; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-md); color: var(--ink); background: var(--surface); text-decoration: none; transition: border-color var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease); }
 .cr-handout:hover { border-color: var(--accent-line); color: var(--ink); background: var(--paper); }
-.cr-handout-icon { display: grid; flex: none; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: var(--radius-md); color: #fff; background: var(--grad); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 16px -10px rgba(12, 27, 46, 0.6); --glyph-wash: 0.3; }
+.cr-handout-icon { display: grid; flex: none; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: var(--radius-md); color: #fff; background: var(--grad); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 16px -10px rgba(12, 27, 46, 0.6); }
 .cr-handout-text { display: grid; gap: 0.2rem; min-width: 0; }
 .cr-handout-text strong { font-size: var(--text-base); font-weight: var(--weight-bold); line-height: 1.6; }
 .cr-handout:hover .cr-handout-text strong { color: var(--accent-hover); }

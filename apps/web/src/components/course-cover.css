@@ -16,7 +16,6 @@
   stroke-width: 1.15;
   transform: rotate(-10deg);
   transition: transform var(--motion-slow) var(--ease), opacity var(--motion-slow) var(--ease);
-  --glyph-wash: 0.4;
 }
 .cc-name { position: relative; max-width: 72%; font-size: clamp(1.15rem, 2.2vw, 1.55rem); font-weight: var(--weight-heavy); line-height: 1.45; text-wrap: balance; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.16); }
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { CourseCard } from "../components/CourseCard";
 import { contentTypeLabel, formatPublicDate, publicArticlePath, type PublicArticleRecord } from "../components/PublicContent";
 import { StructuredData } from "../components/StructuredData";
-import { Glyph, type GlyphName } from "../components/SubjectIcon";
+import { Icon3D, type Icon3DName } from "../components/Icon3D";
 import { evidenceStats, studentResults } from "../content/evidence";
 import { guides, subjects } from "../content/editorial";
 import { findPhase12EditorialPage, phase12EditorialPages } from "../content/phase12";
@@ -34,7 +34,7 @@ async function safe<T>(path: string): Promise<T | null> {
 }
 
 /** The whole path, in the order a candidate walks it. */
-const STEPS: { title: string; body: string; href: string; link: string; icon: GlyphName }[] = [
+const STEPS: { title: string; body: string; href: string; link: string; icon: Icon3DName }[] = [
   {
     title: "مسیرت را بشناس",
     body: "رشته، درس‌ها، ضرایب و تقویم رسمی ۱۴۰۶ را ببین تا بدانی دقیقاً برای چه می‌خوانی.",
@@ -231,7 +231,7 @@ export default async function HomePage() {
             {STEPS.map((step, index) => (
               <li className="hx-step" key={step.title}>
                 <span className="hx-step-top">
-                  <span className="hx-step-icon"><Glyph name={step.icon} /></span>
+                  <span className="hx-step-icon"><Icon3D name={step.icon} size={52} /></span>
                   <span className="hx-step-n" aria-hidden="true">{toPersianDigits(`0${index + 1}`)}</span>
                 </span>
                 <h3>{step.title}</h3>

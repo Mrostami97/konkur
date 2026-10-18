@@ -3,7 +3,7 @@ import Link from "next/link";
 import { apiGetPublic } from "../../lib/api";
 import { ComingSoon } from "../../components/ComingSoon";
 import { CourseCard } from "../../components/CourseCard";
-import { Glyph, type GlyphName } from "../../components/SubjectIcon";
+import { Icon3D, type Icon3DName } from "../../components/Icon3D";
 import { EmptyState } from "../../components/ui";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
@@ -54,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /** How one subject is learnt here, from first lesson to a ranked exam. */
-const FLOW: { icon: GlyphName; title: string; text: string }[] = [
+const FLOW: { icon: Icon3DName; title: string; text: string }[] = [
   { icon: "book", title: "درس‌نامه", text: "مفهوم را از پایه بساز" },
   { icon: "target", title: "حل تست", text: "روی سؤال‌های کنکور محکش بزن" },
   { icon: "list", title: "بانک سؤال", text: "با تمرین بیشتر جا بینداز" },
@@ -62,11 +62,11 @@ const FLOW: { icon: GlyphName; title: string; text: string }[] = [
 ];
 
 /** What every paid course comes with, as the course page lists it. */
-const INCLUDED: { icon: GlyphName; title: string; text: string }[] = [
+const INCLUDED: { icon: Icon3DName; title: string; text: string }[] = [
   { icon: "play", title: "درس‌به‌درس، با ویدیو", text: "از مفهوم پایه تا تست کنکور، به ترتیب فصل." },
-  { icon: "spark", title: "نمونهٔ رایگان", text: "چند درس هر دوره پیش از خرید برای همه آزاد است." },
+  { icon: "gift", title: "نمونهٔ رایگان", text: "چند درس هر دوره پیش از خرید برای همه آزاد است." },
   { icon: "book", title: "جزوه‌های دوره", text: "در پنلت باز می‌شوند؛ برای خواندن و دانلود." },
-  { icon: "flag", title: "ادامه از همان‌جا", text: "پیشرفتت ذخیره می‌شود و از آخرین درس ادامه می‌دهی." },
+  { icon: "bookmark", title: "ادامه از همان‌جا", text: "پیشرفتت ذخیره می‌شود و از آخرین درس ادامه می‌دهی." },
 ];
 
 interface Shelf {
@@ -118,7 +118,7 @@ export default async function CoursesPage() {
           <ol className="cl-flow" aria-label="مسیر یادگیری هر درس">
             {FLOW.map((step) => (
               <li key={step.title}>
-                <span className="cl-flow-icon"><Glyph name={step.icon} /></span>
+                <span className="cl-flow-icon"><Icon3D name={step.icon} size={30} /></span>
                 <span>
                   <strong>{step.title}</strong>
                   <small>{step.text}</small>
@@ -174,7 +174,7 @@ export default async function CoursesPage() {
             <ul>
               {INCLUDED.map((row) => (
                 <li key={row.title}>
-                  <span className="cl-included-icon"><Glyph name={row.icon} /></span>
+                  <span className="cl-included-icon"><Icon3D name={row.icon} size={48} /></span>
                   <strong>{row.title}</strong>
                   <p>{row.text}</p>
                 </li>
