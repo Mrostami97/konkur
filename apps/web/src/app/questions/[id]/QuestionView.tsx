@@ -11,6 +11,7 @@ import { DataState } from "../../../components/ds";
 import { fieldLabel } from "../../account/profile-options";
 import { OUTSIDE_1406_SUBJECTS, topicPlace } from "../../../lib/syllabus";
 import { CONFIDENCE, PracticePanel, loadHistory, type Confidence, type History, type Outcome } from "./PracticePanel";
+import { clearPracticeSet, readPracticeSet } from "../practice-set";
 
 interface Block {
   type: string;
@@ -72,6 +73,14 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
   const [history, setHistory] = useState<History | null>(null);
   const [wrongAnswerId, setWrongAnswerId] = useState<string | null>(null);
   const [startedAt, setStartedAt] = useState(() => Date.now());
+  /** Where this question sits in a practice set from the exam builder, if it is in one. */
+  const [inSet, setInSet] = useState<{ index: number; total: number; next: string | null } | null>(null);
+
+  useEffect(() => {
+    const set = readPracticeSet();
+    const index = set.indexOf(id);
+    setInSet(index >= 0 ? { index, total: set.length, next: set[index + 1] ?? null } : null);
+  }, [id]);
 
   useEffect(() => {
     (async () => {
@@ -275,6 +284,19 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                     <ContentBlocks blocks={question.solutionBlocks} assets={question.assets} />
                   </div>
                 </section>
+              )}
+
+              {inSet && (
+                <nav className="qv-set" aria-label="تمرین مبحثی">
+                  <span className="tnum">
+                    تمرین مبحثی · تست {toPersianDigits(inSet.index + 1)} از {toPersianDigits(inSet.total)}
+                  </span>
+                  {inSet.next ? (
+                    <Link className="ds-btn ds-btn-primary" href={`/questions/${inSet.next}`}>تست بعدی</Link>
+                  ) : (
+                    <Link className="ds-btn ds-btn-primary" href="/questions/build" onClick={clearPracticeSet}>پایان تمرین؛ آزمون تازه</Link>
+                  )}
+                </nav>
               )}
 
               <nav className="qv-nav" aria-label="ادامه">

@@ -376,4 +376,61 @@ describe("Past-exam archive questions (question.v2)", () => {
     expect(await collection("unseen")).toEqual([]);
     expect((await http().get("/questions").query({ subjectCode: practiceSubject, collection: "unseen" }).set("Cookie", other).expect(200)).body.total).toBe(3);
   });
+
+  it("builds a student's own practice set and timed exam from questions they may read, by topic and collection", async () => {
+    const ownSubject = `own-exam-subject-${run}`;
+    const checked = { text_verified: true, key_verified: true };
+    const items = [
+      { ...archiveQuestion(`own-a-${run}`, ownSubject, 160, { review: checked }), sample: true, topic_codes: ["own-topic-1"] },
+      { ...archiveQuestion(`own-b-${run}`, ownSubject, 161, { review: checked }), sample: true, topic_codes: ["own-topic-2"] },
+      { ...archiveQuestion(`own-c-${run}`, ownSubject, 162, { review: checked }), sample: true, topic_codes: ["own-topic-1"], key_state: "deleted" },
+      // Not a sample: a student without this subject's bank never draws it.
+      { ...archiveQuestion(`own-d-${run}`, ownSubject, 163, { review: checked }), topic_codes: ["own-topic-1"] },
+    ];
+    const zip = new AdmZip();
+    zip.addFile("payload.json", Buffer.from(JSON.stringify(items)));
+    const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "own.zip").expect(201);
+    const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+    await http().post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: staged.body.map((item: { id: string }) => item.id), decision: "APPROVE" }).expect(201);
+    await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+    const listed = await http().get("/questions").query({ subjectCode: ownSubject }).expect(200);
+    const idOf = (n: number) => listed.body.items.find((row: { questionNumber: number }) => row.questionNumber === n).id as string;
+    const [a, b] = [idOf(160), idOf(161)];
+
+    const student = await examReadyStudent();
+    const other = await examReadyStudent();
+    await http().post("/questions/practice-set").send({ subjectCode: ownSubject, count: 10 }).expect(401);
+
+    // Samples only (no bank), the deleted one left out.
+    const all = await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, count: 10 }).expect(201);
+    expect(all.body).toMatchObject({ available: 2, hasBank: false });
+    expect([...all.body.ids].sort()).toEqual([a, b].sort());
+    const topic = await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, topicCodes: ["own-topic-1"], count: 10 }).expect(201);
+    expect(topic.body.ids).toEqual([a]);
+    await http().post(`/questions/${b}/practice`).set("Cookie", student).send({ selectedOption: 2 }).expect(201);
+    const unseen = await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, collection: "unseen", count: 10 }).expect(201);
+    expect(unseen.body.ids).toEqual([a]);
+    await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, count: 0 }).expect(400);
+
+    // A timed exam of their own: only they can start it, and it is not in the catalogue.
+    const exam = await http()
+      .post("/questions/practice-exams")
+      .set("Cookie", student)
+      .send({ subjectCode: ownSubject, count: 10, title: "آزمون مبحثی من", durationMinutes: 5 })
+      .expect(201);
+    expect(exam.body).toMatchObject({ questionCount: 2, durationMinutes: 5 });
+    await http().post(`/exams/${exam.body.examId}/start`).set("Cookie", other).expect(404);
+    const attempt = await http().post(`/exams/${exam.body.examId}/start`).set("Cookie", student).expect(201);
+    expect(attempt.body.items).toHaveLength(2);
+    expect(JSON.stringify(attempt.body)).not.toContain("correctOption");
+    const catalogue = await http().get("/exams").expect(200);
+    expect(catalogue.body.some((row: { id: string }) => row.id === exam.body.examId)).toBe(false);
+    const adminList = await http().get("/admin/exams").set("Cookie", adminCookie).expect(200);
+    expect(adminList.body.some((row: { id: string }) => row.id === exam.body.examId)).toBe(false);
+    await http()
+      .post("/questions/practice-exams")
+      .set("Cookie", student)
+      .send({ subjectCode: `nothing-here-${run}`, count: 5, title: "خالی", durationMinutes: 5 })
+      .expect(400);
+  });
 });

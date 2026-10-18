@@ -6,5 +6,5 @@ import "../questions.css";
 export default async function QuestionDetailPage({ params: pendingParams }: { params: Promise<{ id: string }> }) {
   const params = await pendingParams;
   const subjectTitles = Object.fromEntries(subjects.map((subject) => [subject.slug, subject.title]));
-  return <QuestionView id={params.id} subjectTitles={subjectTitles} />;
+  return <QuestionView key={params.id} id={params.id} subjectTitles={subjectTitles} />;
 }

@@ -211,6 +211,7 @@ export function QuestionBank({
           <p className="qb-kicker">بانک سؤال</p>
           <h1>تست‌های کنکور، درس‌به‌درس و مبحث‌به‌مبحث</h1>
           <p>هر تست سر جای خودش در سرفصل ۱۴۰۶ است. سؤال‌های نمونه برای همه باز است؛ متن و پاسخ بقیه با دسترسی بانک همان درس نمایش داده می‌شود.</p>
+          <Link className="ds-btn ds-btn-primary qb-build" href="/questions/build">آزمون از مبحثی که خوانده‌ای</Link>
         </div>
       </header>
 

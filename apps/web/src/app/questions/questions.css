@@ -227,3 +227,67 @@ button[aria-pressed="true"] .qb-count { color: var(--accent-hover); background: 
 .qp-note-form div { display: flex; gap: 0.5rem; }
 .qb-history { display: inline-flex; }
 .qb-history .qp-marks span { width: 1.1rem; height: 1.1rem; }
+
+/* Exam builder (build/ExamBuilder.tsx). */
+.qb-kicker a { color: inherit; text-decoration: none; }
+.qb-build { display: inline-flex; margin-top: 1rem; }
+.xb { display: grid; padding-block: 1.5rem 3rem; }
+.xb-form { display: grid; gap: 1rem; max-width: 56rem; }
+.xb-card { display: grid; gap: 0.85rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.xb-card h2 { margin: 0; color: var(--ink); font-size: var(--text-base); font-weight: var(--weight-bold); }
+.xb-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.xb-head span { color: var(--muted); font-size: var(--text-xs); }
+.xb-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.xb-chips button {
+  min-height: 2.4rem;
+  padding: 0 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  color: var(--ink-700);
+  background: var(--surface);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.xb-chips button:hover { border-color: var(--accent); color: var(--ink); }
+.xb-chips button[aria-checked="true"] { border-color: var(--accent); color: var(--accent-hover); background: var(--accent-soft); font-weight: var(--weight-semibold); }
+.xb-chapter { margin: 0; padding: 0.75rem 0 0; border: 0; border-top: 1px solid var(--line-soft); }
+.xb-chapter legend { float: right; width: 100%; padding: 0; }
+.xb-chapter label { display: flex; align-items: center; gap: 0.55rem; cursor: pointer; }
+.xb-chapter legend label { color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.xb-chapter small { margin-inline-start: auto; color: var(--ink-400); font-size: var(--text-2xs); font-weight: var(--weight-semibold); }
+.xb-chapter input { width: 1.05rem; height: 1.05rem; accent-color: var(--accent); }
+.xb-topics { clear: both; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.15rem 1.25rem; padding: 0.5rem 1.6rem 0.25rem 0; }
+.xb-topics label { padding: 0.3rem 0; color: var(--ink-700); font-size: var(--text-sm); }
+.xb-topics label[data-empty] { color: var(--ink-400); }
+.xb-grid { grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.xb-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.75rem; }
+.xb-modes button {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--ink-700);
+  background: var(--surface);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.xb-modes button strong { color: var(--ink); font-size: var(--text-sm); }
+.xb-modes button span { font-size: var(--text-xs); line-height: 1.8; }
+.xb-modes button[aria-checked="true"] { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.xb-minutes { max-width: 12rem; }
+.xb-message { margin: 0; padding: 0.75rem 1rem; border: 1px solid var(--warning-line); border-radius: var(--radius-md); color: var(--warning-ink); background: var(--surface); font-size: var(--text-sm); }
+.xb-submit { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.xb-submit p { flex: 1 1 18rem; margin: 0; color: var(--muted); font-size: var(--text-xs); line-height: 1.9; }
+.xb-signin { max-width: 36rem; justify-items: start; }
+.xb-signin p { margin: 0; color: var(--muted); font-size: var(--text-sm); line-height: 1.9; }
+.qv-set { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem; padding: 0.85rem 1rem; border: 1px solid var(--accent-line); border-radius: var(--radius-md); background: var(--accent-soft); }
+.qv-set span { color: var(--accent-hover); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+@media (max-width: 640px) {
+  .xb-card { padding: 1rem; }
+  .xb-topics { padding-inline-start: 0; grid-template-columns: 1fr; }
+}
+.xb-chips button small { margin-inline-start: 0.45rem; color: var(--ink-400); font-size: var(--text-2xs); font-weight: var(--weight-semibold); }
+.xb-chips button[data-empty] { color: var(--ink-400); border-style: dashed; }

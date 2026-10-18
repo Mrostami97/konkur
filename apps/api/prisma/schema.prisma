@@ -1362,12 +1362,16 @@ model Exam {
   // its report card can then place the student against that year's results.
   simulatesExamCode String?
   simulatesYear     Int?
+  // A student's own practice exam (built from the bank by topic): never
+  // published, only its owner may sit it.
+  ownerUserId       String?
   forms             ExamForm[]
   sections          ExamSection[]
   attempts          Attempt[]
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
+  @@index([ownerUserId])
   @@map("exams")
 }
 

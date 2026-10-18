@@ -11,6 +11,8 @@ import { SetSampleDto } from "./dto/set-sample.dto";
 import { ConfirmExamKeyDto, ReviewQuestionDto } from "./dto/review-question.dto";
 import { PracticeAnswerDto, PracticeReasonDto, QuestionMarkDto } from "./dto/practice.dto";
 import { COLLECTIONS, PracticeService, type Collection } from "./practice.service";
+import { PersonalExamDto, PracticeSelectionDto } from "./dto/personal-exam.dto";
+import { PersonalExamService } from "./personal-exam.service";
 
 @Controller("questions")
 @UseGuards(OptionalSessionAuthGuard)
@@ -18,6 +20,7 @@ export class QuestionsPublicController {
   constructor(
     private readonly questionBank: QuestionBankService,
     private readonly practice: PracticeService,
+    private readonly personalExams: PersonalExamService,
   ) {}
 
   @Get()
@@ -71,6 +74,20 @@ export class QuestionsPublicController {
   @UseGuards(SessionAuthGuard)
   reason(@Req() req: RequestWithUser, @Param("answerId") answerId: string, @Body() dto: PracticeReasonDto) {
     return this.practice.setReason(req.user!.id, answerId, dto.errorReason);
+  }
+
+  /** A random set of questions the student may read, for practice with the key after each. */
+  @Post("practice-set")
+  @UseGuards(SessionAuthGuard)
+  practiceSet(@Req() req: RequestWithUser, @Body() dto: PracticeSelectionDto) {
+    return this.personalExams.pick(req.user!.id, dto);
+  }
+
+  /** The same selection as a timed exam of the student's own, started with POST /exams/:id/start. */
+  @Post("practice-exams")
+  @UseGuards(SessionAuthGuard)
+  practiceExam(@Req() req: RequestWithUser, @Body() dto: PersonalExamDto) {
+    return this.personalExams.createExam(req.user!.id, dto);
   }
 
   /** A star and/or a note on a question. */

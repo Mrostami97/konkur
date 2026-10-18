@@ -399,6 +399,8 @@ export class AssessmentService {
 
   listAllExams() {
     return this.prisma.exam.findMany({
+      // Students' own practice exams are theirs, not the catalogue's.
+      where: { ownerUserId: null },
       include: { forms: { include: { _count: { select: { items: true } } } }, _count: { select: { attempts: true } } },
       orderBy: { createdAt: "desc" },
     });
@@ -571,7 +573,9 @@ export class AssessmentService {
 
   async startAttempt(examId: string, userId: string) {
     const exam = await this.prisma.exam.findUnique({ where: { id: examId }, include: { forms: true } });
-    if (!exam || !exam.isPublished) throw new NotFoundException("exam not found");
+    // A student's own practice exam is never published; only its owner sits it.
+    const ownExam = exam?.ownerUserId != null && exam.ownerUserId === userId;
+    if (!exam || (!exam.isPublished && !ownExam)) throw new NotFoundException("exam not found");
 
     const inProgress = await this.prisma.attempt.findFirst({
       where: { examId, userId, status: AttemptStatus.IN_PROGRESS },
