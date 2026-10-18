@@ -64,6 +64,7 @@ not reach the key).
 | kunkurcomputer-q-1209-1385-b0-079 | CS 1385 q79 | 4 | f(n,k) counts onto maps from a k-set to an n-set: f(4,4)=24, f(3,3)=6, f(4,5)=240, f(5,4)=0. The false statement is option 3 (f(4,5)=0), not 4 |
 | kunkurcomputer-q-1209-1385-b0-073 | CS 1385 q73 | 2 (4×5!) | choose the greatest and least element (5·4=20 ways) and any partial order on the other three (19 labelled posets): 380, which is none of the options |
 | kunkurcomputer-q-1209-1387-b0-058 | CS 1387 q58 | 4 (1024×1024 bytes) | that is a megabyte; options 1–3 (10⁹, 1000 million, 2³⁰) are the two usual meanings of a gigabyte. Booklet text matches the bank |
+| kunkurcomputer-q-1209-1397-262F-076 | CS 1397 q76 | 3 ((A(BC))D) | multiplications: ((AB)C)D = 2250+1500+1020 = 4770, (A(BC))D = 3750+900+1020 = 5670, A((BC)D) = 7830, (AB)(CD) = 9050. The fastest is option 4; booklet text matches the bank |
 | kunkurcomputer-q-1209-1391-368C-056 | CS 1391 q56 | 1 | column-major position of A[i,j,k] in A[1..a,2..b,3..c] is (k−3)(b−1)a+(j−2)a+i; option 1 ends in +k (booklet misprint, matches the bank). Intended answer 1 |
 
 ## Questions whose figure, code or language is missing (2026-10-18)
