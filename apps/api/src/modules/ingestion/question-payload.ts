@@ -80,6 +80,8 @@ export async function questionRowFromPayload(
         // Only worth storing when the key accepts more than the one option.
         acceptedOptions,
         keyState: KEY_STATE[v2.key_state ?? "normal"],
+        solutionHint: v2.hint ?? null,
+        solutionShortcut: v2.shortcut ?? null,
       }
     : {};
   return {

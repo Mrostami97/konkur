@@ -20,6 +20,8 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SAMPLES } from "./samples.mjs";
+import { SOLUTIONS } from "./solutions.mjs";
+import { NEEDS_FIGURE } from "./needs-figure.mjs";
 
 const repo = fileURLToPath(new URL("../../../", import.meta.url));
 const AdmZip = createRequire(`${repo}apps/api/package.json`)("adm-zip");
@@ -296,7 +298,7 @@ const questions = (await readFile(bankFile, "utf8"))
     const q = normalise(record);
     if (!TAGGED) return q;
     const tag = TAGS.get(record.question_id);
-    const subjectCode = subjectOf(tag.course, tag.chapter);
+    const subjectCode = subjectOf(tag.course, tag.chapter, tag.topic);
     if (!subjectCode) throw new Error(`${record.question_id}: no subject for course «${tag.course}» (taxonomy-1406.mjs)`);
     const topic = isOutside1406(subjectCode) ? null : topicOf(subjectCode, tag.chapter, tag.topic);
     // Without an official key, our reviewed answer is the key.
@@ -316,6 +318,7 @@ const report = { generated_at: new Date().toISOString(), bank_modified_at: gener
 const seenIds = new Set();
 /** Samples found in the bank; any left over means a curated id no longer matches. */
 const usedSamples = new Set();
+const usedSolutions = new Set();
 /** Each exam-year's items and files, kept to pack the first-import bundles. */
 const built = [];
 
@@ -419,13 +422,17 @@ for (const examYear of examYears) {
     // A curated sample carries its worked solution, and must reach the key.
     // A verified question brings its own solution (and its own sample flag).
     if (verified && SAMPLES[externalId]) usedSamples.add(externalId);
+    // A question outside the samples may carry a worked solution too (solutions.mjs).
     const curated = verified
       ? { solution: verified.solution, topics: SAMPLES[externalId]?.topics, sample: verified.sample }
-      : SAMPLES[externalId] && { ...SAMPLES[externalId], sample: true };
+      : SAMPLES[externalId]
+        ? { ...SAMPLES[externalId], sample: true }
+        : SOLUTIONS[externalId];
     if (curated && !verified) {
       if (curated.answer !== q.correct) throw new Error(`${externalId}: the solution reaches option ${curated.answer}, the key says ${q.correct}`);
       if (!q.textVerified || !q.keyVerified || q.initialKey) throw new Error(`${externalId}: a sample needs a checked text and a final, checked key`);
-      usedSamples.add(externalId);
+      if (SAMPLES[externalId]) usedSamples.add(externalId);
+      else usedSolutions.add(externalId);
     }
     const notes = [
       ...q.notes,
@@ -434,6 +441,7 @@ for (const examYear of examYears) {
       ...(q.keySource === "authored" ? ["کلید رسمی در دسترس نیست؛ پاسخ تألیفی با بازبینی مستقل جای کلید است"] : []),
       ...(keyless ? ["کلید ندارد؛ تا حل‌شدن در صف بازبینی می‌ماند (گزینهٔ ۱ فقط جای خالی است)"] : []),
       ...(q.deleted ? ["در کلید نهایی حذف شده"] : []),
+      ...(NEEDS_FIGURE.has(externalId) ? [`ناقص: ${NEEDS_FIGURE.get(externalId)}؛ تا تایپ یا برش شکل در صف بازبینی می‌ماند`] : []),
     ];
     const passageKey = q.passageId
       ? String(q.passageId).replace(/[^A-Za-z0-9-]/g, "")
@@ -469,8 +477,10 @@ for (const examYear of examYears) {
       ...(q.accepted.length > 1 && q.accepted.includes(q.correct) ? { accepted_options: q.accepted } : {}),
       ...(q.deleted ? { key_state: "deleted" } : q.positiveEffect ? { key_state: "positive_effect" } : {}),
       solution_blocks: curated?.solution ?? (q.authoredExplanation ? [{ type: "text", text: q.authoredExplanation }] : []),
-      review: { text_verified: q.textVerified, key_verified: keyless ? false : q.keyVerified, notes },
+      review: { text_verified: q.textVerified && !NEEDS_FIGURE.has(externalId), key_verified: keyless ? false : q.keyVerified, notes },
       ...(q.labels && Object.keys(q.labels).length ? { labels: q.labels } : {}),
+      ...(curated?.hint ? { hint: curated.hint } : {}),
+      ...(curated?.shortcut ? { shortcut: curated.shortcut } : {}),
       ...(curated?.sample ? { sample: true } : {}),
       assets,
       source: {
@@ -546,6 +556,7 @@ for (const bundle of bundles) {
 const missingSamples = Object.keys(SAMPLES).filter((id) => !usedSamples.has(id));
 if (missingSamples.length && onlyYears.size === 0 && !TAGGED) throw new Error(`curated samples not in the bank: ${missingSamples.join(", ")}`);
 report.samples = usedSamples.size;
+report.solutions = usedSolutions.size;
 await writeFile(path.join(outDir, "report.json"), JSON.stringify(report, null, 2));
 const totals = {};
 for (const [examYear, s] of Object.entries(report.exams)) {

@@ -27,6 +27,13 @@ export const TREE = JSON.parse(readFileSync(new URL("../../../apps/web/src/conte
  */
 const ALGORITHMIC_CHAPTER = /تحلیل پیچیدگی|تحلیل الگوریتم|روابط بازگشتی|مرتب‌سازی|درخت‌ها|درخت‌های جست|پشته و صف|لیست پیوندی|لیست‌های پیوندی|مجموعه‌های مجزا|الگوریتم‌های گراف|جریان در شبکه|ساختمان داده|جست‌وجو$|^جستجو$|تقسیم و حل|الگوریتم‌های حریصانه|انتخاب|مدل‌سازی برنامه‌ریزی/;
 
+/**
+ * A tagged topic that is plainly about languages and machines stays with the
+ * theory of computation even when its chapter reads as analysis: the tag file
+ * files some DPDA and closure questions under «تحلیل پیچیدگی و روابط بازگشتی».
+ */
+const THEORY_TOPIC = /محاسبه‌پذیر|قطری‌سازی|چامسکی|زبان|گرامر|ماشین|اتومات|تورینگ|تصمیم‌پذیر|عبارت منظم|عبارات منظم|منظم|مستقل از متن|لم تزریق|لم پمپاژ|DFA|NFA|PDA|DPDA/;
+
 /** The bank's course names → site subjects. */
 export const COURSE_SUBJECT = [
   [/ساختمان داده|الگوریتم/, "data-structures-algorithms"],
@@ -113,6 +120,8 @@ export const RULES = {
     [/جریان|شبکه|برنامه‌ریزی صحیح|الگوریتم/, "dsa-off-other"],
   ],
   automata: [
+    [/سلسله‌مراتب چامسکی/, "aut-basics-grammars"],
+    [/مستقل از متن قطعی|پشته‌ای قطعی|DPDA/, "aut-pda-deterministic"],
     [/تورینگ.*تصمیم|تصمیم‌پذیر|تصمیم ناپذیر|بازگشتی شمارش|بازگشتی‌شمارش|زبان‌های بازگشتی/, "aut-computability-decidability"],
     [/توقف|PCP|پست|کاهش/, "aut-computability-halting"],
     [/پیچیدگی|NP|ردهٔ P|کلاس P/, "aut-computability-complexity"],
@@ -245,9 +254,9 @@ export const RULES = {
  * null when its course is not known yet. A course the 1406 exam dropped
  * returns its own code with `outside1406`.
  */
-export function subjectOf(course, chapter = "") {
+export function subjectOf(course, chapter = "", topic = "") {
   const base = COURSE_SUBJECT.find(([pattern]) => pattern.test(course))?.[1] ?? null;
-  if (base && base !== "data-structures-algorithms" && ["automata", "programming-fundamentals"].includes(base) && ALGORITHMIC_CHAPTER.test(chapter)) {
+  if (base && base !== "data-structures-algorithms" && ["automata", "programming-fundamentals"].includes(base) && ALGORITHMIC_CHAPTER.test(chapter) && !(base === "automata" && THEORY_TOPIC.test(topic))) {
     return "data-structures-algorithms";
   }
   if (base) return base;
@@ -260,7 +269,9 @@ export const isOutside1406 = (subject) => OUTSIDE_1406.some(([, code]) => code =
 
 /** The topic code for one tagged question, or null when no rule fits. */
 export function topicOf(subject, chapter, topic) {
-  const text = `${chapter} | ${topic}`;
+  // A theory question filed under an analysis chapter is placed by its topic alone.
+  const misfiled = subject === "automata" && ALGORITHMIC_CHAPTER.test(chapter) && THEORY_TOPIC.test(topic);
+  const text = misfiled ? topic : `${chapter} | ${topic}`;
   for (const [pattern, code] of RULES[subject] ?? []) if (pattern.test(text)) return code;
   return null;
 }

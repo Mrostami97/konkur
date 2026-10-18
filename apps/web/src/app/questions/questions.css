@@ -291,3 +291,8 @@ button[aria-pressed="true"] .qb-count { color: var(--accent-hover); background: 
 }
 .xb-chips button small { margin-inline-start: 0.45rem; color: var(--ink-400); font-size: var(--text-2xs); font-weight: var(--weight-semibold); }
 .xb-chips button[data-empty] { color: var(--ink-400); border-style: dashed; }
+.qv-hint { flex-basis: 100%; margin: 0; padding: 0.7rem 0.9rem; border: 1px dashed var(--warning-line); border-radius: var(--radius-md); color: var(--ink-700); background: var(--surface); font-size: var(--text-sm); line-height: 1.9; }
+.qv-hint strong { display: block; margin-bottom: 0.15rem; color: var(--warning-ink); font-size: var(--text-xs); }
+.qv-hint p, .qv-shortcut p { margin: 0; }
+.qv-shortcut { margin-bottom: 1.25rem; padding: 0.85rem 1rem; border-radius: var(--radius-md); background: var(--accent-soft); color: var(--ink); line-height: 2; }
+.qv-shortcut h3 { margin: 0 0 0.25rem; color: var(--accent-hover); font-size: var(--text-sm); font-weight: var(--weight-bold); }

@@ -49,3 +49,21 @@ the bank before these checks and carries the three errors above (1405 q44, 1403 
 1403 q104). Do not upload it; rebuild it after the bank is corrected. On 2026-10-13 no
 sample was live on the site (`/api/questions/samples` returned none). The other 31
 samples match their images.
+
+## Keys that the mathematics does not reach (found writing solutions, 2026-10-18)
+
+The text matches the booklet; the recorded key cannot be right. Left without a
+written solution until the owner decides (build.mjs refuses a solution that does
+not reach the key).
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1209-1389-3077-058 | CS 1389 q58 | 4 (`o(ln n)`) | `T(n)=H_n=Θ(ln n)`, so `T(n)∈o(ln n)` is false and only option 2 (`o(n)`) holds |
+
+## Questions whose figure, code or language is missing (2026-10-18)
+
+The stem points at something that is only in the booklet crop, which students do
+not see. `needs-figure.mjs` keeps these ten in the review queue until the part is
+typed in or cut as a figure: CS 1382 q144 (the language), CS 1384 q117 and q121
+(automaton), CS 1392 q88 (matrix sizes), CE 1382 q60 (graph), CE 1383 q50 (program),
+q52 (tree), q63 (matrix P), CE 1384 q52 (tree), q53 (algorithm).

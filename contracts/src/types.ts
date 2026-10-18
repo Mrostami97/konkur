@@ -175,6 +175,10 @@ export interface QuestionV2 {
   review: { text_verified: boolean; key_verified: boolean; notes?: string[] };
   /** The tagger's own chapter and one-line description, beside the syllabus topic. */
   labels?: { chapter?: string; topic?: string };
+  /** A nudge shown before the answer, on request. */
+  hint?: string;
+  /** The quick way to the answer under exam time, shown above the full solution. */
+  shortcut?: string;
   /** A public sample of its subject: key and solution shown to everyone. Absent leaves the panel's choice. */
   sample?: boolean;
   assets?: Asset[];

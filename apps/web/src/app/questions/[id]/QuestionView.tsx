@@ -51,6 +51,10 @@ interface Question {
   /** DELETED: the board removed it; POSITIVE_EFFECT: a wrong answer costs nothing. */
   keyState?: "NORMAL" | "DELETED" | "POSITIVE_EFFECT";
   solutionBlocks?: Block[];
+  /** A nudge shown before answering, on request. */
+  solutionHint?: string | null;
+  /** The quick way under exam time, shown above the full solution. */
+  solutionShortcut?: string | null;
   /** The tagger's own chapter and description, shown after answering. */
   labels?: { chapter?: string; topic?: string } | null;
   /** Whose answer the key is: the board's, or ours where no official key exists. */
@@ -70,6 +74,7 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
   const [picked, setPicked] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [confidence, setConfidence] = useState<Confidence | null>(null);
+  const [hintOpen, setHintOpen] = useState(false);
   const [history, setHistory] = useState<History | null>(null);
   const [wrongAnswerId, setWrongAnswerId] = useState<string | null>(null);
   const [startedAt, setStartedAt] = useState(() => Date.now());
@@ -129,6 +134,7 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
     setChecked(false);
     setPicked(null);
     setConfidence(null);
+    setHintOpen(false);
     setWrongAnswerId(null);
     setStartedAt(Date.now());
   }
@@ -236,6 +242,17 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                           <button type="button" className="ds-btn ds-btn-primary" disabled={picked === null} onClick={() => void check()}>
                             بررسی پاسخ
                           </button>
+                          {question.solutionHint && !hintOpen && (
+                            <button type="button" className="ds-btn ds-btn-ghost" onClick={() => setHintOpen(true)}>
+                              یک سرنخ بده
+                            </button>
+                          )}
+                          {question.solutionHint && hintOpen && (
+                            <div className="qv-hint" role="note">
+                              <strong>سرنخ</strong>
+                              <ContentBlocks blocks={[{ type: "text", text: question.solutionHint }]} />
+                            </div>
+                          )}
                         </>
                       ) : (
                         <>
@@ -276,13 +293,23 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                 </section>
               )}
 
-              {checked && question.solutionBlocks && question.solutionBlocks.length > 0 && (
-                <section className="qv-solution" aria-labelledby="qv-solution-title">
+              {checked && (question.solutionShortcut || (question.solutionBlocks && question.solutionBlocks.length > 0)) && (
+                <section className="qv-solution" aria-label="راه‌حل">
                   {question.labels?.topic && <p className="qv-about">این تست دربارهٔ: {question.labels.topic}</p>}
-                  <h2 id="qv-solution-title">راه‌حل</h2>
-                  <div>
-                    <ContentBlocks blocks={question.solutionBlocks} assets={question.assets} />
-                  </div>
+                  {question.solutionShortcut && (
+                    <div className="qv-shortcut">
+                      <h3>راه سریع سر جلسه</h3>
+                      <ContentBlocks blocks={[{ type: "text", text: question.solutionShortcut }]} />
+                    </div>
+                  )}
+                  {question.solutionBlocks && question.solutionBlocks.length > 0 && (
+                    <>
+                      <h2 id="qv-solution-title">{question.solutionShortcut ? "حل کامل" : "راه‌حل"}</h2>
+                      <div>
+                        <ContentBlocks blocks={question.solutionBlocks} assets={question.assets} />
+                      </div>
+                    </>
+                  )}
                 </section>
               )}
 

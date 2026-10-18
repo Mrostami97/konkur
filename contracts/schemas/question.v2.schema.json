@@ -256,6 +256,18 @@
     "sample": {
       "type": "boolean"
     },
+    "hint": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600,
+      "description": "A one-line nudge shown before the answer, on request: where to look, without giving the answer away."
+    },
+    "shortcut": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "description": "The quick way to the answer under exam time (elimination, a special case, a known result), shown above the full solution."
+    },
     "labels": {
       "type": "object",
       "additionalProperties": false,

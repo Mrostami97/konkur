@@ -92,6 +92,8 @@ const ANSWERED_QUESTION_SELECT = {
   acceptedOptions: true,
   keyState: true,
   solutionBlocks: true,
+  solutionHint: true,
+  solutionShortcut: true,
   // Read only to project `labels` and `keySource` from it (answeredView); the
   // record itself (archive paths, pages) never leaves the server.
   source: true,

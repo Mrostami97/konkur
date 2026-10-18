@@ -285,6 +285,8 @@ describe("Past-exam archive questions (question.v2)", () => {
       topic_codes: ["dsa-analysis-master"],
       key_state: "deleted",
       labels: { chapter: "روابط بازگشتی", topic: "قضیهٔ اصلی با ضریب لگاریتمی" },
+      hint: "ضریب لگاریتمی را با حالت دوم قضیهٔ اصلی مقایسه کن.",
+      shortcut: "هر سطح درخت بازگشت به یک اندازه کار می‌کند.",
       source: { page: 3, question_number: 140, archive_path: "ce/03/1403.pdf", key_source: "authored" },
       sample: true,
     };
@@ -304,7 +306,12 @@ describe("Past-exam archive questions (question.v2)", () => {
       keySource: "authored",
       labels: { chapter: "روابط بازگشتی", topic: "قضیهٔ اصلی با ضریب لگاریتمی" },
       topicCodes: ["dsa-analysis-master"],
+      solutionHint: "ضریب لگاریتمی را با حالت دوم قضیهٔ اصلی مقایسه کن.",
+      solutionShortcut: "هر سطح درخت بازگشت به یک اندازه کار می‌کند.",
     });
+    // A locked question carries neither layer.
+    const locked = await http().get("/questions").query({ subjectCode: `archive-subject-${run}` }).expect(200);
+    for (const row of locked.body.items.filter((r: { isSample: boolean }) => !r.isSample)) expect(row.solutionHint).toBeUndefined();
     // The record behind it (archive path, page) stays on the server.
     expect(question.body.source).toBeUndefined();
     expect(JSON.stringify(question.body)).not.toContain("ce/03/1403.pdf");
