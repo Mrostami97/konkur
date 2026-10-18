@@ -24,6 +24,7 @@ import { parseImportZip } from "./zip-reader";
 import { sha256Buffer, sha256Json } from "./checksum";
 import { IMPORT_IMAGE_MIME_TYPES, isSafeImportFilename, sniffImportImageMime } from "./media-types";
 import { questionRowFromPayload } from "./question-payload";
+import { NOT_SOURCE_REVIEWED } from "../question-bank/retire-reasons";
 
 type ContractItem = ArticleV1 | ArticleV2 | QuestionV1 | QuestionV2 | ReportCardV1;
 type PublicationReview = { reviewedByUserId: string; reviewedAt: Date };
@@ -251,6 +252,9 @@ export class IngestionService {
           : await this.prisma.question.findUnique({ where: { externalId } });
 
     if (!existing) return { status: DedupeStatus.NEW };
+    // Set aside only because it was not source-reviewed: even an unchanged
+    // reviewed import has to go through publishing to bring it back.
+    if ("retiredReason" in existing && existing.retiredAt && existing.retiredReason === NOT_SOURCE_REVIEWED) return { status: DedupeStatus.CONFLICT };
 
     const latestVersion = await this.prisma.contentVersion.findFirst({
       where: { entityType: schemaVersionToEntityType(schemaVersion), entityId: existing.id },
@@ -597,7 +601,15 @@ export class IngestionService {
     const p = payload as QuestionV1 | QuestionV2;
     const existing = await tx.question.findUnique({ where: { externalId: p.external_id } });
     const version = (existing?.version ?? 0) + 1;
-    const data = { externalId: p.external_id, ...(await questionRowFromPayload(tx, p, existing)), version };
+    // A question set aside only because it was not yet source-reviewed returns
+    // with its reviewed import; any other retirement stays.
+    const returns = p.schema_version === "question.v2" && existing?.retiredAt && existing.retiredReason === NOT_SOURCE_REVIEWED;
+    const data = {
+      externalId: p.external_id,
+      ...(await questionRowFromPayload(tx, p, existing)),
+      version,
+      ...(returns ? { retiredAt: null, retiredReason: null } : {}),
+    };
     const question = existing
       ? await tx.question.update({ where: { id: existing.id }, data })
       : await tx.question.create({ data });

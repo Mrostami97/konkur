@@ -7,6 +7,7 @@ import request from "supertest";
 import { AppModule } from "../src/app.module";
 import { OTP_PROVIDER, OtpProvider } from "../src/modules/identity/otp-provider";
 import { seed, SEED_ADMIN_PHONE } from "../src/seed";
+import { NOT_SOURCE_REVIEWED } from "../src/modules/question-bank/retire-reasons";
 
 class CapturingOtpProvider implements OtpProvider {
   public sent: { phone: string; code: string }[] = [];
@@ -255,6 +256,7 @@ describe("Past-exam archive questions (question.v2)", () => {
       zip.addFile("payload.json", Buffer.from(JSON.stringify([item])));
       const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "one.zip").expect(201);
       const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+      if (staged.body.some((item: { status: string }) => item.status !== "VALID")) console.log(JSON.stringify(staged.body.map((item: { status: string; errors?: unknown }) => [item.status, item.errors])));
       await http().post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: [staged.body[0].id], decision: "APPROVE" }).expect(201);
       await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
     }
@@ -443,5 +445,34 @@ describe("Past-exam archive questions (question.v2)", () => {
       .set("Cookie", student)
       .send({ subjectCode: `nothing-here-${run}`, count: 5, title: "خالی", durationMinutes: 5 })
       .expect(400);
+  });
+
+  it("brings back a question set aside as not source-reviewed when its reviewed text is imported, and only that one", async () => {
+    const subject = `returns-subject-${run}`;
+    const checked = { text_verified: true, key_verified: true };
+    const items = [archiveQuestion(`returns-a-${run}`, subject, 170, { review: checked }), archiveQuestion(`returns-b-${run}`, subject, 171, { review: checked })];
+    const upload = async (batch: object[]) => {
+      const zip = new AdmZip();
+      zip.addFile("payload.json", Buffer.from(JSON.stringify(batch)));
+      const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "returns.zip").expect(201);
+      const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+      if (staged.body.some((item: { status: string }) => item.status !== "VALID")) console.log(JSON.stringify(staged.body.map((item: { status: string; errors?: unknown }) => [item.status, item.errors])));
+      const open = staged.body.filter((item: { status: string }) => item.status !== "PUBLISHED").map((item: { id: string }) => item.id);
+      await http().post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: open, decision: "APPROVE" }).expect(201);
+      await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+    };
+    await upload(items);
+    const listed = await http().get("/questions").query({ subjectCode: subject }).expect(200);
+    const [a, b] = [170, 171].map((n) => listed.body.items.find((row: { questionNumber: number }) => row.questionNumber === n).id as string);
+    await http().post(`/admin/questions/${a}/retire`).set("Cookie", adminCookie).send({ reason: NOT_SOURCE_REVIEWED }).expect(201);
+    await http().post(`/admin/questions/${b}/retire`).set("Cookie", adminCookie).send({ reason: "تکراری" }).expect(201);
+    expect((await http().get("/questions").query({ subjectCode: subject }).expect(200)).body.total).toBe(0);
+    // The next reviewed bundle carries the same (unchanged) texts and a new question.
+    await upload([...items, archiveQuestion(`returns-c-${run}`, subject, 172, { review: checked })]);
+    const after = await http().get("/questions").query({ subjectCode: subject }).expect(200);
+    const back = after.body.items.map((row: { id: string; questionNumber: number }) => row.questionNumber).sort();
+    expect(back).toEqual([170, 172]);
+    expect(after.body.items.some((row: { id: string }) => row.id === a)).toBe(true);
+    expect(after.body.items.some((row: { id: string }) => row.id === b)).toBe(false);
   });
 });
