@@ -76,6 +76,14 @@ export class QuestionsPublicController {
     return this.practice.setReason(req.user!.id, answerId, dto.errorReason);
   }
 
+  /** The student's progress on a subject, per syllabus topic; declared before `:id`. */
+  @Get("progress")
+  @UseGuards(SessionAuthGuard)
+  progress(@Req() req: RequestWithUser, @Query("subjectCode") subjectCode?: string) {
+    if (!subjectCode || !/^[a-z0-9-]{1,80}$/.test(subjectCode)) throw new BadRequestException("subjectCode is required");
+    return this.practice.progress(req.user!.id, subjectCode);
+  }
+
   /** A random set of questions the student may read, for practice with the key after each. */
   @Post("practice-set")
   @UseGuards(SessionAuthGuard)

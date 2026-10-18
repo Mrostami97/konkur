@@ -211,7 +211,10 @@ export function QuestionBank({
           <p className="qb-kicker">بانک سؤال</p>
           <h1>تست‌های کنکور، درس‌به‌درس و مبحث‌به‌مبحث</h1>
           <p>هر تست سر جای خودش در سرفصل ۱۴۰۶ است. سؤال‌های نمونه برای همه باز است؛ متن و پاسخ بقیه با دسترسی بانک همان درس نمایش داده می‌شود.</p>
-          <Link className="ds-btn ds-btn-primary qb-build" href="/questions/build">آزمون از مبحثی که خوانده‌ای</Link>
+          <div className="qb-top-actions">
+            <Link className="ds-btn ds-btn-primary" href="/questions/subjects">بانک فصل‌به‌فصل هر درس</Link>
+            <Link className="ds-btn ds-btn-secondary" href="/questions/build">آزمون از مبحثی که خوانده‌ای</Link>
+          </div>
         </div>
       </header>
 
@@ -281,6 +284,7 @@ export function QuestionBank({
             {tree.length > 0 && (
               <fieldset className="qb-tree">
                 <legend>سرفصل {titleOf(applied.subjectCode)}</legend>
+                <Link className="qb-subject-hub" href={`/questions/subjects/${applied.subjectCode}`}>فصل‌به‌فصل، با تمرین و آزمون هر فصل ←</Link>
                 <button type="button" aria-pressed={!applied.chapter && !applied.topic} onClick={() => pick({ chapter: "", topic: "" })}>
                   <span>همهٔ فصل‌ها</span>
                 </button>

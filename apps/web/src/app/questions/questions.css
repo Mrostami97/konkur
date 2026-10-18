@@ -296,3 +296,41 @@ button[aria-pressed="true"] .qb-count { color: var(--accent-hover); background: 
 .qv-hint p, .qv-shortcut p { margin: 0; }
 .qv-shortcut { margin-bottom: 1.25rem; padding: 0.85rem 1rem; border-radius: var(--radius-md); background: var(--accent-soft); color: var(--ink); line-height: 2; }
 .qv-shortcut h3 { margin: 0 0 0.25rem; color: var(--accent-hover); font-size: var(--text-sm); font-weight: var(--weight-bold); }
+
+/* Chapter-by-chapter bank (subjects/). */
+.sb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.75rem; padding-block: 1.5rem 3rem; }
+.sb-tile { display: grid; gap: 0.35rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius-lg); color: var(--ink); background: var(--surface); text-decoration: none; transition: border-color var(--motion-fast) var(--ease), box-shadow var(--motion-fast) var(--ease); }
+.sb-tile:hover { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(11, 122, 106, 0.1); }
+.sb-tile strong { font-size: var(--text-base); font-weight: var(--weight-bold); }
+.sb-tile span { color: var(--muted); font-size: var(--text-xs); }
+.sb-tile[data-empty] { background: var(--paper); }
+.sb-tile[data-empty] strong { color: var(--ink-700); }
+.sb-chapters { display: grid; gap: 0.85rem; max-width: 56rem; padding-block: 1.5rem 3rem; }
+.sb-chapter { display: grid; gap: 0.75rem; padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.sb-chapter[data-off], .sb-chapter[data-empty] { background: var(--paper); }
+.sb-chapter-head { display: flex; align-items: center; gap: 0.85rem; }
+.sb-n { flex: none; display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%; color: var(--accent-hover); background: var(--accent-soft); font-weight: var(--weight-bold); }
+.sb-chapter[data-off] .sb-n { color: var(--ink-400); background: var(--surface-sunken); }
+.sb-chapter-title { flex: 1; min-width: 0; }
+.sb-chapter-title h2 { margin: 0; color: var(--ink); font-size: var(--text-base); font-weight: var(--weight-bold); line-height: 1.6; }
+.sb-chapter-title p { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.1rem 0 0; color: var(--muted); font-size: var(--text-xs); }
+.sb-toggle { flex: none; padding: 0.3rem 0.1rem; border: 0; background: none; color: var(--accent); font: inherit; font-size: var(--text-xs); font-weight: var(--weight-semibold); cursor: pointer; }
+.sb-progress { display: grid; gap: 0.3rem; }
+.sb-bar { display: flex; height: 0.45rem; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.sb-bar span[data-kind="right"] { background: var(--success); }
+.sb-bar span[data-kind="seen"] { background: var(--warning-line); }
+.sb-progress small { color: var(--ink-700); font-size: var(--text-2xs); }
+.sb-topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.2rem 1.25rem; margin: 0; padding: 0.6rem 0 0; border-top: 1px solid var(--line-soft); list-style: none; }
+.sb-topics li { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; padding: 0.3rem 0; }
+.sb-topics a { color: var(--ink-700); font-size: var(--text-sm); text-decoration: none; }
+.sb-topics a:hover { color: var(--accent); }
+.sb-topics small { flex: none; color: var(--ink-400); font-size: var(--text-2xs); }
+.sb-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.qb-subject-hub { display: block; margin: 0.35rem 0 0.6rem; color: var(--accent); font-size: var(--text-xs); font-weight: var(--weight-semibold); text-decoration: none; }
+@media (max-width: 640px) {
+  .sb-chapter { padding: 1rem; }
+  .sb-actions .ds-btn { flex: 1 1 auto; }
+}
+.qb-top-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+.sb-note { margin: 0; padding: 0.85rem 1rem; border: 1px solid var(--accent-line); border-radius: var(--radius-md); color: var(--ink-700); background: var(--accent-soft); font-size: var(--text-sm); line-height: 1.9; }
+.sb-note a { color: var(--accent-hover); font-weight: var(--weight-semibold); }

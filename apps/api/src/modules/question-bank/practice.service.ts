@@ -113,6 +113,34 @@ export class PracticeService {
     return result;
   }
 
+  /**
+   * The student's progress on one subject, per syllabus topic: how many of its
+   * questions they have answered at least once, and how many they got right the
+   * last time (a deleted question's VOID does not count either way).
+   */
+  async progress(userId: string, subjectCode: string): Promise<Record<string, { seen: number; right: number }>> {
+    const answers = await this.prisma.practiceAnswer.findMany({
+      where: { userId, question: { subjectCode, retiredAt: null } },
+      orderBy: { createdAt: "asc" },
+      select: { questionId: true, outcome: true, question: { select: { topicCodes: true } } },
+    });
+    const last = new Map<string, { topics: string[]; outcome: PracticeOutcome | null }>();
+    for (const answer of answers) {
+      const entry = last.get(answer.questionId) ?? { topics: answer.question.topicCodes, outcome: null };
+      if (answer.outcome !== PracticeOutcome.VOID) entry.outcome = answer.outcome;
+      last.set(answer.questionId, entry);
+    }
+    const result: Record<string, { seen: number; right: number }> = {};
+    for (const { topics, outcome } of last.values()) {
+      for (const topic of topics) {
+        const row = (result[topic] ??= { seen: 0, right: 0 });
+        row.seen += 1;
+        if (outcome === PracticeOutcome.CORRECT) row.right += 1;
+      }
+    }
+    return result;
+  }
+
   /** Stars or notes a question the student can see listed. An empty note clears it. */
   async mark(userId: string, questionId: string, input: { starred?: boolean; note?: string | null }) {
     const exists = await this.prisma.question.findFirst({ where: { id: questionId, retiredAt: null }, select: { id: true } });

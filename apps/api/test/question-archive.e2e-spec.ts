@@ -415,6 +415,10 @@ describe("Past-exam archive questions (question.v2)", () => {
     const topic = await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, topicCodes: ["own-topic-1"], count: 10 }).expect(201);
     expect(topic.body.ids).toEqual([a]);
     await http().post(`/questions/${b}/practice`).set("Cookie", student).send({ selectedOption: 2 }).expect(201);
+    // Progress per syllabus topic: b (own-topic-2) seen once and right.
+    const progress = await http().get("/questions/progress").query({ subjectCode: ownSubject }).set("Cookie", student).expect(200);
+    expect(progress.body).toEqual({ "own-topic-2": { seen: 1, right: 1 } });
+    await http().get("/questions/progress").query({ subjectCode: ownSubject }).expect(401);
     const unseen = await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, collection: "unseen", count: 10 }).expect(201);
     expect(unseen.body.ids).toEqual([a]);
     await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, count: 0 }).expect(400);
