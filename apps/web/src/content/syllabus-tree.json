@@ -627,5 +627,335 @@
         }
       ]
     }
+  ],
+  "english": [
+    {
+      "code": "en-vocab",
+      "title": "واژگان و اصطلاحات",
+      "topics": [
+        {
+          "code": "en-vocab-general",
+          "title": "واژگان عمومی پرتکرار"
+        },
+        {
+          "code": "en-vocab-technical",
+          "title": "اصطلاحات تخصصی کامپیوتر"
+        },
+        {
+          "code": "en-vocab-context",
+          "title": "معنای واژه در بافت و هم‌آیی"
+        }
+      ]
+    },
+    {
+      "code": "en-grammar",
+      "title": "ساختار زبان",
+      "topics": [
+        {
+          "code": "en-grammar-tenses",
+          "title": "زمان‌ها و افعال مجهول"
+        },
+        {
+          "code": "en-grammar-clauses",
+          "title": "جمله‌واره‌ها، حروف ربط و ضمایر"
+        },
+        {
+          "code": "en-grammar-roles",
+          "title": "مقایسه، شرطی‌ها و نقش کلمات"
+        }
+      ]
+    },
+    {
+      "code": "en-reading",
+      "title": "خواندن تخصصی",
+      "topics": [
+        {
+          "code": "en-reading-main",
+          "title": "ایدهٔ اصلی و جزئیات"
+        },
+        {
+          "code": "en-reading-reference",
+          "title": "ارجاع ضمیر و واژه در متن"
+        },
+        {
+          "code": "en-reading-cloze",
+          "title": "استنتاج و کلوز تست"
+        }
+      ]
+    }
+  ],
+  "digital-logic": [
+    {
+      "code": "dl-boolean",
+      "title": "جبر بول و نمایش",
+      "topics": [
+        {
+          "code": "dl-boolean-numbers",
+          "title": "سیستم‌های عددی و کدها"
+        },
+        {
+          "code": "dl-boolean-gates",
+          "title": "جبر بول، گیت‌ها و ساده‌سازی"
+        },
+        {
+          "code": "dl-boolean-kmap",
+          "title": "نقشهٔ کارنو و فرم‌های استاندارد"
+        }
+      ]
+    },
+    {
+      "code": "dl-comb",
+      "title": "مدارهای ترکیبی",
+      "topics": [
+        {
+          "code": "dl-comb-adders",
+          "title": "جمع‌کننده و تفریق‌کننده"
+        },
+        {
+          "code": "dl-comb-mux",
+          "title": "مالتی‌پلکسر، دیکودر و انکودر"
+        },
+        {
+          "code": "dl-comb-arith",
+          "title": "مقایسه‌گر و مدارهای حسابی"
+        }
+      ]
+    },
+    {
+      "code": "dl-seq",
+      "title": "مدارهای ترتیبی",
+      "topics": [
+        {
+          "code": "dl-seq-flipflops",
+          "title": "لچ و فلیپ‌فلاپ"
+        },
+        {
+          "code": "dl-seq-counters",
+          "title": "شمارنده و ثبات"
+        },
+        {
+          "code": "dl-seq-fsm",
+          "title": "ماشین حالت متناهی و طراحی زمان‌مند"
+        }
+      ]
+    }
+  ],
+  "operating-systems": [
+    {
+      "code": "os-process",
+      "title": "فرایند و نخ",
+      "topics": [
+        {
+          "code": "os-process-structure",
+          "title": "ساختار سیستم‌عامل"
+        },
+        {
+          "code": "os-process-processes",
+          "title": "فرایند، نخ و ارتباط بین فرایندها"
+        },
+        {
+          "code": "os-process-scheduling",
+          "title": "زمان‌بندی پردازنده"
+        }
+      ]
+    },
+    {
+      "code": "os-sync",
+      "title": "هم‌روندی و بن‌بست",
+      "topics": [
+        {
+          "code": "os-sync-critical",
+          "title": "ناحیهٔ بحرانی و سمافور"
+        },
+        {
+          "code": "os-sync-monitors",
+          "title": "همگام‌سازی و مانیتور"
+        },
+        {
+          "code": "os-sync-deadlock",
+          "title": "بن‌بست"
+        }
+      ]
+    },
+    {
+      "code": "os-memory",
+      "title": "حافظه و فایل",
+      "topics": [
+        {
+          "code": "os-memory-paging",
+          "title": "صفحه‌بندی و بخش‌بندی"
+        },
+        {
+          "code": "os-memory-virtual",
+          "title": "حافظهٔ مجازی و جایگزینی صفحه"
+        },
+        {
+          "code": "os-memory-files",
+          "title": "سیستم فایل، دیسک و ورودی/خروجی"
+        }
+      ]
+    }
+  ],
+  "computer-networks": [
+    {
+      "code": "net-arch",
+      "title": "معماری شبکه",
+      "topics": [
+        {
+          "code": "net-arch-layers",
+          "title": "مدل‌های لایه‌ای و سوئیچینگ"
+        },
+        {
+          "code": "net-arch-physical",
+          "title": "لایهٔ فیزیکی و رسانه"
+        },
+        {
+          "code": "net-arch-delay",
+          "title": "تأخیر و کیفیت سرویس"
+        }
+      ]
+    },
+    {
+      "code": "net-app",
+      "title": "لایهٔ کاربرد و انتقال",
+      "topics": [
+        {
+          "code": "net-app-application",
+          "title": "HTTP، DNS و سرویس‌های اینترنت"
+        },
+        {
+          "code": "net-app-transport",
+          "title": "TCP، UDP و کنترل ازدحام"
+        }
+      ]
+    },
+    {
+      "code": "net-network",
+      "title": "شبکه و پیوند",
+      "topics": [
+        {
+          "code": "net-network-ip",
+          "title": "آدرس‌دهی IP"
+        },
+        {
+          "code": "net-network-routing",
+          "title": "پروتکل‌های مسیریابی"
+        },
+        {
+          "code": "net-network-link",
+          "title": "Ethernet، وایرلس و تشخیص خطا"
+        }
+      ]
+    },
+    {
+      "code": "net-security",
+      "title": "امنیت و شبکه‌های نوین",
+      "topics": [
+        {
+          "code": "net-security-crypto",
+          "title": "مبانی رمزنگاری و امنیت شبکه"
+        }
+      ]
+    }
+  ],
+  "databases": [
+    {
+      "code": "db-model",
+      "title": "مدل‌سازی و جبر رابطه‌ای",
+      "topics": [
+        {
+          "code": "db-model-er",
+          "title": "مدل ER و EER"
+        },
+        {
+          "code": "db-model-relational",
+          "title": "مدل رابطه‌ای و قیود"
+        },
+        {
+          "code": "db-model-algebra",
+          "title": "جبر رابطه‌ای و حساب رابطه‌ای"
+        }
+      ]
+    },
+    {
+      "code": "db-sql",
+      "title": "SQL و طراحی",
+      "topics": [
+        {
+          "code": "db-sql-queries",
+          "title": "پرس‌وجوی SQL"
+        },
+        {
+          "code": "db-sql-normalization",
+          "title": "وابستگی تابعی و نرمال‌سازی"
+        },
+        {
+          "code": "db-sql-indexing",
+          "title": "نمایه و سازمان فایل"
+        }
+      ]
+    },
+    {
+      "code": "db-tx",
+      "title": "تراکنش و سامانه",
+      "topics": [
+        {
+          "code": "db-tx-concurrency",
+          "title": "ACID و کنترل همروندی"
+        },
+        {
+          "code": "db-tx-recovery",
+          "title": "بازیابی"
+        }
+      ]
+    }
+  ],
+  "artificial-intelligence": [
+    {
+      "code": "ai-search",
+      "title": "عامل و جست‌وجو",
+      "topics": [
+        {
+          "code": "ai-search-agents",
+          "title": "عامل و فضای حالت"
+        },
+        {
+          "code": "ai-search-search",
+          "title": "جست‌وجوی ناآگاهانه و آگاهانه"
+        },
+        {
+          "code": "ai-search-games",
+          "title": "بازی‌ها و minimax"
+        }
+      ]
+    },
+    {
+      "code": "ai-logic",
+      "title": "قید و منطق",
+      "topics": [
+        {
+          "code": "ai-logic-csp",
+          "title": "مسائل ارضای قید"
+        },
+        {
+          "code": "ai-logic-logic",
+          "title": "منطق و برنامه‌نویسی منطقی"
+        }
+      ]
+    },
+    {
+      "code": "ai-prob",
+      "title": "احتمال و یادگیری",
+      "topics": [
+        {
+          "code": "ai-prob-bayes",
+          "title": "شبکهٔ بیزی و استدلال احتمالی"
+        },
+        {
+          "code": "ai-prob-learning",
+          "title": "یادگیری و شبکهٔ عصبی"
+        }
+      ]
+    }
   ]
 }
