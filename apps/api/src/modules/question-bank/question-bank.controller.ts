@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { QuestionQuality, Role } from "@prisma/client";
 import { SessionAuthGuard, RequestWithUser } from "../identity/guards/session-auth.guard";
 import { OptionalSessionAuthGuard } from "../identity/guards/optional-session-auth.guard";
@@ -9,11 +9,16 @@ import { CreateQuestionDto } from "./dto/create-question.dto";
 import { RetireQuestionDto } from "./dto/retire-question.dto";
 import { SetSampleDto } from "./dto/set-sample.dto";
 import { ConfirmExamKeyDto, ReviewQuestionDto } from "./dto/review-question.dto";
+import { PracticeAnswerDto, PracticeReasonDto, QuestionMarkDto } from "./dto/practice.dto";
+import { COLLECTIONS, PracticeService, type Collection } from "./practice.service";
 
 @Controller("questions")
 @UseGuards(OptionalSessionAuthGuard)
 export class QuestionsPublicController {
-  constructor(private readonly questionBank: QuestionBankService) {}
+  constructor(
+    private readonly questionBank: QuestionBankService,
+    private readonly practice: PracticeService,
+  ) {}
 
   @Get()
   list(
@@ -21,6 +26,7 @@ export class QuestionsPublicController {
     @Query("subjectCode") subjectCode?: string,
     @Query("topicCode") topicCode?: string,
     @Query("topicCodes") topicCodes?: string,
+    @Query("collection") collection?: string,
     @Query("examDegree") examDegree?: "master" | "phd",
     @Query("examMajor") examMajor?: string,
     @Query("examYear") examYear?: string,
@@ -34,6 +40,7 @@ export class QuestionsPublicController {
         topicCode,
         // A chapter is sent as its topics, comma separated; a sane cap keeps the query small.
         topicCodes: topicCodes ? topicCodes.split(",").map((code) => code.trim()).filter(Boolean).slice(0, 60) : undefined,
+        collection: collection && (COLLECTIONS as readonly string[]).includes(collection) ? (collection as Collection) : undefined,
         examDegree,
         examMajor,
         examYear: examYear ? Number(examYear) : undefined,
@@ -43,6 +50,34 @@ export class QuestionsPublicController {
       },
       req.user,
     );
+  }
+
+  /** The signed-in student's history and marks on these questions (comma separated ids); declared before `:id`. */
+  @Get("history")
+  @UseGuards(SessionAuthGuard)
+  history(@Req() req: RequestWithUser, @Query("ids") ids?: string) {
+    return this.practice.history(req.user!.id, (ids ?? "").split(",").map((id) => id.trim()).filter(Boolean));
+  }
+
+  /** A practice answer: graded on the server from the key, kept for the student's history. */
+  @Post(":id/practice")
+  @UseGuards(SessionAuthGuard)
+  answer(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: PracticeAnswerDto) {
+    return this.practice.record(req.user!.id, id, dto);
+  }
+
+  /** The student's own reason for one of their wrong answers. */
+  @Patch("practice-answers/:answerId")
+  @UseGuards(SessionAuthGuard)
+  reason(@Req() req: RequestWithUser, @Param("answerId") answerId: string, @Body() dto: PracticeReasonDto) {
+    return this.practice.setReason(req.user!.id, answerId, dto.errorReason);
+  }
+
+  /** A star and/or a note on a question. */
+  @Put(":id/mark")
+  @UseGuards(SessionAuthGuard)
+  mark(@Req() req: RequestWithUser, @Param("id") id: string, @Body() dto: QuestionMarkDto) {
+    return this.practice.mark(req.user!.id, id, dto);
   }
 
   /** Question counts per subject and, for one subject, per syllabus topic; declared before `:id`. */

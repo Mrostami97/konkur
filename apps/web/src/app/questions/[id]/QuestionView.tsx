@@ -10,6 +10,7 @@ import { BuyButton } from "../../../components/BuyButton";
 import { DataState } from "../../../components/ds";
 import { fieldLabel } from "../../account/profile-options";
 import { OUTSIDE_1406_SUBJECTS, topicPlace } from "../../../lib/syllabus";
+import { CONFIDENCE, PracticePanel, loadHistory, type Confidence, type History, type Outcome } from "./PracticePanel";
 
 interface Block {
   type: string;
@@ -67,11 +68,19 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
   const [notFound, setNotFound] = useState(false);
   const [picked, setPicked] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
+  const [confidence, setConfidence] = useState<Confidence | null>(null);
+  const [history, setHistory] = useState<History | null>(null);
+  const [wrongAnswerId, setWrongAnswerId] = useState<string | null>(null);
+  const [startedAt, setStartedAt] = useState(() => Date.now());
 
   useEffect(() => {
     (async () => {
       try {
-        setQuestion(await apiFetch<Question>(`/questions/${id}`));
+        const loaded = await apiFetch<Question>(`/questions/${id}`);
+        setQuestion(loaded);
+        setStartedAt(Date.now());
+        // Signed-out visitors get null: their answers are checked here but not kept.
+        if (loaded.options) setHistory(await loadHistory(loaded.id));
       } catch (err) {
         if (err instanceof ApiError && err.status === 404) setNotFound(true);
         else setError("اتصال به بانک سؤال برقرار نشد.");
@@ -89,6 +98,31 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
   const keyOptions = [...new Set(accepted)].sort();
   const correct = checked && picked !== null && !deleted && keyOptions.includes(picked);
   const place = question ? topicPlace(question.subjectCode, question.topicCodes[0]) : null;
+
+  /** Shows the key at once; a signed-in student's answer is also graded and kept on the server. */
+  async function check() {
+    if (!question || picked === null) return;
+    setChecked(true);
+    if (!history) return;
+    try {
+      const saved = await apiFetch<{ answerId: string; outcome: Outcome; history: History }>(`/questions/${question.id}/practice`, {
+        method: "POST",
+        body: { selectedOption: picked, ...(confidence ? { confidence } : {}), timeSpentMs: Math.min(Date.now() - startedAt, 6 * 3600 * 1000) },
+      });
+      setHistory(saved.history);
+      setWrongAnswerId(saved.outcome === "WRONG" ? saved.answerId : null);
+    } catch {
+      // The key is already on screen; a failed save only means this try is not in the history.
+    }
+  }
+
+  function retry() {
+    setChecked(false);
+    setPicked(null);
+    setConfidence(null);
+    setWrongAnswerId(null);
+    setStartedAt(Date.now());
+  }
 
   return (
     <main className="qv">
@@ -173,9 +207,27 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                   {hasKey && (
                     <div className="qv-actions">
                       {!checked ? (
-                        <button type="button" className="ds-btn ds-btn-primary" disabled={picked === null} onClick={() => setChecked(true)}>
-                          بررسی پاسخ
-                        </button>
+                        <>
+                          {/* Asked before the key shows, so a lucky guess is not counted as knowing it. */}
+                          {history && (
+                            <div className="qp-confidence" role="group" aria-label="چقدر مطمئنی؟">
+                              <span>چقدر مطمئنی؟</span>
+                              {CONFIDENCE.map((item) => (
+                                <button
+                                  type="button"
+                                  key={item.value}
+                                  aria-pressed={confidence === item.value}
+                                  onClick={() => setConfidence((current) => (current === item.value ? null : item.value))}
+                                >
+                                  {item.label}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                          <button type="button" className="ds-btn ds-btn-primary" disabled={picked === null} onClick={() => void check()}>
+                            بررسی پاسخ
+                          </button>
+                        </>
                       ) : (
                         <>
                           <p className="qv-verdict" data-ok={correct || undefined} data-bad={(!correct && !deleted) || undefined} data-void={deleted || undefined} role="status">
@@ -195,13 +247,14 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                               {question.keySource === "official" ? "کلید رسمی سنجش" : "پاسخ کنکور کامپیوتر؛ کلید رسمی در دسترس نیست"}
                             </span>
                           )}
-                          <button type="button" className="ds-btn ds-btn-ghost" onClick={() => { setChecked(false); setPicked(null); }}>
+                          <button type="button" className="ds-btn ds-btn-ghost" onClick={retry}>
                             دوباره حل می‌کنم
                           </button>
                         </>
                       )}
                     </div>
                   )}
+                  <PracticePanel questionId={question.id} history={history} onHistory={setHistory} wrongAnswerId={checked ? wrongAnswerId : null} />
                 </article>
               ) : (
                 <section className="qv-locked">

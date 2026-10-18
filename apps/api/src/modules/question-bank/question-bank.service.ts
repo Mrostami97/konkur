@@ -5,6 +5,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { IngestionService } from "../ingestion/ingestion.service";
 import { AccessService } from "../access/access.service";
 import { AuditService } from "../audit/audit.service";
+import { PracticeService, type Collection } from "./practice.service";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 import type { SessionUser } from "../identity/identity.service";
 
@@ -13,6 +14,8 @@ export interface QuestionFilters {
   topicCode?: string;
   /** Any of these topics: a whole syllabus chapter, sent as its topics. */
   topicCodes?: string[];
+  /** One of the student's smart collections (practice.service.ts); needs a signed-in requester. */
+  collection?: Collection;
   examDegree?: "master" | "phd";
   examMajor?: string;
   examYear?: number;
@@ -117,6 +120,7 @@ export class QuestionBankService {
     private readonly ingestion: IngestionService,
     private readonly access: AccessService,
     private readonly audit: AuditService,
+    private readonly practice: PracticeService,
   ) {}
 
   /**
@@ -155,6 +159,12 @@ export class QuestionBankService {
         { examMajor: { contains: filters.q, mode: "insensitive" } },
         { topicCodes: { has: filters.q } },
       ];
+    }
+
+    // A smart collection is the requester's own; without one there is nothing in it.
+    if (filters.collection) {
+      if (!requester) return { items: [], total: 0, page, pageSize };
+      where.AND = [await this.practice.collectionFilter(requester.id, filters.collection)];
     }
 
     const [page_, total] = await this.prisma.$transaction([

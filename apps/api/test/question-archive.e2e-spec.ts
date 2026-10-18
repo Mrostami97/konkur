@@ -316,4 +316,64 @@ describe("Past-exam archive questions (question.v2)", () => {
     expect(counts.body.subjects[tagged]).toBe(1);
     expect(counts.body.topics["dsa-analysis-master"]).toBe(1);
   });
+
+  it("grades practice answers on the server, keeps each question's history and serves the smart collections", async () => {
+    const practiceSubject = `practice-subject-${run}`;
+    const checked = { text_verified: true, key_verified: true };
+    const items = [
+      { ...archiveQuestion(`practice-a-${run}`, practiceSubject, 150, { review: checked }), sample: true },
+      { ...archiveQuestion(`practice-b-${run}`, practiceSubject, 151, { review: checked }), sample: true },
+      { ...archiveQuestion(`practice-c-${run}`, practiceSubject, 152, { review: checked }), sample: true, key_state: "deleted" },
+    ];
+    const zip = new AdmZip();
+    zip.addFile("payload.json", Buffer.from(JSON.stringify(items)));
+    const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "practice.zip").expect(201);
+    const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+    await http().post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: staged.body.map((item: { id: string }) => item.id), decision: "APPROVE" }).expect(201);
+    await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+    const listed = await http().get("/questions").query({ subjectCode: practiceSubject }).expect(200);
+    const idOf = (n: number) => listed.body.items.find((row: { questionNumber: number }) => row.questionNumber === n).id as string;
+    const [a, b, c] = [idOf(150), idOf(151), idOf(152)];
+
+    const student = await login(randomPhone());
+    const other = await login(randomPhone());
+    const answer = (id: string, selectedOption: number, extra: object = {}) =>
+      http().post(`/questions/${id}/practice`).set("Cookie", student).send({ selectedOption, ...extra });
+
+    // Signed out, nothing is recorded.
+    await http().post(`/questions/${a}/practice`).send({ selectedOption: 2 }).expect(401);
+
+    // a: right then wrong twice (once "sure"); b: right; c: deleted.
+    expect((await answer(a, 2).expect(201)).body.outcome).toBe("CORRECT");
+    await answer(a, 1).expect(201);
+    const last = await answer(a, 3, { confidence: "SURE" }).expect(201);
+    expect(last.body.outcome).toBe("WRONG");
+    expect(last.body.history).toMatchObject({ seen: 3, outcomes: ["CORRECT", "WRONG", "WRONG"] });
+    await answer(b, 2).expect(201);
+    expect((await answer(c, 2).expect(201)).body.outcome).toBe("VOID");
+    await answer(a, 5).expect(400);
+
+    // The reason for a wrong answer is the student's own, on their own answer.
+    await http().patch(`/questions/practice-answers/${last.body.answerId}`).set("Cookie", other).send({ errorReason: "CARELESS" }).expect(404);
+    await http().patch(`/questions/practice-answers/${last.body.answerId}`).set("Cookie", student).send({ errorReason: "CARELESS" }).expect(200);
+
+    await http().put(`/questions/${b}/mark`).set("Cookie", student).send({ starred: true, note: "دام گزینهٔ ۳" }).expect(200);
+
+    const history = await http().get("/questions/history").query({ ids: `${a},${b}` }).set("Cookie", student).expect(200);
+    expect(history.body[a]).toMatchObject({ seen: 3, starred: false });
+    expect(history.body[b]).toMatchObject({ seen: 1, outcomes: ["CORRECT"], starred: true, note: "دام گزینهٔ ۳" });
+    // Another student's history is empty.
+    expect((await http().get("/questions/history").query({ ids: a }).set("Cookie", other).expect(200)).body[a].seen).toBe(0);
+
+    const collection = async (name: string) =>
+      (await http().get("/questions").query({ subjectCode: practiceSubject, collection: name }).set("Cookie", student).expect(200)).body.items.map(
+        (row: { id: string }) => row.id,
+      );
+    expect(await collection("last_two_wrong")).toEqual([a]);
+    expect(await collection("sure_but_wrong")).toEqual([a]);
+    expect(await collection("never_right")).toEqual([]);
+    expect(await collection("starred")).toEqual([b]);
+    expect(await collection("unseen")).toEqual([]);
+    expect((await http().get("/questions").query({ subjectCode: practiceSubject, collection: "unseen" }).set("Cookie", other).expect(200)).body.total).toBe(3);
+  });
 });

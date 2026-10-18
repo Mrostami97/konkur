@@ -39,6 +39,8 @@ model User {
   studySessions        StudySession[]
   savedResources       SavedResource[]
   masteryStates        MasteryState[]
+  practiceAnswers      PracticeAnswer[]
+  questionMarks        QuestionMark[]
   rankEstimates        RankEstimate[]
   choiceList           ChoiceList?
   lead                 Lead?
@@ -973,6 +975,66 @@ enum QuestionQuality {
   DRAFT
 }
 
+/// How sure a student was before answering: chosen with the answer, optional.
+enum AnswerConfidence {
+  SURE
+  TWO_WAY
+  GUESS
+}
+
+/// Why a student got a question wrong, in their own judgement after reading the key.
+enum PracticeErrorReason {
+  DID_NOT_KNOW
+  CARELESS
+  CALCULATION
+  OUT_OF_TIME
+  TRAP_OPTION
+}
+
+/// What an answer earned. VOID: the final key deleted the question.
+enum PracticeOutcome {
+  CORRECT
+  WRONG
+  VOID
+}
+
+/// One answer a student gave while practising a bank question, outside an
+/// exam. The outcome is computed on the server from the key at that moment.
+/// A question's history (seen three times, wrong the last two) and the smart
+/// collections (never right, wrong the last two, sure but wrong) read these.
+model PracticeAnswer {
+  id             String               @id @default(uuid())
+  userId         String
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId     String
+  question       Question             @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOption Int
+  outcome        PracticeOutcome
+  confidence     AnswerConfidence?
+  errorReason    PracticeErrorReason?
+  timeSpentMs    Int?
+  createdAt      DateTime             @default(now())
+
+  @@index([userId, questionId, createdAt])
+  @@index([userId, createdAt])
+  @@map("practice_answers")
+}
+
+/// A student's own star and note on a bank question.
+model QuestionMark {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  starred    Boolean  @default(false)
+  note       String?
+  updatedAt  DateTime @updatedAt
+
+  @@id([userId, questionId])
+  @@index([userId, starred])
+  @@map("question_marks")
+}
+
 /// How the final key scores a question. DELETED: the exam board removed it --
 /// no mark either way and not counted (correctOption keeps the earlier key,
 /// for reference). POSITIVE_EFFECT: a right answer scores, a wrong one costs
@@ -1045,6 +1107,8 @@ model Question {
   retiredAt       DateTime?
   retiredReason   String?
   examItems       ExamItem[]
+  practiceAnswers PracticeAnswer[]
+  marks           QuestionMark[]
   answers         Answer[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
