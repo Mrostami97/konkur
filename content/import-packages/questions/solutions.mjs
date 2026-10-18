@@ -3281,4 +3281,186 @@ export const SOLUTIONS = {
       t(String.raw`در پایهٔ $\{1,x,x^2\}$ ماتریس بالامثلثی است با قطر $1,2,3$، و مقدارهای ویژهٔ ماتریس مثلثی درایه‌های قطرند: $\{1,2,3\}$؛ گزینهٔ ۳.`),
     ],
   },
+  // ===================================================== آمار و احتمال
+  "kunkurcomputer-q-1209-1384-b0-051": {
+    answer: 1,
+    hint: String.raw`$E(X^2)$ را از $E(X(X-1))$ دربیاور.`,
+    shortcut: String.raw`$E(X^2)=E(X(X-1))+E(X)=5+2=7$ و $\operatorname{Var}(X)=7-2^2=3$؛ گزینهٔ ۱.`,
+    solution: [
+      t(String.raw`$E(X(X-1))=E(X^2)-E(X)$، پس $E(X^2)=5+2=7$.`),
+      t(String.raw`$\operatorname{Var}(X)=E(X^2)-(EX)^2=7-4=3$؛ گزینهٔ ۱.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-053": {
+    answer: 2,
+    hint: "نامساوی چبیشف را حول میانگین ۳ با فاصلهٔ ۳ به کار ببر.",
+    shortcut: String.raw`$P(X\ge6)\le P(|X-3|\ge3)\le\frac4{9}$، پس $P(X<6)\ge\frac59$؛ گزینهٔ ۲.`,
+    solution: [
+      t(String.raw`چبیشف: $P(|X-\mu|\ge k)\le\frac{\sigma^2}{k^2}$. با $\mu=3$، $\sigma^2=4$ و $k=3$: $P(|X-3|\ge3)\le\frac49$.`),
+      t(String.raw`رویداد $X\ge6$ زیرمجموعهٔ $|X-3|\ge3$ است، پس $P(X\ge6)\le\frac49$ و $P(X<6)\ge1-\frac49=\frac59$؛ گزینهٔ ۲.`),
+      t(String.raw`(نامساوی یک‌طرفهٔ کانتلی کران بهتر $1-\frac4{4+9}=\frac9{13}$ را می‌دهد؛ ولی پاسخ مورد انتظار همان کران چبیشف است.)`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-054": {
+    answer: 1,
+    hint: "کوواریانس را دوخطی باز کن.",
+    shortcut: String.raw`$\operatorname{Cov}(X+Y,X-Y)=\operatorname{Var}X-\operatorname{Cov}(X,Y)+\operatorname{Cov}(Y,X)-\operatorname{Var}Y=\operatorname{Var}X-\operatorname{Var}Y$؛ گزینهٔ ۱.`,
+    solution: [
+      t(String.raw`کوواریانس دوخطی است: $\operatorname{Cov}(X+Y,X-Y)=\operatorname{Cov}(X,X)-\operatorname{Cov}(X,Y)+\operatorname{Cov}(Y,X)-\operatorname{Cov}(Y,Y)$.`),
+      t(String.raw`دو جملهٔ وسط با هم خنثی می‌شوند: $\operatorname{Var}(X)-\operatorname{Var}(Y)$، بدون هیچ فرض استقلالی؛ گزینهٔ ۱.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-055": {
+    answer: 3,
+    hint: String.raw`$P(X=k\mid X+Y=n)$ را با فرمول پواسون و $X+Y\sim\text{Poisson}(\lambda+\mu)$ بنویس.`,
+    shortcut: String.raw`$P(X=k\mid X+Y=n)=\binom nk\left(\frac\lambda{\lambda+\mu}\right)^k\left(\frac\mu{\lambda+\mu}\right)^{n-k}$: دوجمله‌ای با $n$ و $p=\frac\lambda{\lambda+\mu}$؛ گزینهٔ ۳.`,
+    solution: [
+      t(String.raw`$P(X=k,X+Y=n)=P(X=k)P(Y=n-k)=e^{-\lambda}\frac{\lambda^k}{k!}e^{-\mu}\frac{\mu^{n-k}}{(n-k)!}$ و $X+Y\sim\text{Poisson}(\lambda+\mu)$.`),
+      t(String.raw`تقسیم: $\frac{n!}{k!(n-k)!}\cdot\frac{\lambda^k\mu^{n-k}}{(\lambda+\mu)^n}=\binom nk p^k(1-p)^{n-k}$ با $p=\frac\lambda{\lambda+\mu}$؛ گزینهٔ ۳.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-056": {
+    answer: 3,
+    hint: String.raw`$P(A\cup B)=P(A)+P(B)-P(A)P(B)$ برای مستقل‌ها.`,
+    shortcut: String.raw`$0.8=0.4+p-0.4p$ پس $0.6p=0.4$ و $p=\frac23$؛ گزینهٔ ۳.`,
+    solution: [
+      t(String.raw`با استقلال، $P(A\cap B)=P(A)P(B)$ و $P(A\cup B)=0.4+p-0.4p=0.4+0.6p$.`),
+      t(String.raw`$0.4+0.6p=0.8$ می‌دهد $p=\frac23$؛ گزینهٔ ۳.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-057": {
+    answer: 4,
+    hint: "برای هر رنگ احتمال دو گوی هم‌رنگ را حساب کن و جمع بزن.",
+    shortcut: String.raw`قرمز $\frac36\cdot\frac16$، سفید $\frac26\cdot\frac26$، آبی $\frac16\cdot\frac36$: جمع $\frac{3+4+3}{36}=\frac5{18}$؛ گزینهٔ ۴.`,
+    solution: [
+      t(String.raw`انتخاب‌ها از دو ظرف مستقل‌اند. هر دو قرمز: $\frac36\times\frac16=\frac3{36}$؛ هر دو سفید: $\frac26\times\frac26=\frac4{36}$؛ هر دو آبی: $\frac16\times\frac36=\frac3{36}$.`),
+      t(String.raw`جمع: $\frac{10}{36}=\frac5{18}$؛ گزینهٔ ۴.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-058": {
+    answer: 1,
+    hint: String.raw`$\frac{X^2-a}X=X-\frac aX$. کوواریانس آن با $X$ را صفر کن.`,
+    shortcut: String.raw`$\operatorname{Cov}(X,X-\frac aX)=\operatorname{Var}X-a\operatorname{Cov}(X,\frac1X)=\frac1{18}-a(1-\frac23\cdot2)=\frac1{18}+\frac a3$. صفر یعنی $a=-\frac16$؛ گزینهٔ ۱.`,
+    solution: [
+      t(String.raw`با $f(x)=2x$: $E(X)=\frac23$، $E(X^2)=\frac12$، $\operatorname{Var}X=\frac12-\frac49=\frac1{18}$، $E(\frac1X)=\int_0^12\,dx=2$ و $E(X\cdot\frac1X)=1$؛ پس $\operatorname{Cov}(X,\frac1X)=1-\frac23\cdot2=-\frac13$.`),
+      t(String.raw`$\operatorname{Cov}(X,X-\frac aX)=\frac1{18}-a(-\frac13)=\frac1{18}+\frac a3$. برای ناهمبستگی صفر: $a=-\frac16$؛ گزینهٔ ۱.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-059": {
+    answer: 2,
+    hint: String.raw`برای $x<0$ و $x\ge0$ جدا انتگرال بگیر.`,
+    shortcut: String.raw`برای $x<0$: $\int_{-\infty}^x\frac12e^t\,dt=\frac12e^x$. برای $x\ge0$: $\frac12+\int_0^x\frac12e^{-t}dt=1-\frac12e^{-x}$؛ گزینهٔ ۲.`,
+    solution: [
+      t(String.raw`$x<0$: $F(x)=\int_{-\infty}^x\frac12e^{t}\,dt=\frac12e^x$ (که در $0$ به $\frac12$ می‌رسد).`),
+      t(String.raw`$x\ge0$: $F(x)=\frac12+\int_0^x\frac12e^{-t}\,dt=\frac12+\frac12(1-e^{-x})=1-\frac12e^{-x}$. این گزینهٔ ۲ است و حدهای ۰ و ۱ در دو سر درست‌اند.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1384-b0-060": {
+    answer: 3,
+    hint: "ناحیهٔ مثلث 0<x<y<2 را بکش و خط x+y=2 را رویش بیاور.",
+    shortcut: String.raw`چگالی روی مثلثی به مساحت ۲ برابر $\frac12$ است. بخشی که $x+y<2$ است مثلثی با رئوس $(0,0)$، $(0,2)$ و $(1,1)$ به مساحت ۱ است: احتمال $\frac12$؛ گزینهٔ ۳.`,
+    solution: [
+      t(String.raw`ناحیهٔ $0<x<y<2$ مثلثی با رئوس $(0,0)$، $(0,2)$ و $(2,2)$ و مساحت ۲ است؛ چگالی یکنواخت $\frac12$.`),
+      t(String.raw`خط $x+y=2$ قطر $y=x$ را در $(1,1)$ قطع می‌کند. بخش زیر خط، مثلث $(0,0)$، $(1,1)$، $(0,2)$ با مساحت $\frac12\cdot2\cdot1=1$ است. احتمال $1\times\frac12=\frac12$؛ گزینهٔ ۳.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1385-b0-051": {
+    answer: 1,
+    hint: String.raw`$P(B\mid A)=1-P(\bar B\mid A)$ و $P(\bar B\cap A)\le P(\bar B)$.`,
+    shortcut: String.raw`$P(B\mid A)=1-\frac{P(\bar B\cap A)}{P(A)}\ge1-\frac{P(\bar B)}{P(A)}$؛ گزینهٔ ۱ (و شرط $P(A)+P(B)>1$ این کران را مثبت می‌کند).`,
+    solution: [
+      t(String.raw`$P(B\mid A)=1-P(\bar B\mid A)=1-\frac{P(A\cap\bar B)}{P(A)}$ و چون $P(A\cap\bar B)\le P(\bar B)$، داریم $P(B\mid A)\ge1-\frac{P(\bar B)}{P(A)}$.`),
+      t(String.raw`شرط $P(A)+P(B)>1$ یعنی $P(\bar B)<P(A)$ و این کران مثبت و معنادار است. جواب: گزینهٔ ۱.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1385-b0-052": {
+    answer: 3,
+    hint: "رقم دوم اعشار ۵ است یعنی عدد در کدام بازه‌هاست؟",
+    shortcut: String.raw`رقم دوم ۵ یعنی عدد در یکی از ۱۰ بازهٔ $[0.d5,\,0.d6)$ به طول $0.01$؛ جمع طول‌ها $0.1$؛ گزینهٔ ۳.`,
+    solution: [
+      t(String.raw`برای هر رقم اول $d$، اعداد با رقم دوم ۵ بازهٔ $[0.d5,0.d6)$ به طول $0.01$ را می‌سازند. ده رقم اول ممکن است.`),
+      t(String.raw`با توزیع یکنواخت، احتمال برابر جمع طول‌هاست: $10\times0.01=0.1$؛ گزینهٔ ۳. (هر رقم دلخواه از اعشار با احتمال $\frac1{10}$ هر مقدار را می‌گیرد.)`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1385-b0-053": {
+    answer: 1,
+    hint: "قانون بیز را بنویس؛ فرض کن دو کارخانه به یک اندازه تولید می‌کنند.",
+    shortcut: String.raw`با سهم برابر: $P(A\mid D)=\frac{0.05}{0.05+0.10}=\frac13$؛ گزینهٔ ۱.`,
+    solution: [
+      t(String.raw`سؤال سهم تولید دو کارخانه را نگفته؛ فرض استاندارد این است که کالا به‌تصادف و با احتمال برابر از دو کارخانه آمده: $P(A)=P(B)=\frac12$.`),
+      t(String.raw`بیز: $P(A\mid D)=\frac{\frac12\cdot0.05}{\frac12\cdot0.05+\frac12\cdot0.10}=\frac{0.05}{0.15}=\frac13$؛ گزینهٔ ۱.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1385-b0-054": {
+    answer: 4,
+    hint: String.raw`اول $k$ را از $\int_0^1xe^x\,dx=1$ پیدا کن.`,
+    shortcut: String.raw`$\int_0^1xe^x\,dx=[e^x(x-1)]_0^1=1$ پس $k=1$. $E(X)=\int_0^1x^2e^x\,dx=[e^x(x^2-2x+2)]_0^1=e-2$؛ گزینهٔ ۴.`,
+    solution: [
+      t(String.raw`جزءبه‌جزء: $\int_0^1xe^x\,dx=[(x-1)e^x]_0^1=0-(-1)=1$، پس $k=1$.`),
+      t(String.raw`$E(X)=\int_0^1x^2e^x\,dx=[(x^2-2x+2)e^x]_0^1=e-2\approx0.718$؛ گزینهٔ ۴.`),
+    ],
+  },
+  "kunkurcomputer-q-1209-1385-b0-055": {
+    answer: 4,
+    hint: String.raw`همهٔ احتمال‌ها ضریب $e^{-1}$ دارند؛ فقط $\frac1{k!}$ها را جمع بزن.`,
+    shortcut: String.raw`$P(X\le4)\propto1+1+\frac12+\frac16+\frac1{24}=\frac{65}{24}$ و $P(2\le X\le4)\propto\frac12+\frac16+\frac1{24}=\frac{17}{24}$. نسبت $\frac{17}{65}$؛ گزینهٔ ۴.`,
+    solution: [
+      t(String.raw`$P(X=k)=\frac{e^{-1}}{k!}$. $P(X\le4)=e^{-1}(1+1+\frac12+\frac16+\frac1{24})=e^{-1}\frac{65}{24}$.`),
+      t(String.raw`$P(2\le X\le4)=e^{-1}(\frac12+\frac16+\frac1{24})=e^{-1}\frac{17}{24}$. احتمال شرطی: $\frac{17}{65}$؛ گزینهٔ ۴.`),
+    ],
+  },
+  "kunkurcomputer-q-1277-1394-b1-037": {
+    answer: 3,
+    hint: String.raw`$E(X)$ را بر حسب $\theta$ حساب کن و برابر $\bar x$ بگذار.`,
+    shortcut: String.raw`$E(X)=\int_0^1(\theta+1)x^{\theta+1}dx=\frac{\theta+1}{\theta+2}$. از $\frac{\theta+1}{\theta+2}=\bar x$: $\theta=\frac{2\bar x-1}{1-\bar x}$؛ گزینهٔ ۳.`,
+    solution: [
+      t(String.raw`$E(X)=(\theta+1)\int_0^1x^{\theta+1}\,dx=\frac{\theta+1}{\theta+2}$.`),
+      t(String.raw`روش گشتاوری: $\frac{\theta+1}{\theta+2}=\bar x\Rightarrow\theta+1=\bar x\theta+2\bar x\Rightarrow\theta(1-\bar x)=2\bar x-1\Rightarrow\hat\theta=\frac{2\bar x-1}{1-\bar x}$؛ گزینهٔ ۳.`),
+    ],
+  },
+  "kunkurcomputer-q-1277-1401-b1-041": {
+    answer: 2,
+    hint: "میانگین مجموع را حساب کن و با ۴۰ مقایسه کن.",
+    shortcut: String.raw`$E(X)=\frac23$ و $E(\sum)=60\cdot\frac23=40$. طبق قضیهٔ حد مرکزی مجموع تقریباً نرمال و متقارن حول ۴۰ است: $P(\sum>40)\approx0.5$؛ گزینهٔ ۲.`,
+    solution: [
+      t(String.raw`$E(X)=\int_0^12x^2\,dx=\frac23$، پس میانگین مجموع $60\times\frac23=40$.`),
+      t(String.raw`طبق قضیهٔ حد مرکزی $\sum X_i$ تقریباً نرمال با میانگین ۴۰ است و احتمال بیشتر بودن از میانگین تقریباً نصف است: $0.5$؛ گزینهٔ ۲. (واریانس اینجا لازم نیست.)`),
+    ],
+  },
+  "kunkurcomputer-q-1277-1402-b1-037": {
+    answer: 3,
+    hint: String.raw`$P(X=Y)=\sum_kP(X=k)P(Y=k)$ و سری هندسی.`,
+    shortcut: String.raw`$\sum_{k\ge1}p^2(1-p)^{2(k-1)}=\frac{p^2}{1-(1-p)^2}=\frac{p^2}{p(2-p)}=\frac p{2-p}$؛ گزینهٔ ۳.`,
+    solution: [
+      t(String.raw`با استقلال: $P(X=Y)=\sum_{k=1}^\infty p^2(1-p)^{2(k-1)}$، سری هندسی با قدر نسبت $(1-p)^2$.`),
+      t(String.raw`جمع: $\frac{p^2}{1-(1-p)^2}=\frac{p^2}{2p-p^2}=\frac p{2-p}$؛ گزینهٔ ۳. وارسی با $p=1$: هر دو همیشه ۱ هستند و احتمال ۱ است.`),
+    ],
+  },
+  "kunkurcomputer-q-1277-1402-b1-039": {
+    answer: 1,
+    hint: String.raw`$E(X)=\frac{\theta+1}{\theta+2}$؛ میانگین نمونه چقدر است؟`,
+    shortcut: String.raw`$\bar x=\frac{0.1+0.3+0.5+0.7+0.9}5=0.5$ و $\hat\theta=\frac{2\bar x-1}{1-\bar x}=0$؛ گزینهٔ ۱.`,
+    solution: [
+      t(String.raw`$E(X)=\frac{\theta+1}{\theta+2}$ (مثل تست ۱۳۹۴)، پس $\hat\theta=\frac{2\bar x-1}{1-\bar x}$.`),
+      t(String.raw`میانگین نمونه $\frac{2.5}5=0.5$ و $\hat\theta=\frac{0}{0.5}=0$؛ گزینهٔ ۱. یعنی برآورد، توزیع یکنواخت روی $(0,1)$ است که با داده‌های متقارن حول ۰٫۵ می‌خواند.`),
+    ],
+  },
+  "kunkurcomputer-q-1277-1403-b1-036": {
+    answer: 4,
+    hint: String.raw`$E(X)=\sum x\cdot\frac k{x^2}$؛ این سری همگراست؟`,
+    shortcut: String.raw`$E(X)=\sum_{x\ge1}\frac kx$ که سری هارمونیک و واگراست؛ پس میانگین وجود ندارد؛ گزینهٔ ۴.`,
+    solution: [
+      t(String.raw`$k=\frac6{\pi^2}$ (چون $\sum\frac1{x^2}=\frac{\pi^2}6$) و توزیع خوش‌تعریف است. ولی $E(X)=\sum_{x=1}^\infty x\cdot\frac k{x^2}=k\sum\frac1x=\infty$.`),
+      t(String.raw`پس امید ریاضی متناهی وجود ندارد؛ گزینهٔ ۴. این نمونهٔ کلاسیک توزیعی است که احتمال‌هایش جمع‌پذیرند ولی میانگین ندارد.`),
+    ],
+  },
+  "kunkurcomputer-q-1277-1403-b1-038": {
+    answer: 2,
+    hint: String.raw`انحراف معیار $\bar X$ برابر $\frac\sigma{\sqrt n}$ است؛ بازهٔ دوطرفهٔ ۹۰٪ کدام چندک را می‌خواهد؟`,
+    shortcut: String.raw`$\frac\sigma{\sqrt n}=\frac6{10}=0.6$. بازهٔ متقارن ۹۰٪ یعنی ۵٪ در هر دم: $z=\Phi^{-1}(0.95)=1.64$. پس $\pm1.64\times0.6=\pm0.984$؛ گزینهٔ ۲.`,
+    solution: [
+      t(String.raw`طبق قضیهٔ حد مرکزی $\bar X-\mu\approx N(0,\frac{\sigma^2}n)$ با انحراف معیار $\frac6{\sqrt{100}}=0.6$.`),
+      t(String.raw`برای $P(|\bar X-\mu|<c)=0.9$ باید $\frac c{0.6}=\Phi^{-1}(0.95)=1.64$، پس $c=0.984$؛ گزینهٔ ۲. دام تست: استفاده از $1.28$ (چندک ۰٫۹) جواب بازهٔ یک‌طرفه را می‌دهد ($0.768$، گزینهٔ ۱).`),
+    ],
+  },
 };
