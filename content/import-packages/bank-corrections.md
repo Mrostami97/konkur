@@ -92,3 +92,21 @@ Two stay in the queue with their gap typed in, because no option is exactly righ
 |---|---|---|---|
 | kunkurcomputer-q-1209-1384-b0-117 | CS 1384 q117 | 4 | in the drawn automaton the middle edge goes from the lower state up to the upper one on 0, so 10 and 100 are accepted too; option 4, 0+(00+1+11)00*, leaves them out |
 | kunkurcomputer-q-1277-1389-b1-033 | CE 1389 q33 | 4 (p_ik*p_kj) | with independent failures a path fails with probability p+q−pq; the product is the probability that both edges fail. No option is exact |
+
+## Texts the bank marked ambiguous, compared with the booklet (2026-10-18)
+
+Released (`verified: true` in `text-fixes.mjs`) after reading the crop: CS 1397 q92,
+1398 q77, q85, q94, 1400 q85, 1404 q69 (text complete as printed); CS 1396 q212 (the
+booklet asks about «M», the set defined is R); CS 1402 q85 (option 3's «SL» is L);
+CS 1402 q84 and 1403 q88 (the booklet prints the terminal c as «C» in Y → cY and, in
+1403, Z as «z»; both keys read it as c; the duplicate grammar crop is dropped);
+CS 1400 q67 (the program, two copies of one crop, typed as printed — its outer loop
+starts at i = 0, where the inner loop would not advance; the key, n lg n, reads it
+from i = 1).
+
+Still held:
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1209-1392-370C-093 | CS 1392 q93 | 3 (5, 1101) | the booklet prints f's frequency as «s»; read as 5 the depth is 5, but f's code under the usual convention (smaller weight on 0) is 1100, option 4 |
+| kunkurcomputer-q-1209-1402-760F-062 | CS 1402 q62 | 4 (initial) | the booklet's loop multiplies j by 3 with i, so it prints n; the options (and the key) fit j = j*i, which gives 3^(k(k+1)/2) with k = log₃n |

@@ -76,4 +76,26 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1382-b0-060", { figures: ["outputs/algo_supplement/assets/1382/p0008_q060_graph.png"] }],
   ["kunkurcomputer-q-1277-1383-b0-052", { figures: ["outputs/algo_supplement/assets/1383/p0009_q052_binary_search_tree.png"] }],
   ["kunkurcomputer-q-1277-1384-b0-052", { figures: ["outputs/algo_supplement/assets/1384/supp-8c8a5c725791db05-p0013-q003-figure-1.png"] }],
+
+  // The bank marked these ambiguous; compared with the booklet crop, the text is complete.
+  ["kunkurcomputer-q-1209-1397-262F-092", { verified: true }],
+  ["kunkurcomputer-q-1209-1398-861A-077", { verified: true }],
+  ["kunkurcomputer-q-1209-1398-861A-085", { verified: true }],
+  ["kunkurcomputer-q-1209-1398-861A-094", { verified: true }],
+  ["kunkurcomputer-q-1209-1400-660A-085", { verified: true }],
+  ["kunkurcomputer-q-1209-1404-460C-069", { verified: true }],
+  // The booklet asks about «M»; the set the stem defines is R.
+  ["kunkurcomputer-q-1209-1396-265A-212", { verified: true, stem: [["در مورد $M$", "در مورد $R$"]] }],
+  // The booklet's «SL» is the language L.
+  ["kunkurcomputer-q-1209-1402-760F-085", { verified: true, options: { 3: "برای زبان منظم $L$ که شامل $\\lambda$ نیست، می‌توان یک NFA بدون $\\lambda$ ارائه نمود که شامل یک state پایانی باشد و $L$ را بپذیرد. ($\\lambda$ همان بلانک است.)" } }],
+  // The booklet prints the terminal c as «C» in Y → cY (and z for Z in 1403); the keys read it as c.
+  // The grammar is typed in, so its crop (printed twice) goes.
+  ["kunkurcomputer-q-1209-1402-760F-084", { verified: true, dropFigures: true, stem: [["Y&\\to CY", "Y&\\to cY"]] }],
+  ["kunkurcomputer-q-1209-1403-259A-088", { verified: true, dropFigures: true, stem: [["$Y\\to CY\\mid\\epsilon$", "$Y\\to cY\\mid\\epsilon$"], ["$W\\to aWc\\mid z$", "$W\\to aWc\\mid Z$"]] }],
+  // The program was two copies of one crop; typed as printed (the outer loop starts at i = 0).
+  ["kunkurcomputer-q-1209-1400-660A-067", {
+    verified: true,
+    dropFigures: true,
+    append: code(["k = 0", "for (i = 0; i < n; i = i + 1)", "    for (j = 1; j < n; j = j + i)", "        k = k + 1"]),
+  }],
 ]);

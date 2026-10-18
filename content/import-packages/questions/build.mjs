@@ -385,7 +385,10 @@ for (const examYear of examYears) {
       }
       if (fix.options) q.options = q.options.map((option) => (fix.options[option.number] ? { ...option, text: fix.options[option.number] } : option));
       if (fix.append) q.stem = `${String(q.stem).trim()}\n${fix.append}`;
+      if (fix.dropFigures) q.figures = [];
       if (fix.figures) q.figures = [...q.figures, ...fix.figures];
+      // A text the bank marked ambiguous, compared with the booklet crop and found complete.
+      if (fix.verified) q.textVerified = true;
     }
     // No official key: our worked answer (solutions.mjs `ourKey`) becomes the key, marked as ours.
     const ourKey = SOLUTIONS[externalId]?.ourKey;
