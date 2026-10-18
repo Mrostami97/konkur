@@ -225,3 +225,5 @@ button[aria-pressed="true"] .qb-count { color: var(--accent-hover); background: 
 .qp-note-form textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line-strong); border-radius: var(--radius-md); color: var(--ink); background: var(--surface); font: inherit; font-size: var(--text-sm); line-height: 1.8; resize: vertical; }
 .qp-note-form textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(11, 122, 106, 0.16); }
 .qp-note-form div { display: flex; gap: 0.5rem; }
+.qb-history { display: inline-flex; }
+.qb-history .qp-marks span { width: 1.1rem; height: 1.1rem; }

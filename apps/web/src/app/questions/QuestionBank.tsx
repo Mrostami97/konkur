@@ -8,6 +8,16 @@ import { toPersianDigits } from "../../lib/format";
 import { OUTSIDE_1406_SUBJECTS, SYLLABUS, chapterTopicCodes, topicPlace } from "../../lib/syllabus";
 import { DataState, Pagination } from "../../components/ds";
 import { fieldLabel } from "../account/profile-options";
+import { HistoryMarks, historySentence, type History } from "./[id]/PracticePanel";
+
+/** The student's history on these questions (comma separated ids); empty when signed out. */
+async function loadHistories(ids: string): Promise<Record<string, History>> {
+  try {
+    return await apiFetch<Record<string, History>>(`/questions/history?ids=${encodeURIComponent(ids)}`);
+  } catch {
+    return {};
+  }
+}
 
 export interface SubjectOption { code: string; title: string }
 interface Block { type: string; text?: string }
@@ -40,8 +50,20 @@ const TRACKS = [
   { value: "computer-science", label: "علوم کامپیوتر" },
 ];
 
-interface Filters { subjectCode: string; chapter: string; topic: string; examYear: string; examMajor: string; query: string }
-const EMPTY: Filters = { subjectCode: "", chapter: "", topic: "", examYear: "", examMajor: "", query: "" };
+/** The signed-in student's own sets of questions (practice.service.ts `COLLECTIONS`). */
+const COLLECTIONS = [
+  { value: "unseen", label: "هنوز ندیده‌ام" },
+  { value: "wrong", label: "غلط زده‌ام" },
+  { value: "never_right", label: "هنوز درست نزده‌ام" },
+  { value: "last_wrong", label: "بار آخر غلط" },
+  { value: "last_two_wrong", label: "دو بار آخر غلط" },
+  { value: "sure_but_wrong", label: "مطمئن بودم ولی غلط شد" },
+  { value: "starred", label: "ستاره‌دارها" },
+  { value: "noted", label: "یادداشت‌دارها" },
+];
+
+interface Filters { subjectCode: string; chapter: string; topic: string; examYear: string; examMajor: string; query: string; collection: string }
+const EMPTY: Filters = { subjectCode: "", chapter: "", topic: "", examYear: "", examMajor: "", query: "", collection: "" };
 
 /**
  * The bank as a study tool: filters stay put on the side, questions are a
@@ -61,7 +83,10 @@ export function QuestionBank({
   const filling = availability !== null && availability.questions < MIN_QUESTIONS_FOR_BANK;
 
   const start = { ...EMPTY, ...initial };
-  const [draft, setDraft] = useState({ examYear: start.examYear, examMajor: start.examMajor, query: start.query });
+  const [draft, setDraft] = useState({ examYear: start.examYear, examMajor: start.examMajor, query: start.query, collection: start.collection });
+  /** null until known; signed-out visitors keep no history, so they get no collections or marks. */
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [histories, setHistories] = useState<Record<string, History>>({});
   const [applied, setApplied] = useState<Filters>(start);
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -105,9 +130,12 @@ export function QuestionBank({
       if (applied.examYear) params.set("examYear", applied.examYear);
       if (applied.examMajor) params.set("examMajor", applied.examMajor);
       if (applied.query) params.set("q", applied.query);
+      if (applied.collection) params.set("collection", applied.collection);
       const data = await apiFetch<{ items: Question[]; total: number }>(`/questions?${params}`);
       setItems(data.items);
       setTotal(data.total);
+      const ids = data.items.map((item) => item.id).join(",");
+      setHistories(ids ? await loadHistories(ids) : {});
     } catch (err) {
       setError(err instanceof Error ? err.message : "خواندن بانک سؤال ممکن نشد.");
     } finally {
@@ -119,6 +147,12 @@ export function QuestionBank({
     void search();
   }, [search]);
 
+  useEffect(() => {
+    apiFetch("/questions/history?ids=")
+      .then(() => setSignedIn(true))
+      .catch(() => setSignedIn(false));
+  }, []);
+
   // Keep the address in step, so a filtered bank can be bookmarked or shared.
   useEffect(() => {
     const params = new URLSearchParams();
@@ -127,6 +161,7 @@ export function QuestionBank({
     if (applied.topic) params.set("topic", applied.topic);
     if (applied.examYear) params.set("year", applied.examYear);
     if (applied.examMajor) params.set("track", applied.examMajor);
+    if (applied.collection) params.set("collection", applied.collection);
     const next = params.size ? `?${params}` : window.location.pathname;
     window.history.replaceState(null, "", next);
   }, [applied]);
@@ -144,12 +179,12 @@ export function QuestionBank({
   }
 
   function clear() {
-    setDraft({ examYear: "", examMajor: "", query: "" });
+    setDraft({ examYear: "", examMajor: "", query: "", collection: "" });
     setApplied(EMPTY);
     setPage(1);
   }
 
-  const activeCount = [applied.subjectCode, applied.examYear, applied.examMajor, applied.query].filter(Boolean).length;
+  const activeCount = [applied.subjectCode, applied.examYear, applied.examMajor, applied.query, applied.collection].filter(Boolean).length;
   const firstIndex = (page - 1) * PAGE_SIZE;
   const tree = applied.subjectCode ? SYLLABUS[applied.subjectCode] ?? [] : [];
   const topicCount = (code: string) => counts?.topics[code] ?? 0;
@@ -210,6 +245,18 @@ export function QuestionBank({
                 ))}
               </select>
             </label>
+
+            {signedIn && (
+              <label className="qb-field">
+                <span>سؤال‌های من</span>
+                <select value={draft.collection} onChange={(event) => setDraft({ ...draft, collection: event.target.value })}>
+                  <option value="">همهٔ سؤال‌ها</option>
+                  {COLLECTIONS.map((item) => (
+                    <option key={item.value} value={item.value}>{item.label}</option>
+                  ))}
+                </select>
+              </label>
+            )}
 
             <button type="submit" className="qb-apply">اعمال</button>
             {activeCount > 0 && (
@@ -315,6 +362,11 @@ export function QuestionBank({
                           <span>{fieldLabel(question.examMajor)}</span>
                           <span>{where ? where.topic.title : titleOf(question.subjectCode)}</span>
                           {where?.chapter.offSyllabus && <span>خارج از سرفصل ۱۴۰۶</span>}
+                          {histories[question.id]?.seen ? (
+                            <span className="qb-history" title={historySentence(histories[question.id])}>
+                              <HistoryMarks outcomes={histories[question.id].outcomes.slice(-5)} />
+                            </span>
+                          ) : null}
                         </span>
                       </span>
                       {(question.isSample || !stem) && (

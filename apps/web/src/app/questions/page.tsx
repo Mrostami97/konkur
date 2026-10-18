@@ -23,6 +23,7 @@ export default async function QuestionBankPage({ searchParams: pendingSearchPara
         topic: one(searchParams.topic),
         examYear: one(searchParams.year),
         examMajor: one(searchParams.track),
+        collection: one(searchParams.collection),
       }}
     />
   );
