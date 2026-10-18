@@ -9,6 +9,7 @@ import { tidyQuestionBlocks } from "../../../lib/question-text";
 import { BuyButton } from "../../../components/BuyButton";
 import { DataState } from "../../../components/ds";
 import { fieldLabel } from "../../account/profile-options";
+import { OUTSIDE_1406_SUBJECTS, topicPlace } from "../../../lib/syllabus";
 
 interface Block {
   type: string;
@@ -34,6 +35,8 @@ interface Question {
   examDegree: string;
   examMajor: string;
   examYear: number;
+  examCode?: string | null;
+  questionNumber?: number | null;
   topicCodes: string[];
   assets?: { media_key: string; checksum: string }[];
   isSample: boolean;
@@ -41,7 +44,15 @@ interface Question {
   stemBlocks?: Block[];
   options?: Option[];
   correctOption?: number;
+  /** Every option the final key accepts, when more than one. */
+  acceptedOptions?: number[];
+  /** DELETED: the board removed it; POSITIVE_EFFECT: a wrong answer costs nothing. */
+  keyState?: "NORMAL" | "DELETED" | "POSITIVE_EFFECT";
   solutionBlocks?: Block[];
+  /** The tagger's own chapter and description, shown after answering. */
+  labels?: { chapter?: string; topic?: string } | null;
+  /** Whose answer the key is: the board's, or ours where no official key exists. */
+  keySource?: "official" | "authored" | null;
 }
 
 /**
@@ -70,9 +81,14 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
     })();
   }, [id]);
 
-  const title = question ? subjectTitles[question.subjectCode] ?? question.subjectCode : "";
+  const outside1406 = question ? OUTSIDE_1406_SUBJECTS[question.subjectCode] : undefined;
+  const title = question ? subjectTitles[question.subjectCode] ?? outside1406 ?? question.subjectCode : "";
   const hasKey = question?.correctOption !== undefined;
-  const correct = checked && picked !== null && picked === question?.correctOption;
+  const deleted = question?.keyState === "DELETED";
+  const accepted = question ? [question.correctOption, ...(question.acceptedOptions ?? [])].filter((n): n is number => typeof n === "number") : [];
+  const keyOptions = [...new Set(accepted)].sort();
+  const correct = checked && picked !== null && !deleted && keyOptions.includes(picked);
+  const place = question ? topicPlace(question.subjectCode, question.topicCodes[0]) : null;
 
   return (
     <main className="qv">
@@ -84,11 +100,31 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
             <span>{title || "سؤال"}</span>
           </p>
           {question && (
-            <div className="qv-meta">
-              <span>{fieldLabel(question.examMajor)}</span>
-              <span>کنکور {toPersianDigits(question.examYear)}</span>
-              <span>{question.isSample ? "نمونهٔ رایگان" : "بانک درس"}</span>
-            </div>
+            <>
+              <h1 className="qv-title">
+                کنکور {question.examDegree === "PHD" ? "دکتری " : ""}
+                {toPersianDigits(question.examYear)}
+                {question.questionNumber ? <> · سؤال {toPersianDigits(question.questionNumber)}</> : null}
+              </h1>
+              <div className="qv-meta">
+                <span>{fieldLabel(question.examMajor)}</span>
+                <span>{question.isSample ? "نمونهٔ رایگان" : "بانک درس"}</span>
+              </div>
+              {/* Where it sits in the 1406 syllabus; each step opens the bank on it. */}
+              <nav className="qv-place" aria-label="جای سؤال در سرفصل ۱۴۰۶">
+                <Link href={`/questions?subject=${encodeURIComponent(question.subjectCode)}`}>{title}</Link>
+                {place && (
+                  <>
+                    <span aria-hidden="true">›</span>
+                    <Link href={`/questions?subject=${encodeURIComponent(question.subjectCode)}&chapter=${encodeURIComponent(place.chapter.code)}`}>{place.chapter.title}</Link>
+                    <span aria-hidden="true">›</span>
+                    <Link href={`/questions?subject=${encodeURIComponent(question.subjectCode)}&topic=${encodeURIComponent(place.topic.code)}`}>{place.topic.title}</Link>
+                  </>
+                )}
+                {outside1406 && <span className="qv-tag qv-tag-muted">خارج از کنکور ۱۴۰۶</span>}
+                {place?.chapter.offSyllabus && <span className="qv-tag qv-tag-muted">خارج از سرفصل ۱۴۰۶</span>}
+              </nav>
+            </>
           )}
         </div>
       </div>
@@ -111,8 +147,8 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                   </div>
                   <div className="qv-options" role="radiogroup" aria-label="گزینه‌ها">
                     {question.options.map((option) => {
-                      const isKey = checked && option.number === question.correctOption;
-                      const isWrongPick = checked && option.number === picked && picked !== question.correctOption;
+                      const isKey = checked && !deleted && keyOptions.includes(option.number);
+                      const isWrongPick = checked && !deleted && option.number === picked && !keyOptions.includes(option.number);
                       return (
                         <button
                           type="button"
@@ -142,9 +178,23 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
                         </button>
                       ) : (
                         <>
-                          <p className="qv-verdict" data-ok={correct || undefined} data-bad={!correct || undefined} role="status">
-                            {correct ? "درست است." : `نادرست؛ پاسخ درست گزینهٔ ${toPersianDigits(question.correctOption!)} است.`}
+                          <p className="qv-verdict" data-ok={correct || undefined} data-bad={(!correct && !deleted) || undefined} data-void={deleted || undefined} role="status">
+                            {deleted
+                              ? "این تست در کلید نهایی حذف شد؛ در کنکور برای هیچ پاسخی نمره‌ای داده یا کم نشد."
+                              : correct
+                                ? keyOptions.length > 1
+                                  ? `درست است. کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
+                                  : "درست است."
+                                : keyOptions.length > 1
+                                  ? `نادرست؛ کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
+                                  : `نادرست؛ پاسخ درست گزینهٔ ${toPersianDigits(question.correctOption!)} است.`}
+                            {question.keyState === "POSITIVE_EFFECT" && " این تست در کلید نهایی «تأثیر مثبت» دارد: پاسخ غلط نمرهٔ منفی ندارد."}
                           </p>
+                          {!deleted && question.keySource && (
+                            <span className="qv-tag" data-authored={question.keySource === "authored" || undefined}>
+                              {question.keySource === "official" ? "کلید رسمی سنجش" : "پاسخ کنکور کامپیوتر؛ کلید رسمی در دسترس نیست"}
+                            </span>
+                          )}
                           <button type="button" className="ds-btn ds-btn-ghost" onClick={() => { setChecked(false); setPicked(null); }}>
                             دوباره حل می‌کنم
                           </button>
@@ -166,6 +216,7 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
 
               {checked && question.solutionBlocks && question.solutionBlocks.length > 0 && (
                 <section className="qv-solution" aria-labelledby="qv-solution-title">
+                  {question.labels?.topic && <p className="qv-about">این تست دربارهٔ: {question.labels.topic}</p>}
                   <h2 id="qv-solution-title">راه‌حل</h2>
                   <div>
                     <ContentBlocks blocks={question.solutionBlocks} assets={question.assets} />

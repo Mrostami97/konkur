@@ -276,4 +276,44 @@ describe("Past-exam archive questions (question.v2)", () => {
 
     await http().get("/questions/samples").expect(400);
   });
+
+  it("keeps a deleted question, shows the tagger's labels and whose key it is, and never the source record", async () => {
+    const tagged = `tagged-subject-${run}`;
+    const checked = { text_verified: true, key_verified: true };
+    const item = {
+      ...archiveQuestion(`archive-tagged-${run}`, tagged, 140, { review: checked }),
+      topic_codes: ["dsa-analysis-master"],
+      key_state: "deleted",
+      labels: { chapter: "روابط بازگشتی", topic: "قضیهٔ اصلی با ضریب لگاریتمی" },
+      source: { page: 3, question_number: 140, archive_path: "ce/03/1403.pdf", key_source: "authored" },
+      sample: true,
+    };
+    const zip = new AdmZip();
+    zip.addFile("payload.json", Buffer.from(JSON.stringify([item])));
+    const job = await http().post("/admin/import").set("Cookie", adminCookie).attach("file", zip.toBuffer(), "tagged.zip").expect(201);
+    const staged = await http().get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+    expect(staged.body[0].status).toBe("VALID");
+    await http().post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: [staged.body[0].id], decision: "APPROVE" }).expect(201);
+    await http().post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+
+    const list = await http().get("/questions").query({ subjectCode: tagged }).expect(200);
+    expect(list.body.total).toBe(1);
+    const question = await http().get(`/questions/${list.body.items[0].id}`).expect(200);
+    expect(question.body).toMatchObject({
+      keyState: "DELETED",
+      keySource: "authored",
+      labels: { chapter: "روابط بازگشتی", topic: "قضیهٔ اصلی با ضریب لگاریتمی" },
+      topicCodes: ["dsa-analysis-master"],
+    });
+    // The record behind it (archive path, page) stays on the server.
+    expect(question.body.source).toBeUndefined();
+    expect(JSON.stringify(question.body)).not.toContain("ce/03/1403.pdf");
+
+    // A chapter is several topics; counts sit beside the bank's filters.
+    const byChapter = await http().get("/questions").query({ subjectCode: tagged, topicCodes: "dsa-analysis-growth,dsa-analysis-master" }).expect(200);
+    expect(byChapter.body.total).toBe(1);
+    const counts = await http().get("/questions/counts").query({ subjectCode: tagged }).expect(200);
+    expect(counts.body.subjects[tagged]).toBe(1);
+    expect(counts.body.topics["dsa-analysis-master"]).toBe(1);
+  });
 });

@@ -1,0 +1,631 @@
+{
+  "data-structures-algorithms": [
+    {
+      "code": "dsa-basics",
+      "title": "مقدمات",
+      "topics": [
+        {
+          "code": "dsa-basics-adt",
+          "title": "داده‌مدل، داده‌گونهٔ انتزاعی و داده‌ساختار"
+        },
+        {
+          "code": "dsa-basics-arrays",
+          "title": "آرایه، ماتریس و نمایش در حافظه"
+        },
+        {
+          "code": "dsa-basics-recursion",
+          "title": "توابع بازگشتی و ردیابی آن‌ها"
+        },
+        {
+          "code": "dsa-basics-correctness",
+          "title": "درستی الگوریتم و ناوردای حلقه"
+        },
+        {
+          "code": "dsa-basics-counting",
+          "title": "شمارش و ریاضی پایه"
+        }
+      ]
+    },
+    {
+      "code": "dsa-analysis",
+      "title": "تحلیل الگوریتم",
+      "topics": [
+        {
+          "code": "dsa-analysis-growth",
+          "title": "رشد توابع و نمادهای مجانبی"
+        },
+        {
+          "code": "dsa-analysis-loops",
+          "title": "تحلیل زمانی و شمارش اجرای حلقه‌ها"
+        },
+        {
+          "code": "dsa-analysis-recurrences",
+          "title": "روابط بازگشتی و حل آن‌ها"
+        },
+        {
+          "code": "dsa-analysis-master",
+          "title": "قضیهٔ اصلی"
+        },
+        {
+          "code": "dsa-analysis-amortized",
+          "title": "تحلیل سرشکن"
+        },
+        {
+          "code": "dsa-analysis-divide",
+          "title": "تقسیم و حل (ادغامی، ضرب اعداد، جست‌وجوی دودویی)"
+        },
+        {
+          "code": "dsa-analysis-randomized",
+          "title": "تحلیل الگوریتم‌های تصادفی"
+        }
+      ]
+    },
+    {
+      "code": "dsa-structures",
+      "title": "داده‌ساختارهای پایه",
+      "topics": [
+        {
+          "code": "dsa-structures-stack-queue",
+          "title": "صف و پشته"
+        },
+        {
+          "code": "dsa-structures-linked-list",
+          "title": "لیست پیوندی"
+        },
+        {
+          "code": "dsa-structures-trees",
+          "title": "درخت، درخت دودویی و پیمایش"
+        },
+        {
+          "code": "dsa-structures-expression",
+          "title": "درخت عبارت و تبدیل نگارش‌ها (میانوندی، پسوندی)"
+        },
+        {
+          "code": "dsa-structures-trie",
+          "title": "داده‌ساختار ترای"
+        },
+        {
+          "code": "dsa-structures-bst",
+          "title": "درخت دودویی جست‌وجو"
+        },
+        {
+          "code": "dsa-structures-heap",
+          "title": "صف اولویت و هرم"
+        }
+      ]
+    },
+    {
+      "code": "dsa-sorting",
+      "title": "مرتب‌سازی و انتخاب",
+      "topics": [
+        {
+          "code": "dsa-sorting-lower-bound",
+          "title": "درخت تصمیم و کران پایین"
+        },
+        {
+          "code": "dsa-sorting-comparison",
+          "title": "مرتب‌سازی‌های مقایسه‌ای (درجی، ادغامی، هرمی، سریع)"
+        },
+        {
+          "code": "dsa-sorting-linear",
+          "title": "مرتب‌سازی خطی: شمارشی، مبنایی و سطلی"
+        },
+        {
+          "code": "dsa-sorting-selection",
+          "title": "مرتبهٔ آماری، کمینه و بیشینه و انتخاب k-امین"
+        },
+        {
+          "code": "dsa-sorting-hashing",
+          "title": "درهم‌سازی"
+        },
+        {
+          "code": "dsa-sorting-search",
+          "title": "جست‌وجو در آرایه و ماتریس مرتب"
+        }
+      ]
+    },
+    {
+      "code": "dsa-advanced",
+      "title": "داده‌ساختارهای پیشرفته و گراف",
+      "topics": [
+        {
+          "code": "dsa-advanced-disjoint-sets",
+          "title": "مجموعه‌های مجزا"
+        },
+        {
+          "code": "dsa-advanced-balanced",
+          "title": "درخت‌های متوازن (قرمز–سیاه)"
+        },
+        {
+          "code": "dsa-advanced-interval",
+          "title": "درخت بازه"
+        },
+        {
+          "code": "dsa-advanced-graph-basics",
+          "title": "گراف و پیاده‌سازی آن"
+        },
+        {
+          "code": "dsa-advanced-traversal",
+          "title": "جست‌وجوی عمق‌اول و سطح‌اول و کاربردها"
+        },
+        {
+          "code": "dsa-advanced-topological",
+          "title": "ترتیب توپولوژیکی و مؤلفه‌های قویاً همبند"
+        },
+        {
+          "code": "dsa-advanced-shortest-path",
+          "title": "کوتاه‌ترین مسیر: دایکسترا و بلمن–فورد"
+        }
+      ]
+    },
+    {
+      "code": "dsa-off",
+      "title": "خارج از سرفصل ۱۴۰۶ (برای مرور سال‌های قبل)",
+      "offSyllabus": true,
+      "topics": [
+        {
+          "code": "dsa-off-dp",
+          "title": "برنامه‌ریزی پویا"
+        },
+        {
+          "code": "dsa-off-greedy",
+          "title": "الگوریتم‌های حریصانه و کد هافمن"
+        },
+        {
+          "code": "dsa-off-mst",
+          "title": "درخت پوشای کمینه"
+        },
+        {
+          "code": "dsa-off-all-pairs",
+          "title": "کوتاه‌ترین مسیر همهٔ زوج‌ها (فلوید)"
+        },
+        {
+          "code": "dsa-off-np",
+          "title": "پیچیدگی محاسباتی، NP و کاهش"
+        },
+        {
+          "code": "dsa-off-backtracking",
+          "title": "عقبگرد و شاخه‌وکران"
+        },
+        {
+          "code": "dsa-off-string",
+          "title": "تطابق رشته و الگوریتم‌های رشته"
+        },
+        {
+          "code": "dsa-off-avl-b",
+          "title": "AVL، درخت B و ساختارهای ذخیره‌سازی خارجی"
+        },
+        {
+          "code": "dsa-off-other",
+          "title": "مباحث دیگر"
+        }
+      ]
+    }
+  ],
+  "automata": [
+    {
+      "code": "aut-basics",
+      "title": "مقدمات: زبان، گرامر و اثبات",
+      "topics": [
+        {
+          "code": "aut-basics-languages",
+          "title": "زبان‌ها، الفبا و عملیات روی زبان‌ها"
+        },
+        {
+          "code": "aut-basics-grammars",
+          "title": "گرامرها و سلسله‌مراتب چامسکی"
+        }
+      ]
+    },
+    {
+      "code": "aut-fa",
+      "title": "ماشین‌های حالت متناهی",
+      "topics": [
+        {
+          "code": "aut-fa-dfa",
+          "title": "پذیرندهٔ متناهی قطعی"
+        },
+        {
+          "code": "aut-fa-nfa",
+          "title": "پذیرندهٔ متناهی غیرقطعی و تبدیل‌ها"
+        }
+      ]
+    },
+    {
+      "code": "aut-regular",
+      "title": "زبان‌ها و گرامرهای منظم",
+      "topics": [
+        {
+          "code": "aut-regular-expressions",
+          "title": "عبارات منظم"
+        },
+        {
+          "code": "aut-regular-grammars",
+          "title": "گرامرهای منظم و خطی"
+        },
+        {
+          "code": "aut-regular-languages",
+          "title": "تشخیص منظم بودن زبان"
+        }
+      ]
+    },
+    {
+      "code": "aut-regular-props",
+      "title": "خواص زبان‌های منظم",
+      "topics": [
+        {
+          "code": "aut-regular-props-closure",
+          "title": "خواص بستاری زبان‌های منظم"
+        },
+        {
+          "code": "aut-regular-props-pumping",
+          "title": "لم پمپاژ و زبان‌های نامنظم"
+        }
+      ]
+    },
+    {
+      "code": "aut-cfl",
+      "title": "زبان‌های مستقل از متن",
+      "topics": [
+        {
+          "code": "aut-cfl-grammars",
+          "title": "گرامرها و زبان‌های مستقل از متن"
+        },
+        {
+          "code": "aut-cfl-derivation",
+          "title": "اشتقاق و درخت اشتقاق"
+        },
+        {
+          "code": "aut-cfl-ambiguity",
+          "title": "ابهام و زبان‌های ذاتاً مبهم"
+        }
+      ]
+    },
+    {
+      "code": "aut-simplify",
+      "title": "ساده‌سازی گرامرها",
+      "topics": [
+        {
+          "code": "aut-simplify-normal-forms",
+          "title": "فرم نرمال چامسکی و گرایباخ"
+        },
+        {
+          "code": "aut-simplify-cyk",
+          "title": "مسئلهٔ عضویت و CYK"
+        }
+      ]
+    },
+    {
+      "code": "aut-pda",
+      "title": "ماشین‌های پشته‌ای",
+      "topics": [
+        {
+          "code": "aut-pda-pda",
+          "title": "ماشین پشته‌ای و هم‌ارزی با گرامر"
+        },
+        {
+          "code": "aut-pda-deterministic",
+          "title": "ماشین پشته‌ای قطعی"
+        }
+      ]
+    },
+    {
+      "code": "aut-cfl-props",
+      "title": "خواص زبان‌های مستقل از متن",
+      "topics": [
+        {
+          "code": "aut-cfl-props-pumping",
+          "title": "لم پمپاژ مستقل از متن"
+        },
+        {
+          "code": "aut-cfl-props-closure",
+          "title": "خواص بستاری و زبان‌های غیرمستقل از متن"
+        }
+      ]
+    },
+    {
+      "code": "aut-computability",
+      "title": "محاسبه‌پذیری و پیچیدگی",
+      "topics": [
+        {
+          "code": "aut-computability-tm",
+          "title": "ماشین تورینگ و تز چرچ–تورینگ"
+        },
+        {
+          "code": "aut-computability-decidability",
+          "title": "تصمیم‌پذیری، بازگشتی و بازگشتی‌شمارش‌پذیر"
+        },
+        {
+          "code": "aut-computability-halting",
+          "title": "مسئلهٔ توقف، کاهش و PCP"
+        },
+        {
+          "code": "aut-computability-complexity",
+          "title": "پیچیدگی محاسباتی، P و NP"
+        }
+      ]
+    }
+  ],
+  "programming-fundamentals": [
+    {
+      "code": "pf-language",
+      "title": "حل مسئله و زبان",
+      "topics": [
+        {
+          "code": "pf-language-concepts",
+          "title": "مفاهیم زبان‌های برنامه‌نویسی"
+        },
+        {
+          "code": "pf-language-types",
+          "title": "انواع داده، عملگرها و عبارت‌ها"
+        },
+        {
+          "code": "pf-language-numbers",
+          "title": "نمایش داده و اعداد، عملگرهای بیتی"
+        }
+      ]
+    },
+    {
+      "code": "pf-control",
+      "title": "کنترل و ساختار برنامه",
+      "topics": [
+        {
+          "code": "pf-control-loops",
+          "title": "شرط، حلقه و ردگیری برنامه"
+        },
+        {
+          "code": "pf-control-functions",
+          "title": "تابع، پارامتر و دامنهٔ متغیر"
+        },
+        {
+          "code": "pf-control-arrays",
+          "title": "آرایه، رشته و اشاره‌گر"
+        },
+        {
+          "code": "pf-control-memory",
+          "title": "مدیریت حافظه"
+        },
+        {
+          "code": "pf-control-oop",
+          "title": "C++، Java و شیءگرایی"
+        }
+      ]
+    },
+    {
+      "code": "pf-thinking",
+      "title": "تفکر الگوریتمی",
+      "topics": [
+        {
+          "code": "pf-thinking-recursion",
+          "title": "بازگشت"
+        },
+        {
+          "code": "pf-thinking-numeric",
+          "title": "محاسبات و الگوریتم‌های عددی"
+        }
+      ]
+    }
+  ],
+  "discrete-math": [
+    {
+      "code": "dm-logic",
+      "title": "منطق و اثبات",
+      "topics": [
+        {
+          "code": "dm-logic-propositional",
+          "title": "منطق گزاره‌ها"
+        },
+        {
+          "code": "dm-logic-predicate",
+          "title": "منطق محمولات و سورها"
+        }
+      ]
+    },
+    {
+      "code": "dm-sets",
+      "title": "مجموعه، تابع و عدد",
+      "topics": [
+        {
+          "code": "dm-sets-relations",
+          "title": "مجموعه، رابطه و تابع"
+        },
+        {
+          "code": "dm-sets-numbers",
+          "title": "نظریهٔ اعداد و همنهشتی"
+        },
+        {
+          "code": "dm-sets-algebra",
+          "title": "ساختارهای جبری"
+        }
+      ]
+    },
+    {
+      "code": "dm-counting",
+      "title": "شمارش و احتمال گسسته",
+      "topics": [
+        {
+          "code": "dm-counting-combinatorics",
+          "title": "شمارش و ترکیبیات"
+        },
+        {
+          "code": "dm-counting-recurrences",
+          "title": "روابط بازگشتی و توابع مولد"
+        }
+      ]
+    },
+    {
+      "code": "dm-graphs",
+      "title": "رابطه، گراف و مدل محاسبات",
+      "topics": [
+        {
+          "code": "dm-graphs-graphs",
+          "title": "گراف‌ها، درخت‌ها و رنگ‌آمیزی"
+        },
+        {
+          "code": "dm-graphs-orders",
+          "title": "ترتیب جزئی و جبر بول"
+        }
+      ]
+    }
+  ],
+  "computer-architecture": [
+    {
+      "code": "arch-cpu",
+      "title": "ساختار پردازنده",
+      "topics": [
+        {
+          "code": "arch-cpu-isa",
+          "title": "مجموعه دستورها و حالت‌های آدرس‌دهی"
+        },
+        {
+          "code": "arch-cpu-rtl",
+          "title": "اسمبلی، انتقال ثبات و ریزعملیات"
+        },
+        {
+          "code": "arch-cpu-arith",
+          "title": "نمایش داده و حساب کامپیوتر"
+        }
+      ]
+    },
+    {
+      "code": "arch-perf",
+      "title": "کارایی و خط لوله",
+      "topics": [
+        {
+          "code": "arch-perf-performance",
+          "title": "کارایی و معیارهای آن"
+        },
+        {
+          "code": "arch-perf-pipeline",
+          "title": "خط لوله و مخاطرات"
+        },
+        {
+          "code": "arch-perf-parallel",
+          "title": "چندپردازنده و پردازش موازی"
+        }
+      ]
+    },
+    {
+      "code": "arch-memory",
+      "title": "حافظه و ورودی/خروجی",
+      "topics": [
+        {
+          "code": "arch-memory-cache",
+          "title": "حافظهٔ نهان"
+        },
+        {
+          "code": "arch-memory-main",
+          "title": "حافظهٔ اصلی، گذرگاه و ورودی/خروجی"
+        },
+        {
+          "code": "arch-memory-secondary",
+          "title": "حافظهٔ جانبی و دیسک"
+        }
+      ]
+    }
+  ],
+  "linear-algebra": [
+    {
+      "code": "la-systems",
+      "title": "ماتریس و دستگاه خطی",
+      "topics": [
+        {
+          "code": "la-systems-solve",
+          "title": "دستگاه‌های خطی و رتبه"
+        },
+        {
+          "code": "la-systems-decomposition",
+          "title": "تجزیهٔ ماتریس (LU، QR، چولسکی)"
+        },
+        {
+          "code": "la-systems-least-squares",
+          "title": "کمترین مربعات"
+        },
+        {
+          "code": "la-systems-norms",
+          "title": "نرم، عدد حالت و روش‌های تکراری"
+        }
+      ]
+    },
+    {
+      "code": "la-spaces",
+      "title": "فضاهای برداری",
+      "topics": [
+        {
+          "code": "la-spaces-spaces",
+          "title": "فضای برداری، پایه و تعامد"
+        },
+        {
+          "code": "la-spaces-transforms",
+          "title": "تبدیل خطی و ماتریس‌های متعامد"
+        }
+      ]
+    },
+    {
+      "code": "la-spectral",
+      "title": "ویژگی‌های طیفی",
+      "topics": [
+        {
+          "code": "la-spectral-determinant",
+          "title": "دترمینان و انواع ماتریس"
+        },
+        {
+          "code": "la-spectral-eigen",
+          "title": "مقادیر و بردارهای ویژه، قطری‌سازی"
+        }
+      ]
+    }
+  ],
+  "statistics": [
+    {
+      "code": "st-prob",
+      "title": "احتمال",
+      "topics": [
+        {
+          "code": "st-prob-events",
+          "title": "پیشامدها، احتمال شرطی و بیز"
+        },
+        {
+          "code": "st-prob-rv",
+          "title": "متغیر تصادفی و توزیع"
+        }
+      ]
+    },
+    {
+      "code": "st-dist",
+      "title": "توزیع و ممان",
+      "topics": [
+        {
+          "code": "st-dist-moments",
+          "title": "امید، واریانس، کوواریانس و ممان‌ها"
+        },
+        {
+          "code": "st-dist-joint",
+          "title": "توزیع توأم و شرطی"
+        },
+        {
+          "code": "st-dist-inequalities",
+          "title": "نامساوی‌های احتمال"
+        }
+      ]
+    },
+    {
+      "code": "st-inference",
+      "title": "استنتاج آماری",
+      "topics": [
+        {
+          "code": "st-inference-clt",
+          "title": "قضیهٔ حد مرکزی"
+        },
+        {
+          "code": "st-inference-estimation",
+          "title": "نمونه‌گیری و برآورد"
+        },
+        {
+          "code": "st-inference-tests",
+          "title": "آزمون فرض و تحلیل واریانس"
+        }
+      ]
+    }
+  ]
+}

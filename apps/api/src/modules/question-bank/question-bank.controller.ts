@@ -20,6 +20,7 @@ export class QuestionsPublicController {
     @Req() req: RequestWithUser,
     @Query("subjectCode") subjectCode?: string,
     @Query("topicCode") topicCode?: string,
+    @Query("topicCodes") topicCodes?: string,
     @Query("examDegree") examDegree?: "master" | "phd",
     @Query("examMajor") examMajor?: string,
     @Query("examYear") examYear?: string,
@@ -31,6 +32,8 @@ export class QuestionsPublicController {
       {
         subjectCode,
         topicCode,
+        // A chapter is sent as its topics, comma separated; a sane cap keeps the query small.
+        topicCodes: topicCodes ? topicCodes.split(",").map((code) => code.trim()).filter(Boolean).slice(0, 60) : undefined,
         examDegree,
         examMajor,
         examYear: examYear ? Number(examYear) : undefined,
@@ -40,6 +43,12 @@ export class QuestionsPublicController {
       },
       req.user,
     );
+  }
+
+  /** Question counts per subject and, for one subject, per syllabus topic; declared before `:id`. */
+  @Get("counts")
+  counts(@Query("subjectCode") subjectCode?: string) {
+    return this.questionBank.counts(subjectCode || undefined);
   }
 
   /** A subject's public samples with their answers; declared before `:id` so it is not read as an id. */

@@ -56,6 +56,20 @@
 }
 .qb-subjects button:hover { color: var(--ink); background: var(--surface-hover); }
 .qb-subjects button[aria-pressed="true"] { color: var(--accent-hover); background: var(--accent-soft); font-weight: var(--weight-semibold); }
+.qb-subjects button, .qb-tree button { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.qb-count { flex: none; min-width: 1.6rem; padding: 0 0.35rem; border-radius: var(--radius-pill); color: var(--ink-400); background: var(--surface-sunken); font-size: var(--text-2xs); font-weight: var(--weight-semibold); text-align: center; }
+button[aria-pressed="true"] .qb-count { color: var(--accent-hover); background: #fff; }
+.qb-subjects-note { margin: 0.6rem 0 0.2rem; padding-inline: 0.6rem; color: var(--ink-400); font-size: var(--text-2xs); font-weight: var(--weight-semibold); }
+
+/* The open subject's 1406 syllabus: chapters, and the open chapter's topics. */
+.qb-tree { display: grid; gap: 1px; margin: 0.25rem 0 0; padding: 0.75rem 0 0; border: 0; border-top: 1px solid var(--line); }
+.qb-tree legend { float: right; width: 100%; margin-bottom: 0.4rem; padding: 0; color: var(--ink-700); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.qb-tree button { width: 100%; padding: 0.4rem 0.6rem; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--ink-700); font: inherit; font-size: var(--text-sm); text-align: start; cursor: pointer; }
+.qb-tree button:hover { color: var(--ink); background: var(--surface-hover); }
+.qb-tree button[aria-pressed="true"] { color: var(--accent-hover); background: var(--accent-soft); font-weight: var(--weight-semibold); }
+.qb-chapter[data-off] > button > span:first-child { color: var(--ink-400); }
+.qb-topics { display: grid; gap: 1px; margin: 0.1rem 0 0.35rem; padding-inline-start: 0.75rem; border-inline-start: 2px solid var(--accent-line); }
+.qb-topics button { font-size: var(--text-xs); }
 
 /* ------------------------------------------------------------------- list */
 .qb-main { min-width: 0; }
@@ -132,6 +146,18 @@
 .qv-verdict { margin: 0; font-size: var(--text-sm); font-weight: var(--weight-bold); }
 .qv-verdict[data-ok] { color: var(--success); }
 .qv-verdict[data-bad] { color: var(--danger); }
+.qv-verdict[data-void] { color: var(--ink-700); }
+
+/* The question's title line and its place in the 1406 syllabus. */
+.qv-title { margin: 0.35rem 0 0.5rem; color: var(--ink); font-size: clamp(1.15rem, 2.4vw, 1.4rem); font-weight: var(--weight-heavy); }
+.qv-place { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin-top: 0.6rem; font-size: var(--text-sm); }
+.qv-place a { color: var(--accent-hover); font-weight: var(--weight-semibold); text-decoration: none; }
+.qv-place a:hover { text-decoration: underline; }
+.qv-place > span[aria-hidden] { color: var(--ink-400); }
+.qv-tag { display: inline-flex; align-items: center; padding: 0.1rem 0.55rem; border: 1px solid var(--accent-line); border-radius: var(--radius-pill); color: var(--accent-hover); background: var(--accent-soft); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.qv-tag[data-authored] { border-color: var(--warning-line); color: var(--warning-ink); background: var(--warning-soft); }
+.qv-tag-muted { border-color: var(--line); color: var(--ink-700); background: var(--surface-sunken); }
+.qv-about { margin: 0 0 0.6rem; color: var(--muted); font-size: var(--text-sm); }
 
 .qv-solution { padding: clamp(1.25rem, 3vw, 1.75rem); border: 1px solid var(--line); border-inline-start: 3px solid var(--accent); border-radius: var(--radius-lg); background: var(--surface); }
 .qv-solution h2 { margin: 0 0 0.5rem; color: var(--accent); font-size: var(--text-base); font-weight: var(--weight-bold); }

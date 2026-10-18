@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 // The 1406 syllabus as the bank's topic tree, and the rules that place each of
 // the owner's tagged questions on it.
 //
@@ -13,129 +15,9 @@
 // A rule matches the owner's chapter and topic text; the first rule that fits
 // wins, so specific rules come before general ones.
 
-/** Topic code prefix per subject. */
-export const SUBJECT_PREFIX = { "data-structures-algorithms": "dsa" };
-
-/** The tree: code → title, grouped by chapter. Order is the syllabus order. */
-export const TREE = {
-  "data-structures-algorithms": [
-    {
-      code: "dsa-basics",
-      title: "مقدمات",
-      topics: [
-        ["dsa-basics-adt", "داده‌مدل، داده‌گونهٔ انتزاعی و داده‌ساختار"],
-        ["dsa-basics-arrays", "آرایه، ماتریس و نمایش در حافظه"],
-        ["dsa-basics-recursion", "توابع بازگشتی و ردیابی آن‌ها"],
-        ["dsa-basics-correctness", "درستی الگوریتم و ناوردای حلقه"],
-        ["dsa-basics-counting", "شمارش و ریاضی پایه"],
-      ],
-    },
-    {
-      code: "dsa-analysis",
-      title: "تحلیل الگوریتم",
-      topics: [
-        ["dsa-analysis-growth", "رشد توابع و نمادهای مجانبی"],
-        ["dsa-analysis-loops", "تحلیل زمانی و شمارش اجرای حلقه‌ها"],
-        ["dsa-analysis-recurrences", "روابط بازگشتی و حل آن‌ها"],
-        ["dsa-analysis-master", "قضیهٔ اصلی"],
-        ["dsa-analysis-amortized", "تحلیل سرشکن"],
-        ["dsa-analysis-divide", "تقسیم و حل (ادغامی، ضرب اعداد، جست‌وجوی دودویی)"],
-        ["dsa-analysis-randomized", "تحلیل الگوریتم‌های تصادفی"],
-      ],
-    },
-    {
-      code: "dsa-structures",
-      title: "داده‌ساختارهای پایه",
-      topics: [
-        ["dsa-structures-stack-queue", "صف و پشته"],
-        ["dsa-structures-linked-list", "لیست پیوندی"],
-        ["dsa-structures-trees", "درخت، درخت دودویی و پیمایش"],
-        ["dsa-structures-expression", "درخت عبارت و تبدیل نگارش‌ها (میانوندی، پسوندی)"],
-        ["dsa-structures-trie", "داده‌ساختار ترای"],
-        ["dsa-structures-bst", "درخت دودویی جست‌وجو"],
-        ["dsa-structures-heap", "صف اولویت و هرم"],
-      ],
-    },
-    {
-      code: "dsa-sorting",
-      title: "مرتب‌سازی و انتخاب",
-      topics: [
-        ["dsa-sorting-lower-bound", "درخت تصمیم و کران پایین"],
-        ["dsa-sorting-comparison", "مرتب‌سازی‌های مقایسه‌ای (درجی، ادغامی، هرمی، سریع)"],
-        ["dsa-sorting-linear", "مرتب‌سازی خطی: شمارشی، مبنایی و سطلی"],
-        ["dsa-sorting-selection", "مرتبهٔ آماری، کمینه و بیشینه و انتخاب k-امین"],
-        ["dsa-sorting-hashing", "درهم‌سازی"],
-        ["dsa-sorting-search", "جست‌وجو در آرایه و ماتریس مرتب"],
-      ],
-    },
-    {
-      code: "dsa-advanced",
-      title: "داده‌ساختارهای پیشرفته و گراف",
-      topics: [
-        ["dsa-advanced-disjoint-sets", "مجموعه‌های مجزا"],
-        ["dsa-advanced-balanced", "درخت‌های متوازن (قرمز–سیاه)"],
-        ["dsa-advanced-interval", "درخت بازه"],
-        ["dsa-advanced-graph-basics", "گراف و پیاده‌سازی آن"],
-        ["dsa-advanced-traversal", "جست‌وجوی عمق‌اول و سطح‌اول و کاربردها"],
-        ["dsa-advanced-topological", "ترتیب توپولوژیکی و مؤلفه‌های قویاً همبند"],
-        ["dsa-advanced-shortest-path", "کوتاه‌ترین مسیر: دایکسترا و بلمن–فورد"],
-      ],
-    },
-    {
-      code: "dsa-off",
-      title: "خارج از سرفصل ۱۴۰۶ (برای مرور سال‌های قبل)",
-      offSyllabus: true,
-      topics: [
-        ["dsa-off-dp", "برنامه‌ریزی پویا"],
-        ["dsa-off-greedy", "الگوریتم‌های حریصانه و کد هافمن"],
-        ["dsa-off-mst", "درخت پوشای کمینه"],
-        ["dsa-off-all-pairs", "کوتاه‌ترین مسیر همهٔ زوج‌ها (فلوید)"],
-        ["dsa-off-np", "پیچیدگی محاسباتی، NP و کاهش"],
-        ["dsa-off-backtracking", "عقبگرد و شاخه‌وکران"],
-        ["dsa-off-string", "تطابق رشته و الگوریتم‌های رشته"],
-        ["dsa-off-avl-b", "AVL، درخت B و ساختارهای ذخیره‌سازی خارجی"],
-        ["dsa-off-other", "مباحث دیگر"],
-      ],
-    },
-  ],
-  automata: [
-    { code: "aut-basics", title: "مقدمات: زبان، گرامر و اثبات", topics: [["aut-basics-languages", "زبان‌ها، الفبا و عملیات روی زبان‌ها"], ["aut-basics-grammars", "گرامرها و سلسله‌مراتب چامسکی"]] },
-    { code: "aut-fa", title: "ماشین‌های حالت متناهی", topics: [["aut-fa-dfa", "پذیرندهٔ متناهی قطعی"], ["aut-fa-nfa", "پذیرندهٔ متناهی غیرقطعی و تبدیل‌ها"]] },
-    { code: "aut-regular", title: "زبان‌ها و گرامرهای منظم", topics: [["aut-regular-expressions", "عبارات منظم"], ["aut-regular-grammars", "گرامرهای منظم و خطی"], ["aut-regular-languages", "تشخیص منظم بودن زبان"]] },
-    { code: "aut-regular-props", title: "خواص زبان‌های منظم", topics: [["aut-regular-props-closure", "خواص بستاری زبان‌های منظم"], ["aut-regular-props-pumping", "لم پمپاژ و زبان‌های نامنظم"]] },
-    { code: "aut-cfl", title: "زبان‌های مستقل از متن", topics: [["aut-cfl-grammars", "گرامرها و زبان‌های مستقل از متن"], ["aut-cfl-derivation", "اشتقاق و درخت اشتقاق"], ["aut-cfl-ambiguity", "ابهام و زبان‌های ذاتاً مبهم"]] },
-    { code: "aut-simplify", title: "ساده‌سازی گرامرها", topics: [["aut-simplify-normal-forms", "فرم نرمال چامسکی و گرایباخ"], ["aut-simplify-cyk", "مسئلهٔ عضویت و CYK"]] },
-    { code: "aut-pda", title: "ماشین‌های پشته‌ای", topics: [["aut-pda-pda", "ماشین پشته‌ای و هم‌ارزی با گرامر"], ["aut-pda-deterministic", "ماشین پشته‌ای قطعی"]] },
-    { code: "aut-cfl-props", title: "خواص زبان‌های مستقل از متن", topics: [["aut-cfl-props-pumping", "لم پمپاژ مستقل از متن"], ["aut-cfl-props-closure", "خواص بستاری و زبان‌های غیرمستقل از متن"]] },
-    { code: "aut-computability", title: "محاسبه‌پذیری و پیچیدگی", topics: [["aut-computability-tm", "ماشین تورینگ و تز چرچ–تورینگ"], ["aut-computability-decidability", "تصمیم‌پذیری، بازگشتی و بازگشتی‌شمارش‌پذیر"], ["aut-computability-halting", "مسئلهٔ توقف، کاهش و PCP"], ["aut-computability-complexity", "پیچیدگی محاسباتی، P و NP"]] },
-  ],
-  "programming-fundamentals": [
-    { code: "pf-language", title: "حل مسئله و زبان", topics: [["pf-language-concepts", "مفاهیم زبان‌های برنامه‌نویسی"], ["pf-language-types", "انواع داده، عملگرها و عبارت‌ها"], ["pf-language-numbers", "نمایش داده و اعداد، عملگرهای بیتی"]] },
-    { code: "pf-control", title: "کنترل و ساختار برنامه", topics: [["pf-control-loops", "شرط، حلقه و ردگیری برنامه"], ["pf-control-functions", "تابع، پارامتر و دامنهٔ متغیر"], ["pf-control-arrays", "آرایه، رشته و اشاره‌گر"], ["pf-control-memory", "مدیریت حافظه"], ["pf-control-oop", "C++، Java و شیءگرایی"]] },
-    { code: "pf-thinking", title: "تفکر الگوریتمی", topics: [["pf-thinking-recursion", "بازگشت"], ["pf-thinking-numeric", "محاسبات و الگوریتم‌های عددی"]] },
-  ],
-  "discrete-math": [
-    { code: "dm-logic", title: "منطق و اثبات", topics: [["dm-logic-propositional", "منطق گزاره‌ها"], ["dm-logic-predicate", "منطق محمولات و سورها"]] },
-    { code: "dm-sets", title: "مجموعه، تابع و عدد", topics: [["dm-sets-relations", "مجموعه، رابطه و تابع"], ["dm-sets-numbers", "نظریهٔ اعداد و همنهشتی"], ["dm-sets-algebra", "ساختارهای جبری"]] },
-    { code: "dm-counting", title: "شمارش و احتمال گسسته", topics: [["dm-counting-combinatorics", "شمارش و ترکیبیات"], ["dm-counting-recurrences", "روابط بازگشتی و توابع مولد"]] },
-    { code: "dm-graphs", title: "رابطه، گراف و مدل محاسبات", topics: [["dm-graphs-graphs", "گراف‌ها، درخت‌ها و رنگ‌آمیزی"], ["dm-graphs-orders", "ترتیب جزئی و جبر بول"]] },
-  ],
-  "computer-architecture": [
-    { code: "arch-cpu", title: "ساختار پردازنده", topics: [["arch-cpu-isa", "مجموعه دستورها و حالت‌های آدرس‌دهی"], ["arch-cpu-rtl", "اسمبلی، انتقال ثبات و ریزعملیات"], ["arch-cpu-arith", "نمایش داده و حساب کامپیوتر"]] },
-    { code: "arch-perf", title: "کارایی و خط لوله", topics: [["arch-perf-performance", "کارایی و معیارهای آن"], ["arch-perf-pipeline", "خط لوله و مخاطرات"], ["arch-perf-parallel", "چندپردازنده و پردازش موازی"]] },
-    { code: "arch-memory", title: "حافظه و ورودی/خروجی", topics: [["arch-memory-cache", "حافظهٔ نهان"], ["arch-memory-main", "حافظهٔ اصلی، گذرگاه و ورودی/خروجی"], ["arch-memory-secondary", "حافظهٔ جانبی و دیسک"]] },
-  ],
-  "linear-algebra": [
-    { code: "la-systems", title: "ماتریس و دستگاه خطی", topics: [["la-systems-solve", "دستگاه‌های خطی و رتبه"], ["la-systems-decomposition", "تجزیهٔ ماتریس (LU، QR، چولسکی)"], ["la-systems-least-squares", "کمترین مربعات"], ["la-systems-norms", "نرم، عدد حالت و روش‌های تکراری"]] },
-    { code: "la-spaces", title: "فضاهای برداری", topics: [["la-spaces-spaces", "فضای برداری، پایه و تعامد"], ["la-spaces-transforms", "تبدیل خطی و ماتریس‌های متعامد"]] },
-    { code: "la-spectral", title: "ویژگی‌های طیفی", topics: [["la-spectral-determinant", "دترمینان و انواع ماتریس"], ["la-spectral-eigen", "مقادیر و بردارهای ویژه، قطری‌سازی"]] },
-  ],
-  statistics: [
-    { code: "st-prob", title: "احتمال", topics: [["st-prob-events", "پیشامدها، احتمال شرطی و بیز"], ["st-prob-rv", "متغیر تصادفی و توزیع"]] },
-    { code: "st-dist", title: "توزیع و ممان", topics: [["st-dist-moments", "امید، واریانس، کوواریانس و ممان‌ها"], ["st-dist-joint", "توزیع توأم و شرطی"], ["st-dist-inequalities", "نامساوی‌های احتمال"]] },
-    { code: "st-inference", title: "استنتاج آماری", topics: [["st-inference-clt", "قضیهٔ حد مرکزی"], ["st-inference-estimation", "نمونه‌گیری و برآورد"], ["st-inference-tests", "آزمون فرض و تحلیل واریانس"]] },
-  ],
-};
+/** The tree (subject → chapters → topics), kept where the site reads it too, so a
+ * title shown on a question is always the one the import used. */
+export const TREE = JSON.parse(readFileSync(new URL("../../../apps/web/src/content/syllabus-tree.json", import.meta.url), "utf8"));
 
 /**
  * A question's site subject: algorithmic chapters inside other booklets'

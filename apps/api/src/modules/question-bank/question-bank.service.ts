@@ -11,6 +11,8 @@ import type { SessionUser } from "../identity/identity.service";
 export interface QuestionFilters {
   subjectCode?: string;
   topicCode?: string;
+  /** Any of these topics: a whole syllabus chapter, sent as its topics. */
+  topicCodes?: string[];
   examDegree?: "master" | "phd";
   examMajor?: string;
   examYear?: number;
@@ -85,11 +87,28 @@ const ANSWERED_QUESTION_SELECT = {
   ...PUBLIC_QUESTION_SELECT,
   correctOption: true,
   acceptedOptions: true,
+  keyState: true,
   solutionBlocks: true,
+  // Read only to project `labels` and `keySource` from it (answeredView); the
+  // record itself (archive paths, pages) never leaves the server.
+  source: true,
 } satisfies Prisma.QuestionSelect;
 
 export type LockedQuestion = Prisma.QuestionGetPayload<{ select: typeof LOCKED_QUESTION_SELECT }>;
-export type AnsweredQuestion = Prisma.QuestionGetPayload<{ select: typeof ANSWERED_QUESTION_SELECT }>;
+type AnsweredRow = Prisma.QuestionGetPayload<{ select: typeof ANSWERED_QUESTION_SELECT }>;
+export type AnsweredQuestion = Omit<AnsweredRow, "source"> & {
+  /** The tagger's own chapter and one-line description of the question. */
+  labels: { chapter?: string; topic?: string } | null;
+  /** Whose answer the key is: the exam board's, or ours where no official key exists. */
+  keySource: "official" | "authored" | null;
+};
+
+/** An answered row as a student sees it: the source record reduced to the two things shown. */
+function answeredView({ source, ...row }: AnsweredRow): AnsweredQuestion {
+  const record = (source ?? {}) as { labels?: { chapter?: string; topic?: string }; key_source?: string };
+  const keySource = record.key_source === "official" || record.key_source === "authored" ? record.key_source : null;
+  return { ...row, labels: record.labels ?? null, keySource };
+}
 
 @Injectable()
 export class QuestionBankService {
@@ -122,6 +141,7 @@ export class QuestionBankService {
     const where: Prisma.QuestionWhereInput = { ...STUDENT_VISIBLE };
     if (filters.subjectCode) where.subjectCode = filters.subjectCode;
     if (filters.topicCode) where.topicCodes = { has: filters.topicCode };
+    else if (filters.topicCodes?.length) where.topicCodes = { hasSome: filters.topicCodes };
     if (filters.examDegree) where.examDegree = filters.examDegree.toUpperCase() as Degree;
     if (filters.examMajor) where.examMajor = filters.examMajor;
     if (filters.examYear) where.examYear = filters.examYear;
@@ -143,7 +163,8 @@ export class QuestionBankService {
         select: LOCKED_QUESTION_SELECT,
         skip: (page - 1) * pageSize,
         take: pageSize,
-        orderBy: { createdAt: "desc" },
+        // Newest konkur first, in booklet order -- how a candidate reads past exams.
+        orderBy: [{ examYear: "desc" }, { examCode: "asc" }, { questionNumber: "asc" }, { id: "asc" }],
       }),
       this.prisma.question.count({ where }),
     ]);
@@ -158,7 +179,7 @@ export class QuestionBankService {
       .map((question) => question.id);
 
     const answered = unlockedIds.length
-      ? await this.prisma.question.findMany({ where: { id: { in: unlockedIds } }, select: ANSWERED_QUESTION_SELECT })
+      ? (await this.prisma.question.findMany({ where: { id: { in: unlockedIds } }, select: ANSWERED_QUESTION_SELECT })).map(answeredView)
       : [];
     const answeredById = new Map(answered.map((question) => [question.id, question]));
 
@@ -185,13 +206,38 @@ export class QuestionBankService {
    * shop-window a subject page shows. Only questions an admin (or an import
    * package) flagged as samples, newest exam first.
    */
+  /**
+   * How many student-visible questions each subject has, and -- for one
+   * subject -- each topic of the syllabus tree: the counts beside the bank's
+   * filters. Counts only; nothing of a question's content.
+   */
+  async counts(subjectCode?: string) {
+    const [subjects, topics] = await Promise.all([
+      this.prisma.$queryRaw<{ code: string; n: number }[]>`
+        SELECT "subjectCode" AS code, count(*)::int AS n FROM "questions"
+        WHERE "retiredAt" IS NULL AND "qualityTier" <> 'DRAFT'
+        GROUP BY "subjectCode"`,
+      subjectCode
+        ? this.prisma.$queryRaw<{ code: string; n: number }[]>`
+            SELECT t.code AS code, count(*)::int AS n FROM "questions" q, unnest(q."topicCodes") AS t(code)
+            WHERE q."subjectCode" = ${subjectCode} AND q."retiredAt" IS NULL AND q."qualityTier" <> 'DRAFT'
+            GROUP BY t.code`
+        : Promise.resolve([] as { code: string; n: number }[]),
+    ]);
+    return {
+      subjects: Object.fromEntries(subjects.map((row) => [row.code, row.n])),
+      topics: Object.fromEntries(topics.map((row) => [row.code, row.n])),
+    };
+  }
+
   async samples(subjectCode: string, limit = 6): Promise<AnsweredQuestion[]> {
-    return this.prisma.question.findMany({
+    const rows = await this.prisma.question.findMany({
       where: { ...STUDENT_VISIBLE, isSample: true, subjectCode },
       select: ANSWERED_QUESTION_SELECT,
       orderBy: [{ examYear: "desc" }, { examCode: "asc" }, { questionNumber: "asc" }],
       take: Math.min(Math.max(limit, 1), 12),
     });
+    return rows.map(answeredView);
   }
 
   async getById(id: string, requester?: SessionUser): Promise<LockedQuestion | AnsweredQuestion> {
@@ -211,7 +257,7 @@ export class QuestionBankService {
 
     const question = await this.prisma.question.findUnique({ where: { id }, select: ANSWERED_QUESTION_SELECT });
     if (!question) throw new NotFoundException("question not found");
-    return question;
+    return answeredView(question);
   }
 
   /**
