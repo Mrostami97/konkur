@@ -76,3 +76,19 @@ not see. `needs-figure.mjs` keeps these ten in the review queue until the part i
 typed in or cut as a figure: CS 1382 q144 (the language), CS 1384 q117 and q121
 (automaton), CS 1392 q88 (matrix sizes), CE 1382 q60 (graph), CE 1383 q50 (program),
 q52 (tree), q63 (matrix P), CE 1384 q52 (tree), q53 (algorithm).
+
+**Closed from the booklet crops (2026-10-18).** `text-fixes.mjs` now types the missing
+part (`append`, `stem`, `table`) or adds the drawing already cut from the booklet
+(`figures`) for 13 of the 15: CS 1382 q144, CS 1383 q139 (the definition of f),
+CS 1384 q121, CS 1392 q88, CE 1382 q60, CE 1383 q50, q52, q63, CE 1384 q52, q53,
+CE 1389 q74 (stack program), CE 1389 q50 (DFS table), CE 1390 q34 (MAYBESORT). Each
+key was checked against the typed text and holds. In CE 1389 q50 the booklet prints
+the fourth and eighth columns blurred as «a» and «n»; the options name d and h, so
+the table is typed with d and h.
+
+Two stay in the queue with their gap typed in, because no option is exactly right:
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1209-1384-b0-117 | CS 1384 q117 | 4 | in the drawn automaton the middle edge goes from the lower state up to the upper one on 0, so 10 and 100 are accepted too; option 4, 0+(00+1+11)00*, leaves them out |
+| kunkurcomputer-q-1277-1389-b1-033 | CE 1389 q33 | 4 (p_ik*p_kj) | with independent failures a path fails with probability p+q−pq; the product is the probability that both edges fail. No option is exact |

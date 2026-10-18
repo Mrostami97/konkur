@@ -384,6 +384,8 @@ for (const examYear of examYears) {
         q.stem = String(q.stem).replace(wrong, right);
       }
       if (fix.options) q.options = q.options.map((option) => (fix.options[option.number] ? { ...option, text: fix.options[option.number] } : option));
+      if (fix.append) q.stem = `${String(q.stem).trim()}\n${fix.append}`;
+      if (fix.figures) q.figures = [...q.figures, ...fix.figures];
     }
     // No official key: our worked answer (solutions.mjs `ourKey`) becomes the key, marked as ours.
     const ourKey = SOLUTIONS[externalId]?.ourKey;
@@ -459,7 +461,7 @@ for (const examYear of examYears) {
       ...(q.keySource === "authored" ? ["کلید رسمی در دسترس نیست؛ پاسخ تألیفی با بازبینی مستقل جای کلید است"] : []),
       ...(keyless ? ["کلید ندارد؛ تا حل‌شدن در صف بازبینی می‌ماند (گزینهٔ ۱ فقط جای خالی است)"] : []),
       ...(q.deleted ? ["در کلید نهایی حذف شده"] : []),
-      ...(NEEDS_FIGURE.has(externalId) ? [`ناقص: ${NEEDS_FIGURE.get(externalId)}؛ تا تایپ یا برش شکل در صف بازبینی می‌ماند`] : []),
+      ...(NEEDS_FIGURE.has(externalId) ? [`در صف بازبینی: ${NEEDS_FIGURE.get(externalId)}`] : []),
     ];
     const passageKey = q.passageId
       ? String(q.passageId).replace(/[^A-Za-z0-9-]/g, "")
@@ -482,7 +484,10 @@ for (const examYear of examYears) {
         : passageBlocks.length ? { passage: { external_id: `kunkurcomputer-passage-${code}-${year}-${passageKey}`, blocks: passageBlocks } } : {}),
       stem_blocks: verified
         ? [{ type: "text", text: q.stem }, ...(verified.table ? [{ type: "table", ...verified.table }] : []), ...verifiedFigures]
-        : q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)],
+        : [
+            ...(q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)]),
+            ...(fix?.table ? [{ type: "table", ...fix.table }] : []),
+          ],
       options: q.options.map((option) => ({
         number: option.number,
         blocks: [
