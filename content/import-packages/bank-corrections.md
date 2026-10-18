@@ -110,3 +110,35 @@ Still held:
 |---|---|---|---|
 | kunkurcomputer-q-1209-1392-370C-093 | CS 1392 q93 | 3 (5, 1101) | the booklet prints f's frequency as «s»; read as 5 the depth is 5, but f's code under the usual convention (smaller weight on 0) is 1100, option 4 |
 | kunkurcomputer-q-1209-1402-760F-062 | CS 1402 q62 | 4 (initial) | the booklet's loop multiplies j by 3 with i, so it prints n; the options (and the key) fit j = j*i, which gives 3^(k(k+1)/2) with k = log₃n |
+
+## Old CS questions without a key (1380–1385), solved from the booklet (2026-10-18)
+
+The republished compiler key of these years does not match the booklet (the bank set
+it aside), so each question was solved from its crop. Our key (`ourKey` in
+`solutions.mjs`) is given only where one option is clearly right: CS 1380 q51, q62,
+q70, q76, q79; 1381 q72, q84, q111, q139; 1382 q91, q147; 1383 q91, q110, q142;
+1384 q82, q93, q140; and CS 1404 q68 (whose key sources conflict). Text fixes from the
+booklet: 1383 q110 (22313 instructions, B's CPI is 3; the bank typed 33333 and 2),
+1384 q140 (tridiagonal means a_ij = 0 for |i−j| > 1; the booklet prints ≥ 1),
+1383 q91 (distance table typed out). In 1380 q70 and 1381 q84 the booklet writes
+«خارج قسمت» where it means the dividend's upper half; the solution says so.
+
+Left without a key, and why:
+
+| Question | Why |
+|---|---|
+| CS 1380 q43 | the program ends with S[i]='\0' and i is 0 there, so it prints nothing; the options fit S[k] (AF3) |
+| CS 1380 q57, 1381 q110, 1380 q95, 1381 q61, 1382 q148, 1381 q150 | two options are true (1380 q57: 1 and 4; 1381 q110: 1 and 4; 1380 q95: 1 and 3; 1381 q61: 2 and 3 are not tautologies; 1382 q148: 2 and 3 are false; 1381 q150: 1 and 4) |
+| CS 1380 q61 | «word» can be the word within a block (3 bits, option 1) or the byte offset (5 bits, option 2) |
+| CS 1380 q67, q69, q77, q120; 1381 q96, q147, q148, q149 | the wording admits more than one reading (≈100 bits between 90 and 120; «maximum» speed-up; tape reasons; this; tape figures that give 73%; functional-language claims) |
+| CS 1380 q101, q109, q110; 1381 q136 | hand-drawn automata / a TM table not yet worked through |
+| CS 1381 q74 | both loops end in «;», so the body runs once after them (and n, i are out of scope in standard C++) |
+| CS 1381 q78, q104 | written with little o: read literally, o(n²) and o(n log n) are false for Θ(n²) and Θ(n log n) |
+| CS 1381 q85 | no option matches the XY table (next state is xQ + x̄ȳ + x̄Q̄) |
+| CS 1381 q156 | the grammar gives k ≥ 2 in both parts; option 3 says k ≥ 1 |
+| CS 1381 q157 | the grammar gives only abba and bbaabbabba; all four statements hold |
+| CS 1383 q77, q82, q84 | C macros/expressions with x++ twice or y==y++: undefined or unspecified order |
+| CS 1383 q129 | an orthogonal triangular matrix is diagonal with ±1, so its trace is not fixed |
+| CS 1383 q138 | f(3) = 3^(3^3) = 3^27, not an option |
+| CS 1384 q52 | Y = 2 is outside the support 0 < y < 1 |
+| CS 1385 q62 | the loop runs while m == 1, so for (42, 13) it stops after one pass and returns 0; the options fit m >= 1 (546) |

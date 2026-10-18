@@ -245,6 +245,27 @@ async function imageAsset(relPath, mediaKey) {
   };
 }
 
+/** A small grey picture of an image and its shape, to spot one drawing cropped twice. */
+async function thumbnail(buffer) {
+  const meta = await sharp(buffer).metadata();
+  const pixels = await sharp(buffer).flatten({ background: "#ffffff" }).grayscale().resize(32, 32, { fit: "fill" }).raw().toBuffer();
+  return { ratio: (meta.width ?? 1) / (meta.height ?? 1), pixels };
+}
+
+// Only a drawing cut twice (a booklet crop and its cleaned copy) is dropped.
+// Single lines of code and per-option pieces ("code-overlay-NN", "option_N")
+// look alike and still differ (A[i][i] and A[j][j]), so they always stay.
+const PIECE = /code-overlay-\d+|option_\d+/;
+function sameDrawing(a, b, file) {
+  if (a.path === file) return true;
+  if (PIECE.test(a.path) || PIECE.test(file)) return false;
+  if (a.ratio > 4 || b.ratio > 4) return false;
+  if (Math.abs(a.ratio - b.ratio) / Math.max(a.ratio, b.ratio) > 0.15) return false;
+  let diff = 0;
+  for (let i = 0; i < a.pixels.length; i += 1) diff += Math.abs(a.pixels[i] - b.pixels[i]);
+  return diff / a.pixels.length < 18;
+}
+
 /** Stem text with `![name](name)` markers becomes text and image blocks;
  * figures the text never mentions follow the stem. */
 function stemBlocks(text, figureKeys) {
@@ -405,9 +426,18 @@ for (const examYear of examYears) {
       files.set(asset.filename, buffer);
     };
     const figureKeys = new Map();
+    // The bank sometimes keeps one drawing twice (a figure crop and a code
+    // crop of the same box); a student sees it once.
+    const figureThumbs = [];
     for (const [index, figure] of q.figures.entries()) {
       const image = await imageAsset(figure, `fig${index + 1}`);
+      const thumb = image ? await thumbnail(image.buffer) : null;
+      if (thumb && figureThumbs.some((seen) => sameDrawing(seen, thumb, figure))) {
+        if (process.env.LOG_DEDUPE) console.log("dedupe", externalId, figureThumbs.find((seen) => sameDrawing(seen, thumb, figure)).path, figure);
+        continue;
+      }
       if (image) {
+        figureThumbs.push({ ...thumb, path: figure });
         addFile(image);
         figureKeys.set(path.basename(figure), image.asset.media_key);
       }

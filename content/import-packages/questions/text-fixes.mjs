@@ -98,4 +98,14 @@ export const TEXT_FIXES = new Map([
     dropFigures: true,
     append: code(["k = 0", "for (i = 0; i < n; i = i + 1)", "    for (j = 1; j < n; j = j + i)", "        k = k + 1"]),
   }],
+
+  // CS 1383 q110: the booklet runs 22313 instructions and gives B a CPI of 3; the bank typed 33333 and 2.
+  ["kunkurcomputer-q-1209-1383-b0-110", { stem: [["با۳۳۳۳۳دستورالعمل", "با ۲۲۳۱۳ دستورالعمل"], ["روی B دارای CPI برابر۲ است", "روی B دارای CPI برابر ۳ است"]] }],
+  // CS 1384 q140: a tridiagonal matrix has a_ij = 0 for |i-j| > 1; the booklet's «≥ 1» would leave only the diagonal.
+  ["kunkurcomputer-q-1209-1384-b0-140", { stem: [["|i-j|\\ge1", "|i-j|>1"]] }],
+  // CS 1383 q91: the distance table typed out in place of its crop.
+  ["kunkurcomputer-q-1209-1383-b0-091", {
+    dropFigures: true,
+    table: { headers: ["رأس", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], rows: [["فاصله تا a", "0", "2", "1", "5", "2", "4", "1", "2", "3", "5"]] },
+  }],
 ]);
