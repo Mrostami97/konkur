@@ -153,3 +153,5 @@ Left without a key, and why:
 Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`text-fixes.mjs`).
 | kunkurcomputer-q-1209-1393-370E-101 (and its repeat q191) | CS 1393 q101 | 4 (O(n³)) | the k-core is found by repeatedly deleting a vertex of degree < k: degrees in O(n²) from the matrix, each deletion updates its n neighbours, so O(n²) in all — option 2 |
 | kunkurcomputer-q-1209-1404-460C-072 | CS 1404 q72 | 3 (۶) | counting by machine: \|N_n(i,j)\| takes the values 3,5,6,7,8,10 for n = 4 (six values) but 3,5,…,12 (nine values) for every n ≥ 6, so «for n > 3» has no single answer; 6 holds only for n = 4 |
+| kunkurcomputer-q-1209-1391-368C-082 | CS 1391 q82 | 4 (Θ(log n / n)) | the recurrence is solved exactly by T(n) = 1 + (log₂ n)/n (check: 3/2·T(n/2) − 1/2·T(n/4) = 1 + (log₂ n + 1)/n, minus 1/n), with T(1) = 1 and T(2) = 3/2; so T(n) = Θ(1), not an option |
+| kunkurcomputer-q-1209-1390-372B-094 | CS 1390 q94 | 4 (2^(⌊log₂n⌋+1)) | the star is printed outside the if, so A(0) prints one too: S(0) = 1, S(i) = 2S(i/2) + 1, giving S(n) = 2^(⌊log₂n⌋+2) − 1 (A(1) prints 3); no option matches |
