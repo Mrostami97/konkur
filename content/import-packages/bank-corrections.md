@@ -60,6 +60,7 @@ not reach the key).
 |---|---|---|---|
 | kunkurcomputer-q-1209-1389-3077-058 | CS 1389 q58 | 4 (`o(ln n)`) | `T(n)=H_n=Θ(ln n)`, so `T(n)∈o(ln n)` is false and only option 2 (`o(n)`) holds |
 | kunkurcomputer-q-1209-1387-b0-087 | CS 1387 q87 | 1 (۲۲) | BSTs on five keys: 6 have 3 levels, 20 have 4 and 16 have 5 (6+20+16=42=C₅); «depth 4 with the root on level 1» gives 20, which is not an option |
+| kunkurcomputer-q-1209-1383-b0-097 | CS 1383 q97 | 4 (۱۴) | 23 numbers exceed 1000; t of them on the bottom (10th) level need at least Σ⌈t/2^(9−l)⌉ ancestors above 1000. t=8 uses 21, t=9 needs 25, so the maximum is 8 — not an option. 14 looks like 23−9 (one root path), which ignores that the leaves need different parents |
 
 ## Questions whose figure, code or language is missing (2026-10-18)
 
