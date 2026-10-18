@@ -32,7 +32,7 @@ const ALGORITHMIC_CHAPTER = /تحلیل پیچیدگی|تحلیل الگوریت
  * theory of computation even when its chapter reads as analysis: the tag file
  * files some DPDA and closure questions under «تحلیل پیچیدگی و روابط بازگشتی».
  */
-const THEORY_TOPIC = /محاسبه‌پذیر|قطری‌سازی|چامسکی|زبان|گرامر|ماشین|اتومات|تورینگ|تصمیم‌پذیر|عبارت منظم|عبارات منظم|منظم|مستقل از متن|لم تزریق|لم پمپاژ|DFA|NFA|PDA|DPDA/;
+const THEORY_TOPIC = /بازگشتی شمارا|بازگشتی‌شمارا|شمارش‌پذیر|محاسبه‌پذیر|قطری‌سازی|چامسکی|زبان|گرامر|ماشین|اتومات|تورینگ|تصمیم‌پذیر|عبارت منظم|عبارات منظم|منظم|مستقل از متن|لم تزریق|لم پمپاژ|DFA|NFA|PDA|DPDA/;
 
 /** The bank's course names → site subjects. */
 export const COURSE_SUBJECT = [
@@ -120,6 +120,7 @@ export const RULES = {
     [/جریان|شبکه|برنامه‌ریزی صحیح|الگوریتم/, "dsa-off-other"],
   ],
   automata: [
+    [/بازگشتی شمارا|بازگشتی‌شمارا/, "aut-computability-decidability"],
     [/سلسله‌مراتب چامسکی/, "aut-basics-grammars"],
     [/مستقل از متن قطعی|پشته‌ای قطعی|DPDA/, "aut-pda-deterministic"],
     [/تورینگ.*تصمیم|تصمیم‌پذیر|تصمیم ناپذیر|بازگشتی شمارش|بازگشتی‌شمارش|زبان‌های بازگشتی/, "aut-computability-decidability"],
