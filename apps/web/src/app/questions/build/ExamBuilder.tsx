@@ -38,10 +38,10 @@ type Mode = "exam" | "feedback";
  * as a timed exam (scored with a report card like any exam) or one question
  * at a time with the answer right after each.
  */
-export function ExamBuilder({ catalog }: { catalog: SubjectOption[] }) {
+export function ExamBuilder({ catalog, initialSubject }: { catalog: SubjectOption[]; initialSubject?: string }) {
   const router = useRouter();
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
-  const [subjectCode, setSubjectCode] = useState(catalog[0]?.code ?? "");
+  const [subjectCode, setSubjectCode] = useState(initialSubject ?? catalog[0]?.code ?? "");
   const [topics, setTopics] = useState<Set<string>>(new Set());
   const [counts, setCounts] = useState<Counts | null>(null);
   const [totals, setTotals] = useState<Record<string, number> | null>(null);

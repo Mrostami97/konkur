@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { subjects } from "../../../../content/editorial";
 import { SYLLABUS } from "../../../../lib/syllabus";
-import { SubjectBank } from "./SubjectBank";
+import { SubjectBank, type ChapterStats } from "./SubjectBank";
+import { apiGetPublic } from "../../../../lib/api";
 import { pageMetadata } from "../../../../lib/seo";
 import "../../questions.css";
 
@@ -28,5 +29,12 @@ export default async function SubjectBankPage({ params }: { params: Promise<{ su
   const { subject: code } = await params;
   const subject = subjects.find((item) => item.slug === code);
   if (!subject || !SYLLABUS[code]) notFound();
-  return <SubjectBank code={code} title={subject.title} chapters={SYLLABUS[code]} />;
+  // Counts are rendered on the server so search engines see them; the student's progress loads in the browser.
+  let stats: ChapterStats | null = null;
+  try {
+    stats = await apiGetPublic<ChapterStats>(`/questions/chapter-stats?subjectCode=${encodeURIComponent(code)}`, { revalidate: 600 });
+  } catch {
+    stats = null;
+  }
+  return <SubjectBank code={code} title={subject.title} chapters={SYLLABUS[code]} initialStats={stats} />;
 }

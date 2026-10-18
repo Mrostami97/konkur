@@ -242,6 +242,30 @@ export class QuestionBankService {
     };
   }
 
+  /**
+   * A subject's bank by syllabus topic: how many questions, how many carry a
+   * worked solution, and how many came in each exam year (all tracks
+   * together). Counts only -- no question content -- so it is public.
+   */
+  async chapterStats(subjectCode: string) {
+    const rows = await this.prisma.$queryRaw<{ code: string; year: number; n: number; solved: number }[]>`
+      SELECT t.code AS code, q."examYear" AS year, count(*)::int AS n,
+             count(*) FILTER (WHERE jsonb_typeof(q."solutionBlocks") = 'array' AND jsonb_array_length(q."solutionBlocks") > 0)::int AS solved
+      FROM "questions" q, unnest(q."topicCodes") AS t(code)
+      WHERE q."subjectCode" = ${subjectCode} AND q."retiredAt" IS NULL AND q."qualityTier" <> 'DRAFT'
+      GROUP BY t.code, q."examYear"`;
+    const topics: Record<string, { n: number; solved: number; byYear: Record<number, number> }> = {};
+    const years = new Set<number>();
+    for (const row of rows) {
+      const topic = (topics[row.code] ??= { n: 0, solved: 0, byYear: {} });
+      topic.n += row.n;
+      topic.solved += row.solved;
+      topic.byYear[row.year] = row.n;
+      years.add(row.year);
+    }
+    return { years: [...years].sort((a, b) => a - b), topics };
+  }
+
   async samples(subjectCode: string, limit = 6): Promise<AnsweredQuestion[]> {
     const rows = await this.prisma.question.findMany({
       where: { ...STUDENT_VISIBLE, isSample: true, subjectCode },

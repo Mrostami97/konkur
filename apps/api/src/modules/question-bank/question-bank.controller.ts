@@ -111,6 +111,13 @@ export class QuestionsPublicController {
     return this.questionBank.counts(subjectCode || undefined);
   }
 
+  /** For one subject, per syllabus topic: questions, worked solutions and questions per exam year; declared before `:id`. */
+  @Get("chapter-stats")
+  chapterStats(@Query("subjectCode") subjectCode: string) {
+    if (!subjectCode) throw new BadRequestException("subjectCode is required");
+    return this.questionBank.chapterStats(subjectCode);
+  }
+
   /** A subject's public samples with their answers; declared before `:id` so it is not read as an id. */
   @Get("samples")
   samples(@Query("subjectCode") subjectCode: string, @Query("limit") limit?: string) {

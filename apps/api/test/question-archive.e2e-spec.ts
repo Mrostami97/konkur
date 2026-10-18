@@ -324,6 +324,10 @@ describe("Past-exam archive questions (question.v2)", () => {
     const counts = await http().get("/questions/counts").query({ subjectCode: tagged }).expect(200);
     expect(counts.body.subjects[tagged]).toBe(1);
     expect(counts.body.topics["dsa-analysis-master"]).toBe(1);
+    // Per topic and exam year, with how many carry a worked solution; counts only.
+    const stats = await http().get("/questions/chapter-stats").query({ subjectCode: tagged }).expect(200);
+    expect(stats.body).toEqual({ years: [1403], topics: { "dsa-analysis-master": { n: 1, solved: 0, byYear: { "1403": 1 } } } });
+    await http().get("/questions/chapter-stats").expect(400);
   });
 
   it("grades practice answers on the server, keeps each question's history and serves the smart collections", async () => {
