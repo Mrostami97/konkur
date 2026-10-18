@@ -142,3 +142,12 @@ Left without a key, and why:
 | CS 1383 q138 | f(3) = 3^(3^3) = 3^27, not an option |
 | CS 1384 q52 | Y = 2 is outside the support 0 < y < 1 |
 | CS 1385 q62 | the loop runs while m == 1, so for (42, 13) it stops after one pass and returns 0; the options fit m >= 1 (546) |
+
+## More keys the mathematics does not reach (2026-10-18, later)
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1209-1384-b0-062 | CS 1384 q62 | 2 (O(n²)) | the program is heapsort's sort-down: in the inner loop c = 2p+1 and p = c, so p at least doubles and the loop runs O(log i) times; the whole is O(n log n), option 3 |
+| kunkurcomputer-q-1209-1396-265A-197 | CS 1396 q197 | 1 (10 or 18) | in 6,8,4,10,18,23,22,11 everything left of 10 is smaller and everything right is larger, but 11 sits right of 18, so 18 cannot have been the pivot: option 3 |
+
+Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`text-fixes.mjs`).

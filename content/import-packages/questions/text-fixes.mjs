@@ -108,4 +108,7 @@ export const TEXT_FIXES = new Map([
     dropFigures: true,
     table: { headers: ["رأس", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], rows: [["فاصله تا a", "0", "2", "1", "5", "2", "4", "1", "2", "3", "5"]] },
   }],
+
+  // CS 1399 q72: the booklet sorts a 10-element array; the bank typed 15.
+  ["kunkurcomputer-q-1209-1399-462F-072", { stem: [["یک آرایه ۱۵ عنصری", "یک آرایه ۱۰ عنصری"]] }],
 ]);
