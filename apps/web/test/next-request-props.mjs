@@ -124,7 +124,7 @@ try {
   }
   const bank = await read("/questions?subject=operating-systems");
   assert.equal(bank.response.status, 200);
-  assert.match(bank.body, /initialSubject[^<]*operating-systems/);
+  assert.match(bank.body, /subjectCode[^<]*operating-systems/);
   checks++;
   for (const route of ["/lessons/fixture-lesson", "/attempts/fixture-attempt", "/attempts/fixture-attempt/report", "/account/orders/fixture-order", "/account/library/fixture-resource", "/admin/import/fixture-job", "/admin/crm/leads/fixture-lead", "/instructor/students/fixture-student"]) {
     const page = await read(route);
