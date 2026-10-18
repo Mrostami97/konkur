@@ -22,6 +22,7 @@ import { fileURLToPath } from "node:url";
 import { SAMPLES } from "./samples.mjs";
 import { SOLUTIONS } from "./solutions.mjs";
 import { NEEDS_FIGURE } from "./needs-figure.mjs";
+import { TEXT_FIXES } from "./text-fixes.mjs";
 
 const repo = fileURLToPath(new URL("../../../", import.meta.url));
 const AdmZip = createRequire(`${repo}apps/api/package.json`)("adm-zip");
@@ -375,6 +376,15 @@ for (const examYear of examYears) {
       continue;
     }
     seenIds.add(externalId);
+    // The booklet's text where the bank mistyped it (text-fixes.mjs).
+    const fix = TEXT_FIXES.get(externalId);
+    if (fix) {
+      for (const [wrong, right] of fix.stem ?? []) {
+        if (!String(q.stem).includes(wrong)) throw new Error(`${externalId}: text fix «${wrong}» not found`);
+        q.stem = String(q.stem).replace(wrong, right);
+      }
+      if (fix.options) q.options = q.options.map((option) => (fix.options[option.number] ? { ...option, text: fix.options[option.number] } : option));
+    }
 
     const assets = [];
     const addFile = ({ asset, buffer }) => {

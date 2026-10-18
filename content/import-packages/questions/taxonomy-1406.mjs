@@ -217,6 +217,10 @@ export const RULES = {
     [/کارنو/, "dl-boolean-kmap"],
     [/گیت|بول/, "dl-boolean-gates"],
     [/عدد|کد/, "dl-boolean-numbers"],
+    // Fallbacks by chapter, for tags the rules above do not name.
+    [/آشکارساز|Moore|Mealy|مدارهای ترتیبی/, "dl-seq-fsm"],
+    [/پوشاننده|ساده‌سازی توابع/, "dl-boolean-kmap"],
+    [/مدارهای ترکیبی|مدار ترکیبی/, "dl-comb-arith"],
   ],
   "operating-systems": [
     [/حافظه مجازی|حافظهٔ مجازی|خطای صفحه|جایگزینی/, "os-memory-virtual"],
@@ -226,6 +230,8 @@ export const RULES = {
     [/سمافور|بحرانی/, "os-sync-critical"],
     [/زمان‌بندی/, "os-process-scheduling"],
     [/فرایند|نخ/, "os-process-processes"],
+    // Fallback by chapter.
+    [/fork|مدیریت فرآیندها|مدیریت فرایندها/, "os-process-processes"],
   ],
   "computer-networks": [
     [/DNS|HTTP|کاربرد/i, "net-app-application"],
@@ -247,6 +253,11 @@ export const RULES = {
     [/منطق|Prolog/i, "ai-logic-logic"],
     [/minimax|بازی/i, "ai-search-games"],
     [/جست‌وجو|جستجو/, "ai-search-search"],
+    [/ارضای محدودیت|محدودیت|ارضای قید|سازگاری/, "ai-logic-csp"],
+    [/بازنمایی دانش|مسئلهٔ قاب/, "ai-logic-logic"],
+    [/یادگیری|عصبی/, "ai-prob-learning"],
+    // Planning has no topic of its own in the 1406 list; it sits with agents and state spaces.
+    [/برنامه‌ریزی|عامل/, "ai-search-agents"],
   ],
 };
 

@@ -15,6 +15,7 @@ Fix these in the bank; articles built here already use the image's text.
 | doc-aa34d7e9ba352ebc-q-0035 | CE 1404 q35, stem | `۰/۰۱٪` of requests are real attacks | `۰/۱٪` — with the bank number the answer is 0.005, not the key (3) 0.047 |
 | doc-aa34d7e9ba352ebc-q-0039 | CE 1404 q39, option 4 | `۶۰۰۰` lines | `۶۰۰۰۰` lines — with the bank number option 4 is also false and the key (2) is no longer the only answer |
 | it-1388-C-q0096 | IT 1388 q96, stem | «(با کوانتوم زمانی q=1 و NP-LCFS» | «(با کوانتوم زمانی q=1) و NP-LCFS» (closing parenthesis) |
+| kunkurcomputer-q-1209-1392-370C-063 | CS 1392 q63, option 3 | ۱۲۵ | ۱۲۰ (the Huffman merge cost; the key 3 holds with the booklet). Fixed in questions/text-fixes.mjs |
 
 ## Key errors (the bank's key misses a final-key change)
 
