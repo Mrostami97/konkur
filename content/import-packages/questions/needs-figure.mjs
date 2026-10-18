@@ -14,4 +14,5 @@ export const NEEDS_FIGURE = new Map([
   ["kunkurcomputer-q-1277-1383-b0-063", "ماتریس P در متن نیست"],
   ["kunkurcomputer-q-1277-1384-b0-052", "شکل درخت در متن نیست"],
   ["kunkurcomputer-q-1277-1384-b0-053", "متن الگوریتم در سؤال نیست"],
+  ["kunkurcomputer-q-1209-1383-b0-139", "متن سؤال ناقص است؛ تعریف تابع f نیامده"],
 ]);
