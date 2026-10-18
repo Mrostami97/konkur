@@ -366,7 +366,7 @@ for (const examYear of examYears) {
     }
     // A tagged question with no key at all (neither the board's nor ours yet)
     // still comes in, held in the review queue until it is solved.
-    const keyless = TAGGED && ![1, 2, 3, 4].includes(q.correct) && !q.deleted;
+    let keyless = TAGGED && ![1, 2, 3, 4].includes(q.correct) && !q.deleted;
     // 1389 held two sessions that both numbered from 1; the second session's
     // questions keep the base id plus their source document.
     let externalId = `kunkurcomputer-q-${code}-${year}-${q.bookletLabel}-${String(q.number).padStart(3, "0")}`;
@@ -384,6 +384,14 @@ for (const examYear of examYears) {
         q.stem = String(q.stem).replace(wrong, right);
       }
       if (fix.options) q.options = q.options.map((option) => (fix.options[option.number] ? { ...option, text: fix.options[option.number] } : option));
+    }
+    // No official key: our worked answer (solutions.mjs `ourKey`) becomes the key, marked as ours.
+    const ourKey = SOLUTIONS[externalId]?.ourKey;
+    if (ourKey) {
+      if (!keyless) throw new Error(`${externalId}: ourKey is only for questions without an official key`);
+      if (SOLUTIONS[externalId].answer !== ourKey) throw new Error(`${externalId}: ourKey and answer differ`);
+      Object.assign(q, { correct: ourKey, accepted: [ourKey], keyVerified: true, keySource: "authored" });
+      keyless = false;
     }
 
     const assets = [];
