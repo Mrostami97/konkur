@@ -207,3 +207,4 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1209-1387-b0-116 | CS 1387 q116 | 4 | all four statements hold: the grammar is in CNF and baba has the single derivation S→XY, X→YS→ba, Y→XS→ba; no statement is false |
 | kunkurcomputer-q-1209-1387-b0-124 | CS 1387 q124 | 2 | a machine whose language is decidable may still loop on rejected words, so option 1 (T may loop on w ∉ L) is true and option 2 is false |
 | kunkurcomputer-q-1209-1388-D-117 | CS 1388 q117 | 2 | option 4 ({aⁿbᵐcᵏ : n = m or m ≤ k}) is also context-free, as a union of two context-free languages |
+| kunkurcomputer-q-1209-1390-372B-121 | CS 1390 q121 | 2 | statement 3 is also false: membership of a word in the language of a context-free grammar is decidable (CYK), so options 2 and 3 are both false statements |
