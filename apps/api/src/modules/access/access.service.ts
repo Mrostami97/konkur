@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 
 export type AccessTx = PrismaService | Prisma.TransactionClient;
@@ -29,6 +29,17 @@ export class AccessService {
       revokedAt: null,
       OR: [{ endAt: null }, { endAt: { gt: now } }],
     };
+  }
+
+  /**
+   * The site's admin sees everything a buyer could unlock (owner, 2026-10-19):
+   * the whole question bank, every course and every resource, without
+   * holding an entitlement for each.
+   */
+  async isAdmin(userId: string, tx?: AccessTx): Promise<boolean> {
+    const db = tx ?? this.prisma;
+    const role = await db.userRole.findFirst({ where: { userId, role: Role.ADMIN }, select: { id: true } });
+    return Boolean(role);
   }
 
   private async hasActiveGrant(
@@ -66,6 +77,7 @@ export class AccessService {
   /** Course access: bought directly (Product.courseId) or via an explicit
    * ProductCourseGrant (a bundle/multi-course product). */
   async hasActiveCourseAccess(userId: string, courseId: string, tx?: AccessTx): Promise<boolean> {
+    if (await this.isAdmin(userId, tx)) return true;
     return this.hasActiveGrant(userId, { OR: [{ courseId }, { courseGrants: { some: { courseId } } }] }, tx);
   }
 
@@ -73,6 +85,7 @@ export class AccessService {
    * of a course the user has access to (CourseMaterial) -- the course bought
    * directly or through a bundle's ProductCourseGrant. */
   async hasActiveResourceAccess(userId: string, resourceId: string, tx?: AccessTx): Promise<boolean> {
+    if (await this.isAdmin(userId, tx)) return true;
     const withHandout = { materials: { some: { resourceId } } };
     return this.hasActiveGrant(
       userId,
@@ -111,6 +124,7 @@ export class AccessService {
    * product that also carries a ProductQuestionBankGrant for its subject.
    */
   async hasActiveQuestionBankAccess(userId: string, subjectCode: string, tx?: AccessTx): Promise<boolean> {
+    if (await this.isAdmin(userId, tx)) return true;
     return this.hasActiveGrant(userId, { questionBankGrants: { some: { subjectCode } } }, tx);
   }
 
@@ -126,6 +140,7 @@ export class AccessService {
   ): Promise<Set<string>> {
     const distinct = [...new Set(subjectCodes)];
     if (distinct.length === 0) return new Set();
+    if (await this.isAdmin(userId, tx)) return new Set(distinct);
     const db = tx ?? this.prisma;
     const now = new Date();
     const entitlements = await db.entitlement.findMany({
