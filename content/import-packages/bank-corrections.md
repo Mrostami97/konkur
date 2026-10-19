@@ -180,3 +180,4 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1276-1402-758F-030 | IT 1402 q30 | 3 | text fix, not a key dispute: the booklet says oranges in multiples of 3 (the bank typed 2); with that the generating function is 1/(1−x)² and the answer 21 matches the key |
 | kunkurcomputer-q-1277-1389-b2-047 | CE 1389 q47 | 1 | 47^74 ≡ 1 (mod 24) and ≡ 4 (mod 7), so 47^74 ≡ 25 (mod 168): one day and one hour after Wednesday 4 pm is Thursday 5 pm, not an option |
 | kunkurcomputer-q-1277-1391-b1-045 | CE 1391 q45 | 1 | φn follows from the premises iff (φ1∧…∧φn−1)→φn is a tautology: option 2 (checked against the crop); option 1 (a disjunction being satisfiable) is far too weak |
+| kunkurcomputer-q-1277-1391-b2-120 | CE 1391 q120 | 4 | entailment is monotonic, so option 2 (a follows from KB2 = KB1 ∪ {b}) is just as true as option 4; the question has two correct options |
