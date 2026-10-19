@@ -215,3 +215,5 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1209-1382-b0-071 | CS 1382 q71 | 2 | option 4 (IF NOT(x OR y) THEN statement 2 ELSE statement 1) is the same statement as option 2; both are right |
 | kunkurcomputer-q-1209-1383-b0-085 | CS 1383 q85 | 1 | option 3 fills the same board: (J + J/8)%2 = (row+col)%2 is symmetric, so writing it at T[J%8][J/8] gives the identical matrix; options 1 and 3 are both right |
 | kunkurcomputer-q-1209-1388-D-062 | CS 1388 q62 | 1 (18) | after the in-place A[i] = A[8−i] the array is 3,2,1,3,2,3,1,2,3, whose sum is 20 (option 2); 18 is the sum before the loop |
+| kunkurcomputer-q-1209-1392-370C-060 | CS 1392 q60 | 2 | with while (p > 0) the last pass has p = 0 and prints a spurious 1 (n ≥ 0 always holds), e.g. n = 4 prints 1001; none of the four changes gives a correct program |
+| kunkurcomputer-q-1209-1392-370C-061 | CS 1392 q61 | 4 | swapping lines 2 and 4 gives r := n; n := m mod n; m := r, which is Euclid (option 3); moving line 4 before the loop makes n := m mod n compute n mod n = 0 on the first pass |
