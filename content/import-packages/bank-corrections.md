@@ -164,3 +164,6 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1209-1399-462F-076 | CS 1399 q76 | 1 (θ(1)) | the sum Σ1/i² converges, so its value is θ(1), but the question asks for the time to compute it, which takes n terms: θ(n), option 2 |
 | kunkurcomputer-q-1209-1405-257A-074 | CS 1405 q74 | 3 (231) | optimal three-way merging (ternary Huffman) of 3,7,8,9,15,16,17,20,33: 3+7+8=18, 9+15+16=40, 17+18+20=55, 33+40+55=128; moves 18+40+55+128 = 241, not an option |
 | kunkurcomputer-q-1209-1405-257A-079 | CS 1405 q79 | 3 (40) | job 3 (d=1) at time 1, job 1 (d=2) at time 2, job 2 (d=3) at time 3 all meet their deadlines: 10+20+15 = 45, option 4 |
+| kunkurcomputer-q-1209-1386-309-122 | CS 1386 q122 | 1 | option 2 is also true: in S→S(SS)|λ the inner SS can be any balanced string (take the second S→λ), so G″ also generates every balanced string, the same as G and G′ |
+| kunkurcomputer-q-1209-1405-257A-086 | CS 1405 q86 | 1 | L₂ (n_a+n_b = 2n_c) is also context-free: a one-counter PDA pushes one mark per a or b and pops two per c (or the reverse, with a sign state), so both are context-free: option 3 |
+| kunkurcomputer-q-1209-1405-257A-086 | CS 1405 q86 | 1 | L₂ (n_a+n_b = 2n_c) is also context-free: a one-counter PDA adds one per a or b and subtracts two per c, so both languages are context-free: option 3 |
