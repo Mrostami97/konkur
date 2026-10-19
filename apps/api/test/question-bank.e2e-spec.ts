@@ -566,6 +566,44 @@ describe("Taxonomy + Question Bank (e2e)", () => {
     expect(all.body.total).toBe(2);
   });
 
+  it("serves «۱۰ تست امروز» from readable questions only, and counts the day's answers and the streak", async () => {
+    const suffix = Date.now();
+    const subjectCode = `today-subject-${suffix}`;
+    async function publish(externalId: string) {
+      const job = await request(app.getHttpServer()).post("/admin/questions").set("Cookie", adminCookie).send(questionDto(externalId, subjectCode, 1405)).expect(201);
+      const items = await request(app.getHttpServer()).get(`/admin/import/${job.body.id}/items`).set("Cookie", adminCookie).expect(200);
+      await request(app.getHttpServer()).post("/admin/import/items/review").set("Cookie", adminCookie).send({ itemIds: [items.body[0].id], decision: "APPROVE" }).expect(201);
+      await request(app.getHttpServer()).post(`/admin/import/${job.body.id}/publish`).set("Cookie", adminCookie).expect(201);
+      return prisma.question.findUniqueOrThrow({ where: { externalId } });
+    }
+    const sample = await publish(`today-sample-${suffix}`);
+    await prisma.question.update({ where: { id: sample.id }, data: { isSample: true } });
+    const locked = await publish(`today-locked-${suffix}`);
+
+    await request(app.getHttpServer()).get("/questions/today").expect(401);
+
+    const phone = randomPhone();
+    await request(app.getHttpServer()).post("/auth/otp/request").send({ phone }).expect(200);
+    const code = otpProvider.sent[otpProvider.sent.length - 1].code;
+    const login = await request(app.getHttpServer()).post("/auth/otp/verify").send({ phone, code }).expect(200);
+    const cookie = login.headers["set-cookie"][0] as string;
+
+    const before = await request(app.getHttpServer()).get("/questions/today").set("Cookie", cookie).expect(200);
+    expect(before.body).toMatchObject({ goal: 10, answeredToday: 0, streak: 0 });
+    const ids = before.body.items.map((item: { id: string }) => item.id);
+    expect(ids).not.toContain(locked.id);
+    // Every question served is whole: a locked one would arrive without its key.
+    for (const item of before.body.items) expect(item.correctOption).toBeDefined();
+
+    await request(app.getHttpServer()).post(`/questions/${sample.id}/practice`).set("Cookie", cookie).send({ selectedOption: 2 }).expect(201);
+    const after = await request(app.getHttpServer()).get("/questions/today").set("Cookie", cookie).expect(200);
+    expect(after.body).toMatchObject({ answeredToday: 1, streak: 1 });
+    expect(after.body.items.map((item: { id: string }) => item.id)).not.toContain(sample.id);
+
+    const samplesOnly = await request(app.getHttpServer()).get(`/questions?subjectCode=${subjectCode}&sample=true`).expect(200);
+    expect(samplesOnly.body.items.map((item: { id: string }) => item.id)).toEqual([sample.id]);
+  });
+
   it("republishing bumps the version and rollback restores an old one with history intact", async () => {
     const externalId = `direct-versioned-${Date.now()}`;
 

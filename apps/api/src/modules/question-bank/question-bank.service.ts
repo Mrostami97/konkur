@@ -26,6 +26,8 @@ export interface QuestionFilters {
   qualityTier?: QuestionQuality;
   /** Only questions with a worked solution (GOLD: checked and solved, see qualityTierOf). */
   solved?: boolean;
+  /** Only the free samples. */
+  sample?: boolean;
 }
 
 /** What every student-facing read requires: in the bank, and checked. */
@@ -154,6 +156,7 @@ export class QuestionBankService {
     if (filters.examMajor) where.examMajor = filters.examMajor;
     if (filters.examYear) where.examYear = filters.examYear;
     if (filters.solved) where.qualityTier = QuestionQuality.GOLD;
+    if (filters.sample) where.isSample = true;
     // Structured filters are indexed and exact; `q` is a simple substring
     // match over scalar fields only. True full-text search into the JSON
     // stem/solution block content (doc's "PostgreSQL FTS") is not built yet
@@ -227,7 +230,8 @@ export class QuestionBankService {
    * filters. Counts only; nothing of a question's content.
    */
   async counts(subjectCode?: string) {
-    const [subjects, topics] = await Promise.all([
+    const weekAgo = new Date(Date.now() - 7 * 86400000);
+    const [subjects, topics, addedThisWeek, samples] = await Promise.all([
       this.prisma.$queryRaw<{ code: string; n: number; solved: number }[]>`
         SELECT "subjectCode" AS code, count(*)::int AS n,
                count(*) FILTER (WHERE jsonb_typeof("solutionBlocks") = 'array' AND jsonb_array_length("solutionBlocks") > 0)::int AS solved
@@ -240,8 +244,13 @@ export class QuestionBankService {
             WHERE q."subjectCode" = ${subjectCode} AND q."retiredAt" IS NULL AND q."qualityTier" <> 'DRAFT'
             GROUP BY t.code`
         : Promise.resolve([] as { code: string; n: number }[]),
+      this.prisma.question.count({ where: { ...STUDENT_VISIBLE, createdAt: { gte: weekAgo } } }),
+      this.prisma.question.count({ where: { ...STUDENT_VISIBLE, isSample: true } }),
     ]);
     return {
+      /** Questions that joined the bank in the last seven days, and the free samples. */
+      addedThisWeek,
+      samples,
       subjects: Object.fromEntries(subjects.map((row) => [row.code, row.n])),
       /** Per subject, how many questions carry a worked solution. */
       solved: Object.fromEntries(subjects.map((row) => [row.code, row.solved])),
@@ -274,6 +283,80 @@ export class QuestionBankService {
     const [{ latest }] = await this.prisma.$queryRaw<{ latest: number | null }[]>`
       SELECT max("examYear")::int AS latest FROM "questions" WHERE "retiredAt" IS NULL AND "qualityTier" <> 'DRAFT'`;
     return { years: [...years].sort((a, b) => a - b), latestYear: latest ?? null, topics };
+  }
+
+  /**
+   * «۱۰ تست امروز»: the day's practice for one student, the same all day
+   * (Tehran time) so a reload does not reshuffle it. First the questions
+   * whose last answer was wrong before today (oldest first: they are due),
+   * then unseen questions with a worked solution, from the subjects the
+   * student practises (all readable ones before they practise any). Only
+   * questions the student may read are served, whole. Also how many
+   * questions they answered today and their streak of practice days.
+   */
+  async today(userId: string) {
+    const tehranDay = (date: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tehran" }).format(date);
+    const day = tehranDay(new Date());
+    const dayStart = new Date(`${day}T00:00:00+03:30`);
+
+    const subjects = (await this.prisma.question.findMany({ where: STUDENT_VISIBLE, distinct: ["subjectCode"], select: { subjectCode: true } })).map(
+      (row) => row.subjectCode,
+    );
+    const open = [...(await this.access.accessibleQuestionBankSubjects(userId, subjects))];
+    const readable: Prisma.QuestionWhereInput = { ...STUDENT_VISIBLE, OR: [{ isSample: true }, { subjectCode: { in: open } }] };
+
+    const answers = await this.prisma.practiceAnswer.findMany({
+      where: { userId },
+      orderBy: { createdAt: "asc" },
+      select: { questionId: true, outcome: true, createdAt: true, question: { select: { subjectCode: true } } },
+    });
+    const last = new Map<string, { outcome: string; at: Date }>();
+    const practised = new Set<string>();
+    const days = new Set<string>();
+    const today = new Set<string>();
+    for (const answer of answers) {
+      days.add(tehranDay(answer.createdAt));
+      practised.add(answer.question.subjectCode);
+      if (answer.createdAt >= dayStart) today.add(answer.questionId);
+      if (answer.outcome !== "VOID") last.set(answer.questionId, { outcome: answer.outcome, at: answer.createdAt });
+    }
+
+    // A streak counts back from today, or from yesterday while today is still open.
+    let streak = 0;
+    const cursor = new Date(dayStart.getTime() + 12 * 3600 * 1000);
+    if (!days.has(day)) cursor.setTime(cursor.getTime() - 86400000);
+    while (days.has(tehranDay(cursor))) {
+      streak += 1;
+      cursor.setTime(cursor.getTime() - 86400000);
+    }
+
+    const GOAL = 10;
+    const due = [...last.entries()]
+      .filter(([id, entry]) => entry.outcome === "WRONG" && entry.at < dayStart && !today.has(id))
+      .sort((a, b) => a[1].at.getTime() - b[1].at.getTime())
+      .map(([id]) => id);
+    const review = due.length
+      ? (await this.prisma.question.findMany({ where: { ...readable, id: { in: due } }, select: { id: true } }))
+          .map((row) => row.id)
+          .sort((a, b) => due.indexOf(a) - due.indexOf(b))
+          .slice(0, 4)
+      : [];
+
+    // Fresh questions in an order fixed for the day: hashed with the student and the date.
+    const subjectsToDraw = practised.size ? [...practised] : null;
+    const fresh = await this.prisma.$queryRaw<{ id: string }[]>`
+      SELECT q."id" FROM "questions" q
+      WHERE q."retiredAt" IS NULL AND q."qualityTier" = 'GOLD'
+        AND (q."isSample" OR q."subjectCode" = ANY(${open}::text[]))
+        AND (${subjectsToDraw}::text[] IS NULL OR q."subjectCode" = ANY(${subjectsToDraw}::text[]))
+        AND NOT EXISTS (SELECT 1 FROM "practice_answers" a WHERE a."questionId" = q."id" AND a."userId" = ${userId})
+      ORDER BY md5(q."id" || ${userId} || ${day})
+      LIMIT ${GOAL}`;
+    const ids = [...review, ...fresh.map((row) => row.id)].slice(0, GOAL);
+    const rows = ids.length ? (await this.prisma.question.findMany({ where: { id: { in: ids } }, select: ANSWERED_QUESTION_SELECT })).map(answeredView) : [];
+    const items = ids.map((id) => rows.find((row) => row.id === id)).filter((row): row is AnsweredQuestion => Boolean(row));
+
+    return { day, goal: GOAL, answeredToday: today.size, streak, review: review.length, items };
   }
 
   async samples(subjectCode: string, limit = 6): Promise<AnsweredQuestion[]> {

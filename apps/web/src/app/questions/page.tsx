@@ -22,8 +22,8 @@ async function chapterReading(): Promise<Record<string, ReadingLink[]>> {
 /**
  * Server shell: resolves the Persian subject names here so the client bundle
  * carries a small list of names, not the whole editorial corpus. A link with
- * `?subject=`, `&chapter=`, `&topic=`, `&year=`, `&track=`, `&solved=1` or
- * `&page=` (from a question page, or a shared filtered bank) opens the bank
+ * `?subject=`, `&chapter=`, `&topic=`, `&year=`, `&track=`, `&solved=1`, `&sample=1`,
+ * `&set=today` or `&page=` (from a question page, or a shared filtered bank) opens the bank
  * already filtered.
  */
 export default async function QuestionBankPage({ searchParams: pendingSearchParams }: { searchParams: Promise<Params> }) {
@@ -43,6 +43,8 @@ export default async function QuestionBankPage({ searchParams: pendingSearchPara
         examMajor: one(searchParams.track),
         collection: one(searchParams.collection),
         solved: one(searchParams.solved) ? "1" : "",
+        sample: one(searchParams.sample) ? "1" : "",
+        set: one(searchParams.set) === "today" ? "today" : "",
       }}
     />
   );

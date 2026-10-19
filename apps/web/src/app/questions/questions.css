@@ -66,6 +66,28 @@
 .qb-focus-btn:hover { background: var(--accent); }
 .qb .glyph { width: 1.1em; height: 1.1em; flex: none; }
 
+/* ------------------------------------------------- practice desk (top) */
+.pd { display: flex; align-items: center; gap: 0.9rem 1.1rem; flex-wrap: wrap; margin-bottom: 1rem; padding: 0.9rem 1.1rem; border: 1px solid var(--accent-line); border-radius: var(--radius-xl, 1rem); background: linear-gradient(135deg, var(--accent-soft), var(--surface) 70%); }
+.pd-ring { position: relative; flex: none; width: 3.6rem; height: 3.6rem; }
+.pd-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.pd-ring circle { fill: none; stroke-width: 4.5; }
+.pd-ring-track { stroke: var(--line); }
+.pd-ring-fill { stroke: var(--accent); stroke-linecap: round; transition: stroke-dasharray var(--motion-slow, 400ms) var(--ease); }
+.pd-ring span { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ink); line-height: 1.1; }
+.pd-ring b { font-size: var(--text-base); font-weight: var(--weight-heavy); }
+.pd-ring small { color: var(--muted); font-size: 0.62rem; font-weight: var(--weight-semibold); }
+.pd-main { flex: 1 1 16rem; min-width: 0; }
+.pd-title { margin: 0; color: var(--ink); font-size: var(--text-base); font-weight: var(--weight-bold); line-height: 1.7; }
+.pd-sub { display: flex; flex-wrap: wrap; gap: 0.15rem 0.9rem; margin: 0.1rem 0 0; color: var(--ink-700); font-size: var(--text-xs); line-height: 1.8; }
+.pd-sub span + span::before { content: "·"; margin-inline-end: 0.9rem; color: var(--ink-300); }
+.pd-streak { color: var(--warning-ink); font-weight: var(--weight-semibold); }
+.pd-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.pd-actions .ds-btn { gap: 0.35rem; }
+.pd-actions .glyph { width: 1rem; height: 1rem; }
+.qb-today { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; padding: 0.7rem 1rem; border: 1px solid var(--accent-line); border-radius: var(--radius-lg); background: var(--accent-soft); }
+.qb-today p { margin: 0; color: var(--ink-700); font-size: var(--text-sm); }
+.qb-today strong { color: var(--accent-hover); }
+
 /* ------------------------------------------------------- sheet and side */
 .qb-layout { display: grid; grid-template-columns: minmax(0, 1fr) 13.5rem; gap: 1.5rem; align-items: start; padding-block: 1rem 4rem; }
 .qb-sheet { min-width: 0; }

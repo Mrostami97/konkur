@@ -10,10 +10,12 @@ import { Glyph } from "../../components/SubjectIcon";
 import type { ReadingLink } from "../../content/article-topics";
 import { LockedRun, QuestionCard, isOpen, type BankQuestion, type CardHandle } from "./QuestionCard";
 import { loadHistories, type History, type Outcome } from "./practice";
+import { LAST_PLACE_KEY, PracticeDesk, type TodayState } from "./PracticeDesk";
 
 export interface SubjectOption { code: string; title: string }
 
-interface Counts { subjects: Record<string, number>; solved?: Record<string, number>; topics: Record<string, number> }
+interface Counts { subjects: Record<string, number>; solved?: Record<string, number>; topics: Record<string, number>; addedThisWeek?: number; samples?: number }
+interface TodayResponse { goal: number; answeredToday: number; streak: number; review: number; items: BankQuestion[] }
 
 const PAGE_SIZE = 10;
 /** Konkur years a question can come from, newest first. */
@@ -37,8 +39,9 @@ const COLLECTIONS = [
   { value: "noted", label: "یادداشت‌دارها" },
 ];
 
-export interface Filters { subjectCode: string; chapter: string; topic: string; examYear: string; examMajor: string; collection: string; solved: string }
-const EMPTY: Filters = { subjectCode: "", chapter: "", topic: "", examYear: "", examMajor: "", collection: "", solved: "" };
+/** `set`: "today" is the day's practice set instead of the filtered bank; `sample`: only the free samples. */
+export interface Filters { subjectCode: string; chapter: string; topic: string; examYear: string; examMajor: string; collection: string; solved: string; sample: string; set: string }
+const EMPTY: Filters = { subjectCode: "", chapter: "", topic: "", examYear: "", examMajor: "", collection: "", solved: "", sample: "", set: "" };
 
 const KEYS: [string, string][] = [
   ["۱ تا ۴", "انتخاب گزینه"],
@@ -84,6 +87,9 @@ export function QuestionBank({
   /** null when signed out: no history, collections or stars. */
   const [histories, setHistories] = useState<Record<string, History> | null>(null);
   const [outcomes, setOutcomes] = useState<Record<string, Outcome>>({});
+  /** Today's goal and streak; null until known, and for a visitor. */
+  const [today, setToday] = useState<TodayState | null>(null);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [active, setActive] = useState(0);
   const [focus, setFocus] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -123,6 +129,17 @@ export function QuestionBank({
     setLoading(true);
     setError(null);
     try {
+      if (filters.set === "today") {
+        const day = await apiFetch<TodayResponse>("/questions/today");
+        setToday({ goal: day.goal, answeredToday: day.answeredToday, streak: day.streak, review: day.review, total: day.items.length });
+        setHistories(await loadHistories(day.items.map((item) => item.id)));
+        setItems(day.items);
+        setTotal(day.items.length);
+        setOutcomes({});
+        setActive(0);
+        firstLoad.current = false;
+        return;
+      }
       const params = new URLSearchParams({ page: String(page), pageSize: String(PAGE_SIZE) });
       if (filters.subjectCode) params.set("subjectCode", filters.subjectCode);
       if (filters.topic) params.set("topicCode", filters.topic);
@@ -131,6 +148,7 @@ export function QuestionBank({
       if (filters.examMajor) params.set("examMajor", filters.examMajor);
       if (filters.collection) params.set("collection", filters.collection);
       if (filters.solved) params.set("solved", "true");
+      if (filters.sample) params.set("sample", "true");
       const data = await apiFetch<{ items: BankQuestion[]; total: number }>(`/questions?${params}`);
       setHistories(await loadHistories(data.items.map((item) => item.id)));
       setItems(data.items);
@@ -161,13 +179,34 @@ export function QuestionBank({
     if (filters.examMajor) params.set("track", filters.examMajor);
     if (filters.collection) params.set("collection", filters.collection);
     if (filters.solved) params.set("solved", "1");
+    if (filters.sample) params.set("sample", "1");
+    if (filters.set) params.set("set", filters.set);
     if (page > 1) params.set("page", String(page));
     window.history.replaceState(null, "", params.size ? `?${params}` : window.location.pathname);
+    // Remembered for «ادامه از جای قبلی» (this browser only); the day's set is not a place.
+    if (!filters.set && params.size) {
+      try {
+        window.localStorage.setItem(LAST_PLACE_KEY, `?${params}`);
+      } catch {
+        // Private windows may refuse storage; the bank works without it.
+      }
+    }
   }, [filters, page]);
 
+  // Today's goal and streak, which also says whether the visitor is signed in.
+  useEffect(() => {
+    apiFetch<TodayResponse>("/questions/today")
+      .then((day) => {
+        setSignedIn(true);
+        setToday({ goal: day.goal, answeredToday: day.answeredToday, streak: day.streak, review: day.review, total: day.items.length });
+      })
+      .catch(() => setSignedIn(false));
+  }, []);
+
+  /** Any filter change leaves the day's set for the filtered bank. */
   function set(next: Partial<Filters>) {
     setPage(1);
-    setFilters((previous) => ({ ...previous, ...next }));
+    setFilters((previous) => ({ ...previous, set: "", ...next }));
   }
 
   const open = items.filter(isOpen);
@@ -175,7 +214,8 @@ export function QuestionBank({
   const tree = filters.subjectCode ? SYLLABUS[filters.subjectCode] ?? [] : [];
   const topicCount = (code: string) => counts?.topics[code] ?? 0;
   const chapter = tree.find((item) => item.code === filters.chapter);
-  const activeFilters = [filters.subjectCode, filters.examYear, filters.examMajor, filters.collection, filters.solved].filter(Boolean).length;
+  const activeFilters = [filters.subjectCode, filters.examYear, filters.examMajor, filters.collection, filters.solved, filters.sample].filter(Boolean).length;
+  const todayMode = filters.set === "today";
   const bankTotal = counts ? Object.values(counts.subjects).reduce((sum, n) => sum + n, 0) : null;
   const bankSolved = counts?.solved ? Object.values(counts.solved).reduce((sum, n) => sum + n, 0) : null;
   const answered = open.filter((question) => outcomes[question.id]).length;
@@ -252,6 +292,12 @@ export function QuestionBank({
   }, [focus]);
 
   function onOutcome(id: string, outcome: Outcome) {
+    // A question first answered today moves today's ring on (the server counts the same way).
+    const midnight = new Date().setHours(0, 0, 0, 0);
+    const lastAt = histories?.[id]?.lastAt;
+    if (signedIn && !outcomes[id] && !(lastAt && Date.parse(lastAt) >= midnight)) {
+      setToday((current) => (current ? { ...current, answeredToday: current.answeredToday + 1 } : current));
+    }
     setOutcomes((previous) => ({ ...previous, [id]: outcome }));
   }
 
@@ -276,6 +322,7 @@ export function QuestionBank({
     filters.examMajor && TRACKS.find((track) => track.value === filters.examMajor)?.label,
     filters.collection && COLLECTIONS.find((item) => item.value === filters.collection)?.label,
     filters.solved && "با حل تشریحی",
+    filters.sample && "تست‌های رایگان",
   ].filter(Boolean);
 
   return (
@@ -403,6 +450,9 @@ export function QuestionBank({
             <button type="button" className="qb-chip" aria-pressed={Boolean(filters.solved)} onClick={() => set({ solved: filters.solved ? "" : "1" })}>
               فقط با حل تشریحی
             </button>
+            <button type="button" className="qb-chip" aria-pressed={Boolean(filters.sample)} onClick={() => set({ sample: filters.sample ? "" : "1", set: "" })}>
+              رایگان
+            </button>
             {activeFilters > 0 && (
               <button type="button" className="qb-clear" onClick={() => set(EMPTY)}>پاک کردن</button>
             )}
@@ -421,14 +471,38 @@ export function QuestionBank({
 
       <div className="qb-wrap qb-layout" ref={sheetTop}>
         <section className="qb-sheet" aria-label="تست‌ها">
-          {summary.length > 0 && <p className="qb-summary">{summary.join(" · ")}</p>}
+          {todayMode ? (
+            <div className="qb-today">
+              <p>
+                <strong>تست‌های امروز</strong>
+                {today ? ` · ${toPersianDigits(Math.min(today.answeredToday, today.goal))} از ${toPersianDigits(today.goal)} تست امروز زده‌ای` : ""}
+              </p>
+              <button type="button" className="qb-clear" onClick={() => set({ set: "" })}>همهٔ تست‌های بانک</button>
+            </div>
+          ) : (
+            <PracticeDesk
+              today={today}
+              signedIn={signedIn}
+              samples={counts?.samples ?? null}
+              addedThisWeek={counts?.addedThisWeek ?? null}
+              onToday={() => set({ ...EMPTY, set: "today" })}
+              onSamples={() => set({ ...EMPTY, sample: "1" })}
+            />
+          )}
+          {!todayMode && summary.length > 0 && <p className="qb-summary">{summary.join(" · ")}</p>}
           <DataState
             loading={loading}
             error={error}
             isEmpty={items.length === 0}
             onRetry={search}
-            emptyTitle={filters.collection ? "در این دسته هنوز تستی نیست" : "تستی با این فیلترها نیست"}
-            emptyDescription={filters.collection ? "تست بزن تا این دسته پر شود، یا دستهٔ دیگری را انتخاب کن." : "فیلترها را کمتر کن یا همه را پاک کن."}
+            emptyTitle={todayMode ? "برای امروز تستی نمانده" : filters.collection ? "در این دسته هنوز تستی نیست" : "تستی با این فیلترها نیست"}
+            emptyDescription={
+              todayMode
+                ? "همهٔ تست‌های آمادهٔ امروز را زده‌ای، یا هنوز بانک درسی را باز نکرده‌ای. از تست‌های رایگان شروع کن."
+                : filters.collection
+                  ? "تست بزن تا این دسته پر شود، یا دستهٔ دیگری را انتخاب کن."
+                  : "فیلترها را کمتر کن یا همه را پاک کن."
+            }
             skeletonRows={6}
           >
             <div className="qb-items">
@@ -469,13 +543,13 @@ export function QuestionBank({
               })}
             </div>
 
-            {hasNext && (
+            {hasNext && !todayMode && (
               <button type="button" className="qb-next" onClick={() => setPage(page + 1)}>
                 {toPersianDigits(Math.min(PAGE_SIZE, total - page * PAGE_SIZE))} تست بعدی
                 <Glyph name="arrowLeft" />
               </button>
             )}
-            {total > PAGE_SIZE && (
+            {total > PAGE_SIZE && !todayMode && (
               <div className="qb-pages">
                 <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
               </div>

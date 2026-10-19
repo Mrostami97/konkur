@@ -35,6 +35,7 @@ export class QuestionsPublicController {
     @Query("examYear") examYear?: string,
     @Query("q") q?: string,
     @Query("solved") solved?: string,
+    @Query("sample") sample?: string,
     @Query("page") page?: string,
     @Query("pageSize") pageSize?: string,
   ) {
@@ -50,6 +51,7 @@ export class QuestionsPublicController {
         examYear: examYear ? Number(examYear) : undefined,
         q,
         solved: solved === "true",
+        sample: sample === "true",
         page: page ? Number(page) : undefined,
         pageSize: pageSize ? Number(pageSize) : undefined,
       },
@@ -84,6 +86,13 @@ export class QuestionsPublicController {
   progress(@Req() req: RequestWithUser, @Query("subjectCode") subjectCode?: string) {
     if (!subjectCode || !/^[a-z0-9-]{1,80}$/.test(subjectCode)) throw new BadRequestException("subjectCode is required");
     return this.practice.progress(req.user!.id, subjectCode);
+  }
+
+  /** «۱۰ تست امروز»: the day's practice set, today's answers against the goal, and the streak; declared before `:id`. */
+  @Get("today")
+  @UseGuards(SessionAuthGuard)
+  today(@Req() req: RequestWithUser) {
+    return this.questionBank.today(req.user!.id);
   }
 
   /** The student's progress on every subject they have practised: questions seen and right last time. */
