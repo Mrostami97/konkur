@@ -16,6 +16,10 @@ Fix these in the bank; articles built here already use the image's text.
 | doc-aa34d7e9ba352ebc-q-0039 | CE 1404 q39, option 4 | `۶۰۰۰` lines | `۶۰۰۰۰` lines — with the bank number option 4 is also false and the key (2) is no longer the only answer |
 | it-1388-C-q0096 | IT 1388 q96, stem | «(با کوانتوم زمانی q=1 و NP-LCFS» | «(با کوانتوم زمانی q=1) و NP-LCFS» (closing parenthesis) |
 | kunkurcomputer-q-1209-1392-370C-063 | CS 1392 q63, option 3 | ۱۲۵ | ۱۲۰ (the Huffman merge cost; the key 3 holds with the booklet). Fixed in questions/text-fixes.mjs |
+| kunkurcomputer-q-1209-1389-3077-057 | CS 1389 q57, option 2 | «۲ و ۱۰» (the same as option 4) | «۳ و ۱۰». Found by the 2026-10-20 text audit (duplicate options); key 1 unaffected. Fixed in text-fixes.mjs |
+| kunkurcomputer-q-1209-1395-271F-093 (and its repeat -185) | CS 1395 q93, options 3 and 4 | option 3 untyped (crop only); option 4 «زمان O(n³) و حافظه O(n²)» (the same as option 1) | option 3 «زمان O(n³) و حافظه O(n³)», option 4 «زمان O(n²) و حافظه O(n³)». Key 1 unaffected. Fixed in text-fixes.mjs |
+
+The same audit found two booklets that print two options identically themselves: CE 1389 q53 (options 3 and 4, `O(n lg n)`) and CE 1390 q76 (options 1 and 4, «۹۰٪، ۵/۹»). The bank keeps the booklet's text.
 
 ## Key errors (the bank's key misses a final-key change)
 

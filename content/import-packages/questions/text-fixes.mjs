@@ -13,10 +13,15 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1276-1402-758F-030", { stem: [["تعداد پرتقال‌ها مضرب ۲ باشد", "تعداد پرتقال‌ها مضرب ۳ باشد"]] }],
   // CS 1392 q63: the booklet's option 3 is ۱۲۰ (the Huffman merge cost), the bank typed 125.
   ["kunkurcomputer-q-1209-1392-370C-063", { options: { 3: "$120$" } }],
+  // CS 1389 q57: option 2 is «۳ و ۱۰» in the booklet; the bank repeated option 4 (2026-10-20 text audit).
+  ["kunkurcomputer-q-1209-1389-3077-057", { options: { 2: "‭۳ و ۱۰‬" } }],
+  // CS 1395 q93 (repeated as q185): option 3 was untyped and option 4 repeated option 1.
+  ["kunkurcomputer-q-1209-1395-271F-093", { options: { 3: "زمان $O(n^3)$ و حافظهٔ $O(n^3)$", 4: "زمان $O(n^2)$ و حافظهٔ $O(n^3)$" } }],
+  ["kunkurcomputer-q-1209-1395-271F-185", { options: { 3: "زمان $O(n^3)$ و حافظهٔ $O(n^3)$", 4: "زمان $O(n^2)$ و حافظهٔ $O(n^3)$" } }],
 
   // Typed from the booklet crop: the bank kept only the sentence that points at them.
   ["kunkurcomputer-q-1209-1382-b0-144", {
-    append: "$$L=\\{w \\mid w\\in\\{\\{a\\}^*,\\{b\\}^*,\\{c\\}^*\\}\\ \\wedge\\ \\big((n_a(w)=n_b(w))\\ \\vee\\ (n_a(w)=n_c(w))\\ \\vee\\(n_b(w)=n_c(w))\\big)\\}$$",
+    append: "$$L=\\{w \\mid w\\in\\{\\{a\\}^*,\\{b\\}^*,\\{c\\}^*\\}\\ \\wedge\\ \\big((n_a(w)=n_b(w))\\ \\vee\\ (n_a(w)=n_c(w))\\ \\vee\\ (n_b(w)=n_c(w))\\big)\\}$$",
   }],
   ["kunkurcomputer-q-1209-1392-370C-088", {
     table: { headers: ["ماتریس", "A", "B", "C", "D"], rows: [["ابعاد", "10×100", "100×1", "1×20", "20×5"]] },
