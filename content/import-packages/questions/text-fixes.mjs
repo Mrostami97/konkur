@@ -9,6 +9,8 @@
 const code = (lines) => "```\n" + lines.join("\n") + "\n```";
 
 export const TEXT_FIXES = new Map([
+  // IT 1402 q30: the booklet says oranges come in multiples of 3; the bank typed «مضرب ۲».
+  ["kunkurcomputer-q-1276-1402-758F-030", { stem: [["تعداد پرتقال‌ها مضرب ۲ باشد", "تعداد پرتقال‌ها مضرب ۳ باشد"]] }],
   // CS 1392 q63: the booklet's option 3 is ۱۲۰ (the Huffman merge cost), the bank typed 125.
   ["kunkurcomputer-q-1209-1392-370C-063", { options: { 3: "$120$" } }],
 
