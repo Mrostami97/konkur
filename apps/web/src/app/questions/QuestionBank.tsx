@@ -287,17 +287,16 @@ export function QuestionBank({
             <p className="qb-stats">
               {bankTotal !== null ? (
                 <>
-                  <strong className="tnum">{formatPersianNumber(bankTotal)}</strong> تست مقابله‌شده با دفترچهٔ اصلی
+                  <strong className="tnum">{formatPersianNumber(bankTotal)}</strong> تست از کنکورهای ارشد سال‌های قبل
                   {bankSolved ? (
                     <>
-                      {" · "}
-                      <strong className="tnum">{formatPersianNumber(bankSolved)}</strong> حل تشریحی
+                      ؛ <strong className="tnum">{formatPersianNumber(bankSolved)}</strong> تا با حل تشریحی
                     </>
                   ) : null}
-                  {" · "}هر تست سر جای خودش در سرفصل ۱۴۰۶
+                  .
                 </>
               ) : (
-                "تست‌های کنکور، درس‌به‌درس و مبحث‌به‌مبحث، سر جای خودش در سرفصل ۱۴۰۶"
+                "تست‌های کنکورهای ارشد سال‌های قبل، درس‌به‌درس و مبحث‌به‌مبحث."
               )}
             </p>
           </div>
