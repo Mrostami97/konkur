@@ -3,6 +3,7 @@ import { subjects } from "../../../../content/editorial";
 import { SYLLABUS } from "../../../../lib/syllabus";
 import { SubjectBank, type ChapterStats } from "./SubjectBank";
 import { apiGetPublic } from "../../../../lib/api";
+import { readingByChapter, solutionArticles, type ListedArticle } from "../../../../content/article-topics";
 import { pageMetadata } from "../../../../lib/seo";
 import "../../questions.css";
 
@@ -36,5 +37,22 @@ export default async function SubjectBankPage({ params }: { params: Promise<{ su
   } catch {
     stats = null;
   }
-  return <SubjectBank code={code} title={subject.title} chapters={SYLLABUS[code]} initialStats={stats} />;
+  // What to read for each chapter: the lesson notes and topic-test articles that teach its topics.
+  let articles: ListedArticle[] = [];
+  try {
+    const listed = await apiGetPublic<ListedArticle[] | { items: ListedArticle[] }>("/articles?pageSize=200", { revalidate: 600 });
+    articles = Array.isArray(listed) ? listed : listed?.items ?? [];
+  } catch {
+    articles = [];
+  }
+  return (
+    <SubjectBank
+      code={code}
+      title={subject.title}
+      chapters={SYLLABUS[code]}
+      initialStats={stats}
+      reading={readingByChapter(articles, SYLLABUS[code])}
+      solutions={solutionArticles(articles, code)}
+    />
+  );
 }

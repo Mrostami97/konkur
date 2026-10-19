@@ -1,6 +1,7 @@
 import { subjects } from "../../../content/editorial";
 import { SYLLABUS } from "../../../lib/syllabus";
-import { SubjectsIndex } from "./SubjectsIndex";
+import { SubjectsIndex, type BankCounts } from "./SubjectsIndex";
+import { apiGetPublic } from "../../../lib/api";
 import { pageMetadata } from "../../../lib/seo";
 import "../questions.css";
 
@@ -15,9 +16,16 @@ export const metadata = {
 };
 
 /** Server shell: every 1406 subject with a syllabus tree, and how many chapters it has. */
-export default function SubjectsIndexPage() {
+export default async function SubjectsIndexPage() {
   const catalog = subjects
     .filter((subject) => SYLLABUS[subject.slug])
     .map((subject) => ({ code: subject.slug, title: subject.title, chapters: SYLLABUS[subject.slug].filter((c) => !c.offSyllabus).length }));
-  return <SubjectsIndex catalog={catalog} />;
+  // Counts on the server, so search engines see them; the student's progress loads in the browser.
+  let counts: BankCounts | null = null;
+  try {
+    counts = await apiGetPublic<BankCounts>("/questions/counts", { revalidate: 600 });
+  } catch {
+    counts = null;
+  }
+  return <SubjectsIndex catalog={catalog} initialCounts={counts} />;
 }

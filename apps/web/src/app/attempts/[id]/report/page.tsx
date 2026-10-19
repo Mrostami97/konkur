@@ -21,6 +21,7 @@ interface ReportItem {
   question: {
     id: string;
     subjectCode: string;
+    topicCodes?: string[];
     passage: { externalId: string; blocks: Block[] } | null;
     stemBlocks: Block[];
     options: Option[];
@@ -131,6 +132,7 @@ export default function ReportPage({ params: pendingParams }: { params: Promise<
         outcome,
         sectionId: item.sectionId,
         subjectCode: item.question.subjectCode,
+        topicCodes: item.question.topicCodes ?? [],
         timeSpentMs: item.timeSpentMs,
         changeCount: item.changeCount,
         flagged: item.flagged,

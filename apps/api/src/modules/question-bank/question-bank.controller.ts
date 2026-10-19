@@ -84,6 +84,13 @@ export class QuestionsPublicController {
     return this.practice.progress(req.user!.id, subjectCode);
   }
 
+  /** The student's progress on every subject they have practised: questions seen and right last time. */
+  @Get("progress-summary")
+  @UseGuards(SessionAuthGuard)
+  progressSummary(@Req() req: RequestWithUser) {
+    return this.practice.progressSummary(req.user!.id);
+  }
+
   /** A random set of questions the student may read, for practice with the key after each. */
   @Post("practice-set")
   @UseGuards(SessionAuthGuard)

@@ -7,6 +7,7 @@ import modelJson from "../../../../content/rank-model-1277.json";
 import { subjectName } from "../../../../content/subject-names";
 import { toPersianDigits } from "../../../../lib/format";
 import { AdmissionMatches } from "../../../../components/AdmissionMatches";
+import { ChapterInsight } from "./ChapterInsight";
 import { boxesFrom } from "../../../../lib/konkur-estimate";
 import {
   admissionMatches,
@@ -51,6 +52,8 @@ export interface CardItem {
   outcome: "correct" | "wrong" | "blank";
   sectionId: string | null;
   subjectCode: string;
+  /** The question's 1406 syllabus topics, for the chapter-by-chapter view. */
+  topicCodes: string[];
   timeSpentMs: number;
   changeCount: number;
   flagged: boolean;
@@ -468,6 +471,7 @@ export function ReportCard({
       {report.sections.length > 0 && <SectionsTable report={report} />}
       <RankEstimate report={report} />
       <Subjects report={report} />
+      <ChapterInsight items={items} />
       {charts}
       <TimeAndStrategy report={report} items={items} onJump={onJump} />
       <GoldenMisses report={report} items={items} onJump={onJump} />

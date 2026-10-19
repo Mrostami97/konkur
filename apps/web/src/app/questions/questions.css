@@ -365,3 +365,11 @@ button[aria-pressed="true"] .qb-count { color: var(--accent-hover); background: 
 .sb-more { display: grid; gap: 0.45rem; padding: 1rem 1.25rem; border: 1px dashed var(--line); border-radius: var(--radius-lg); }
 .sb-more a { color: var(--accent-hover); font-size: var(--text-sm); font-weight: var(--weight-semibold); text-decoration: none; }
 .sb-more a:hover { text-decoration: underline; }
+.sb-tile-solved { color: var(--accent-hover) !important; font-weight: var(--weight-semibold); }
+.sb-tile-progress { display: grid; gap: 0.25rem; margin-top: 0.2rem; }
+.sb-tile-progress small { color: var(--ink-700); font-size: var(--text-2xs); }
+.sb-reading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.6rem; font-size: var(--text-xs); }
+.sb-reading span { color: var(--ink-700); font-weight: var(--weight-semibold); }
+.sb-reading a { padding: 0.15rem 0.6rem; border: 1px solid var(--line); border-radius: var(--radius-pill); color: var(--accent-hover); background: var(--surface); text-decoration: none; }
+.sb-reading a[data-kind="lesson"] { border-color: var(--accent-line); background: var(--accent-soft); }
+.sb-reading a:hover { border-color: var(--accent); }

@@ -220,3 +220,27 @@
   .rp-lead strong, .rp-lead h2, .rp-lead p { color: #000 !important; }
   a { color: inherit; text-decoration: none; }
 }
+
+/* Chapter by chapter: the student's result next to the chapter's weight in recent exams. */
+.rc-chapters { display: grid; gap: 0; }
+.rc-chapter { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 0.25rem 1rem; align-items: center; padding: 0.65rem 0; border-bottom: 1px solid var(--line-soft); }
+.rc-chapter-head { padding-top: 0; color: var(--muted); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.rc-chapter-name { display: grid; gap: 0.1rem; min-width: 0; }
+.rc-chapter-name b { color: var(--ink); font-size: var(--text-sm); }
+.rc-chapter-name small { color: var(--muted); font-size: var(--text-2xs); }
+.rc-chapter-score { display: flex; align-items: baseline; gap: 0.45rem; }
+.rc-chapter-score b { color: var(--ink); font-size: var(--text-base); }
+.rc-chapter-score em { font-style: normal; font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.rc-chapter-score em[data-tone="weak"] { color: var(--danger); }
+.rc-chapter-score em[data-tone="mid"] { color: var(--warning); }
+.rc-chapter-score em[data-tone="good"] { color: var(--success); }
+.rc-chapter-weight { color: var(--ink-700); font-size: var(--text-xs); }
+.rc-chapter-link a { color: var(--accent); font-size: var(--text-xs); font-weight: var(--weight-semibold); text-decoration: none; white-space: nowrap; }
+@media (max-width: 640px) {
+  .rc-chapter { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name name" "score link" "weight weight"; }
+  .rc-chapter-head { display: none; }
+  .rc-chapter-name { grid-area: name; }
+  .rc-chapter-score { grid-area: score; }
+  .rc-chapter-weight { grid-area: weight; }
+  .rc-chapter-link { grid-area: link; }
+}

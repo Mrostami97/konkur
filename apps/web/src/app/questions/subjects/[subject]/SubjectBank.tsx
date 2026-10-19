@@ -7,10 +7,13 @@ import { apiFetch } from "../../../../lib/api";
 import { toPersianDigits } from "../../../../lib/format";
 import type { SyllabusChapter } from "../../../../lib/syllabus";
 import { startPractice } from "../../start-practice";
+import type { ReadingLink } from "../../../../content/article-topics";
 
 /** GET /questions/chapter-stats: per syllabus topic, questions, worked solutions and questions per exam year. */
 export interface ChapterStats {
   years: number[];
+  /** The latest konkur in the whole bank, so "recent" means the same years on every subject. */
+  latestYear?: number | null;
   topics: Record<string, { n: number; solved: number; byYear: Record<string, number> }>;
 }
 type Progress = Record<string, { seen: number; right: number }>;
@@ -37,11 +40,17 @@ export function SubjectBank({
   title,
   chapters,
   initialStats,
+  reading = {},
+  solutions = [],
 }: {
   code: string;
   title: string;
   chapters: SyllabusChapter[];
   initialStats: ChapterStats | null;
+  /** Per chapter code, the articles that teach its topics. */
+  reading?: Record<string, ReadingLink[]>;
+  /** The subject's year-by-year solution articles. */
+  solutions?: ReadingLink[];
 }) {
   const router = useRouter();
   const [stats, setStats] = useState<ChapterStats | null>(initialStats);
@@ -55,11 +64,19 @@ export function SubjectBank({
     apiFetch<Progress>(`/questions/progress?subjectCode=${encodeURIComponent(code)}`).then(setProgress).catch(() => setProgress(null));
   }, [code, initialStats]);
 
-  const recentYears = (stats?.years ?? []).slice(-RECENT_YEARS);
+  // The latest five konkurs (e.g. 1401–1405). A subject whose reviewed questions stop earlier has no
+  // recent window, and its frequencies are counted over every year in the bank, labelled so.
+  const latest = stats ? stats.latestYear ?? Math.max(0, ...stats.years) : 0;
+  const window = latest ? Array.from({ length: RECENT_YEARS }, (_, i) => latest - RECENT_YEARS + 1 + i) : [];
+  const hasRecent = Boolean(stats && window.some((y) => Object.values(stats.topics).some((t) => t.byYear[y])));
+  const recentYears = hasRecent ? window : [];
   const topic = (topicCode: string) => stats?.topics[topicCode];
   const sumOf = (codes: string[], pick: (t: ChapterStats["topics"][string]) => number) =>
     codes.reduce((sum, c) => sum + (topic(c) ? pick(topic(c)!) : 0), 0);
   const recentOf = (t: ChapterStats["topics"][string]) => recentYears.reduce((sum, y) => sum + (t.byYear[y] ?? 0), 0);
+  /** How often a topic comes: in the latest konkurs, or over all years when the subject has none of those. */
+  const freqOf = (t: ChapterStats["topics"][string]) => (hasRecent ? recentOf(t) : t.n);
+  const freqLabel = hasRecent ? `${fa(RECENT_YEARS)} کنکور اخیر` : "همهٔ سال‌های بانک";
 
   const ordered = [...chapters.filter((c) => !c.offSyllabus), ...chapters.filter((c) => c.offSyllabus)];
   const rows = ordered.map((chapter) => {
@@ -70,6 +87,7 @@ export function SubjectBank({
       total: sumOf(codes, (t) => t.n),
       solved: sumOf(codes, (t) => t.solved),
       recent: sumOf(codes, recentOf),
+      freq: sumOf(codes, freqOf),
       perYear: recentYears.map((y) => sumOf(codes, (t) => t.byYear[y] ?? 0)),
       seen: progress ? codes.reduce((s, c) => s + (progress[c]?.seen ?? 0), 0) : 0,
       right: progress ? codes.reduce((s, c) => s + (progress[c]?.right ?? 0), 0) : 0,
@@ -81,13 +99,13 @@ export function SubjectBank({
   const maxPerYear = Math.max(1, ...rows.flatMap((r) => r.perYear));
   // The chapters that carried the most tests in the latest exams (1406 syllabus only).
   const frequent = rows
-    .filter((r) => !r.chapter.offSyllabus && r.recent > 0)
-    .sort((a, b) => b.recent - a.recent)
+    .filter((r) => !r.chapter.offSyllabus && r.freq > 0)
+    .sort((a, b) => b.freq - a.freq)
     .slice(0, 3);
   const frequentCodes = new Set(frequent.map((r) => r.chapter.code));
   const hotTopics = ordered
     .filter((c) => !c.offSyllabus)
-    .flatMap((c) => c.topics.map((t) => ({ ...t, chapter: c.title, recent: topic(t.code) ? recentOf(topic(t.code)!) : 0 })))
+    .flatMap((c) => c.topics.map((t) => ({ ...t, chapter: c.title, recent: topic(t.code) ? freqOf(topic(t.code)!) : 0 })))
     .filter((t) => t.recent > 0)
     .sort((a, b) => b.recent - a.recent)
     .slice(0, 6);
@@ -154,12 +172,12 @@ export function SubjectBank({
 
         {frequent.length > 0 && (
           <section className="sb-hot" aria-labelledby="sb-hot-title">
-            <h2 id="sb-hot-title">پرتکرارترین‌ها در {fa(recentYears.length)} کنکور اخیر</h2>
+            <h2 id="sb-hot-title">پرتکرارترین‌ها در {freqLabel}</h2>
             <div className="sb-hot-row">
               {frequent.map((row) => (
                 <a key={row.chapter.code} href={`#${row.chapter.code}`} className="sb-chip">
                   {row.chapter.title}
-                  <small className="tnum">{fa(row.recent)} تست</small>
+                  <small className="tnum">{fa(row.freq)} تست</small>
                 </a>
               ))}
             </div>
@@ -168,7 +186,7 @@ export function SubjectBank({
                 {hotTopics.map((t) => (
                   <li key={t.code}>
                     <Link href={`/questions?subject=${encodeURIComponent(code)}&topic=${encodeURIComponent(t.code)}`}>{t.title}</Link>
-                    <small className="tnum">{fa(t.recent)} تست اخیر · {t.chapter}</small>
+                    <small className="tnum">{fa(t.recent)} تست{hasRecent ? " اخیر" : ""} · {t.chapter}</small>
                   </li>
                 ))}
               </ul>
@@ -228,6 +246,17 @@ export function SubjectBank({
                 </div>
               )}
 
+              {reading[chapter.code] && (
+                <div className="sb-reading">
+                  <span>پیش از تست‌ها بخوان:</span>
+                  {reading[chapter.code].map((link) => (
+                    <Link key={link.slug} href={`/articles/${link.slug}`} data-kind={link.kind}>
+                      {link.title}
+                    </Link>
+                  ))}
+                </div>
+              )}
+
               {progress && total > 0 && (
                 <div className="sb-progress" aria-label={`پیشرفت تو در این فصل: ${seen} از ${total} تست دیده، ${right} درست`}>
                   <div className="sb-bar">
@@ -279,6 +308,9 @@ export function SubjectBank({
 
         <nav className="sb-more" aria-label="ادامهٔ مطالعهٔ این درس">
           <Link href={`/subjects/${code}`}>درس‌نامه، منابع و تست‌های نمونهٔ رایگان {title} ←</Link>
+          {solutions.map((link) => (
+            <Link key={link.slug} href={`/articles/${link.slug}`}>{link.title} ←</Link>
+          ))}
           <Link href={`/questions/build?subject=${encodeURIComponent(code)}`}>آزمون‌ساز: آزمون دلخواه از چند فصل ←</Link>
           <Link href="/questions/subjects">بانک فصل‌به‌فصل درس‌های دیگر ←</Link>
         </nav>
@@ -287,7 +319,7 @@ export function SubjectBank({
   );
 }
 
-type Row = { chapter: SyllabusChapter; total: number; recent: number; seen: number; right: number };
+type Row = { chapter: SyllabusChapter; total: number; freq: number; seen: number; right: number };
 
 /**
  * Where a signed-in student should go next: the weakest chapter they have
@@ -303,7 +335,7 @@ function suggest(rows: Row[], progress: Progress | null): { row: Row; why: strin
     const rate = Math.round((weakest.right / weakest.seen) * 100);
     if (rate < 70) return { row: weakest, why: `فقط ${fa(rate)}٪ تست‌هایی که از این فصل زدی درست بوده؛ دوباره مرورش کن.` };
   }
-  const untouched = inSyllabus.filter((r) => r.seen === 0).sort((a, b) => b.recent - a.recent)[0];
-  if (untouched) return { row: untouched, why: untouched.recent ? `از فصل‌های پرتکرار است و هنوز از آن تستی نزده‌ای.` : "هنوز از این فصل تستی نزده‌ای." };
+  const untouched = inSyllabus.filter((r) => r.seen === 0).sort((a, b) => b.freq - a.freq)[0];
+  if (untouched) return { row: untouched, why: untouched.freq ? `از فصل‌های پرتکرار است و هنوز از آن تستی نزده‌ای.` : "هنوز از این فصل تستی نزده‌ای." };
   return null;
 }

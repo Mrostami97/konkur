@@ -225,8 +225,10 @@ export class QuestionBankService {
    */
   async counts(subjectCode?: string) {
     const [subjects, topics] = await Promise.all([
-      this.prisma.$queryRaw<{ code: string; n: number }[]>`
-        SELECT "subjectCode" AS code, count(*)::int AS n FROM "questions"
+      this.prisma.$queryRaw<{ code: string; n: number; solved: number }[]>`
+        SELECT "subjectCode" AS code, count(*)::int AS n,
+               count(*) FILTER (WHERE jsonb_typeof("solutionBlocks") = 'array' AND jsonb_array_length("solutionBlocks") > 0)::int AS solved
+        FROM "questions"
         WHERE "retiredAt" IS NULL AND "qualityTier" <> 'DRAFT'
         GROUP BY "subjectCode"`,
       subjectCode
@@ -238,6 +240,8 @@ export class QuestionBankService {
     ]);
     return {
       subjects: Object.fromEntries(subjects.map((row) => [row.code, row.n])),
+      /** Per subject, how many questions carry a worked solution. */
+      solved: Object.fromEntries(subjects.map((row) => [row.code, row.solved])),
       topics: Object.fromEntries(topics.map((row) => [row.code, row.n])),
     };
   }
@@ -263,7 +267,10 @@ export class QuestionBankService {
       topic.byYear[row.year] = row.n;
       years.add(row.year);
     }
-    return { years: [...years].sort((a, b) => a - b), topics };
+    // The latest konkur in the bank (any subject), so "recent" means the same years on every page.
+    const [{ latest }] = await this.prisma.$queryRaw<{ latest: number | null }[]>`
+      SELECT max("examYear")::int AS latest FROM "questions" WHERE "retiredAt" IS NULL AND "qualityTier" <> 'DRAFT'`;
+    return { years: [...years].sort((a, b) => a - b), latestYear: latest ?? null, topics };
   }
 
   async samples(subjectCode: string, limit = 6): Promise<AnsweredQuestion[]> {

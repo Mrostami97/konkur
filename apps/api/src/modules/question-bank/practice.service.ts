@@ -141,6 +141,28 @@ export class PracticeService {
     return result;
   }
 
+  /** Per subject, how many distinct questions the student has answered and how many were right the last time. */
+  async progressSummary(userId: string): Promise<Record<string, { seen: number; right: number }>> {
+    const answers = await this.prisma.practiceAnswer.findMany({
+      where: { userId, question: { retiredAt: null } },
+      orderBy: { createdAt: "asc" },
+      select: { questionId: true, outcome: true, question: { select: { subjectCode: true } } },
+    });
+    const last = new Map<string, { subject: string; outcome: PracticeOutcome | null }>();
+    for (const answer of answers) {
+      const entry = last.get(answer.questionId) ?? { subject: answer.question.subjectCode, outcome: null };
+      if (answer.outcome !== PracticeOutcome.VOID) entry.outcome = answer.outcome;
+      last.set(answer.questionId, entry);
+    }
+    const result: Record<string, { seen: number; right: number }> = {};
+    for (const { subject, outcome } of last.values()) {
+      const row = (result[subject] ??= { seen: 0, right: 0 });
+      row.seen += 1;
+      if (outcome === PracticeOutcome.CORRECT) row.right += 1;
+    }
+    return result;
+  }
+
   /** Stars or notes a question the student can see listed. An empty note clears it. */
   async mark(userId: string, questionId: string, input: { starred?: boolean; note?: string | null }) {
     const exists = await this.prisma.question.findFirst({ where: { id: questionId, retiredAt: null }, select: { id: true } });

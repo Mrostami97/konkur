@@ -324,9 +324,11 @@ describe("Past-exam archive questions (question.v2)", () => {
     const counts = await http().get("/questions/counts").query({ subjectCode: tagged }).expect(200);
     expect(counts.body.subjects[tagged]).toBe(1);
     expect(counts.body.topics["dsa-analysis-master"]).toBe(1);
+    expect(counts.body.solved[tagged]).toBe(0);
     // Per topic and exam year, with how many carry a worked solution; counts only.
     const stats = await http().get("/questions/chapter-stats").query({ subjectCode: tagged }).expect(200);
-    expect(stats.body).toEqual({ years: [1403], topics: { "dsa-analysis-master": { n: 1, solved: 0, byYear: { "1403": 1 } } } });
+    expect(stats.body).toMatchObject({ years: [1403], topics: { "dsa-analysis-master": { n: 1, solved: 0, byYear: { "1403": 1 } } } });
+    expect(stats.body.latestYear).toBeGreaterThanOrEqual(1403);
     await http().get("/questions/chapter-stats").expect(400);
   });
 
@@ -425,6 +427,9 @@ describe("Past-exam archive questions (question.v2)", () => {
     const progress = await http().get("/questions/progress").query({ subjectCode: ownSubject }).set("Cookie", student).expect(200);
     expect(progress.body).toEqual({ "own-topic-2": { seen: 1, right: 1 } });
     await http().get("/questions/progress").query({ subjectCode: ownSubject }).expect(401);
+    const summary = await http().get("/questions/progress-summary").set("Cookie", student).expect(200);
+    expect(summary.body[ownSubject]).toEqual({ seen: 1, right: 1 });
+    await http().get("/questions/progress-summary").expect(401);
     const unseen = await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, collection: "unseen", count: 10 }).expect(201);
     expect(unseen.body.ids).toEqual([a]);
     await http().post("/questions/practice-set").set("Cookie", student).send({ subjectCode: ownSubject, count: 0 }).expect(400);
