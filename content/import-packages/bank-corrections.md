@@ -171,3 +171,5 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1209-1389-3077-058 | CS 1389 q58 | 4 | T(n) = H_n = Θ(ln n), so it is not o(ln n) (little-o, as printed); the true statement is o(n), option 2 |
 | kunkurcomputer-q-1209-1391-368C-082 | CS 1391 q82 | 4 | with n = 2^k the solution is T(n) = 1 + (log₂ n)/n exactly (fits T(1)=1, T(2)=3/2), so T(n) = Θ(1), not an option; log n / n is only the decaying part |
 | kunkurcomputer-q-1276-1402-758F-033 | IT 1402 q33 | 1 | T(n³) = Σθ(k) for k ≤ n = θ(n²), so T(N) = θ(N^{2/3}), option 3 (booklet order 1, n^{1/3}, n^{2/3}, n checked against the crop) |
+| kunkurcomputer-q-1209-1397-262F-076 | CS 1397 q76 | 3 | costs: ((AB)C)D = 2250+1500+1020 = 4770, (A(BC))D = 3750+900+1020 = 5670, A((BC)D) = 7830, (AB)(CD) = 9050; the fastest is ((AB)C)D, option 4 |
+| kunkurcomputer-q-1276-1402-758F-032 | IT 1402 q32 | 1 | i and j are both multiplied by 3 the same number of times, so the printed j equals n: θ(n), which is none of the options (θ(n²) is not it) |
