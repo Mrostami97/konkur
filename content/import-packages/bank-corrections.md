@@ -181,3 +181,5 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1277-1389-b2-047 | CE 1389 q47 | 1 | 47^74 ≡ 1 (mod 24) and ≡ 4 (mod 7), so 47^74 ≡ 25 (mod 168): one day and one hour after Wednesday 4 pm is Thursday 5 pm, not an option |
 | kunkurcomputer-q-1277-1391-b1-045 | CE 1391 q45 | 1 | φn follows from the premises iff (φ1∧…∧φn−1)→φn is a tautology: option 2 (checked against the crop); option 1 (a disjunction being satisfiable) is far too weak |
 | kunkurcomputer-q-1277-1391-b2-120 | CE 1391 q120 | 4 | entailment is monotonic, so option 2 (a follows from KB2 = KB1 ∪ {b}) is just as true as option 4; the question has two correct options |
+| kunkurcomputer-q-1209-1387-b0-058 | CS 1387 q58 | 4 (1024×1024 bytes) | 1024×1024 bytes is a megabyte; a gigabyte is 2^30 bytes (option 3), or 10^9 = 1000 million bytes in SI units (options 1 and 2) |
+| kunkurcomputer-q-1209-1391-368C-056 | CS 1391 q56 | 1 | column-major order of A[1..a,2..b,3..c] puts A[i,j,k] at position (k−3)(b−1)a + (j−2)a + i (counting from 1); no option ends in i, option 1 ends in k |
