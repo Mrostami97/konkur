@@ -203,3 +203,7 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1277-1390-b1-054 | CE 1390 q54 | 4 | a chain of h internal nodes with a 1-element leaf already gives n = h+1, so n ≤ h+2^h (option 1) also holds and is tighter; the intended model is unclear |
 | kunkurcomputer-q-1277-1392-b1-047 | CE 1392 q47 | 1 (150) | 99 Push(S1) then one dequeue costs 99 + 2·99 + 1 = 298 in total, and the single dequeue alone 199; 150 is reached by no sequence |
 | kunkurcomputer-q-1277-1392-b1-051 | CE 1392 q51 | 4 | growing at 3/4 to double and shrinking below 1/4 to half keeps a constant gap, so each operation is Θ(1) amortized (option 1) |
+| kunkurcomputer-q-1209-1387-b0-114 | CS 1387 q114 | 3 | option 4 is also true: the minimal complete DFAs of L and Σ*−L differ only in which states accept, so they have the same number of states |
+| kunkurcomputer-q-1209-1387-b0-116 | CS 1387 q116 | 4 | all four statements hold: the grammar is in CNF and baba has the single derivation S→XY, X→YS→ba, Y→XS→ba; no statement is false |
+| kunkurcomputer-q-1209-1387-b0-124 | CS 1387 q124 | 2 | a machine whose language is decidable may still loop on rejected words, so option 1 (T may loop on w ∉ L) is true and option 2 is false |
+| kunkurcomputer-q-1209-1388-D-117 | CS 1388 q117 | 2 | option 4 ({aⁿbᵐcᵏ : n = m or m ≤ k}) is also context-free, as a union of two context-free languages |
