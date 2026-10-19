@@ -3,8 +3,9 @@
 // booklet printed in the sentence arrives as a display formula on its own.
 // This joins what the PDF wrapped and leaves alone what is really separate:
 // list items (- , • , ۱) , الف -), lines after a full stop or colon, and code.
+// Booklets also dash a statement with a kashida «ـ» or a minus sign «−».
 
-const LIST_ITEM = /^([-–•▪◦]\s|[0-9۰-۹]+\s*[.)\-–]\s|(الف|ب|ج|د|ه)\s*[-–)]|I{1,3}V?\s*[.)]|\$\$\\begin)/;
+const LIST_ITEM = /^([-–—−ـ•▪◦]\s|[0-9۰-۹]+\s*[.)\-–]\s|(الف|ب|ج|د|ه)\s*[-–)]|I{1,3}V?\s*[.)]|\$\$\\begin)/;
 const ENDS_SENTENCE = /[.:؟?!؛]$/;
 const CODE_FENCE = /(```[^\n]*\n[\s\S]*?```)/g;
 

@@ -23,6 +23,7 @@ import { SAMPLES } from "./samples.mjs";
 import { SOLUTIONS } from "./solutions.mjs";
 import { NEEDS_FIGURE } from "./needs-figure.mjs";
 import { TEXT_FIXES } from "./text-fixes.mjs";
+import { FIGURE_PICKS } from "./figure-picks.mjs";
 
 const repo = fileURLToPath(new URL("../../../", import.meta.url));
 const AdmZip = createRequire(`${repo}apps/api/package.json`)("adm-zip");
@@ -30,7 +31,7 @@ const sharp = createRequire(`${repo}apps/web/package.json`)("sharp");
 const { validateQuestion } = createRequire(`${repo}apps/api/package.json`)("@konkurcom/contracts");
 
 import { VERIFIED, VERIFIED_ONLY } from "./verified.mjs";
-import { isOutside1406, subjectOf, topicOf } from "./taxonomy-1406.mjs";
+import { TREE, isOutside1406, subjectOf, topicOf } from "./taxonomy-1406.mjs";
 
 const [bankRoot, outDir, ...restArgs] = process.argv.slice(2);
 if (!bankRoot || !outDir) {
@@ -246,10 +247,19 @@ async function imageAsset(relPath, mediaKey) {
 }
 
 /** A small grey picture of an image and its shape, to spot one drawing cropped twice. */
+/** A hand-cut copy of a booklet drawing (cleaner than the automatic crop). */
+const HAND_CUT = /[\\/]source_fidelity[\\/]/;
+
+/** A drawing reduced to 32×32 grey after its white margin is trimmed, so two
+ * cuts of one drawing with different margins still compare alike. */
 async function thumbnail(buffer) {
-  const meta = await sharp(buffer).metadata();
-  const pixels = await sharp(buffer).flatten({ background: "#ffffff" }).grayscale().resize(32, 32, { fit: "fill" }).raw().toBuffer();
-  return { ratio: (meta.width ?? 1) / (meta.height ?? 1), pixels };
+  const flat = await sharp(buffer).flatten({ background: "#ffffff" }).grayscale().toBuffer();
+  const { data: trimmed, info } = await sharp(flat)
+    .trim({ background: "#ffffff", threshold: 40 })
+    .toBuffer({ resolveWithObject: true })
+    .catch(() => sharp(flat).toBuffer({ resolveWithObject: true }));
+  const pixels = await sharp(trimmed).resize(32, 32, { fit: "fill" }).raw().toBuffer();
+  return { ratio: info.width / info.height, pixels };
 }
 
 // Only a drawing cut twice (a booklet crop and its cleaned copy) is dropped.
@@ -426,21 +436,32 @@ for (const examYear of examYears) {
       files.set(asset.filename, buffer);
     };
     const figureKeys = new Map();
-    // The bank sometimes keeps one drawing twice (a figure crop and a code
-    // crop of the same box); a student sees it once.
-    const figureThumbs = [];
+    // The bank often keeps one drawing twice: the booklet's automatic crop
+    // and a clean hand cut of it (source_fidelity/). A student sees it once,
+    // as the hand cut, in the place the first copy had.
+    const keptFigures = [];
     for (const [index, figure] of q.figures.entries()) {
       const image = await imageAsset(figure, `fig${index + 1}`);
-      const thumb = image ? await thumbnail(image.buffer) : null;
-      if (thumb && figureThumbs.some((seen) => sameDrawing(seen, thumb, figure))) {
-        if (process.env.LOG_DEDUPE) console.log("dedupe", externalId, figureThumbs.find((seen) => sameDrawing(seen, thumb, figure)).path, figure);
+      if (!image) continue;
+      const thumb = await thumbnail(image.buffer);
+      const twin = keptFigures.find((seen) => sameDrawing({ ...seen.thumb, path: seen.figure }, thumb, figure));
+      if (twin) {
+        if (process.env.LOG_DEDUPE) console.log("dedupe", externalId, twin.figure, figure);
+        if (HAND_CUT.test(figure) && !HAND_CUT.test(twin.figure)) Object.assign(twin, { figure, image, thumb });
         continue;
       }
-      if (image) {
-        figureThumbs.push({ ...thumb, path: figure });
-        addFile(image);
-        figureKeys.set(path.basename(figure), image.asset.media_key);
-      }
+      keptFigures.push({ figure, image, thumb });
+    }
+    // Picked by eye where the bank keeps one drawing more than once (figure-picks.mjs).
+    const picks = FIGURE_PICKS.get(externalId);
+    if (picks) {
+      const keys = keptFigures.map(({ image }) => image.asset.media_key);
+      for (const key of picks) if (!keys.includes(key)) throw new Error(`${externalId}: figure pick ${key} not among ${keys.join(",")}`);
+      keptFigures.splice(0, keptFigures.length, ...keptFigures.filter(({ image }) => picks.includes(image.asset.media_key)));
+    }
+    for (const { figure, image } of keptFigures) {
+      addFile(image);
+      figureKeys.set(path.basename(figure), image.asset.media_key);
     }
     // The booklet crop is not shown to students (owner, 2026-10-18); a tagged build leaves it out.
     const crop = q.crop && !TAGGED ? await imageAsset(q.crop, "source") : null;
@@ -579,6 +600,37 @@ for (const examYear of examYears) {
   summary.zip_bytes = size;
   if (size > 50 * 1024 * 1024 || files.size + 1 > 1000) summary.warning = "zip exceeds the importer limits (50 MB / 1000 entries)";
 }
+
+// Free samples (owner, 2026-10-20): two questions of every syllabus chapter
+// are open to everyone, answer and solution included -- the newest checked
+// questions with a worked solution, all three layers (hint, quick way, full
+// solution) first. The curated samples above count towards their chapter.
+const SAMPLES_PER_CHAPTER = 2;
+const chapterOf = new Map();
+for (const chapters of Object.values(TREE)) for (const chapter of chapters) for (const topic of chapter.topics) chapterOf.set(topic.code, chapter.code);
+const byChapter = new Map();
+for (const item of built.flatMap((exam) => exam.items)) {
+  const chapter = chapterOf.get(item.topic_codes[0]);
+  if (!chapter) continue;
+  if (!byChapter.has(chapter)) byChapter.set(chapter, []);
+  byChapter.get(chapter).push(item);
+}
+let autoSamples = 0;
+for (const items of byChapter.values()) {
+  const open = items.filter(
+    (item) => item.solution_blocks.length > 0 && item.review.text_verified && item.review.key_verified && !item.key_state,
+  );
+  const want = SAMPLES_PER_CHAPTER - open.filter((item) => item.sample).length;
+  const ranked = open
+    .filter((item) => !item.sample)
+    .sort((a, b) => Number(Boolean(b.hint && b.shortcut)) - Number(Boolean(a.hint && a.shortcut)) || b.exam.year - a.exam.year || a.slot.number - b.slot.number);
+  for (const item of ranked.slice(0, Math.max(want, 0))) {
+    item.sample = true;
+    autoSamples += 1;
+  }
+}
+report.auto_samples = autoSamples;
+console.log(`free samples: ${autoSamples} picked, two per syllabus chapter`);
 
 // The first import, in as few uploads as the importer allows: whole years of
 // one exam packed together while a bundle stays under 1000 entries/items and

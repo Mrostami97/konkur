@@ -280,7 +280,6 @@ export const QuestionCard = forwardRef<CardHandle, CardProps>(function QuestionC
         </Link>
         <span className="qc-badges">
           {question.isSample && <span className="qc-badge" data-tone="free">نمونهٔ رایگان</span>}
-          {place?.chapter.offSyllabus && <span className="qc-badge">خارج از سرفصل ۱۴۰۶</span>}
           {history && history.seen > 0 && (
             <span className="qc-history" title={historySentence(history)}>
               <HistoryMarks outcomes={history.outcomes.slice(-4)} />

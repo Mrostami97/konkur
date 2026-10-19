@@ -7,9 +7,11 @@ import { readFileSync } from "node:fs";
 // so one subject arrives under several names and almost every topic is unique
 // to its question. The site needs a fixed tree so a candidate can build an exam
 // from one topic and see how often it came: subject → chapter → topic, taken
-// from the official 1406 syllabus (apps/web/src/content/editorial.ts). Topics
-// the 1406 list dropped (dynamic programming, greedy, NP, ...) sit in their own
-// chapter so past questions stay usable without passing as 1406 material. The
+// from the official 1406 syllabus (apps/web/src/content/editorial.ts). Algorithm
+// design (dynamic programming, greedy, MST, NP, ...) is outside the unified
+// 1276/1277 list but inside the computer-science (1209) «طراحی الگوریتم‌ها»
+// list, so it is its own chapter of the bank, not "outside 1406" (owner,
+// 2026-10-20). Its codes keep the old dsa-off- prefix so stored tags hold. The
 // owner's own wording stays on the question as its fine-grained label.
 //
 // A rule matches the owner's chapter and topic text; the first rule that fits
@@ -68,7 +70,8 @@ export const RULES = {
     [/پوشای کمینه|فراگیر|پریم|کراسکال|کروسکال|MST/i, "dsa-off-mst"],
     [/فلوید|floyd|همهٔ زوج|همه زوج|وارشال/i, "dsa-off-all-pairs"],
     [/برنامه‌ریزی پویا|برنامه‌نویسی پویا|پویا|ضرب زنجیره|کوله‌پشتی|زیردنبالهٔ مشترک|LCS/i, "dsa-off-dp"],
-    [/NP|پیچیدگی محاسباتی|کلاس‌های پیچیدگی|کاهش|ارضاپذیری|تقریبی|بلندترین مسیر/, "dsa-off-np"],
+    // «کاهش» alone also means a recurrence step («کاهش یک واحد»); only a reduction between problems is NP.
+    [/NP|پیچیدگی محاسباتی|کلاس‌های پیچیدگی|کاهش چندجمله‌ای|کاهش‌پذیر|کاهش مسئله|ارضاپذیری|تقریبی|بلندترین مسیر/, "dsa-off-np"],
     [/عقب‌گرد|عقبگرد|شاخه و حد|شاخه‌وکران|فضای حالت/, "dsa-off-backtracking"],
     [/تطبیق رشته|تابع شکست|KMP|الگوریتم‌های رشته/i, "dsa-off-string"],
     [/AVL|درخت B|B\+|B-tree|ذخیره‌سازی خارجی|فایل/i, "dsa-off-avl-b"],
@@ -81,7 +84,8 @@ export const RULES = {
     [/درخت بازه/, "dsa-advanced-interval"],
     [/گراف/, "dsa-advanced-graph-basics"],
     // Sorting, selection, hashing, search.
-    [/درهم‌سازی|درهم سازی|هش|وارسی/, "dsa-sorting-hashing"],
+    // «هش» only as a word: «کاهش» (a recurrence shrinking its input) is not hashing.
+    [/درهم‌سازی|درهم سازی|(?<![؀-ۿ])هش|وارسی/, "dsa-sorting-hashing"],
     [/کران پایین|درخت تصمیم/, "dsa-sorting-lower-bound"],
     [/شمارشی|مبنایی|سطلی|radix|counting sort/i, "dsa-sorting-linear"],
     [/k-ام|kام|k ام|انتخاب|آمار ترتیبی|مرتبهٔ آماری|میانه|کمینه و بیشینه|کمینه.*بیشینه|ماکزیمم و مینیمم|دومین/, "dsa-sorting-selection"],
@@ -93,7 +97,8 @@ export const RULES = {
     [/هرم|هیپ|heap|deap|صف اولویت/i, "dsa-structures-heap"],
     [/جستجوی دودویی|جست‌وجوی دودویی|جستجو دودویی/, "dsa-analysis-divide"],
     [/درخت جستجو|درخت جست‌وجو|درخت‌های جستجو|درخت‌های جست‌وجو|BST/i, "dsa-structures-bst"],
-    [/پشته|صف/, "dsa-structures-stack-queue"],
+    // «صف» only as a word: «نصف» (halving) is not a queue.
+    [/پشته|(?<![؀-ۿ])صف/, "dsa-structures-stack-queue"],
     [/لیست/, "dsa-structures-linked-list"],
     [/درخت|پیمایش|جنگل|نخ‌کشی/, "dsa-structures-trees"],
     // Analysis.
