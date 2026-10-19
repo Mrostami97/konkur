@@ -167,3 +167,7 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1209-1386-309-122 | CS 1386 q122 | 1 | option 2 is also true: in S→S(SS)|λ the inner SS can be any balanced string (take the second S→λ), so G″ also generates every balanced string, the same as G and G′ |
 | kunkurcomputer-q-1209-1405-257A-086 | CS 1405 q86 | 1 | L₂ (n_a+n_b = 2n_c) is also context-free: a one-counter PDA pushes one mark per a or b and pops two per c (or the reverse, with a sign state), so both are context-free: option 3 |
 | kunkurcomputer-q-1209-1405-257A-086 | CS 1405 q86 | 1 | L₂ (n_a+n_b = 2n_c) is also context-free: a one-counter PDA adds one per a or b and subtracts two per c, so both languages are context-free: option 3 |
+| kunkurcomputer-q-1209-1387-b0-087 | CS 1387 q87 | 1 (22) | counting BSTs on 5 keys by levels (f(n,h) = Σ f(k,h−1)f(n−1−k,h−1)): at most 3 levels 6, at most 4 levels 26, so exactly 4 levels is 20 (26 if «at most»); 22 matches neither |
+| kunkurcomputer-q-1209-1389-3077-058 | CS 1389 q58 | 4 | T(n) = H_n = Θ(ln n), so it is not o(ln n) (little-o, as printed); the true statement is o(n), option 2 |
+| kunkurcomputer-q-1209-1391-368C-082 | CS 1391 q82 | 4 | with n = 2^k the solution is T(n) = 1 + (log₂ n)/n exactly (fits T(1)=1, T(2)=3/2), so T(n) = Θ(1), not an option; log n / n is only the decaying part |
+| kunkurcomputer-q-1276-1402-758F-033 | IT 1402 q33 | 1 | T(n³) = Σθ(k) for k ≤ n = θ(n²), so T(N) = θ(N^{2/3}), option 3 (booklet order 1, n^{1/3}, n^{2/3}, n checked against the crop) |
