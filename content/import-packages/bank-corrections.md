@@ -208,3 +208,5 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1209-1387-b0-124 | CS 1387 q124 | 2 | a machine whose language is decidable may still loop on rejected words, so option 1 (T may loop on w ∉ L) is true and option 2 is false |
 | kunkurcomputer-q-1209-1388-D-117 | CS 1388 q117 | 2 | option 4 ({aⁿbᵐcᵏ : n = m or m ≤ k}) is also context-free, as a union of two context-free languages |
 | kunkurcomputer-q-1209-1390-372B-121 | CS 1390 q121 | 2 | statement 3 is also false: membership of a word in the language of a context-free grammar is decidable (CYK), so options 2 and 3 are both false statements |
+| kunkurcomputer-q-1209-1394-371F-111 | CS 1394 q111 | 2 | «always neither regular nor context-free» cannot hold: with S regular (or S = ∅) the language L_{A,S} is regular; no option is always true |
+| kunkurcomputer-q-1209-1394-371F-112 | CS 1394 q112 | 1 | a right-linear grammar with k rules gives an NFA with about k+1 states, but a DFA may need exponentially many (e.g. (a+b)*a(a+b)^n); option 1 does not hold for DFAs |
