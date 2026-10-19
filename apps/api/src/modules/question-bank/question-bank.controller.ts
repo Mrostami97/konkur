@@ -34,6 +34,7 @@ export class QuestionsPublicController {
     @Query("examMajor") examMajor?: string,
     @Query("examYear") examYear?: string,
     @Query("q") q?: string,
+    @Query("solved") solved?: string,
     @Query("page") page?: string,
     @Query("pageSize") pageSize?: string,
   ) {
@@ -48,6 +49,7 @@ export class QuestionsPublicController {
         examMajor,
         examYear: examYear ? Number(examYear) : undefined,
         q,
+        solved: solved === "true",
         page: page ? Number(page) : undefined,
         pageSize: pageSize ? Number(pageSize) : undefined,
       },

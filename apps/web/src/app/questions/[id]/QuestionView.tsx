@@ -1,85 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
 import { formatRial, toPersianDigits } from "../../../lib/format";
-import { ContentBlocks } from "../../../components/ContentBlocks";
-import { tidyQuestionBlocks } from "../../../lib/question-text";
 import { BuyButton } from "../../../components/BuyButton";
 import { DataState } from "../../../components/ds";
+import { Glyph } from "../../../components/SubjectIcon";
 import { fieldLabel } from "../../account/profile-options";
 import { OUTSIDE_1406_SUBJECTS, topicPlace } from "../../../lib/syllabus";
-import { CONFIDENCE, PracticePanel, loadHistory, type Confidence, type History, type Outcome } from "./PracticePanel";
+import { QuestionCard, examLine, isOpen, type BankQuestion, type CardHandle } from "../QuestionCard";
+import { loadHistories, type History } from "../practice";
 import { clearPracticeSet, readPracticeSet } from "../practice-set";
 
-interface Block {
-  type: string;
-  [key: string]: unknown;
-}
-
-interface Option {
-  number: number;
-  blocks: Block[];
-}
+/** Where this question sits among its topic's questions, in bank order. */
+interface Neighbours { index: number; total: number; previous: string | null; next: string | null }
 
 /**
- * Everything below `version` is optional because the API decides server-side
- * how much of a question this caller may see (question-bank.service.ts
- * `getById`): a sample question or one whose subject the caller has bank
- * access to arrives whole, anything else arrives as metadata alone -- no
- * stem, no options, no answer key. Locked fields are never sent here, so
- * they are not fetched-then-hidden.
- */
-interface Question {
-  id: string;
-  subjectCode: string;
-  examDegree: string;
-  examMajor: string;
-  examYear: number;
-  examCode?: string | null;
-  questionNumber?: number | null;
-  topicCodes: string[];
-  assets?: { media_key: string; checksum: string }[];
-  isSample: boolean;
-  version: number;
-  stemBlocks?: Block[];
-  options?: Option[];
-  correctOption?: number;
-  /** Every option the final key accepts, when more than one. */
-  acceptedOptions?: number[];
-  /** DELETED: the board removed it; POSITIVE_EFFECT: a wrong answer costs nothing. */
-  keyState?: "NORMAL" | "DELETED" | "POSITIVE_EFFECT";
-  solutionBlocks?: Block[];
-  /** A nudge shown before answering, on request. */
-  solutionHint?: string | null;
-  /** The quick way under exam time, shown above the full solution. */
-  solutionShortcut?: string | null;
-  /** The tagger's own chapter and description, shown after answering. */
-  labels?: { chapter?: string; topic?: string } | null;
-  /** Whose answer the key is: the board's, or ours where no official key exists. */
-  keySource?: "official" | "authored" | null;
-}
-
-/**
- * One question as a study page: pick an answer, check it, then read the
- * solution. The key arrives with the question for a caller entitled to it;
- * waiting for "check" is study practice, not access control.
+ * One question on its own page: the same card as the bank's sheet, with its
+ * place in the 1406 syllabus above it and the previous and next question of
+ * its topic (or of the practice set it was opened from) beside it.
  */
 export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles: Record<string, string> }) {
-  const [question, setQuestion] = useState<Question | null>(null);
+  const router = useRouter();
+  const [question, setQuestion] = useState<BankQuestion | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
-  const [picked, setPicked] = useState<number | null>(null);
-  const [checked, setChecked] = useState(false);
-  const [confidence, setConfidence] = useState<Confidence | null>(null);
-  const [hintOpen, setHintOpen] = useState(false);
   const [history, setHistory] = useState<History | null>(null);
-  const [wrongAnswerId, setWrongAnswerId] = useState<string | null>(null);
-  const [startedAt, setStartedAt] = useState(() => Date.now());
-  /** Where this question sits in a practice set from the exam builder, if it is in one. */
   const [inSet, setInSet] = useState<{ index: number; total: number; next: string | null } | null>(null);
+  const [neighbours, setNeighbours] = useState<Neighbours | null>(null);
+  const card = useRef<CardHandle | null>(null);
 
   useEffect(() => {
     const set = readPracticeSet();
@@ -90,11 +42,11 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
   useEffect(() => {
     (async () => {
       try {
-        const loaded = await apiFetch<Question>(`/questions/${id}`);
+        const loaded = await apiFetch<BankQuestion>(`/questions/${id}`);
         setQuestion(loaded);
-        setStartedAt(Date.now());
         // Signed-out visitors get null: their answers are checked here but not kept.
-        if (loaded.options) setHistory(await loadHistory(loaded.id));
+        const histories = await loadHistories([loaded.id]);
+        setHistory(histories?.[loaded.id] ?? null);
       } catch (err) {
         if (err instanceof ApiError && err.status === 404) setNotFound(true);
         else setError("اتصال به بانک سؤال برقرار نشد.");
@@ -104,81 +56,68 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
     })();
   }, [id]);
 
+  // The topic's questions in bank order, for "previous" and "next".
+  const topic = question?.topicCodes?.[0];
+  useEffect(() => {
+    if (!question || !topic) return;
+    apiFetch<{ items: { id: string }[]; total: number }>(
+      `/questions?subjectCode=${encodeURIComponent(question.subjectCode)}&topicCode=${encodeURIComponent(topic)}&pageSize=100`,
+    )
+      .then(({ items, total }) => {
+        const index = items.findIndex((item) => item.id === question.id);
+        if (index >= 0) setNeighbours({ index, total, previous: items[index - 1]?.id ?? null, next: items[index + 1]?.id ?? null });
+      })
+      .catch(() => setNeighbours(null));
+  }, [question, topic]);
+
+  const nextId = inSet ? inSet.next : neighbours?.next ?? null;
+  const previousId = inSet ? null : neighbours?.previous ?? null;
+
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      if (event.ctrlKey || event.metaKey || event.altKey || (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)))) return;
+      const digit = /^(?:Digit|Numpad)([1-4])$/.exec(event.code);
+      if (digit) card.current?.pick(Number(digit[1]));
+      else if (event.code === "Enter" && !(target instanceof HTMLButtonElement || target instanceof HTMLAnchorElement)) card.current?.check();
+      else if (event.code === "KeyH") card.current?.hint();
+      else if (event.code === "KeyS") card.current?.star();
+      else if ((event.code === "KeyJ" || event.code === "KeyN") && nextId) router.push(`/questions/${nextId}`);
+      else if ((event.code === "KeyK" || event.code === "KeyP") && previousId) router.push(`/questions/${previousId}`);
+      else return;
+      event.preventDefault();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [nextId, previousId, router]);
+
   const outside1406 = question ? OUTSIDE_1406_SUBJECTS[question.subjectCode] : undefined;
   const title = question ? subjectTitles[question.subjectCode] ?? outside1406 ?? question.subjectCode : "";
-  const hasKey = question?.correctOption !== undefined;
-  const deleted = question?.keyState === "DELETED";
-  const accepted = question ? [question.correctOption, ...(question.acceptedOptions ?? [])].filter((n): n is number => typeof n === "number") : [];
-  const keyOptions = [...new Set(accepted)].sort();
-  const correct = checked && picked !== null && !deleted && keyOptions.includes(picked);
-  const place = question ? topicPlace(question.subjectCode, question.topicCodes[0]) : null;
-
-  /** Shows the key at once; a signed-in student's answer is also graded and kept on the server. */
-  async function check() {
-    if (!question || picked === null) return;
-    setChecked(true);
-    if (!history) return;
-    try {
-      const saved = await apiFetch<{ answerId: string; outcome: Outcome; history: History }>(`/questions/${question.id}/practice`, {
-        method: "POST",
-        body: { selectedOption: picked, ...(confidence ? { confidence } : {}), timeSpentMs: Math.min(Date.now() - startedAt, 6 * 3600 * 1000) },
-      });
-      setHistory(saved.history);
-      setWrongAnswerId(saved.outcome === "WRONG" ? saved.answerId : null);
-    } catch {
-      // The key is already on screen; a failed save only means this try is not in the history.
-    }
-  }
-
-  function retry() {
-    setChecked(false);
-    setPicked(null);
-    setConfidence(null);
-    setHintOpen(false);
-    setWrongAnswerId(null);
-    setStartedAt(Date.now());
-  }
+  const place = question ? topicPlace(question.subjectCode, topic) : null;
+  const bank = (query: string) => `/questions?subject=${encodeURIComponent(question!.subjectCode)}${query}`;
 
   return (
     <main className="qv">
-      <div className="qv-top">
-        <div className="qv-wrap">
-          <p className="qv-crumbs">
-            <Link href="/questions">بانک سؤال</Link>
-            <span aria-hidden="true">/</span>
-            <span>{title || "سؤال"}</span>
-          </p>
+      <div className="qv-wrap">
+        <nav className="qv-crumbs" aria-label="جای سؤال در سرفصل ۱۴۰۶">
+          <Link href="/questions">بانک تست</Link>
           {question && (
             <>
-              <h1 className="qv-title">
-                کنکور {question.examDegree === "PHD" ? "دکتری " : ""}
-                {toPersianDigits(question.examYear)}
-                {question.questionNumber ? <> · سؤال {toPersianDigits(question.questionNumber)}</> : null}
-              </h1>
-              <div className="qv-meta">
-                <span>{fieldLabel(question.examMajor)}</span>
-                <span>{question.isSample ? "نمونهٔ رایگان" : "بانک درس"}</span>
-              </div>
-              {/* Where it sits in the 1406 syllabus; each step opens the bank on it. */}
-              <nav className="qv-place" aria-label="جای سؤال در سرفصل ۱۴۰۶">
-                <Link href={`/questions?subject=${encodeURIComponent(question.subjectCode)}`}>{title}</Link>
-                {place && (
-                  <>
-                    <span aria-hidden="true">›</span>
-                    <Link href={`/questions?subject=${encodeURIComponent(question.subjectCode)}&chapter=${encodeURIComponent(place.chapter.code)}`}>{place.chapter.title}</Link>
-                    <span aria-hidden="true">›</span>
-                    <Link href={`/questions?subject=${encodeURIComponent(question.subjectCode)}&topic=${encodeURIComponent(place.topic.code)}`}>{place.topic.title}</Link>
-                  </>
-                )}
-                {outside1406 && <span className="qv-tag qv-tag-muted">خارج از کنکور ۱۴۰۶</span>}
-                {place?.chapter.offSyllabus && <span className="qv-tag qv-tag-muted">خارج از سرفصل ۱۴۰۶</span>}
-              </nav>
+              <span aria-hidden="true">›</span>
+              <Link href={bank("")}>{title}</Link>
+              {place && (
+                <>
+                  <span aria-hidden="true">›</span>
+                  <Link href={bank(`&chapter=${encodeURIComponent(place.chapter.code)}`)}>{place.chapter.title}</Link>
+                  <span aria-hidden="true">›</span>
+                  <Link href={bank(`&topic=${encodeURIComponent(place.topic.code)}`)}>{place.topic.title}</Link>
+                </>
+              )}
+              {outside1406 && <span className="qc-badge">خارج از کنکور ۱۴۰۶</span>}
             </>
           )}
-        </div>
-      </div>
+        </nav>
 
-      <div className="qv-wrap qv-body">
         <DataState
           loading={loading}
           error={notFound ? null : error}
@@ -189,146 +128,53 @@ export function QuestionView({ id, subjectTitles }: { id: string; subjectTitles:
         >
           {question && (
             <>
-              {question.stemBlocks && question.options ? (
-                <article className="qv-sheet" aria-label="متن سؤال">
-                  <div className="qv-stem">
-                    <ContentBlocks blocks={tidyQuestionBlocks(question.stemBlocks)} assets={question.assets} />
-                  </div>
-                  <div className="qv-options" role="radiogroup" aria-label="گزینه‌ها">
-                    {question.options.map((option) => {
-                      const isKey = checked && !deleted && keyOptions.includes(option.number);
-                      const isWrongPick = checked && !deleted && option.number === picked && !keyOptions.includes(option.number);
-                      return (
-                        <button
-                          type="button"
-                          role="radio"
-                          aria-checked={picked === option.number}
-                          className="qv-option"
-                          data-picked={(!checked && picked === option.number) || undefined}
-                          data-correct={isKey || undefined}
-                          data-wrong={isWrongPick || undefined}
-                          disabled={checked}
-                          onClick={() => setPicked(option.number)}
-                          key={option.number}
-                        >
-                          <span className="qv-opt-n" aria-hidden="true">{toPersianDigits(option.number)}</span>
-                          <span className="qv-opt-body">
-                            <ContentBlocks blocks={option.blocks} assets={question.assets} />
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {hasKey && (
-                    <div className="qv-actions">
-                      {!checked ? (
-                        <>
-                          {/* Asked before the key shows, so a lucky guess is not counted as knowing it. */}
-                          {history && (
-                            <div className="qp-confidence" role="group" aria-label="چقدر مطمئنی؟">
-                              <span>چقدر مطمئنی؟</span>
-                              {CONFIDENCE.map((item) => (
-                                <button
-                                  type="button"
-                                  key={item.value}
-                                  aria-pressed={confidence === item.value}
-                                  onClick={() => setConfidence((current) => (current === item.value ? null : item.value))}
-                                >
-                                  {item.label}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                          <button type="button" className="ds-btn ds-btn-primary" disabled={picked === null} onClick={() => void check()}>
-                            بررسی پاسخ
-                          </button>
-                          {question.solutionHint && !hintOpen && (
-                            <button type="button" className="ds-btn ds-btn-ghost" onClick={() => setHintOpen(true)}>
-                              یک سرنخ بده
-                            </button>
-                          )}
-                          {question.solutionHint && hintOpen && (
-                            <div className="qv-hint" role="note">
-                              <strong>سرنخ</strong>
-                              <ContentBlocks blocks={[{ type: "text", text: question.solutionHint }]} />
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <p className="qv-verdict" data-ok={correct || undefined} data-bad={(!correct && !deleted) || undefined} data-void={deleted || undefined} role="status">
-                            {deleted
-                              ? "این تست در کلید نهایی حذف شد؛ در کنکور برای هیچ پاسخی نمره‌ای داده یا کم نشد."
-                              : correct
-                                ? keyOptions.length > 1
-                                  ? `درست است. کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
-                                  : "درست است."
-                                : keyOptions.length > 1
-                                  ? `نادرست؛ کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
-                                  : `نادرست؛ پاسخ درست گزینهٔ ${toPersianDigits(question.correctOption!)} است.`}
-                            {question.keyState === "POSITIVE_EFFECT" && " این تست در کلید نهایی «تأثیر مثبت» دارد: پاسخ غلط نمرهٔ منفی ندارد."}
-                          </p>
-                          {!deleted && question.keySource && (
-                            <span className="qv-tag" data-authored={question.keySource === "authored" || undefined}>
-                              {question.keySource === "official" ? "کلید رسمی سنجش" : "پاسخ کنکور کامپیوتر؛ کلید رسمی در دسترس نیست"}
-                            </span>
-                          )}
-                          <button type="button" className="ds-btn ds-btn-ghost" onClick={retry}>
-                            دوباره حل می‌کنم
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  )}
-                  <PracticePanel questionId={question.id} history={history} onHistory={setHistory} wrongAnswerId={checked ? wrongAnswerId : null} />
-                </article>
+              <h1 className="sr-only">
+                {title} · {examLine(question)} · {fieldLabel(question.examMajor)}
+              </h1>
+              {isOpen(question) ? (
+                <QuestionCard ref={card} question={question} subjectTitle={title} history={history} onHistory={setHistory} active passageOpen />
               ) : (
                 <section className="qv-locked">
-                  <h2>این سؤال با بانک سؤال همین درس باز می‌شود</h2>
-                  <p>
-                    متن، گزینه‌ها و راه‌حل برای حساب‌هایی نمایش داده می‌شود که بانک سؤال {title} را تهیه کرده‌اند. بانک سؤال
-                    جدا از دوره‌ها فروخته می‌شود؛ سؤال‌های نمونه برای همه آزادند.
-                  </p>
-                  <BankOffer subjectCode={question.subjectCode} />
-                </section>
-              )}
-
-              {checked && (question.solutionShortcut || (question.solutionBlocks && question.solutionBlocks.length > 0)) && (
-                <section className="qv-solution" aria-label="راه‌حل">
-                  {question.labels?.topic && <p className="qv-about">این تست دربارهٔ: {question.labels.topic}</p>}
-                  {question.solutionShortcut && (
-                    <div className="qv-shortcut">
-                      <h3>راه سریع سر جلسه</h3>
-                      <ContentBlocks blocks={[{ type: "text", text: question.solutionShortcut }]} />
+                  <span className="qc-locked-icon"><Glyph name="lock" /></span>
+                  <div>
+                    <h2>{examLine(question)} · {fieldLabel(question.examMajor)}</h2>
+                    <p>
+                      متن، گزینه‌ها و حل این تست با بانک سؤال {title} باز می‌شود. بانک سؤال جدا از دوره‌ها فروخته می‌شود؛
+                      تست‌های نمونه برای همه آزادند.
+                    </p>
+                    <div className="qv-locked-actions">
+                      <BankOffer subjectCode={question.subjectCode} />
                     </div>
-                  )}
-                  {question.solutionBlocks && question.solutionBlocks.length > 0 && (
-                    <>
-                      <h2 id="qv-solution-title">{question.solutionShortcut ? "حل کامل" : "راه‌حل"}</h2>
-                      <div>
-                        <ContentBlocks blocks={question.solutionBlocks} assets={question.assets} />
-                      </div>
-                    </>
-                  )}
+                  </div>
                 </section>
               )}
 
-              {inSet && (
-                <nav className="qv-set" aria-label="تمرین مبحثی">
+              <nav className="qv-nav" aria-label={inSet ? "تمرین مبحثی" : "تست‌های همین مبحث"}>
+                {inSet ? (
+                  <span className="tnum">تمرین مبحثی · تست {toPersianDigits(inSet.index + 1)} از {toPersianDigits(inSet.total)}</span>
+                ) : neighbours ? (
                   <span className="tnum">
-                    تمرین مبحثی · تست {toPersianDigits(inSet.index + 1)} از {toPersianDigits(inSet.total)}
+                    {place?.topic.title ?? title} · تست {toPersianDigits(neighbours.index + 1)} از {toPersianDigits(neighbours.total)}
                   </span>
-                  {inSet.next ? (
-                    <Link className="ds-btn ds-btn-primary" href={`/questions/${inSet.next}`}>تست بعدی</Link>
-                  ) : (
-                    <Link className="ds-btn ds-btn-primary" href="/questions/build" onClick={clearPracticeSet}>پایان تمرین؛ آزمون تازه</Link>
+                ) : (
+                  <Link href={bank("")}>تست‌های دیگر {title}</Link>
+                )}
+                <span className="qv-nav-steps">
+                  {previousId && (
+                    <Link className="ds-btn ds-btn-secondary ds-btn-sm" href={`/questions/${previousId}`} title="تست قبلی (K)">
+                      <Glyph name="arrowRight" />
+                      قبلی
+                    </Link>
                   )}
-                </nav>
-              )}
-
-              <nav className="qv-nav" aria-label="ادامه">
-                <Link className="ds-btn ds-btn-secondary" href="/questions">بازگشت به فهرست</Link>
-                <Link className="ds-btn ds-btn-ghost" href={`/questions?subject=${encodeURIComponent(question.subjectCode)}`}>سؤال‌های دیگر {title}</Link>
+                  {nextId ? (
+                    <Link className="ds-btn ds-btn-primary ds-btn-sm" href={`/questions/${nextId}`} title="تست بعدی (J)">
+                      بعدی
+                      <Glyph name="arrowLeft" />
+                    </Link>
+                  ) : inSet ? (
+                    <Link className="ds-btn ds-btn-primary ds-btn-sm" href="/questions/build" onClick={clearPracticeSet}>پایان تمرین؛ آزمون تازه</Link>
+                  ) : null}
+                </span>
               </nav>
             </>
           )}
@@ -366,8 +212,8 @@ function BankOffer({ subjectCode }: { subjectCode: string }) {
   }, [subjectCode]);
 
   const samples = (
-    <Link className="ds-btn ds-btn-secondary" href={`/questions?subject=${encodeURIComponent(subjectCode)}`}>
-      سؤال‌های نمونهٔ این درس
+    <Link className="ds-btn ds-btn-secondary ds-btn-sm" href={`/questions?subject=${encodeURIComponent(subjectCode)}`}>
+      تست‌های این درس
     </Link>
   );
   if (product === undefined) return null;

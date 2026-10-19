@@ -554,6 +554,16 @@ describe("Taxonomy + Question Bank (e2e)", () => {
 
     const byQ = await request(app.getHttpServer()).get(`/questions?q=${subjectCode}`).expect(200);
     expect(byQ.body.total).toBe(2);
+
+    // "Only with a worked solution": a checked question still waiting for its solution (SILVER) drops out.
+    await prisma.question.update({ where: { externalId: `search-q1-${suffix}` }, data: { qualityTier: "SILVER", solutionBlocks: [] } });
+    const solved = await request(app.getHttpServer())
+      .get(`/questions?subjectCode=${subjectCode}&solved=true`)
+      .expect(200);
+    expect(solved.body.total).toBe(1);
+    expect(solved.body.items[0].examYear).toBe(1405);
+    const all = await request(app.getHttpServer()).get(`/questions?subjectCode=${subjectCode}`).expect(200);
+    expect(all.body.total).toBe(2);
   });
 
   it("republishing bumps the version and rollback restores an old one with history intact", async () => {

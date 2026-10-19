@@ -1,46 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch } from "../../lib/api";
-import { MIN_QUESTIONS_FOR_BANK, useAvailability } from "../../lib/availability";
-import { toPersianDigits } from "../../lib/format";
+import { formatPersianNumber, toPersianDigits } from "../../lib/format";
 import { OUTSIDE_1406_SUBJECTS, SYLLABUS, chapterTopicCodes, topicPlace } from "../../lib/syllabus";
 import { DataState, Pagination } from "../../components/ds";
-import { fieldLabel } from "../account/profile-options";
-import { HistoryMarks, historySentence, type History } from "./[id]/PracticePanel";
-
-/** The student's history on these questions (comma separated ids); empty when signed out. */
-async function loadHistories(ids: string): Promise<Record<string, History>> {
-  try {
-    return await apiFetch<Record<string, History>>(`/questions/history?ids=${encodeURIComponent(ids)}`);
-  } catch {
-    return {};
-  }
-}
+import { Glyph } from "../../components/SubjectIcon";
+import type { ReadingLink } from "../../content/article-topics";
+import { LockedRun, QuestionCard, isOpen, type BankQuestion, type CardHandle } from "./QuestionCard";
+import { loadHistories, type History, type Outcome } from "./practice";
 
 export interface SubjectOption { code: string; title: string }
-interface Block { type: string; text?: string }
 
-/**
- * A locked question carries metadata only -- the API decides server-side how
- * much of a question a caller may see, so a row must never assume a stem.
- */
-interface Question {
-  id: string;
-  subjectCode: string;
-  examMajor: string;
-  examDegree?: string;
-  examYear: number;
-  questionNumber?: number | null;
-  isSample: boolean;
-  topicCodes?: string[];
-  stemBlocks?: Block[];
-}
+interface Counts { subjects: Record<string, number>; solved?: Record<string, number>; topics: Record<string, number> }
 
-interface Counts { subjects: Record<string, number>; topics: Record<string, number> }
-
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 /** Konkur years a question can come from, newest first. */
 const YEARS = Array.from({ length: 26 }, (_, index) => 1405 - index);
 /** The master's tracks a question can come from. */
@@ -62,329 +37,445 @@ const COLLECTIONS = [
   { value: "noted", label: "یادداشت‌دارها" },
 ];
 
-interface Filters { subjectCode: string; chapter: string; topic: string; examYear: string; examMajor: string; query: string; collection: string }
-const EMPTY: Filters = { subjectCode: "", chapter: "", topic: "", examYear: "", examMajor: "", query: "", collection: "" };
+export interface Filters { subjectCode: string; chapter: string; topic: string; examYear: string; examMajor: string; collection: string; solved: string }
+const EMPTY: Filters = { subjectCode: "", chapter: "", topic: "", examYear: "", examMajor: "", collection: "", solved: "" };
+
+const KEYS: [string, string][] = [
+  ["۱ تا ۴", "انتخاب گزینه"],
+  ["Enter", "بررسی پاسخ"],
+  ["J / K", "تست بعد / قبل"],
+  ["H", "سرنخ"],
+  ["S", "ستاره"],
+  ["F", "حالت تمرکز"],
+];
+
+/** Typing in a field must never answer a question. */
+function typing(target: EventTarget | null) {
+  const element = target as HTMLElement | null;
+  return Boolean(element && (element.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(element.tagName)));
+}
 
 /**
- * The bank as a study tool: filters stay put on the side, questions are a
- * dense list you scan and open one after another -- the shape of an index,
- * not a catalogue of cards. A subject opens its 1406 syllabus tree (chapters,
- * then topics) with how many questions each holds, so a candidate who read
- * one topic tonight finds exactly its questions.
+ * The bank as a practice sheet: ten whole questions a page, each answerable
+ * where it stands -- no opening a question and coming back. Filters sit in one
+ * sticky bar (subject → chapter → topic, year, track, the student's own sets),
+ * a map beside the sheet shows how the page is going, and the keyboard or a
+ * focus mode moves question to question.
  */
 export function QuestionBank({
   catalog,
   initial,
+  initialPage = 1,
+  reading,
 }: {
   catalog: SubjectOption[];
   initial: Partial<Filters>;
+  initialPage?: number;
+  /** Lesson notes and test articles per syllabus chapter. */
+  reading: Record<string, ReadingLink[]>;
 }) {
-  const availability = useAvailability();
-  const filling = availability !== null && availability.questions < MIN_QUESTIONS_FOR_BANK;
-
-  const start = { ...EMPTY, ...initial };
-  const [draft, setDraft] = useState({ examYear: start.examYear, examMajor: start.examMajor, query: start.query, collection: start.collection });
-  /** null until known; signed-out visitors keep no history, so they get no collections or marks. */
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
-  const [histories, setHistories] = useState<Record<string, History>>({});
-  const [applied, setApplied] = useState<Filters>(start);
-  const [page, setPage] = useState(1);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState<Filters>({ ...EMPTY, ...initial });
+  const [page, setPage] = useState(initialPage);
   const [counts, setCounts] = useState<Counts | null>(null);
-
-  const [items, setItems] = useState<Question[]>([]);
+  const [items, setItems] = useState<BankQuestion[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  /** null when signed out: no history, collections or stars. */
+  const [histories, setHistories] = useState<Record<string, History> | null>(null);
+  const [outcomes, setOutcomes] = useState<Record<string, Outcome>>({});
+  const [active, setActive] = useState(0);
+  const [focus, setFocus] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const handles = useRef<(CardHandle | null)[]>([]);
+  const itemEls = useRef<(HTMLDivElement | null)[]>([]);
+  const sheetTop = useRef<HTMLDivElement | null>(null);
+  const firstLoad = useRef(true);
+  /** After "next" past the last card, the new page opens on its first card. */
+  const openFirst = useRef(false);
 
-  // Counts beside every subject, and the open subject's topics.
+  // The site header stays on screen; the filter bar sticks right under it.
+  const root = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    const params = applied.subjectCode ? `?subjectCode=${encodeURIComponent(applied.subjectCode)}` : "";
-    apiFetch<Counts>(`/questions/counts${params}`).then(setCounts).catch(() => setCounts(null));
-  }, [applied.subjectCode]);
+    const header = document.querySelector<HTMLElement>(".hd");
+    if (!header || !root.current) return;
+    const place = () => root.current?.style.setProperty("--qb-top", `${header.offsetHeight}px`);
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, []);
 
-  const titleOf = useMemo(() => {
+  useEffect(() => {
+    const params = filters.subjectCode ? `?subjectCode=${encodeURIComponent(filters.subjectCode)}` : "";
+    apiFetch<Counts>(`/questions/counts${params}`).then(setCounts).catch(() => setCounts(null));
+  }, [filters.subjectCode]);
+
+  const titles = useMemo(() => {
     const map = new Map<string, string>(Object.entries(OUTSIDE_1406_SUBJECTS));
     catalog.forEach((subject) => map.set(subject.code, subject.title));
-    return (code: string) => map.get(code) ?? code;
+    return map;
   }, [catalog]);
-
-  // 1406 subjects first, in the editorial order; courses the exam dropped after, when they hold questions.
-  const subjectList = useMemo(() => {
-    const has = (code: string) => !counts || (counts.subjects[code] ?? 0) > 0;
-    const main = catalog.filter((subject) => has(subject.code));
-    const outside = Object.entries(OUTSIDE_1406_SUBJECTS)
-      .filter(([code]) => counts && (counts.subjects[code] ?? 0) > 0)
-      .map(([code, title]) => ({ code, title }));
-    return { main, outside };
-  }, [catalog, counts]);
+  const titleOf = useCallback((code: string) => titles.get(code) ?? code, [titles]);
 
   const search = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams({ page: String(page), pageSize: String(PAGE_SIZE) });
-      if (applied.subjectCode) params.set("subjectCode", applied.subjectCode);
-      if (applied.topic) params.set("topicCode", applied.topic);
-      else if (applied.chapter) params.set("topicCodes", chapterTopicCodes(applied.subjectCode, applied.chapter).join(","));
-      if (applied.examYear) params.set("examYear", applied.examYear);
-      if (applied.examMajor) params.set("examMajor", applied.examMajor);
-      if (applied.query) params.set("q", applied.query);
-      if (applied.collection) params.set("collection", applied.collection);
-      const data = await apiFetch<{ items: Question[]; total: number }>(`/questions?${params}`);
+      if (filters.subjectCode) params.set("subjectCode", filters.subjectCode);
+      if (filters.topic) params.set("topicCode", filters.topic);
+      else if (filters.chapter) params.set("topicCodes", chapterTopicCodes(filters.subjectCode, filters.chapter).join(","));
+      if (filters.examYear) params.set("examYear", filters.examYear);
+      if (filters.examMajor) params.set("examMajor", filters.examMajor);
+      if (filters.collection) params.set("collection", filters.collection);
+      if (filters.solved) params.set("solved", "true");
+      const data = await apiFetch<{ items: BankQuestion[]; total: number }>(`/questions?${params}`);
+      setHistories(await loadHistories(data.items.map((item) => item.id)));
       setItems(data.items);
       setTotal(data.total);
-      const ids = data.items.map((item) => item.id).join(",");
-      setHistories(ids ? await loadHistories(ids) : {});
+      setOutcomes({});
+      setActive(0);
+      if (!firstLoad.current && !openFirst.current) sheetTop.current?.scrollIntoView({ block: "start" });
+      firstLoad.current = false;
+      openFirst.current = false;
     } catch (err) {
       setError(err instanceof Error ? err.message : "خواندن بانک سؤال ممکن نشد.");
     } finally {
       setLoading(false);
     }
-  }, [applied, page]);
+  }, [filters, page]);
 
   useEffect(() => {
     void search();
   }, [search]);
 
-  useEffect(() => {
-    apiFetch("/questions/history?ids=")
-      .then(() => setSignedIn(true))
-      .catch(() => setSignedIn(false));
-  }, []);
-
-  // Keep the address in step, so a filtered bank can be bookmarked or shared.
+  // Keep the address in step, so a filtered page of the bank can be bookmarked or shared.
   useEffect(() => {
     const params = new URLSearchParams();
-    if (applied.subjectCode) params.set("subject", applied.subjectCode);
-    if (applied.chapter) params.set("chapter", applied.chapter);
-    if (applied.topic) params.set("topic", applied.topic);
-    if (applied.examYear) params.set("year", applied.examYear);
-    if (applied.examMajor) params.set("track", applied.examMajor);
-    if (applied.collection) params.set("collection", applied.collection);
-    const next = params.size ? `?${params}` : window.location.pathname;
-    window.history.replaceState(null, "", next);
-  }, [applied]);
+    if (filters.subjectCode) params.set("subject", filters.subjectCode);
+    if (filters.chapter) params.set("chapter", filters.chapter);
+    if (filters.topic) params.set("topic", filters.topic);
+    if (filters.examYear) params.set("year", filters.examYear);
+    if (filters.examMajor) params.set("track", filters.examMajor);
+    if (filters.collection) params.set("collection", filters.collection);
+    if (filters.solved) params.set("solved", "1");
+    if (page > 1) params.set("page", String(page));
+    window.history.replaceState(null, "", params.size ? `?${params}` : window.location.pathname);
+  }, [filters, page]);
 
-  function apply(event?: FormEvent) {
-    event?.preventDefault();
+  function set(next: Partial<Filters>) {
     setPage(1);
-    setApplied((previous) => ({ ...previous, ...draft }));
-    setFiltersOpen(false);
+    setFilters((previous) => ({ ...previous, ...next }));
   }
 
-  function pick(next: Partial<Filters>) {
-    setPage(1);
-    setApplied((previous) => ({ ...previous, ...next }));
-  }
-
-  function clear() {
-    setDraft({ examYear: "", examMajor: "", query: "", collection: "" });
-    setApplied(EMPTY);
-    setPage(1);
-  }
-
-  const activeCount = [applied.subjectCode, applied.examYear, applied.examMajor, applied.query, applied.collection].filter(Boolean).length;
+  const open = items.filter(isOpen);
   const firstIndex = (page - 1) * PAGE_SIZE;
-  const tree = applied.subjectCode ? SYLLABUS[applied.subjectCode] ?? [] : [];
+  const tree = filters.subjectCode ? SYLLABUS[filters.subjectCode] ?? [] : [];
   const topicCount = (code: string) => counts?.topics[code] ?? 0;
-  const chapterCount = (codes: string[]) => codes.reduce((sum, code) => sum + topicCount(code), 0);
-  const place = applied.topic ? topicPlace(applied.subjectCode, applied.topic) : null;
-  const openChapter = applied.chapter || place?.chapter.code || "";
+  const chapter = tree.find((item) => item.code === filters.chapter);
+  const activeFilters = [filters.subjectCode, filters.examYear, filters.examMajor, filters.collection, filters.solved].filter(Boolean).length;
+  const bankTotal = counts ? Object.values(counts.subjects).reduce((sum, n) => sum + n, 0) : null;
+  const bankSolved = counts?.solved ? Object.values(counts.solved).reduce((sum, n) => sum + n, 0) : null;
+  const answered = open.filter((question) => outcomes[question.id]).length;
+  const right = open.filter((question) => outcomes[question.id] === "CORRECT").length;
+  const hasNext = page * PAGE_SIZE < total;
 
-  const subjectButton = (subject: SubjectOption) => (
-    <button
-      type="button"
-      key={subject.code}
-      aria-pressed={applied.subjectCode === subject.code}
-      onClick={() => pick({ subjectCode: subject.code, chapter: "", topic: "" })}
-    >
-      <span>{subject.title}</span>
-      {counts && <span className="qb-count tnum">{toPersianDigits(counts.subjects[subject.code] ?? 0)}</span>}
-    </button>
+  const go = useCallback(
+    (step: number) => {
+      const next = active + step;
+      if (next >= 0 && next < open.length) {
+        setActive(next);
+        if (!focus) itemEls.current[next]?.scrollIntoView({ block: "start", behavior: "smooth" });
+      } else if (next >= open.length && hasNext) {
+        openFirst.current = focus;
+        setPage((current) => current + 1);
+      }
+    },
+    [active, open.length, focus, hasNext],
   );
 
+  // The question being worked on is the one at the top of the screen.
+  useEffect(() => {
+    if (focus) return;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const line = 160;
+        const index = itemEls.current.findIndex((element) => element && element.getBoundingClientRect().bottom > line);
+        if (index >= 0) setActive(index);
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [focus, open.length]);
+
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.ctrlKey || event.metaKey || event.altKey || typing(event.target)) return;
+      const card = handles.current[active];
+      const digit = /^(?:Digit|Numpad)([1-4])$/.exec(event.code);
+      if (digit) card?.pick(Number(digit[1]));
+      else if (event.code === "Enter" && !(event.target instanceof HTMLButtonElement || event.target instanceof HTMLAnchorElement)) card?.check();
+      else if (event.code === "KeyJ" || event.code === "KeyN") go(1);
+      else if (event.code === "KeyK" || event.code === "KeyP") go(-1);
+      else if (event.code === "KeyH") card?.hint();
+      else if (event.code === "KeyS") card?.star();
+      else if (event.code === "KeyF") setFocus((on) => !on);
+      else if (event.code === "Escape") setFocus(false);
+      else if (event.code === "Slash" && event.shiftKey) setHelpOpen((on) => !on);
+      else return;
+      event.preventDefault();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [active, go]);
+
+  // Focus mode covers the page; the page under it must not scroll. Leaving
+  // it returns the sheet to the question the student ended on.
+  const activeNow = useRef(active);
+  activeNow.current = active;
+  useEffect(() => {
+    if (!focus) return;
+    const previous = document.body.style.overflow;
+    const elements = itemEls.current;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+      elements[activeNow.current]?.scrollIntoView({ block: "start" });
+    };
+  }, [focus]);
+
+  function onOutcome(id: string, outcome: Outcome) {
+    setOutcomes((previous) => ({ ...previous, [id]: outcome }));
+  }
+
+  // Questions and runs of locked ones, in page order.
+  const rows: ({ kind: "open"; question: BankQuestion; index: number; number: number } | { kind: "locked"; questions: BankQuestion[]; number: number })[] = [];
+  const seenPassages = new Set<string>();
+  items.forEach((question, offset) => {
+    const number = firstIndex + offset + 1;
+    if (isOpen(question)) {
+      rows.push({ kind: "open", question, index: rows.filter((row) => row.kind === "open").length, number });
+    } else {
+      const last = rows[rows.length - 1];
+      if (last?.kind === "locked") last.questions.push(question);
+      else rows.push({ kind: "locked", questions: [question], number });
+    }
+  });
+
+  const summary = [
+    filters.subjectCode && titleOf(filters.subjectCode),
+    filters.topic ? topicPlace(filters.subjectCode, filters.topic)?.topic.title : chapter?.title,
+    filters.examYear && `کنکور ${toPersianDigits(filters.examYear)}`,
+    filters.examMajor && TRACKS.find((track) => track.value === filters.examMajor)?.label,
+    filters.collection && COLLECTIONS.find((item) => item.value === filters.collection)?.label,
+    filters.solved && "با حل تشریحی",
+  ].filter(Boolean);
+
   return (
-    <main className="qb">
-      <header className="qb-top">
+    <main className="qb" data-focus={focus || undefined} ref={root}>
+      <header className="qb-hero">
         <div className="qb-wrap">
-          <p className="qb-kicker">بانک سؤال</p>
-          <h1>تست‌های کنکور، درس‌به‌درس و مبحث‌به‌مبحث</h1>
-          <p>هر تست سر جای خودش در سرفصل ۱۴۰۶ است. سؤال‌های نمونه برای همه باز است؛ متن و پاسخ بقیه با دسترسی بانک همان درس نمایش داده می‌شود.</p>
-          <div className="qb-top-actions">
-            <Link className="ds-btn ds-btn-primary" href="/questions/subjects">بانک فصل‌به‌فصل هر درس</Link>
-            <Link className="ds-btn ds-btn-secondary" href="/questions/build">آزمون از مبحثی که خوانده‌ای</Link>
+          <div>
+            <h1>بانک تست کنکور ارشد کامپیوتر</h1>
+            <p className="qb-stats">
+              {bankTotal !== null ? (
+                <>
+                  <strong className="tnum">{formatPersianNumber(bankTotal)}</strong> تست مقابله‌شده با دفترچهٔ اصلی
+                  {bankSolved ? (
+                    <>
+                      {" · "}
+                      <strong className="tnum">{formatPersianNumber(bankSolved)}</strong> حل تشریحی
+                    </>
+                  ) : null}
+                  {" · "}هر تست سر جای خودش در سرفصل ۱۴۰۶
+                </>
+              ) : (
+                "تست‌های کنکور، درس‌به‌درس و مبحث‌به‌مبحث، سر جای خودش در سرفصل ۱۴۰۶"
+              )}
+            </p>
           </div>
+          <nav className="qb-hero-links" aria-label="راه‌های دیگر تمرین">
+            <Link className="ds-btn ds-btn-secondary ds-btn-sm" href="/questions/subjects">فصل‌به‌فصل</Link>
+            <Link className="ds-btn ds-btn-primary ds-btn-sm" href="/questions/build">آزمون شخصی</Link>
+          </nav>
         </div>
       </header>
 
-      <div className="qb-wrap qb-layout">
-        <aside className="qb-filters" data-open={filtersOpen || undefined} aria-label="فیلتر سؤال‌ها">
-          <button type="button" className="qb-filters-toggle" onClick={() => setFiltersOpen((open) => !open)} aria-expanded={filtersOpen}>
-            فیلترها{activeCount > 0 ? ` (${toPersianDigits(activeCount)})` : ""}
+      <div className="qb-bar">
+        <div className="qb-wrap">
+          <button type="button" className="qb-bar-toggle" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((on) => !on)}>
+            <Glyph name="filter" />
+            فیلتر{activeFilters ? ` (${toPersianDigits(activeFilters)})` : ""}
           </button>
-
-          <form className="qb-filters-body" onSubmit={apply}>
-            <label className="qb-field">
-              <span>جست‌وجو</span>
-              <input type="search" value={draft.query} onChange={(event) => setDraft({ ...draft, query: event.target.value })} placeholder="متن، مبحث یا کد درس" />
-            </label>
-
-            <label className="qb-field">
-              <span>رشته</span>
-              <select value={draft.examMajor} onChange={(event) => setDraft({ ...draft, examMajor: event.target.value })}>
-                <option value="">همهٔ رشته‌ها</option>
-                {TRACKS.map((track) => (
-                  <option key={track.value} value={track.value}>{track.label}</option>
-                ))}
+          <div className="qb-filters" data-open={filtersOpen || undefined}>
+            <label>
+              <span className="sr-only">درس</span>
+              <select value={filters.subjectCode} onChange={(event) => set({ subjectCode: event.target.value, chapter: "", topic: "" })}>
+                <option value="">همهٔ درس‌ها</option>
+                {catalog
+                  .filter((subject) => !counts || (counts.subjects[subject.code] ?? 0) > 0)
+                  .map((subject) => (
+                    <option key={subject.code} value={subject.code}>
+                      {subject.title}
+                      {counts ? ` (${toPersianDigits(counts.subjects[subject.code] ?? 0)})` : ""}
+                    </option>
+                  ))}
+                {counts && Object.keys(OUTSIDE_1406_SUBJECTS).some((code) => counts.subjects[code]) && (
+                  <optgroup label="خارج از کنکور ۱۴۰۶">
+                    {Object.entries(OUTSIDE_1406_SUBJECTS)
+                      .filter(([code]) => counts.subjects[code])
+                      .map(([code, title]) => (
+                        <option key={code} value={code}>{title} ({toPersianDigits(counts.subjects[code])})</option>
+                      ))}
+                  </optgroup>
+                )}
               </select>
             </label>
-
-            <label className="qb-field">
-              <span>سال کنکور</span>
-              <select value={draft.examYear} onChange={(event) => setDraft({ ...draft, examYear: event.target.value })}>
+            {tree.length > 0 && (
+              <label>
+                <span className="sr-only">فصل</span>
+                <select value={filters.chapter} onChange={(event) => set({ chapter: event.target.value, topic: "" })}>
+                  <option value="">همهٔ فصل‌ها</option>
+                  {tree.map((item) => {
+                    const n = item.topics.reduce((sum, topic) => sum + topicCount(topic.code), 0);
+                    if (counts && n === 0) return null;
+                    return (
+                      <option key={item.code} value={item.code}>
+                        {item.title}
+                        {counts ? ` (${toPersianDigits(n)})` : ""}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+            )}
+            {chapter && (
+              <label>
+                <span className="sr-only">مبحث</span>
+                <select value={filters.topic} onChange={(event) => set({ topic: event.target.value })}>
+                  <option value="">همهٔ مبحث‌های فصل</option>
+                  {chapter.topics
+                    .filter((topic) => !counts || topicCount(topic.code) > 0)
+                    .map((topic) => (
+                      <option key={topic.code} value={topic.code}>
+                        {topic.title}
+                        {counts ? ` (${toPersianDigits(topicCount(topic.code))})` : ""}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            )}
+            <label>
+              <span className="sr-only">سال کنکور</span>
+              <select data-size="s" value={filters.examYear} onChange={(event) => set({ examYear: event.target.value })}>
                 <option value="">همهٔ سال‌ها</option>
                 {YEARS.map((year) => (
                   <option key={year} value={year}>{toPersianDigits(year)}</option>
                 ))}
               </select>
             </label>
-
-            {signedIn && (
-              <label className="qb-field">
-                <span>سؤال‌های من</span>
-                <select value={draft.collection} onChange={(event) => setDraft({ ...draft, collection: event.target.value })}>
-                  <option value="">همهٔ سؤال‌ها</option>
+            <label>
+              <span className="sr-only">رشته</span>
+              <select data-size="s" value={filters.examMajor} onChange={(event) => set({ examMajor: event.target.value })}>
+                <option value="">همهٔ رشته‌ها</option>
+                {TRACKS.map((track) => (
+                  <option key={track.value} value={track.value}>{track.label}</option>
+                ))}
+              </select>
+            </label>
+            {histories && (
+              <label>
+                <span className="sr-only">سؤال‌های من</span>
+                <select value={filters.collection} onChange={(event) => set({ collection: event.target.value })}>
+                  <option value="">همهٔ تست‌ها</option>
                   {COLLECTIONS.map((item) => (
                     <option key={item.value} value={item.value}>{item.label}</option>
                   ))}
                 </select>
               </label>
             )}
-
-            <button type="submit" className="qb-apply">اعمال</button>
-            {activeCount > 0 && (
-              <button type="button" className="qb-clear" onClick={clear}>پاک کردن همهٔ فیلترها</button>
+            <button type="button" className="qb-chip" aria-pressed={Boolean(filters.solved)} onClick={() => set({ solved: filters.solved ? "" : "1" })}>
+              فقط با حل تشریحی
+            </button>
+            {activeFilters > 0 && (
+              <button type="button" className="qb-clear" onClick={() => set(EMPTY)}>پاک کردن</button>
             )}
-
-            <fieldset className="qb-subjects">
-              <legend>درس</legend>
-              <button type="button" aria-pressed={applied.subjectCode === ""} onClick={() => pick({ subjectCode: "", chapter: "", topic: "" })}>
-                <span>همهٔ درس‌ها</span>
-              </button>
-              {subjectList.main.map(subjectButton)}
-              {subjectList.outside.length > 0 && (
-                <>
-                  <p className="qb-subjects-note">خارج از کنکور ۱۴۰۶</p>
-                  {subjectList.outside.map(subjectButton)}
-                </>
-              )}
-            </fieldset>
-
-            {tree.length > 0 && (
-              <fieldset className="qb-tree">
-                <legend>سرفصل {titleOf(applied.subjectCode)}</legend>
-                <Link className="qb-subject-hub" href={`/questions/subjects/${applied.subjectCode}`}>فصل‌به‌فصل، با تمرین و آزمون هر فصل ←</Link>
-                <button type="button" aria-pressed={!applied.chapter && !applied.topic} onClick={() => pick({ chapter: "", topic: "" })}>
-                  <span>همهٔ فصل‌ها</span>
-                </button>
-                {tree.map((chapter) => {
-                  const codes = chapter.topics.map((topic) => topic.code);
-                  const n = chapterCount(codes);
-                  if (counts && n === 0) return null;
-                  const open = openChapter === chapter.code;
-                  return (
-                    <div className="qb-chapter" key={chapter.code} data-off={chapter.offSyllabus || undefined}>
-                      <button type="button" aria-pressed={applied.chapter === chapter.code && !applied.topic} aria-expanded={open} onClick={() => pick({ chapter: chapter.code, topic: "" })}>
-                        <span>{chapter.title}</span>
-                        {counts && <span className="qb-count tnum">{toPersianDigits(n)}</span>}
-                      </button>
-                      {open && (
-                        <div className="qb-topics">
-                          {chapter.topics
-                            .filter((topic) => !counts || topicCount(topic.code) > 0)
-                            .map((topic) => (
-                              <button type="button" key={topic.code} aria-pressed={applied.topic === topic.code} onClick={() => pick({ chapter: chapter.code, topic: topic.code })}>
-                                <span>{topic.title}</span>
-                                {counts && <span className="qb-count tnum">{toPersianDigits(topicCount(topic.code))}</span>}
-                              </button>
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </fieldset>
-            )}
-          </form>
-        </aside>
-
-        <section className="qb-main" aria-labelledby="qb-count">
-          {filling && (
-            <p className="soon-banner" role="status">
-              <span className="soon-pill">به‌زودی</span>
-              بانک سؤال در حال تکمیل است؛ تست‌های کنکور سال‌های قبل درس‌به‌درس و مبحث‌به‌مبحث اضافه می‌شوند.
-            </p>
-          )}
-
-          <div className="qb-bar">
-            <p id="qb-count">
-              {loading ? "در حال جست‌وجو…" : `${toPersianDigits(total)} سؤال`}
-              {applied.subjectCode ? ` · ${titleOf(applied.subjectCode)}` : ""}
-              {place ? ` · ${place.topic.title}` : applied.chapter ? ` · ${tree.find((chapter) => chapter.code === applied.chapter)?.title ?? ""}` : ""}
-              {applied.examMajor ? ` · ${fieldLabel(applied.examMajor)}` : ""}
-              {applied.examYear ? ` · کنکور ${toPersianDigits(applied.examYear)}` : ""}
-            </p>
           </div>
+          <p className="qb-count" aria-live="polite">
+            {loading ? "در حال آوردن تست‌ها…" : `${formatPersianNumber(total)} تست`}
+          </p>
+          {open.length > 0 && (
+            <button type="button" className="qb-focus-btn" onClick={() => setFocus(true)} title="حالت تمرکز (F)">
+              <Glyph name="focus" />
+              <span>تمرکز</span>
+            </button>
+          )}
+        </div>
+      </div>
 
+      <div className="qb-wrap qb-layout" ref={sheetTop}>
+        <section className="qb-sheet" aria-label="تست‌ها">
+          {summary.length > 0 && <p className="qb-summary">{summary.join(" · ")}</p>}
           <DataState
             loading={loading}
             error={error}
             isEmpty={items.length === 0}
             onRetry={search}
-            emptyTitle="سؤالی با این فیلترها نیست"
-            emptyDescription="فیلترها را کمتر کن یا همه را پاک کن."
-            skeletonRows={8}
+            emptyTitle={filters.collection ? "در این دسته هنوز تستی نیست" : "تستی با این فیلترها نیست"}
+            emptyDescription={filters.collection ? "تست بزن تا این دسته پر شود، یا دستهٔ دیگری را انتخاب کن." : "فیلترها را کمتر کن یا همه را پاک کن."}
+            skeletonRows={6}
           >
-            <ol className="qb-list" start={firstIndex + 1}>
-              {items.map((question, index) => {
-                const stem = question.stemBlocks?.find((block) => block.type === "text")?.text;
-                const where = topicPlace(question.subjectCode, question.topicCodes?.[0]);
+            <div className="qb-items">
+              {rows.map((row) => {
+                if (row.kind === "locked") {
+                  return <LockedRun key={row.questions[0].id} questions={row.questions} subjectTitle={titleOf} startAt={row.number} signedOut={histories === null} />;
+                }
+                const passage = row.question.passage?.externalId;
+                const passageOpen = Boolean(passage && !seenPassages.has(passage));
+                if (passage) seenPassages.add(passage);
+                const place = topicPlace(row.question.subjectCode, row.question.topicCodes?.[0]);
                 return (
-                  <li key={question.id}>
-                    <Link className="qb-row" href={`/questions/${question.id}`}>
-                      <span className="qb-n tnum" aria-hidden="true">{toPersianDigits(firstIndex + index + 1)}</span>
-                      <span className="qb-body">
-                        <span className="qb-stem" data-locked={!stem || undefined}>
-                          {stem ?? "متن این سؤال با دسترسی بانک این درس نمایش داده می‌شود."}
-                        </span>
-                        <span className="qb-meta">
-                          <span>
-                            کنکور {question.examDegree === "PHD" ? "دکتری " : ""}
-                            {toPersianDigits(question.examYear)}
-                            {question.questionNumber ? ` · سؤال ${toPersianDigits(question.questionNumber)}` : ""}
-                          </span>
-                          <span>{fieldLabel(question.examMajor)}</span>
-                          <span>{where ? where.topic.title : titleOf(question.subjectCode)}</span>
-                          {where?.chapter.offSyllabus && <span>خارج از سرفصل ۱۴۰۶</span>}
-                          {histories[question.id]?.seen ? (
-                            <span className="qb-history" title={historySentence(histories[question.id])}>
-                              <HistoryMarks outcomes={histories[question.id].outcomes.slice(-5)} />
-                            </span>
-                          ) : null}
-                        </span>
-                      </span>
-                      {(question.isSample || !stem) && (
-                        <span className="qb-access" data-free={question.isSample || undefined}>
-                          {question.isSample ? "نمونهٔ رایگان" : "قفل"}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
+                  <div
+                    key={row.question.id}
+                    className="qb-item"
+                    data-focused={(focus && active === row.index) || undefined}
+                    ref={(element) => {
+                      itemEls.current[row.index] = element;
+                    }}
+                  >
+                    <QuestionCard
+                      ref={(handle) => {
+                        handles.current[row.index] = handle;
+                      }}
+                      question={row.question}
+                      subjectTitle={titleOf(row.question.subjectCode)}
+                      position={row.number}
+                      history={histories?.[row.question.id] ?? null}
+                      onHistory={(history) => setHistories((previous) => (previous ? { ...previous, [row.question.id]: history } : previous))}
+                      onOutcome={onOutcome}
+                      active={active === row.index}
+                      onActivate={() => setActive(row.index)}
+                      reading={place ? reading[place.chapter.code] : undefined}
+                      passageOpen={passageOpen}
+                    />
+                  </div>
                 );
               })}
-            </ol>
+            </div>
 
+            {hasNext && (
+              <button type="button" className="qb-next" onClick={() => setPage(page + 1)}>
+                {toPersianDigits(Math.min(PAGE_SIZE, total - page * PAGE_SIZE))} تست بعدی
+                <Glyph name="arrowLeft" />
+              </button>
+            )}
             {total > PAGE_SIZE && (
               <div className="qb-pages">
                 <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
@@ -392,7 +483,89 @@ export function QuestionBank({
             )}
           </DataState>
         </section>
+
+        <aside className="qb-side" aria-label="این صفحه">
+          {open.length > 0 && (
+            <div className="qb-map">
+              <p className="qb-map-title">این صفحه</p>
+              <ol className="qb-dots">
+                {rows
+                  .filter((row) => row.kind === "open")
+                  .map((row) => {
+                    if (row.kind !== "open") return null;
+                    const outcome = outcomes[row.question.id];
+                    const history = histories?.[row.question.id];
+                    return (
+                      <li key={row.question.id}>
+                        <button
+                          type="button"
+                          data-active={active === row.index || undefined}
+                          data-outcome={outcome}
+                          data-seen={(!outcome && history?.seen) || undefined}
+                          data-starred={history?.starred || undefined}
+                          aria-label={`تست ${toPersianDigits(row.number)}`}
+                          onClick={() => {
+                            setActive(row.index);
+                            itemEls.current[row.index]?.scrollIntoView({ block: "start", behavior: "smooth" });
+                          }}
+                        >
+                          {toPersianDigits(row.number)}
+                        </button>
+                      </li>
+                    );
+                  })}
+              </ol>
+              <p className="qb-map-score tnum">
+                {answered === 0
+                  ? "هنوز تستی از این صفحه نزده‌ای."
+                  : `${toPersianDigits(answered)} از ${toPersianDigits(open.length)} زده‌ای · ${toPersianDigits(right)} درست`}
+              </p>
+              {histories === null && (
+                <p className="qb-map-note">
+                  <Link href="/login?next=/questions">وارد شو</Link> تا پاسخ‌هایت، ستاره‌ها و یادداشت‌هایت بماند.
+                </p>
+              )}
+            </div>
+          )}
+          <div className="qb-keys">
+            <button type="button" className="qb-keys-toggle" aria-expanded={helpOpen} onClick={() => setHelpOpen((on) => !on)}>
+              <Glyph name="keyboard" />
+              میان‌برهای صفحه‌کلید
+            </button>
+            {helpOpen && (
+              <dl>
+                {KEYS.map(([key, label]) => (
+                  <div key={key}>
+                    <dt><kbd>{key}</kbd></dt>
+                    <dd>{label}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
+        </aside>
       </div>
+
+      {focus && open.length > 0 && (
+        <div className="qb-focusbar" role="toolbar" aria-label="حالت تمرکز">
+          <button type="button" onClick={() => go(-1)} disabled={active === 0} aria-label="تست قبلی (K)">
+            <Glyph name="arrowRight" />
+          </button>
+          <span className="tnum">
+            {toPersianDigits(firstIndex + 1 + items.indexOf(open[active] ?? items[0]))} از {formatPersianNumber(total)}
+          </span>
+          <button type="button" onClick={() => go(1)} disabled={active >= open.length - 1 && !hasNext} aria-label="تست بعدی (J)">
+            <Glyph name="arrowLeft" />
+          </button>
+          <span className="qb-focus-progress" aria-hidden="true">
+            <span style={{ width: `${((active + 1) / open.length) * 100}%` }} />
+          </span>
+          <button type="button" className="qb-focus-exit" onClick={() => setFocus(false)}>
+            <Glyph name="unfocus" />
+            خروج
+          </button>
+        </div>
+      )}
     </main>
   );
 }

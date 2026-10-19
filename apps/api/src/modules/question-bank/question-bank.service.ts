@@ -24,6 +24,8 @@ export interface QuestionFilters {
   pageSize?: number;
   /** Admin only: one quality tier, e.g. the DRAFT review queue. */
   qualityTier?: QuestionQuality;
+  /** Only questions with a worked solution (GOLD: checked and solved, see qualityTierOf). */
+  solved?: boolean;
 }
 
 /** What every student-facing read requires: in the bank, and checked. */
@@ -151,6 +153,7 @@ export class QuestionBankService {
     if (filters.examDegree) where.examDegree = filters.examDegree.toUpperCase() as Degree;
     if (filters.examMajor) where.examMajor = filters.examMajor;
     if (filters.examYear) where.examYear = filters.examYear;
+    if (filters.solved) where.qualityTier = QuestionQuality.GOLD;
     // Structured filters are indexed and exact; `q` is a simple substring
     // match over scalar fields only. True full-text search into the JSON
     // stem/solution block content (doc's "PostgreSQL FTS") is not built yet
