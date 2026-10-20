@@ -221,3 +221,22 @@ Text: CS 1399 q72 sorts a 10-element array in the booklet; the bank typed 15 (`t
 | kunkurcomputer-q-1209-1388-D-062 | CS 1388 q62 | 1 (18) | after the in-place A[i] = A[8−i] the array is 3,2,1,3,2,3,1,2,3, whose sum is 20 (option 2); 18 is the sum before the loop |
 | kunkurcomputer-q-1209-1392-370C-060 | CS 1392 q60 | 2 | with while (p > 0) the last pass has p = 0 and prints a spurious 1 (n ≥ 0 always holds), e.g. n = 4 prints 1001; none of the four changes gives a correct program |
 | kunkurcomputer-q-1209-1392-370C-061 | CS 1392 q61 | 4 | swapping lines 2 and 4 gives r := n; n := m mod n; m := r, which is Euclid (option 3); moving line 4 before the loop makes n := m mod n compute n mod n = 0 on the first pass |
+
+## Discrete mathematics: keys and booklets the mathematics does not reach (2026-10-20)
+
+Each was checked against the booklet crop; the bank's text matches the booklet. No worked solution is written until the owner decides.
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1209-1382-b0-051 | CS 1382 q51 | 3 | graph 3 is planar, but graph 4 is planar too: 6 vertices, 12 edges, and it embeds as a triangulation (8 triangular faces, V−E+F = 2); graphs 1 (K₅) and 2 (K₃,₃) are not |
+| kunkurcomputer-q-1209-1382-b0-059 | CS 1382 q59 | 3 | the coefficient is C(2n,n); option 3 (Σ C(n,k)²) equals it, but so does option 2, since 2·C(2n−1,n−1) = C(2n,n) |
+| kunkurcomputer-q-1209-1383-b0-064 | CS 1383 q64 | 1 | option 2 as printed has an unclosed parenthesis; read as S(x) → (∀y(…) → P(x,x)) it is logically equivalent to option 1 (A∧B→C ≡ A→(B→C)) |
+| kunkurcomputer-q-1209-1385-b0-073 | CS 1385 q73 | 2 (4×5!) | choose the greatest (5 ways) and the least (4 ways), then any partial order on the other three (19): 5·4·19 = 380, which is no option |
+| kunkurcomputer-q-1209-1385-b0-079 | CS 1385 q79 | 4 | f(n,k) counts onto maps from k to n elements (n!·S(k,n)): f(5,4) = 0 is true, while f(4,5) = 4!·S(5,4) = 240 ≠ 0, so the false statement is option 3 |
+| kunkurcomputer-q-1276-1388-C-034 | IT 1388 q34 | 3 (91) | the booklet prints F(F(n+1)); with n+1 the recursion never ends (F(100) = F(91) = F(F(92)) = … = F(91)), and any constant value on 1..100 satisfies the equations, so F(72) is not determined. With F(F(n+11)) (McCarthy's 91 function) the key holds |
+| kunkurcomputer-q-1276-1401-459C-035 | IT 1401 q35 | 1 (۲) | three are always equivalences: h(g(f(R))), h(f(g(R))) and f(h(g(R))) (the transitive closure of a symmetric relation is symmetric, and adding the diagonal keeps it transitive); 3 is no option |
+| kunkurcomputer-q-1277-1389-b2-047 | CE 1389 q47 | 1 | 47^74 mod 168 = 25 (checked by machine), so it is 25 hours later: Thursday 5 p.m., which is no option |
+| kunkurcomputer-q-1277-1391-b1-044 | CE 1391 q44 | 4 | counted by machine: a₁…a₅ = 9, 78, 680, 5923, 51598; option 4 gives a₃ = 681 and none of the four recurrences holds |
+| kunkurcomputer-q-1277-1391-b1-045 | CE 1391 q45 | 1 | φₙ follows from the premises exactly when (φ₁∧…∧φₙ₋₁) → φₙ is a tautology, option 2; option 1 (a satisfiable disjunction) does not make an argument valid |
+
+Note: two wrong keys in a row from CE 1391 (q44, q45) suggest checking that year's key source as a whole.
