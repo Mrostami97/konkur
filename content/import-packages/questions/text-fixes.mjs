@@ -13,6 +13,44 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1276-1402-758F-030", { stem: [["تعداد پرتقال‌ها مضرب ۲ باشد", "تعداد پرتقال‌ها مضرب ۳ باشد"]] }],
   // CS 1392 q63: the booklet's option 3 is ۱۲۰ (the Huffman merge cost), the bank typed 125.
   ["kunkurcomputer-q-1209-1392-370C-063", { options: { 3: "$120$" } }],
+  // Stems that point at a function, graph, table or circuit the bank never carried (2026-10-20 audit of
+  // stems that refer to «زیر/روبه‌رو» with nothing attached). Each drawing is the clean hand cut, checked
+  // against the booklet crop; the two tables are typed.
+  ["kunkurcomputer-q-1277-1381-b0-139", {
+    stem: [["تابع زیر را در نظر بگیرید:\n", "تابع زیر را در نظر بگیرید:\n![](ce1381_q0139_component.png)\n"]],
+    figures: ["outputs/source_fidelity/assets/ce_next20/ce1381_q0139_component.png"],
+  }],
+  ["kunkurcomputer-q-1277-1382-b0-052", { figures: ["outputs/source_fidelity/assets/ce_next20/ce1382_q0052_component.png"] }],
+  ["kunkurcomputer-q-1277-1383-b0-043", {
+    stem: [["تابع زیر را در نظر می‌گیریم.", "تابع زیر را در نظر می‌گیریم.\n![](ce1383_q0043_component.png)\n"]],
+    figures: ["outputs/source_fidelity/assets/ce_following20/ce1383_q0043_component.png"],
+  }],
+  ["kunkurcomputer-q-1277-1386-b0-043", {
+    figures: ["outputs/source_fidelity/assets/ce_third20/ce1386_q0043_component_1.png", "outputs/source_fidelity/assets/ce_third20/ce1386_q0043_component_2.png"],
+  }],
+  ["kunkurcomputer-q-1277-1390-b2-057", {
+    table: {
+      headers: ["", "A", "B", "C", "D", "E"],
+      rows: [
+        ["A", "", "۱۰", "۸", "۲", ""],
+        ["B", "۱۰", "", "۲", "", "۲"],
+        ["C", "۸", "", "", "۲", "۶"],
+        ["D", "۲", "", "۲", "", "۹"],
+        ["E", "", "۲", "۶", "۹", ""],
+      ],
+    },
+  }],
+  ["kunkurcomputer-q-1277-1390-b1-078", {
+    table: {
+      headers: ["زمان ورود درخواست", "۰", "۱۰", "۲۰", "۷۰", "۸۰", "۹۰"],
+      rows: [["سیلندر درخواست‌شده", "۲۱", "۷۵", "۱۶", "۶۸", "۲", "۱۷"]],
+    },
+  }],
+  ["kunkurcomputer-q-1277-1391-b1-050", {
+    stem: [["تابع روبه‌رو را در نظر بگیرید.", "تابع زیر را در نظر بگیرید.\n![](doc-95fb09b12836fade-q-0050-C-code.png)\n"]],
+    figures: ["outputs/source_fidelity/assets/ce_technical_07/doc-95fb09b12836fade-q-0050-C-code.png"],
+  }],
+  ["kunkurcomputer-q-2355-1402-b0-010", { figures: ["outputs/phd_question_bank/assets/1402/phd-1402-7fc9cab5307f7cda-q0010-figure.png"] }],
   // CE 1389 q40: the stem points at «خلاصه اطلاعات زیر» but the bank never typed the table (2026-10-20).
   ["kunkurcomputer-q-1277-1389-b2-040", {
     table: {

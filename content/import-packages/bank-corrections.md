@@ -19,6 +19,8 @@ Fix these in the bank; articles built here already use the image's text.
 | kunkurcomputer-q-1209-1389-3077-057 | CS 1389 q57, option 2 | «۲ و ۱۰» (the same as option 4) | «۳ و ۱۰». Found by the 2026-10-20 text audit (duplicate options); key 1 unaffected. Fixed in text-fixes.mjs |
 | kunkurcomputer-q-1209-1395-271F-093 (and its repeat -185) | CS 1395 q93, options 3 and 4 | option 3 untyped (crop only); option 4 «زمان O(n³) و حافظه O(n²)» (the same as option 1) | option 3 «زمان O(n³) و حافظه O(n³)», option 4 «زمان O(n²) و حافظه O(n³)». Key 1 unaffected. Fixed in text-fixes.mjs |
 
+Missing content found by the same audit (stems that point at «زیر/روبه‌رو» with nothing attached), now attached from the clean hand cuts or typed: CE 1381 q139 (the functions f and g), CE 1382 q52 (F₁ and F₂), CE 1383 q43 (Concow), CE 1386 q43 (both graphs), CE 1390 q57 of the AI set (the distance table, typed), CE 1390 q78 (the request table, typed), CE 1391 q50 (the C function), PhD 2355 1402 q10 (the circuit), and CE 1389 q40 (the ANOVA summary, typed).
+
 The same audit found two booklets that print two options identically themselves: CE 1389 q53 (options 3 and 4, `O(n lg n)`) and CE 1390 q76 (options 1 and 4, «۹۰٪، ۵/۹»). The bank keeps the booklet's text.
 
 ## Key errors (the bank's key misses a final-key change)
