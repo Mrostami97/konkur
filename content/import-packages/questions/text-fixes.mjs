@@ -13,6 +13,17 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1276-1402-758F-030", { stem: [["تعداد پرتقال‌ها مضرب ۲ باشد", "تعداد پرتقال‌ها مضرب ۳ باشد"]] }],
   // CS 1392 q63: the booklet's option 3 is ۱۲۰ (the Huffman merge cost), the bank typed 125.
   ["kunkurcomputer-q-1209-1392-370C-063", { options: { 3: "$120$" } }],
+  // CE 1389 q40: the stem points at «خلاصه اطلاعات زیر» but the bank never typed the table (2026-10-20).
+  ["kunkurcomputer-q-1277-1389-b2-040", {
+    table: {
+      headers: ["", "نمونهٔ ۱", "نمونهٔ ۲", "نمونهٔ ۳"],
+      rows: [
+        ["اندازهٔ نمونهٔ iام", "۲", "۵", "۴"],
+        ["میانگین نمونهٔ iام", "۶", "۸", "۴"],
+        ["انحراف معیار نمونهٔ iام", "۰٫۷", "۱٫۰", "۱٫۱"],
+      ],
+    },
+  }],
   // CS 1389 q57: option 2 is «۳ و ۱۰» in the booklet; the bank repeated option 4 (2026-10-20 text audit).
   ["kunkurcomputer-q-1209-1389-3077-057", { options: { 2: "‭۳ و ۱۰‬" } }],
   // CS 1395 q93 (repeated as q185): option 3 was untyped and option 4 repeated option 1.

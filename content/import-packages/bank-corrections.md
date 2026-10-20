@@ -239,4 +239,10 @@ Each was checked against the booklet crop; the bank's text matches the booklet. 
 | kunkurcomputer-q-1277-1391-b1-044 | CE 1391 q44 | 4 | counted by machine: a₁…a₅ = 9, 78, 680, 5923, 51598; option 4 gives a₃ = 681 and none of the four recurrences holds |
 | kunkurcomputer-q-1277-1391-b1-045 | CE 1391 q45 | 1 | φₙ follows from the premises exactly when (φ₁∧…∧φₙ₋₁) → φₙ is a tautology, option 2; option 1 (a satisfiable disjunction) does not make an argument valid |
 
-Note: two wrong keys in a row from CE 1391 (q44, q45) suggest checking that year's key source as a whole.
+| kunkurcomputer-q-1209-1383-b0-128 | CS 1383 q128 | 2 (√(a+d)) | the booklet asks for the Frobenius norm of B, which is √(a²+b²+c²+d²) (option 3); √(a+d) = √trace(AA^T) is the Frobenius norm of A |
+| kunkurcomputer-q-1209-1405-257A-045 | CS 1405 q45 | 2 | the eigenvector for 3 is orthogonal to (1,1,1) and (1,0,−1), i.e. a multiple of (1,−2,1); option 1 (−1,2,−1) is the same eigenvector, so options 1 and 2 are both right |
+| kunkurcomputer-q-1277-1389-b2-036 | CE 1389 q36 | 2 | the probability of exactly one defective is ≈ 0.30 (hypergeometric) or 0.28 (binomial, 0.4·0.96⁹); option 1 exceeds 1 and options 2–4 are 0.039, 0.885, 0.013 — none is close |
+| kunkurcomputer-q-1277-1391-b1-035 | CE 1391 q35 | 2 | Σ_{i=k}^{n} C(i−1,k−1) = C(n,k) (the hockey-stick identity), option 1; option 2 (2ⁿ(n−1)) does not even depend on k |
+| kunkurcomputer-q-1277-1391-b1-037 | CE 1391 q37 | 1 (۳۷۴٫۵) | the expected payout is 3.5 coins = 350 rials; a profit of a quarter of the coins needs a ticket of 350 × 1.25 = 437.5, option 2 |
+
+Note: four wrong keys from CE 1391 (q35, q37, q44, q45) suggest checking that year's key source as a whole.
