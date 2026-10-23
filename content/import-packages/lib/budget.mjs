@@ -163,8 +163,8 @@ export function subjectBudgetArticle(subject) {
     const groups = [yrs.filter((y) => y <= 1395), yrs.filter((y) => y >= 1396 && y <= 1401), yrs.filter((y) => y >= 1402)].filter((g) => g.length);
     return groups.map((g) => `${fa(g[0])} تا ${fa(g[g.length - 1])}: میانگین ${one(avg(g.map((y) => count(track, y, subject))))} تست`).join("؛ ");
   };
-  if (ceHas) blocks.push(text(`مهندسی کامپیوتر: ${eras("ce")}. دفترچه هم در این سال‌ها کوچک‌تر شد: ۱۲۱ تا ۱۵۰ سؤال پیش از ۱۴۰۰ و ۱۱۵ سؤال از ۱۴۰۲ به بعد.`));
-  if (itHas) blocks.push(text(`IT: ${eras("it")}. دفترچهٔ IT از ۱۱۰ سؤال در دههٔ هشتاد به ۹۵ سؤال در ۱۴۰۲ تا ۱۴۰۵ رسید.`));
+  if (ceHas) blocks.push(text(`در مهندسی کامپیوتر، ${eras("ce")}. دفترچه هم در این سال‌ها کوچک‌تر شد: ۱۲۱ تا ۱۵۰ سؤال پیش از ۱۴۰۰ و ۱۱۵ سؤال از ۱۴۰۲ به بعد.`));
+  if (itHas) blocks.push(text(`در IT، ${eras("it")}. دفترچهٔ IT از ۱۱۰ سؤال در دههٔ هشتاد به ۹۵ سؤال در ۱۴۰۲ تا ۱۴۰۵ رسید.`));
   blocks.push(text(`ساختار دفترچه در ۱۴۰۲ تا ۱۴۰۵ در هر دو مجموعه تقریباً ثابت بوده است؛ برای همین برنامه‌ریزی را بر همین چهار سال بگذار، نه بر میانگین بیست سال.`));
 
   blocks.push(h2(`${subject} در کنکور ۱۴۰۶`));
