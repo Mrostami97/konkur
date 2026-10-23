@@ -316,6 +316,7 @@
 .qv-locked-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.85rem; }
 .qv-locked-actions p { margin: 0; }
 .qv-locked-price { color: var(--ink) !important; font-weight: var(--weight-bold); }
+.qv-offer { display: inline-flex; align-items: center; gap: 0.5rem; }
 .qv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; padding: 0.6rem 0.9rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
 .qv-nav > span.tnum, .qv-nav > a { color: var(--ink-700); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
 .qv-nav-steps { display: flex; gap: 0.5rem; }

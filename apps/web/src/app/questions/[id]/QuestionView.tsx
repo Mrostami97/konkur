@@ -188,27 +188,38 @@ interface BankProduct {
   id: string;
   kind: string;
   prices?: { amountRial: number }[];
+  courseGrants?: unknown[];
+  resourceGrants?: unknown[];
   questionBankGrants?: { subjectCode: string }[];
 }
 
+const grantsSubject = (item: BankProduct, subjectCode: string) =>
+  Boolean(item.prices?.length && item.questionBankGrants?.some((grant) => grant.subjectCode === subjectCode));
+
 /**
- * The bank product of one subject, sold on its own (owner, 2026-10-06): its
- * price and a buy button when it is on sale, otherwise a note and the free
- * sample questions of the subject.
+ * The bank of one subject, sold on its own (owner, 2026-10-06), and the whole
+ * bank, a bundle of every subject's bank and nothing else (owner, 2026-10-24):
+ * a price and a buy button for each that is on sale, otherwise a note and the
+ * free sample questions of the subject.
  */
 function BankOffer({ subjectCode }: { subjectCode: string }) {
-  const [product, setProduct] = useState<BankProduct | null | undefined>(undefined);
+  const [offers, setOffers] = useState<{ subject?: BankProduct; whole?: BankProduct } | null | undefined>(undefined);
 
   useEffect(() => {
     apiFetch<BankProduct[]>("/products")
-      .then((products) =>
-        setProduct(
-          products.find(
-            (item) => item.kind === "QUESTION_BANK" && item.questionBankGrants?.some((grant) => grant.subjectCode === subjectCode) && item.prices?.length,
-          ) ?? null,
-        ),
-      )
-      .catch(() => setProduct(null));
+      .then((products) => {
+        const subject = products.find((item) => item.kind === "QUESTION_BANK" && grantsSubject(item, subjectCode));
+        const whole = products.find(
+          (item) =>
+            item.kind === "BUNDLE" &&
+            !item.courseGrants?.length &&
+            !item.resourceGrants?.length &&
+            (item.questionBankGrants?.length ?? 0) > 1 &&
+            grantsSubject(item, subjectCode),
+        );
+        setOffers(subject || whole ? { subject, whole } : null);
+      })
+      .catch(() => setOffers(null));
   }, [subjectCode]);
 
   const samples = (
@@ -216,8 +227,8 @@ function BankOffer({ subjectCode }: { subjectCode: string }) {
       تست‌های این درس
     </Link>
   );
-  if (product === undefined) return null;
-  if (!product) {
+  if (offers === undefined) return null;
+  if (!offers) {
     return (
       <>
         <p className="qv-locked-soon">فروش بانک سؤال این درس به‌زودی باز می‌شود.</p>
@@ -227,8 +238,18 @@ function BankOffer({ subjectCode }: { subjectCode: string }) {
   }
   return (
     <>
-      <p className="qv-locked-price tnum">{formatRial(product.prices![0].amountRial)}</p>
-      <BuyButton productId={product.id} label="تهیهٔ بانک سؤال این درس" />
+      {offers.subject && (
+        <span className="qv-offer">
+          <span className="qv-locked-price tnum">{formatRial(offers.subject.prices![0].amountRial)}</span>
+          <BuyButton productId={offers.subject.id} label="بانک سؤال این درس" />
+        </span>
+      )}
+      {offers.whole && (
+        <span className="qv-offer">
+          <span className="qv-locked-price tnum">{formatRial(offers.whole.prices![0].amountRial)}</span>
+          <BuyButton productId={offers.whole.id} label="کل بانک سؤال، همهٔ دروس" />
+        </span>
+      )}
       {samples}
     </>
   );
