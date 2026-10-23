@@ -90,9 +90,11 @@ export default async function ResourcePage({ params: pendingParams }: { params: 
             <p className="editorial-deck">{resource.summary}</p>
             <div className="editorial-byline">
               <div>
-                {resource.authorProfile && <span>تهیه‌کننده: <Link href={`/authors/${resource.authorProfile.slug}`}>{resource.authorProfile.displayName}</Link></span>}
-                {resource.reviewerProfile && <span>بازبین: <Link href={`/authors/${resource.reviewerProfile.slug}`}>{resource.reviewerProfile.displayName}</Link></span>}
-                {!resource.authorProfile && !resource.reviewerProfile && <span>انتساب عمومی برای این منبع منتشر نشده است.</span>}
+                {(() => {
+                  // One name, no "reviewer" line (owner, 2026-10-24).
+                  const writer = resource.authorProfile ?? resource.reviewerProfile;
+                  return writer ? <span>تهیهٔ <Link href={`/authors/${writer.slug}`}>{writer.displayName}</Link></span> : null;
+                })()}
               </div>
               <div className="editorial-dates">
                 {resource.publishedAt && <span>انتشار {formatPublicDate(resource.publishedAt)}</span>}

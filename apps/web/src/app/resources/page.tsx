@@ -169,8 +169,8 @@ export default async function ResourcesPage({ searchParams: pendingSearchParams 
       {subject && visibleResources.length === 0 && !unavailable && (
         <EmptyState
           title={`هنوز منبعی برای ${subject.shortTitle} نگذاشته‌ایم`}
-          description="این نتیجه عمداً خالی است؛ منابع پس از ثبت منبع، وضعیت حقوق استفاده و بازبینی نمایش داده می‌شوند."
-          action={<a className="button button-secondary" href="https://t.me/kunkurcomputer" target="_blank" rel="noreferrer">دیدن آرشیو @kunkurcomputer</a>}
+          description="تا آن موقع جلسه‌های رایگان کلاس‌ها را ببین."
+          action={<a className="button button-secondary" href="/free-videos">جلسه‌های رایگان</a>}
         />
       )}
       <section aria-labelledby="telegram-resources-title">
@@ -205,7 +205,7 @@ export default async function ResourcesPage({ searchParams: pendingSearchParams 
         </div>
         <Link className="text-link" href="/articles/how-to-choose-study-resources">راهنمای کامل انتخاب منبع ←</Link>
       </section>
-      <section className="surface-card resource-process"><div><span className="eyebrow">شفافیت منبع</span><h2>از کانال تا کتابخانهٔ ساختاریافته</h2><p>هر رکورد با درس، مبحث، مقطع، نوع، تاریخ بررسی و وضعیت حقوق استفاده ثبت می‌شود؛ پیش‌نویس و منبع بدون مجوز در این فهرست دیده نمی‌شود.</p></div><Link className="button button-secondary" href="/free-videos">جلسه‌های رایگان دوره‌ها</Link></section>
+      <section className="surface-card resource-process"><div><span className="eyebrow">جلسه‌های رایگان</span><h2>کلاس‌ها را هم ببین</h2><p>جلسه‌های رایگان دوره‌ها روی خود سایت است؛ چند جلسه ببین و خودت قضاوت کن تدریس به کارت می‌آید یا نه.</p></div><Link className="button button-secondary" href="/free-videos">جلسه‌های رایگان دوره‌ها</Link></section>
     </main>
   );
 }

@@ -39,10 +39,10 @@ export default function CorrectionsPage() {
       </div>
 
       <div className="policy-steps policy-note">
-        <section className="surface-card"><span>۱</span><h2>دریافت</h2><p>گزارش با نشانی صفحه و ادعای مورد نظر ثبت می‌شود؛ دریافت گزارش به‌تنهایی به معنی تأیید خطا نیست.</p></section>
-        <section className="surface-card"><span>۲</span><h2>بررسی</h2><p>نسخهٔ فعلی، منبع مورد استناد و در صورت لزوم سند تازه‌تر با هم مقایسه می‌شوند.</p></section>
-        <section className="surface-card"><span>۳</span><h2>تصمیم</h2><p>اصلاح، افزودن زمینه، تعویض منبع یا حفظ متن با توضیح دلیل، بر پایهٔ شواهد انتخاب می‌شود.</p></section>
-        <section className="surface-card"><span>۴</span><h2>انتشار</h2><p>متن و تاریخ بازبینی به‌روزرسانی می‌شوند؛ تغییر اثرگذار همراه با یادداشت روشن اصلاح می‌آید.</p></section>
+        <section className="surface-card"><span>۱</span><h2>دریافت</h2><p>نشانی صفحه و جمله‌ای که به نظرت غلط است را برایمان بفرست.</p></section>
+        <section className="surface-card"><span>۲</span><h2>بررسی</h2><p>متن را با منبعش و اگر سند تازه‌تری آمده با همان سند مقایسه می‌کنیم.</p></section>
+        <section className="surface-card"><span>۳</span><h2>تصمیم</h2><p>اگر حق با تو باشد متن را درست می‌کنیم؛ اگر نه، دلیلش را برایت می‌نویسیم.</p></section>
+        <section className="surface-card"><span>۴</span><h2>انتشار</h2><p>متن اصلاح‌شده با تاریخ تازه منتشر می‌شود و اگر عدد یا نتیجه‌ای عوض شده باشد، همان‌جا می‌گوییم چه چیزی عوض شد.</p></section>
       </div>
 
       <div className="trust-layout policy-note">
@@ -55,7 +55,7 @@ export default function CorrectionsPage() {
         <section className="surface-card">
           <h2>شفافیت در اختلاف</h2>
           <p>اگر منابع معتبر با هم ناسازگار باشند، اختلاف به‌جای انتخاب بی‌توضیح یک روایت ذکر می‌شود. ادعای تأییدنشده حذف یا با برچسب روشن محدود می‌شود. درخواست حذف یا اصلاح دربارهٔ حریم خصوصی و حق نشر نیز بر پایهٔ همان صفحه و شواهد همراه آن بررسی می‌شود.</p>
-          <p>روش انتخاب و سنجش منابع در <Link className="text-link" href="/source-policy">سیاست منبع و حق نشر</Link> و مسئولیت تحریریه در <Link className="text-link" href="/editorial-policy">روش تولید محتوا</Link> آمده است.</p>
+          <p>روش انتخاب و سنجش منابع در <Link className="text-link" href="/source-policy">سیاست منبع و حق نشر</Link> و نویسندهٔ مطالب در <Link className="text-link" href="/editorial-policy">این صفحه</Link> آمده است.</p>
         </section>
       </div>
     </main>

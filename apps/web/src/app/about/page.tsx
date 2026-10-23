@@ -213,7 +213,7 @@ export default function AboutPage() {
         کانال رسمی:{" "}
         <a className="text-link" href={telegramUrl} target="_blank" rel="noreferrer">‎@kunkurcomputer</a>
         {" · "}
-        <Link className="text-link" href="/editorial-policy">روش تولید محتوا</Link>
+        <Link className="text-link" href="/editorial-policy">نویسندهٔ مطالب</Link>
       </p>
       {/* The icon sets' licences ask for credit (Solar: CC BY 4.0; Fluent Emoji: MIT). */}
       <p className="about-footnote" style={{ fontSize: "var(--text-xs)", color: "var(--muted)", textAlign: "center" }}>

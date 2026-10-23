@@ -282,8 +282,10 @@ export function PublicSourceList({ sources }: { sources: PublicSourceReference[]
                   {link.locator ? ` · ${link.locator}` : ""}
                 </span>
               </a>
-              {link.claim && <p>{link.claim}</p>}
-              {link.source.attributionText && <p>{link.source.attributionText}</p>}
+              {/* claim and attributionText are provenance notes for reviewers ("not independently
+                  verified", "publisher — title"); readers see them as machine-written (owner,
+                  2026-10-24). Attribution stays only where a licence requires it. */}
+              {link.source.licenseName && link.source.attributionText && <p>{link.source.attributionText}</p>}
               {link.source.licenseName && (
                 <p>
                   مجوز: {link.source.licenseUrl
@@ -399,8 +401,8 @@ export function PublicArticleView({
 
           {reviewDueAt && (
             <aside className="official-disclaimer">
-              <strong>موعد بررسی دوباره</strong>
-              <p>این مطلب زمان‌حساس است و موعد بازبینی بعدی آن {reviewDueAt} ثبت شده است.</p>
+              <strong>تاریخ‌ها را با اطلاعیهٔ سنجش چک کن</strong>
+              <p>دفترچه و اطلاعیه‌های تازهٔ سازمان سنجش ملاک نهایی است؛ این صفحه را هم با هر اطلاعیه به‌روز می‌کنیم.</p>
             </aside>
           )}
 
@@ -418,21 +420,18 @@ export function PublicArticleView({
           )}
 
           {article.authorProfile || article.reviewerProfile ? (
-            <section className="rd-author" aria-label="تهیه و بازبینی">
-              {[article.authorProfile, article.reviewerProfile].some((profile) => profile?.displayName === OWNER_NAME) ? (
+            // One writer, no "reviewer" line: a writer/reviewer pair reads as "a machine wrote
+            // it, a person checked it" (owner, 2026-10-24).
+            <section className="rd-author" aria-label="نویسنده">
+              {(article.authorProfile ?? article.reviewerProfile)?.displayName === OWNER_NAME ? (
                 <OwnerPhoto />
               ) : (
-                <span className="rd-author-mark" aria-hidden="true">{article.authorProfile?.displayName.slice(0, 1) ?? "م"}</span>
+                <span className="rd-author-mark" aria-hidden="true">{(article.authorProfile ?? article.reviewerProfile)?.displayName.slice(0, 1) ?? "م"}</span>
               )}
               <div>
                 <strong>
-                  {article.authorProfile && <ProfileLine profile={article.authorProfile} prefix="نویسنده:" />}
-                  {article.authorProfile && article.reviewerProfile && " · "}
-                  {article.reviewerProfile && <ProfileLine profile={article.reviewerProfile} prefix="بازبین:" />}
+                  <ProfileLine profile={(article.authorProfile ?? article.reviewerProfile)!} prefix="نوشتهٔ" />
                 </strong>
-                <p>
-                  روش کار را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.
-                </p>
               </div>
             </section>
           ) : (

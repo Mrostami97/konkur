@@ -65,7 +65,7 @@ const jsonLd = {
   mainEntity: {
     "@type": "ItemList",
     name: "مستندات کلاس‌های محمد رستمی",
-    description: "ادعاهای خوداظهاری از آرشیو مدرس، هرکدام با تصویر سند اصلی؛ مستقلاً راستی‌آزمایی نشده‌اند.",
+    description: "نتیجهٔ شاگردها و سؤال‌هایی از کنکور که سر کلاس کار شده بود، هرکدام کنار تصویر سند اصلی‌اش.",
     numberOfItems: orderedDocuments.length,
     itemListElement: orderedDocuments.map((item, index) => ({
       "@type": "ListItem",

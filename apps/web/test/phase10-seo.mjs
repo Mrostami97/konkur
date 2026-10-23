@@ -120,11 +120,10 @@ assert.doesNotMatch(robotsTxt.body, /Disallow: \/rank-calculator/);
 const legacyGuide = await read("/guides/master-computer-engineering-1406");
 assert.equal(legacyGuide.response.status, 200);
 assert.equal(canonicalOf(legacyGuide.body), `${canonicalOrigin}/guides/master-computer-engineering-1406`);
-// Attribution reflects the explicitly declared author and reviewer.
-assert.match(legacyGuide.body, /نویسنده:/);
-assert.match(legacyGuide.body, /بازبین:/);
+// One writer is named; a writer/reviewer pair reads as machine-written (owner, 2026-10-24).
+assert.match(legacyGuide.body, /نوشتهٔ/);
+assert.doesNotMatch(legacyGuide.body, /بازبین:/);
 assert.match(legacyGuide.body, /محمد رستمی/);
-assert.match(legacyGuide.body, /تحریریه کنکور کامپیوتر/);
 const guideSchemas = structuredData(legacyGuide.body);
 assert.ok(guideSchemas.some((item) => item["@type"] === "Article"));
 assert.ok(guideSchemas.some((item) => item["@type"] === "BreadcrumbList"));

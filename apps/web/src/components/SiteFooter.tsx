@@ -21,7 +21,7 @@ const ENAMAD_SEAL =
 const TRUST_LINKS = [
   { href: "/about", label: "دربارهٔ محمد رستمی" },
   { href: "/evidence", label: "مستندات تدریس و نتایج" },
-  { href: "/editorial-policy", label: "روش تولید محتوا" },
+  { href: "/editorial-policy", label: "نویسندهٔ مطالب" },
   { href: "/source-policy", label: "سیاست منبع و حق نشر" },
   { href: "/corrections", label: "سیاست اصلاح" },
 ];
@@ -62,7 +62,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
           </Link>
           <p>کلاس درس‌به‌درس، ویدیوی رایگان، راهنمای رسمی ۱۴۰۶ و ابزار انتخاب‌رشته برای ارشد و دکتری مهندسی کامپیوتر، IT و علوم کامپیوتر.</p>
           <ul className="ft-badges">
-            <li><Glyph name="shield" /> هر عدد با منبع و تاریخ بازبینی</li>
+            <li><Glyph name="shield" /> هر عدد با منبعش</li>
             <li><Glyph name="trophy" /> نتیجهٔ شاگرد فقط با رضایت خودش</li>
           </ul>
           <div className="ft-enamad" dangerouslySetInnerHTML={{ __html: ENAMAD_SEAL }} />
@@ -102,7 +102,7 @@ export function SiteFooter({ subjects }: { subjects: FooterSubject[] }) {
 
       <div className="ft-bottom">
         <span>© ۱۴۰۵ کنکور کامپیوتر · <bdi dir="ltr">kunkurcomputer.ir</bdi></span>
-        <span>اطلاعات زمان‌حساس با تاریخ بازبینی و منبع منتشر می‌شوند؛ پیش از هر اقدام، اطلاعیهٔ رسمی سنجش را هم ببین.</span>
+        <span>پیش از ثبت‌نام و انتخاب رشته، اطلاعیهٔ رسمی سنجش را هم ببین.</span>
       </div>
     </footer>
   );

@@ -50,7 +50,6 @@ export function EditorialPageView({
   const lead = relatedSubjects[0];
   const tone = lead ? SUBJECT_TONE[lead.slug] ?? "blue" : basePath === "/guides" ? "teal" : "blue";
   const authorIsOwner = page.author === OWNER_NAME;
-  const reviewerIsOwner = page.reviewer === OWNER_NAME;
   const reviewPending = page.reviewer === "در انتظار بازبینی انسانی";
   const publishedAt = editorialDateIso(page.publishedAt);
   const modifiedAt = reviewPending ? undefined : articleModifiedTime(publishedAt, page.reviewedAtIso ?? editorialDateIso(page.reviewedAt));
@@ -110,7 +109,7 @@ export function EditorialPageView({
               <strong>اعتبار اطلاعات ۱۴۰۶</strong>
               <p>{reviewPending
                 ? "برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است."
-                : `این راهنما در ${page.reviewedAt} بازبینی شده است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است.`}</p>
+                : `این راهنما تا ${page.reviewedAt} به‌روز است؛ برای نام مجموعه، ضرایب و شرایط ثبت‌نام، آخرین دفترچه و اصلاحیهٔ سازمان سنجش ملاک نهایی است.`}</p>
             </aside>
           )}
 
@@ -172,16 +171,15 @@ export function EditorialPageView({
             </section>
           )}
 
-          <section className="rd-author" aria-label="تهیه و بازبینی">
+          {/* One writer, no "reviewer" line: a writer/reviewer pair reads as "a machine wrote it,
+              a person checked it" (owner, 2026-10-24). */}
+          <section className="rd-author" aria-label="نویسنده">
             {authorIsOwner ? <OwnerPhoto /> : <span className="rd-author-mark" aria-hidden="true">ک</span>}
             <div>
               <strong>
-                نویسنده: {authorIsOwner ? <Link href="/about">{page.author}</Link> : page.author}
-                {reviewPending
-                  ? null
-                  : <> · بازبین: {reviewerIsOwner ? <Link href="/about">{page.reviewer}</Link> : page.reviewer}</>}
+                نوشتهٔ {authorIsOwner ? <Link href="/about">{page.author}</Link> : page.author}
               </strong>
-              <p>منابع این مطلب در پایین صفحه آمده‌اند. روش کار را در <Link href="/editorial-policy">روش تولید محتوا</Link> ببین.</p>
+              <p>منابع این مطلب پایین صفحه آمده‌اند.</p>
             </div>
           </section>
 

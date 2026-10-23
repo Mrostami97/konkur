@@ -79,13 +79,13 @@ export async function generateMetadata({ params: pendingParams }: { params: Prom
   const params = await pendingParams;
   const result = await loadContributor(params.slug);
   if (!result.contributor) return pageMetadata({
-    title: "پروفایل تحریریه در دسترس نیست",
+    title: "این صفحه پیدا نشد",
     description: "این پروفایل عمومی پیدا نشد یا سرویس محتوا موقتاً در دسترس نیست.",
     path: `/authors/${params.slug}`,
     noIndex: true,
   });
   return pageMetadata({
-    title: `${result.contributor.displayName}؛ نویسنده و بازبین کنکور کامپیوتر`,
+    title: `${result.contributor.displayName}؛ نویسندهٔ کنکور کامپیوتر`,
     description:
       result.contributor.shortBio ??
       `پروفایل و فهرست مطالب منتشرشدهٔ ${result.contributor.displayName} در کنکور کامپیوتر.`,
@@ -122,7 +122,7 @@ export default async function AuthorPage({ params: pendingParams }: { params: Pr
   const path = `/authors/${contributor.slug}`;
   const breadcrumbs = [
     { name: "خانه", href: "/" },
-    { name: "سیاست تحریریه", href: "/editorial-policy" },
+    { name: "نویسندهٔ مطالب", href: "/editorial-policy" },
     { name: contributor.displayName },
   ];
   const personSchema: Record<string, unknown> = {
@@ -155,14 +155,15 @@ export default async function AuthorPage({ params: pendingParams }: { params: Pr
       item: absoluteUrl(item.href ?? path),
     })),
   };
+  // One list of the writer's pages: a separate "reviewed" list reads as "a machine wrote it,
+  // a person checked it" (owner, 2026-10-24).
+  const seen = new Set<string>();
   const authored = [
     ...articleItems(contributor.authoredArticles),
     ...resourceItems(contributor.authoredResources),
-  ];
-  const reviewed = [
-    ...articleItems(contributor.reviewedArticles, "بازبینی"),
-    ...resourceItems(contributor.reviewedResources, "بازبینی"),
-  ];
+    ...articleItems(contributor.reviewedArticles),
+    ...resourceItems(contributor.reviewedResources),
+  ].filter((item) => !seen.has(item.href) && Boolean(seen.add(item.href)));
 
   return (
     <main className="page-container trust-page">
@@ -185,7 +186,7 @@ export default async function AuthorPage({ params: pendingParams }: { params: Pr
           </span>
         )}
         <div>
-          <span className="eyebrow">پروفایل تأییدشدهٔ تحریریه</span>
+          <span className="eyebrow">نویسنده</span>
           <h1 id="author-name">{contributor.displayName}</h1>
           {contributor.roleTitle && <strong>{contributor.roleTitle}</strong>}
           {contributor.shortBio && <p>{contributor.shortBio}</p>}
@@ -207,7 +208,7 @@ export default async function AuthorPage({ params: pendingParams }: { params: Pr
 
       {contributor.bioBlocks.length > 0 && (
         <section className="surface-card" aria-labelledby="author-biography">
-          <div className="section-heading"><div><h2 id="author-biography">دربارهٔ نویسنده</h2><p>معرفی منتشرشده در پروفایل تحریریه</p></div></div>
+          <div className="section-heading"><div><h2 id="author-biography">دربارهٔ نویسنده</h2></div></div>
           <ContentBlocks blocks={contributor.bioBlocks} />
         </section>
       )}
@@ -234,19 +235,14 @@ export default async function AuthorPage({ params: pendingParams }: { params: Pr
       )}
 
       <RelatedContentGrid
-        title="مطالب منتشرشده"
-        description="مقاله‌ها، راهنماها و منابعی که نویسندگی آن‌ها در سامانه ثبت و منتشر شده است."
+        title="مطالب"
+        description={`مقاله‌ها، راهنماها و منابعی که ${contributor.displayName} نوشته است.`}
         items={authored}
       />
-      <RelatedContentGrid
-        title="مطالب بازبینی‌شده"
-        description="محتواهایی که بازبینی این مشارکت‌کننده برای نسخهٔ عمومی آن‌ها ثبت شده است."
-        items={reviewed}
-      />
-      {authored.length === 0 && reviewed.length === 0 && contributor.taughtCourses.length === 0 && (
+      {authored.length === 0 && contributor.taughtCourses.length === 0 && (
         <EmptyState
-          title="هنوز محتوای عمومی به این پروفایل متصل نشده است"
-          description="فقط محتواهای منتشرشده و دارای انتساب تأییدشده در این فهرست می‌آیند."
+          title="هنوز مطلبی از این نویسنده منتشر نشده است"
+          description="مطالب تازه به‌محض انتشار همین‌جا می‌آیند."
         />
       )}
     </main>

@@ -303,9 +303,8 @@ try {
   const ownerArticle = ownerSchemas.find((item) => item["@type"] === "Article");
   assert.equal(ownerArticle?.author?.["@type"], "Person");
   assert.equal(ownerArticle.author.name, "محمد رستمی", "an explicitly declared personal author must be retained");
-  assert.match(visibleMarkup(ownerHtml), /نویسنده:/);
-  assert.match(visibleMarkup(ownerHtml), /بازبین:/);
-  assert.match(visibleMarkup(ownerHtml), /تحریریه کنکور کامپیوتر/);
+  assert.match(visibleMarkup(ownerHtml), /نوشتهٔ/);
+  assert.doesNotMatch(visibleMarkup(ownerHtml), /بازبین:/, "one writer is named, never a reviewer (owner, 2026-10-24)");
 
   for (const path of [
     "/articles/mock-unavailable",
