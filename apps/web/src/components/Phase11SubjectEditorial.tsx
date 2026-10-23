@@ -63,7 +63,7 @@ export function Phase11SubjectEditorial({
             >
               <span>مجموعهٔ {toPersianDigits(track.collectionCode)} · {track.officialName}</span>
               <strong>{coefficientLabel(bundle)}</strong>
-              <small>{bundle.title} — دیدن راهنمای کامل ←</small>
+              <small>{bundle.title} · راهنمای کامل ←</small>
             </Link>
           )) : (
             <div className="track-snapshot-card track-snapshot-card-muted">

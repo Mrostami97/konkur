@@ -226,7 +226,7 @@ export default async function ResultsPage({ searchParams: pendingSearchParams }:
                             <p className="lp-result-uni">
                               <Glyph name="building" />
                               {row.acceptedUniversity}
-                              {row.acceptedProgram ? ` — ${row.acceptedProgram}` : ""}
+                              {row.acceptedProgram ? `، ${row.acceptedProgram}` : ""}
                             </p>
                           )}
                           {row.quote && <blockquote>«{row.quote}»</blockquote>}

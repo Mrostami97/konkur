@@ -441,7 +441,7 @@ export function BarChart({
   return (
     <div className="ds-chart" role="img" aria-label={points.map((p) => `${p.label}: ${formatValue(p.value)}`).join("، ")}>
       {points.map((point) => (
-        <div className="ds-chart-col" key={point.label} title={`${point.label} — ${formatValue(point.value)}`}>
+        <div className="ds-chart-col" key={point.label} title={`${point.label}: ${formatValue(point.value)}`}>
           <span className="ds-chart-bar" style={{ height: `${Math.max(2, (point.value / max) * 100)}%` }} />
           <span className="ds-chart-x">{point.label}</span>
         </div>

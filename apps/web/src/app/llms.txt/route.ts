@@ -96,7 +96,7 @@ export async function GET() {
     "",
     "## دانشگاه‌ها و رشته‌محل‌های دارای منبع رسمی",
     ...universityResult.items.map((item) => `- [${item.title}](${absoluteUrl(`/universities/${encodeURIComponent(item.code)}`)}): ${item.city}`),
-    ...programResult.items.map((item) => `- [${item.title} — ${item.university.title}](${absoluteUrl(`/programs/${encodeURIComponent(item.code)}`)}): ${item.degree}، ${item.field}`),
+    ...programResult.items.map((item) => `- [${item.title}، ${item.university.title}](${absoluteUrl(`/programs/${encodeURIComponent(item.code)}`)}): ${item.degree}، ${item.field}`),
     "",
     "اطلاعات دانشگاه، رشته‌محل و ظرفیت تنها هنگامی در این فهرست می‌آید که در سامانه به منبع رسمی فعال متصل باشد؛ تاریخ بررسی و لینک منبع در صفحهٔ همان رکورد نمایش داده می‌شود.",
     "",

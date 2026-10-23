@@ -166,7 +166,7 @@ export function SubjectBank({
 
         {suggestion && (
           <p className="sb-suggest">
-            <span>پیشنهاد برای ادامه:</span> <a href={`#${suggestion.row.chapter.code}`}>{suggestion.row.chapter.title}</a> — {suggestion.why}
+            <span>پیشنهاد برای ادامه:</span> <a href={`#${suggestion.row.chapter.code}`}>{suggestion.row.chapter.title}</a>؛ {suggestion.why}
           </p>
         )}
 
