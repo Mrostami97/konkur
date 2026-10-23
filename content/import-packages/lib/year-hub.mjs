@@ -38,7 +38,7 @@ function hubBlocks(year) {
     { label: "بودجه‌بندی هوشمند ۱۴۰۶", href: "/budget" },
     { label: "تخمین رتبه با درصدهای خودت", href: "/rank-calculator/master-computer-engineering" },
     { label: "کارنامهٔ رتبهٔ ۱۰۰ ارشد کامپیوتر", href: "/articles/master-computer-rank-100-report-card" },
-    { label: "کنکورهای ارشد کامپیوتر سال‌به‌سال", href: "/articles/master-computer-exam-years-guide" },
+    { label: "کنکورهای ارشد کامپیوتر سال‌به‌سال", href: "/guides/master-computer-exam-years-guide" },
   ];
   blocks.push({ type: "link_group", items });
   blocks.push(h2(`کلید کنکور ارشد مهندسی کامپیوتر ${fa(year)}`));

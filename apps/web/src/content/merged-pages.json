@@ -60,6 +60,12 @@
       "to": "/free-videos",
       "approvedAt": "2026-10-13",
       "reason": "Owner (merge thin duplicates for SEO): Owner rule: no Telegram archive pages; free class sessions are now on the site"
+    },
+    {
+      "from": "/articles/master-computer-exam-years-guide",
+      "to": "/guides/master-computer-exam-years-guide",
+      "approvedAt": "2026-10-24",
+      "reason": "A guide, not an article: /articles/ already redirects there; the year analyses linked the old URL (Search Console: Page with redirect)"
     }
   ]
 }
