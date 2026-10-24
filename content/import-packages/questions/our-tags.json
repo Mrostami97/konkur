@@ -279,6 +279,69 @@
    "topic": "خرد کردن پول به روش حریصانه",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0100",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "کوتاه‌ترین مسیر بین همهٔ زوج‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0109",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی سریع تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0110",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "ارتفاع درخت هافمن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0111",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "یکتایی درخت فراگیر کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0112",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "الگوریتم بلمن-فورد",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0113",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "برش میله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0114",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "دایکسترا با هرم فیبوناچی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

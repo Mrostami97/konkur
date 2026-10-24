@@ -175,4 +175,6 @@ export const TEXT_FIXES = new Map([
 
   // CS 1399 q72: the booklet sorts a 10-element array; the bank typed 15.
   ["kunkurcomputer-q-1209-1399-462F-072", { stem: [["یک آرایه ۱۵ عنصری", "یک آرایه ۱۰ عنصری"]] }],
+  // CE 1394 q113: Persian digits inside the formula.
+  ["kunkurcomputer-q-1277-1394-b2-113", { stem: [["v_{۱۰۰}", "v_{100}"]] }],
 ]);
