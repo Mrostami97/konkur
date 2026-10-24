@@ -27,6 +27,87 @@
    "topic": "بیشترین مسیر وزن‌دار در درخت",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0110",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "کران مرتب‌سازی با رویهٔ محدود",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0111",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "درخت فراگیر کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0112",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "انتخاب k عنصر کوچک‌تر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0113",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "کوتاه‌ترین مسیر در گراف بدون دور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0114",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "کران پایین با استدلال رقیب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0115",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مجموع پیشوندی و مرتب‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0047",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل سرشکن و ساختمان داده‌های خطی",
+   "topic": "لیست خودسازمانده (MTF)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0048",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "تعداد تکرار با کاهش ضربی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0049",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل سرشکن",
+   "topic": "هزینهٔ سرشکن صف با حذف از انتها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
