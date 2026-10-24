@@ -153,6 +153,33 @@
    "topic": "انتخاب عناصر غیرمجاور",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0110",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "به‌روزرسانی درخت فراگیر کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0111",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "میانه و انتخاب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0112",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "پیمایش عمق‌اول و سطح‌اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
