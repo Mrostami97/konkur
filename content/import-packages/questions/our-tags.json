@@ -207,6 +207,42 @@
    "topic": "بخش‌بندی در مرتب‌سازی سریع",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0049",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "زنجیره‌سازی و انتخاب اندازهٔ جدول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0050",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی و تابع لگاریتم ستاره‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0051",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "درج در لیست پیوندی دوسویه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0052",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "درخت جست‌وجوی دودویی افزوده با اندازهٔ زیردرخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
