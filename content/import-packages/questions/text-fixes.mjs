@@ -205,4 +205,18 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1399-b0-086", { options: { 1: "احتمال آن که ورودی x = ۴ به خانه ۷ نگاشت شود برابر ۱ است." } }],
   // CE 1399 q91: the booklet's second item is A[i] = 3i + 2; the bank typed 2i + 3.
   ["kunkurcomputer-q-1277-1399-b0-091", { stem: [["A[i]=2i+3", "A[i]=3i+2"]] }],
+  // CE 1400 q61: the booklet prints Pr[h(u) = h(u)]; the definition it states is for two values u and v.
+  ["kunkurcomputer-q-1277-1400-b1-061", { stem: [["[h(u)=h(u)]", "[h(u)=h(v)]"]] }],
+  // CE 1400 q66: the exchange-rate table was only in the page scan; typed from the booklet (row = from, column = to).
+  ["kunkurcomputer-q-1277-1400-b1-066", {
+    table: {
+      headers: ["از / به", "D", "E", "P", "T"],
+      rows: [
+        ["D", "1", "1/1.2", "1/1.4", "25"],
+        ["E", "1.2", "1", "1/1.1", "30"],
+        ["P", "1.4", "1.1", "1", "35"],
+        ["T", "1/25", "1/30", "1/35", "1"],
+      ],
+    },
+  }],
 ]);
