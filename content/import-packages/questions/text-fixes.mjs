@@ -194,4 +194,11 @@ export const TEXT_FIXES = new Map([
       4: "$d_{ij}^{(m)}=\\min_{i\\le k<j}\\{d_{ik}^{(m-1)}+w_{kj}\\}$",
     },
   }],
+  // CE 1397 q55: the hash table was only in the crop; typed from the booklet (empty cells left blank).
+  ["kunkurcomputer-q-1277-1397-b0-055", {
+    table: {
+      headers: ["خانه", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"],
+      rows: [["کلید", "5", "", "7", "", "", "", "11", "", "2", "9", "", "14", "", "3", "", "1", "4", "6"]],
+    },
+  }],
 ]);
