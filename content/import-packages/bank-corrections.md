@@ -292,3 +292,58 @@ Keys the reasoning does not settle; no worked solution until the owner decides:
 | kunkurcomputer-q-1277-1390-b1-070 | CE 1390 q70 | 2 (103, 11) | a horizontal microinstruction needs 100 control bits + 3 condition-select bits (six conditions + always) + 8 next-address bits = 111; with a nanomemory of the 15 distinct control words it is 4 + 3 + 8 = 15. Neither 103 nor 11 follows from the chart |
 | kunkurcomputer-q-1277-1391-b1-069 | CE 1391 q69 | 4 | traced from the booklet: the right adder adds x, 2y+1 (y shifted with a 1 below it) and Cin = 1, so its Cout is 1 exactly when x + 2y + 2 ≥ 16, i.e. x > 13 − 2y; that Cout inverts B and sets the left adder's Cin, giving A − B. That is option 1, not the key |
 | kunkurcomputer-q-1277-1392-b1-067 | CE 1392 q67 | 4 (169000) | the bank's crop for this question shows q66, so the text is unchecked; as the bank has it, a nanoprogrammed unit needs 2000 × 8 (nano addresses for 150 words) + 150 × 100 = 31,000 bits, which is no option |
+
+## Artificial intelligence: checked against the booklet crops (2026-10-24)
+
+Text fix applied: kunkurcomputer-q-1276-1402-758F-085 (IT 1402 q85) option 3 reads «به‌معنی **اثبات‌ناپذیر** بودن» in the booklet; the bank typed «اثبات‌پذیر بودن», which made option 3 true too.
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1276-1402-758F-083 | IT 1402 q83 | 3 | on a finite state graph option 4 is true as well: A* stores at most every node once, so its memory is linear (polynomial) in the number of nodes; option 3 is true too (graph search on a finite graph terminates) |
+| kunkurcomputer-q-1276-1402-758F-086 | IT 1402 q86 | 2 | 429 fits depth 4 only if every expanded node adds 5 new nodes (tree search, the parent re-added): 125 + 4·76 = 429. With graph search the parent is not re-added (4 new per node: 5, 20, 80, 320, …) and no frontier reaches 429 (option 4) |
+| kunkurcomputer-q-1276-1403-257C-085 | IT 1403 q85 | 3 (۲) | with the vacuum world's usual actions (move to each neighbouring room plus Suck) each state has 3 successors (b = 3, option 2); the key counts the two moves only |
+| kunkurcomputer-q-1277-1389-b2-059-8e54dd | CE 1389 q59 | 3 | traced: options 2 and 3 prune nothing, and neither does the tree as printed (MIN values 1, 2 with leaves never ≤ α before the last child), so options 2, 3 and 4 are all right |
+
+## Questions without a key in the source bank (2026-10-24)
+
+The owner's bank has no key for these reviewed questions, so they stay in the review queue. Where the answer is certain, solutions.mjs now carries an authored key (`ourKey`, shown as «پاسخ تألیفی»). These could not be given one:
+
+| Question id | Exam | Why no authored key |
+|---|---|---|
+| kunkurcomputer-q-1209-1380-b0-043 | CS 1380 q43 | the program ends the string with `S[i]='\0'`; i is 0 after the loop, so S[0] is cleared and nothing is printed. The intended answer (S[k]) would be AF3, option 2 |
+| kunkurcomputer-q-1209-1380-b0-057 | CS 1380 q57 | the bank's crop is booklet q55 (tree depths); the bank's text (growth rates) is not on it, so the question cannot be checked. As typed, options 1 and 4 are both true (Σk^n ≤ n^n·e/(e−1)) |
+| kunkurcomputer-q-1209-1380-b0-069 | CS 1380 q69 | «maximum speed-up» is 4× for work that does not use the bus, while the bus bandwidth is unchanged (5 MHz × 32 = 20 MHz × 8); the booklet does not say which it means |
+| kunkurcomputer-q-1209-1380-b0-095 | CS 1380 q95 | eigenvalues in reciprocal pairs give det A = 1 = det A⁻¹ (option 1) and the same eigenvalue set for A and A⁻¹ (option 3); two options are right and option 4 includes the false option 2 |
+| kunkurcomputer-q-1209-1380-b0-101 | CS 1380 q101 | a lone non-accepting start state with no transitions accepts the empty language (option 1), but with no transitions defined it is also a valid NFA (option 4) |
+| kunkurcomputer-q-1209-1380-b0-109 | CS 1380 q109 | four hand-drawn DFAs against a subset construction; left for a careful pass with the owner's own figure reading |
+| kunkurcomputer-q-1209-1380-b0-110 | CS 1380 q110 | one edge from the start state to the middle state carries no readable label on the scan, so the language cannot be fixed |
+| kunkurcomputer-q-1209-1380-b0-120 | CS 1380 q120 | the options about `this` are matters of wording (whether the object's own name could be used instead); none is definitely right |
+| kunkurcomputer-q-1209-1381-b0-061 | CS 1381 q61 | two options are not tautologies: option 2 fails at A=F, B=T and option 3 fails at A=T, B=F |
+| kunkurcomputer-q-1209-1381-b0-074 | CS 1381 q74 | the second loop ends in `;` and the next line uses i outside its scope; the code does not compile (with old scope rules it writes s[4], the terminator, and prints garbage) |
+| kunkurcomputer-q-1209-1381-b0-078 | CS 1381 q78 | the loops run 3·n(n−1)/2 = Θ(n²) times, but the options use little o, under which only o(n³) is true; big O would make option 4 right |
+| kunkurcomputer-q-1209-1381-b0-085 | CS 1381 q85 | the table gives Q⁺ = x̄ȳ + x̄yQ̄ + xQ; no option matches (option 4 gives 0 at XY=11, Q=1 where the table keeps Q=1; options 1–3 fail at XY=01 or 00) |
+| kunkurcomputer-q-1209-1381-b0-096 | CS 1381 q96 | a 2575-byte block at 125 bytes/inch is 20.6 inches; with 7.5-inch gaps the use is 20.6/28.1 ≈ 73%, which is no option, and «رکورد ۱ اینچ» is not defined |
+| kunkurcomputer-q-1209-1381-b0-104 | CS 1381 q104 | Θ(n log n) by sorting B and searching (option 1) in the comparison model, but O(n) expected with hashing (option 2); the booklet does not fix the model |
+| kunkurcomputer-q-1209-1381-b0-110 | CS 1381 q110 | options 1 (Σi² = O(n³)) and 4 (n²/log n = O(n²)) are both true |
+| kunkurcomputer-q-1209-1381-b0-136 | CS 1381 q136 | run step by step on baba²ba³, the machine halts when q2 reads b (no move defined) with b⁵ on the tape, which is no option |
+| kunkurcomputer-q-1209-1381-b0-147 | CS 1381 q147 | «no side effects» (2) is the defining property, but «no loops» (3) is also usually said of pure functional languages, and «all three» depends on reading (1); not certain |
+| kunkurcomputer-q-1209-1381-b0-148 | CS 1381 q148 | single-assignment variables: none of the four claims is clearly what the booklet wants (programming and recursion are possible; «most variables on the stack» is a reading of one design) |
+| kunkurcomputer-q-1209-1381-b0-149 | CS 1381 q149 | whether «always» (2) or «only some programs» (4) is meant for side-effect-free procedural code is a matter of reading |
+| kunkurcomputer-q-1209-1381-b0-150 | CS 1381 q150 | interpreted languages are both more flexible (1) and usually slower (4); two options are right |
+| kunkurcomputer-q-1209-1381-b0-156 | CS 1381 q156 | the grammar gives aᵏbᵏ and aᵏb²ᵏ only for k ≥ 2 (ab and abb are not generated); option 3 says k ≥ 1, the nearest option but not exact |
+| kunkurcomputer-q-1209-1381-b0-157 | CS 1381 q157 | the bank's crop is booklet q155 (an identifier grammar), so the text cannot be checked; as typed, all four statements are true and there is no false option |
+| kunkurcomputer-q-1209-1383-b0-077 | CS 1383 q77 | sumsqr(x++, y++) expands to x++*x++ + y++*y++, which modifies x and y twice without a sequence point: undefined behaviour in C, no single output |
+| kunkurcomputer-q-1209-1383-b0-082 | CS 1383 q82 | Squr(Max(C, A++)) repeats A++ in both factors (and the Squr macro's parentheses do not balance as printed); undefined behaviour |
+| kunkurcomputer-q-1209-1383-b0-084 | CS 1383 q84 | `y == y++` and `y == ++y` read and modify y without a sequence point; undefined behaviour |
+| kunkurcomputer-q-1209-1383-b0-129 | CS 1383 q129 | a triangular orthogonal matrix is diagonal with entries ±1, so its trace can be any of −n, −n+2, …, n; it is not determined |
+| kunkurcomputer-q-1209-1383-b0-138 | CS 1383 q138 | f(1)=1, f(2)=2²=4, f(3)=3^(3^3)=3²⁷; no option has 3²⁷ |
+| kunkurcomputer-q-1209-1384-b0-052 | CS 1384 q52 | the condition Y = 2 lies outside the density's support (0 < x < y < 1), so P(X < 1/2 \| Y = 2) is undefined |
+| kunkurcomputer-q-1209-1385-b0-062 | CS 1385 q62 | the loop condition is `while (m == 1)`, so the body runs once and the function returns 0 for (42, 13); the intended Russian-peasant loop (m ≥ 1) would give 546, option 3 |
+
+## Databases: checked against the booklet crops (2026-10-24)
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1276-1402-758F-076 | IT 1402 q76 | 2 (three true) | only (الف) is always true: (ب) fails when the whole schema is the only key (one superkey, one candidate key), (ج) constraints are DDL, (د) a view on B alone can have more rows (a self-join of B), so the count is 1, option 4 |
+| kunkurcomputer-q-1276-1403-257C-078 | IT 1403 q78 | 4 | under a RESTRICT rule both deleting a referenced customer (option 4) and updating a referenced CustomerID (option 3) are refused; two options are right |
+| kunkurcomputer-q-1277-1391-b2-105 | CE 1391 q105 | 1 (only 1NF) | with AB→CD, EF→GH, GH→AB the only key is EF, and neither E nor F alone determines anything, so the relation is in 2NF (GH→AB is transitive, so not 3NF); «only 1NF» understates it and no option says 2NF |
