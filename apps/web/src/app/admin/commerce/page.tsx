@@ -95,7 +95,9 @@ export default function CommerceAdminPage() {
   const [kind, setKind] = useState<ProductKind>("COURSE");
   const [courseId, setCourseId] = useState("");
   const [resourceId, setResourceId] = useState("");
-  const [bankSubjects, setBankSubjects] = useState("");
+  const [bankSubjects, setBankSubjects] = useState<string[]>([]);
+  // Subjects the bank actually holds, with their question counts (GET /questions/counts).
+  const [bankCounts, setBankCounts] = useState<{ code: string; count: number }[]>([]);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createNotice, setCreateNotice] = useState<string | null>(null);
@@ -154,6 +156,17 @@ export default function CommerceAdminPage() {
       setProducts(nextProducts);
       setUsers(userResponse.users);
       setOrders(nextOrders);
+      // The picker lists only subjects with questions; a failed read leaves it empty, not the page.
+      apiFetch<{ subjects: Record<string, number> }>("/questions/counts")
+        .then((counts) =>
+          setBankCounts(
+            Object.entries(counts.subjects)
+              .filter(([, count]) => count > 0)
+              .map(([code, count]) => ({ code, count }))
+              .sort((a, b) => b.count - a.count),
+          ),
+        )
+        .catch(() => setBankCounts([]));
     } catch (err) {
       setError(err instanceof Error ? err.message : "خواندن داده‌های فروش ممکن نشد.");
     } finally {
@@ -170,7 +183,7 @@ export default function CommerceAdminPage() {
     setCreating(true);
     setCreateError(null);
     setCreateNotice(null);
-    const subjectCodes = bankSubjects.split(",").map((code) => code.trim()).filter(Boolean);
+    const subjectCodes = bankSubjects;
     try {
       const created = await apiFetch<{ id: string; title: string }>("/admin/products", {
         method: "POST",
@@ -187,7 +200,7 @@ export default function CommerceAdminPage() {
       setSlug("");
       setTitle("");
       setDescription("");
-      setBankSubjects("");
+      setBankSubjects([]);
       setResourceId("");
       await load();
       // The next step is its price: pick the new product there already.
@@ -268,7 +281,7 @@ export default function CommerceAdminPage() {
 
             <Field label="نوع محصول" hint={KINDS.find((item) => item.value === kind)?.note} required>
               {(props) => (
-                <Select {...props} value={kind} onChange={(event) => setKind(event.target.value as ProductKind)}>
+                <Select {...props} value={kind} onChange={(event) => { setKind(event.target.value as ProductKind); setBankSubjects([]); }}>
                   {KINDS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
                 </Select>
               )}
@@ -305,23 +318,64 @@ export default function CommerceAdminPage() {
             {/* The bank is sold on its own or inside a bundle, never with a course product. */}
             {(kind === "QUESTION_BANK" || kind === "BUNDLE") && (
             <Field
-              label={kind === "QUESTION_BANK" ? "کد درسِ بانک" : "بانک سؤال در این بسته (اختیاری)"}
+              label={kind === "QUESTION_BANK" ? "بانک کدام درس" : "بانک سؤال در این بسته (اختیاری)"}
               hint={
                 kind === "QUESTION_BANK"
-                  ? "دسترسی بانک درس‌محور است؛ برای محصول بانک دقیقاً یک کد درس بدهید."
-                  : "کد درس‌هایی که بانک سؤالشان جزو این بسته است. چند کد را با کاما جدا کنید."
+                  ? "خریدار بانک همین یک درس را می‌گیرد. برای فروش کل بانک، «بسته» بسازید و همهٔ درس‌ها را تیک بزنید."
+                  : "بانک درس‌هایی که تیک بخورند جزو این بسته است. بستهٔ «کل بانک» یعنی همه را تیک بزنید و دوره یا جزوه‌ای انتخاب نکنید."
               }
               required={kind === "QUESTION_BANK"}
             >
-              {(props) => (
-                <Input
-                  {...props}
-                  value={bankSubjects}
-                  onChange={(event) => setBankSubjects(event.target.value)}
-                  placeholder="data-structures, algorithms"
-                  required={kind === "QUESTION_BANK"}
-                />
-              )}
+              {(props) =>
+                kind === "QUESTION_BANK" ? (
+                  <Select
+                    {...props}
+                    value={bankSubjects[0] ?? ""}
+                    onChange={(event) => setBankSubjects(event.target.value ? [event.target.value] : [])}
+                    required
+                  >
+                    <option value="">درس را انتخاب کنید</option>
+                    {bankCounts.map((subject) => (
+                      <option key={subject.code} value={subject.code}>
+                        {subjectName(subject.code)} · {toPersianDigits(subject.count)} سؤال
+                      </option>
+                    ))}
+                  </Select>
+                ) : (
+                  <div id={props.id} style={{ display: "grid", gap: "var(--sp-2)" }}>
+                    <div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setBankSubjects(bankSubjects.length === bankCounts.length ? [] : bankCounts.map((subject) => subject.code))
+                        }
+                      >
+                        {bankSubjects.length === bankCounts.length && bankCounts.length ? "برداشتن همه" : "همهٔ درس‌ها (کل بانک)"}
+                      </Button>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(14rem, 1fr))", gap: "var(--sp-2)" }}>
+                      {bankCounts.map((subject) => (
+                        <label className="ds-check" key={subject.code}>
+                          <input
+                            type="checkbox"
+                            checked={bankSubjects.includes(subject.code)}
+                            onChange={(event) =>
+                              setBankSubjects(
+                                event.target.checked
+                                  ? [...bankSubjects, subject.code]
+                                  : bankSubjects.filter((code) => code !== subject.code),
+                              )
+                            }
+                          />
+                          {subjectName(subject.code)} · {toPersianDigits(subject.count)} سؤال
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
             </Field>
             )}
 
