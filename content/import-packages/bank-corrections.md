@@ -362,3 +362,12 @@ The owner's bank has no key for these reviewed questions, so they stay in the re
 | kunkurcomputer-q-1276-1401-459C-059 | IT 1401 q59 | 1 | bind((210.17.0.5, 1200)) is the server's own address, so the keyed option's «requests from source 210.17.0.5» is wrong; option 2 describes the socket correctly but calls it the client's. No option is exact |
 | kunkurcomputer-q-1276-1402-758F-050 | IT 1402 q50 | 3 | a fabric slower than the slowest output link (option 3) keeps output queues empty, but so does each output serving a single input (option 1) when links have equal rates; two options can be right |
 | kunkurcomputer-q-1276-1402-758F-053 | IT 1402 q53 | 1 | the average throughput of a long transfer is set by the bottleneck link on the path (option 2); the inverse RTT (key) bounds a single window per round trip but is not «the main factor» the booklet asks for |
+
+## Digital logic (CE 1406 subjects): checked against the booklet crops (2026-10-24)
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1277-1391-b1-059 | CE 1391 q59 | 1 | read from the diagram: 00→(0)00,(1)01; 01→(0)10,(1)11; 10→(0)11,(1)00; 11→(0)11,(1)00, which gives D1 = q̄1q0 + q1ā and D0 = q1ā + q̄1a, option 4. The keyed D1 = q1q̄0 + q̄1a sends 00 with a = 1 to 11, against the diagram |
+| kunkurcomputer-q-1277-1391-b1-061 | CE 1391 q61 | 4 | a full adder is self-dual (inverting all three inputs inverts both outputs), so the alternating inverters cancel and the circuit computes a + b̄ + 1 = a − b in two's complement, option 1 |
+| kunkurcomputer-q-1277-1391-b1-062 | CE 1391 q62 | 1 | traced from the booklet: I0 = (b⊙d) + b̄c, I1 = (b⊙d) + bc̄, select a, which gives Σ(0,2,3,5,7,8,10,12,13,15), option 4 |
+| kunkurcomputer-q-1277-1391-b1-063 | CE 1391 q63 | 4 | with T_C = Q_A + Q̄_C, D_B = Q_C, T_A = Q_B from 000 the counter runs 0, 1, 3, 7, 2, 5, 6, 1 (option 1), not 0, 2, 4, 6, … |
