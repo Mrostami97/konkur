@@ -95,8 +95,9 @@ export const RULES = {
     [/میانوندی|پسوندی|پیشوندی|درخت عبارت|نگارش/, "dsa-structures-expression"],
     [/ترای|trie/i, "dsa-structures-trie"],
     [/هرم|هیپ|heap|deap|صف اولویت/i, "dsa-structures-heap"],
-    [/جستجوی دودویی|جست‌وجوی دودویی|جستجو دودویی/, "dsa-analysis-divide"],
+    // A binary search tree before binary search: «درخت جست‌وجوی دودویی» contains «جست‌وجوی دودویی».
     [/درخت جستجو|درخت جست‌وجو|درخت‌های جستجو|درخت‌های جست‌وجو|BST/i, "dsa-structures-bst"],
+    [/جستجوی دودویی|جست‌وجوی دودویی|جستجو دودویی/, "dsa-analysis-divide"],
     // «صف» only as a word: «نصف» (halving) is not a queue.
     [/پشته|(?<![؀-ۿ])صف/, "dsa-structures-stack-queue"],
     [/لیست/, "dsa-structures-linked-list"],
