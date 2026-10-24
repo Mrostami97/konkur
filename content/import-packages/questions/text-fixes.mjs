@@ -225,5 +225,14 @@ export const TEXT_FIXES = new Map([
     append: code(["for (i = 1; i <= n; i++)", "    for (j = 1; j <= floor(n / i); j++)", "        S.O;"]),
   }],
   // CE 1402 q64: algorithm B combines in O(n^3) in the booklet; the bank typed O(n^2).
-  ["kunkurcomputer-q-1277-1402-b1-064", { options: { 2: "الگوریتم B نمونه‌ای به اندازه $n$ را با حل بازگشتی هشت نمونه با اندازه $\\frac{n}{2}$ حل می‌کند و سپس راه‌حل‌های آنها را در زمان $O(n^3)$ ترکیب می‌کنند." } }],
+  // CE 1403 q62: the example array was only in the crop.
+  ["kunkurcomputer-q-1277-1403-b1-062", { stem: [["برای مثال آرایهٔ زیر.", "برای مثال آرایهٔ $\\langle40,50,60,70,80,90,10,20,30\\rangle$."]] }],
+  // CE 1403 q64: the task table was only in the crop; typed from the booklet.
+  ["kunkurcomputer-q-1277-1403-b1-064", {
+    table: {
+      headers: ["کار", "w1", "w2", "w3", "w4", "w5", "w6", "w7"],
+      rows: [["مهلت (Deadline)", "10", "2", "3", "3", "2", "5", "1"], ["جریمه (Penalty)", "10", "45", "55", "65", "70", "33", "18"]],
+    },
+  }],
+  ["kunkurcomputer-q-1277-1402-b1-064", { options: { 2:"الگوریتم B نمونه‌ای به اندازه $n$ را با حل بازگشتی هشت نمونه با اندازه $\\frac{n}{2}$ حل می‌کند و سپس راه‌حل‌های آنها را در زمان $O(n^3)$ ترکیب می‌کنند." } }],
 ]);

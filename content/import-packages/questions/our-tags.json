@@ -1143,6 +1143,87 @@
    "topic": "قضیهٔ اصلی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0056",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "درهم‌سازی سراسری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0057",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی آرایهٔ تقریباً مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0058",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "درخت فراگیر کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0061",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی و کران رشد",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0062",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "آرایهٔ مرتب چرخشی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0063",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "محاسبهٔ اعداد فیبوناچی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0064",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "زمان‌بندی کارها با مهلت و جریمه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0066",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "مقایسهٔ رشد توابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0067",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "ضرب ماتریس و چندجمله‌ای، شار بیشینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
