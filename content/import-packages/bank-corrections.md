@@ -372,3 +372,5 @@ The owner's bank has no key for these reviewed questions, so they stay in the re
 | kunkurcomputer-q-1277-1391-b1-063 | CE 1391 q63 | 4 | with T_C = Q_A + Q̄_C, D_B = Q_C, T_A = Q_B from 000 the counter runs 0, 1, 3, 7, 2, 5, 6, 1 (option 1), not 0, 2, 4, 6, … |
 | kunkurcomputer-q-1276-1388-C-069 | IT 1388 q69 | 2 | computed from the four tables: net3 4 via D, net6 4 via B, net7 3 via C, net8 4 via D. Option 2 is the only table with all eight routes, but it prints net7's next hop as B (B never advertised net7; C did), so no option is exactly right |
 | kunkurcomputer-q-1277-1393-b2-078 | CE 1393 q78 | 2 | the three series pass NMOS (gates c, d, a) all take external gate signals, so a high level loses one threshold only: y reaches V_DD − V_tn; with a = 1, c = d = 1 and b = 0 the NMOS chain passes a full 0. The swing is 0 to V_DD − V_tn, option 1; V_DD − 2V_tn would need one transistor's output to drive another's gate |
+
+Text fix (2026-10-24): kunkurcomputer-q-1277-1394-b1-047 (CE 1394 q47, untagged, added by us): the booklet's array is ⟨3,1,2,4,5,8,7,6,9⟩; the bank typed (2,1,3,4,5,8,7,6,9).

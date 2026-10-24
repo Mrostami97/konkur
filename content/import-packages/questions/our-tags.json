@@ -180,6 +180,33 @@
    "topic": "پیمایش عمق‌اول و سطح‌اول",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0114",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "هزینهٔ جمع اعداد با طول متغیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0115",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "زمان‌بندی با جریمهٔ دیرکرد",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0047",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "بخش‌بندی در مرتب‌سازی سریع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

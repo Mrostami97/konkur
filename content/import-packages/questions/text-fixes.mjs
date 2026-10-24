@@ -67,6 +67,8 @@ export const TEXT_FIXES = new Map([
   // CS 1382 q85: option 4 in the booklet says a path «does not exist» (وجود ندارد); the bank typed «وجود دارد».
   // IT 1402 q85: option 3 ends «به‌معنی اثبات‌ناپذیربودن گزاره است» in the booklet; the bank typed «اثبات‌پذیر بودن».
   ["kunkurcomputer-q-1276-1402-758F-085", { options: { 3: "در صورتی که نتیجه اعمال تجزیه در یکی از مراحل اثبات، تهی شود، به معنی اثبات‌ناپذیر بودن گزاره است." } }],
+  // CE 1394 q47: the booklet prints the partitioned array as ⟨3,1,2,4,5,8,7,6,9⟩; the bank typed (2,1,3,…), which has four possible pivots.
+  ["kunkurcomputer-q-1277-1394-b1-047", { stem: [["2,1,3,4,5,8,7,6,9", "3,1,2,4,5,8,7,6,9"]] }],
   // CS 1400 q67: the booklet's options are n, n lg n, n², n² lg n; the bank typed n, n², n³, n⁴.
   ["kunkurcomputer-q-1209-1400-660A-068", { options: { 2: String.raw`$n\lg n$`, 3: "$n^2$", 4: String.raw`$n^2\lg n$` } }],
   ["kunkurcomputer-q-1209-1382-b0-085", { options: { 4: "بین تمام رئوس در M مسیری وجود ندارد." } }],
