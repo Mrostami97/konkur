@@ -1224,6 +1224,96 @@
    "topic": "ضرب ماتریس و چندجمله‌ای، شار بیشینه",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0056",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "روش آکرا-بازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0057",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی دنبالهٔ دوآهنگی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0058",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "عقب‌گرد و شاخه و حد",
+   "topic": "بازگشت به عقب روی زیردنباله‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0059",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "عقب‌گرد و شاخه و حد",
+   "topic": "حد بالا در شاخه و حد",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0060",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی درجی با جست‌وجوی دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0061",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "انتخاب عناصر غیرمجاور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0063",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "کران پایین مرتب‌سازی مقایسه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0064",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "یافتن دومین بزرگ‌ترین عنصر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0066",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مقایسهٔ مرتب‌سازی سریع و ادغامی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0067",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "اشاره‌گرهای کند و تند در لیست پیوندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
