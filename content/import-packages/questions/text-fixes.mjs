@@ -219,4 +219,11 @@ export const TEXT_FIXES = new Map([
       ],
     },
   }],
+  // CE 1402 q57: the loops were split over lines with a display formula inside; typed as a program.
+  ["kunkurcomputer-q-1277-1402-b1-057", {
+    stem: [["for(i=1 ; i<=n ; i++)", ""], ["for(j=1 ; j<=$$\\lfloor \\frac{n}{i} \\rfloor$$ ; j++)", ""], ["S.O ;", ""]],
+    append: code(["for (i = 1; i <= n; i++)", "    for (j = 1; j <= floor(n / i); j++)", "        S.O;"]),
+  }],
+  // CE 1402 q64: algorithm B combines in O(n^3) in the booklet; the bank typed O(n^2).
+  ["kunkurcomputer-q-1277-1402-b1-064", { options: { 2: "الگوریتم B نمونه‌ای به اندازه $n$ را با حل بازگشتی هشت نمونه با اندازه $\\frac{n}{2}$ حل می‌کند و سپس راه‌حل‌های آنها را در زمان $O(n^3)$ ترکیب می‌کنند." } }],
 ]);
