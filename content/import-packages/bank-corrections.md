@@ -248,3 +248,47 @@ Each was checked against the booklet crop; the bank's text matches the booklet. 
 | kunkurcomputer-q-1277-1391-b1-037 | CE 1391 q37 | 1 (۳۷۴٫۵) | the expected payout is 3.5 coins = 350 rials; a profit of a quarter of the coins needs a ticket of 350 × 1.25 = 437.5, option 2 |
 
 Note: four wrong keys from CE 1391 (q35, q37, q44, q45) suggest checking that year's key source as a whole.
+
+## Data structures and algorithms: checked against the booklet crops (2026-10-24)
+
+Text fix applied in `questions/text-fixes.mjs`:
+
+- kunkurcomputer-q-1209-1382-b0-085 (CS 1382 q85): option 4 is «بین تمام رئوس در M مسیری **وجود ندارد**» in the booklet; the bank typed «وجود دارد», which made option 4 true as well.
+
+Keys the reasoning does not settle; no worked solution until the owner decides:
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1209-1382-b0-089 | CS 1382 q89 | 1 | with integer division only the standard parenthesization keeps the value (key 1); over the reals d*(e/f) = (d*e)/f, so ((a−(b*c))−(d*(e/f))) is equal too and the answer is 2. The booklet does not say which arithmetic |
+| kunkurcomputer-q-1209-1383-b0-079 | CS 1383 q79 | 4 | traced on a leaf (z = w = x), the keyed lines set x→right = x and x→left = x, a self-loop; the function's return values (left call returns z, the leftmost node) also do not give the inorder predecessor the keyed lines assume |
+| kunkurcomputer-q-1209-1385-b0-095 | CS 1385 q95 | 2 | the first postorder node is reached by going left when possible, the last inorder node by going right only; height n−1 is not enough: a chain of left children (root, its left child, …) has the leaf first in postorder but the root last in inorder. The condition is that the right spine has no left children, which no option states |
+| kunkurcomputer-q-1209-1386-309-099 | CS 1386 q99 | 1 (O(nm)) | adding two sparse matrices kept as row-ordered triples merges the two lists in O(r_A + r_B) (O(n + m + r_A + r_B) with row headers, option 3); O(nm) is the dense algorithm, which a sparse representation exists to avoid |
+| kunkurcomputer-q-1209-1388-D-093 | CS 1388 q93 | 4 | option 4 is false (A ≤p B says nothing about A ∈ NP unless B ∈ NP), but option 1 is false too: P ⊄ NP-Complete, since ∅ and Σ* are in P and are not NP-complete (and in general P ⊂ NPC would need P = NP) |
+| kunkurcomputer-q-1209-1389-3077-085 | CS 1389 q85 | 3 | T(n) = Σ T(i)T(n−i), T(1)=1 is the Catalan number C(n−1): the binary trees with n−1 nodes (option 3), but also the ways to parenthesize a chain product of n matrices (option 1) |
+| kunkurcomputer-q-1209-1390-372B-092 | CS 1390 q92 | 3 | O gives only upper bounds, so it cannot say when one algorithm is faster; even reading the bounds as exact times, c′n log n ≤ cn² needs log n ≤ (c/c′)n, which the threshold c/c′ in option 3 does not express |
+| kunkurcomputer-q-1209-1391-368C-057 | CS 1391 q57 | 3 (۱۱) | the program's loop is `while (L!=L)`, which is never true, so nothing is printed; the intended condition (L != NULL?) cannot be read from the booklet |
+| kunkurcomputer-q-1209-1392-370C-094 | CS 1392 q94 | 1 | the keyed order 2,3,4,6,5,1 is Prim's algorithm from vertex 2; Kruskal does not start from a vertex and adds edges in weight order (6–4, 2–3, 3–4, 4–5, 1–5), i.e. vertices 6,4,2,3,5,1, which is no option |
+| kunkurcomputer-q-1209-1392-370C-095 | CS 1392 q95 | 2 (30) | the printed array is not a max-heap (index 10 holds 35 under index 5 = 23); deleting the max anyway (move 25 to the root, sift down past 40) leaves 25 at index 2. 30 appears nowhere in the heap |
+| kunkurcomputer-q-1209-1393-370E-182 | CS 1393 q92/182 | 1 | checked node by node, options 1 and 2 are both min-max heaps (option 2 only swaps 30 and 15 between a min-level node with children 45, 50 and a childless min-level leaf); option 3 fails at 15 > 12, option 4 at 30 > 12 |
+| kunkurcomputer-q-1209-1393-370E-196 | CS 1393 q196 | 2 | the booklet's own example needs two strings while only x has in-degree 0 (t has a self-loop), so option 3 is false as well as option 2; the definition of a k-formula is never given beyond the example |
+| kunkurcomputer-q-1209-1393-370E-197 | CS 1393 q197 | 3 (2996) | the celebrity problem needs at most 3n − ⌊log₂ n⌋ − 3 = 2988 questions for n = 1000 (keep the elimination as a balanced tournament and reuse its answers in the check); 2996 = 3(n−1) − 1 is not the minimum, and 2988 is no option |
+| kunkurcomputer-q-1209-1394-371F-196 | CS 1394 q196 | 1 | with n = 3 and one leaf there are 4 binary trees (the four chains), while option 1 gives C(2,1)/2 = 1·… = 2; the count is computable (binary trees with n nodes and k leaves: (1/n)·C(n,k)·C(n,k−1)·2^(n−2k+1)), so option 4 is wrong too and no option is right |
+| kunkurcomputer-q-1209-1398-861A-076 | CS 1398 q76 | 2 (n log n) | a bipartite graph with n/2 vertices per side can have n²/4 edges, and any MST algorithm must read them all, Ω(n²); O(n log n) holds only for sparse graphs, which the booklet does not say |
+| kunkurcomputer-q-1209-1399-462F-085 | CS 1399 q85 | 1 | Floyd–Warshall is wrong on a graph with a negative cycle, so «always correct» (option 1) is false unless negative cycles are excluded; option 4 (correct on a tree) is true. With negative cycles excluded, options 1 and 4 are both true |
+| kunkurcomputer-q-1209-1400-660A-068 | CS 1400 q67 | 3 (n²) | text fix applied: the bank's options were n, n², n³, n⁴; the booklet's are n, n lg n, n², n² lg n. The outer loop starts at i = 0, so `j = j + i` never advances and the inner loop never ends; with i from 1 the count is Σ n/i = Θ(n lg n), option 2, not the key |
+| kunkurcomputer-q-1209-1400-660A-081 | CS 1400 q81 | 4 (7) | the network is drawn undirected; the cut {s, A, B} (A top-left, B bottom-left) has capacity 3 + 3 + 2 = 8 and 8 units fit (bottom-right sends 1 to t and 1 up to top-right), so the maximum flow is 8, option 1. It is 7 only if the right-hand vertical edge carries flow downward alone |
+| kunkurcomputer-q-1209-1400-660A-084 | CS 1400 q84 | 4 | option 4 is true, but so is option 3: if P ⊆ NP-Complete, any problem in P is NP-complete and NP = P (the premise is even impossible, since ∅ ∈ P is not NP-complete, which makes the implication vacuously true) |
+
+## Computer architecture: checked against the booklet crops (2026-10-24)
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1209-1382-b0-104 | CS 1382 q104 | 3 (009H) | with 4-byte blocks the offset is 2 bits; 888809FH ≫ 2 = 2222027H, whose set index is 027H (256 sets, or 1024 if the 1024 blocks are per way), option 4. 009H needs a 16-byte line (offset 4 bits), which the booklet does not give |
+| kunkurcomputer-q-1209-1383-b0-109 | CS 1383 q109 | 2 (FEFE) | the booklet names a Pentium: from the 80286 on, `push sp` stores sp's value before the decrement (FF00), so `pop bp` gives FF00, option 1. FEFE is the 8086/8088 behaviour |
+| kunkurcomputer-q-1209-1384-b0-109 | CS 1384 q109 | 1 | for a fixed cache, larger blocks first lower the miss rate (spatial locality, option 4) and only past a point raise it (fewer blocks, option 1); both options state half of the same curve |
+| kunkurcomputer-q-1209-1385-b0-108 | CS 1385 q108 | 1 | a one-address machine names one explicit operand (the accumulator is implied), option 2; no instruction of such a machine has more than two operands, so option 1 is false |
+| kunkurcomputer-q-1276-1387-b0-103 | IT 1387 q103 | 2 | the statement loads R1 on every negative edge of x (the else-branch never coincides with a positive edge), but the keyed circuit gates R1's load with yT, so R1 loads only when yT = 1 |
+| kunkurcomputer-q-1277-1390-b1-069 | CE 1390 q69 | 4 | the bank's crop for this question shows q68 (a digital-logic hazard circuit), so the stem and its figure cannot be checked against the booklet; the crop path needs fixing first |
+| kunkurcomputer-q-1277-1390-b1-070 | CE 1390 q70 | 2 (103, 11) | a horizontal microinstruction needs 100 control bits + 3 condition-select bits (six conditions + always) + 8 next-address bits = 111; with a nanomemory of the 15 distinct control words it is 4 + 3 + 8 = 15. Neither 103 nor 11 follows from the chart |
+| kunkurcomputer-q-1277-1391-b1-069 | CE 1391 q69 | 4 | traced from the booklet: the right adder adds x, 2y+1 (y shifted with a 1 below it) and Cin = 1, so its Cout is 1 exactly when x + 2y + 2 ≥ 16, i.e. x > 13 − 2y; that Cout inverts B and sets the left adder's Cin, giving A − B. That is option 1, not the key |
+| kunkurcomputer-q-1277-1392-b1-067 | CE 1392 q67 | 4 (169000) | the bank's crop for this question shows q66, so the text is unchecked; as the bank has it, a nanoprogrammed unit needs 2000 × 8 (nano addresses for 150 words) + 150 × 100 = 31,000 bits, which is no option |

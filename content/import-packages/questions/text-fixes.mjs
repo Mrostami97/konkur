@@ -64,6 +64,10 @@ export const TEXT_FIXES = new Map([
   }],
   // CS 1389 q57: option 2 is «۳ و ۱۰» in the booklet; the bank repeated option 4 (2026-10-20 text audit).
   ["kunkurcomputer-q-1209-1389-3077-057", { options: { 2: "‭۳ و ۱۰‬" } }],
+  // CS 1382 q85: option 4 in the booklet says a path «does not exist» (وجود ندارد); the bank typed «وجود دارد».
+  // CS 1400 q67: the booklet's options are n, n lg n, n², n² lg n; the bank typed n, n², n³, n⁴.
+  ["kunkurcomputer-q-1209-1400-660A-068", { options: { 2: String.raw`$n\lg n$`, 3: "$n^2$", 4: String.raw`$n^2\lg n$` } }],
+  ["kunkurcomputer-q-1209-1382-b0-085", { options: { 4: "بین تمام رئوس در M مسیری وجود ندارد." } }],
   // CS 1395 q93 (repeated as q185): option 3 was untyped and option 4 repeated option 1.
   ["kunkurcomputer-q-1209-1395-271F-093", { options: { 3: "زمان $O(n^3)$ و حافظهٔ $O(n^3)$", 4: "زمان $O(n^2)$ و حافظهٔ $O(n^3)$" } }],
   ["kunkurcomputer-q-1209-1395-271F-185", { options: { 3: "زمان $O(n^3)$ و حافظهٔ $O(n^3)$", 4: "زمان $O(n^2)$ و حافظهٔ $O(n^3)$" } }],
