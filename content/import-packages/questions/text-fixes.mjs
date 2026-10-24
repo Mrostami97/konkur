@@ -177,4 +177,21 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1209-1399-462F-072", { stem: [["یک آرایه ۱۵ عنصری", "یک آرایه ۱۰ عنصری"]] }],
   // CE 1394 q113: Persian digits inside the formula.
   ["kunkurcomputer-q-1277-1394-b2-113", { stem: [["v_{۱۰۰}", "v_{100}"]] }],
+  // CE 1395 q94: the bank left the definitions to the crop and the four formulas empty; typed from the booklet.
+  ["kunkurcomputer-q-1277-1395-b2-094", {
+    dropFigures: true,
+    stem: [
+      ["وزن‌دار G که", "وزن‌دار $G$ که"],
+      [
+        "فرض کنید ماتریس مجاورت گراف W=(wᵢⱼ) (n×n) باشد. تعریف‌ها و شرایط اولیه در تصویر آمده‌اند. اگر dᵢⱼ⁽ᵐ⁾ وزن کوتاه‌ترین مسیر i→j با حداکثر m یال باشد، کدام گزینه درست است؟",
+        "فرض کنید ماتریس مجاورت گراف $W=(w_{ij})$ ($n\\times n$) باشد که:\n$$W[i,j]=\\begin{cases}w_{ij}&(i,j)\\in E\\\\\\infty&(i,j)\\notin E\\\\0&i=j\\end{cases}$$\nاگر $d_{ij}^{(m)}$ وزن کوتاه‌ترین مسیر $i\\leadsto j$ که حداکثر $m$ یال داشته باشد، و\n$$d_{ij}^{(0)}=\\begin{cases}0&i=j\\\\\\infty&i\\ne j\\end{cases}$$\nدر آن صورت کدام یک از گزینه‌های زیر درست است؟",
+      ],
+    ],
+    options: {
+      1: "$d_{ij}^{(m)}=\\min_{i\\le k<n}\\{d_{ik}^{(m-1)}+w_{kj}\\}$",
+      2: "$d_{ij}^{(m)}=\\min_{1\\le k\\le n}\\{d_{ik}^{(m-1)}+w_{kj}\\}$",
+      3: "$d_{ij}^{(m)}=\\min_{i\\le k\\le n}\\{d_{ik}^{(m-1)}+w_{kj}\\}$",
+      4: "$d_{ij}^{(m)}=\\min_{i\\le k<j}\\{d_{ik}^{(m-1)}+w_{kj}\\}$",
+    },
+  }],
 ]);

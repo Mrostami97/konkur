@@ -402,7 +402,9 @@ for (const examYear of examYears) {
           notes: ["متن، گزینه‌ها و کلید کلمه‌به‌کلمه با دفترچهٔ 135A و کلید نهایی تطبیق داده شده (مقالهٔ حل تشریحی ۱۴۰۵)"],
         }
       : record;
-    const reason = skipReason(q);
+    // Options typed in text-fixes.mjs count, so a question whose options were never transcribed is not skipped.
+    const optionFix = TEXT_FIXES.get(`kunkurcomputer-q-${code}-${year}-${q.bookletLabel}-${String(q.number).padStart(3, "0")}`)?.options;
+    const reason = skipReason(optionFix ? { ...q, options: q.options.map((option) => (optionFix[option.number] ? { ...option, text: optionFix[option.number] } : option)) } : q);
     if (reason) {
       summary.skipped[reason] = (summary.skipped[reason] ?? 0) + 1;
       continue;
