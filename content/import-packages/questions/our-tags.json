@@ -342,6 +342,51 @@
    "topic": "دایکسترا با هرم فیبوناچی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0048",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی آرایهٔ تقریباً مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0049",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "اندازهٔ زیردرخت‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0050",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "هرم و صف اولویت",
+   "topic": "تعداد گره‌های هم‌ارتفاع در هرم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0051",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "کران پایین مرتب‌سازی مقایسه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0052",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مجموعه‌های مجزا",
+   "topic": "ادغام بر اساس ارتفاع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
