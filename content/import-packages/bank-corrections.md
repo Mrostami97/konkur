@@ -347,3 +347,18 @@ The owner's bank has no key for these reviewed questions, so they stay in the re
 | kunkurcomputer-q-1276-1402-758F-076 | IT 1402 q76 | 2 (three true) | only (الف) is always true: (ب) fails when the whole schema is the only key (one superkey, one candidate key), (ج) constraints are DDL, (د) a view on B alone can have more rows (a self-join of B), so the count is 1, option 4 |
 | kunkurcomputer-q-1276-1403-257C-078 | IT 1403 q78 | 4 | under a RESTRICT rule both deleting a referenced customer (option 4) and updating a referenced CustomerID (option 3) are refused; two options are right |
 | kunkurcomputer-q-1277-1391-b2-105 | CE 1391 q105 | 1 (only 1NF) | with AB→CD, EF→GH, GH→AB the only key is EF, and neither E nor F alone determines anything, so the relation is in 2NF (GH→AB is transitive, so not 3NF); «only 1NF» understates it and no option says 2NF |
+
+## Operating systems: checked against the booklet crops (2026-10-24)
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1276-1401-459C-096 | IT 1401 q96 | 1 (17) | round robin with q = 4 and a 1 ms switch gives an average wait of 11 (new arrival queued before the preempted process; 9.75 the other way, 12 with a switch before the first run); no option is near any of these |
+| kunkurcomputer-q-1276-1401-459C-100 | IT 1401 q100 | 1 | «static/dynamic sparsity» are one textbook's terms; pure demand paging relies on both (a process needs little of its image at load and little in each interval), so the choice between options 1, 2 and 3 is a matter of that book's wording |
+
+## Computer networks: checked against the booklet crops (2026-10-24)
+
+| Question id | Exam | Key | Why |
+|---|---|---|---|
+| kunkurcomputer-q-1276-1401-459C-059 | IT 1401 q59 | 1 | bind((210.17.0.5, 1200)) is the server's own address, so the keyed option's «requests from source 210.17.0.5» is wrong; option 2 describes the socket correctly but calls it the client's. No option is exact |
+| kunkurcomputer-q-1276-1402-758F-050 | IT 1402 q50 | 3 | a fabric slower than the slowest output link (option 3) keeps output queues empty, but so does each output serving a single input (option 1) when links have equal rates; two options can be right |
+| kunkurcomputer-q-1276-1402-758F-053 | IT 1402 q53 | 1 | the average throughput of a long transfer is set by the bottleneck link on the path (option 2); the inverse RTT (key) bounds a single window per round trip but is not «the main factor» the booklet asks for |
