@@ -201,4 +201,8 @@ export const TEXT_FIXES = new Map([
       rows: [["کلید", "5", "", "7", "", "", "", "11", "", "2", "9", "", "14", "", "3", "", "1", "4", "6"]],
     },
   }],
+  // CE 1399 q86: option 1 asks about x = 4 (h(4) = 7), like options 2 and 3; the bank typed x = 2.
+  ["kunkurcomputer-q-1277-1399-b0-086", { options: { 1: "احتمال آن که ورودی x = ۴ به خانه ۷ نگاشت شود برابر ۱ است." } }],
+  // CE 1399 q91: the booklet's second item is A[i] = 3i + 2; the bank typed 2i + 3.
+  ["kunkurcomputer-q-1277-1399-b0-091", { stem: [["A[i]=2i+3", "A[i]=3i+2"]] }],
 ]);
