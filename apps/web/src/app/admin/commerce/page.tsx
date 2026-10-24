@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { subjectName } from "../../../content/subject-names";
+import { OUTSIDE_1406_SUBJECTS } from "../../../lib/syllabus";
 import {
   AdminPageHeader,
   Alert,
@@ -24,6 +25,9 @@ import {
 interface Course { id: string; title: string }
 interface SellableResource { id: string; title: string; accessMode: string; reviewStatus: string }
 interface AdminUser { id: string; phone: string; name?: string | null }
+
+/** A bank subject by name, including the few the bank holds outside the 1406 syllabus. */
+const bankSubjectName = (code: string) => OUTSIDE_1406_SUBJECTS[code] ?? subjectName(code);
 
 /** How a person reads in a picker: name first when there is one. */
 const userLabel = (user: AdminUser) => (user.name ? `${user.name} · ${toPersianDigits(user.phone)}` : toPersianDigits(user.phone));
@@ -337,7 +341,7 @@ export default function CommerceAdminPage() {
                     <option value="">درس را انتخاب کنید</option>
                     {bankCounts.map((subject) => (
                       <option key={subject.code} value={subject.code}>
-                        {subjectName(subject.code)} · {toPersianDigits(subject.count)} سؤال
+                        {bankSubjectName(subject.code)} · {toPersianDigits(subject.count)} سؤال
                       </option>
                     ))}
                   </Select>
@@ -369,7 +373,7 @@ export default function CommerceAdminPage() {
                               )
                             }
                           />
-                          {subjectName(subject.code)} · {toPersianDigits(subject.count)} سؤال
+                          {bankSubjectName(subject.code)} · {toPersianDigits(subject.count)} سؤال
                         </label>
                       ))}
                     </div>
@@ -439,7 +443,7 @@ export default function CommerceAdminPage() {
                       <tr key={product.id}>
                         <td>{product.title}</td>
                         <td><Badge tone="info">{kindLabel(product.kind)}</Badge></td>
-                        <td>{banks.length ? banks.map((grant) => subjectName(grant.subjectCode)).join("، ") : "—"}</td>
+                        <td>{banks.length ? banks.map((grant) => bankSubjectName(grant.subjectCode)).join("، ") : "—"}</td>
                         <td className="ds-table-numeric">
                           {price ? (
                             <>
