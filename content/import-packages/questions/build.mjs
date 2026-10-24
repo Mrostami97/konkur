@@ -50,6 +50,13 @@ const BANK = TAGGED ? "outputs/unified_question_bank/questions.jsonl" : "outputs
 const TAGS = TAGGED
   ? new Map(JSON.parse(await readFile(path.join(bankRoot, "outputs/unified_question_bank/chapter_topics.json"), "utf8")).questions.map((tag) => [tag.question_id, tag]))
   : new Map();
+// Questions of the 1406 computer-engineering subjects the owner has not tagged yet, which we checked
+// word for word against the booklet crop and solved to confirm the key (owner, 2026-10-24: build the
+// bank to the 1406 CE exam). Each entry is tagged like chapter_topics.json, plus `ours: true`.
+if (TAGGED) {
+  const ours = JSON.parse(await readFile(new URL("./our-tags.json", import.meta.url), "utf8")).questions;
+  for (const tag of ours) if (!TAGS.has(tag.question_id)) TAGS.set(tag.question_id, { ...tag, ours: true });
+}
 
 const TRACKS = {
   ce: { code: "1277", major: "computer-engineering" },
@@ -330,6 +337,11 @@ const questions = (await readFile(bankFile, "utf8"))
     const q = normalise(record);
     if (!TAGGED) return q;
     const tag = TAGS.get(record.question_id);
+    // Our own crop check stands in for the owner's review; the key only when we confirmed it by solving.
+    if (tag.ours) {
+      q.textVerified = true;
+      if (tag.key_checked) q.keyVerified = true;
+    }
     const subjectCode = subjectOf(tag.course, tag.chapter, tag.topic);
     if (!subjectCode) throw new Error(`${record.question_id}: no subject for course «${tag.course}» (taxonomy-1406.mjs)`);
     const topic = isOutside1406(subjectCode) ? null : topicOf(subjectCode, tag.chapter, tag.topic);

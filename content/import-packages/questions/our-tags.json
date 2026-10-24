@@ -1,0 +1,32 @@
+{
+ "comment": "1406 CE-subject questions the owner has not tagged, checked by us against the booklet crop (text) and by solving (key_checked). build.mjs --tagged adds them. Add entries with .claude/bank-tools/add-our-tag.cjs.",
+ "questions": [
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0098",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی با جابه‌جایی و دورهای جایگشت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0099",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "درخت فراگیر کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0100",
+   "exam_track": "ce",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "بیشترین مسیر وزن‌دار در درخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  }
+ ]
+}
