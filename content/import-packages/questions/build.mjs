@@ -166,7 +166,7 @@ function normalise(record) {
   // original crop is shown, since OCR of code is not to be trusted.
   const figures = cs
     ? [...assetsOf(record, "original_figure_crop"), ...assetsOf(record, "original_table_crop"), ...(/```/.test(stem) ? [] : assetsOf(record, "original_code_crop"))]
-    : it
+    : it || record.exam_track === "phd"
       ? [record.source_figure_crop, record.source_table_crop].filter(Boolean)
       : record.figure_paths ?? [];
   const stage = String(record.answer_stage ?? "");
@@ -343,6 +343,9 @@ const questions = (await readFile(bankFile, "utf8"))
     if (tag.ours) {
       q.textVerified = true;
       if (tag.key_checked) q.keyVerified = true;
+      // The PhD archive holds almost no key marked final, and the owner asked us to settle each key by
+      // solving (2026-10-25): a printed key our worked solution reaches stands as the key.
+      if (tag.key_checked && record.exam_track === "phd") q.initialKey = false;
     }
     const subjectCode = subjectOf(tag.course, tag.chapter, tag.topic);
     if (!subjectCode) throw new Error(`${record.question_id}: no subject for course «${tag.course}» (taxonomy-1406.mjs)`);
@@ -570,7 +573,8 @@ for (const examYear of examYears) {
         number: option.number,
         blocks: [
           ...(String(option.text ?? "").trim() ? [{ type: "text", text: String(option.text).trim() }] : []),
-          ...(optionKeys.has(option.number) ? [{ type: "image", media_key: optionKeys.get(option.number) }] : []),
+          // An option typed in text-fixes.mjs replaces its crop.
+          ...(optionKeys.has(option.number) && !fix?.options?.[option.number] ? [{ type: "image", media_key: optionKeys.get(option.number) }] : []),
         ],
       })),
       // A deleted or keyless question keeps 1 as a placeholder: the key state says it is not a key.

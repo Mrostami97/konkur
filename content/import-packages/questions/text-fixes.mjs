@@ -542,6 +542,12 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1277-1404-b1-047", { options: { 4: String.raw`$(0+\varepsilon)(11^*0)^*1^*$` } }],
   // CE 1404 q50: no figure in the booklet; the bank attached a stray image.
   ["kunkurcomputer-q-1277-1404-b1-050", { dropFigures: true }],
+  // PhD 2354 1404 q14: option 3 was empty; typed as the booklet prints it.
+  ["kunkurcomputer-q-2354-1404-b0-014", { options: { 3: String.raw`$O(\log_2^{\,n})$` } }],
+  // PhD 2354 1404 q21: the "figure" is the three equations, already typed in the stem.
+  ["kunkurcomputer-q-2354-1404-b0-021", { dropFigures: true }],
+  // PhD 2354 1404 q31: the ALU table is typed in the stem; only the datapath drawing is kept.
+  ["kunkurcomputer-q-2354-1404-b0-031", { dropFigures: true, figures: ["outputs/phd_question_bank/assets/1404/phd-1404-5deb8ce4ef34e66c-q0031-figure.png"] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
