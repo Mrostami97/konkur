@@ -3213,6 +3213,51 @@
    "topic": "بهره‌وری پردازنده و حالت بیکار",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0096",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "اندازهٔ جدول صفحه در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0097",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "حافظهٔ مجازی",
+   "topic": "زمان دسترسی مؤثر با خطای صفحه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0098",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "الگوریتم بانکدار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0101",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "تکه‌تکه شدن داخلی در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0099",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "همگام‌سازی فرایندها",
+   "topic": "قفل چرخشی (Spinlock) در ناحیهٔ بحرانی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

@@ -258,6 +258,22 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1401-b1-101", { stem: [["۵۰۰ MB/Sec", "۵۰ MB/Sec"]] }],
   // CE 1401 q102: the table was only in the crop.
   ["kunkurcomputer-q-1277-1401-b1-102", { stem: [["\n\n[جدول در تصویر منبع]", ""]], table: { headers: ["", "P1", "P2", "P3"], rows: [["مدت زمان CPU", "5", "20", "10"], ["دوره تناوب", "25", "50", "40"]] } }],
+  // CE 1402 q98: the booklet's option 1 is 0.000003 (five zeros); the bank typed it the same as option 3.
+  ["kunkurcomputer-q-1277-1402-b1-098", { options: { 1: "P < ۰/۰۰۰۰۰۳" } }],
+  // CE 1402 q99: the tables were only in the crop.
+  ["kunkurcomputer-q-1277-1402-b1-099", {
+    append: "منابع آزاد (available): ‭r1 = 1، r2 = 5، r3 = 2، r4 = 0‬",
+    tables: [{
+      headers: ["فرایند", "تخصیص r1", "تخصیص r2", "تخصیص r3", "تخصیص r4", "حداکثر r1", "حداکثر r2", "حداکثر r3", "حداکثر r4"],
+      rows: [
+        ["P0", "0", "0", "1", "2", "0", "0", "1", "2"],
+        ["P1", "1", "0", "0", "1", "1", "5", "1", "1"],
+        ["P2", "1", "3", "0", "4", "2", "3", "5", "6"],
+        ["P3", "0", "6", "3", "2", "0", "6", "7", "2"],
+        ["P4", "0", "0", "1", "4", "0", "6", "5", "6"],
+      ],
+    }],
+  }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
