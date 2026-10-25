@@ -185,6 +185,8 @@ export const RULES = {
     [/نمایش|حساب|ممیز|مکمل/, "arch-cpu-arith"],
     [/اسمبلی|رجیستر|ثبات|ریزعمل/, "arch-cpu-rtl"],
     [/دستورالعمل|آدرس‌دهی|دستور|طراحی کامپیوتر/, "arch-cpu-isa"],
+    // The control unit (hardwired or microprogrammed) sits with register transfer and micro-operations.
+    [/کنترل|ریزبرنامه/, "arch-cpu-rtl"],
   ],
   "linear-algebra": [
     [/کمترین مربعات|QR/i, "la-systems-least-squares"],

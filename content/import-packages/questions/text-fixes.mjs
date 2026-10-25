@@ -333,6 +333,19 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1402-b1-086", { stem: [["از\n\nیک", "از یک"], ["می‌توان\n\nاز", "می‌توان از"], ["بین\n\nخانه‌های", "بین خانه‌های"]] }],
   ["kunkurcomputer-q-1277-1402-b1-087", { stem: [["ظرفیت\n\n512", "ظرفیت 512"], ["offset)\n\nچند", "offset) چند"]] }],
   ["kunkurcomputer-q-1277-1402-b1-088", { stem: [["X\n\nt1:DR", "X\nt1:DR"], ["M[MAR]\n\nt2:M[MAR]", "M[MAR]\nt2:M[MAR]"], ["A\n\nt3:A", "A\nt3:A"]] }],
+  // CE 1403 q84, q85 and q87: the tables and the four microprogram options were only in the crop; q88 drops a bank note.
+  ["kunkurcomputer-q-1277-1403-b1-084", { stem: [["\n\n[جدول در تصویر منبع]", ""]], table: { headers: ["علامت", "توان", "مانتیس"], rows: [["1 bit", "3 bit", "4 bit"]] } }],
+  ["kunkurcomputer-q-1277-1403-b1-085", { stem: [["\n\n[جدول در تصویر منبع]", ""]], table: {
+    headers: ["", "درصد A", "درصد B", "درصد C", "درصد D", "CPI کلاس A", "CPI کلاس B", "CPI کلاس C", "CPI کلاس D"],
+    rows: [["P1", "30", "20", "40", "10", "1", "3", "2", "1"], ["P2", "20", "50", "20", "10", "1", "1", "3", "2"]],
+  } }],
+  ["kunkurcomputer-q-1277-1403-b1-087", { options: {
+    1: "‭NOP S JMP OVER / NOP U JMP FETCH‬",
+    2: "‭NOP I CALL INDRCT / ACTDR U JMP NEXT / WRITE U JMP FETCH‬",
+    3: "‭PCTAR U JMP NEXT / READ, INCPC U JMP NEXT / DRTAR‬",
+    4: "‭READ U JMP NEXT / DRTAR U RET‬",
+  } }],
+  ["kunkurcomputer-q-1277-1403-b1-088", { stem: [[" جهت خواندن نیز در برش تصویر منبع حفظ شده است.", ""]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
