@@ -309,6 +309,16 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1399-b0-078", { stem: [["اضافه\n\nمی‌شوند،", "اضافه می‌شوند،"]] }],
   // Line breaks in the middle of sentences (bank OCR), joined.
   ["kunkurcomputer-q-1277-1400-b1-088", { stem: [["این\n\nعدد", "این عدد"]] }],
+  // CE 1401 q89: the function table and the four options (a table of u, v, w, z) were only in the crop.
+  ["kunkurcomputer-q-1277-1401-b1-089", {
+    table: { headers: ["S1", "S0", "C0", "F"], rows: [["0", "0", "0", "A"], ["0", "0", "1", "A+1"], ["0", "1", "0", "A+B"], ["0", "1", "1", "A+B+1"], ["1", "0", "0", "A-1"], ["1", "0", "1", "A"], ["1", "1", "0", "A-B-1"], ["1", "1", "1", "A-B"]] },
+    options: {
+      1: String.raw`$u=0,\ v=b_i,\ w=1,\ z=b'_i$`,
+      2: String.raw`$u=b_i,\ v=1,\ w=b'_i,\ z=0$`,
+      3: String.raw`$u=0,\ v=b'_i,\ w=1,\ z=b_i$`,
+      4: String.raw`$u=b'_i,\ v=0,\ w=b_i,\ z=1$`,
+    },
+  }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

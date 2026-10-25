@@ -3708,6 +3708,60 @@
    "topic": "بزرگ‌ترین عدد در نمایش ممیز شناور",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0088",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "زبان اسمبلی و عملیات رجیستر",
+   "topic": "انتقال ثبات با دیکودر و بافر سه‌حالته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0089",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "مدار حسابی با جمع‌کننده و مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0090",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بیت‌های وضعیت در جمع مکمل دو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0091",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "CPI، فرکانس و بهبود کارایی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0092",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "تعداد راه‌ها در نگاشت مجموعه‌انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0094",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بزرگ‌ترین عدد در نمایش ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
