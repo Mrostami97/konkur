@@ -2493,6 +2493,42 @@
    "topic": "ضرب دکارتی در مدل رابطه‌ای",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0108",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "مدل رابطه‌ای",
+   "topic": "ابرکلید و استقلال داده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0110",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "کلیدهای کاندید",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0111",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "شاخص‌گذاری",
+   "topic": "شاخص خوشه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0114",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "توابع تجمعی و HAVING",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
