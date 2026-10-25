@@ -307,6 +307,8 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1399-b0-076", { stem: [["دارای\n\nگنجایش", "دارای گنجایش"]] }],
   ["kunkurcomputer-q-1277-1399-b0-077", { stem: [["دستور\n\nمختلف", "دستور مختلف"]] }],
   ["kunkurcomputer-q-1277-1399-b0-078", { stem: [["اضافه\n\nمی‌شوند،", "اضافه می‌شوند،"]] }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1400-b1-088", { stem: [["این\n\nعدد", "این عدد"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

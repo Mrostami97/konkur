@@ -3681,6 +3681,33 @@
    "topic": "طول tag در انواع نگاشت حافظهٔ نهان",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0087",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "رمزگذاری Booth ضرب‌کننده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0088",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "اندازهٔ tag و اندیس در نگاشت مجموعه‌انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0090",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بزرگ‌ترین عدد در نمایش ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
