@@ -5859,6 +5859,303 @@
    "topic": "مخاطرهٔ ساختاری در خط لوله",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0002",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "تبدیل فوریهٔ سریع (FFT)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "کمینه کردن مجموع فاصله‌ها با میانه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0006",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "یافتن عدد گمشده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0009",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "کمینه و بیشینه با کمترین مقایسه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0010",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی با پنجرهٔ مرتب‌کنندهٔ ثابت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0011",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی با دو زیرمسئلهٔ نامساوی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0012",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "کاهش چندجمله‌ای و NP-کامل بودن (NP)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0013",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "ردیابی تابع بازگشتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0015",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "ساخت هرم، الگوریتم پریم و درخت AVL",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0016",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "گراف با وزن یال‌های یکسان: MST و BFS",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0017",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "تعداد افرازهای n به k جمعوند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0018",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "یافتن عنصر پرتکرار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0019",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "وارسی خطی و احتمال قرار گرفتن کلید",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0020",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "مرتب‌سازی توپولوژیک، قطر درخت و تشخیص دور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0022",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "دیکودر، مالتی‌پلکسر و انکودر اولویت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0023",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "تحلیل مدار ترتیبی و حالت قفل‌شده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0024",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "تعداد EPI ها با جدول کارنو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0026",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع خروجی مدار با مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0027",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "کاهش حالت و پیاده‌سازی ماشین حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0029",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "زمان setup و hold و فرکانس کار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0030",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تعداد گیت‌های جمع‌کنندهٔ پیش‌بینی نقلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0031",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "ضرب‌کنندهٔ آرایه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0025",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "ضرب در ثابت با جمع‌کننده (بدون ضرب‌کننده)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0028",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و مسیر داده",
+   "topic": "سیگنال‌های کنترلی مسیر داده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0032",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "زبان اسمبلی و عملیات رجیستر",
+   "topic": "اجرای برنامهٔ انباشتگر با آدرس‌دهی غیرمستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0033",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "طراحی حافظهٔ نهان برای پیمایش آرایه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0034",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "فرکانس لازم با تغییر CPI",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0036",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تعداد مراحل خط لوله و توان عملیاتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0037",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "مسیرهای forwarding در خط لولهٔ MIPS",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0038",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "نمایش ممیز شناور در قالب IEEE",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0039",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "فضای آدرس حافظهٔ مجازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0040",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "زمان متوسط دسترسی با خطای صفحه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1403-0f9bd97e1a1de5b3-q0021",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شبیه‌سازی توصیف Verilog/VHDL با شکل موج",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
