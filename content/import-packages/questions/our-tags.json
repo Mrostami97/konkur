@@ -3312,6 +3312,42 @@
    "topic": "پیچیدگی الگوریتم بانکدار",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0096",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مفاهیم پایه سیستم عامل",
+   "topic": "حالت دوگانهٔ پردازنده (فرایند کاربر و هسته)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0097",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "اجرای دسته‌ای روی پردازندهٔ دوهسته‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0099",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "فرایندها و نخ‌ها",
+   "topic": "مدل‌های چندنخی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0101",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "زمان‌بندی غیرقبضه‌ای FIFO",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
