@@ -359,6 +359,16 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1405-b1-089", { append: String.raw`$P_i, G_i$ Generator: $P_i=A'_i+B_i\cdot A_i$ و $G_i=A'_iB_i$
 XOR Generator: $S_i=A_i\oplus B_i\oplus C_{i-1}$
 C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_i+P_iG_{i-1}+P_iP_{i-1}G_{i-2}+\cdots+\prod_{i=1}^{n}P_iC_{in}$` }],
+  // CE 1394 q59: the four options are circuits drawn only in the crop; described as drawn.
+  ["kunkurcomputer-q-1277-1394-b1-059", { options: {
+    1: String.raw`مالتی‌پلکسر $4\times1$ با ورودی‌های داده $I_0=0$، $I_1=C$، $I_2=1$، $I_3=0$ و خطوط انتخاب $S_1=B$ و $S_0=A$`,
+    2: String.raw`مالتی‌پلکسر $2\times1$ با خط انتخاب A؛ ورودی ۰ خروجی گیت AND روی B و C، و ورودی ۱ برابر $\overline B$`,
+    3: String.raw`دیکودر با ورودی‌های C (بیت ۰)، B (بیت ۱) و A (بیت ۲) و هشت خروجی؛ خروجی‌های ۳، ۴ و ۵ به یک گیت OR`,
+    4: String.raw`دیکودر $2\times4$ با ورودی‌های B (بیت ۰) و A (بیت ۱)؛ خروجی ۱ با C به یک گیت AND و خروجی آن و خروجی ۲ به یک گیت OR`,
+  } }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1393-b1-061", { stem: [["را\n\nبه", "را به"]] }],
+  ["kunkurcomputer-q-1277-1393-b1-062", { stem: [["جمع\n\nحاصل", "جمع حاصل"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

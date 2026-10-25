@@ -4005,6 +4005,69 @@
    "topic": "مخاطرهٔ داده و توقف در خط لوله",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0061",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "گیت‌ها و جبر بول",
+   "topic": "بافر سه‌حالته و مقاومت بالاکش",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0062",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "جدول کارنو پنج‌متغیره با حالت بی‌اهمیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0057",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "فلیپ‌فلاپ JK با انکدر اولویت و شمارنده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0058",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "جمله‌های اول و جمله‌های اول اساسی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0059",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با مالتی‌پلکسر و دیکودر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0060",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "گیت‌ها و جبر بول",
+   "topic": "مخاطرهٔ ایستا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0061",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "سیستم‌های عددی",
+   "topic": "تبدیل مبنای اعداد اعشاری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
