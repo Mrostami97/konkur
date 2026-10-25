@@ -4995,6 +4995,69 @@
    "topic": "زبان مستقل از متن قطعی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0050",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "شمارا و ناشمارا بودن ردهٔ زبان‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0053",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "خواص بستاری رده‌های زبان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0054",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "کلاس‌های هم‌ارزی رشته‌ها در ماشین متناهی قطعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0051",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "زبان‌های تشخیص‌پذیر و تصمیم‌پذیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0053",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "گرامرها",
+   "topic": "گرامر بدون محدودیت برای زبان توان‌های دو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0054",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "خواص بستاری مستقل از متن با زبان منظم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0055",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "زبان یک گرامر مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
