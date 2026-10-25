@@ -2808,6 +2808,87 @@
    "topic": "صورت‌های نرمال",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0109",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "توابع تجمعی در WHERE",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0111",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "تجزیهٔ بدون گمشدگی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0114",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "شمارش ابرکلیدها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0115",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "هدف نرمال‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0109",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "مدل موجودیت-رابطه",
+   "topic": "تخصیص و تعمیم (is-a)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0111",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "جبر رابطه‌ای",
+   "topic": "پیوند طبیعی و ضرب دکارتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0112",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "صورت‌های نرمال 3NF و BCNF",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0113",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "کلیدهای کاندید",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0114",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "شاخص‌گذاری",
+   "topic": "شاخص در مدل رابطه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
