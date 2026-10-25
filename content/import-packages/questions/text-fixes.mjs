@@ -413,7 +413,7 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
     "end ARCH;",
   ]) }],
   // CE 1398 q68: the four options are state sequences drawn with arrows only in the crop.
-  ["kunkurcomputer-q-1277-1398-b0-068", { options: {
+  ["kunkurcomputer-q-1277-1398-b0-068", { figures: ["outputs/content_review/source_crops/doc-80ceacadef3e68ab-q-0068-p15-b9-image.png"], options: {
     1: "‭000 → 011 → 110 → 010‬، و 010 به خودش برمی‌گردد",
     2: "‭000 → 011 → 110 → 010 → 000‬",
     3: "‭000 → 011 → 101 → 010 → 000‬",
@@ -434,6 +434,34 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
     3: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب y؛ ورودی ۰ خروجی AND روی x و $\overline z$ و ورودی ۱ خروجی OR روی x و $\overline z$`,
     4: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب $\overline x$؛ ورودی ۰ خروجی AND روی z و y و ورودی ۱ خروجی OR روی z و y`,
   } }],
+  // CE 1400 q81 and q84: the options (state sequences, D-input equations) and q84's example were only in the crop.
+  ["kunkurcomputer-q-1277-1400-b1-081", { figures: ["outputs/content_review/source_crops/doc-ce948be666ad51cd-q-0080-p18-b9-image.png"], options: {
+    1: "‭111 → 110 → 010‬، و 010 به خودش برمی‌گردد",
+    2: "‭111 → 001 → 011 → 101 → 111‬",
+    3: "‭111 → 001 → 110 → 100 → 111‬",
+    4: "‭111 → 000 → 011 → 101 → 010 → 111‬",
+  } }],
+  ["kunkurcomputer-q-1277-1400-b1-084", {
+    stem: [["برای مثال، توالی‌های x و z در تصویر زیر آمده‌اند.", "برای مثال:"]],
+    append: "‭x = 0101001000110010010‬\n‭z = 0000001000000010010‬",
+    options: {
+      1: String.raw`$d_0=x\oplus y_1$، $d_1=y_1\bar y_0+\bar x(y_1+y_0)$`,
+      2: String.raw`$d_0=x+y_1\bar y_0$، $d_1=\bar x(y_1\oplus y_0)$`,
+      3: String.raw`$d_0=x\oplus y_1$، $d_1=y_1y_0+\bar x(\bar y_1+y_0)$`,
+      4: String.raw`$d_0=x\odot y_1$، $d_1=y_1\bar y_0x+\bar xy_1$`,
+    },
+  }],
+  // CE 1390 q75: the five process listings (with the run time of each block) were only in the crop.
+  ["kunkurcomputer-q-1277-1390-b1-075", { append: code([
+    "P0: code1();        // 10",
+    "    P(s); code2(); V(s);   // 15",
+    "P1: code3();        // 40",
+    "P2: code4();        // 50",
+    "P3: code5();        // 10",
+    "    P(s); code6(); V(s);   // 15",
+    "P4: code7();        // 15",
+    "    P(s); code8(); V(s);   // 10",
+  ]) }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

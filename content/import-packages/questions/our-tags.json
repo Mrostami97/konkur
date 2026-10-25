@@ -4365,6 +4365,60 @@
    "topic": "قضیهٔ De Morgan و مکمل تابع",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0080",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارنده با فلیپ‌فلاپ T",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0081",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "جمله‌های اول اساسی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0082",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "هزینهٔ پیاده‌سازی مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0083",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "آشکارساز دنباله با ماشین میلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0084",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0085",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "حالت‌های دسترس‌ناپذیر مدار ترتیبی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
