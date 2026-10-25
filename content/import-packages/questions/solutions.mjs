@@ -16982,7 +16982,7 @@ export const SOLUTIONS = {
     shortcut: "‏w1 = ab·aa·baa·ab·aa، ‏w2 = aa·aa·baa·aa، ‏w4 = baa·aa·baa. ولی w3 به b ختم می‌شود و پیش از آن «aa» است؛ پایان ab نمی‌تواند با قطعه‌های پیشین جور شود ⇒ w3 در $L^*$ نیست؛ گزینهٔ ۳.",
     solution: [
       t(String.raw`w1 = abaabaaabaa = ab · aa · baa · ab · aa. w2 = aaaabaaaa = aa · aa · baa · aa. w4 = baaaabaa = baa · aa · baa. پس این سه در $L^*$ هستند.`),
-      t(String.raw`w3 = baaaabaaaab به b ختم می‌شود، پس قطعهٔ آخر باید ab باشد و پیش از آن «baaaabaaa» باید در $L^*$ باشد. این رشته با baa شروع می‌شود، سپس «aabaaa»: aa، سپس «baaa»: baa و یک a تنها می‌ماند که با هیچ قطعه‌ای جور نمی‌شود (قطعه‌ها همه طول زوج دارند جز baa و تعداد a ها باید جور شود). پس w3 در $L^*$ نیست. جواب: گزینهٔ ۳.`),
+      t(String.raw`w3 = baaaabaaaab به b ختم می‌شود، پس قطعهٔ آخر باید ab باشد و پیش از آن «baaaabaaa» باید در $L^*$ باشد. این رشته با baa شروع می‌شود، سپس «aabaaa»: aa، سپس «baaa»: baa و یک a تنها می‌ماند که با هیچ قطعه‌ای جور نمی‌شود. تجزیهٔ دیگری هم ممکن نیست، چون هر b در w3 یا آغاز یک baa است یا پایان یک ab و تنها انتخاب‌ها همین‌هاست. پس w3 در $L^*$ نیست. جواب: گزینهٔ ۳.`),
     ],
   },
   "kunkurcomputer-q-1277-1398-b0-064": {
