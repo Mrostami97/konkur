@@ -241,6 +241,12 @@ export const TEXT_FIXES = new Map([
   // CE 1392 q102 and q103 share a schema printed above them in the booklet; it is added to each.
   ["kunkurcomputer-q-1277-1392-b2-102", { stem: [["دستور SQL زیر تاریخ تولد", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nدستور SQL زیر تاریخ تولد"]] }],
   ["kunkurcomputer-q-1277-1392-b2-103", { stem: [["عبارت جبر رابطه‌ای زیر", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nعبارت جبر رابطه‌ای زیر"]] }],
+  // CE 1399 q141, q149, q150: the schemas and the query were only in the crops; typed from the booklet.
+  ["kunkurcomputer-q-1277-1399-b0-141", {
+    append: "Supplier(s#, sname, city): تولیدکننده (شماره، نام، شهر)\nSupply(s#, p#, Qty): تولید (شمارهٔ تولیدکننده، شمارهٔ قطعه، تعداد)\nPart(p#, color): قطعه (شماره، رنگ)\n" + code(["select s#", "from supplier", "where s# = p#;"]),
+  }],
+  ["kunkurcomputer-q-1277-1399-b0-149", { stem: [["با توجه به پایگاه داده زیر در مورد پرس‌وجوهای SQL زیر کدام مورد درست است؟", "با توجه به پایگاه داده زیر در مورد پرس‌وجوهای SQL زیر کدام مورد درست است؟\nNode(NID, Name, Color, Description): شماره، نام، رنگ و شرح هر گره.\nEdge(NID1, NID2, EdgeType): هر سطر یک یال جهت‌دار از نوع EdgeType از گرهٔ NID1 به گرهٔ NID2 است."]] }],
+  ["kunkurcomputer-q-1277-1399-b0-150", { stem: [["چند مورد از دستورهای SQL (الف، ب و ج) برای این پرس‌وجو درست است؟", "چند مورد از دستورهای SQL (الف، ب و ج) برای این پرس‌وجو درست است؟\nBook(ISBN, Title, Author, Publisher): کتاب‌ها\nMember(MID, Name, MDate): اعضا\nBorrow(MID, ISBN, BDate, Duration): امانت کتاب (کلید: MID, ISBN, BDate)"]] }],
   // CE 1396 q109: the four expressions were only in the crop; typed from the booklet.
   ["kunkurcomputer-q-1277-1396-b1-109", {
     options: {

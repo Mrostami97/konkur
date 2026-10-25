@@ -2574,6 +2574,69 @@
    "topic": "پوشش کمینه و صفت زائد",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0141",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "خطای ارجاع به ستون در SQL",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0144",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "شمارش ابرکلیدها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0145",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "شمارش ابرکلیدها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0146",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "جبر رابطه‌ای",
+   "topic": "تتا-پیوند و یافتن کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0148",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "مدل رابطه‌ای",
+   "topic": "مدل رابطه‌ای و مدیریت تراکنش",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0149",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "پیوند بیرونی و شمارش درجه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0150",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "SQL با NOT EXISTS و EXCEPT",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
