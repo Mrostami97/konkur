@@ -473,6 +473,32 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   } }],
   // CE 1401 q83: the multiplexer circuit was not attached; a clean cut of it (from the booklet crop) is added.
   ["kunkurcomputer-q-1277-1401-b1-083", { figures: ["outputs/source_fidelity/assets/ce_ours/ce1401_q0083_mux.png"] }],
+  // CE 1402 q81: the booklet asks for register R3; the bank typed R2.
+  ["kunkurcomputer-q-1277-1402-b1-081", { stem: [["مقدار ثبات R₂ پس از ۵ سیکل", "مقدار ثبات R₃ پس از ۵ سیکل"]] }],
+  // CE 1402 q82: the Verilog description, the input waveforms and the four output waveforms were only in the crop.
+  ["kunkurcomputer-q-1277-1402-b1-082", {
+    append: code([
+      "module ParReg (A, load, clear, clk, Z);",
+      "    input A, load, clear, clk;  output Z;",
+      "    wire [7:0] A;  wire load, clear, clk;",
+      "    reg  [7:0] Z;",
+      "    always @(posedge clk)",
+      "        if (!clear) begin",
+      "            Z = 0;",
+      "        end else begin",
+      "            if (load) begin",
+      "                Z = A;",
+      "            end",
+      "        end",
+      "endmodule",
+    ]) + "\n(نسخهٔ VHDL همین رفتار را توصیف می‌کند.)\nشکل موج ورودی‌ها در دفترچه: ورودی داده در چهار لبهٔ بالاروندهٔ ساعت به ترتیب ۱۰، ۲۰، ۳۰ و ۴۰ است. clear یک بار کمی بعد از لبهٔ اول (پیش از لبهٔ دوم) و یک بار درست در لبهٔ سوم برای مدت کوتاهی ۰ می‌شود. load پیش از لبهٔ اول ۱ می‌شود و بین لبهٔ سوم و چهارم به ۰ برمی‌گردد.",
+    options: {
+      1: "Z به ترتیب ۱۰، ۲۰ و ۳۰ می‌شود.",
+      2: "Z به ترتیب ۱۰، ۰، ۲۰، ۰ و ۴۰ می‌شود.",
+      3: "Z به ترتیب ۱۰، ۰، ۲۰، ۰ و ۳۰ می‌شود.",
+      4: "Z به ترتیب ۱۰، ۲۰ و ۰ می‌شود و ۰ می‌ماند.",
+    },
+  }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
