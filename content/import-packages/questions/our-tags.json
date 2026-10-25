@@ -4725,6 +4725,114 @@
    "topic": "پیاده‌سازی تابع با جدول جست‌وجو (LUT)",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0053",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "هم‌ارزی گرامر، ماشین متناهی و عبارت منظم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0054",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "ابهام و هم‌ارزی گرامرهای مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0055",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "گرامر خطی، زبان قطعی و ابهام ذاتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0056",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "خواص بستاری مستقل از متن با همریختی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0057",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "ماشین تورینگ",
+   "topic": "طراحی ماشین تورینگ برای یک تابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0053",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "زبان ذاتاً مبهم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0054",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "گرامرها",
+   "topic": "زبان یک گرامر بدون محدودیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0055",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "مسائل تصمیم‌پذیر برای زبان‌های مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0056",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "خواص بستاری و مکمل زبان مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0053",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "عبارت منظم و ماشین متناهی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0054",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "ماشین تورینگ",
+   "topic": "ماشین تورینگ افزاینده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0056",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "خواص بستاری: اشتراک زبان‌های مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
