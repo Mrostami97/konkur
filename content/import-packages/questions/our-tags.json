@@ -2088,6 +2088,78 @@
    "topic": "قابل‌قبول و سازگار بودن تابع ابتکاری",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0068",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "بازی‌ها",
+   "topic": "هرس آلفا-بتا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0069",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "گراف محدودیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0070",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی محلی",
+   "topic": "تپه‌نوردی با شروع مجدد تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0071",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "بهینگی A* با توابع قابل‌قبول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0072",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "جست‌وجوی دوطرفه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0073",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "استلزام منطقی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0074",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "مقایسهٔ روش‌های جست‌وجو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0075",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "پیچیدگی جست‌وجوی هزینهٔ یکنواخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
