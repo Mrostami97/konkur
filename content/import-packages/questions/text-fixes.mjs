@@ -557,6 +557,13 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-2354-1397-b0-002", { dropFigures: true }],
   ["kunkurcomputer-q-2354-1397-b0-010", { dropFigures: true }],
   ["kunkurcomputer-q-2354-1397-b0-017", { dropFigures: true }],
+  // PhD 2354 1396 q11: the options list the three orders right to left like the algorithm names; typed with the names so the order is unambiguous.
+  ["kunkurcomputer-q-2354-1396-b0-011", { options: {
+    1: String.raw`Insertion sort: $O(1)$، Randomized quicksort: $O(\log_2N)$، MergeSort: $O(1)$`,
+    2: String.raw`Insertion sort: $O(1)$، Randomized quicksort: $O(\log_2N)$، MergeSort: $O(\log_2N)$`,
+    3: String.raw`Insertion sort: $O(N^2)$، Randomized quicksort: $O(N\log_2N)$، MergeSort: $O(N\log_2N)$`,
+    4: String.raw`Insertion sort: $O(1)$، Randomized quicksort: $O(N\log_2N)$، MergeSort: $O(N\log_2N)$`,
+  } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
