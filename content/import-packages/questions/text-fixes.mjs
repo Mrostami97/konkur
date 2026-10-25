@@ -550,6 +550,9 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-2354-1404-b0-031", { dropFigures: true, figures: ["outputs/phd_question_bank/assets/1404/phd-1404-5deb8ce4ef34e66c-q0031-figure.png"] }],
   // PhD 2354 1403 q26: the multiplexer circuit had no figure crop; cut by us from the question image.
   ["kunkurcomputer-q-2354-1403-b0-026", { figures: ["outputs/source_fidelity/assets/ce_ours/phd1403_q0026_mux.png"] }],
+  // PhD 2354 1401 q7 and q15: the figure crops repeat the statements/constraints already typed in the stem.
+  ["kunkurcomputer-q-2354-1401-b0-007", { dropFigures: true }],
+  ["kunkurcomputer-q-2354-1401-b0-015", { dropFigures: true }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
