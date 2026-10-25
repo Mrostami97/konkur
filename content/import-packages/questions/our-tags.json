@@ -1818,6 +1818,51 @@
    "topic": "شمارش مدل‌ها",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0116",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "فرم نرمال عطفی و رزولوشن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0118",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "ترکیب توابع ابتکاری قابل‌قبول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0119",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "طراحی تابع ابتکاری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0120",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "ترتیب انتخاب متغیر و مقدار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0127",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "برنامه‌ریزی",
+   "topic": "گراف‌پلن و برنامه‌ریزی با ترتیب جزئی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
