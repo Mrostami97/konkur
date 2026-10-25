@@ -4833,6 +4833,96 @@
    "topic": "خواص بستاری: اشتراک زبان‌های مستقل از متن",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0056",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "حالت‌های پذیرش ماشین متناهی برای عبارت منظم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0058",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "پیچیدگی عضویت در زبان خودکارهٔ کراندار خطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0059",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "ماشین تورینگ",
+   "topic": "قدرت خودکاره با چند پشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0061",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "مسائل تصمیم‌پذیر برای زبان‌های مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0062",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "طراحی عبارت منظم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0063",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "زبان یک گرامر مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0061",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "کمینه‌سازی ماشین متناهی قطعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0062",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "عبارت منظم ماشین متناهی قطعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0063",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "بستار ستاره‌ای زبان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0064",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "گرامرها",
+   "topic": "سلسله‌مراتب چامسکی و رده‌بندی زبان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
