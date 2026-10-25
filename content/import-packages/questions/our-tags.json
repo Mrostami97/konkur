@@ -4671,6 +4671,60 @@
    "topic": "تمام‌جمع‌کننده و مالتی‌پلکسر",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0076",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "کاهش حالت و نمودار حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0077",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "گیت‌ها و جبر بول",
+   "topic": "پیاده‌سازی با گیت NOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0078",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "ساده‌سازی بدون مخاطره با حالت بی‌اهمیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0079",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تأخیر جمع‌کنندهٔ پیش‌بینی نقلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0080",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "طراحی مدار ترتیبی با فلیپ‌فلاپ D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0081",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با جدول جست‌وجو (LUT)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
