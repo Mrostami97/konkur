@@ -2889,6 +2889,60 @@
    "topic": "شاخص در مدل رابطه‌ای",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0072",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "جدول صفحهٔ معکوس در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0073",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "فرایندها و نخ‌ها",
+   "topic": "مدل‌های چندنخی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0070",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت دیسک",
+   "topic": "زمان‌بندی دیسک C-SCAN",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0071",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "شرط عدم بن‌بست",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0072",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "حافظهٔ مجازی",
+   "topic": "زمان دسترسی مؤثر با خطای صفحه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0073",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "زمان‌بندی HRRN و FCFS",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
