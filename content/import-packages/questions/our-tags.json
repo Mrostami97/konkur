@@ -1629,6 +1629,87 @@
    "topic": "برنامه‌ریزی با ترتیب جزئی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0111",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "عامل‌های هوشمند",
+   "topic": "انواع عامل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0112",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "جست‌وجوی هزینهٔ یکنواخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0113",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "استلزام منطقی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0114",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "بازی‌ها",
+   "topic": "الگوریتم minimax",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0115",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "حافظهٔ جست‌وجوهای ناآگاهانه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0121",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "جست‌وجوی IDA*",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0124",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "محدودیت AllDiff",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0126",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "ترجمهٔ جمله به منطق گزاره‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0128",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "بازی‌ها",
+   "topic": "هرس آلفا-بتا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
