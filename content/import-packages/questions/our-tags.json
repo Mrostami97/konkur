@@ -2430,6 +2430,69 @@
    "topic": "پرس‌وجوی تقسیم با NOT EXISTS",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0102",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "SQL با NOT EXISTS تودرتو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0103",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "کلیدهای کاندید",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0104",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "جبر رابطه‌ای",
+   "topic": "تفاضل و پیوند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0105",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "جبر رابطه‌ای",
+   "topic": "حساب رابطه‌ای تاپلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0106",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "دید و تبدیل پرس‌وجو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0107",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "ASSERTION و محدودیت جامعیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0108",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "مدل رابطه‌ای",
+   "topic": "ضرب دکارتی در مدل رابطه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

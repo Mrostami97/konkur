@@ -248,9 +248,9 @@ export const RULES = {
     [/رمز|امنیت/, "net-security-crypto"],
   ],
   databases: [
-    [/موجودیت|EER|ER/i, "db-model-er"],
+    [/موجودیت|EER|(?<![A-Za-z])ER(?![A-Za-z])/i, "db-model-er"],
     [/جبر رابطه‌ای|حساب رابطه‌ای|تقسیم|پیوند طبیعی|تفاضل|اشتراک/, "db-model-algebra"],
-    [/SQL|SELECT|GROUP|ASSERTION/i, "db-sql-queries"],
+    [/SQL|SELECT|GROUP|ASSERTION|Trigger|رهانا|(?<![؀-ۿ])دید(?![؀-ۿ])|View/i, "db-sql-queries"],
     [/وابستگی|نرمال|کلید|بستار/, "db-sql-normalization"],
     [/تراکنش|همروندی/, "db-tx-concurrency"],
     [/ترمیم|بازیابی|ثبت وقایع|log/i, "db-tx-recovery"],

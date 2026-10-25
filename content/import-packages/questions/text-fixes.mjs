@@ -241,6 +241,15 @@ export const TEXT_FIXES = new Map([
   // CE 1392 q102 and q103 share a schema printed above them in the booklet; it is added to each.
   ["kunkurcomputer-q-1277-1392-b2-102", { stem: [["دستور SQL زیر تاریخ تولد", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nدستور SQL زیر تاریخ تولد"]] }],
   ["kunkurcomputer-q-1277-1392-b2-103", { stem: [["عبارت جبر رابطه‌ای زیر", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nعبارت جبر رابطه‌ای زیر"]] }],
+  // CE 1396 q109: the four expressions were only in the crop; typed from the booklet.
+  ["kunkurcomputer-q-1277-1396-b1-109", {
+    options: {
+      1: "$\\Pi_{Title}(\\sigma_{publisher='wiley'}(Book))-\\Pi_{ISBN}(Borrow)$",
+      2: "$\\Pi_{Title,ISBN}(\\sigma_{publisher='wiley'}(Book))\\div\\Pi_{ISBN}(Borrow)$",
+      3: "$\\Pi_{Title}\\big((\\Pi_{ISBN,MID}(Borrow)\\div\\Pi_{MID}(Member))\\bowtie Borrow\\big)$",
+      4: "$\\Pi_{Title}\\big((\\Pi_{ISBN}(\\sigma_{publisher='wiley'}(Book))-\\Pi_{ISBN}(Borrow))\\bowtie Book\\big)$",
+    },
+  }],
   // CE 1395 q118: the schema and the four expressions were only in the crop; typed from the booklet.
   ["kunkurcomputer-q-1277-1395-b2-118", {
     stem: [["تعریف رابطه‌ها، کلیدها، متغیرهای برد و عبارت‌های A تا D در تصویر آمده‌اند.", ""]],
