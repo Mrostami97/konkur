@@ -327,7 +327,9 @@ function skipReason(q) {
 }
 
 const bankFile = path.join(bankRoot, BANK);
-const generatedAt = (await stat(bankFile)).mtime.toISOString();
+// BANK_GENERATED_AT pins the bank's date when its file was copied to a disk that rounds timestamps
+// (exFAT keeps 2 seconds), so an unchanged bank does not show every question as changed.
+const generatedAt = process.env.BANK_GENERATED_AT ?? (await stat(bankFile)).mtime.toISOString();
 const questions = (await readFile(bankFile, "utf8"))
   .split("\n")
   .filter((line) => line.trim())
