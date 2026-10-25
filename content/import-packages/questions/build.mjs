@@ -559,6 +559,7 @@ for (const examYear of examYears) {
         : [
             ...(q.stem ? stemBlocks(q.stem, figureKeys) : [{ type: "text", text: `(${q.number})` }, ...stemBlocks("", figureKeys)]),
             ...(fix?.table ? [{ type: "table", ...fix.table }] : []),
+            ...(fix?.tables ?? []).map((table) => ({ type: "table", ...table })),
           ],
       options: q.options.map((option) => ({
         number: option.number,

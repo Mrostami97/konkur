@@ -238,6 +238,17 @@ export const TEXT_FIXES = new Map([
     figures: ["outputs/content_review/source_crops/doc-64e3de2de6db498a-q-0104-p30-b25-image.png"],
     options: { 1: "$(Q_3,3)$ یا $(Q_3,1)$", 2: "$(Q_3,3)$ یا $(Q_4,1)$", 3: "$(Q_4,4)$ یا $(Q_4,1)$", 4: "$(Q_4,4)$ یا $(Q_3,3)$" },
   }],
+  // CE 1392 q102 and q103 share a schema printed above them in the booklet; it is added to each.
+  ["kunkurcomputer-q-1277-1392-b2-102", { stem: [["دستور SQL زیر تاریخ تولد", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nدستور SQL زیر تاریخ تولد"]] }],
+  ["kunkurcomputer-q-1277-1392-b2-103", { stem: [["عبارت جبر رابطه‌ای زیر", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nعبارت جبر رابطه‌ای زیر"]] }],
+  // CE 1393 q104: the three sample tables were only in the crop.
+  ["kunkurcomputer-q-1277-1393-b2-104", {
+    tables: [
+      { headers: ["eid", "NN", "ename"], rows: [["e1", "111111", "John"], ["e2", "222222", "Jack"], ["e3", "333333", "Bob"], ["e4", "444444", "Joe"]] },
+      { headers: ["did", "dname", "address"], rows: [["d1", "Books", "a1"], ["d2", "Electronics", "a2"], ["d3", "Health", "a3"]] },
+      { headers: ["eid", "did", "salary"], rows: [["e1", "d1", "1"], ["e2", "d1", "3"], ["e3", "d1", "4"], ["e4", "d3", "4"]] },
+    ],
+  }],
   // CE 1401 q79: in the booklet option 3 is 1/19 and option 4 is zero; the bank swapped them.
   ["kunkurcomputer-q-1277-1401-b1-079", { options: { 3: "$\\frac1{19}$", 4: "صفر" } }],
   // CE 1381 q101: the directed graph was not attached.
