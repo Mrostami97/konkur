@@ -2529,6 +2529,51 @@
    "topic": "توابع تجمعی و HAVING",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0108",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "زیرپرس‌وجو و توابع تجمعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0110",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "یافتن بیشینه با زیرپرس‌وجو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0111",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "GROUP BY و HAVING",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0112",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "کلیدهای کاندید",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0114",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "پوشش کمینه و صفت زائد",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
