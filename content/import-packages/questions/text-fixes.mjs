@@ -387,6 +387,42 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
     3: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب A؛ $I_0$ خروجی OR روی B و C و $I_1$ خروجی AND روی B و C`,
     4: String.raw`مالتی‌پلکسر $4\times1$ با ورودی‌های $I_0=C$، $I_1=1$، $I_2=0$، $I_3=C'$ و خطوط انتخاب $s_1=B$ و $s_0=A$`,
   } }],
+  // CE 1397 q68: the state table was only in the crop.
+  ["kunkurcomputer-q-1277-1397-b0-068", { stem: [["\n\n[جدول در تصویر منبع]", ""]], table: { headers: ["PS", "NS/Z (X=0)", "NS/Z (X=1)"], rows: [["A", "B/1", "A/0"], ["B", "A/1", "B/1"], ["C", "C/0", "D/1"], ["D", "E/0", "C/1"], ["E", "D/0", "E/1"]] } }],
+  // CE 1398 q67: the two descriptions (Verilog and VHDL) were only in the crop.
+  ["kunkurcomputer-q-1277-1398-b0-067", { append: "نسخهٔ وریلاگ:\n" + code([
+    "module DQ(Q, D, M, N);",
+    "    output Q;",
+    "    input D, M, N;",
+    "    reg Q;",
+    "    always @(posedge M or negedge N)",
+    "        if (N == 0) Q = 1'b0;",
+    "        else Q = D;",
+    "endmodule",
+  ]) + "\nنسخهٔ VHDL:\n" + code([
+    "architecture ARCH of DQ is",
+    "begin",
+    "    process(M, N)",
+    "    begin",
+    "        if (N = '0') then",
+    "            Q <= '0';",
+    "        elsif (rising_edge(M)) then",
+    "            Q <= D;",
+    "        end if;",
+    "    end process;",
+    "end ARCH;",
+  ]) }],
+  // CE 1398 q68: the four options are state sequences drawn with arrows only in the crop.
+  ["kunkurcomputer-q-1277-1398-b0-068", { options: {
+    1: "‭000 → 011 → 110 → 010‬، و 010 به خودش برمی‌گردد",
+    2: "‭000 → 011 → 110 → 010 → 000‬",
+    3: "‭000 → 011 → 101 → 010 → 000‬",
+    4: "‭000 → 011 → 101 → 110 → 100 → 000‬",
+  } }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1397-b0-066", { stem: [["مینتترم\n\nبی", "مینتترم بی"]] }],
+  ["kunkurcomputer-q-1277-1398-b0-065", { stem: [["انجام\n\nمی‌شود.", "انجام می‌شود."]] }],
+  ["kunkurcomputer-q-1277-1398-b0-069", { stem: [["۱۰۱۱۰۱۰۰\n\nباشند،", "۱۰۱۱۰۱۰۰ باشند،"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
