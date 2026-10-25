@@ -3474,6 +3474,87 @@
    "topic": "نمایش ممیز شناور",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0064",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "روش‌های ورودی-خروجی: وقفه و DMA",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0065",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "جمع‌کنندهٔ انتخاب نقلی (carry select)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0066",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "اندازهٔ tag در حافظهٔ نهان مجموعه‌انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0067",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "نمایش ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0065",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "ورودی-خروجی نگاشت‌شده در حافظه و وقفه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0066",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "جمع ممیز شناور و سرریز",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0067",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "حافظهٔ نهان مجموعه‌انجمنی با جایگزینی LRU",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0063",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "قالب دستور سه‌آدرسه و شیوه‌های آدرس‌دهی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0068",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "حافظهٔ مجازی قطعه-صفحه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

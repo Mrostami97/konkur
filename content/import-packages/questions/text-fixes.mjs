@@ -287,6 +287,17 @@ export const TEXT_FIXES = new Map([
   // Line breaks in the middle of sentences (bank OCR), joined.
   ["kunkurcomputer-q-1277-1393-b1-067", { stem: [["تعداد\n\nبلوک‌های", "تعداد بلوک‌های"]] }],
   ["kunkurcomputer-q-1277-1393-b1-068", { stem: [["در\n\nحالی", "در حالی"]] }],
+  // CE 1394 q68: the booklet's code is C8FF; the bank typed CAFF.
+  ["kunkurcomputer-q-1277-1394-b1-068", { stem: [["$CAFF_{16}$", "$C8FF_{16}$"]] }],
+  // CE 1395 q66: the two numbers and the three encoded options were only in the crop.
+  ["kunkurcomputer-q-1277-1395-b1-066", {
+    append: "‭A = 0 | 111 | 0010‬\n‭B = 0 | 111 | 0001‬\n(به ترتیب S، E و F)",
+    options: { 1: "‭0 | 111 | 0011‬", 2: "‭0 | 111 | 0010‬", 3: "‭0 | 111 | 0001‬", 4: "غیرقابل نمایش" },
+  }],
+  // CE 1395 q68: the TLB excerpt was only in the crop.
+  ["kunkurcomputer-q-1277-1395-b1-068", { stem: [["\n\n[جدول در تصویر منبع]", ""]], table: { headers: ["قطعه (۴ بیت)", "صفحه (۱۲ بیت)", "بلوک (۱۲ بیت)"], rows: [["1", "2FF", "012"], ["5", "02A", "2A5"]] } }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1394-b1-067", { stem: [["ظرفیت\n\n512kByte", "ظرفیت 512kByte"], ["اندازه\n\nنشانه", "اندازه نشانه"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
