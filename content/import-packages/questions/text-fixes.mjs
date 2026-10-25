@@ -229,6 +229,15 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1392-b2-118", {
     table: { headers: ["گره", "h1", "h2"], rows: [["S", "3", "4"], ["A", "3", "2"], ["B", "4", "3"], ["C", "2", "1"], ["D", "3", "1"], ["G", "0", "0"]] },
   }],
+  // CE 1395 q101: the options were only in the page scan; typed from the booklet (the grid image is attached).
+  ["kunkurcomputer-q-1277-1395-b2-101", {
+    options: { 1: "1, 2, 3", 2: "1, 2, 5", 3: "1, 4, 7", 4: "1, 4, 5" },
+  }],
+  // CE 1395 q104: the board image is attached and the options typed from the booklet.
+  ["kunkurcomputer-q-1277-1395-b2-104", {
+    figures: ["outputs/content_review/source_crops/doc-64e3de2de6db498a-q-0104-p30-b25-image.png"],
+    options: { 1: "$(Q_3,3)$ یا $(Q_3,1)$", 2: "$(Q_3,3)$ یا $(Q_4,1)$", 3: "$(Q_4,4)$ یا $(Q_4,1)$", 4: "$(Q_4,4)$ یا $(Q_3,3)$" },
+  }],
   // CE 1394 q119 points back to q118's graph, which is attached here too.
   ["kunkurcomputer-q-1277-1394-b2-119", { stem: [["تابع اکتشافی h سوال ۱۱۸", "تابع اکتشافی h در گراف زیر (همان گراف سؤال ۱۱۸)"]] }],
   // CE 1403 q62: the example array was only in the crop.
