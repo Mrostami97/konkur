@@ -2160,6 +2160,69 @@
    "topic": "پیچیدگی جست‌وجوی هزینهٔ یکنواخت",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0068",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "جست‌وجوی عمیق‌شوندهٔ تکراری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0069",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "بازی‌ها",
+   "topic": "هرس آلفا-بتا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0070",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "استنتاج با رزولوشن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0071",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "ویژگی‌های A* با تابع ابتکاری سازگار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0072",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی محلی",
+   "topic": "تپه‌نوردی و جست‌وجوی پرتو محلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0073",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "انتخاب متغیر بعدی (MRV و درجه)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0075",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "سازگاری کمان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
