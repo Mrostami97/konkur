@@ -1521,6 +1521,60 @@
    "topic": "برنامه‌ریزی با ترتیب جزئی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0115",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "الگوریتم DPLL",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0116",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "سازگاری کمان (AC-3)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0117",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "جست‌وجوی IDA*",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0118",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "قابل‌قبول و سازگار بودن تابع ابتکاری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0119",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "تبدیل به فرم نرمال عطفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0120",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "استنتاج با رزولوشن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

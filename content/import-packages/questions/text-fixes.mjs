@@ -229,6 +229,8 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1392-b2-118", {
     table: { headers: ["گره", "h1", "h2"], rows: [["S", "3", "4"], ["A", "3", "2"], ["B", "4", "3"], ["C", "2", "1"], ["D", "3", "1"], ["G", "0", "0"]] },
   }],
+  // CE 1394 q119 points back to q118's graph, which is attached here too.
+  ["kunkurcomputer-q-1277-1394-b2-119", { stem: [["تابع اکتشافی h سوال ۱۱۸", "تابع اکتشافی h در گراف زیر (همان گراف سؤال ۱۱۸)"]] }],
   // CE 1403 q62: the example array was only in the crop.
   ["kunkurcomputer-q-1277-1403-b1-062", { stem: [["برای مثال آرایهٔ زیر.", "برای مثال آرایهٔ $\\langle40,50,60,70,80,90,10,20,30\\rangle$."]] }],
   // CE 1403 q64: the task table was only in the crop; typed from the booklet.
