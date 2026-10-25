@@ -2637,6 +2637,96 @@
    "topic": "SQL با NOT EXISTS و EXCEPT",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0113",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "جبر رابطه‌ای",
+   "topic": "هم‌ارزی عبارت‌های جبر رابطه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0114",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "صورت‌های نرمال 3NF و BCNF",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0115",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "کلیدهای کاندید",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0116",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "INTERSECT و IN",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0117",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "جبر رابطه‌ای",
+   "topic": "تفاضل برای سور عمومی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0118",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "تجزیه به 3NF",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0116",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "مدل رابطه‌ای",
+   "topic": "استقلال داده‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0118",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "جبر رابطه‌ای",
+   "topic": "سازگاری رابطه‌ها در اشتراک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0119",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "زبان SQL",
+   "topic": "SQL با NOT EXISTS تودرتو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0120",
+   "exam_track": "ce",
+   "course": "پایگاه داده‌ها",
+   "chapter": "وابستگی تابعی و نرمال‌سازی",
+   "topic": "تجزیه به 3NF",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

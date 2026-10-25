@@ -241,6 +241,8 @@ export const TEXT_FIXES = new Map([
   // CE 1392 q102 and q103 share a schema printed above them in the booklet; it is added to each.
   ["kunkurcomputer-q-1277-1392-b2-102", { stem: [["دستور SQL زیر تاریخ تولد", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nدستور SQL زیر تاریخ تولد"]] }],
   ["kunkurcomputer-q-1277-1392-b2-103", { stem: [["عبارت جبر رابطه‌ای زیر", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nعبارت جبر رابطه‌ای زیر"]] }],
+  // CE 1401 q119: the three tables were only in the crop.
+  ["kunkurcomputer-q-1277-1401-b1-119", { stem: [["(برای راحتی، اسامی انگلیسی ستون‌ها نیز نوشته شده است.)", "(برای راحتی، اسامی انگلیسی ستون‌ها نیز نوشته شده است.)\nStudent(Stn, Name): شمارهٔ دانشجویی، نام و نام‌خانوادگی\nCourse(Code, CName): کد درس، نام درس\nTaken(CCode, SStn, Mark): کد درس، شمارهٔ دانشجو، نمره"]] }],
   // CE 1399 q141, q149, q150: the schemas and the query were only in the crops; typed from the booklet.
   ["kunkurcomputer-q-1277-1399-b0-141", {
     append: "Supplier(s#, sname, city): تولیدکننده (شماره، نام، شهر)\nSupply(s#, p#, Qty): تولید (شمارهٔ تولیدکننده، شمارهٔ قطعه، تعداد)\nPart(p#, color): قطعه (شماره، رنگ)\n" + code(["select s#", "from supplier", "where s# = p#;"]),
