@@ -355,6 +355,10 @@ export const TEXT_FIXES = new Map([
   } }],
   // Line breaks in the middle of sentences (bank OCR), joined.
   ["kunkurcomputer-q-1277-1401-b1-093", { stem: [["آوردن\n\nعملوندها", "آوردن عملوندها"], ["استفاده\n\nمی", "استفاده می"]] }],
+  // CE 1405 q89: the three formula boxes under the circuit were dropped from the stem; typed from the booklet.
+  ["kunkurcomputer-q-1277-1405-b1-089", { append: String.raw`$P_i, G_i$ Generator: $P_i=A'_i+B_i\cdot A_i$ و $G_i=A'_iB_i$
+XOR Generator: $S_i=A_i\oplus B_i\oplus C_{i-1}$
+C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_i+P_iG_{i-1}+P_iP_{i-1}G_{i-2}+\cdots+\prod_{i=1}^{n}P_iC_{in}$` }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
