@@ -225,6 +225,10 @@ export const TEXT_FIXES = new Map([
     append: code(["for (i = 1; i <= n; i++)", "    for (j = 1; j <= floor(n / i); j++)", "        S.O;"]),
   }],
   // CE 1402 q64: algorithm B combines in O(n^3) in the booklet; the bank typed O(n^2).
+  // CE 1392 q118: the heuristic table beside the graph was not in the figure crop; typed from the booklet.
+  ["kunkurcomputer-q-1277-1392-b2-118", {
+    table: { headers: ["گره", "h1", "h2"], rows: [["S", "3", "4"], ["A", "3", "2"], ["B", "4", "3"], ["C", "2", "1"], ["D", "3", "1"], ["G", "0", "0"]] },
+  }],
   // CE 1403 q62: the example array was only in the crop.
   ["kunkurcomputer-q-1277-1403-b1-062", { stem: [["برای مثال آرایهٔ زیر.", "برای مثال آرایهٔ $\\langle40,50,60,70,80,90,10,20,30\\rangle$."]] }],
   // CE 1403 q64: the task table was only in the crop; typed from the booklet.
