@@ -254,6 +254,10 @@ export const TEXT_FIXES = new Map([
   // CE 1400 q106 and q107: the tables were only in the crops.
   ["kunkurcomputer-q-1277-1400-b1-106", { stem: [["به\n\nنحوی", "به نحوی"]], table: { headers: ["پردازه", "Period", "CPU Time"], rows: [["P1", "50", "25"], ["P2", "80", "x"]] } }],
   ["kunkurcomputer-q-1277-1400-b1-107", { stem: [["میانگین\n\nزمان", "میانگین زمان"], ["\n\n[جدول در تصویر منبع]", ""]], table: { headers: ["پردازه", "زمان", "اولویت"], rows: [["P1", "10 ms", "3"], ["P2", "1 ms", "1"], ["P3", "2 ms", "4"], ["P4", "1 ms", "5"], ["P5", "5 ms", "2"]] } }],
+  // CE 1401 q101: the booklet's transfer rate is 50 MB/Sec; the bank typed 500.
+  ["kunkurcomputer-q-1277-1401-b1-101", { stem: [["۵۰۰ MB/Sec", "۵۰ MB/Sec"]] }],
+  // CE 1401 q102: the table was only in the crop.
+  ["kunkurcomputer-q-1277-1401-b1-102", { stem: [["\n\n[جدول در تصویر منبع]", ""]], table: { headers: ["", "P1", "P2", "P3"], rows: [["مدت زمان CPU", "5", "20", "10"], ["دوره تناوب", "25", "50", "40"]] } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
