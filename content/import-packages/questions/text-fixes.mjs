@@ -241,6 +241,20 @@ export const TEXT_FIXES = new Map([
   // CE 1392 q102 and q103 share a schema printed above them in the booklet; it is added to each.
   ["kunkurcomputer-q-1277-1392-b2-102", { stem: [["دستور SQL زیر تاریخ تولد", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nدستور SQL زیر تاریخ تولد"]] }],
   ["kunkurcomputer-q-1277-1392-b2-103", { stem: [["عبارت جبر رابطه‌ای زیر", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nعبارت جبر رابطه‌ای زیر"]] }],
+  // CE 1395 q118: the schema and the four expressions were only in the crop; typed from the booklet.
+  ["kunkurcomputer-q-1277-1395-b2-118", {
+    stem: [["تعریف رابطه‌ها، کلیدها، متغیرهای برد و عبارت‌های A تا D در تصویر آمده‌اند.", ""]],
+    append: [
+      "ST(STID, STNAME, STLEVEL, STMAJOR): دانشجویان (کلید STID)",
+      "CO(COID, CONAME, COTYPE, CREDIT): درس‌ها (کلید COID)",
+      "STCO(STID, COID, YR, TR, GRADE): درس‌های انتخاب‌شده (کلید STID, COID, YR, TR)",
+      "RANGEVAR STX OVER ST، RANGEVAR COX OVER CO، RANGEVAR STCOX OVER STCO",
+      "A) STX.STNAME WHERE EXISTS STCOX (STCOX.YR='94-95' AND STCOX.TR='2' AND STCOX.STID=STX.STID AND EXISTS COX (COX.COID=STCOX.COID AND COX.COTYPE='p'))",
+      "B) $\\Pi_{STNAME}\\big(ST\\bowtie(\\sigma_{YR='94\\text{-}95'\\wedge TR='2'}(STCO)\\bowtie\\sigma_{COTYPE='p'}(CO))\\big)$",
+      "C) STX.STNAME WHERE NOT EXISTS STCOX (STCOX.YR='94-95' AND STCOX.TR='2' AND STCOX.STID=STX.STID AND NOT EXISTS COX (COX.COID=STCOX.COID AND COX.COTYPE='p'))",
+      "D) $\\Pi_{STNAME}\\big(\\sigma_{YR='94\\text{-}95'\\wedge TR='2'\\wedge COTYPE='p'}(ST\\bowtie(STCO\\bowtie CO))\\big)$",
+    ].join("\n"),
+  }],
   // CE 1393 q104: the three sample tables were only in the crop.
   ["kunkurcomputer-q-1277-1393-b2-104", {
     tables: [

@@ -253,6 +253,9 @@ export const RULES = {
     [/SQL|SELECT|GROUP|ASSERTION/i, "db-sql-queries"],
     [/وابستگی|نرمال|کلید|بستار/, "db-sql-normalization"],
     [/تراکنش|همروندی/, "db-tx-concurrency"],
+    [/ترمیم|بازیابی|ثبت وقایع|log/i, "db-tx-recovery"],
+    [/شاخص|ایندکس|درخت B|index/i, "db-sql-indexing"],
+    [/مدل رابطه‌ای|ویژگی‌های رابطه|جامعیت/, "db-model-relational"],
   ],
   "artificial-intelligence": [
     [/بیز|احتمال/, "ai-prob-bayes"],
