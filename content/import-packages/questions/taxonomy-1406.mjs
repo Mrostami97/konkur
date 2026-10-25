@@ -246,6 +246,9 @@ export const RULES = {
     [/IP|آدرس/i, "net-network-ip"],
     [/فیزیکی|QAM|مدولاسیون/i, "net-arch-physical"],
     [/رمز|امنیت/, "net-security-crypto"],
+    [/CSMA|Ethernet|اترنت|پیوند|برخورد|وایرلس|CRC|تشخیص خطا/i, "net-network-link"],
+    [/تأخیر|گذردهی|صف/, "net-arch-delay"],
+    [/لایه‌ای|سوئیچینگ|سویچینگ/, "net-arch-layers"],
   ],
   databases: [
     [/موجودیت|EER|(?<![A-Za-z])ER(?![A-Za-z])/i, "db-model-er"],

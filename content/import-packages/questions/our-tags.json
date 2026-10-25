@@ -3375,6 +3375,51 @@
    "topic": "دستور compare_and_swap در ناحیهٔ بحرانی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0073",
+   "exam_track": "ce",
+   "course": "شبکه‌های کامپیوتری",
+   "chapter": "لایهٔ انتقال",
+   "topic": "کنترل ازدحام TCP Reno",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0074",
+   "exam_track": "ce",
+   "course": "شبکه‌های کامپیوتری",
+   "chapter": "لایهٔ کاربرد",
+   "topic": "کش وب و زمان دریافت فایل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0075",
+   "exam_track": "ce",
+   "course": "شبکه‌های کامپیوتری",
+   "chapter": "لایهٔ شبکه",
+   "topic": "تجمیع آدرس IP و آگهی مسیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0077",
+   "exam_track": "ce",
+   "course": "شبکه‌های کامپیوتری",
+   "chapter": "لایهٔ پیوند داده",
+   "topic": "تشخیص برخورد در CSMA/CD",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0078",
+   "exam_track": "ce",
+   "course": "شبکه‌های کامپیوتری",
+   "chapter": "لایهٔ شبکه",
+   "topic": "تأخیر صف در مسیریاب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
