@@ -353,6 +353,8 @@ export const TEXT_FIXES = new Map([
     3: "‭100: A | 101: A-1 | 110: A-B-1 | 111: A-B‬",
     4: "‭100: A | 101: A+1 | 110: A-B | 111: A-B+1‬",
   } }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1401-b1-093", { stem: [["آوردن\n\nعملوندها", "آوردن عملوندها"], ["استفاده\n\nمی", "استفاده می"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

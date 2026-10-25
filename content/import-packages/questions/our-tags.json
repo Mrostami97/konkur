@@ -3933,6 +3933,78 @@
    "topic": "معماری مبتنی بر پشته",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0084",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "مقایسهٔ کارایی با IPC و فرکانس",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0085",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "روش‌های ورودی-خروجی: برنامه‌ریزی‌شده، وقفه و DMA",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0086",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "مخاطرهٔ داده و توقف در خط لوله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0087",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "برگ‌برگ‌سازی حافظه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0088",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "میدان‌های آدرس در نگاشت مجموعه‌انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0089",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تفریق‌کننده با پیش‌بینی رقم قرضی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0093",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "مخاطرهٔ داده و توقف در خط لوله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0084",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "مخاطرهٔ داده و توقف در خط لوله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
