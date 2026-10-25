@@ -238,6 +238,8 @@ export const TEXT_FIXES = new Map([
     figures: ["outputs/content_review/source_crops/doc-64e3de2de6db498a-q-0104-p30-b25-image.png"],
     options: { 1: "$(Q_3,3)$ یا $(Q_3,1)$", 2: "$(Q_3,3)$ یا $(Q_4,1)$", 3: "$(Q_4,4)$ یا $(Q_4,1)$", 4: "$(Q_4,4)$ یا $(Q_3,3)$" },
   }],
+  // CE 1399 q120: the game tree was not attached.
+  ["kunkurcomputer-q-1277-1399-b0-120", { figures: ["outputs/content_review/source_crops/doc-f383d14836ddf149-q-0120-p27-b28-image.png"] }],
   // CE 1398 q119: the grid figure was not attached.
   ["kunkurcomputer-q-1277-1398-b0-119", { figures: ["outputs/content_review/source_crops/doc-80ceacadef3e68ab-q-0119-p30-b10-table.png"] }],
   // CE 1396 q120: the attached "figures" are page barcodes; the question is text only.

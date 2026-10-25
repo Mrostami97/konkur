@@ -1863,6 +1863,78 @@
    "topic": "گراف‌پلن و برنامه‌ریزی با ترتیب جزئی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0119",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "طراحی تابع ابتکاری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0120",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "بازی‌ها",
+   "topic": "هرس آلفا-بتا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0122",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "ترکیب توابع ابتکاری سازگار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0123",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "کلازهای هورن و رزولوشن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0125",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "اعتبار و ارضاپذیری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0126",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "استنتاج با رزولوشن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0127",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "مقایسهٔ UCS و A*",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0129",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "کلازهای معین و هورن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
