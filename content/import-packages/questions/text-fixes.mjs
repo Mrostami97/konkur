@@ -462,6 +462,17 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
     "P4: code7();        // 15",
     "    P(s); code8(); V(s);   // 10",
   ]) }],
+  // CE 1401 q81: the booklet's options 1 and 2 are A-3 and A+3; the bank typed 2 for 3.
+  ["kunkurcomputer-q-1277-1401-b1-081", { options: { 1: "$A-3$", 2: "$A+3$" } }],
+  // CE 1401 q84: the four options are circuits drawn only in the crop; each gate pair is given by what it feeds to R and S.
+  ["kunkurcomputer-q-1277-1401-b1-084", { options: {
+    1: String.raw`دو گیت NAND با ورودی‌های وارون‌شده: $R=T+\overline Q$ و $S=T+Q$`,
+    2: String.raw`دو گیت NOR با ورودی‌های وارون‌شده: $R=T\cdot Q$ و $S=T\cdot\overline Q$`,
+    3: String.raw`دو گیت NAND: $R=\overline{T\cdot Q}$ و $S=\overline{T\cdot\overline Q}$`,
+    4: String.raw`دو گیت NOR: $R=\overline{T+\overline Q}$ و $S=\overline{T+Q}$`,
+  } }],
+  // CE 1401 q83: the multiplexer circuit was not attached; a clean cut of it (from the booklet crop) is added.
+  ["kunkurcomputer-q-1277-1401-b1-083", { figures: ["outputs/source_fidelity/assets/ce_ours/ce1401_q0083_mux.png"] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

@@ -4419,6 +4419,69 @@
    "topic": "حالت‌های دسترس‌ناپذیر مدار ترتیبی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0081",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ افزایشی با فلیپ‌فلاپ D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0082",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ LFSR در وریلاگ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0083",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0084",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "تبدیل لچ SR به لچ T",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0085",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "گیت‌ها و جبر بول",
+   "topic": "ساده‌سازی جبری تابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0086",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "تحلیل مدار ترتیبی با فلیپ‌فلاپ D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0087",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "مخاطره در پیاده‌سازی کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
