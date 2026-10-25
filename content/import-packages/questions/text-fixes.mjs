@@ -369,6 +369,24 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   // Line breaks in the middle of sentences (bank OCR), joined.
   ["kunkurcomputer-q-1277-1393-b1-061", { stem: [["را\n\nبه", "را به"]] }],
   ["kunkurcomputer-q-1277-1393-b1-062", { stem: [["جمع\n\nحاصل", "جمع حاصل"]] }],
+  // CE 1395 q60: the booklet's f1 is Σm(0,3,5,8,11,15) and its option 3 is Σm(1,3,7,8,9,14,15); the bank typed 2 for 3 in both.
+  ["kunkurcomputer-q-1277-1395-b1-060", { stem: [["m(0,2,5,8,11,15)", "m(0,3,5,8,11,15)"]], options: { 3: String.raw`$f_2(a,b,c,d) = \sum m(1,3,7,8,9,14,15)$` } }],
+  // CE 1395 q61: each option is a pair read right to left (PI, then EPI); written out so the order cannot flip.
+  ["kunkurcomputer-q-1277-1395-b1-061", { options: { 1: "PI = ۴، EPI = ۰", 2: "PI = ۴، EPI = ۲", 3: "PI = ۶، EPI = ۲", 4: "PI = ۷، EPI = ۰" } }],
+  // CE 1395 q62: the four options are output waveforms drawn only in the crop; described against the drawn X, Y and clock.
+  ["kunkurcomputer-q-1277-1395-b1-062", { append: "شکل موج ورودی‌ها در دفترچه: ساعت سه پالس دارد و تغییر حالت در لبه‌های پایین‌رونده است. X هم‌زمان با لبهٔ بالاروندهٔ دوم ساعت از ۰ به ۱ می‌رود و ۱ می‌ماند. Y اندکی پیش از لبهٔ پایین‌روندهٔ سوم از ۰ به ۱ می‌رود و ۱ می‌ماند.", options: {
+    1: "خروجی از لبهٔ پایین‌روندهٔ دوم ساعت ۱ می‌شود و با بالا رفتن Y به ۰ برمی‌گردد.",
+    2: "خروجی از لبهٔ پایین‌روندهٔ دوم ساعت ۱ می‌شود و تا لبهٔ پایین‌روندهٔ سوم ۱ می‌ماند.",
+    3: "خروجی همزمان با بالا رفتن X یک می‌شود و همزمان با بالا رفتن Y به ۰ برمی‌گردد.",
+    4: "خروجی همزمان با بالا رفتن X یک می‌شود و تا لبهٔ پایین‌روندهٔ سوم ساعت ۱ می‌ماند.",
+  } }],
+  // CE 1396 q66: the four options are circuits drawn only in the crop; described as drawn.
+  ["kunkurcomputer-q-1277-1396-b1-066", { options: {
+    1: String.raw`دیکودر $2\times4$ با ورودی‌های B ($I_0$) و A ($I_1$)؛ $y_0$ با C و $y_3$ با $C'$ هر کدام به یک AND، و خروجی این دو AND و $y_1$ به یک OR`,
+    2: String.raw`دیکودر $3\times8$ با ورودی‌های C ($I_0$)، B ($I_1$) و A ($I_2$)؛ خروجی‌های $y_1$، $y_2$، $y_3$ و $y_6$ به یک گیت AND`,
+    3: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب A؛ $I_0$ خروجی OR روی B و C و $I_1$ خروجی AND روی B و C`,
+    4: String.raw`مالتی‌پلکسر $4\times1$ با ورودی‌های $I_0=C$، $I_1=1$، $I_2=0$، $I_3=C'$ و خطوط انتخاب $s_1=B$ و $s_0=A$`,
+  } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
