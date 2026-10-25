@@ -2988,6 +2988,60 @@
    "topic": "سمافورهای شمارشی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0069",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "جدول صفحهٔ چندسطحی در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0074",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مفاهیم پایه سیستم عامل",
+   "topic": "فرایندهای daemon، مجازی‌سازی و NUMA",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0076",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "حافظهٔ مجازی",
+   "topic": "جایگزینی صفحه FIFO و LRU",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0074",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "آدرس منطقی و فیزیکی در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0075",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "شرط عدم بن‌بست",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0076",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "بهره‌وری پردازنده در چندبرنامگی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
