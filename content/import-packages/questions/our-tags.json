@@ -3348,6 +3348,33 @@
    "topic": "زمان‌بندی غیرقبضه‌ای FIFO",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0098",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "حفاظت حافظه با MMU در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0099",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "فرایندها و نخ‌ها",
+   "topic": "مزایای نخ‌های سطح کاربر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0100",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "همگام‌سازی فرایندها",
+   "topic": "دستور compare_and_swap در ناحیهٔ بحرانی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
