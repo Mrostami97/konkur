@@ -1962,6 +1962,78 @@
    "topic": "تپه‌نوردی با شروع مجدد تصادفی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0073",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "غلبهٔ توابع ابتکاری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0074",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی محلی",
+   "topic": "جست‌وجوی پرتو محلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0075",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی محلی",
+   "topic": "تپه‌نوردی با شروع مجدد تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0076",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "احتمال درستی گزاره‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0077",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "استدلال احتمالی",
+   "topic": "نمونه‌برداری گیبس",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0078",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "یادگیری",
+   "topic": "دسته‌بند بیز ساده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0079",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "استدلال احتمالی",
+   "topic": "استنتاج در شبکهٔ بیزی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0080",
+   "exam_track": "ce",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "انتخاب متغیر بعدی (MRV و درجه)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

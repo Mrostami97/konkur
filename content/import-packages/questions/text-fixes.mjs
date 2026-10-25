@@ -238,6 +238,8 @@ export const TEXT_FIXES = new Map([
     figures: ["outputs/content_review/source_crops/doc-64e3de2de6db498a-q-0104-p30-b25-image.png"],
     options: { 1: "$(Q_3,3)$ یا $(Q_3,1)$", 2: "$(Q_3,3)$ یا $(Q_4,1)$", 3: "$(Q_4,4)$ یا $(Q_4,1)$", 4: "$(Q_4,4)$ یا $(Q_3,3)$" },
   }],
+  // CE 1401 q79: in the booklet option 3 is 1/19 and option 4 is zero; the bank swapped them.
+  ["kunkurcomputer-q-1277-1401-b1-079", { options: { 3: "$\\frac1{19}$", 4: "صفر" } }],
   // CE 1381 q101: the directed graph was not attached.
   ["kunkurcomputer-q-1277-1381-b0-101", { figures: ["outputs/source_fidelity/assets/ce_next20/ce1381_q0101_component.png"] }],
   // CE 1399 q120: the game tree was not attached.
