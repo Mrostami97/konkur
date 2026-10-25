@@ -402,6 +402,10 @@ for (const examYear of examYears) {
           notes: ["متن، گزینه‌ها و کلید کلمه‌به‌کلمه با دفترچهٔ 135A و کلید نهایی تطبیق داده شده (مقالهٔ حل تشریحی ۱۴۰۵)"],
         }
       : record;
+    // The bank marks a figure's place with «[شکل در تصویر منبع]»; the figure itself is attached, so the marker goes.
+    const FIGURE_MARKER = /\s*\[شکل در تصویر منبع\]\s*/g;
+    q.stem = String(q.stem ?? "").replace(FIGURE_MARKER, "\n").trim();
+    q.options = q.options.map((option) => ({ ...option, text: String(option.text ?? "").replace(FIGURE_MARKER, " ").trim() }));
     // Options typed in text-fixes.mjs count, so a question whose options were never transcribed is not skipped.
     const optionFix = TEXT_FIXES.get(`kunkurcomputer-q-${code}-${year}-${q.bookletLabel}-${String(q.number).padStart(3, "0")}`)?.options;
     const reason = skipReason(optionFix ? { ...q, options: q.options.map((option) => (optionFix[option.number] ? { ...option, text: optionFix[option.number] } : option)) } : q);
