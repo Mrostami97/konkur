@@ -355,6 +355,9 @@ const questions = (await readFile(bankFile, "utf8"))
       outside1406: isOutside1406(subjectCode),
     };
   })
+  // The bank carries only the courses of the 1406 exam (owner, 2026-10-25); the dropped ones
+  // (signals, general and engineering maths, digital electronics, management) stay in the archive.
+  .filter((q) => !q.outside1406)
   .filter((q) => onlyYears.size === 0 || onlyYears.has(q.year));
 
 await mkdir(outDir, { recursive: true });
