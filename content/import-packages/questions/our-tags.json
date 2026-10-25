@@ -4257,6 +4257,114 @@
    "topic": "تعداد جمع در ضرب جمع و شیفت",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0061",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "سیستم‌های عددی",
+   "topic": "تبدیل کد گری به دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0062",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "جمله‌های اول اساسی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0063",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با مالتی‌پلکسر و بافر سه‌حالته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0064",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارنده با فلیپ‌فلاپ D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0065",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "کاهش حالت در جدول حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0066",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "گیت‌ها و جبر بول",
+   "topic": "ماهیت مخاطره",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0068",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "جدول تحریک فلیپ‌فلاپ JK",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0069",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با دی‌مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0070",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارنده با فلیپ‌فلاپ JK و D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0071",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "تحلیل مدار ترتیبی با فلیپ‌فلاپ D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0072",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع اکثریت با مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0067",
+   "exam_track": "ce",
+   "course": "مدار منطقی",
+   "chapter": "گیت‌ها و جبر بول",
+   "topic": "قضیهٔ De Morgan و مکمل تابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

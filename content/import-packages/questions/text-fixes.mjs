@@ -423,6 +423,17 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1277-1397-b0-066", { stem: [["مینتترم\n\nبی", "مینتترم بی"]] }],
   ["kunkurcomputer-q-1277-1398-b0-065", { stem: [["انجام\n\nمی‌شود.", "انجام می‌شود."]] }],
   ["kunkurcomputer-q-1277-1398-b0-069", { stem: [["۱۰۱۱۰۱۰۰\n\nباشند،", "۱۰۱۱۰۱۰۰ باشند،"]] }],
+  // CE 1399 q65: the state table was only in the crop (the x=1 entries of b, c and e are «e», checked enlarged).
+  ["kunkurcomputer-q-1277-1399-b0-065", { table: { headers: ["PS", "NS/Output (x=0)", "NS/Output (x=1)"], rows: [["a", "f/0", "b/0"], ["b", "d/0", "e/0"], ["c", "f/0", "e/0"], ["d", "g/1", "a/0"], ["e", "d/0", "e/0"], ["f", "f/1", "b/1"], ["g", "g/0", "h/1"], ["h", "g/1", "a/0"]] } }],
+  // CE 1399 q67: the bank read the booklet's «+» in option 1 as «-».
+  ["kunkurcomputer-q-1277-1399-b0-067", { options: { 1: String.raw`$F'(X,Y,Z)=X'+(Y'+Z)(Y+Z')$` } }],
+  // CE 1399 q72: the four options are circuits drawn only in the crop; described as drawn.
+  ["kunkurcomputer-q-1277-1399-b0-072", { options: {
+    1: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب z؛ ورودی ۰ خروجی AND روی x و y و ورودی ۱ خروجی OR روی x و y`,
+    2: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب $\overline x$؛ ورودی ۰ خروجی AND روی $\overline y$ و $\overline z$ و ورودی ۱ خروجی OR روی $\overline y$ و $\overline z$`,
+    3: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب y؛ ورودی ۰ خروجی AND روی x و $\overline z$ و ورودی ۱ خروجی OR روی x و $\overline z$`,
+    4: String.raw`مالتی‌پلکسر $2\times1$ با انتخاب $\overline x$؛ ورودی ۰ خروجی AND روی z و y و ورودی ۱ خروجی OR روی z و y`,
+  } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
