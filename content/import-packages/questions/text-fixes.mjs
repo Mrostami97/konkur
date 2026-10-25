@@ -284,6 +284,9 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1397-b0-077", { options: { 2: "۱۴۰۰ - ۶۰۰", 3: "۹۰۰ - ۱۰۰" } }],
   // CE 1397 q78: line breaks in the middle of sentences.
   ["kunkurcomputer-q-1277-1397-b0-078", { stem: [["را\n\nیک", "را یک"], ["کامپیوتر\n\nA", "کامپیوتر A"], ["برای\n\nB", "برای B"], ["بسته\n\n۱۰۰۰", "بسته ۱۰۰۰"], ["ماند؟\n\n(مقادیری", "ماند؟\n(مقادیری"]] }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1393-b1-067", { stem: [["تعداد\n\nبلوک‌های", "تعداد بلوک‌های"]] }],
+  ["kunkurcomputer-q-1277-1393-b1-068", { stem: [["در\n\nحالی", "در حالی"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

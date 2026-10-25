@@ -3420,6 +3420,60 @@
    "topic": "تأخیر صف در مسیریاب",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-b08b0a453fcade0c-q-0069",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "مدار حسابی با جمع‌کننده و مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0064",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و گذرگاه",
+   "topic": "ساخت ماژول حافظه از تراشه‌های کوچک‌تر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0066",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "حساب BCD",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0067",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "حافظهٔ tag در نگاشت مجموعه‌انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0068",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "وقفه‌های داخلی و خارجی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0069",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "نمایش ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
