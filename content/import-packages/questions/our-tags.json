@@ -5130,6 +5130,96 @@
    "topic": "تجزیهٔ خطی با گرامر ساده (s-grammar)",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0046",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "تشخیص زبان منظم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0047",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "هم‌ارزی عبارت‌های منظم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0048",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "ابهام گرامر در تولید یک رشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0049",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "خواص بستاری: اجتماع و الحاق",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0050",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "مسائل تصمیم‌پذیر برای اتوماتون پشته‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0046",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "شرط پذیرش در اتوماتون پشته‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0047",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "گرامرها",
+   "topic": "زبان‌های حساس به متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0048",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "ویژگی‌های NFA، DFA و زبان منظم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0049",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "مسائل تصمیم‌پذیر برای ماشین تورینگ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0050",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "خواص بستاری زبان مستقل از متن قطعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
