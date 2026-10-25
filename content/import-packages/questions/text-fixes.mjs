@@ -301,6 +301,12 @@ export const TEXT_FIXES = new Map([
   // Line breaks in the middle of sentences (bank OCR), joined.
   ["kunkurcomputer-q-1277-1396-b1-071", { stem: [["۲۰٪\n\nاز", "۲۰٪ از"], ["این\n\nبرنامه", "این برنامه"]] }],
   ["kunkurcomputer-q-1277-1398-b0-073", { stem: [["روش\n\n$$A", "روش $$A"]] }],
+  // CE 1399 q80: the memory contents were only in the crop.
+  ["kunkurcomputer-q-1277-1399-b0-080", { table: { headers: ["آدرس", "محتوای حافظه"], rows: [["100", "100"], ["110", "-10"], ["120", "120"], ["130", "-12"]] } }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1399-b0-076", { stem: [["دارای\n\nگنجایش", "دارای گنجایش"]] }],
+  ["kunkurcomputer-q-1277-1399-b0-077", { stem: [["دستور\n\nمختلف", "دستور مختلف"]] }],
+  ["kunkurcomputer-q-1277-1399-b0-078", { stem: [["اضافه\n\nمی‌شوند،", "اضافه می‌شوند،"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
