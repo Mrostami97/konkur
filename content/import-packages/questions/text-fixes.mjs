@@ -346,6 +346,13 @@ export const TEXT_FIXES = new Map([
     4: "‭READ U JMP NEXT / DRTAR U RET‬",
   } }],
   ["kunkurcomputer-q-1277-1403-b1-088", { stem: [[" جهت خواندن نیز در برش تصویر منبع حفظ شده است.", ""]] }],
+  // CE 1404 q85: the four options are function tables printed only in the crop (rows S1S0Cin = 100, 101, 110, 111).
+  ["kunkurcomputer-q-1277-1404-b1-085", { dropFigures: true, figures: ["outputs/content_review/source_crops/doc-aa34d7e9ba352ebc-q-0085-p20-b14-image.png"], options: {
+    1: "‭100: A-1 | 101: A | 110: A-B-1 | 111: A-B‬",
+    2: "‭100: A-1 | 101: A | 110: A-B-1 | 111: A-B+1‬",
+    3: "‭100: A | 101: A-1 | 110: A-B-1 | 111: A-B‬",
+    4: "‭100: A | 101: A+1 | 110: A-B | 111: A-B+1‬",
+  } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
