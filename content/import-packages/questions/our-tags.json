@@ -3105,6 +3105,69 @@
    "topic": "ترتیب اجرا با سمافور",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0100",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت دیسک",
+   "topic": "سطوح RAID",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0101",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "همگام‌سازی فرایندها",
+   "topic": "ترتیب اجرا با سمافور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0102",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "جدول صفحهٔ چندسطحی در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0103",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "همگام‌سازی فرایندها",
+   "topic": "الگوریتم دکر برای ناحیهٔ بحرانی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0104",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "شرط عدم بن‌بست",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0105",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "زمان‌بندی بلادرنگ Rate Monotonic",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0106",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "زمان‌بندی اولویت‌دار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

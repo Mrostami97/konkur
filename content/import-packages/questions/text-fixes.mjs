@@ -243,6 +243,17 @@ export const TEXT_FIXES = new Map([
   ["kunkurcomputer-q-1277-1392-b2-103", { stem: [["عبارت جبر رابطه‌ای زیر", "بانک اطلاعاتی زیر را در نظر بگیرید:\nPerson(pID, pName, sex, DoB): شناسه، نام، جنسیت و تاریخ تولد هر فرد.\nRel(pID1, pID2, pRel): رابطهٔ pRel بین دو شخص pID1 و pID2؛ به‌طور خاص pRel = 1 یعنی شخص با شناسهٔ pID2 پدر شخص با شناسهٔ pID1 است.\nعبارت جبر رابطه‌ای زیر"]] }],
   // CE 1399 q103: the memory figure (16 frames, 6 of them shaded for the process) was not attached; described in words.
   ["kunkurcomputer-q-1277-1399-b0-103", { append: "(در شکل دفترچه، حافظهٔ اصلی ۱۶ فریم دارد که ۶ فریم آن، به‌صورت پراکنده، به این پردازه تخصیص داده شده است.)" }],
+  // CE 1400 q102: the four options are columns of code (one per process) printed as a table; typed from the booklet.
+  ["kunkurcomputer-q-1277-1400-b1-102", { options: {
+    1: "‭P1: S1; Signal(a) | P2: Wait(a); S2; Signal(b) | P3: Wait(b); S3; Signal(c) | P4: Wait(c); S4‬",
+    2: "‭P1: S1; Signal(a); Signal(b) | P2: Wait(b); S2; Signal(a) | P3: Wait(a); S3; Signal(b) | P4: Wait(a); Wait(b); S4‬",
+    3: "‭P1: S1; Signal(a) | P2: Wait(a); S2; Signal(a); Signal(a) | P3: Wait(a); Wait(a); S3; Signal(a); Signal(a); Signal(a) | P4: Wait(a); Wait(a); Wait(a); S4; Signal(a); Signal(a); Signal(a); Signal(a)‬",
+    4: "‭P1: S1; Wait(a); Signal(b); Signal(c) | P2: Wait(a); S2; Signal(b); Signal(c) | P3: Wait(a); Signal(b); S3; Signal(c) | P4: Wait(a); Signal(b); Signal(c); S4‬",
+  } }],
+  ["kunkurcomputer-q-1277-1400-b1-105", { stem: [["هیچ\n\nوقت", "هیچ وقت"]] }],
+  // CE 1400 q106 and q107: the tables were only in the crops.
+  ["kunkurcomputer-q-1277-1400-b1-106", { stem: [["به\n\nنحوی", "به نحوی"]], table: { headers: ["پردازه", "Period", "CPU Time"], rows: [["P1", "50", "25"], ["P2", "80", "x"]] } }],
+  ["kunkurcomputer-q-1277-1400-b1-107", { stem: [["میانگین\n\nزمان", "میانگین زمان"], ["\n\n[جدول در تصویر منبع]", ""]], table: { headers: ["پردازه", "زمان", "اولویت"], rows: [["P1", "10 ms", "3"], ["P2", "1 ms", "1"], ["P3", "2 ms", "4"], ["P4", "1 ms", "5"], ["P5", "5 ms", "2"]] } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
