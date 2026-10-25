@@ -4923,6 +4923,78 @@
    "topic": "سلسله‌مراتب چامسکی و رده‌بندی زبان",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0051",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "عملیات روی زبان‌ها با زبان تهی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0052",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "کمینه‌سازی و زبان ماشین متناهی قطعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0053",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های منظم",
+   "topic": "بستار ستاره‌ای زبان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0054",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "تصمیم‌پذیری",
+   "topic": "مسائل تصمیم‌ناپذیر گرامرهای مستقل از متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0055",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "زبان عبارت‌های منظم و رده‌بندی آن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0058",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "ماشین تورینگ",
+   "topic": "شمارا بودن ماشین‌های تورینگ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0059",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "خواص بستاری: مقایسهٔ دو رشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0060",
+   "exam_track": "ce",
+   "course": "نظریه زبان‌ها و ماشین‌ها",
+   "chapter": "زبان‌های مستقل از متن",
+   "topic": "زبان مستقل از متن قطعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
