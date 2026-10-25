@@ -499,6 +499,29 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
       4: "Z به ترتیب ۱۰، ۲۰ و ۰ می‌شود و ۰ می‌ماند.",
     },
   }],
+  // CE 1403 q77: the four options are state diagrams drawn only in the crop; each is listed as its transitions (input/output, «-» = any).
+  ["kunkurcomputer-q-1277-1403-b1-077", { options: {
+    1: "‭00 →(-/0) 01؛ 01 →(0/0) 01؛ 01 →(1/1) 00؛ 10 →(-/0) 11؛ 11 →(-/0) 11‬",
+    2: "‭00 →(-/0) 10؛ 10 →(0/0) 10؛ 10 →(1/1) 01؛ 01 →(1/0) 01؛ 01 →(0/0) 11؛ 11 →(-/0) 11‬",
+    3: "‭00 →(-/0) 10؛ 10 →(0/0) 10؛ 10 →(1/1) 00؛ 01 →(-/0) 11؛ 11 →(-/0) 11‬",
+    4: "‭00 →(-/0) 01؛ 01 →(0/0) 01؛ 01 →(1/1) 10؛ 10 →(1/0) 10؛ 10 →(0/0) 11؛ 11 →(-/0) 11‬",
+  } }],
+  // CE 1403 q80: the Verilog description and the input waveforms were only in the crop.
+  ["kunkurcomputer-q-1277-1403-b1-080", { append: code([
+    "module exam(A, B, d, e, z);",
+    "    input A, B, d, e;",
+    "    output z;",
+    "    wire [7:0] A, B;",
+    "    wire d, e;",
+    "    reg [7:0] z;",
+    "    always @(posedge d or negedge e)",
+    "        if (!e) begin",
+    "            z <= 0;",
+    "        end else begin",
+    "            z <= z + A + B;",
+    "        end",
+    "endmodule",
+  ]) + "\n(نسخهٔ VHDL همین رفتار را توصیف می‌کند.)\nشکل موج ورودی‌ها در دفترچه: d چهار پالس دارد و در لبه‌های بالاروندهٔ آن، (A, B) به ترتیب (۱۰، ۱۲)، (۱۴، ۱۶)، (۵، ۶) و (۱۰، ۱۰) است. e در ابتدا ۰ است و کمی بعد از لبهٔ اول d یک می‌شود؛ بین لبهٔ دوم و سوم d برای مدت کوتاهی ۰ می‌شود و دوباره ۱ می‌ماند." }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
