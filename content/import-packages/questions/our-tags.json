@@ -3258,6 +3258,60 @@
    "topic": "قفل چرخشی (Spinlock) در ناحیهٔ بحرانی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0096",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "فرایندها و نخ‌ها",
+   "topic": "نخ‌های سطح کاربر و سطح هسته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0097",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "زمان‌بندی نوبت گردشی با تعویض متن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0098",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مفاهیم پایه سیستم عامل",
+   "topic": "اجرای فرایند در حالت هسته و حالت کاربر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0099",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "جدول صفحهٔ دوسطحی در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0100",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "زمان‌بندی FCFS و اثر کاروان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0101",
+   "exam_track": "ce",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "پیچیدگی الگوریتم بانکدار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
