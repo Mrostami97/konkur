@@ -319,6 +319,20 @@ export const TEXT_FIXES = new Map([
       4: String.raw`$u=b'_i,\ v=0,\ w=b_i,\ z=1$`,
     },
   }],
+  // CE 1402 q89: the four options are function tables printed only in the crop (rows S1S0Cin = 100, 101, 110, 111).
+  ["kunkurcomputer-q-1277-1402-b1-089", { options: {
+    1: "‭100: A-1 | 101: A | 110: A-B-1 | 111: A-B+1‬",
+    2: "‭100: A-1 | 101: A | 110: A-B-1 | 111: A-B‬",
+    3: "‭100: A | 101: A-1 | 110: A-B-1 | 111: A-B‬",
+    4: "‭100: A | 101: A+1 | 110: A-B | 111: A-B+1‬",
+  } }],
+  // Line breaks in the middle of sentences (bank OCR), joined.
+  ["kunkurcomputer-q-1277-1402-b1-083", { stem: [["آن\n\nکدام", "آن کدام"]] }],
+  ["kunkurcomputer-q-1277-1402-b1-084", { stem: [["صرف\n\nمی‌شود.", "صرف می‌شود."]] }],
+  ["kunkurcomputer-q-1277-1402-b1-085", { stem: [["دو\n\nثبات", "دو ثبات"], ["طراحی\n\nاین", "طراحی این"]] }],
+  ["kunkurcomputer-q-1277-1402-b1-086", { stem: [["از\n\nیک", "از یک"], ["می‌توان\n\nاز", "می‌توان از"], ["بین\n\nخانه‌های", "بین خانه‌های"]] }],
+  ["kunkurcomputer-q-1277-1402-b1-087", { stem: [["ظرفیت\n\n512", "ظرفیت 512"], ["offset)\n\nچند", "offset) چند"]] }],
+  ["kunkurcomputer-q-1277-1402-b1-088", { stem: [["X\n\nt1:DR", "X\nt1:DR"], ["M[MAR]\n\nt2:M[MAR]", "M[MAR]\nt2:M[MAR]"], ["A\n\nt3:A", "A\nt3:A"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

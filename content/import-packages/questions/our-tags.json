@@ -3762,6 +3762,69 @@
    "topic": "بزرگ‌ترین عدد در نمایش ممیز شناور",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0082",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بازهٔ اعداد در نمایش مکمل دو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0083",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "قانون امدال و تسریع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0084",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و مسیر داده",
+   "topic": "طراحی بانک ثبات با دیکودر و بافر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0085",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "میدان‌های قالب دستور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0086",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "میدان‌های آدرس در نگاشت مستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0087",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و ریزعملیات",
+   "topic": "برنامهٔ RTL یک دستور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0088",
+   "exam_track": "ce",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "مدار حسابی با جمع‌کننده و مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
