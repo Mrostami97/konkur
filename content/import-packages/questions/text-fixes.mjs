@@ -593,6 +593,20 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-2355-1400-b0-010", { stem: [[" مدار دیکودر 3×8 و گیت‌ها در تصویر اصلی آمده است.",""]] }],
   ["kunkurcomputer-q-2355-1400-b0-012", { stem: [[" شکل در تصویر اصلی آمده است.",""]] }],
   ["kunkurcomputer-q-2355-1400-b0-016", { dropFigures: true }],
+  // PhD 2355 1399: notes pointing at the source image dropped; figure crops repeating typed formulas dropped;
+  // q4 options typed (the four mux drawings only repeat the inputs); q6 keeps the printed table instead of the typed rows.
+  ["kunkurcomputer-q-2355-1399-b0-001", { stem: [[" مدار در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1399-b0-004", { stem: [["؛ مدار هر گزینه در تصویر اصلی مستقل آمده است.","."]], options: {
+    1: String.raw`$I_0=\overline{c}$، $I_1=0$، $I_2=1$، $I_3=c$`,
+    2: String.raw`$I_0=\overline{c}$، $I_1=1$، $I_2=0$، $I_3=c$`,
+    3: String.raw`$I_0=c$، $I_1=0$، $I_2=1$، $I_3=\overline{c}$`,
+    4: String.raw`$I_0=c$، $I_1=1$، $I_2=0$، $I_3=\overline{c}$`,
+  } }],
+  ["kunkurcomputer-q-2355-1399-b0-005", { stem: [[" مدار در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1399-b0-006", { stem: [["\nستون‌ها: PS؛ NS/y برای x=0؛ NS/y برای x=1.\na: c/0؛ a/1\nb: d/0؛ b/1\nc: a/1؛ c/0\nd: b/1؛ d/0\ne: c/0؛ e/1\nf: a/1؛ c/0\nجدول چاپی در تصویر اصلی نیز آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1399-b0-009", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1399-b0-017", { stem: [[" مدار در تصویر منبع آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1399-b0-019", { dropFigures: true }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

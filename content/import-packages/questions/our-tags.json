@@ -7434,6 +7434,132 @@
    "topic": "CPI و زمان اجرا در پردازندهٔ چندسیکلی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ حلقوی با شیفت‌رجیستر و فیدبک XOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0002",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "عامل‌های اولیهٔ ضروری در جدول کارنو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0003",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "سیستم‌های عددی",
+   "topic": "تعداد ارقام لازم در تبدیل مبنا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "دنبالهٔ حالت شمارنده با فلیپ‌فلاپ D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0006",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "کاهش حالت در ماشین میلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "سیستم‌های عددی و کدها",
+   "topic": "تشخیص خطا با کد همینگ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0009",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "نمودار حالت و خودآغازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0012",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "کد عملیات گسترش‌پذیر در دو قالب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0013",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تعداد جمع و تفریق در ضرب بوت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0014",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "I/O نگاشت‌شده در حافظه و DMA",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0017",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تأخیر جمع‌کنندهٔ دهدهی BCD",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0018",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "پردازش موازی",
+   "topic": "قانون آمدال در پردازش موازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-d42253ce7ed3fc5e-q0019",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "عمق پشته در ماشین صفرآدرسه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
