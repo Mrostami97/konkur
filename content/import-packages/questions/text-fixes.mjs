@@ -683,6 +683,9 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1276-1400-658A-098", { dropFigures: true }],
   // IT 1399 q92: the booklet prints # for the not-entails sign.
   ["kunkurcomputer-q-1276-1399-460E-092", { stem: [[String.raw`$KB\#\alpha$`, String.raw`$KB\not\models\alpha$`]] }],
+  // IT 1398: typed copies of printed tables dropped (the table crop is shown).
+  ["kunkurcomputer-q-1276-1398-859A-095", { stem: [["\nپردازه\nزمان ورود\nزمان مورد استفاده از cpu\nP₁\n۲\n۵\nP₂\n۳\n۱۳\nP₃\n۰\n۸\nP₄\n۵\n۴\nP₅\n۱\n۱۰", ""]] }],
+  ["kunkurcomputer-q-1276-1398-859A-099", { stem: [["\nزمان مورد استفاده از CPU (CPU Burst time)\nزمان ورود\nپردازه\n۸\n۰\nP₁\n۹\n۱\nP₂\n۵\n۲\nP₃\n۴\n۳\nP₄", ""]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
