@@ -9819,6 +9819,213 @@
    "topic": "قضیهٔ اصلی برای رابطهٔ بازگشتی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0036",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "شرط یکتایی مرتب‌سازی توپولوژیک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0037",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "قضیهٔ اصلی برای رابطهٔ بازگشتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0038",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی آرایهٔ k-مرتب با ادغام k فهرست",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0039",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "هرم و صف اولویت",
+   "topic": "خروجی‌های ممکن با هرم کمینه و پشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0040",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "یکنواختی تابع درهم‌ساز",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0041",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "جست‌وجو در لیست پیوندی مرتب با آرایهٔ اشاره‌گر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0042",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "طول متن کدگذاری‌شده با هافمن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0043",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تعداد relax یال‌ها در دایکسترا و کوتاه‌ترین مسیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0044",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو",
+   "topic": "عضو غایب تکرارنشده در آرایهٔ مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0045",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "کوتاه‌ترین مسیر همهٔ زوج‌ها در گراف تنک با الگوریتم جانسون",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0047",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "زمان چندجمله‌ای الگوریتم‌های شار بیشینه در گراف",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0048",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "مؤلفه‌های قویاً همبند و زمان پایان DFS",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0087",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "برنامه‌ریزی",
+   "topic": "گراف برنامه‌ریزی و توابع ابتکاری برنامه‌ریزی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0088",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "بازی‌ها",
+   "topic": "الگوریتم مینیمکس و هرس آلفا-بتا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0089",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "A* با تابع ابتکاری بیش‌برآوردکننده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0090",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "قاعدهٔ رزولوشن و استلزام",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0091",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "کامل بودن زنجیرهٔ جلورو و تصمیم‌ناپذیری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0092",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "عامل‌های هوشمند",
+   "topic": "اجزای عامل یادگیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0094",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مفاهیم پایه سیستم عامل",
+   "topic": "قانون آمدال و تسریع اجرای فرایند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0095",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "همگام‌سازی فرایندها",
+   "topic": "مسئلهٔ پل با سمافور و مانیتور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0098",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت دیسک",
+   "topic": "زمان‌بندی دیسک C-LOOK",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0099",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "الگوریتم بانکدار و حالت امن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0100",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "تخصیص حافظه با بخش‌بندی ثابت و بدترین برازش",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
