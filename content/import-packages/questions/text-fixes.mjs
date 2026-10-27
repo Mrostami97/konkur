@@ -624,6 +624,12 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
     3: String.raw`Push Ax: $SP\leftarrow SP-2$ سپس $M[SP]\leftarrow Ax$؛ Pop Bx: $Bx\leftarrow M[SP]$ سپس $SP\leftarrow SP+2$`,
     4: String.raw`Push Ax: $M[SP]\leftarrow Ax$ سپس $SP\leftarrow SP+2$؛ Pop Bx: $SP\leftarrow SP-2$ سپس $Bx\leftarrow M[SP]$`,
   } }],
+  // PhD 2355 1397: notes pointing at the source image dropped; q2 output names were typed as powers.
+  ["kunkurcomputer-q-2355-1397-b0-001", { stem: [[" مدار و اتصال انتخاب‌گرهای A و C در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1397-b0-002", { stem: [["$Z^2Z^1Z^0$","$Z_2Z_1Z_0$"],[" مدار اصلی سه فلیپ‌فلاپ JK در تصویر آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1397-b0-011", { stem: [[" قالب اصلی شامل S با ۱ بیت، E با ۵ بیت و M با ۱۰ بیت در تصویر آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1397-b0-012", { stem: [[" طرح اصلی حافظهٔ تابع در تصویر آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1397-b0-014", { stem: [[" در شکل، زمان S1 برابر ۱ نانوثانیه و زمان مراحل S2 تا S6 به ترتیب t2 تا t6 است.",""]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

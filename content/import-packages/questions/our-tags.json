@@ -7713,6 +7713,141 @@
    "topic": "طول دستور دوآدرسه و اندازهٔ عملوند",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با مالتی‌پلکسر چهار به یک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0002",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ پایین‌شمار با فلیپ‌فلاپ JK",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0003",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع خروجی نیم‌جمع‌کننده و دیکودر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "کاهش حالت در ماشین مور با حالت بی‌اهمیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تأخیر مسیرهای جمع‌کنندهٔ کامل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0007",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "عامل‌های اولیه و ضروری در جدول کارنو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارنده با فلیپ‌فلاپ D و دنبالهٔ حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0009",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "XOR دو تابع با جدول کارنو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0010",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تولید جملهٔ ضربی با دیکودر و ورودی فعال‌ساز",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0011",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "ممیز شناور با یک صریح و بایاس ۱۵",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0012",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "فراخوانی تابع و آدرس بازگشت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0014",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "بیشترین تسریع خط لوله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0015",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "سربار حافظهٔ نهان انجمنی مجموعه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0017",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "کد عملیات گسترش‌پذیر در سه قالب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1397-c9aad6a58096f646-q0019",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "نانوبرنامه و تعداد سیگنال‌های کنترل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
