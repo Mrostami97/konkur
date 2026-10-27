@@ -216,6 +216,14 @@
 .qc-opt-n { display: grid; place-items: center; flex: none; width: 1.75rem; height: 1.75rem; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--ink-700); font-size: var(--text-xs); font-weight: var(--weight-bold); }
 .qc-opt-body { flex: 1; min-width: 0; overflow-x: auto; line-height: 1.8; overflow-wrap: anywhere; scrollbar-width: thin; }
 .qc-opt-body p { margin: 0; }
+/* Set by QuestionCard when a formula is still wider than one full-width option. */
+.qc-options[data-shrink="1"] .qc-opt-body .katex { font-size: 1.05em; }
+.qc-options[data-shrink="2"] .qc-opt-body .katex { font-size: 0.92em; }
+/* A line of code typed as \texttt keeps KaTeX's non-breaking spaces; in an option it may wrap instead of scrolling. */
+.qc-opt-body .katex-base:has(.texttt),
+.qc-opt-body .katex-base:has(.texttt) * { white-space: normal; overflow-wrap: anywhere; }
+.qc-opt-body .katex-base:has(.texttt) { display: inline; }
+.qc-opt-body p:has(.texttt) { text-align: left; }
 .qc-opt-body .cb-figure { justify-content: flex-start; margin: 0.2rem 0; }
 .qc-opt-body .cb-code { max-height: none; margin: 0; padding: 0.45rem 0.65rem; font-size: 0.78rem; line-height: 1.45; }
 .qc-opt:has(.cb-code) { align-items: flex-start; }

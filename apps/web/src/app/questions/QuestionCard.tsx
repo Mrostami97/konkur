@@ -173,7 +173,61 @@ export const QuestionCard = forwardRef<CardHandle, CardProps>(function QuestionC
   const place = topicPlace(question.subjectCode, question.topicCodes?.[0]);
   const longStem = (question.stemBlocks ?? []).reduce((sum, block) => sum + String(block.text ?? "").length, 0) > 420;
   const hasSolution = Boolean(question.solutionBlocks?.length);
-  const layout = question.options ? optionLayout(question.options) : "stack";
+  const baseLayout = question.options ? optionLayout(question.options) : "stack";
+  // The guess above cannot see how wide a typeset formula really is, so the
+  // options are measured once drawn: an option that would scroll sideways moves
+  // the card to the next looser layout, and in one column its formula is set a
+  // little smaller (owner, 2026-10-27: no option should need sideways scrolling).
+  const [fit, setFit] = useState({ layout: baseLayout, shrink: 0 });
+  const layout = fit.layout;
+  const optionsRef = useRef<HTMLDivElement>(null);
+  const fitWidth = useRef(0);
+  useEffect(() => {
+    setFit({ layout: baseLayout, shrink: 0 });
+  }, [baseLayout, question.id]);
+  useEffect(() => {
+    const box = optionsRef.current;
+    if (!box) return;
+    const bodies = () => [...box.querySelectorAll<HTMLElement>(".qc-opt-body")];
+    // A box with no width yet (styles not applied) says nothing; wait for the next frame.
+    const ready = () => bodies().every((body) => body.clientWidth > 24);
+    const overflows = () => bodies().some((body) => body.scrollWidth > body.clientWidth + 1);
+    let frame = 0;
+    const measure = () => {
+      if (!ready()) {
+        frame = requestAnimationFrame(measure);
+        return;
+      }
+      if (!overflows()) return;
+      setFit((current) => {
+        if (current.layout === "row") return { layout: "grid", shrink: 0 };
+        if (current.layout === "grid") return { layout: "stack", shrink: 0 };
+        return current.shrink < 2 ? { ...current, shrink: current.shrink + 1 } : current;
+      });
+    };
+    frame = requestAnimationFrame(measure);
+    // The math and Persian fonts may load after this (fonts.ready can settle before
+    // KaTeX's font is even requested), widening the options: look again a little later.
+    const timers = [400, 1500, 4000].map((delay) => window.setTimeout(measure, delay));
+    document.fonts?.addEventListener("loadingdone", measure);
+    return () => {
+      cancelAnimationFrame(frame);
+      timers.forEach((timer) => window.clearTimeout(timer));
+      document.fonts?.removeEventListener("loadingdone", measure);
+    };
+  }, [fit, baseLayout]);
+  // A resized window (a phone turned sideways) starts again from the guess. Only the
+  // window counts: the card itself changes width when its own layout adds a scrollbar.
+  useEffect(() => {
+    fitWidth.current = window.innerWidth;
+    const resized = () => {
+      if (window.innerWidth === fitWidth.current) return;
+      fitWidth.current = window.innerWidth;
+      setFit({ layout: baseLayout, shrink: 0 });
+    };
+    window.addEventListener("resize", resized);
+    return () => window.removeEventListener("resize", resized);
+  }, [baseLayout]);
 
   async function check() {
     if (!hasKey || picked === null || checked) return;
@@ -314,7 +368,7 @@ export const QuestionCard = forwardRef<CardHandle, CardProps>(function QuestionC
         <div className="qc-stem" data-long={longStem || undefined}>
           <ContentBlocks blocks={tidyQuestionBlocks(question.stemBlocks ?? [])} assets={question.assets} />
         </div>
-        <div className="qc-options" data-layout={layout} role="radiogroup" aria-label="گزینه‌ها">
+        <div className="qc-options" data-layout={layout} data-shrink={fit.shrink || undefined} ref={optionsRef} role="radiogroup" aria-label="گزینه‌ها">
           {question.options?.map((option) => {
             const isKey = checked && !deleted && keyOptions.includes(option.number);
             const isWrongPick = checked && !deleted && option.number === picked && !keyOptions.includes(option.number);
