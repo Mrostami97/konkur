@@ -564,6 +564,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
     3: String.raw`Insertion sort: $O(N^2)$، Randomized quicksort: $O(N\log_2N)$، MergeSort: $O(N\log_2N)$`,
     4: String.raw`Insertion sort: $O(1)$، Randomized quicksort: $O(N\log_2N)$، MergeSort: $O(N\log_2N)$`,
   } }],
+  // PhD 2354 1394 q20: the booklet says 1393 points in both places (the bank had 1392 in the second).
+  ["kunkurcomputer-q-2354-1394-b0-020", { stem: [["۱۳۹۲ نقطه", "۱۳۹۳ نقطه"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
