@@ -662,6 +662,12 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-2356-1394-b0-020", { stem: [["از۱۳۹۲نقطهٔ", "از ۱۳۹۳ نقطهٔ"]] }],
   // PhD 2356 1398 q13: the booklet prints k-1 for k=1 in the sum.
   ["kunkurcomputer-q-2356-1398-b0-013", { stem: [["sum_{k-1}^{i}", "sum_{k=1}^{i}"]] }],
+  // PhD 2356 1400: crops that only repeat typed triples, formulas, arrays or digit sequences dropped; notes on print order dropped.
+  ["kunkurcomputer-q-2356-1400-b0-004", { dropFigures: true, stem: [[" سه‌تایی‌ها از چپ به راست مطابق چاپ:", " سه‌تایی‌ها:"]] }],
+  ["kunkurcomputer-q-2356-1400-b0-011", { dropFigures: true }],
+  ["kunkurcomputer-q-2356-1400-b0-014", { dropFigures: true }],
+  ["kunkurcomputer-q-2356-1400-b0-015", { stem: [[" توالی گزینه‌ها از چپ به راست مطابق چاپ است.", ""]] }],
+  ["kunkurcomputer-q-2356-1400-b0-017", { dropFigures: true }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
