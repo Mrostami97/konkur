@@ -8172,6 +8172,141 @@
    "topic": "ساخت جمع‌کنندهٔ کامل با دو نیم‌جمع‌کننده",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "جبر بول و گیت‌ها",
+   "topic": "wired-AND با گیت‌های open-drain",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0002",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "مخاطرهٔ ایستای صفر در مدار XOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0003",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "مدار میلی و زمان نگهداری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "شمارش عامل‌های اولیهٔ تابع پنج‌متغیره",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "ضرب در ثابت با نیم‌جمع‌کننده و جمع‌کنندهٔ کامل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0006",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "انکودر عادی و اولویت‌دار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0007",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "طراحی ماشین مور تشخیص دنباله با JK",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "مقایسه‌گر سریالی با نمودار حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0010",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "ماشین حالت تشخیص‌دهندهٔ دنباله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0012",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "زمان برپایی و نگهداری فلیپ‌فلاپ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0014",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "مالتی‌پلکسر و دیکودر با فیدبک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0016",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ آسنکرون با لبهٔ پایین‌رونده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0018",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "دنبالهٔ حالت مدار با فلیپ‌فلاپ T و D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0019",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "سیستم‌های عددی",
+   "topic": "تبدیل عدد اعشاری دودویی به دهدهی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-ccb569becea25068-q0020",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیچیدگی مالتی‌پلکسر دوطبقه بر حسب ورودی گیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
