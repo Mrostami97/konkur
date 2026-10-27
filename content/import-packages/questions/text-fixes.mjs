@@ -566,6 +566,23 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   } }],
   // PhD 2354 1394 q20: the booklet says 1393 points in both places (the bank had 1392 in the second).
   ["kunkurcomputer-q-2354-1394-b0-020", { stem: [["۱۳۹۲ نقطه", "۱۳۹۳ نقطه"]] }],
+  // PhD 2355 1401-1402: notes pointing at «the original image» are dropped (the figure is shown); figure crops that repeat a typed formula, code or table are dropped.
+  ["kunkurcomputer-q-2355-1401-b0-001", { stem: [[" جدول حالت و مدار در تصویر اصلی آورده شده‌اند.",""]] }],
+  ["kunkurcomputer-q-2355-1402-b0-001", { stem: [[" مدار در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1402-b0-005", { stem: [[" مدار دیکدر و بافرها در تصویر منبع آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1402-b0-006", { stem: [[" مدار در تصویر منبع آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1402-b0-008", { stem: [[" مدار در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1402-b0-009", { stem: [[" ماشین حالت در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1402-b0-013", { stem: [[" مسیر داده در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1402-b0-017", { stem: [[" دیاگرام جمع‌کننده در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1401-b0-013", { dropFigures: true, stem: [["در جدول اصلی: ",""]] }],
+  ["kunkurcomputer-q-2355-1401-b0-002", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1401-b0-009", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1401-b0-010", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1401-b0-015", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1401-b0-016", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1401-b0-019", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1402-b0-003", { dropFigures: true }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

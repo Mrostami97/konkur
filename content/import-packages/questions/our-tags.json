@@ -6966,6 +6966,321 @@
    "topic": "رنگ‌آمیزی بدون تعارض نقاط روی خط",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "پیاده‌سازی ماشین حالت با ROM",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0002",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "تعداد مخاطره‌ها در پیاده‌سازی SOP کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "گیت اضافی و جملهٔ اجماع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "فرکانس خروجی یک شمارندهٔ سه‌حالته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0007",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "ضرب در ثابت با شیفت و جمع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "ثبات انتقالی با فیدبک XOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0009",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "کمینه‌سازی دو تابع با گیت NAND",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0010",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "تعداد PI و EPI با جدول کارنو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0011",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و مسیر داده",
+   "topic": "ریزعمل‌های دستور Add در مسیر داده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0013",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "مقایسهٔ زمان اجرا و MIPS",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0014",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "شرط سرریز در جمع اعداد علامت‌دار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0015",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "مد آدرس‌دهی نسبی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0016",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و ریزعملیات",
+   "topic": "تعارض ریزعمل‌ها در یک پالس",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0017",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "قالب ممیز شناور و بایاس",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0018",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "قانون امدال و انتخاب بهبود",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0019",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "اصابت در حافظهٔ نهان انجمنی مجموعه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1401-e292e0a1f89b22fa-q0020",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "دست‌دهی در انتقال ورودی ـ خروجی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ جانسون و ثبات‌های بارشونده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0003",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "ساده‌سازی XOR دو تابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "طراحی ماشین حالت با فلیپ‌فلاپ D",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع مدار با دیکودر و بافر سه‌حالته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0006",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "حداقل دورهٔ کلاک و مسیر بحرانی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0007",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و مسیر داده",
+   "topic": "اصلاح مسیر داده برای یک الگوریتم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارنده و مالتی‌پلکسر خروجی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0009",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "ظرفیت ROM برای ماشین حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0011",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "قالب ممیز شناور ۸ بیتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0012",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "قانون امدال با کند و تند شدن دستورها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0013",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و مسیر داده",
+   "topic": "تعداد پالس‌ها برای جمع در مسیر داده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0014",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "طول میدان‌های دستورالعمل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0015",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "میدان‌های آدرس حافظهٔ نهان انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0016",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "زبان اسمبلی و عملیات رجیستر",
+   "topic": "ریزعمل‌های دستور Call",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0017",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تأخیر جمع‌کنندهٔ پیش‌بینی نقلی چندطبقه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0018",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و ریزعملیات",
+   "topic": "سیگنال‌های کنترلی اجرای دستور SUB",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0019",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "کدگذاری بوت در ضرب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-7fc9cab5307f7cda-q0020",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "مقایسهٔ فراخوانی زیربرنامه و وقفه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
