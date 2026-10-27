@@ -8892,6 +8892,177 @@
    "topic": "به‌روزرسانی شار بیشینه پس از تغییر ظرفیت در گراف",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-41d78ba69d814ad9-q0001",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تغییر تعداد مؤلفه‌های قویاً همبند با افزودن یال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-41d78ba69d814ad9-q0008",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "طول کد هافمن نویسهٔ پرتکرار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0001",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "فلوید-وارشال و زمان اجرای آن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0002",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "رابطهٔ کلاس‌های P و NP-کامل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "میانهٔ n آرایهٔ نامرتب با انتخاب خطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0005",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ زمان میانگین و بدترین حالت در تحلیل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0006",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو",
+   "topic": "جست‌وجوی زوج با مجموع x در آرایهٔ مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0007",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "یافتن قلهٔ آرایهٔ صعودی-نزولی با جستجوی دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0009",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "تعریف نماد امگا و رشد توابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0012",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "پیامدهای الگوریتم چندجمله‌ای برای NP-سخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0013",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "کلاس NP و حد پایین نمایی NP-کامل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0014",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "کوله‌پشتی صفر و یک و زمان شبه‌چندجمله‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0015",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "k-امین کلید در درخت جست‌وجوی دودویی متوازن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0016",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "رتبهٔ کلید در درخت جست‌وجوی دودویی با اندازهٔ زیردرخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0018",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "تبدیل درخت جست‌وجوی دودویی با دوران و مقایسهٔ رشد توابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0019",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی مبنایی اعداد کمتر از n به توان ۲",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0020",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "دنبالهٔ کلیدهای جست‌وجو در درخت جست‌وجوی دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0008",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "گزاره‌های چندگانه در تحلیل الگوریتم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1402-c48ce403656222dc-q0017",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "نسبت طول مسیرها در درخت قرمز-سیاه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
