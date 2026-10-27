@@ -9270,6 +9270,186 @@
    "topic": "مدار جمع‌کننده و تفریق‌کننده با XOR",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0037",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "مقایسهٔ مرتبهٔ رشد توابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0038",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "دنباله‌های خروجی با دو پشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0040",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "اشتراک دو آرایه با مرتب‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0043",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "زمان و حافظهٔ LCS با یک دنبالهٔ کوتاه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0044",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "دنبالهٔ پروفر و ساخت درخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0047",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "کد هافمن با فراوانی‌های مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0048",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "یال‌های برش در درخت پوشای کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0087",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "استنتاج با رزولوشن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0088",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "درستی جمله‌های منطق مرتبه اول در دنیای مکعب‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0089",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "استلزام، ارضاپذیری و همیشه‌درستی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0090",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "عقبگرد با بررسی پیشرو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0091",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "جستجوی هزینهٔ یکنواخت و تابع ابتکاری قابل قبول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0092",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "بهینگی A* درختی و گرافی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0093",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "جستجوی عمیق‌سازی تکراری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0094",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "حافظهٔ مجازی",
+   "topic": "ناهنجاری بلادی در جایگزینی صفحه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0095",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "شرط نبود بن‌بست با منابع یکسان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0097",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "ترجمهٔ آدرس در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0098",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "همگام‌سازی فرایندها",
+   "topic": "تعداد اجرای دستور با سمافورهای دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0096",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مفاهیم پایه سیستم عامل",
+   "topic": "ساختار سیستم عامل (لایه‌ای و یکپارچه) و اجرای فرایند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0039",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "ارتفاع درخت دودویی پر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

@@ -679,6 +679,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-2312-1395-b0-021", { stem: [[" دو مدار و برچسب‌های «اول» و «دوم» در تصویر اصلی آمده‌اند.",""]] }],
   ["kunkurcomputer-q-2312-1395-b0-029", { dropFigures: true }],
   ["kunkurcomputer-q-2312-1395-b0-030", { stem: [[" مدار جمع‌کنندهٔ nبیتی و گیت‌ها در تصویر اصلی آمده است.",""]] }],
+  // IT 1400 q98: the figure crop only repeats the typed code.
+  ["kunkurcomputer-q-1276-1400-658A-098", { dropFigures: true }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
