@@ -9063,6 +9063,213 @@
    "topic": "نسبت طول مسیرها در درخت قرمز-سیاه",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0001",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "رابطهٔ بازگشتی ارتفاع درخت جست‌وجوی دودویی تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0002",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "حل رابطهٔ بازگشتی با جایگذاری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0003",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "زیرساختار بهینهٔ کوتاه‌ترین و بلندترین مسیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "حافظهٔ لازم برای طول زیردنبالهٔ مشترک LCS",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0007",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تغییر وزن یال‌ها با تابع پتانسیل و کوتاه‌ترین مسیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0008",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "شمارش جواب‌های فرمول CNF و DNF",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0009",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تعداد افزایش‌های فورد-فالکرسون در گراف",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0010",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "تعداد مقایسه‌های هر عنصر در مرتب‌سازی ادغامی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0011",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "طول متن کدگذاری‌شده با هافمن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0012",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "تخصیص اتاق به کلاس‌ها با ترتیب زمان پایان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0013",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "درخت جست‌وجوی دودویی که هرم هم هست (treap)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0014",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "رنگ‌آمیزی درخت جست‌وجوی دودویی به قرمز-سیاه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0016",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع خروجی دو دیکودر با NAND",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0017",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تأخیر مدار زنجیره‌ای با نیم‌جمع‌کننده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0019",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "عامل‌های اولیهٔ ضروری و غیرضروری در جدول کارنو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0020",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارنده با فلیپ‌فلاپ JK و T",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0021",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "لچ و OR با مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0022",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "رفع مخاطره با جملهٔ اجماع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0023",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تقسیم دودویی و شرط سرریز",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0024",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "روش‌های I/O برنامه‌ریزی‌شده، وقفه و DMA",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0026",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "اندازهٔ حافظهٔ tag با تغییر تعداد مجموعه‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0029",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تسریع خط لوله با شکستن مراحل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-ba245241e44aed64-q0030",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "مدار جمع‌کننده و تفریق‌کننده با XOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
