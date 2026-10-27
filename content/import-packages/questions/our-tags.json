@@ -8010,6 +8010,168 @@
    "topic": "زمان اجرای خط لوله برای n داده",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "مخاطرهٔ ایستا و پهنای گلیچ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0002",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "تعداد جواب‌های کمینه در جدول کارنو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0003",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "حالت بعد با فلیپ‌فلاپ JK",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارنده با بارگذاری همگام",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع خروجی دو دیکودر با خروجی فعال‌پایین",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0006",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع خروجی آرایهٔ منطقی PAL با فیدبک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0007",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ دهدهی آسنکرون با فلیپ‌فلاپ JK",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "ساده‌سازی جبر بول و تعداد گیت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0010",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "ساخت مالتی‌پلکسر بزرگ از کوچک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0011",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "جمع‌کننده با ورودی‌های وارون",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0012",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "جبر بول و گیت‌ها",
+   "topic": "گیت اکثریت سه‌ورودی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0013",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "جبر بول و گیت‌ها",
+   "topic": "گیت کامل XOR با wired-AND",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0014",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تبدیل مکمل ۲ به مکمل ۱ با جمع‌کننده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0015",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "جبر بول و گیت‌ها",
+   "topic": "گیت کامل سه‌ورودی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0017",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "خروجی مقایسهٔ دو جمع‌کننده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0018",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "جبر بول و گیت‌ها",
+   "topic": "حاشیهٔ نویز گیت از منحنی انتقال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0019",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "پیاده‌سازی تابع جدول کارنو با XNOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-08f579a3c2d7180d-q0020",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "ساخت جمع‌کنندهٔ کامل با دو نیم‌جمع‌کننده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
