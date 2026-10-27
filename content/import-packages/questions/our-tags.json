@@ -10026,6 +10026,195 @@
    "topic": "تخصیص حافظه با بخش‌بندی ثابت و بدترین برازش",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0037",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "ارتفاع درخت ترای برای رشته‌های دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0038",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "کوتاه‌ترین مسیر بین دو گره در درخت کم‌ارتفاع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0039",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "حل رابطهٔ بازگشتی دومتغیره",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0040",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "هرم و صف اولویت",
+   "topic": "ویژگی‌های هرم کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0041",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "پس‌ترتیب درخت جست‌وجوی دودویی از روی پیش‌ترتیب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0042",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "پایداری و کران پایین درخت تصمیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0043",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "دایکسترا با یال منفی و کوتاه‌ترین مسیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0044",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "ویژگی‌های زیردنبالهٔ مشترک LCS",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0046",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "تعریف زیرمسئله در فلوید-وارشال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0047",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "شرط یکتایی درخت پوشای کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0048",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "بیشترین طول کد هافمن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0088",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "ارضای محدودیت",
+   "topic": "حل CSP درختی و AC-3",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0089",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی محلی",
+   "topic": "شبیه‌سازی تبرید و جستجوی پرتو محلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0090",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "برنامه‌ریزی",
+   "topic": "برنامه‌ریزی مرتبهٔ جزئی POP و پیوندهای علّی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0091",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "تابع ابتکاری قابل قبول و سازگار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0092",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "ترتیب گسترش در A* و جستجوی حریصانه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0093",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "ترجمهٔ جمله به منطق مرتبه اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0095",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مفاهیم پایه سیستم عامل",
+   "topic": "سهم وقفهٔ ساعت از زمان پردازنده و اجرای فرایند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0096",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "جدول صفحهٔ وارونه در صفحه‌بندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0100",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "الگوریتم بانکدار و حالت ناامن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0045",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "ویژگی‌های پیمایش BFS و سطح رأس‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

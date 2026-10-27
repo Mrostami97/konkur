@@ -689,6 +689,9 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   // IT 1397: typed copies of printed tables dropped (the table crop is shown).
   ["kunkurcomputer-q-1276-1397-260E-041", { stem: [["\n$$O(n) \\quad (۲) \\quad O(۱) \\quad (۱)$$\n\n$$O(\\sqrt{n}) \\quad (۴) \\quad O(\\sqrt{n}) \\quad (۳)$$", ""]] }],
   ["kunkurcomputer-q-1276-1397-260E-099", { stem: [["\nMax و Allocation به‌ترتیب A,B,C:\nP0: Max=(0,0,1), Allocation=(0,0,1)\nP1: Max=(1,7,5), Allocation=(1,0,0)\nP2: Max=(2,3,5), Allocation=(1,3,5)\nP3: Max=(0,6,5), Allocation=(0,6,3)\nTotal Allocation=(2,9,9), Available=(1,5,2)", ""]] }],
+  // IT 1396: typed copies of printed tables dropped (the table crop is shown).
+  ["kunkurcomputer-q-1276-1396-259C-100", { stem: [["\n(تخصیص یافته)\n\nA\nB\nC\nP₀\n۰\n۱\n۲\nP₁\n۲\n۰\n۳\nP₂\n۳\n۲\n۰\nP₃\n۱\n۰\n۲\nP₄\n۱\n۱\n۰\n\n(حداکثر نیاز)\n\nA\nB\nC\nP₀\n۳\n۶\n۸\nP₁\n۷\n۳\n۶\nP₂\n۵\n۳\n۳\nP₃\n۴\n۵\n۹\nP₄\n۲\n۳\n۳\n\n(تعداد منابع اولیه)\n\nA\nB\nC\n۸\n۶\n۱۰", ""]] }],
+  ["kunkurcomputer-q-1276-1396-259C-048", { dropFigures: true }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
