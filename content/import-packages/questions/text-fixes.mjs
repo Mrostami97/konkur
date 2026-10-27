@@ -630,6 +630,23 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-2355-1397-b0-011", { stem: [[" قالب اصلی شامل S با ۱ بیت، E با ۵ بیت و M با ۱۰ بیت در تصویر آمده است.",""]] }],
   ["kunkurcomputer-q-2355-1397-b0-012", { stem: [[" طرح اصلی حافظهٔ تابع در تصویر آمده است.",""]] }],
   ["kunkurcomputer-q-2355-1397-b0-014", { stem: [[" در شکل، زمان S1 برابر ۱ نانوثانیه و زمان مراحل S2 تا S6 به ترتیب t2 تا t6 است.",""]] }],
+  // PhD 2355 1396: notes pointing at the source image dropped; q11 options spelled out per field (the printed
+  // dashes read right to left); q16 address order stated plainly.
+  ["kunkurcomputer-q-2355-1396-b0-001", { stem: [[" مدار شامل majority_3 و majority_5 در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1396-b0-002", { stem: [[" مدار با چهار HA در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1396-b0-005", { stem: [[" مدار وارون‌سازها و گیت xor در تصویر منبع آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1396-b0-006", { stem: [[" مدار در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1396-b0-007", { stem: [[" درخت گیت‌های xor در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1396-b0-008", { stem: [[" مدار در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1396-b0-010", { stem: [[" مدار decoder و MUX در تصویر اصلی آمده است.",""]] }],
+  ["kunkurcomputer-q-2355-1396-b0-011", { stem: [[" رشتهٔ عددی گزینه‌ها از چپ به راستِ تصویر چاپی ثبت شده است.",""]], options: {
+    1: String.raw`tag: ۴۹، index: ۱۱، offset: ۴`,
+    2: String.raw`tag: ۵۰، index: ۱۰، offset: ۴`,
+    3: String.raw`tag: ۴۹، index: ۱۰، offset: ۵`,
+    4: String.raw`tag: ۴۸، index: ۱۱، offset: ۵`,
+  } }],
+  ["kunkurcomputer-q-2355-1396-b0-013", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1396-b0-016", { dropFigures: true, stem: [["ترتیب تولید آدرس‌ها مطابق جهت پیکانِ تصویر از راست به چپ است: ","آدرس‌ها به این ترتیب تولید می‌شوند: "]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

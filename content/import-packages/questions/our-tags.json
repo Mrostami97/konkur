@@ -7848,6 +7848,168 @@
    "topic": "نانوبرنامه و تعداد سیگنال‌های کنترل",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع اکثریت و معادل گیتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0002",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تعداد یک‌ها با نیم‌جمع‌کننده‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0003",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "سیستم‌های عددی",
+   "topic": "نمایش عدد در مبنای منفی دو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "سیستم‌های عددی",
+   "topic": "عدد اعشاری در مکمل ۲",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تأخیر گیت و گلیچ در خروجی XOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0006",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "مکمل ۲ سریالی با فلیپ‌فلاپ JK",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0007",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "بیت توازن کد با درخت XOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "لچ ساخته‌شده از گیت‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0009",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "مفاهیم مدار ترتیبی، حالت و ماشین حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0010",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "مالتی‌پلکسر با دیکودر و فیدبک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0011",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "میدان‌های آدرس نهان انجمنی مجموعه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0012",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "آدرس روتین وقفهٔ غیربرداری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0013",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تخصیص بیت نما و کسر در ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0014",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "قانون آمدال با دو بخش بهبودیافته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0016",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "شمارش miss در نهان نگاشت مستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0017",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل سیم‌بندی‌شده",
+   "topic": "تعداد فلیپ‌فلاپ واحد کنترل از چارت ASM",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0019",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "احتمال یک تفریق در ضرب بوت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1396-5495d8623cbe0081-q0015",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "زمان اجرای خط لوله برای n داده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
