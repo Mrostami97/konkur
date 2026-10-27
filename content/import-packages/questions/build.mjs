@@ -572,7 +572,8 @@ for (const examYear of examYears) {
       options: q.options.map((option) => ({
         number: option.number,
         blocks: [
-          ...(String(option.text ?? "").trim() ? [{ type: "text", text: String(option.text).trim() }] : []),
+          // optionImagesOnly: the crop says it all, so the long typed description of a drawing is left out.
+          ...(String(option.text ?? "").trim() && !(fix?.optionImagesOnly && optionKeys.has(option.number)) ? [{ type: "text", text: String(option.text).trim() }] : []),
           // An option typed in text-fixes.mjs replaces its crop.
           ...(optionKeys.has(option.number) && !fix?.options?.[option.number] ? [{ type: "image", media_key: optionKeys.get(option.number) }] : []),
         ],

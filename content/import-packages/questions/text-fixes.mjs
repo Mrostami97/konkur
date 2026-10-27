@@ -607,6 +607,23 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-2355-1399-b0-009", { dropFigures: true }],
   ["kunkurcomputer-q-2355-1399-b0-017", { stem: [[" مدار در تصویر منبع آمده است.",""]] }],
   ["kunkurcomputer-q-2355-1399-b0-019", { dropFigures: true }],
+  // PhD 2355 1398: notes pointing at the source image dropped; formula/option-table crops dropped; q18 options as
+  // drawings only; q19/q20 options typed; q19 circuit cut from the page ourselves (no figure crop existed).
+  ["kunkurcomputer-q-2355-1398-b0-004", { stem: [["؛ مدار و ماشین حالت در تصویر اصلی آمده‌اند.","."]] }],
+  ["kunkurcomputer-q-2355-1398-b0-017", { dropFigures: true }],
+  ["kunkurcomputer-q-2355-1398-b0-018", { stem: [[" اتصال‌های Source و Destination و چهار نمودار Data Valid، Data Bus و Data Accepted در تصویرهای اصلی آمده‌اند.",""]], optionImagesOnly: true }],
+  ["kunkurcomputer-q-2355-1398-b0-019", { stem: [[" مدار اصلی شامل MUXها و F.A در تصویر آمده است.",""]], figures: ["outputs/source_fidelity/assets/ce_ours/phd1398_q0019_alu.png"], options: {
+    1: String.raw`یک مدار مقایسه‌کنندهٔ یک‌بیتی است.`,
+    2: String.raw`یک مدار جمع‌کننده و تفریق‌کنندهٔ یک‌بیتی است.`,
+    3: String.raw`یک ALU یک‌بیتی است و چهار عمل $A+B$، $A+\overline B$، $A\wedge B$ و $A\vee B$ را انجام می‌دهد.`,
+    4: String.raw`یک ALU یک‌بیتی است و چهار عمل $A+B$، $A-B$ به کمک مکمل ۲، $A\wedge B$ و $A\vee B$ را انجام می‌دهد.`,
+  } }],
+  ["kunkurcomputer-q-2355-1398-b0-020", { dropFigures: true, options: {
+    1: String.raw`Push Ax: $SP\leftarrow SP+2$ سپس $M[SP]\leftarrow Ax$؛ Pop Bx: $Bx\leftarrow M[SP]$ سپس $SP\leftarrow SP-2$`,
+    2: String.raw`Push Ax: $M[SP]\leftarrow Ax$؛ Pop Bx: $Bx\leftarrow M[SP]$`,
+    3: String.raw`Push Ax: $SP\leftarrow SP-2$ سپس $M[SP]\leftarrow Ax$؛ Pop Bx: $Bx\leftarrow M[SP]$ سپس $SP\leftarrow SP+2$`,
+    4: String.raw`Push Ax: $M[SP]\leftarrow Ax$ سپس $SP\leftarrow SP+2$؛ Pop Bx: $SP\leftarrow SP-2$ سپس $Bx\leftarrow M[SP]$`,
+  } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

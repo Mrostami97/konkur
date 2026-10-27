@@ -7560,6 +7560,159 @@
    "topic": "عمق پشته در ماشین صفرآدرسه",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0001",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "مخاطرهٔ ایستا و مدت گلیچ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0003",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "شمارندهٔ آسنکرون با فلیپ‌فلاپ JK و T",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0004",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "منطق حالت بعد از روی نمودار حالت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0005",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "ترم‌های بی‌اهمیت در ساده‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0006",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تابع خروجی دو دیکودر با NOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0007",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "پیاده‌سازی تابع با مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0008",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترتیبی",
+   "topic": "ماشین حالت تشخیص‌دهندهٔ دنباله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0009",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "مدارهای ترکیبی",
+   "topic": "تبدیل عدد باینری به BCD با ROM",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0010",
+   "exam_track": "phd",
+   "course": "مدار منطقی",
+   "chapter": "ساده‌سازی توابع",
+   "topic": "عبارت کمینهٔ تابع با ورودی‌های نابرابر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0012",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "سهم سرکشی (polling) از زمان پردازنده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0014",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "مکمل ۲ و مکمل ۱۰",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0015",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بازهٔ اعداد مثبت ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0017",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "زمان متوسط دسترسی در سلسله‌مراتب سه‌سطحی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0018",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "دست‌دهی (handshake) فرستنده و گیرنده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0019",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "ALU یک‌بیتی با جمع‌کننده و مالتی‌پلکسر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0020",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "Push و Pop در پشتهٔ رو به پایین",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-985a1949c28641bd-q0011",
+   "exam_track": "phd",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "طول دستور دوآدرسه و اندازهٔ عملوند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
