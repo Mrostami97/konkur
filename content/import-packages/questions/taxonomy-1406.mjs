@@ -237,6 +237,8 @@ export const RULES = {
     [/بن‌بست/, "os-sync-deadlock"],
     [/سمافور|بحرانی/, "os-sync-critical"],
     [/زمان‌بندی/, "os-process-scheduling"],
+    // Basic concepts (dual mode, interrupts, hardware support) after the specific chapters above.
+    [/مفاهیم پایه سیستم عامل|مفاهیم پایهٔ سیستم‌عامل|ساختار سیستم‌عامل|حالت دوگانه/, "os-process-structure"],
     [/فرایند|نخ/, "os-process-processes"],
     // Fallback by chapter.
     [/fork|مدیریت فرآیندها|مدیریت فرایندها/, "os-process-processes"],
