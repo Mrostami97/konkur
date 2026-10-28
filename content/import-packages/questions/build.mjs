@@ -47,6 +47,7 @@ if (!bankRoot || !outDir) {
 const TAGGED = restArgs.includes("--tagged");
 const onlyYears = new Set(restArgs.filter((arg) => arg !== "--tagged").map(Number));
 const BANK = TAGGED ? "outputs/unified_question_bank/questions.jsonl" : "outputs/unified_question_bank/active_questions.jsonl";
+const DUPLICATE_COPIES = JSON.parse(await readFile(new URL("./duplicate-copies.json", import.meta.url), "utf8"));
 const TAGS = TAGGED
   ? new Map(JSON.parse(await readFile(path.join(bankRoot, "outputs/unified_question_bank/chapter_topics.json"), "utf8")).questions.map((tag) => [tag.question_id, tag]))
   : new Map();
@@ -363,6 +364,9 @@ const questions = (await readFile(bankFile, "utf8"))
   // The bank carries only the courses of the 1406 exam (owner, 2026-10-25); the dropped ones
   // (signals, general and engineering maths, digital electronics, management) stay in the archive.
   .filter((q) => !q.outside1406)
+  // CS 1393-1396 booklets print the specialized section twice (questions 91-130 and 181-220); one copy
+  // of each twin stays (owner, 2026-10-29). duplicate-copies.json maps each dropped copy to the kept one.
+  .filter((q) => !DUPLICATE_COPIES[q.questionId])
   .filter((q) => onlyYears.size === 0 || onlyYears.has(q.year));
 
 await mkdir(outDir, { recursive: true });
