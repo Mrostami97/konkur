@@ -707,6 +707,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1276-1387-b0-052", { stem: [["$U(n)$ و $S(n)$ به ترتیب", "$S(n)$ و $U(n)$ به ترتیب"]] }],
   ["kunkurcomputer-q-2357-1399-b0-011", { stem: [[" درخت عبارت و هشت برگ در تصویر اصلی آمده‌اند.", ""]] }],
   ["kunkurcomputer-q-2357-1399-b0-016", { stem: [[" شبکه و ظرفیت‌ها در تصویر اصلی آمده است.", ""]] }],
+  // PhD 2207 1395 q7: the booklet prints F_{h+3} - 1 in option 1.
+  ["kunkurcomputer-q-2207-1395-b0-007", { options: { 1: "$G_h=F_{h+3}-1$" } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

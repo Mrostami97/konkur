@@ -14040,6 +14040,132 @@
    "topic": "رابطهٔ ضرب زنجیره‌ای ماتریس‌ها",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0001",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "درستی گزاره‌ها دربارهٔ NP و کاهش",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0002",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "درخت با پیش‌ترتیب و پس‌ترتیب برابر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0003",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی با دو زیرمسئلهٔ کسری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "مقدار تابع بازگشتی با جمع توان‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0005",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "جانشین یک برگ در درخت جست‌وجوی دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0006",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مقدمات",
+   "topic": "رابطهٔ بازگشتی اعداد کاتالان برای شمارش درخت‌های جست‌وجو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0007",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "کمترین تعداد گره درخت AVL با ارتفاع h",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0008",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "تشخیص محور پس از اولین افراز مرتب‌سازی سریع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0009",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "یافتن دو عدد نزدیک با روش سطلی و اصل لانهٔ کبوتری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0010",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "قطر درخت وزن‌دار در زمان خطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0011",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تعداد درخت‌های فراگیر گراف بادبزن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0012",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تعداد درخت‌های فراگیر دو گراف کامل متصل با یک یال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0014",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "حریصانه برای ضرب زنجیره‌ای ماتریس‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1395-29d5b8390dde23dd-q0015",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "ضرب سریع ماتریس هادامارد در بردار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
