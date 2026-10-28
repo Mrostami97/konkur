@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: { params: Promise<{ subject: 
   if (!title) return { title: "بانک سؤال" };
   return {
     ...pageMetadata({
-      title: `تست‌های کنکور ارشد ${title} فصل‌به‌فصل`,
-      description: `تست‌های کنکور ارشد ${title} به ترتیب فصل‌های سرفصل ۱۴۰۶، با تعداد تست هر فصل، تمرین تست‌به‌تست و آزمون زمان‌دار.`,
+      title: `تست‌های کنکور ارشد و دکتری ${title} فصل‌به‌فصل`,
+      description: `تست‌های کنکور ارشد و دکتری ${title} به ترتیب فصل‌های سرفصل ۱۴۰۶، با تعداد تست هر فصل، تمرین تست‌به‌تست و آزمون زمان‌دار.`,
       path: `/questions/subjects/${subject}`,
     }),
     robots: { index: true, follow: true },

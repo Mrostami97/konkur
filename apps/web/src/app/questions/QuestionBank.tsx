@@ -330,11 +330,11 @@ export function QuestionBank({
       <header className="qb-hero">
         <div className="qb-wrap">
           <div>
-            <h1>بانک تست کنکور ارشد کامپیوتر</h1>
+            <h1>بانک تست کنکور ارشد و دکتری کامپیوتر</h1>
             <p className="qb-stats">
               {bankTotal !== null ? (
                 <>
-                  <strong className="tnum">{formatPersianNumber(bankTotal)}</strong> تست از کنکورهای ارشد سال‌های قبل
+                  <strong className="tnum">{formatPersianNumber(bankTotal)}</strong> تست از کنکورهای ارشد و دکتری سال‌های قبل
                   {bankSolved ? (
                     <>
                       ؛ <strong className="tnum">{formatPersianNumber(bankSolved)}</strong> تا با حل تشریحی
@@ -343,7 +343,7 @@ export function QuestionBank({
                   .
                 </>
               ) : (
-                "تست‌های کنکورهای ارشد سال‌های قبل، درس‌به‌درس و مبحث‌به‌مبحث."
+                "تست‌های کنکورهای ارشد و دکتری سال‌های قبل، درس‌به‌درس و مبحث‌به‌مبحث."
               )}
             </p>
           </div>

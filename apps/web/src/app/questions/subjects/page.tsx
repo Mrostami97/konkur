@@ -8,8 +8,8 @@ import "../questions.css";
 // The rest of /questions stays private (layout.tsx); this index is public, so it says so explicitly.
 export const metadata = {
   ...pageMetadata({
-    title: "بانک سؤال کنکور ارشد کامپیوتر فصل‌به‌فصل",
-    description: "تست‌های کنکور ارشد کامپیوتر به تفکیک درس و فصل‌های سرفصل ۱۴۰۶، با تعداد تست هر فصل و پاسخ تشریحی.",
+    title: "بانک سؤال کنکور ارشد و دکتری کامپیوتر فصل‌به‌فصل",
+    description: "تست‌های کنکور ارشد و دکتری کامپیوتر به تفکیک درس و فصل‌های سرفصل ۱۴۰۶، با تعداد تست هر فصل و پاسخ تشریحی.",
     path: "/questions/subjects",
   }),
   robots: { index: true, follow: true },

@@ -38,7 +38,7 @@ export function SubjectsIndex({ catalog, initialCounts }: { catalog: Subject[]; 
           <p className="qb-kicker"><Link href="/questions">بانک سؤال</Link></p>
           <h1>بانک سؤال فصل‌به‌فصل</h1>
           <p>
-            {allQuestions > 0 && `${fa(allQuestions)} تست کنکور ارشد کامپیوتر${allSolved ? `، ${fa(allSolved)} تا با پاسخ تشریحی` : ""}. `}
+            {allQuestions > 0 && `${fa(allQuestions)} تست کنکور ارشد و دکتری کامپیوتر${allSolved ? `، ${fa(allSolved)} تا با پاسخ تشریحی` : ""}. `}
             هر درس را باز کن تا فصل‌های سرفصل ۱۴۰۶ را با تعداد تست هر فصل، سهم هر فصل در کنکورهای اخیر و پیشرفت خودت ببینی، و هر فصل را جدا تمرین کنی یا از آن آزمون بدهی.
           </p>
         </div>
