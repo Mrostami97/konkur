@@ -14463,6 +14463,186 @@
    "topic": "طول سطر TLB در حافظهٔ مجازی قطعه‌صفحه",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0096",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "ورودی و خروجی نگاشت به حافظه و مبتنی بر وقفه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0097",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "شرط سرریز در جمع اعداد علامت‌دار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0098",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "تعداد مجموعه‌ها و بلوک‌ها از روی قالب آدرس نهان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0100",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تسریع خط لوله برای سه دستور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0102",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بزرگ‌ترین و کوچک‌ترین عدد مثبت ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0103",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "زبان اسمبلی و عملیات رجیستر",
+   "topic": "ترتیب بایت‌ها در Big-Endian",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "محلیت، الگوریتم پشته‌ای و اندازهٔ برچسب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0094",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و مسیر داده",
+   "topic": "تعداد کلاک عمل جمع روی مسیر داده با باس مشترک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0104",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "نانوبرنامه‌سازی و کدگذاری سیگنال‌های کنترل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0094",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "مدار تفریق مکمل ۲ با جمع‌کنندهٔ ۹ بیتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0095",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "نانوبرنامه‌سازی و کدگذاری سیگنال‌های کنترل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0096",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "سیاست‌های جایگزینی LRU و FIFO",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0097",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و ریزعملیات",
+   "topic": "تشخیص عمل دستور در کامپیوتر پایه از روی ریزعمل‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0099",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "دست‌دهی در انتقال ناهمگام",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0100",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "کد عملیات گسترش‌یافته برای دستورهای یک‌آدرسه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0101",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بزرگ‌ترین عدد در قالب ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0103",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "عوامل بهبود کارایی پردازنده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "جدول نگاشت تمام‌انجمنی به‌جای جدول صفحه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0098",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "ریزبرنامه‌سازی پویا با RAM به‌جای ROM",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0102",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "تعداد دسترسی load در RISC بدون آدرس‌دهی غیرمستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
