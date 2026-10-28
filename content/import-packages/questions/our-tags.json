@@ -15732,6 +15732,150 @@
    "topic": "دنبالهٔ امتیازهای تورنمنت",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0031",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "تعداد جمع‌های ممکن با سکه‌های ۳ تا ۱۲",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "عکس نقیض جملهٔ شرطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0033",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "یکنوایی ترکیب توابع صعودی و نزولی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "جواب عمومی با ریشهٔ مضاعف",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "اجتماع، ضرب دکارتی و خانواده‌های ناشمارا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0036",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "رقم یکان جمع توان‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0031",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "احتمال داشتن هر دو رنگ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "ترتیب جزئی و مشبکه",
+   "topic": "ترتیب کامل، مشبکه و خوش‌ترتیبی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "وارون راست تابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "انتخاب‌های بدون دو عضو با جمع ۱۰۵",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0036",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "عددهای مرکب متوالی و هم‌نهشتی توان‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0031",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "تعداد درخت‌های پوشای دو K4 با رأس مشترک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "ترکیب بستارها و رابطهٔ بازتابی متقارن ناترایا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0033",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "تابع مولد دنبالهٔ ۱، ۲، ۳",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "مجموعهٔ مستقل در درخت و گشت ماکزیمال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "لانهٔ کبوتری در n+1 عدد از ۱ تا 2n",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
