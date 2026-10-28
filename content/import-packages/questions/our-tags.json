@@ -14643,6 +14643,96 @@
    "topic": "تعداد دسترسی load در RISC بدون آدرس‌دهی غیرمستقیم",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0085",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "طول برچسب در نهان مجموعه‌انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0086",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "روش‌های ورودی و خروجی و نگاشت به حافظه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0087",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "زمان اجرا در پردازندهٔ چندصدوری خط لوله‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0089",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "طول سطر TLB",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0090",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تعداد سطح‌های جمع‌کنندهٔ carry save",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0088",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "صرفه‌جویی با نانوبرنامه‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1390-351B-q0086",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "نمای بایاس‌دار و نرمال‌سازی در ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1390-351B-q0087",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل سیم‌بندی‌شده",
+   "topic": "شمارش گیت‌ها و فلیپ‌فلاپ‌ها در کنترل سیم‌بندی مستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1390-351B-q0088",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تعداد بهینهٔ مراحل و بیشترین گذردهی خط لوله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1390-351B-q0090",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "محتوای نهان دستور با نگاشت مستقیم پس از اجرای حلقه‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
