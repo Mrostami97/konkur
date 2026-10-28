@@ -14994,6 +14994,168 @@
    "topic": "طول MAR و تعداد دستورهای یک‌بایتی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0041",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "صف‌بندی افراد جلوی دو باجه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "تعداد جواب‌های طبیعی معادلهٔ خطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "درجهٔ رئوس گراف مربع‌های ناهم‌پوشان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "گراف مسیرهای دور C10",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0040",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "تعداد اجرای حلقه‌های تودرتو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0041",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "توزیع اشیای یکسان با حداقل یکی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0042",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "نقیض گزارهٔ شرطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "تابع مولد دنبالهٔ n ضرب در n فاکتوریل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "حل رابطهٔ بازگشتی با تقسیم بر فاکتوریل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0040",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "شمارش توان‌های کامل با شمول و عدم شمول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0041",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "ماتریس مجاورت، وقوع و درجات",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0042",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "تابع مولد معادلهٔ با ضرایب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "تشخیص راستگو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "شمارش توابع g با f→g راستگو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d6b4ac841e02bf1-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "رشته‌های دودویی بدون دو صفر متوالی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0040",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "لانهٔ کبوتری با باقی‌مانده بر ۴",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-7adaa40c11e371ac-q-0042",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "شمارش انتخاب‌ها با شرط زوج بودن تعداد یا جمع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-aa34d7e9ba352ebc-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "خواص رابطه و رابطهٔ هم‌ارزی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

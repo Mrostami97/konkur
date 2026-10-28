@@ -715,6 +715,10 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1276-1388-C-104", { stem: [["۱،۲،۳،۴ و ۳", "۲، ۱، ۲، ۴ و ۳"]] }],
   // IT 1386 q104: the booklet asks for the single mixed number 7 1/7, not 7 and 1/7.
   ["kunkurcomputer-q-1276-1386-421-104", { stem: [["نمایش عدد ۷ و ۱/۷", "نمایش عدد $7\\tfrac{1}{7}$"]] }],
+  // CE 1403 q45: the booklet's paths have length 3, not 2.
+  ["kunkurcomputer-q-1277-1403-b1-045", { stem: [["هر مسیر به طول ۲", "هر مسیر به طول ۳"]] }],
+  // CE 1405 q44: option 2 is 3^8 in the booklet.
+  ["kunkurcomputer-q-1277-1405-b1-044", { options: { 2: "$3^8$" } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
