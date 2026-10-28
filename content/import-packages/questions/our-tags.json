@@ -15876,6 +15876,168 @@
    "topic": "لانهٔ کبوتری در n+1 عدد از ۱ تا 2n",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0031",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "چینش حروف با دست‌کم سه جفت حرف یکسان کنار هم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "جایگشت‌های صعود و نزول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0033",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "ترتیب جزئی و مشبکه",
+   "topic": "مرتب کلی، نمودار هاسه و ترتیب حاصل‌ضربی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "ویژگی‌های درخت و درخت m‌تایی کامل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "تابع مولد چینش سکه‌ها و اعداد کاتالان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1392-350D-q0036",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "جواب خصوصی رابطهٔ با ریشهٔ سه‌گانه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0031",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "معمای راستگو و دروغگو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "دور بلند در گراف با کمینهٔ درجه و بلندترین مسیر درخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0033",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "ترتیب بستارهای متقارن و متعدی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "زنجیره‌های شمول چهارتایی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "عدد اول و بخش‌پذیری بر ۷۳",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1393-350A-q0036",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "رشته‌های بدون زیررشتهٔ ab",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0031",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "توزیع جایزه‌های متمایز با دقیقاً دو نفر بی‌جایزه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "بخش‌پذیری بر ۷۲",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0033",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "تفاضل متقارن مجموعه‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "ترکیب رابطه با خودش",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "مسیرهای جهش قورباغه روی شش‌ضلعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0036",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "ترتیب جزئی و مشبکه",
+   "topic": "شمارش ترتیب‌های توپولوژیک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

@@ -729,6 +729,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1276-1398-859A-033", { options: { 4: "$a_n=(c_1n+c_2)5^n+c_3(-2)^n$" } }],
   // IT 1396 q35: options 3 and 4 have 3^23 in the booklet.
   ["kunkurcomputer-q-1276-1396-259C-035", { options: { 3: "$2^{75}-3^{23}$", 4: "$3^{23}\\times2^{29}$" } }],
+  // IT 1394 q35: the booklet asks for a_13, not a_17.
+  ["kunkurcomputer-q-1276-1394-351C-035", { stem: [["a_{17}", "a_{13}"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
