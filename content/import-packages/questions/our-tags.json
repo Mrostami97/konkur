@@ -10980,6 +10980,150 @@
    "topic": "اثر اندازهٔ صفحه در صفحه‌بندی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0037",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "درهم‌سازی با آدرس‌دهی باز خطی و درج دوباره بدون یک کلید",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0038",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "حل رابطهٔ بازگشتی با قضیهٔ اصلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0039",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "جست‌وجوی سطح اول در گراف جهت‌دار با صف",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0041",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "هزینهٔ DFS با ماتریس مجاورت، درج در AVL و درهم‌سازی باز",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0042",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "درج در درخت AVL و چرخش دوگانه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0043",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "زمان اجرای دو حلقهٔ تودرتوی لگاریتمی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0045",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی ادغامی با تقسیم در مکان تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0046",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "ساخت درخت جست‌وجوی متوازن از آرایه‌های مرتب و مسیر در درخت فراگیر کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0047",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "ساخت ماتریس مجموع بازه‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0048",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تعداد یال‌های گراف جهت‌دار بی‌دور هم‌بند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0076",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "شرایط استنتاج با رزولوشن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0078",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "ترجمهٔ جمله به منطق مرتبه اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0080",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "حافظهٔ مجازی",
+   "topic": "زمان مؤثر دسترسی با TLB، حافظهٔ نهان و نقص صفحه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0081",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "همگام‌سازی فرایندها",
+   "topic": "راه‌حل ناحیهٔ بحرانی با دستور swap",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0083",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "فرایندها و نخ‌ها",
+   "topic": "نخ‌ها و فرایندهای سبک‌وزن (LWP)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0084",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "حافظهٔ مجازی",
+   "topic": "ساختارهای برنامه مناسب صفحه‌بندی درخواستی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
