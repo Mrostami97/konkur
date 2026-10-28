@@ -12690,6 +12690,177 @@
    "topic": "روابط کلاس‌های پیچیدگی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0001",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی ضربی با ضریب دو به توان n",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0002",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "تحلیل احتمالی تعداد به‌روزرسانی کمینه در ورودی تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0003",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "زمان میانگین جست‌وجو در درهم‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "هرم و صف اولویت",
+   "topic": "تغییر اولویت یک عنصر در هرم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0006",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "تشخیص دور در لیست پیوندی با دو اشاره‌گر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0007",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "یافتن جفتی با مجموع بیشتر از x در دو مجموعه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0008",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "نقطهٔ با بیشترین هم‌پوشانی بازه‌ها با جاروب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0009",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "صف اولویت با لیست پیوندی دوطرفهٔ حلقوی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0010",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "دورترین رأس در گراف بی‌وزن با جست‌وجوی سطح‌اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0012",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "مقایسهٔ زمان بدترین حالت و رفتار روی همهٔ ورودی‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0036",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "درخت آلفا-متوازن و تشخیص تکرار با درهم‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0037",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "توان‌رسانی پیمانه‌ای و تعداد اعمال بیتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0038",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "هزینهٔ سرشکن درج در آرایهٔ دوبرابرشونده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0039",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مباحث دیگر",
+   "topic": "قانون آمدال در الگوریتم‌های موازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0041",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "عقب‌گرد",
+   "topic": "یافتن همهٔ زیرمجموعه‌ها با مجموع T",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0042",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مقدمات",
+   "topic": "امید ریاضی تعداد نابه‌جایی‌های یک جایگشت تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0043",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "افراز حریصانه با اعداد ابرافزایشی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0044",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مباحث دیگر",
+   "topic": "هدف الگوریتم KMP در تطبیق رشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1404-a3b3e32a43c0ec21-q0045",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "مسائل coNP-کامل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
