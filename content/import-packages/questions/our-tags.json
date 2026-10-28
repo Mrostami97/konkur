@@ -12384,6 +12384,42 @@
    "topic": "تعداد نقص صفحه با جایگزینی FIFO",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-69a22229a1cf83cf-q0011",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "بیشینهٔ مقدار درخت عبارت با برگ‌های صفر و یک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1399-69a22229a1cf83cf-q0016",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "شار بیشینه در شبکه و افزایش ظرفیت یک یال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-41d78ba69d814ad9-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "خرد کردن پول با روش حریصانه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-41d78ba69d814ad9-q0015",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "ترتیب‌های ممکن جست‌وجوی سطح‌اول و عمق‌اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
