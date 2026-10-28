@@ -713,6 +713,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1276-1391-349A-089", { options: { 3: "34" } }],
   // IT 1388 q104: the booklet's stage delays are 2, 1, 2, 4 and 3 ns.
   ["kunkurcomputer-q-1276-1388-C-104", { stem: [["۱،۲،۳،۴ و ۳", "۲، ۱، ۲، ۴ و ۳"]] }],
+  // IT 1386 q104: the booklet asks for the single mixed number 7 1/7, not 7 and 1/7.
+  ["kunkurcomputer-q-1276-1386-421-104", { stem: [["نمایش عدد ۷ و ۱/۷", "نمایش عدد $7\\tfrac{1}{7}$"]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

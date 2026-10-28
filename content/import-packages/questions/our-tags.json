@@ -14868,6 +14868,132 @@
    "topic": "تعداد کلاک‌های خط لوله برای پردازش ۱۰۰ داده",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1387-e4fc23f704dcd879-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "زمان متوسط انتقال بلوک با حافظهٔ نهان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1387-e4fc23f704dcd879-q0106",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "شرط کوچک‌تری با پرچم‌های S، Z، C و V",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1387-e4fc23f704dcd879-q0107",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بیشترین تعداد جمع و تفریق در ضرب بوث ۳۲ بیتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1387-e4fc23f704dcd879-q0108",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "تشخیص عبارت از روی کد ماشین پشته‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1387-e4fc23f704dcd879-q0109",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "بیشترین تعداد دستورهای تک‌آدرسه با کد عملیات گسترش‌یافته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1387-e4fc23f704dcd879-q0110",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تسریع خط لولهٔ ۸ بخشی برای ۱۰۰۰ دستور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0103",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "نرخ hit نگاشت مستقیم و LRU برای حلقهٔ ۶۵ دستوری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0104",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "نمایش ممیز شناور ۳۲ بیتی یک عدد کسری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "حالت‌های مرزی نگاشت مجموعه‌انجمنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0106",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "زمان متوسط دسترسی با نهان دوسطحی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0107",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تسریع خط لوله با پرش‌های شرطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0108",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "شرط سرریز نکردن خارج‌قسمت در تقسیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0109",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "صرفه‌جویی با نانوبرنامه‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1386-421-q0110",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "طول MAR و تعداد دستورهای یک‌بایتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
