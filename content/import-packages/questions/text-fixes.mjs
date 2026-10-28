@@ -692,6 +692,11 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   // IT 1396: typed copies of printed tables dropped (the table crop is shown).
   ["kunkurcomputer-q-1276-1396-259C-100", { stem: [["\n(تخصیص یافته)\n\nA\nB\nC\nP₀\n۰\n۱\n۲\nP₁\n۲\n۰\n۳\nP₂\n۳\n۲\n۰\nP₃\n۱\n۰\n۲\nP₄\n۱\n۱\n۰\n\n(حداکثر نیاز)\n\nA\nB\nC\nP₀\n۳\n۶\n۸\nP₁\n۷\n۳\n۶\nP₂\n۵\n۳\n۳\nP₃\n۴\n۵\n۹\nP₄\n۲\n۳\n۳\n\n(تعداد منابع اولیه)\n\nA\nB\nC\n۸\n۶\n۱۰", ""]] }],
   ["kunkurcomputer-q-1276-1396-259C-048", { dropFigures: true }],
+  // IT 1395: typed copies of printed tables dropped (the table crop is shown).
+  ["kunkurcomputer-q-1276-1395-252A-088", { stem: [["\nنام برنامه / زمان ورود(s) / مدت زمان لازم برای اجرا(s)\nA / ۱۰ / ۱۰۰\nB / ۲۰ / ۵۰\nC / ۲۵۰ / ۳۰\nD / ۲۶۰ / ۳۰\nE / ۲۷۰ / ۴۰", ""]] }],
+  ["kunkurcomputer-q-1276-1395-252A-093", { stem: [["\nستون‌ها به ترتیب R₁,R₂,R₃,R₄:\nتخصیص: P₁=(۰,۰,۱,۰)، P₂=(۲,۰,۰,۱)، P₃=(۰,۱,۲,۰).\nنیاز: P₁=(۲,۰,۰,۱)، P₂=(۱,۰,۱,۰)، P₃=(۲,۱,۰,۰).\nموجود: (۲,۱,۰,۰).", ""]] }],
+  ["kunkurcomputer-q-1276-1395-252A-039", { stem: [["\nکلید\nاندیس درهم‌سازی\nB\n۳\nC\n۴\nD\n۵\nF\n۰\nI\n۳\nN\n۱\nU\n۱\n", ""]] }],
+  ["kunkurcomputer-q-1276-1395-252A-090", { stem: [[" (به ترتیب از راست به چپ)", ""]], options: { 1: "منطقی ۹ و فیزیکی ۱۱ بیت", 2: "منطقی ۱۱ و فیزیکی ۱۳ بیت", 3: "منطقی ۱۳ و فیزیکی ۱۵ بیت", 4: "منطقی ۱۵ و فیزیکی ۱۳ بیت" } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
