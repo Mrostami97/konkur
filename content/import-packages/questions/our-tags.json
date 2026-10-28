@@ -12420,6 +12420,69 @@
    "topic": "ترتیب‌های ممکن جست‌وجوی سطح‌اول و عمق‌اول",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1405-60be711e6c26b6a7-q0001",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "مقایسهٔ رشد توابع با لگاریتم گرفتن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1405-60be711e6c26b6a7-q0002",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی با جملهٔ n تقسیم بر log n",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1405-60be711e6c26b6a7-q0003",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و آمار ترتیبی",
+   "topic": "میانهٔ دو آرایهٔ مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1405-60be711e6c26b6a7-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مقدمات",
+   "topic": "شمارش پرانتزگذاری‌ها و اعداد کاتالان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1405-60be711e6c26b6a7-q0007",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "لیست پیوندی با اشاره‌گر XOR",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1405-60be711e6c26b6a7-q0009",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "عقب‌گرد",
+   "topic": "عقب‌گرد در مسئلهٔ n وزیر و بررسی پیشرو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1405-60be711e6c26b6a7-q0011",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "درستی گزاره‌ها دربارهٔ دایکسترای دوطرفه و کوتاه‌ترین مسیر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
