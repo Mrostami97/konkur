@@ -13779,6 +13779,96 @@
    "topic": "الگوریتم شبه‌چندجمله‌ای و پارامترسازی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0024",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "آرایهٔ شمارش تجمعی در مرتب‌سازی شمارشی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0025",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی آرایه‌ای که فقط عناصر مجاور نابه‌جا دارند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0027",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "فاصلهٔ ویرایش دو رشته با هزینهٔ درج، حذف و تغییر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0028",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "رابطهٔ تعداد برگ‌ها و گره‌های دوفرزندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0029",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تعداد یال‌های گراف بر حسب تعداد رأس‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0030",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "ترتیب ملاقات در جست‌وجوی عمق‌اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0031",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "توان‌رسانی سریع با مربع کردن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0033",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "زمان درج n کلید در درخت جست‌وجوی دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0034",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "جواب‌های ممکن رابطهٔ بازگشتی با قضیهٔ اصلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1398-eb1f6ad7d14aadfe-q0035",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "خروجی حلقهٔ جداسازی رقم‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
