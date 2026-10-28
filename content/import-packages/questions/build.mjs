@@ -459,6 +459,10 @@ for (const examYear of examYears) {
     // scored for nobody, with the official key kept for reference and a solution saying why.
     const noOption = Boolean(SOLUTIONS[externalId]?.noCorrectOption);
     if (noOption && (keyless || q.deleted)) throw new Error(`${externalId}: noCorrectOption needs an official key`);
+    // An initial key our worked solution reaches stands as the key, as for the PhD booklets (owner, 2026-10-28:
+    // complete every course of the 1406 package). A solution that disagrees still fails below.
+    const settledInitial = q.initialKey && !q.deleted && !keyless && Boolean(SOLUTIONS[externalId]) && (noOption || SOLUTIONS[externalId].answer === q.correct);
+    if (settledInitial) q.initialKey = false;
 
     const assets = [];
     const addFile = ({ asset, buffer }) => {
@@ -541,6 +545,7 @@ for (const examYear of examYears) {
     const notes = [
       ...q.notes,
       ...(q.initialKey ? ["کلید اولیه؛ کلید نهایی هنوز اعمال نشده"] : []),
+      ...(settledInitial ? ["کلید اولیه؛ حل تشریحی همین گزینه را تأیید می‌کند"] : []),
       ...(curated?.solution?.length ? ["راه‌حل تشریحی: نوشتهٔ Claude و هم‌خوان با کلید؛ بازبینی مالک لازم است"] : []),
       ...(q.keySource === "authored" ? ["کلید رسمی در دسترس نیست؛ پاسخ تألیفی با بازبینی مستقل جای کلید است"] : []),
       ...(keyless ? ["کلید ندارد؛ تا حل‌شدن در صف بازبینی می‌ماند (گزینهٔ ۱ فقط جای خالی است)"] : []),
