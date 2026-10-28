@@ -13869,6 +13869,177 @@
    "topic": "خروجی حلقهٔ جداسازی رقم‌ها",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0024",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "ترتیب‌های ممکن خروجی پشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0025",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "درستی گزاره‌ها دربارهٔ NP و کاهش",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0026",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "ویژگی‌های الگوریتم‌های تقسیم و حل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0027",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو",
+   "topic": "یافتن نقطهٔ ثابت با جست‌وجوی دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0028",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو",
+   "topic": "جست‌وجو در آرایهٔ چرخشی مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0029",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "تعداد مقایسه‌های ادغام دو آرایهٔ مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0030",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "ناوردای حلقهٔ محاسبهٔ فاکتوریل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0031",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "پیش‌ترتیب سازگار با میان‌ترتیب معلوم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0032",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "توان‌رسانی سریع دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1394-a0285b327db3d93d-q0033",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی با قضیهٔ اصلی و جملهٔ لگاریتمی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0024",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "مقایسهٔ کاراکتر به کاراکتر دو رشته در آرایه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0025",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "پیاده‌سازی آرایه و لیست پیوندی با یکدیگر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0026",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "هرم و صف اولویت",
+   "topic": "درج در هرم بیشینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0027",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "مقایسهٔ رشد سه مجموع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0028",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "زمان تابع بازگشتی با حلقهٔ درونی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0029",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "رابطهٔ بازگشتی با تقسیم نامساوی یک‌سوم و دوسوم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0030",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو",
+   "topic": "جست‌وجوی ترتیبی در داده‌های نامرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0032",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "تشخیص مرتب‌سازی سریع از مراحل میانی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1393-fd6bc4a3a081965a-q0034",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "رابطهٔ ضرب زنجیره‌ای ماتریس‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
