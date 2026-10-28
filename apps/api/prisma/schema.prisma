@@ -1038,11 +1038,14 @@ model QuestionMark {
 /// How the final key scores a question. DELETED: the exam board removed it --
 /// no mark either way and not counted (correctOption keeps the earlier key,
 /// for reference). POSITIVE_EFFECT: a right answer scores, a wrong one costs
-/// nothing.
+/// nothing. NO_CORRECT_OPTION: none of the four options is right (we checked
+/// it against the booklet); scored like DELETED, correctOption keeps the
+/// official key for reference.
 enum QuestionKeyState {
   NORMAL
   DELETED
   POSITIVE_EFFECT
+  NO_CORRECT_OPTION
 }
 
 /// Text shared by several questions -- the reading passage of the English

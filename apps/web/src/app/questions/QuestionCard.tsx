@@ -46,8 +46,9 @@ export interface BankQuestion {
   correctOption?: number;
   /** Every option the final key accepts, when more than one. */
   acceptedOptions?: number[];
-  /** DELETED: the board removed it; POSITIVE_EFFECT: a wrong answer costs nothing. */
-  keyState?: "NORMAL" | "DELETED" | "POSITIVE_EFFECT";
+  /** DELETED: the board removed it; POSITIVE_EFFECT: a wrong answer costs nothing;
+   * NO_CORRECT_OPTION: none of the options is right (correctOption is the official key). */
+  keyState?: "NORMAL" | "DELETED" | "POSITIVE_EFFECT" | "NO_CORRECT_OPTION";
   solutionBlocks?: Block[];
   solutionHint?: string | null;
   solutionShortcut?: string | null;
@@ -166,7 +167,9 @@ export const QuestionCard = forwardRef<CardHandle, CardProps>(function QuestionC
     if (active && startedAt.current === null) startedAt.current = Date.now();
   }, [active]);
 
-  const deleted = question.keyState === "DELETED";
+  const noOption = question.keyState === "NO_CORRECT_OPTION";
+  // No answer earns or loses anything: the board deleted it, or no option is right.
+  const deleted = question.keyState === "DELETED" || noOption;
   const keyOptions = [...new Set([question.correctOption, ...(question.acceptedOptions ?? [])].filter((n): n is number => typeof n === "number"))].sort();
   const hasKey = question.correctOption !== undefined;
   const correct = checked && picked !== null && !deleted && keyOptions.includes(picked);
@@ -234,7 +237,8 @@ export const QuestionCard = forwardRef<CardHandle, CardProps>(function QuestionC
     setChecked(true);
     const local: Outcome = deleted ? "VOID" : keyOptions.includes(picked) ? "CORRECT" : "WRONG";
     // A wrong answer opens the quick way at once; a right one leaves the solution a tap away.
-    if (local === "WRONG") setTab(question.solutionShortcut ? "shortcut" : hasSolution ? "solution" : null);
+    // With no right option the solution is the only place the answer is, so it opens too.
+    if (local === "WRONG" || noOption) setTab(question.solutionShortcut ? "shortcut" : hasSolution ? "solution" : null);
     onOutcome?.(question.id, local);
     if (!history) return;
     try {
@@ -300,15 +304,17 @@ export const QuestionCard = forwardRef<CardHandle, CardProps>(function QuestionC
     }
   }
 
-  const verdict = deleted
-    ? "این تست در کلید نهایی حذف شد؛ برای هیچ پاسخی نمره‌ای داده یا کم نشد."
-    : correct
-      ? keyOptions.length > 1
-        ? `درست است. کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
-        : "درست است."
-      : keyOptions.length > 1
-        ? `نادرست؛ کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
-        : `نادرست؛ پاسخ درست گزینهٔ ${toPersianDigits(question.correctOption ?? 0)} است.`;
+  const verdict = noOption
+    ? `جواب درست در هیچ‌کدام از گزینه‌ها نیست. کلید رسمی گزینهٔ ${toPersianDigits(question.correctOption ?? 0)} را اعلام کرده بود؛ دلیلش را در پاسخ تشریحی ببین.`
+    : deleted
+      ? "این تست در کلید نهایی حذف شد؛ برای هیچ پاسخی نمره‌ای داده یا کم نشد."
+      : correct
+        ? keyOptions.length > 1
+          ? `درست است. کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
+          : "درست است."
+        : keyOptions.length > 1
+          ? `نادرست؛ کلید نهایی گزینه‌های ${keyOptions.map((n) => toPersianDigits(n)).join(" و ")} را پذیرفت.`
+          : `نادرست؛ پاسخ درست گزینهٔ ${toPersianDigits(question.correctOption ?? 0)} است.`;
 
   const topicHref = place
     ? `/questions?subject=${encodeURIComponent(question.subjectCode)}&topic=${encodeURIComponent(place.topic.code)}`

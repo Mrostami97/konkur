@@ -169,8 +169,9 @@ export interface QuestionV2 {
   correct_option: 1 | 2 | 3 | 4;
   accepted_options?: (1 | 2 | 3 | 4)[];
   /** How the final key scores it; absent means normal. A deleted question keeps
-   * its earlier key in correct_option for reference only. */
-  key_state?: "normal" | "deleted" | "positive_effect";
+   * its earlier key in correct_option for reference only; so does a question whose
+   * right answer is in none of the options (no_correct_option). */
+  key_state?: "normal" | "deleted" | "positive_effect" | "no_correct_option";
   solution_blocks: QuestionBlock[];
   review: { text_verified: boolean; key_verified: boolean; notes?: string[] };
   /** The tagger's own chapter and one-line description, beside the syllabus topic. */

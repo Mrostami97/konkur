@@ -11259,6 +11259,69 @@
    "topic": "پشتیبانی سخت‌افزاری از سیستم‌عامل در اجرای فرایندها",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0041",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "درخت جست‌وجوی دودویی بهینه و انتخاب پرتکرارترین کلید برای ریشه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0046",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "یافتن رأس هدف در درخت با پرسیدن یال‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1397-260E-q0093",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "شمارش مدل‌های جمله‌های منطق گزاره‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0040",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "چاپ کلیدهای یک بازه در درخت جست‌وجوی دودویی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1391-349A-q0082",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "زمان‌بندی نوبت گردشی با سربار تعویض",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1390-351B-q0041",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "بازسازی درخت دودویی از پیش‌ترتیب و مجموعهٔ برگ‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1390-351B-q0079",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت دیسک",
+   "topic": "زمان‌بندی دیسک FIFO و SSTF",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

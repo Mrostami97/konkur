@@ -1,7 +1,17 @@
 import type { QuestionV1, QuestionV2 } from "@konkurcom/contracts";
 import { Prisma, QuestionKeyState, QuestionQuality } from "@prisma/client";
 
-const KEY_STATE = { normal: QuestionKeyState.NORMAL, deleted: QuestionKeyState.DELETED, positive_effect: QuestionKeyState.POSITIVE_EFFECT } as const;
+const KEY_STATE = {
+  normal: QuestionKeyState.NORMAL,
+  deleted: QuestionKeyState.DELETED,
+  positive_effect: QuestionKeyState.POSITIVE_EFFECT,
+  no_correct_option: QuestionKeyState.NO_CORRECT_OPTION,
+} as const;
+
+/** Key states under which no answer earns or loses a mark: the board deleted
+ * the question, or none of its options is right. */
+export const VOID_KEY_STATES: QuestionKeyState[] = [QuestionKeyState.DELETED, QuestionKeyState.NO_CORRECT_OPTION];
+export const isVoidKey = (keyState?: QuestionKeyState | null) => keyState != null && VOID_KEY_STATES.includes(keyState);
 
 /**
  * GOLD: text and key checked against the booklet, and a worked solution.
@@ -109,12 +119,12 @@ export async function questionRowFromPayload(
 }
 
 /** Whether `selected` earns the mark: the stored key, or any option the final key also accepts.
- * A question the final key deleted earns nothing for anyone. */
+ * A question the final key deleted, or one with no right option, earns nothing for anyone. */
 export function isAcceptedAnswer(
   question: { correctOption: number; acceptedOptions?: number[] | null; keyState?: QuestionKeyState },
   selected: number | null | undefined,
 ) {
   if (selected === null || selected === undefined) return false;
-  if (question.keyState === QuestionKeyState.DELETED) return false;
+  if (isVoidKey(question.keyState)) return false;
   return selected === question.correctOption || (question.acceptedOptions ?? []).includes(selected);
 }

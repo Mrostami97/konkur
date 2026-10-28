@@ -185,9 +185,10 @@
       "enum": [
         "normal",
         "deleted",
-        "positive_effect"
+        "positive_effect",
+        "no_correct_option"
       ],
-      "description": "How the final key scores this question: normal; deleted (the board removed it -- no mark either way, correct_option is then only the key it had before, kept for reference); positive_effect (a right answer scores, a wrong one costs nothing)."
+      "description": "How the final key scores this question: normal; deleted (the board removed it -- no mark either way, correct_option is then only the key it had before, kept for reference); positive_effect (a right answer scores, a wrong one costs nothing); no_correct_option (none of the four options is right, so no mark either way; correct_option keeps the official key for reference)."
     },
     "slot": {
       "type": "object",

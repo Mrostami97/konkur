@@ -14,7 +14,7 @@ const EXAM_NAMES: Record<string, string> = {
   "1276": "فناوری اطلاعات (IT)",
   "1209": "علوم کامپیوتر",
 };
-import { isAcceptedAnswer } from "../ingestion/question-payload";
+import { isAcceptedAnswer, isVoidKey } from "../ingestion/question-payload";
 import {
   Breakdown,
   GradedItem,
@@ -788,7 +788,7 @@ export class AssessmentService {
           sectionId: item.sectionId,
           subjectCode: item.question.subjectCode,
           outcome:
-            item.question.keyState === QuestionKeyState.DELETED
+            isVoidKey(item.question.keyState)
               ? "void"
               : selected == null
                 ? "blank"
@@ -805,8 +805,8 @@ export class AssessmentService {
       let wrongCount = 0;
       let unansweredCount = 0;
       let rawScore = 0;
-      // A question the final key deleted is out of the exam: no mark, no count.
-      const scored = items.filter((item) => item.question.keyState !== QuestionKeyState.DELETED);
+      // A question the final key deleted, or one with no right option, is out of the exam: no mark, no count.
+      const scored = items.filter((item) => !isVoidKey(item.question.keyState));
       for (const item of scored) {
         const selected = answerByQuestion.get(item.questionId);
         if (selected == null) {

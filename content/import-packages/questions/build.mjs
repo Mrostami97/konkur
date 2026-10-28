@@ -455,6 +455,10 @@ for (const examYear of examYears) {
       Object.assign(q, { correct: ourKey, accepted: [ourKey], keyVerified: true, keySource: "authored" });
       keyless = false;
     }
+    // None of the four options is right (checked against the booklet): the question still comes in,
+    // scored for nobody, with the official key kept for reference and a solution saying why.
+    const noOption = Boolean(SOLUTIONS[externalId]?.noCorrectOption);
+    if (noOption && (keyless || q.deleted)) throw new Error(`${externalId}: noCorrectOption needs an official key`);
 
     const assets = [];
     const addFile = ({ asset, buffer }) => {
@@ -529,7 +533,7 @@ for (const examYear of examYears) {
         ? { ...SAMPLES[externalId], sample: true }
         : SOLUTIONS[externalId];
     if (curated && !verified) {
-      if (curated.answer !== q.correct) throw new Error(`${externalId}: the solution reaches option ${curated.answer}, the key says ${q.correct}`);
+      if (!noOption && curated.answer !== q.correct) throw new Error(`${externalId}: the solution reaches option ${curated.answer}, the key says ${q.correct}`);
       if (!q.textVerified || !q.keyVerified || q.initialKey) throw new Error(`${externalId}: a sample needs a checked text and a final, checked key`);
       if (SAMPLES[externalId]) usedSamples.add(externalId);
       else usedSolutions.add(externalId);
@@ -541,6 +545,7 @@ for (const examYear of examYears) {
       ...(q.keySource === "authored" ? ["کلید رسمی در دسترس نیست؛ پاسخ تألیفی با بازبینی مستقل جای کلید است"] : []),
       ...(keyless ? ["کلید ندارد؛ تا حل‌شدن در صف بازبینی می‌ماند (گزینهٔ ۱ فقط جای خالی است)"] : []),
       ...(q.deleted ? ["در کلید نهایی حذف شده"] : []),
+      ...(noOption ? ["جواب درست در هیچ‌کدام از گزینه‌ها نیست؛ کلید رسمی فقط برای ارجاع نگه داشته شده"] : []),
       ...(NEEDS_FIGURE.has(externalId) ? [`در صف بازبینی: ${NEEDS_FIGURE.get(externalId)}`] : []),
     ];
     const passageKey = q.passageId
@@ -581,7 +586,7 @@ for (const examYear of examYears) {
       // A deleted or keyless question keeps 1 as a placeholder: the key state says it is not a key.
       correct_option: [1, 2, 3, 4].includes(q.correct) ? q.correct : 1,
       ...(q.accepted.length > 1 && q.accepted.includes(q.correct) ? { accepted_options: q.accepted } : {}),
-      ...(q.deleted ? { key_state: "deleted" } : q.positiveEffect ? { key_state: "positive_effect" } : {}),
+      ...(q.deleted ? { key_state: "deleted" } : noOption ? { key_state: "no_correct_option" } : q.positiveEffect ? { key_state: "positive_effect" } : {}),
       solution_blocks: curated?.solution ?? (q.authoredExplanation ? [{ type: "text", text: q.authoredExplanation }] : []),
       review: { text_verified: q.textVerified && !NEEDS_FIGURE.has(externalId), key_verified: keyless ? false : q.keyVerified, notes },
       ...(q.labels && Object.keys(q.labels).length ? { labels: q.labels } : {}),

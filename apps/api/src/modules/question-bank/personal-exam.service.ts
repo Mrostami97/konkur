@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { ExamMode, Prisma, QuestionKeyState, QuestionQuality } from "@prisma/client";
+import { ExamMode, Prisma, QuestionQuality } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AccessService } from "../access/access.service";
+import { VOID_KEY_STATES } from "../ingestion/question-payload";
 import { PracticeService, type Collection } from "./practice.service";
 
 export interface PracticeSelection {
@@ -46,7 +47,7 @@ export class PersonalExamService {
     const where: Prisma.QuestionWhereInput = {
       retiredAt: null,
       qualityTier: { not: QuestionQuality.DRAFT },
-      keyState: { not: QuestionKeyState.DELETED },
+      keyState: { notIn: VOID_KEY_STATES },
       subjectCode: selection.subjectCode,
     };
     if (selection.topicCodes?.length) where.topicCodes = { hasSome: selection.topicCodes };

@@ -701,6 +701,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1276-1394-351C-090", { stem: [["\nP1: 2\nP2: 6\nP3: 1\nP4: 4\nP5: 3", ""]] }],
   // IT 1393: typed copies of printed tables dropped (the table crop is shown).
   ["kunkurcomputer-q-1276-1393-350A-090", { stem: [["\nP: Request x₁ kB سپس Request x₂ kB\nQ: Request y₁ kB سپس Request y₂ kB", ""]] }],
+  // IT 1390 q79: the booklet prints 310, not 315, in options 1, 3 and 4.
+  ["kunkurcomputer-q-1276-1390-351B-079", { options: { 1: "۳۱۰، ۲۶۰ و زمانبندی SSTF از FIFO بهتر عمل می‌کند.", 3: "۳۱۰، ۳۱۰ و SSTF مشابه FIFO عمل می‌کند.", 4: "۳۱۰، ۳۵۶ و زمانبندی FIFO از SSTF بهتر عمل می‌کند." } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

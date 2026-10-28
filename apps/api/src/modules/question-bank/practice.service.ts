@@ -1,8 +1,8 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { AnswerConfidence, PracticeErrorReason, PracticeOutcome, Prisma, QuestionKeyState, QuestionQuality } from "@prisma/client";
+import { AnswerConfidence, PracticeErrorReason, PracticeOutcome, Prisma, QuestionQuality } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AccessService } from "../access/access.service";
-import { isAcceptedAnswer } from "../ingestion/question-payload";
+import { isAcceptedAnswer, isVoidKey } from "../ingestion/question-payload";
 
 /** How many past outcomes a question's history line shows. */
 const HISTORY_LENGTH = 6;
@@ -58,7 +58,7 @@ export class PracticeService {
   async record(userId: string, questionId: string, input: { selectedOption: number; confidence?: AnswerConfidence; timeSpentMs?: number }) {
     const question = await this.readable(userId, questionId);
     const outcome =
-      question.keyState === QuestionKeyState.DELETED
+      isVoidKey(question.keyState)
         ? PracticeOutcome.VOID
         : isAcceptedAnswer(question, input.selectedOption)
           ? PracticeOutcome.CORRECT
