@@ -15606,6 +15606,132 @@
    "topic": "دستگاه رابطه‌های بازگشتی خطی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1398-859A-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "احتمال پایان پرتاب سکه با ده شیر پشت سر هم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1398-859A-q0033",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "جواب عمومی با جملهٔ ناهمگن هم‌ریشه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1398-859A-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "بخش‌پذیری فاکتوریل بر عددهای مرکب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1398-859A-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "اشتراک دو رابطهٔ هم‌ارزی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1399-460E-q0031",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "ضریب چندجمله‌ای در بسط",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1399-460E-q0032",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "تورنمنت و مسیر همیلتونی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1399-460E-q0033",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "پوشا بودن ترکیب توابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1399-460E-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "کلمه‌هایی با تعداد زوج a",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1399-460E-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "جابه‌جایی بستارهای بازتابی، تقارنی و تعدی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1399-460E-q0036",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "شرکت‌پذیری عملگرهای منطقی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0034",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "جمع رقم‌های ۲۵ فاکتوریل به‌علاوهٔ ۱۴۰۰",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0035",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "کاهش تعدی رابطهٔ پیش‌نیازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0036",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "همبندی، رأس و یال برشی و بلندترین مسیرها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1400-658A-q0045",
+   "exam_track": "it",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "دنبالهٔ امتیازهای تورنمنت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }

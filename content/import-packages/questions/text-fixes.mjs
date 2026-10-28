@@ -725,6 +725,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1277-1396-b1-046", { options: { 1: "$3\\times3!$", 2: "$6^4$", 3: "$4\\times3!$", 4: "$9!-4\\times3!$" } }],
   // CE 1399 q47: the booklet asks for 2^1026, not a tower of powers.
   ["kunkurcomputer-q-1277-1399-b0-047", { stem: [["$2^{2^{1026}}$", "$2^{1026}$"]] }],
+  // IT 1398 q33: the last constant in option 4 is c_3.
+  ["kunkurcomputer-q-1276-1398-859A-033", { options: { 4: "$a_n=(c_1n+c_2)5^n+c_3(-2)^n$" } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
