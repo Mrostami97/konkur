@@ -23,6 +23,7 @@ import { SAMPLES } from "./samples.mjs";
 import { SOLUTIONS } from "./solutions.mjs";
 import { NEEDS_FIGURE } from "./needs-figure.mjs";
 import { TEXT_FIXES } from "./text-fixes.mjs";
+import { KEY_FIXES } from "./key-fixes.mjs";
 import { FIGURE_PICKS } from "./figure-picks.mjs";
 
 const repo = fileURLToPath(new URL("../../../", import.meta.url));
@@ -450,6 +451,12 @@ for (const examYear of examYears) {
       if (fix.figures) q.figures = [...q.figures, ...fix.figures];
       // A text the bank marked ambiguous, compared with the booklet crop and found complete.
       if (fix.verified) q.textVerified = true;
+    }
+    // A key the bank took from the wrong sheet (key-fixes.mjs).
+    const keyFix = KEY_FIXES.get(externalId);
+    if (keyFix) {
+      if (q.correct !== keyFix.from) throw new Error(`${externalId}: key fix expects bank key ${keyFix.from}, found ${q.correct}`);
+      Object.assign(q, { correct: keyFix.to, accepted: [keyFix.to], initialKey: Boolean(keyFix.initial) || q.initialKey });
     }
     // No official key: our worked answer (solutions.mjs `ourKey`) becomes the key, marked as ours.
     const ourKey = SOLUTIONS[externalId]?.ourKey;

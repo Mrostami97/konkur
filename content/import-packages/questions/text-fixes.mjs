@@ -794,4 +794,6 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
     },
   }],
   ["kunkurcomputer-q-1277-1402-b1-064", { options: { 2:"الگوریتم B نمونه‌ای به اندازه $n$ را با حل بازگشتی هشت نمونه با اندازه $\\frac{n}{2}$ حل می‌کند و سپس راه‌حل‌های آنها را در زمان $O(n^3)$ ترکیب می‌کنند." } }],
+  // CE 1391 q59: option 1 ends D0 = q1'a + q0a' in the booklet; the bank typed q0'a'.
+  ["kunkurcomputer-q-1277-1391-b1-059", { options: { 1: String.raw`$D_1=q_1\bar q_0+\bar q_1a,\quad D_0=\bar q_1a+q_0\bar a$` } }],
 ]);
