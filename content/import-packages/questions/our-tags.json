@@ -11592,6 +11592,267 @@
    "topic": "گراف تخصیص منابع با یال‌های ادعا",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0039",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "زمان جست‌وجو در درهم‌سازی زنجیره‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0040",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "حذف یکی‌درمیان در لیست پیوندی حلقوی (مسئلهٔ ژوزفوس)",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0041",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "تعداد درخت‌های دودویی با پیش‌ترتیب و پس‌ترتیب معلوم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0042",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "مرتب‌سازی مبنایی با پایهٔ n",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0043",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "کران پایین برگ‌های درخت تصمیم ادغام دو لیست",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0044",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "سه حلقهٔ تودرتو با گام دوبرابری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0045",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "بررسی درخت جست‌وجوی دودویی با بازهٔ مجاز کلیدها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0046",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "هرم و صف اولویت",
+   "topic": "تعداد هرم‌های کمینهٔ هفت‌عنصری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0047",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "درخت‌ها",
+   "topic": "بیشترین تعداد کلید در درخت B با کمینهٔ درجه و ارتفاع معلوم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0048",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "صرفه‌جویی برنامه‌ریزی پویا در رابطه‌های بازگشتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0049",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "انواع یال‌ها در جست‌وجوی عمق‌اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0050",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "توان ماتریس مجاورت و مسیرهای به طول k",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0051",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "تشخیص دور در گراف بی‌جهت با جست‌وجوی عمق‌اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0052",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "یال بعدی در الگوریتم پریم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0053",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "طول کد هافمن یک رشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0054",
+   "exam_track": "it",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "درستی گزاره‌های مجانبی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0087",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "شرط قابل قبول بودن تابع مکاشفه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0088",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجو",
+   "topic": "مقایسهٔ حافظه و کیفیت روش‌های جست‌وجو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0089",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "جست‌وجوی آگاهانه",
+   "topic": "جست‌وجوی SMA ستاره با حافظهٔ محدود",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0090",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "بازی‌ها",
+   "topic": "اثر ترتیب گره‌ها در مینیماکس و آلفا-بتا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0091",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق گزاره‌ای",
+   "topic": "انواع استنتاج و استنتاج ربایشی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0092",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "حساب وضعیت‌ها و شناورها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0093",
+   "exam_track": "it",
+   "course": "هوش مصنوعی",
+   "chapter": "منطق مرتبه اول",
+   "topic": "ترجمهٔ جمله به منطق مرتبه اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0096",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "نوبت گردشی و زمان‌بندی LCFS غیرانحصاری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0097",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "فرایندها و نخ‌ها",
+   "topic": "ارتباط بین فرایندها با حافظهٔ مشترک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0098",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "زمان‌بندی پردازنده",
+   "topic": "نوبت گردشی فرایندها با نخ‌های درونشان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0100",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "بن‌بست",
+   "topic": "بن‌بست با منابع فقط‌خواندنی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0101",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "حافظهٔ مجازی",
+   "topic": "زمان مؤثر دسترسی با TLB",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0102",
+   "exam_track": "it",
+   "course": "سیستم‌های عامل",
+   "chapter": "مدیریت حافظه",
+   "topic": "ترجمهٔ آدرس در قطعه‌بندی صفحه‌بندی‌شده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
