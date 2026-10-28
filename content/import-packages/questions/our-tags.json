@@ -15318,6 +15318,168 @@
    "topic": "تقسیم به تیم‌های دونفره با شرط جدایی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0041",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "شمارش جایگشت‌هایی که با مرتب‌سازی پنجره‌های سه‌تایی درست می‌شوند",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0042",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "جزء صحیح n به توان ۲ تقسیم بر ۳ و عددهای اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "استنتاج با حذف یک فرض",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "اتحادهای جبر مجموعه‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-0d7f9c6d482bfc6c-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "جواب عمومی رابطهٔ ناهمگن با ریشهٔ مکرر",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0047",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "جمع اعضای همهٔ انتخاب‌ها از ۱ تا n",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0049",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "ماتریس‌های جایگشت متقارن و برگشت‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0050",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "تابع مولد ترکیب با تکرار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0047",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "میانگین تعداد نقاط ناثابت جایگشت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0048",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق محمولات",
+   "topic": "هم‌ارزی عبارت‌های سوردار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0049",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "تشخیص مجموعهٔ ناشمارا",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0046",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "علامت‌گذاری ۱ تا ۷ با جمع منفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0047",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "باقی‌ماندهٔ توان ۲ بر ۱۷",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0048",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "رابطه‌های نه بازتابی و نه پادمتقارن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0049",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "تشخیص دنبالهٔ درجات گرافیکی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-f383d14836ddf149-q-0050",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "تابع مولد پرداخت با سکه‌های ۱، ۲ و ۵",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-2dd2bed43c589a91-q-0048",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "شمارا بودن خانوادهٔ بازه‌های بی‌شکاف از ℕ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-80ceacadef3e68ab-q-0050",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "زوجیت اندازهٔ رابطه‌های هم‌ارزی و نیم‌مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
