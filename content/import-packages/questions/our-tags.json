@@ -14166,6 +14166,303 @@
    "topic": "ضرب سریع ماتریس هادامارد در بردار",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0101",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "مخاطره‌های خط لوله و تغییر نام ثبات",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0102",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "شمارش miss در حافظهٔ نهان با نگاشت مستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0103",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "ویژگی‌های واحد کنترل ریزبرنامه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0104",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تسریع خط لوله و قانون امدال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تقسیم دودویی جبرانی و غیرجبرانی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0106",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "انواع miss و سیاست جایگزینی LRU",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0107",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تأخیر جمع‌کننده و ضرب‌کنندهٔ آرایه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0108",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "روش‌های انتقال ورودی و خروجی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0109",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "قالب دستور و کد عملیات گسترش‌یافته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1396-259C-q0110",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "حافظهٔ برگ‌برگ‌شده و سیاست نوشتن",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0094",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "ضرب عدد BCD در ۵۰ با کمترین سخت‌افزار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0095",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "کوچک‌ترین عدد مثبت در قالب ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0096",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "نرخ اصابت لازم برای سودمند بودن حافظهٔ نهان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0097",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "چینش علامت، نما و کسر در قالب ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0098",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "تعداد بیت‌های برچسب در نهان انجمنی مجموعه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0099",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "مقایسهٔ گذردهی دو خط لوله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0100",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "مقایسهٔ زمان اجرا با CPI و فرکانس",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0101",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "فضای آدرس با ورودی و خروجی نگاشت به حافظه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0102",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "مقایسهٔ نگاشت مستقیم و انجمنی مجموعه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "مقایسهٔ کنترل سیم‌بندی‌شده و ریزبرنامه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1395-252A-q0104",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل ریزبرنامه‌ای",
+   "topic": "نانوبرنامه‌سازی در واحد کنترل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0094",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "تعداد بیت‌های لازم برای پیاده‌سازی نهان انجمنی مجموعه‌ای",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0095",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تسریع خط لوله با تغییر زمان یک مرحله",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0096",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "شمارش hit در نهان با نگاشت مستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0097",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "مراحل جمع ممیز شناور",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0099",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و ریزعملیات",
+   "topic": "جمع‌کنندهٔ سریال با ثبات‌های شیفت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0100",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "زمان پاسخ پردازنده به وقفه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0101",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "تقسیم دودویی جبرانی و غیرجبرانی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0102",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "تعداد بیت‌های برچسب در سه نوع نگاشت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0103",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "واحد کنترل سیم‌بندی‌شده",
+   "topic": "تعداد فلیپ‌فلاپ و گیت در کنترل سیم‌بندی مستقیم",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0104",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "ویژگی‌های پردازندهٔ RISC و معماری مجموعه دستورالعمل",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "انتقال ثبات و ریزعملیات",
+   "topic": "تشخیص دستور از روی ریزعملیات‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1394-351C-q0098",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه اصلی",
+   "topic": "طول سطر TLB در حافظهٔ مجازی قطعه‌صفحه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
