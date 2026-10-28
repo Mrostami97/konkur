@@ -13374,6 +13374,213 @@
    "topic": "نمونه‌گیری تصادفی مخزنی و حافظهٔ لازم",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0001",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تقسیم و حل",
+   "topic": "محاسبهٔ عدد فیبوناچی با توان‌رسانی ماتریس",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0002",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "مجموع درجه‌های رأس‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0003",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "مقدار متغیر پس از دو حلقهٔ تودرتو",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0004",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "میانگین تعداد مقایسه‌های مرتب‌سازی درجی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0005",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "زمان بدترین، میانگین و بهترین حالت مرتب‌سازی سریع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0006",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "تعداد مقایسه‌های ادغام دو آرایهٔ مرتب",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0008",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "ساختمان داده‌های خطی",
+   "topic": "پیاده‌سازی پشته و صف با یکدیگر و با لیست پیوندی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0009",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "یافتن دو عدد با مجموع t با درهم‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0010",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "آخرین رأس در جست‌وجوی سطح‌اول و عمق‌اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0011",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "پایداری و مرتب‌سازی مبنایی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0012",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های حریصانه",
+   "topic": "تشخیص الگوریتم‌های حریصانه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0031",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "ماهیت تز چرچ-تورینگ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0032",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "روابط قطعی P و NP",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0033",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "مسائل تصمیم در NP-کامل و NP-سخت",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0034",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "پیچیدگی 2-SAT، 3-SAT و برنامه‌ریزی خطی و صحیح",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0037",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "برنامه‌ریزی پویا",
+   "topic": "الگوریتم مجموعهٔ مجموع‌ها برای جمع زیرمجموعه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0039",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "تقریب‌پذیری فروشندهٔ دوره‌گرد و متریک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0040",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مرتب‌سازی",
+   "topic": "دورترین دو نقطه روی خط با کمینه و بیشینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0041",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "الگوریتم‌های گراف",
+   "topic": "شار بیشینه و برش کمینه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0042",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "مباحث دیگر",
+   "topic": "مقایسهٔ الگوریتم برخط و برون‌خط",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0043",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "جست‌وجو و درهم‌سازی",
+   "topic": "زمان عملیات در آرایه و جدول درهم‌سازی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0044",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "تحلیل الگوریتم",
+   "topic": "حل دو رابطهٔ بازگشتی با قضیهٔ اصلی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "phd-1400-40a79fc4ff382302-q0045",
+   "exam_track": "phd",
+   "course": "ساختمان داده و طراحی الگوریتم",
+   "chapter": "NP و پیچیدگی",
+   "topic": "روابط کلاس‌های تصادفی RP و ZPP",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
