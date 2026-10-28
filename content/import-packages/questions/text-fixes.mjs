@@ -697,6 +697,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1276-1395-252A-093", { stem: [["\nستون‌ها به ترتیب R₁,R₂,R₃,R₄:\nتخصیص: P₁=(۰,۰,۱,۰)، P₂=(۲,۰,۰,۱)، P₃=(۰,۱,۲,۰).\nنیاز: P₁=(۲,۰,۰,۱)، P₂=(۱,۰,۱,۰)، P₃=(۲,۱,۰,۰).\nموجود: (۲,۱,۰,۰).", ""]] }],
   ["kunkurcomputer-q-1276-1395-252A-039", { stem: [["\nکلید\nاندیس درهم‌سازی\nB\n۳\nC\n۴\nD\n۵\nF\n۰\nI\n۳\nN\n۱\nU\n۱\n", ""]] }],
   ["kunkurcomputer-q-1276-1395-252A-090", { stem: [[" (به ترتیب از راست به چپ)", ""]], options: { 1: "منطقی ۹ و فیزیکی ۱۱ بیت", 2: "منطقی ۱۱ و فیزیکی ۱۳ بیت", 3: "منطقی ۱۳ و فیزیکی ۱۵ بیت", 4: "منطقی ۱۵ و فیزیکی ۱۳ بیت" } }],
+  // IT 1394: typed copies of printed tables dropped (the table crop is shown).
+  ["kunkurcomputer-q-1276-1394-351C-090", { stem: [["\nP1: 2\nP2: 6\nP3: 1\nP4: 4\nP5: 3", ""]] }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.
