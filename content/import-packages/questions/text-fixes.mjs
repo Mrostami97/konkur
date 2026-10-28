@@ -719,6 +719,8 @@ C-Generator: $C_0=G_0+P_0C_{in}$، $C_1=G_1+P_1G_0+P_1P_2C_{in}$، …، $C_i=G_
   ["kunkurcomputer-q-1277-1403-b1-045", { stem: [["هر مسیر به طول ۲", "هر مسیر به طول ۳"]] }],
   // CE 1405 q44: option 2 is 3^8 in the booklet.
   ["kunkurcomputer-q-1277-1405-b1-044", { options: { 2: "$3^8$" } }],
+  // CE 1401 q50: options 1 and 3 say k^3 in the booklet.
+  ["kunkurcomputer-q-1277-1401-b1-050", { options: { 1: "این گراف حداکثر $k^3$ رأس دارد.", 3: "این گراف حداقل $k^3$ یال دارد." } }],
   // CE 1393 q73: the process table was only in the crop.
   ["kunkurcomputer-q-1277-1393-b1-073", { table: { headers: ["فرایند", "زمان ورود", "زمان پردازش"], rows: [["A", "0", "$t_A=3$"], ["B", "1", "$t_B$"], ["C", "2", "$t_C$"]] } }],
   // CE 1401 q119: the three tables were only in the crop.

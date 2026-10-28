@@ -15156,6 +15156,168 @@
    "topic": "خواص رابطه و رابطهٔ هم‌ارزی",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "احتمال برابری تعداد زوج و فرد در انتخاب تصادفی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "شمارا بودن خانواده‌های دایره و دیسک",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0046",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "تابع مولد افراز عدد به ۱، ۲ و ۵",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0047",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "زوج‌های عدد اول با جمع مربعات اول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0048",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "ترتیب جزئی و مشبکه",
+   "topic": "مشبکهٔ متناهی و متمم در مشبکهٔ کران‌دار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-ce948be666ad51cd-q-0049",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "رابطهٔ بازگشتی شمارش رقم‌های یک در مبنای ۵",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "نتایج پرتاب تاس‌های یکسان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0046",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "شمارا بودن دنباله‌های صعودی و نزولی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0047",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "رابطهٔ بازگشتی پریش‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0048",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "نسبت به هم اول بودن و قضیهٔ ویلسون",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0049",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "تعدی و هم‌ارزی رابطهٔ متقارن‌شده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8a4056bd6a949b1f-q-0050",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "کمر گراف منتظم و کران تعداد رأس‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0040",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "بیشترین نقاط برخورد دایره‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0042",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "دستگاه معادلات نامنفی با شرط نابرابری",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "عددهای ۸ رقمی با جمع رقم زوج",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "شمارش حالت‌های پاسخ‌نامه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "انتخاب‌هایی با تعداد و جمع زوج",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8281fb428ee1c911-q-0041",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "تقسیم به تیم‌های دونفره با شرط جدایی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
