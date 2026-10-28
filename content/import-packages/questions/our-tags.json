@@ -15480,6 +15480,132 @@
    "topic": "زوجیت اندازهٔ رابطه‌های هم‌ارزی و نیم‌مرتب",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0042",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق محمولات",
+   "topic": "پخش سور عمومی روی شرطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "بستار تعدی و اجتماع توان‌های رابطه",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "شمارش و ترکیبیات",
+   "topic": "عددهای چهاررقمی با رقم‌های نانزولی از چپ",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "جواب عمومی رابطهٔ ناهمگن با جملهٔ خطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-8213fe6c865a93cc-q-0046",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "وجود گراف جهت‌دار با درجه‌های ورودی و خروجی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0042",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "سه‌تایی‌های زیرمجموعه با شرط شمول",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "گراف و درخت",
+   "topic": "فرمول اویلر و شمارش ناحیه‌های سه‌ضلعی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "اندازهٔ بستار تعدی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق گزاره‌ها",
+   "topic": "استنتاج از دو فرض",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-21365ad449804cea-q-0046",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "نظریه اعداد",
+   "topic": "رقم یکان جمع توان‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0043",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "منطق محمولات",
+   "topic": "استنتاج از جمله‌های سوردار",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0044",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "مجموعه و رابطه",
+   "topic": "اتحادهای تفاضل مجموعه‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0045",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "ترتیب جزئی و مشبکه",
+   "topic": "عضوهای مینیمال و ماکسیمال",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "doc-64e3de2de6db498a-q-0046",
+   "exam_track": "ce",
+   "course": "ریاضیات گسسته",
+   "chapter": "روابط بازگشتی",
+   "topic": "دستگاه رابطه‌های بازگشتی خطی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
