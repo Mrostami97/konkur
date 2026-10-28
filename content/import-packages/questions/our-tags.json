@@ -14733,6 +14733,141 @@
    "topic": "محتوای نهان دستور با نگاشت مستقیم پس از اجرای حلقه‌ها",
    "key_checked": true,
    "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0103",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "اجرای کد صفرآدرسه روی پشته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0104",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "نرخ اصابت لازم در سلسله‌مراتب سه‌سطحی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "طول برچسب در نهان ۴ راهه با آدرس ۶۴ بیتی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0106",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "نمایش ممیز شناور دقت ساده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0107",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "تشخیص مد آدرس‌دهی نسبی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0108",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "کارایی کامپیوتر",
+   "topic": "سهم زمان ضرب از کل زمان پردازنده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0109",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "نرخ hit در نهان نگاشت مستقیم با تکرار دسترسی‌ها",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1389-3057A-q0110",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "ورودی و خروجی",
+   "topic": "پهنای باند گذرگاه برای انتقال هم‌زمان",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0104",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "بیشترین تسریع خط لوله با مراحل نامساوی",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0105",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "بیشترین تعداد دستورها با کد عملیات گسترش‌یافته",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0106",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "مجموعه دستورالعمل‌ها",
+   "topic": "ذخیرهٔ آدرس برگشت در اولین خانهٔ تابع",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0108",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "مکمل ۹ رقم BCD",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0109",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "نمایش داده‌ها و حساب کامپیوتر",
+   "topic": "بیشترین تعداد جمع و تفریق در ضرب بوث",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0110",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "حافظه و حافظه نهان",
+   "topic": "تشخیص نوع نگاشت و حجم نهان از قالب آدرس",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
+  },
+  {
+   "question_id": "it-1388-C-q0107",
+   "exam_track": "it",
+   "course": "معماری کامپیوتر",
+   "chapter": "خط لوله",
+   "topic": "تعداد کلاک‌های خط لوله برای پردازش ۱۰۰ داده",
+   "key_checked": true,
+   "checked_at": "2026-10-24"
   }
  ]
 }
