@@ -19,6 +19,7 @@ const paths = {
   "@nestjs/core": "apps/api > @nestjs/core@10.4.22",
   "decode-uri-component": "apps/api > minio@8.0.7 > query-string@7.1.3 > decode-uri-component@0.2.2",
   "stream-json": "apps/api > minio@8.0.7 > stream-json@1.9.1",
+  deepmerge: "contracts > jest@29.7.0 > jest-cli@29.7.0 > jest-config@29.7.0 > deepmerge@4.3.1",
 };
 function record(exception = policy.exceptions[0], changes = {}) {
   return { github_advisory_id: exception.advisoryId, module_name: exception.moduleName, severity: exception.severity, findings: [{ version: exception.versions[0], paths: [paths[exception.moduleName]] }], ...changes };
@@ -27,11 +28,19 @@ function check(feed, changes = {}, nextPolicy = policy) {
   return checkAudit(feed, nextPolicy, { now, auditStatus: Object.keys(feed.advisories).length ? 1 : 0, featureState: cleanState, ...changes });
 }
 
-test("accepts a clean full audit and the seven exact reviewed unused-feature exceptions", () => {
+test("accepts a clean full audit and the eight exact reviewed unused-feature exceptions", () => {
   assert.equal(check(audit()).passed, true);
   const result = check(audit(policy.exceptions.map((exception) => record(exception))));
   assert.equal(result.passed, true);
-  assert.equal(result.accepted.length, 7);
+  assert.equal(result.accepted.length, 8);
+});
+test("deepmerge is accepted only through build and test tooling and only while application code does not import it", () => {
+  const exception = policy.exceptions.find((item) => item.moduleName === "deepmerge");
+  assert.equal(check(audit([record(exception)])).passed, true);
+  const runtime = record(exception, { findings: [{ version: "4.3.1", paths: ["apps/api > some-runtime@1.0.0 > deepmerge@4.3.1"] }] });
+  assert.equal(check(audit([runtime])).passed, false);
+  const imported = { ...cleanState, sources: [...cleanState.sources, { path: "apps/api/src/x.ts", text: 'import merge from "deepmerge";' }] };
+  assert.equal(check(audit([record(exception)]), { featureState: imported }).passed, false);
 });
 test("unknown advisories fail at every severity, including low and info", () => {
   for (const severity of ["info", "low", "moderate", "high", "critical"]) {

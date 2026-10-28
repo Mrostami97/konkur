@@ -6,7 +6,7 @@ import { bracesRemediation, isReviewedBracesFinding, verifyBracesRemediation } f
 
 const severityLevels = ["info", "low", "moderate", "high", "critical"];
 const advisoryPattern = /^GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/;
-const guards = new Set(["unused-file-type", "unused-sse", "unused-minio-decoder", "unused-stream-json-filters"]);
+const guards = new Set(["unused-file-type", "unused-sse", "unused-minio-decoder", "unused-stream-json-filters", "unused-deepmerge"]);
 const storageFile = "apps/api/src/modules/ingestion/object-storage.service.ts";
 // listObjects (full backup) was reviewed against 8.0.7: it builds its query with its own uriEscape and
 // parses XML with fast-xml-parser, so neither query-string decoding nor stream-json is reached.
@@ -39,7 +39,7 @@ function reviewExceptions(policy, now) {
   for (const exception of policy.exceptions) {
     requireValid(object(exception) && advisoryPattern.test(exception.advisoryId ?? ""), "Exception advisory ID is invalid");
     requireValid(!entries.has(exception.advisoryId), "Duplicate exception advisory ID");
-    requireValid(typeof exception.moduleName === "string" && exception.moduleName.length > 0 && exception.severity === "moderate", "Only explicit moderate dependency exceptions are supported");
+    requireValid(typeof exception.moduleName === "string" && exception.moduleName.length > 0 && ["low", "moderate"].includes(exception.severity), "Only explicit low or moderate dependency exceptions are supported");
     requireValid(Array.isArray(exception.versions) && exception.versions.length > 0 && exception.versions.every((version) => typeof version === "string" && /^\d+\.\d+\.\d+$/.test(version)), "Exception versions must be explicit stable versions");
     requireValid(guards.has(exception.guard), "Exception feature guard is unknown");
     requireValid(typeof exception.reason === "string" && exception.reason.length >= 60 && typeof exception.source === "string" && exception.source.startsWith("https://github.com/"), "Exception needs a reason and primary advisory reference");
@@ -49,9 +49,13 @@ function reviewExceptions(policy, now) {
   }
   return entries;
 }
+const reviewedDeepmergeParents = new Set(["jest-config@29.7.0", "fork-ts-checker-webpack-plugin@9.0.2"]);
 function reviewedDependencyPath(moduleName, value) {
   const parts = value.replaceAll("\\", "/").split(" > ");
-  if (parts.shift() !== "apps/api") return false;
+  const root = parts.shift();
+  // deepmerge only arrives through build and test tooling, in the API and the contracts package.
+  if (moduleName === "deepmerge") return (root === "apps/api" || root === "contracts") && parts.pop() === "deepmerge@4.3.1" && reviewedDeepmergeParents.has(parts.at(-1));
+  if (root !== "apps/api") return false;
   if (moduleName === "file-type") return parts.pop() === "file-type@20.4.1" && parts.length > 0 && parts.every((part) => reviewedNestPackages.has(part));
   if (moduleName === "@nestjs/core") return parts.pop() === "@nestjs/core@10.4.22" && parts.every((part) => reviewedNestPackages.has(part));
   if (moduleName === "decode-uri-component") return parts.join(" > ") === "minio@8.0.7 > query-string@7.1.3 > decode-uri-component@0.2.2";
@@ -84,6 +88,7 @@ export function guardFailures(guard, state) {
     if (guard === "unused-file-type" && (/\b(?:FileTypeValidator|fileTypeFromBuffer|fileTypeFromStream|fileTypeStream)\b/.test(text) || imports(["file-type"]).test(text))) failures.push(`${source.path}: file-type parser or validator use requires a patched-library review`);
     if (guard === "unused-sse" && /\b(?:Sse|SseStream|EventSource)\b|text\/event-stream/.test(text)) failures.push(`${source.path}: SSE use invalidates the Nest exception`);
     if (guard === "unused-minio-decoder" && imports(["query-string", "decode-uri-component"]).test(text)) failures.push(`${source.path}: direct decoder/query-string use invalidates the exception`);
+    if (guard === "unused-deepmerge" && imports(["deepmerge"]).test(text)) failures.push(`${source.path}: deepmerge use in application code requires a patched-library review`);
     if (guard === "unused-stream-json-filters" && (imports(["stream-json"]).test(text) || /\blistenBucketNotification\b/.test(text))) failures.push(`${source.path}: JSON stream or notification use requires a patched-library review`);
     if (guard.startsWith("unused-minio") || guard === "unused-stream-json-filters") {
       if (imports(["minio"]).test(text) && source.path !== storageFile) failures.push(`${source.path}: new MinIO callsite requires a dependency review`);
