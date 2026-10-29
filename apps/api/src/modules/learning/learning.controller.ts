@@ -76,6 +76,13 @@ export class LearningStudentController {
     return this.spotPlayer.videoStatus(req.user!.id, courseId);
   }
 
+  /** The student's SpotPlayer key, if the owner has recorded one. */
+  @Get("me/video-license")
+  @UseGuards(SessionAuthGuard)
+  myVideoLicense(@Req() req: RequestWithUser) {
+    return this.spotPlayer.myLicense(req.user!.id);
+  }
+
   /** Asks the owner for a licence to this course's videos. */
   @Post("courses/:courseId/video-license")
   @UseGuards(SessionAuthGuard)
@@ -96,6 +103,13 @@ export class VideoLicenseAdminController {
     return this.spotPlayer.listRequests((query.status ?? "PENDING") as VideoLicenseRequestStatus);
   }
 
+  /** Every key on record, asked for or given directly. */
+  @Get("issued")
+  issued() {
+    return this.spotPlayer.listIssued();
+  }
+
+  /** Records a key for any account; a pending request is not needed. */
   @Post(":userId")
   issue(@Param("userId") userId: string, @Body() dto: IssueVideoLicenseDto, @Req() req: RequestWithUser) {
     return this.spotPlayer.issue(req.user!.id, userId, dto.licenseKey);

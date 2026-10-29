@@ -141,6 +141,24 @@ describe("SpotPlayer video licences, issued by hand (e2e)", () => {
     expect(done.body.find((entry: { user: { phone: string } }) => entry.user.phone === buyerPhone).licenseKey).toBe("KEY-ALL-COURSES");
   });
 
+  it("lets the owner give a key to anyone, unasked, and shows it in their profile", async () => {
+    const outsider = await request(app.getHttpServer()).get("/me/video-license").set("Cookie", outsiderCookie).expect(200);
+    expect(outsider.body.license).toBeNull();
+    await request(app.getHttpServer()).get("/me/video-license").expect(401);
+
+    const outsiderId = (await request(app.getHttpServer()).get("/auth/session").set("Cookie", outsiderCookie).expect(200)).body.user.id as string;
+    const given = await request(app.getHttpServer()).post(`/admin/video-licenses/${outsiderId}`).set("Cookie", adminCookie).send({ licenseKey: "GIFT-KEY" }).expect(201);
+    expect(given.body).toMatchObject({ licenseKey: "GIFT-KEY", closedRequests: 0 });
+
+    const mine = await request(app.getHttpServer()).get("/me/video-license").set("Cookie", outsiderCookie).expect(200);
+    expect(mine.body.license).toMatchObject({ licenseKey: "GIFT-KEY" });
+    expect(mine.body.license.downloadUrl).toMatch(/^https:\/\//);
+
+    const issued = await request(app.getHttpServer()).get("/admin/video-licenses/issued").set("Cookie", adminCookie).expect(200);
+    expect(issued.body.find((entry: { user: { id: string } }) => entry.user.id === outsiderId).licenseKey).toBe("GIFT-KEY");
+    await request(app.getHttpServer()).get("/admin/video-licenses/issued").set("Cookie", outsiderCookie).expect(403);
+  });
+
   it("stops showing the key once access is revoked", async () => {
     const entitlement = await prisma.entitlement.findFirstOrThrow({ where: { productId: videoProductId }, orderBy: { createdAt: "desc" } });
     await request(app.getHttpServer())

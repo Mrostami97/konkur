@@ -7,6 +7,7 @@ import { apiFetch } from "../../../lib/api";
 import { EXAM_DATES } from "../../../lib/exam-dates";
 import { toPersianDigits } from "../../../lib/format";
 import { AccountShell } from "../AccountShell";
+import { MyVideoLicense } from "../MyVideoLicense";
 import { ProgressRing } from "../charts";
 import {
   bodyForSection,
@@ -186,6 +187,8 @@ export default function ProfilePage() {
           <Link href={next} className="st-btn st-btn-primary st-btn-sm">برگشت به آزمون</Link>
         </div>
       ) : null}
+
+      <MyVideoLicense />
 
       <SectionCard
         icon="shield"

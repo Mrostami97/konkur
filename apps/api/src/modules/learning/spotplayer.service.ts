@@ -76,6 +76,37 @@ export class SpotPlayerService {
     };
   }
 
+  /**
+   * The student's own key, for their profile. Shown whether or not they asked:
+   * the owner may give a licence to anyone from the admin panel (owner, 2026-10-29).
+   */
+  async myLicense(userId: string) {
+    const license = await this.prisma.studentVideoLicense.findUnique({ where: { userId }, select: { licenseKey: true, issuedAt: true, updatedAt: true } });
+    return {
+      license: license ? { licenseKey: license.licenseKey, downloadUrl: SPOTPLAYER_DOWNLOAD_URL, issuedAt: license.issuedAt, updatedAt: license.updatedAt } : null,
+    };
+  }
+
+  /** Every key on record, newest first, for the admin panel. */
+  async listIssued() {
+    const rows = await this.prisma.studentVideoLicense.findMany({
+      orderBy: { updatedAt: "desc" },
+      take: 1000,
+      select: {
+        licenseKey: true,
+        issuedAt: true,
+        updatedAt: true,
+        user: { select: { id: true, phone: true, profile: { select: { displayName: true } } } },
+      },
+    });
+    return rows.map((row) => ({
+      user: { id: row.user.id, phone: row.user.phone, name: row.user.profile?.displayName ?? null },
+      licenseKey: row.licenseKey,
+      issuedAt: row.issuedAt,
+      updatedAt: row.updatedAt,
+    }));
+  }
+
   /** Requests for the admin panel, one row per student with their courses and current key. */
   async listRequests(status: VideoLicenseRequestStatus) {
     const requests = await this.prisma.videoLicenseRequest.findMany({
@@ -107,6 +138,7 @@ export class SpotPlayerService {
   /**
    * Records the key the owner made on SpotPlayer and closes the student's
    * pending requests: from now on each of those course pages shows the key.
+   * Works for any account, asked or not; the key then shows in their profile.
    */
   async issue(actorId: string, userId: string, licenseKey: string) {
     const key = licenseKey.trim();

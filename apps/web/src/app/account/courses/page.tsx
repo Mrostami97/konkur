@@ -6,6 +6,7 @@ import { Glyph } from "../../../components/SubjectIcon";
 import { apiFetch } from "../../../lib/api";
 import { toPersianDigits } from "../../../lib/format";
 import { AccountShell } from "../AccountShell";
+import { MyVideoLicense } from "../MyVideoLicense";
 import { ProgressRing } from "../charts";
 import { faDate, type CourseProgress, type Enrollment, type Entitlement, type LearningProgress } from "../data";
 
@@ -127,6 +128,8 @@ export default function MyCoursesPage() {
           })}
         </div>
       )}
+
+      <MyVideoLicense />
 
       {activeAccess.length > 0 && (
         <section className="st-card">
