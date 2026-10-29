@@ -1,7 +1,10 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { PUBLIC_CONTENT_TAG } from "../../../lib/api";
 
 export const dynamic = "force-dynamic";
+
+/** Public pages that are cached with `revalidate` (besides the article and guide pages). */
+const CACHED_PAGES = ["/", "/courses", "/exams", "/lesson-notes", "/free-videos", "/subjects/[slug]"];
 
 /** Loopback and private-network addresses: the Docker network the API calls from. */
 function isInternal(address: string) {
@@ -28,5 +31,8 @@ export async function POST(request: Request) {
   const chain = (request.headers.get("x-forwarded-for") ?? "").split(",").filter((part) => part.trim());
   if (chain.length === 0 || !chain.every(isInternal)) return new Response("not found", { status: 404 });
   revalidateTag(PUBLIC_CONTENT_TAG);
+  // The cached listing pages are first rendered at build time, when the API is not there, so their
+  // copies carry no tag; dropping the paths too means the deploy's call replaces them at once.
+  for (const path of CACHED_PAGES) revalidatePath(path, "page");
   return Response.json({ revalidated: true });
 }

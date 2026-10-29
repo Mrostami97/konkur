@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { apiGetPublic } from "../../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../../lib/api";
 import { ComingSoon } from "../../components/ComingSoon";
 import { CourseCard } from "../../components/CourseCard";
 import { Icon3D, type Icon3DName } from "../../components/Icon3D";
@@ -17,10 +17,15 @@ import {
 } from "./catalog";
 import { courseSubject, courseSubjectTitle } from "./course-visual";
 
+// Cached like the article pages: rendered once, served from cache for a minute, and dropped at
+// once by /internal/revalidate after an edit or a deploy. Rendering this page on every request
+// made it slow under crawler bursts (2026-10-29).
+export const revalidate = 60;
+
 async function loadCatalog() {
   let courses: CatalogCourse[] | null;
   try {
-    courses = await apiGetPublic<CatalogCourse[]>("/courses");
+    courses = await apiGetPublic<CatalogCourse[]>("/courses", { revalidate: PUBLIC_PAGE_REVALIDATE });
   } catch {
     return { courses: null, products: [], unavailable: true, productCatalogUnavailable: true };
   }
@@ -30,7 +35,7 @@ async function loadCatalog() {
   }
 
   try {
-    const products = await apiGetPublic<CatalogProduct[]>("/products");
+    const products = await apiGetPublic<CatalogProduct[]>("/products", { revalidate: PUBLIC_PAGE_REVALIDATE });
     return {
       courses,
       products: products ?? [],

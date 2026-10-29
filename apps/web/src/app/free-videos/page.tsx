@@ -5,11 +5,16 @@ import { FreeVideoCard, type FreeVideo } from "../../components/FreeVideoCard";
 import { StructuredData } from "../../components/StructuredData";
 import { SubjectGlyph, SUBJECT_TONE } from "../../components/SubjectIcon";
 import { subjects } from "../../content/editorial";
-import { apiGetPublic } from "../../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../lib/seo";
 import "../home.css";
 import "../landing.css";
+
+// Cached like the article pages: rendered once, served from cache for a minute, and dropped at
+// once by /internal/revalidate after an edit or a deploy. Rendering this page on every request
+// made it slow under crawler bursts (2026-10-29).
+export const revalidate = 60;
 
 interface Course {
   slug: string;
@@ -23,7 +28,7 @@ type LinkedVideo = FreeVideo & { externalUrl: string };
 
 async function load<T>(path: string): Promise<T | null> {
   try {
-    return await apiGetPublic<T>(path);
+    return await apiGetPublic<T>(path, { revalidate: PUBLIC_PAGE_REVALIDATE });
   } catch {
     return null;
   }

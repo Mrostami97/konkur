@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { apiGetPublic } from "../../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../../lib/api";
 import { ComingSoon } from "../../components/ComingSoon";
 import { ExamCatalog, type CatalogExam } from "./ExamCatalog";
 import "./exams.css";
@@ -7,9 +7,14 @@ import { EmptyState } from "../../components/ui";
 import { toPersianDigits } from "../../lib/format";
 import { pageMetadata } from "../../lib/seo";
 
+// Cached like the article pages: rendered once, served from cache for a minute, and dropped at
+// once by /internal/revalidate after an edit or a deploy. Rendering this page on every request
+// made it slow under crawler bursts (2026-10-29).
+export const revalidate = 60;
+
 async function loadExams() {
   try {
-    return await apiGetPublic<CatalogExam[]>("/exams");
+    return await apiGetPublic<CatalogExam[]>("/exams", { revalidate: PUBLIC_PAGE_REVALIDATE });
   } catch {
     return null;
   }

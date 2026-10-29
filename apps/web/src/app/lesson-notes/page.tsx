@@ -5,12 +5,17 @@ import { StructuredData } from "../../components/StructuredData";
 import { Glyph, SUBJECT_TONE, SubjectGlyph } from "../../components/SubjectIcon";
 import { EmptyState } from "../../components/ui";
 import { subjects } from "../../content/editorial";
-import { apiGetPublic } from "../../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../../lib/api";
 import { toPersianDigits } from "../../lib/format";
 import { isLessonNote, LESSON_NOTE_TAGS, LESSON_NOTES_LABEL, LESSON_NOTES_PATH, readingMinutes } from "../../lib/lesson-notes";
 import { absoluteUrl, pageMetadata } from "../../lib/seo";
 import "../articles/articles.css";
 import "./lesson-notes.css";
+
+// Cached like the article pages: rendered once, served from cache for a minute, and dropped at
+// once by /internal/revalidate after an edit or a deploy. Rendering this page on every request
+// made it slow under crawler bursts (2026-10-29).
+export const revalidate = 60;
 
 export const metadata: Metadata = pageMetadata({
   title: "درس‌نامه‌های کنکور ارشد کامپیوتر، درس‌به‌درس",
@@ -41,7 +46,7 @@ export default async function LessonNotesPage() {
   let unavailable = false;
   let published: PublicArticleRecord[] = [];
   try {
-    published = (await apiGetPublic<PublicArticleRecord[]>("/articles")) ?? [];
+    published = (await apiGetPublic<PublicArticleRecord[]>("/articles", { revalidate: PUBLIC_PAGE_REVALIDATE })) ?? [];
   } catch {
     unavailable = true;
   }

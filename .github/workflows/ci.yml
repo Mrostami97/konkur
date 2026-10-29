@@ -852,6 +852,18 @@ jobs:
             exit 1
           fi
 
+          # The cached public pages (home, courses, exams, ...) were first rendered at build time,
+          # when the API was not there. Drop those copies through the same internal call the API
+          # uses after an edit, then render each once, so neither a visitor nor the CDN gets an
+          # empty page. A failure here is only a warning: the pages renew themselves in a minute.
+          $DOCKER compose exec -T api node -e \
+            "fetch(process.env.WEB_INTERNAL_URL + '/internal/revalidate', { method: 'POST' }).then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))" \
+            || echo "WARNING: the public page cache was not refreshed after deploy." >&2
+          for page in / /courses /exams /lesson-notes /free-videos; do
+            $DOCKER run --rm --network host curlimages/curl:latest -sk -o /dev/null \
+              --resolve "${WEB_DOMAIN}:443:127.0.0.1" "https://${WEB_DOMAIN}${page}" || true
+          done
+
           # A bootstrap self-signed certificate is enough for containers to
           # start, but not enough for users or search crawlers. Keep the deploy
           # open until Certbot has installed a publicly trusted certificate and

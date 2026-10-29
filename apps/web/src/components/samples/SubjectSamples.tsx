@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ContentBlocks, InlineBlocks } from "../ContentBlocks";
 import { StructuredData } from "../StructuredData";
-import { apiGetPublic } from "../../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../../lib/api";
 import { examSetTitle } from "../../lib/admissions";
 import { toPersianDigits } from "../../lib/format";
 import { tidyQuestionBlocks } from "../../lib/question-text";
@@ -30,7 +30,7 @@ export interface SampleQuestion {
 /** The subject's samples; none (or the API down) simply leaves the section out. */
 export async function loadSamples(subjectCode: string): Promise<SampleQuestion[]> {
   try {
-    return (await apiGetPublic<SampleQuestion[]>(`/questions/samples?subjectCode=${encodeURIComponent(subjectCode)}&limit=6`)) ?? [];
+    return (await apiGetPublic<SampleQuestion[]>(`/questions/samples?subjectCode=${encodeURIComponent(subjectCode)}&limit=6`, { revalidate: PUBLIC_PAGE_REVALIDATE })) ?? [];
   } catch {
     return [];
   }

@@ -8,7 +8,7 @@ import { Icon3D, type Icon3DName } from "../components/Icon3D";
 import { evidenceStats, studentResults } from "../content/evidence";
 import { guides, subjects } from "../content/editorial";
 import { findPhase12EditorialPage, phase12EditorialPages } from "../content/phase12";
-import { apiGetPublic } from "../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../lib/api";
 import { canonicalHref, withoutMergedGuides } from "../lib/merged-pages";
 import { toPersianDigits } from "../lib/format";
 import { absoluteUrl, pageMetadata, SITE_NAME } from "../lib/seo";
@@ -17,6 +17,11 @@ import { HeroSearch, type HeroEntry } from "./HeroSearch";
 import { SHELVES, shelvesOf } from "./articles/shelves";
 import { HomeHeroArt } from "./HomeHeroArt";
 import "./home.css";
+
+// Cached like the article pages: rendered once, served from cache for a minute, and dropped at
+// once by /internal/revalidate after an edit or a deploy. Rendering this page on every request
+// made it slow under crawler bursts (2026-10-29).
+export const revalidate = 60;
 
 export const metadata: Metadata = pageMetadata({
   title: "کنکور ارشد و دکتری کامپیوتر ۱۴۰۶؛ کلاس، نتایج شاگردان و ویدیوی رایگان",
@@ -27,7 +32,7 @@ export const metadata: Metadata = pageMetadata({
 
 async function safe<T>(path: string): Promise<T | null> {
   try {
-    return await apiGetPublic<T>(path);
+    return await apiGetPublic<T>(path, { revalidate: PUBLIC_PAGE_REVALIDATE });
   } catch {
     return null;
   }

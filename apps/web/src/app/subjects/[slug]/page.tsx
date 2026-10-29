@@ -23,10 +23,15 @@ import {
   type Phase11SubjectContent,
   type Phase11SubjectSlug,
 } from "../../../content/phase11";
-import { apiGetPublic } from "../../../lib/api";
+import { PUBLIC_PAGE_REVALIDATE, apiGetPublic } from "../../../lib/api";
 import { loadSamples, SubjectSamples, type SampleQuestion } from "../../../components/samples/SubjectSamples";
 import { toPersianDigits } from "../../../lib/format";
 import { absoluteUrl, pageMetadata } from "../../../lib/seo";
+
+// Cached like the article pages: rendered once, served from cache for a minute, and dropped at
+// once by /internal/revalidate after an edit or a deploy. Rendering this page on every request
+// made it slow under crawler bursts (2026-10-29).
+export const revalidate = 60;
 
 interface TaxonomyReference {
   code: string;
@@ -99,8 +104,8 @@ interface SubjectLearning {
 async function loadLearning(slug: string): Promise<SubjectLearning> {
   const editorial = findSubject(slug);
   const [videos, courses, samples] = await Promise.all([
-    apiGetPublic<FreeLecture[]>(`/resources?kind=VIDEO&subject=${encodeURIComponent(slug)}`).catch(() => null),
-    apiGetPublic<CatalogueCourse[]>("/courses").catch(() => null),
+    apiGetPublic<FreeLecture[]>(`/resources?kind=VIDEO&subject=${encodeURIComponent(slug)}`, { revalidate: PUBLIC_PAGE_REVALIDATE }).catch(() => null),
+    apiGetPublic<CatalogueCourse[]>("/courses", { revalidate: PUBLIC_PAGE_REVALIDATE }).catch(() => null),
     loadSamples(slug),
   ]);
   const titles = editorial ? [editorial.shortTitle, editorial.title] : [];
@@ -237,7 +242,7 @@ export function generateStaticParams() {
 
 async function loadSubject(slug: string) {
   try {
-    return { subject: await apiGetPublic<PublicSubjectDetail>(`/subjects/${encodeURIComponent(slug)}`), unavailable: false };
+    return { subject: await apiGetPublic<PublicSubjectDetail>(`/subjects/${encodeURIComponent(slug)}`, { revalidate: PUBLIC_PAGE_REVALIDATE }), unavailable: false };
   } catch {
     return { subject: null, unavailable: true };
   }
