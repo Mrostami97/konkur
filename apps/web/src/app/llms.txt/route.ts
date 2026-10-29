@@ -117,5 +117,5 @@ export async function GET() {
     "## استفاده و انتساب",
     "برای نقل واقعیت‌های زمان‌حساس، تاریخ آخرین بررسی و منبع همان صفحه را نیز ذکر کنید. محتوای عمومی برای خواندن و ارجاع در دسترس است؛ بازنشر کامل تابع سیاست منابع و کپی‌رایت سایت است.",
   ].join("\n");
-  return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": complete ? "public, s-maxage=3600, stale-while-revalidate=86400" : "no-store" } });
+  return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
 }

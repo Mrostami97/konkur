@@ -257,12 +257,14 @@ export function sitemapXml(entries: SitemapEntry[]) {
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
 }
 
+// no-store everywhere: the CDN in front of the site (WCDN) ignores s-maxage and kept a sitemap without
+// the bank pages for ten days (found 2026-10-29). Crawlers fetch these rarely, so the origin can answer each time.
 export function sitemapResponse(entries: SitemapEntry[], complete = true) {
   return new Response(sitemapXml(entries), {
     status: complete ? 200 : 503,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": complete ? "public, s-maxage=3600, stale-while-revalidate=86400" : "no-store",
+      "Cache-Control": "no-store",
       ...(complete ? {} : { "Retry-After": "300" }),
     },
   });
